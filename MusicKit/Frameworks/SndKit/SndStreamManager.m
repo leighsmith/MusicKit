@@ -1,26 +1,29 @@
-/*
-  $Id$
-
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h" 
 #import "SndStreamMixer.h"
 #import "SndStreamManager.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// Debug defines
+////////////////////////////////////////////////////////////////////////////////
+
 #define SNDSTREAMMANAGER_DEBUG                  0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 #define SNDSTREAMMANAGER_DELEGATEMESSAGING      1
-
 
 #ifdef __MINGW32__
 #define NSConditionLock SndConditionLock
@@ -28,10 +31,12 @@
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
-/* the enums are dual purpose -- they serve as condition locks for
- * bg_threadlock, and they also serve as the values held by
- * bg_sem to tell the bg thread which activity to perform.
- */
+////////////////////////////////////////////////////////////////////////////////
+// The enums are dual purpose -- they serve as condition locks for
+// bg_threadlock, and they also serve as the values held by
+// bg_sem to tell the bg thread which activity to perform.
+////////////////////////////////////////////////////////////////////////////////
+
 enum {
     BG_ready,
     BG_hasFlag,
@@ -100,15 +105,15 @@ static SndStreamManager *sm = nil;
     delegateMessageArray = [[NSMutableArray alloc] init];
     managerReceivePort   = [NSPort port]; /* we don't need to retain - the connection will do that */
     managerSendPort      = [NSPort port]; 
-    threadConnection     = [[NSConnection alloc] initWithReceivePort:managerReceivePort
-                                                            sendPort:managerSendPort]; 
-
-    //Set the connection's root object to the manager, so we can forward from here in the main thread.
     
+    threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
+                                                            sendPort: managerSendPort]; 
     [threadConnection setRootObject:self];
+    
+
     [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
                              toTarget: self
-                           withObject: [NSArray arrayWithObjects:managerSendPort, managerReceivePort, nil]];
+                           withObject: [NSArray arrayWithObjects: managerSendPort, managerReceivePort, nil]];
 #endif
 
     return self;
@@ -136,8 +141,6 @@ static SndStreamManager *sm = nil;
 
     [bg_threadLock release];
     [bgdm_threadLock release];
-
-//    NSLog(@"Manager version: MIXER");
 
 #if SNDSTREAMMANAGER_DEBUG
     fprintf(stderr,"[manager] ending dealloc\n");
@@ -188,59 +191,59 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// delegateMessageThread:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void)delegateMessageThread:(NSArray*)ports
+- (void) delegateMessageThread:(NSArray*) ports
 {
-    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-
-    id controllerProxy = nil;
+    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+    id controllerProxy;
+    
     [self retain];
 
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"SndManager::entering delegate thread\n");
 #endif
 
-    while (1) {
+    while (bgdm_sem != BGDM_threadStopped) {
       [bgdm_threadLock lockWhenCondition:BGDM_hasFlag];
       if (bgdm_sem == BGDM_delegateMessageReady)  {
         NSInvocation *delegateMessage = nil;
-        int count, i;
-            
-        [delegateMessageArrayLock lock];            
-        count = [delegateMessageArray count];
-        [delegateMessageArrayLock unlock];
-            
-            if (!controllerProxy) {
-              controllerProxy = [threadConnection rootProxy];
-              [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
-            }
-            
-            for (i = 0; i < count; i++) {
-                [delegateMessageArrayLock lock];            
-                delegateMessage = [[delegateMessageArray objectAtIndex: 0] retain];
-                [delegateMessageArray removeObjectAtIndex: 0];
-                [delegateMessageArrayLock unlock];
-                // cast to unsigned long to prevent compiler warnings 
-                [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
-            }
-
-#if SNDSTREAMMANAGER_DEBUG
-        NSLog(@"SndManager::Did process delegate messages!\n");
-#endif
-        [bgdm_threadLock unlockWithCondition:BGDM_ready];
+        int count;
+        while (1) {
+          [delegateMessageArrayLock lock];
+          count = [delegateMessageArray count];
+          if (count) {
+            delegateMessage = [[delegateMessageArray objectAtIndex:0] retain];
+            [delegateMessageArray removeObjectAtIndex:0];
+          }
+          [delegateMessageArrayLock unlock];
+          if (!count) break;
+#if 0
+          if (!controllerProxy) {
+            // SKoT: Thread blocks here... but _why_????
+            controllerProxy = [[NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
+                                                  sendPort:[ports objectAtIndex:1]] rootProxy];
+            [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
+          }
+          /* cast to unsigned long to prevent compiler warnings */
+          [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
+#endif          
+        }
       }
-      if (bgdm_sem == BGDM_abortNow) {
-        
+      else if (bgdm_sem == BGDM_abortNow) {        
 #if SNDSTREAMMANAGER_DEBUG
         NSLog(@"SndManager::Killing delegate message thread.\n");
 #endif
+        bgdm_sem = BGDM_threadStopped;
         break;
       }
+      else {
+        fprintf(stderr,"Semaphore status: %i\n",bgdm_sem);
+        bgdm_sem = BGDM_ready;
+      }
+      [bgdm_threadLock unlockWithCondition: bgdm_sem];
     }
-    
-    [bgdm_threadLock unlockWithCondition:BGDM_threadStopped];
     [self release];
     [localPool release];
     /* even if there is a new thread is created between the following two
@@ -290,9 +293,9 @@ static SndStreamManager *sm = nil;
 #if SNDSTREAMMANAGER_DEBUG
             NSLog(@"SndManager::stopStreaming -  stream stopping");
 #endif
-            active = FALSE;
+            active  = FALSE;
             nowTime = 0.0;
-            bg_sem = 0;
+            bg_sem  = 0;
             
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING            
             [bgdm_threadLock lock];
@@ -328,11 +331,16 @@ static SndStreamManager *sm = nil;
     [NSThread exit];
 }
 
-/* we cast to unsigned long to prevent MacOSX (and maybe GNUstep) from interpreting
- * the argument as an NSInvocation. When it does this, it tries to be too smart, and
- * creates a connection to the object in the thread the NSInvocation was created in
- * (which is what we're trying to avoid).
- */
+////////////////////////////////////////////////////////////////////////////////
+// _sendDelegateInvocation:
+//
+// we cast to unsigned long to prevent MacOSX (and maybe GNUstep) from interpreting
+// the argument as an NSInvocation. When it does this, it tries to be too smart, and
+// creates a connection to the object in the thread the NSInvocation was created in
+// (which is what we're trying to avoid).
+// 
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) _sendDelegateInvocation:(in unsigned long) mesg
 /* this should only be called while in the main thread. Internal use only. */
 {
@@ -341,7 +349,9 @@ static SndStreamManager *sm = nil;
 #endif
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
+// sendMessageInMainThreadToTarget:sel:arg1:arg2:
+////////////////////////////////////////////////////////////////////////////////
 
 - (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2
 {
@@ -368,7 +378,8 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// stopStreaming: responsible for calling low-level C stuff to stop a stream,
+// stopStreaming
+// Responsible for calling low-level C stuff to stop a stream,
 // and unregister the processAudioAtTime: selector as the callback function.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -419,7 +430,7 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//removeClient
+// removeClient
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) removeClient: (SndStreamClient*) client
@@ -436,11 +447,6 @@ static SndStreamManager *sm = nil;
 {
     memcpy(&format, f, sizeof(SndSoundStruct));
     return self;
-}
-
-- (SndSoundStruct*) format
-{
-  return &format;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -460,8 +466,6 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
       fprintf(stderr,"[Manager] <-- processAudio\n");
 #endif
 }
-
-
 
 - (void) processStreamAtTime: (double) sampleCount 
                        input: (SNDStreamBuffer*) cInB
@@ -492,14 +496,11 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 #if SNDSTREAMMANAGER_DEBUG
       fprintf(stderr,"[Manager] post mixer\n");
 #endif
-
       if ([mixer clientCount] == 0) {// Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming]; 
-
 #if SNDSTREAMMANAGER_DEBUG
-      fprintf(stderr,"[Manager] signalling a stop stream...\n");
+        fprintf(stderr,"[Manager] signalling a stop stream...\n");
 #endif
-        
       }
 #if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START 
       {
@@ -522,35 +523,25 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Return the managers sense of time.
+// Micro accessors
 ////////////////////////////////////////////////////////////////////////////////
 
-- (double) nowTime
-{
-    return nowTime;
-}
+- (double) nowTime         { return nowTime; }
+- (SndStreamMixer*) mixer  { return mixer;   }
+- (BOOL)   isActive        { return active;  }
+- (double) samplingRate    { return format.samplingRate; }
+- (SndSoundStruct*) format { return &format; }
 
-- (SndStreamMixer*) mixer
-{
-    return mixer;
-}
 
-- (BOOL) isActive
-{
-  return active;
-}
-
-- (double) samplingRate
-{
-  return format.samplingRate;
-}
+////////////////////////////////////////////////////////////////////////////////
+// resetTime:
+////////////////////////////////////////////////////////////////////////////////
 
 - (void) resetTime: (double) originTimeInSeconds
 {
   nowTime = originTimeInSeconds;
   [mixer resetTime: originTimeInSeconds];
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
