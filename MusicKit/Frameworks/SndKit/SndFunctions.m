@@ -8,6 +8,7 @@
 #import <io.h>
 #endif
 #import <math.h>
+#import <Foundation/Foundation.h>
 
 #import "SndFunctions.h"
 #import "SndResample.h"
@@ -1084,13 +1085,16 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 	s = realloc((char *)s, headerLen + s->dataSize); 
 	free(readBuffer);
 
-        printf("Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
+	if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
+            printf("Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
                informat.info.rate, sizes[informat.info.size],
                styles[informat.info.style], informat.info.channels,
                (informat.info.channels > 1) ? "channels" : "channel");
-        if (informat.comment)
-            printf("Input file: comment \"%s\"\n", informat.comment);
-        printf("Location:%d size:%d format:%d sr:%d cc:%d info:%s\n", s->dataLocation, s->dataSize, s->dataFormat, 			s->samplingRate, s->channelCount, s->info);
+            if (informat.comment)
+                printf("Input file: comment \"%s\"\n", informat.comment);
+            printf("Location:%d size:%d format:%d sr:%d cc:%d info:%s\n",
+                s->dataLocation, s->dataSize, s->dataFormat, s->samplingRate, s->channelCount, s->info);
+        }
 
 	*sound = s;
         (* informat.h->stopread)(&informat);
