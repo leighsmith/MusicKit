@@ -13,6 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioBuffer.h"
+#import "SndAudioFader.h"
 #import "SndAudioProcessor.h"
 #import "SndAudioProcessorChain.h"
 
@@ -35,9 +36,12 @@
 - init
 {
     [super init];
-    if (audioProcessorArray == nil) 
+    if (audioProcessorArray == nil)
         audioProcessorArray = [[NSMutableArray arrayWithCapacity: 2] retain];
     bBypass = FALSE;
+    nowTime = 0.0;
+    postFader = [[SndAudioFader alloc] init];
+    [postFader setAudioProcessorChain:self];
     return self;
 }
 
@@ -49,6 +53,7 @@
 {
     [audioProcessorArray release];
     [tempBuffer release];
+    [postFader release];
     [super dealloc];
 }
 
@@ -60,7 +65,7 @@
 {
     bBypass = b;
     return self;
-} 
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // addAudioProcessor
@@ -69,6 +74,7 @@
 - addAudioProcessor: (SndAudioProcessor*) proc
 {
     [audioProcessorArray addObject: proc];
+    [proc setAudioProcessorChain:self];
     return self;
 }
 
@@ -97,32 +103,38 @@
 
 - removeAllProcessors
 {
-    [audioProcessorArray removeAllObjects];    
+    [audioProcessorArray removeAllObjects];
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// processBuffer
+// processBuffer:forTime:
 ////////////////////////////////////////////////////////////////////////////////
 
-- processBuffer: (SndAudioBuffer*) buff
+- processBuffer: (SndAudioBuffer*) buff forTime: (double) t
 {
     if (bBypass)
         return self;
-        
+
+    nowTime = t;
     // TODO: make sure temp buffer is in same format and size as buff too.
-        
+
     if (tempBuffer == nil) {
         tempBuffer = [SndAudioBuffer audioBufferWithFormat: [buff format] data: NULL];
         [tempBuffer retain];
     }
     {
         int i, c = [audioProcessorArray count];
-        
+
         for (i=0;i<c;i++) {
             SndAudioProcessor *proc = [audioProcessorArray objectAtIndex: i];
-            [proc processReplacingInputBuffer: buff 
-                                 outputBuffer: tempBuffer];
+            if ([proc processReplacingInputBuffer: buff
+                                     outputBuffer: tempBuffer]) {
+                [buff copyData: tempBuffer];
+            }
+        }
+        if ([postFader processReplacingInputBuffer: buff
+                                      outputBuffer: tempBuffer]) {
             [buff copyData: tempBuffer];
         }
     }
@@ -133,7 +145,7 @@
 // processorCount
 ////////////////////////////////////////////////////////////////////////////////
 
-- (int) processorCount 
+- (int) processorCount
 {
     return [audioProcessorArray count];
 }
@@ -163,6 +175,24 @@
 - (void) setBypass: (BOOL) b
 {
   bBypass = b;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @postFader
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndAudioFader *) postFader
+{
+  return [[(id)postFader retain] autorelease];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @nowTime
+////////////////////////////////////////////////////////////////////////////////
+
+- (double) nowTime
+{
+    return nowTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
