@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.6  2000/05/13 17:22:04  leigh
+  Added indexOfNoteReciever method
+
   Revision 1.5  2000/04/25 02:11:02  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -111,13 +114,18 @@
     return _MKLightweightArrayCopy(noteReceivers);
 }
 
+- (int) indexOfNoteReceiver: (MKNoteReceiver *) aNoteReceiver
+{
+    return [noteReceivers indexOfObject: aNoteReceiver];
+}
+
 - (BOOL) isNoteReceiverPresent: (MKNoteReceiver *) aNoteReceiver
   /* TYPE: Querying; Returns YES if aNoteReceiver is present.
    * Returns YES if aNoteReceiver is a member of the receiver's 
    * NoteReceiver collection.  Otherwise returns NO.
    */
 {
-    return ([noteReceivers indexOfObject:aNoteReceiver] == ((unsigned)-1))? NO : YES;
+    return ([self indexOfNoteReceiver: aNoteReceiver] == ((unsigned)-1))? NO : YES;
 }
 
 -addNoteReceiver: (MKNoteReceiver *) aNoteReceiver

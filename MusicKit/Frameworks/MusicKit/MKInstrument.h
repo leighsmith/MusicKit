@@ -38,6 +38,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/05/13 17:22:09  leigh
+  Added indexOfNoteReciever method
+
   Revision 1.5  2000/04/25 02:11:02  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -95,9 +98,14 @@
 
 - (NSArray *) noteReceivers;
  /* 
-  * Returns a copy of the receiver's List of NoteReceivers.  The
+  * Returns a copy of the receiver's NSArray of NoteReceivers.  The
   * NoteReceivers themselves aren't copied.  It's the sender's
-  * responsibility to free the List.  */
+  * responsibility to free the NSArray.  */
+
+- (int) indexOfNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
+  /*
+   * Returns the ordinal index of aNoteReceiver in the MKInstrument's
+   * MKNoteReceiver NSArray.  Returns -1 if aNoteReceiver is not in the NSArray. */
 
 - (BOOL) isNoteReceiverPresent: (MKNoteReceiver *) aNoteReceiver; 
  /* 
