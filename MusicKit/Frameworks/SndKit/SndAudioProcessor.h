@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 
 @class SndAudioBuffer;
+@class SndAudioProcessorChain;
 
 /*!
     @class
@@ -31,6 +32,7 @@
 */
 @interface SndAudioProcessor : NSObject {
     int   numParams;
+    SndAudioProcessorChain *audioProcessorChain;
 }
 
 /*!
@@ -96,13 +98,39 @@
 /*!
     @method processReplacingInputBuffer:outputBuffer:
     @abstract
-    @discussion
+    @discussion The returned BOOL indicates whether the output is
+            held in outB (TRUE), or inB (false). Means that processors
+            that decide not to touch their data at all don't need to
+            spend time copying between buffers
     @param (SndAudioBuffer*) inB
     @param (SndAudioBuffer*) outB
-    @result self.
+    @result BOOL
 */
-- processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                 outputBuffer: (SndAudioBuffer*) outB;
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
+                        outputBuffer: (SndAudioBuffer*) outB;
+
+/*!
+    @method setAudioProcessorChain:
+    @abstract
+    @discussion (Internal SndKit use only) Individual processors may want
+                to query their enclosing processor chain, for example to
+                get the time at the start of the buffer (nowTime). This
+                method gets called when a processor gets added to the chain,
+                with the id of the chain.
+    @param (SndAudioProcessorChain*) inChain
+    @result void.
+*/
+- (void) setAudioProcessorChain:(SndAudioProcessorChain*)inChain;
+
+/*!
+    @method audioProcessorChain
+    @abstract Returns the SndAudioProcessorChain to which the processor is
+              attached
+    @discussion
+    @result SndAudioProcessorChain*
+*/
+- (SndAudioProcessorChain*) audioProcessorChain;
+
 
 @end
 
