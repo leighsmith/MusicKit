@@ -378,7 +378,7 @@ enum {
       else if (bDelegateRespondsToOutputBufferSkipSelector)
         [delegate outputBufferSkipped: self];
       else if (active) {
-        NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? [%s]", clientName);
+//        NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? [%s]", clientName);
       }    
 //          NSLog(@"startprocessing: stage2");
     }
@@ -420,7 +420,7 @@ enum {
         else if (bDelegateRespondsToInputBufferSkipSelector)
           [delegate inputBufferSkipped: self];
         else if (active) {
-          NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
+//          NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
         }
       }
     }
@@ -720,7 +720,7 @@ enum {
 {
   return [outputQueue bufferCount];
 }
-
+ 
 - (BOOL) setInputBufferCount: (int) n
 {
   if (active)
@@ -744,10 +744,20 @@ enum {
 - (void) resetTime: (double) originTimeInSeconds
 {
 //  [synthThreadLock lock];
-//  clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [processedOutputBuffers count];
+  clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
 //  [synthThreadLock unlock];
 }
 
+- (double) outputLatencyInSeconds
+{
+  if (exposedOutputBuffer != nil) {
+      double latency = [outputQueue bufferCount] * [exposedOutputBuffer duration];
+//      NSLog(@"Latecy: %.3f",latency);
+      return latency;
+  }
+  else
+      return 0.0f;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

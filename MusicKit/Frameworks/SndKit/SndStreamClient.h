@@ -398,6 +398,8 @@
 - (BOOL) setInputBufferCount: (int) n;
 - (BOOL) setOutputBufferCount: (int) n;
 
+- (double) outputLatencyInSeconds;
+
 - (NSString*) clientName;
 - setClientName: (NSString*) name;
 
