@@ -31,9 +31,12 @@ unwrap_symlink $APPNAME
 # build a ChangeLog with spaces between filenames and comments, 
 # collected to half-day window, incorporating tags.
 cd $MKCHECKEDOUT_SRCLOC/$APPNAME
-cvs2cl --tags --no-wrap --separate-header --window 43200 --file /tmp/ChangeLog
+cvs2cl --tags --no-wrap --separate-header --window 43200 --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC
+
+# create a readily uploadable copy of README.rtf
+cp README.rtf $TARLOC
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $MKCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
