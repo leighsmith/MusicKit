@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2002/05/01 14:20:35  sbrandon
+  Added MKPlugin.h to project, which defines a protocol for plugins to implement. The protocol is under development.
+
   Revision 1.11  2001/07/02 16:53:59  sbrandon
   - got rid of useless macro __MK_musickit_H___
   - commented out cruft after endif
@@ -105,6 +108,7 @@ extern "Objective-C" {
 #import "MKPatchTemplate.h"
 #import "MKPartials.h"
 #import "MKPerformer.h"
+#import "MKPlugin.h"
 #import "MKTimbre.h"
 #import "MKSamplerInstrument.h"
 #import "MKSamples.h"
