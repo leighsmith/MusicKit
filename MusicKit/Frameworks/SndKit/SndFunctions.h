@@ -44,11 +44,12 @@
  */
 
 //#define USE_MACH_MEMORY_ALLOCATION
-#include <MKPerformSndMIDI/PerformSound.h>
-#include "SndKitDefines.h"
+#import <MKPerformSndMIDI/PerformSound.h>
+#import "SndKitDefines.h"
 
 #ifdef GNUSTEP
-# include "sounderror.h"
+# import <Foundation/NSArray.h>
+# import "sounderror.h"
 # include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 # include <stdio.h>     /* for FILE */
 #else
@@ -58,9 +59,7 @@
 # endif
 #endif /* GNUSTEP */
 
-#include "SndEndianFunctions.h"
-
-@class NSString;
+#import "SndEndianFunctions.h"
 
 /*!
   @function SndStructDescription
@@ -80,10 +79,19 @@ SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
 /*!
   @function SndPrintFrags
   @abstract Prints, to stdout, a description of the data fragments in the sound.
-  @param sound A SndStructSound containing the Snd
+  @param sound A SndStructSound containing the sound data.
   @result Returns?
  */
 SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
+
+/*!
+  @function SndFormatName
+  @abstract Returns and NSString describing the data format, in either a terse or verbose manner.
+  @param dataFormat The sample format enumerated integer. See ? for a description.
+  @param verbose YES returns the verbose description, NO returns the terse description.
+  @result Returns an NSString description of the sample data format.
+ */
+SNDKIT_API NSString *SndFormatName(int dataFormat, BOOL verbose);
 
 /*!
   @function SndFrameSize
