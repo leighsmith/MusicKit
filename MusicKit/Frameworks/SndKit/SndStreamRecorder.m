@@ -120,7 +120,10 @@
     SndAudioBuffer *outB;
     [self lockOutputBuffer];
     outB = [self outputBuffer]; 
-    r    = [recorder prepareToRecordForDuration: time withFormat: [outB format]];
+    r    = [recorder prepareToRecordForDuration: time
+                                 withDataFormat: [outB dataFormat]
+                                   channelCount: [outB channelCount]
+                                   samplingRate: [outB samplingRate]];
     [self unlockOutputBuffer];
   }
   return r;
@@ -143,7 +146,10 @@
   if ([recorder isRecording]) 
     NSLog(@"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
 
-  b = [recorder startRecordingToFile: filename withFormat: [exposedOutputBuffer format]];
+  b = [recorder startRecordingToFile: filename
+                      withDataFormat: [exposedOutputBuffer dataFormat]
+                        channelCount: [exposedOutputBuffer channelCount]
+                        samplingRate: [exposedOutputBuffer samplingRate]];
   
   return b;
 }
