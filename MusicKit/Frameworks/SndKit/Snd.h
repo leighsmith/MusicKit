@@ -163,7 +163,11 @@ typedef enum {
   } SndSoundStruct;
   </pre>
   */
-    SndSoundStruct *soundStruct;  
+    SndSoundStruct *soundStruct; // TODO this is deprecated in favour of soundFormat.
+/*! @var soundFormat The parameters defining the format of the sound. */
+    SndFormat soundFormat;
+/*! @var info A descriptive information string read from a sound file. */
+	NSString *info;
 /*! @var soundStructSize the length of the structure in bytes */
     int soundStructSize;
 
@@ -403,16 +407,15 @@ typedef enum {
 - (void) dealloc;
 
 /*!
-  @method readSoundFromStream:
-  @param  stream is a NSData *.
-  @result Returns a BOOL.
+  @method readSoundFromData:
+  @param  stream is a NSData instance.
+  @result Returns a BOOL.  Returns YES if the sound was read successfully, NO otherwise.
   @discussion Replaces the Snd's contents with those of the sound in the
-              NXStream <i>stream</i>. The Snd is given the name of the sound in
-              the NXStream. If the sound in the NXStream is named, the Snd gets
-              the new name. Returns YES if the sound was read successfully, NO
-              otherwise.
+              NSData instance <i>stream</i>. If the sound in the NSData is named,
+              the Snd gets the new name.
+			  <B>Currently only reads Sun/NeXT .au format files</B>.
 */
-- readSoundFromStream: (NSData *) stream;
+- readSoundFromData: (NSData *) stream;
 
 /*!
   @method writeSoundToStream:
@@ -423,40 +426,36 @@ typedef enum {
 - writeSoundToStream: (NSMutableData *) stream;
 
 /*!
-  @method      swapSndToHost
-  @discussion  The Sun/NeXT audio file format is specifies big-endian storage,
-               which is fine for big-endian machines (eg Motorola 68k, PPC) but
-               a pain for little endian (eg Intel). The swapSndToHost method
-               swaps the byte order of the receiver if it is running on a little-
-               endian architecture, and has no effect on a big-endian architecture.
+  @method      swapBigEndianToHostFormat
+  @discussion  The swapBigEndianToHostFormat method swaps the byte order of the receiver if it
+               is running on a little-endian (e.g Intel) architecture, and has no effect on a big-endian
+               (e.g Motorola 68k, PPC) architecture.
                Note that no checks are done as to whether or not the receiver was
                already byte-swapped, so you have to keep track of the status of
                Snd objects yourself.<br>
                Always use the appropriate method to convert your Snd objects; either
-               swapSndToHost to convert a Snd from the pasteboard or from a soundfile,
-               or swapHostToSnd to prepare a Snd which was in host order to be saved
+               swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
+               or swapHostToBigEndianFormat to prepare a Snd which was in host order to be saved
                or put onto the pasteboard.
   @result      void
  */
-- (void) swapSndToHost;
+- (void) swapBigEndianToHostFormat;
 
 /*!
-  @method      swapHostToSnd
-  @discussion  The Sun/NeXT audio file format is specifies big-endian storage,
-               which is fine for big-endian machines (eg Motorola 68k, PPC) but
-               a pain for little endian (eg Intel). The swapHostToSnd method
-               swaps the byte order of the receiver if it is running on a little-
-               endian architecture, and has no effect on a big-endian architecture.
+  @method      swapHostToBigEndianFormat
+  @discussion  The swapHostToBigEndianFormat method swaps the byte order of the receiver if it
+               is running on a little-endian (e.g Intel) architecture, and has no effect on a big-endian
+               (e.g Motorola 68k, PPC) architecture.
                Note that no checks are done as to whether or not the receiver was
                already byte-swapped, so you have to keep track of the status of
                Snd objects yourself.<br>
                Always use the appropriate method to convert your Snd objects; either
-               swapSndToHost to convert a Snd from the pasteboard or from a soundfile,
-               or swapHostToSnd to prepare a Snd which was in host order to be saved
+               swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
+               or swapHostToBigEndianFormat to prepare a Snd which was in host order to be saved
                or put onto the pasteboard.
   @result      void
  */
-- (void) swapHostToSnd;
+- (void) swapHostToBigEndianFormat;
 
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 - (id) initWithCoder: (NSCoder *) aDecoder;
@@ -524,10 +523,22 @@ typedef enum {
 
 /*!
   @method info
+  @abstract Returns the Snd's info string.
+  @discussion The Snd's info string is any text description the user of the object wishes to assign to it.
+              It will however, endeavour to be written in an appropriate field to any sound file written from this Snd instance.
+			  It will be retrieved from an appropriate field when reading a sound file.
   @result Returns an NSString.
-  @discussion Returns a pointer to the Snd's info string.
 */
 - (NSString *) info;
+
+/*!
+  @method setInfo:
+  @abstract Assigns the Snd's info string.
+  @discussion The Snd's info string is any text description the user of the object wishes to assign to it.
+              It will however, endeavour to be written in an appropriate field to any sound file written from this Snd instance.
+  @param newInfoString An NSString containing the new text.
+ */
+- (void) setInfo: (NSString *) newInfoString;
 
 /*!
     @method play
