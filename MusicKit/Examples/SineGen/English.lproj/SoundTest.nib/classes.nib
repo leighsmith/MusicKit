@@ -32,7 +32,7 @@
                 widthSlider = id; 
                 widthTextField = id; 
             }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }
     ); 
     IBVersion = 1; 

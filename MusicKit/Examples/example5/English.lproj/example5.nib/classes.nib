@@ -5,7 +5,7 @@
             ACTIONS = {setAmplitudeFrom = id; setBearingFrom = id; setFreqFrom = id; }; 
             CLASS = MyCustomObject; 
             LANGUAGE = ObjC; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }
     ); 
     IBVersion = 1; 
