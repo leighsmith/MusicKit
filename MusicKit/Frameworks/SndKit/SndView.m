@@ -67,6 +67,10 @@ OF THIS AGREEMENT.
 // Imitates the SoundView initial reduction factor when divided by the sample rate.
 #define SAMPLE_RATE_REDUCTION 184 
 
+// Tried NSCompositeDestinationIn, NSCompositePlusLighter, NSCompositeDestinationOver
+// TODO to try: NSCompositeDestinationOut, NSCompositeClear
+// This works well if the background is slightly transparent and either light or dark.
+#define SELECTION_DRAWING_COMPOSITE NSCompositeDestinationAtop
 
 @implementation SndView
 
@@ -81,7 +85,7 @@ OF THIS AGREEMENT.
 {
     NSRect cursorRect = [self bounds];
     
-    cursorRect.origin.x = (int) ((float) selectionRange.location / (float) reductionFactor);
+    cursorRect.origin.x = (int) ((float) selectedFrames.location / (float) reductionFactor);
     cursorRect.size.width = CURSOR_WIDTH;
     
     if(svFlags.cursorOn) {
@@ -120,7 +124,7 @@ OF THIS AGREEMENT.
 - showCursor
 {
     if (!cursorFlashTimer) {
-	if (selectionRange.length < 1) {
+	if (selectedFrames.length < 1) {
 	    // Start the cursor on so we don't wait a cursor timer half period before we see a cursor - instant gratification.
 	    svFlags.cursorOn = YES; 
 	    [self toggleCursor];
@@ -177,15 +181,15 @@ OF THIS AGREEMENT.
 
 - (void) delete: (id) sender;
 {
-    if (selectionRange.length < 1) return;
+    if (selectedFrames.length < 1) return;
     if (!sound) return;
-    if ([sound lengthInSampleFrames] < NSMaxRange(selectionRange)) return;
+    if ([sound lengthInSampleFrames] < NSMaxRange(selectedFrames)) return;
     if (![sound isEditable]) return;
     if (![self isEditable]) return;
-    [sound deleteSamplesInRange: selectionRange];
-    [self invalidateCacheStartSample: selectionRange.location
+    [sound deleteSamplesInRange: selectedFrames];
+    [self invalidateCacheStartSample: selectedFrames.location
 				 end: [sound lengthInSampleFrames]];
-    selectionRange.length = 0;
+    selectedFrames.length = 0;
     if (!svFlags.autoscale)
 	[self resizeToFit];
     else { /* scaleToFit does not autodisplay, but resizeToFit does */
@@ -219,9 +223,9 @@ OF THIS AGREEMENT.
     [[self window] enableFlushWindow];
 */
 
-    selectionRange = NSMakeRange(0, [sound lengthInSampleFrames]);
+    selectedFrames = NSMakeRange(0, [sound lengthInSampleFrames]);
     [self setNeedsDisplay: YES];
-//  NSLog(@"FINAL SELECTION %u, %u\n", selectionRange.location, selectionRange.length);
+//  NSLog(@"FINAL SELECTION %u, %u\n", selectedFrames.location, selectedFrames.length);
 }
 
 - delegate;
@@ -378,8 +382,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 {
     NSRect scaledSelRect;
     
-    scaledSelRect.origin.x = (int) ((float) selectionRange.location / (float) reductionFactor);
-    scaledSelRect.size.width = (int) ((NSMaxRange(selectionRange) - 1) / reductionFactor) - NSMinX(scaledSelRect) + 1;
+    scaledSelRect.origin.x = (int) ((float) selectedFrames.location / (float) reductionFactor);
+    scaledSelRect.size.width = (int) ((NSMaxRange(selectedFrames) - 1) / reductionFactor) - NSMinX(scaledSelRect) + 1;
     
     if (!((NSMinX(scaledSelRect) >= NSMinX(rects) &&
 	   NSMinX(scaledSelRect) <= NSMaxX(rects)) ||
@@ -408,7 +412,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	
 	[selectionColour set];
 	
-	NSRectFillUsingOperation(highlightRect, NSCompositeDestinationIn /* NSCompositeSourceOver */);
+	NSRectFillUsingOperation(highlightRect, SELECTION_DRAWING_COMPOSITE);
 	
 	// NSHighlightRect(highlightRect);
 	// NSLog(@"HIGHLIGHT %g to %g\n",NSMinX(highlightRect), NSMaxX(highlightRect));
@@ -912,7 +916,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     free(cacheMaxArray);
     free(cacheMinArray);
 
-    if (selectionRange.length > 0) {	// redraw the selected region.
+    if (selectedFrames.length > 0) {	// redraw the selected region.
 	[self drawSelectionRectangleWithin: drawWithinRectangle];
     }
 }
@@ -986,8 +990,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
 - (void) getSelection: (unsigned int *) firstSample size: (unsigned int *) sampleCount
 {
-    *firstSample = selectionRange.location;
-    *sampleCount = selectionRange.length;
+    *firstSample = selectedFrames.location;
+    *sampleCount = selectedFrames.length;
 }
 
 - (void) setSelection: (int) firstSample size: (int) sampleCount
@@ -996,19 +1000,19 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
     //    [self hideCursor];
 
-    scaledSelection.origin.x  = selectionRange.location / reductionFactor - 1;
-    scaledSelection.size.width = selectionRange.length / reductionFactor + 2;
+    scaledSelection.origin.x  = selectedFrames.location / reductionFactor - 1;
+    scaledSelection.size.width = selectedFrames.length / reductionFactor + 2;
     scaledSelection.origin.y = 0;
     scaledSelection.size.height = [self bounds].size.height;
     scaledSelection = NSIntersectionRect (scaledSelection, [self visibleRect]);
     if (!NSEqualRects(scaledSelection, NSZeroRect)) 
 	[self setNeedsDisplayInRect: scaledSelection];
     
-    selectionRange.location = firstSample;
-    selectionRange.length = sampleCount;
+    selectedFrames.location = firstSample;
+    selectedFrames.length = sampleCount;
     
-    scaledSelection.origin.x  = selectionRange.location / reductionFactor - 1;
-    scaledSelection.size.width = selectionRange.length / reductionFactor + 2;
+    scaledSelection.origin.x  = selectedFrames.location / reductionFactor - 1;
+    scaledSelection.size.width = selectedFrames.length / reductionFactor + 2;
     scaledSelection.origin.y = 0;
     scaledSelection.size.height = [self bounds].size.height;
     scaledSelection = NSIntersectionRect (scaledSelection,[self visibleRect]);
@@ -1047,19 +1051,19 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     foregroundColour = [[NSColor colorWithCalibratedRed: 0.6 green: 0.25 blue: 1.0 alpha: 0.7] retain];
     
     displayMode = SND_SOUNDVIEW_MINMAX;
-    selectionRange = NSMakeRange(0, 0);
+    selectedFrames = NSMakeRange(0, 0);
     reductionFactor = 4.0; /* bogus */
     amplitudeZoom = 1.0; // Not bogus!
     dataList = [[SndDisplayDataList alloc] init];
     
-    svFlags.disabled = 0;
-    svFlags.continuous = 0;
-    svFlags.cursorOn = 0;
+    svFlags.disabled = NO;
+    svFlags.continuousSelectionUpdates = NO;
+    svFlags.cursorOn = NO;
     svFlags.drawsCrosses = 1;
-    svFlags.autoscale = 0;
-    svFlags.bezeled = 0;
-    svFlags.notEditable = 0;
-    svFlags.notOptimizedForSpeed = 0;
+    svFlags.autoscale = NO;
+    svFlags.bezeled = NO;
+    svFlags.notEditable = NO;
+    svFlags.notOptimizedForSpeed = NO;
     optThreshold = FASTSKIPSTART;
     optSkip = FASTSKIPAMOUNT;
     peakFraction = TENPERCENT;
@@ -1076,7 +1080,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     noSelectionDraw = NO;
     firstDraw = YES;
     
-    selectionRange.location = selectionRange.length = 0;
+    selectedFrames.location = selectedFrames.length = 0;
     [self allocateGState]; // attempt speed increase!    
 }
 
@@ -1098,8 +1102,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     if([aDecoder allowsKeyedCoding]) {
 	sound = [[aDecoder decodeObjectForKey: @"SndView_sound"] retain];
 	delegate = [[aDecoder decodeObjectForKey: @"SndView_delegate"] retain];
-	selectionRange.location = [aDecoder decodeIntForKey: @"SndView_selectionRangeLocation"];
-	selectionRange.length = [aDecoder decodeIntForKey: @"SndView_selectionRangeLength"];
+	selectedFrames.location = [aDecoder decodeIntForKey: @"SndView_selectionRangeLocation"];
+	selectedFrames.length = [aDecoder decodeIntForKey: @"SndView_selectionRangeLength"];
 	displayMode = [aDecoder decodeIntForKey: @"SndView_displayMode"];
 	reductionFactor = [aDecoder decodeFloatForKey: @"SndView_reductionFactor"];
 	[backgroundColour release];
@@ -1110,7 +1114,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	selectionColour = [[aDecoder decodeObjectForKey: @"SndView_selectionColour"] retain];
 	// Decode the flags
 	svFlags.disabled = [aDecoder decodeBoolForKey: @"SndView_disabled"];
-	svFlags.continuous = [aDecoder decodeBoolForKey: @"SndView_continuous"];
+	svFlags.continuousSelectionUpdates = [aDecoder decodeBoolForKey: @"SndView_continuous"];
 	svFlags.cursorOn = [aDecoder decodeBoolForKey: @"SndView_cursorOn"];
 	svFlags.drawsCrosses = [aDecoder decodeBoolForKey: @"SndView_drawsCrosses"];
 	svFlags.autoscale = [aDecoder decodeBoolForKey: @"SndView_autoscale"];
@@ -1140,8 +1144,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	sound = [[aDecoder decodeObject] retain];
 	delegate = [[aDecoder decodeObject] retain];
 	selectionRect = [aDecoder decodeRect];
-	selectionRange.location = selectionRect.origin.x;
-	selectionRange.length = selectionRect.size.width;
+	selectedFrames.location = selectionRect.origin.x;
+	selectedFrames.length = selectionRect.size.width;
 	    
 	[aDecoder decodeValuesOfObjCTypes: "if", &displayMode, &reductionFactor];
 	[backgroundColour release];
@@ -1149,7 +1153,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	[aDecoder decodeValuesOfObjCTypes:  "@@", &backgroundColour, &foregroundColour];
 	[aDecoder decodeValuesOfObjCTypes:"cccccccc", &b1, &b2, &b3, &b4, &b5, &b6, &b7, &b8];
 	svFlags.disabled = b1;
-	svFlags.continuous = b2;
+	svFlags.continuousSelectionUpdates = b2;
 	svFlags.cursorOn = b3;
 	svFlags.drawsCrosses = b4;
 	svFlags.autoscale = b5;
@@ -1181,8 +1185,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     if([aCoder allowsKeyedCoding]) {
 	[aCoder encodeObject: sound forKey: @"SndView_sound"];
 	[aCoder encodeConditionalObject: delegate forKey: @"SndView_delegate"];
-	[aCoder encodeInt: selectionRange.location forKey: @"SndView_selectionRangeLocation"];
-	[aCoder encodeInt: selectionRange.length forKey: @"SndView_selectionRangeLength"];
+	[aCoder encodeInt: selectedFrames.location forKey: @"SndView_selectionRangeLocation"];
+	[aCoder encodeInt: selectedFrames.length forKey: @"SndView_selectionRangeLength"];
 	[aCoder encodeInt: displayMode forKey: @"SndView_displayMode"];
 	[aCoder encodeFloat: reductionFactor forKey: @"SndView_reductionFactor"];
 	[aCoder encodeObject: backgroundColour forKey: @"SndView_backgroundColour"];
@@ -1190,7 +1194,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	[aCoder encodeObject: selectionColour forKey: @"SndView_selectionColour"];
 	// encode all the flags
 	[aCoder encodeBool: svFlags.disabled forKey: @"SndView_disabled"];
-	[aCoder encodeBool: svFlags.continuous forKey: @"SndView_continuous"];
+	[aCoder encodeBool: svFlags.continuousSelectionUpdates forKey: @"SndView_continuous"];
 	[aCoder encodeBool: svFlags.cursorOn forKey: @"SndView_cursorOn"];
 	[aCoder encodeBool: svFlags.drawsCrosses forKey: @"SndView_drawsCrosses"];
 	[aCoder encodeBool: svFlags.autoscale forKey: @"SndView_autoscale"];
@@ -1216,11 +1220,11 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
 	[aCoder encodeObject: sound];
 	[aCoder encodeConditionalObject: delegate];
-	[aCoder encodeValuesOfObjCTypes: "uu", &selectionRange.location, &selectionRange.length];
+	[aCoder encodeValuesOfObjCTypes: "uu", &selectedFrames.location, &selectedFrames.length];
 	[aCoder encodeValuesOfObjCTypes: "if", &displayMode, &reductionFactor];
 	[aCoder encodeValuesOfObjCTypes: "@@", &backgroundColour, &foregroundColour];
 	b1 = svFlags.disabled;
-	b2 = svFlags.continuous;
+	b2 = svFlags.continuousSelectionUpdates;
 	b3 = svFlags.cursorOn;
 	b4 = svFlags.drawsCrosses;
 	b5 = svFlags.autoscale;
@@ -1253,9 +1257,9 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     return svFlags.bezeled;
 }
 
-- (BOOL) isContinuous
+- (BOOL) isContinuousSelectionUpdates
 {
-    return svFlags.continuous;
+    return svFlags.continuousSelectionUpdates;
 }
 
 - (BOOL) isEditable
@@ -1314,8 +1318,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 {
     NSRect selectionRect;
     
-    selectionRect.origin.x = (int) ((float) selectionRange.location / (float) reductionFactor);
-    selectionRect.size.width = (int) ((float) selectionRange.length / (float) reductionFactor);
+    selectionRect.origin.x = (int) ((float) selectedFrames.location / (float) reductionFactor);
+    selectionRect.size.width = (int) ((float) selectedFrames.length / (float) reductionFactor);
     selectionRect.origin.y = NSMinY([self bounds]); // extend the y selection to the bounds of the view.
     selectionRect.size.height = NSHeight([self bounds]);
     
@@ -1367,7 +1371,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	
 	// Write data to the pasteboard
 	if ([self writeSelectionToPasteboardNoProvide: pboard types: nil]) {
-	    // I dunno why, but this is what the example code does...
+	    // I dunno why, but the example code subtracts 16 off the mouse location, presumably to compensate
+	    // the hot spot for a flipped coordinate axis?
 	    mouseLocation.x -= 16;
 	    mouseLocation.y -= 16;
 	    [self dragImage: dragIcon == nil ? [self dragImageFromSelection] : dragIcon
@@ -1381,22 +1386,97 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     }
 }
 
+#if 0
+- selectionDragged: (NSEvent *) currentEvent
+//	 fromPoint: oldx
+{
+}
+#endif
+
+// Default operation is to inform the delegate. This allows subclasses to know when selections change.
+- (void) selectionChanged
+{
+    [self tellDelegate: @selector(selectionChanged:)];    
+}
+
+// TODO check if this can be unified with drawSelectionRectangleWithin:
+- (void) drawSelectedRegionRect: (NSRect) selectedRegionRect
+	   previousSelectedRect: (NSRect) previousSelectedRegionRect
+{
+    [selectionColour set];
+    NSRectFillUsingOperation(selectedRegionRect, SELECTION_DRAWING_COMPOSITE);
+
+    // NSHighlightRect(selectedRegionRect);
+    // [self setNeedsDisplay: YES];
+    /* adjust the size of cachedSelectionRect to be the size of the union of cachedSelectionRect and selectedRegionRect */
+    cachedSelectionRect = NSUnionRect(cachedSelectionRect, selectedRegionRect);
+    
+    /* if we have backtracked, invalidate rects that have been selected during this drag for redraw. */
+    if (selectedFrames.length < previousSelectedFrames.length) {
+	NSRect	selectDiff;
+	
+#if 0
+	NSLog(@"selectedFrames:	    %5u	%5u\n",
+	      selectedFrames.location, selectedFrames.length);
+	
+	NSLog(@"selectedRegionRect: %5.f:%5.f	%5.f,%5.f\n",
+	      selectedRegionRect.origin.x, selectedRegionRect.origin.y,
+	      selectedRegionRect.size.width, selectedRegionRect.size.height);
+	
+	NSLog(@"previousSelectedFrames:		    %5u	%5u\n",
+	      previousSelectedFrames.location, previousSelectedFrames.width);
+	
+	NSLog(@"previousSelectedRegionRect:	    %5.f:%5.f	%5.f,%5.f\n",
+	      previousSelectedRegionRect.origin.x, previousSelectedRegionRect.origin.y,
+	      previousSelectedRegionRect.size.width, previousSelectedRegionRect.size.height);
+#endif
+	
+	if (selectedFrames.location == previousSelectedFrames.location) {
+	    DEBUG_MOUSE(@"above");
+	    selectDiff.size.width = (previousSelectedRegionRect.origin.x - selectedRegionRect.origin.x) + previousSelectedRegionRect.size.width + 1;
+	    selectDiff.size.height = selectedRegionRect.size.height;
+	    selectDiff.origin.x = selectedRegionRect.origin.x;
+	    selectDiff.origin.y = selectedRegionRect.origin.y;
+	}
+	else {
+	    DEBUG_MOUSE(@"below");
+	    selectDiff.size.width = (selectedRegionRect.origin.x - previousSelectedRegionRect.origin.x) + 2;
+	    selectDiff.size.height = selectedRegionRect.size.height;
+	    selectDiff.origin.x = previousSelectedRegionRect.origin.x - 1;
+	    selectDiff.origin.y = selectedRegionRect.origin.y;
+	}
+#if 0
+	NSLog(@"selectDiff:	%5.f:%5.f	%5.f,%5.f\n\n",
+	      selectDiff.origin.x, selectDiff.origin.y,
+	      selectDiff.size.width, selectDiff.size.height);
+#endif
+	selectDiff = NSIntersectionRect(selectDiff, [self bounds]);
+	noSelectionDraw = YES;
+	[self setNeedsDisplayInRect: selectDiff];
+	noSelectionDraw = NO;
+    }
+}
+
 - (void) mouseDown: (NSEvent *) theEvent 
 {
-    NSPoint mouseDownLocation, mouseLocation, timerMouseLocation;
-    NSRect visibleRect, adjustableSelectionRect, lastAdjRect;
-    NSRange lastRange;
-    NSPoint selPoint; // starting point for a dragged selection.
-    float oldx = 0, dx = 0;
-    NSEvent *currentEvent;  // We iterate through mouse events until the left mouse button is released. This is the current one.
-    BOOL timer = NO;
+    NSPoint timerMouseLocation;
     BOOL useTimerLocation = NO;
     BOOL scrolled = NO;
-    int hilightStartPixel = -1, hilightEndPixel = -1; /* which pixels are currently highlighted */
-    int realStartFrame = selectionRange.location;
-    int realEndFrame = NSMaxRange(selectionRange) - 1;
+    BOOL timer = NO;
     BOOL forwardDirection;
-    BOOL firstDragEvent = YES;
+    float dx = 0; // change in x coordinate from each drag
+    NSRect previousSelectedRegionRect;
+    // The selection rectangle, adjusted by the dragging.
+    NSRect draggedSelectionRect = [self selectionRect];
+    NSRect currentSelectionRect;
+    
+    NSEvent *currentEvent;
+    
+    NSPoint mouseDownLocation;
+    float oldx = 0;
+    int hilightStartPixel = -1, hilightEndPixel = -1; /* which pixels are currently highlighted */
+    int realStartFrame = selectedFrames.location;
+    int realEndFrame = NSMaxRange(selectedFrames) - 1;
     BOOL clickedWithinPreviousSelection = NO;
     
     /* in order to preserve the start and end points of a selection when
@@ -1432,11 +1512,10 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     }
         
     mouseDownLocation = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-    mouseLocation.x--; // TODO (LMS) why?
     oldx = mouseDownLocation.x;
     // NSLog(@"Converted mouse location - 1 = %g\n",oldx);
     
-    adjustableSelectionRect = [self selectionRect];
+    currentSelectionRect = [self selectionRect];
     
     // Check to append to the region selected if shift key pressed.
     if (!([theEvent modifierFlags] & NSShiftKeyMask)) {
@@ -1444,13 +1523,13 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
         realStartFrame = realEndFrame = -1; /* we don't need to remember the old selection */
 	
 	// Invalidate previous selection rect if the mouse is clicked outside the previous selection. 
-        clickedWithinPreviousSelection = NSPointInRect(mouseDownLocation, adjustableSelectionRect);
-	//NSLog(@"clicked within previous selection %d mouseDownLocation %f adjustableSelectionRect %f %f\n", 
-	//      clickedWithinPreviousSelection, mouseDownLocation.x, adjustableSelectionRect.origin.x, adjustableSelectionRect.size.width);
+        clickedWithinPreviousSelection = NSPointInRect(mouseDownLocation, currentSelectionRect);
+	//NSLog(@"clicked within previous selection %d mouseDownLocation %f currentSelectionRect %f %f\n", 
+	//      clickedWithinPreviousSelection, mouseDownLocation.x, currentSelectionRect.origin.x, currentSelectionRect.size.width);
 	// If it's clicked within a selection, not a cursor, we don't update until after the release of the drag.
-	if (selectionRange.length > 0) {
+	if (selectedFrames.length > 0) {
 	    //NSLog(@"cachedSelectionRect.origin.x = %f cachedSelectionRect.size.width = %f selection.location = %d selection.length = %d\n",
-	    //      cachedSelectionRect.origin.x, cachedSelectionRect.size.width, selectionRange.location, selectionRange.length);
+	    //      cachedSelectionRect.origin.x, cachedSelectionRect.size.width, selectedFrames.location, selectedFrames.length);
 	    if(!clickedWithinPreviousSelection) {
 		DEBUG_MOUSE(@"clicked outside previous selection, setting setNeedsDisplayInRect\n");
 		[self setNeedsDisplayInRect: cachedSelectionRect];
@@ -1465,22 +1544,23 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	} 	
 	
 	/* to zap current selection */
-        if (selectionRange.length > 0) {
-	    // NSHighlightRect(adjustableSelectionRect);
+        if (selectedFrames.length > 0) {
+	    // NSHighlightRect(currentSelectionRect);
 	    // [self setNeedsDisplay: YES];
 	    /* remember our rect for future erasure */
-	    cachedSelectionRect = adjustableSelectionRect;
+	    cachedSelectionRect = currentSelectionRect;
 	    [selectionColour set];
-	    // NSRectFillUsingOperation(adjustableSelectionRect, NSCompositeDestinationOver);
-	    // NSLog(@"zapping %g to %g\n", NSMinX(adjustableSelectionRect), NSMaxX(adjustableSelectionRect));
-	    selectionRange = NSMakeRange(mouseDownLocation.x, 0);  // TODO LMS this seems wrong
+	    // NSRectFillUsingOperation(currentSelectionRect, NSCompositeDestinationOver);
+	    // NSLog(@"zapping %g to %g\n", NSMinX(currentSelectionRect), NSMaxX(currentSelectionRect));
+	    selectedFrames = NSMakeRange(mouseDownLocation.x, 0);  // TODO LMS this seems wrong
 	}
     }
     else { // Shift key pressed
+	// - appendSelection
 	/* if zero selection, (insertion point) what do we do? */
-	if (selectionRange.length > 0) {
-	    hilightStartPixel = ((int) ((float) selectionRange.location + 0.01) / reductionFactor);
-	    hilightEndPixel = (((int) ((float) NSMaxRange(selectionRange) + 0.01) - 1) / reductionFactor);
+	if (selectedFrames.length > 0) {
+	    hilightStartPixel = ((int) ((float) selectedFrames.location + 0.01) / reductionFactor);
+	    hilightEndPixel = (((int) ((float) NSMaxRange(selectedFrames) + 0.01) - 1) / reductionFactor);
 	    if (oldx < (hilightStartPixel + hilightEndPixel) / 2)
 		oldx = hilightStartPixel;
 	    else
@@ -1488,33 +1568,40 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    DEBUG_MOUSE(@"extending selection");
 	}
 	else {
-	    if (oldx < ((float) selectionRange.location / (float) reductionFactor)) {
-		oldx = (int) ((float) selectionRange.location / (float) reductionFactor) + 1;
+	    if (oldx < ((float) selectedFrames.location / (float) reductionFactor)) {
+		oldx = (int) ((float) selectedFrames.location / (float) reductionFactor) + 1;
 	    } 
 	    else {
-		oldx = (int) ((float) selectionRange.location / (float) reductionFactor);
+		oldx = (int) ((float) selectedFrames.location / (float) reductionFactor);
 	    }
 	    DEBUG_MOUSE(@"zero selection, extending");
 	}
     }
     
+    // [self selectionDragged: theEvent]
     currentEvent = theEvent;
-
+    
     // Manage dragging to modify selection range
     [self lockFocus];
     
     /* we're now interested in mouse dragged events */
     [[self window] setAcceptsMouseMovedEvents: YES];
-        
+    
+    // Start the previous selection range the same so the first test is valid.
+    previousSelectedFrames = selectedFrames;
+    
     /***************************************/
     /******** START MAIN MOUSE LOOP ********/
     /***************************************/
+    // iterate through mouse events until the left mouse button is released.
+	
     while ([currentEvent type] != NSLeftMouseUp) {
+	NSPoint mouseLocation;
+	NSRect visibleRect;
+	NSPoint selPoint; // starting point for a dragged selection.
+	
         visibleRect = [self visibleRect];
-        if (!useTimerLocation)
-            mouseLocation = [currentEvent locationInWindow];
-        else
-            mouseLocation = timerMouseLocation;
+	mouseLocation = !useTimerLocation ? [currentEvent locationInWindow] : timerMouseLocation;
 	// mouse coordinates now in view coordinates.
         mouseLocation = [self convertPoint: mouseLocation fromView: nil];
         selPoint = mouseLocation;
@@ -1539,9 +1626,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
             [[self window] enableFlushWindow];
 #if 0
 	     NSLog(@"scrolled to: %g %g\n", selPoint.x, selPoint.y);
-	     NSLog(@"visibleRect: %g %g %g %g\n",NSMinX(visibleRect),
-		   NX_Y(&visibleRect), NX_WIDTH(&visibleRect),
-		   NX_HEIGHT(&visibleRect));
+	     NSLog(@"visibleRect: %g %g %g %g\n", NSMinX(visibleRect), NSMinY(visibleRect), NSWidth(visibleRect), NSHeight(visibleRect));
 #endif
             /* note that we scrolled and start generating timer events for autoscrolling */
             scrolled = YES;
@@ -1559,53 +1644,53 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	
         dx = mouseLocation.x - oldx + 1;
         forwardDirection = (dx > 0);
-        adjustableSelectionRect.origin.x = mouseLocation.x - dx + 1;
+        draggedSelectionRect.origin.x = mouseLocation.x - dx + 1;
 	
         if (dx < 0) {
             dx = -dx;
-            adjustableSelectionRect.origin.x -= dx;
+            draggedSelectionRect.origin.x -= dx;
         }
-        adjustableSelectionRect.size.width = dx;
+        draggedSelectionRect.size.width = dx;
 		
-        if (NSMinX(adjustableSelectionRect) < 0) {
-            adjustableSelectionRect.size.width += NSMinX(adjustableSelectionRect);
-            adjustableSelectionRect.origin.x = 0;
+        if (NSMinX(draggedSelectionRect) < 0) {
+            draggedSelectionRect.size.width += NSMinX(draggedSelectionRect);
+            draggedSelectionRect.origin.x = 0;
         }
 		
         if (dx) { // dragged mouse by dx pixels
             if (hilightStartPixel == -1) {
 		DEBUG_MOUSE(@"0: No new highlight start");
-                hilightStartPixel = NSMinX(adjustableSelectionRect);  
-                hilightEndPixel = (float) NSMaxX(adjustableSelectionRect) - 1.0;
+                hilightStartPixel = NSMinX(draggedSelectionRect);  
+                hilightEndPixel = (float) NSMaxX(draggedSelectionRect) - 1.0;
             }
-	    else if (NSMinX(adjustableSelectionRect) < hilightStartPixel) { /* new start point. need to adjust end? */
+	    else if (NSMinX(draggedSelectionRect) < hilightStartPixel) { /* new start point. need to adjust end? */
                 /* if endpoint of selection is within current sel, we must have
 		 * backtracked right over the current selection, highlighting a new portion,
 		 * but unhighlighting the latter parts of the old selection.
 		 */
                 DEBUG_MOUSE(@"1: tack on new addition to selection from start");
-                if (NSMaxX(adjustableSelectionRect) - 1 >= hilightStartPixel) {
+                if (NSMaxX(draggedSelectionRect) - 1 >= hilightStartPixel) {
                     hilightEndPixel = hilightStartPixel - 1;
                 }
-                hilightStartPixel = NSMinX(adjustableSelectionRect);
+                hilightStartPixel = NSMinX(draggedSelectionRect);
             } 
-	    else if (NSMaxX(adjustableSelectionRect) > hilightEndPixel + 1) {
+	    else if (NSMaxX(draggedSelectionRect) > hilightEndPixel + 1) {
                 /* tack on new addition to selection */
-                if (NSMinX(adjustableSelectionRect) <= hilightEndPixel)
+                if (NSMinX(draggedSelectionRect) <= hilightEndPixel)
                     hilightStartPixel = hilightEndPixel + 1;
-                hilightEndPixel = NSMaxX(adjustableSelectionRect) -1;
+                hilightEndPixel = NSMaxX(draggedSelectionRect) -1;
 		DEBUG_MOUSE(@"2: tack on new addition to selection to end");
             }
-	    else if (NSMinX(adjustableSelectionRect) <= hilightEndPixel && NSMinX(adjustableSelectionRect) >= hilightStartPixel) {
+	    else if (NSMinX(draggedSelectionRect) <= hilightEndPixel && NSMinX(draggedSelectionRect) >= hilightStartPixel) {
                 /* we have shortened selection, by backtracking from end */
                 if (!forwardDirection) {
 		    DEBUG_MOUSE(@"3: shortened selection, by backtracking from end");
-                    hilightEndPixel = NSMinX(adjustableSelectionRect) - 1;
+                    hilightEndPixel = NSMinX(draggedSelectionRect) - 1;
                 }
                 /* shorten selection by forward tracking from start */
                 else { 
 		    DEBUG_MOUSE(@"4: shorten selection by forward tracking from start");
-                    hilightStartPixel = NSMaxX(adjustableSelectionRect);
+                    hilightStartPixel = NSMaxX(draggedSelectionRect);
                 }
                 /* empty selection */
                 if (hilightEndPixel < hilightStartPixel) {
@@ -1618,14 +1703,14 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    
             if (hilightStartPixel != -1) {  
 		DEBUG_MOUSE(@"7: Modify the selection record with new highlight region");
-                selectionRange.location = ceil((float) hilightStartPixel * (float) reductionFactor);
-                selectionRange.length = (float) reductionFactor * (float) (hilightEndPixel + 1);
-		selectionRange.length -= (ceil(reductionFactor * hilightStartPixel) - 1);
+                selectedFrames.location = ceil((float) hilightStartPixel * (float) reductionFactor);
+                selectedFrames.length = (float) reductionFactor * (float) (hilightEndPixel + 1);
+		selectedFrames.length -= (ceil(reductionFactor * hilightStartPixel) - 1);
             }
             else {
 		DEBUG_MOUSE(@"8");
-                selectionRange.location = ceil((float) NSMinX(adjustableSelectionRect) * (float) reductionFactor);
-                selectionRange.length = 0;
+                selectedFrames.location = ceil((float) NSMinX(draggedSelectionRect) * (float) reductionFactor);
+                selectedFrames.length = 0;
             }
 	    
             /* now check to see if we need to adjust to original values.
@@ -1636,88 +1721,39 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    
             if ((realStartFrame != -1) && hilightStartPixel == (int) (realStartFrame / reductionFactor)) {
 		DEBUG_MOUSE(@"9");
-                selectionRange.length = ceil((hilightEndPixel + 1) * reductionFactor) - realStartFrame;
-                selectionRange.location = realStartFrame;
+                selectedFrames.length = ceil((hilightEndPixel + 1) * reductionFactor) - realStartFrame;
+                selectedFrames.location = realStartFrame;
             }
             else
 		realStartFrame = -1;
             if ((realEndFrame != -1) && hilightEndPixel == (int) (realEndFrame / reductionFactor)) {
 		DEBUG_MOUSE(@"10");
-                selectionRange.length = (unsigned int) (realEndFrame - selectionRange.location) + 1;
+                selectedFrames.length = (unsigned int) (realEndFrame - selectedFrames.location) + 1;
 	    }
             else 
 		realEndFrame = -1;
 	    
             /* Finally, adjust selection width down to sound size, if it ends on last pixel.
- 	     * When the num of pixels is not a direct multiple of redfact, the calculation
-	     * for selectionRange, based on the last pixel highlighted, will come out with
+ 	     * When the num of pixels is not a direct multiple of reduction factor, the calculation
+	     * for selectedFrames, based on the last pixel highlighted, will come out with
 	     * a figure slightly too high.
 	     */
 	    
-            if (NSMaxRange(selectionRange) > [sound lengthInSampleFrames]) {
-                selectionRange.length = [sound lengthInSampleFrames] - selectionRange.location;
+            if (NSMaxRange(selectedFrames) > [sound lengthInSampleFrames]) {
+                selectedFrames.length = [sound lengthInSampleFrames] - selectedFrames.location;
             }
-            // NSLog(@"selection changed to %u, %u\n", selectionRange.location, selectionRange.length);
-            if (svFlags.continuous) {
-                [self tellDelegate: @selector(selectionChanged:)];
+            // NSLog(@"selection changed to %u, %u\n", selectedFrames.location, selectedFrames.length);
+            if (svFlags.continuousSelectionUpdates) {
+                [self selectionChanged];
             }
         } // dx != 0
 
 #if 0 // DEBUG_MOUSE
-	NSLog(@"adjustableSelectionRect (%g, %g), dx %g, hilight (%d, %d) oldx %g ",
-	      NSMinX(adjustableSelectionRect), NSMaxX(adjustableSelectionRect), dx, hilightStartPixel, hilightEndPixel, oldx);
+	NSLog(@"selectedRegionRect (%g, %g), dx %g, hilight (%d, %d) oldx %g ",
+	      NSMinX(selectedRegionRect), NSMaxX(selectedRegionRect), dx, hilightStartPixel, hilightEndPixel, oldx);
 #endif
-	[selectionColour set];
-	NSRectFillUsingOperation(adjustableSelectionRect, NSCompositeDestinationIn);
-	// NSHighlightRect(adjustableSelectionRect);
-	// [self setNeedsDisplay: YES];
-	/* adjust the size of cachedSelectionRect to be the size of the union of cachedSelectionRect and adjustableSelectionRect */
-	cachedSelectionRect = NSUnionRect(cachedSelectionRect, adjustableSelectionRect);
 
-	/* if we have backtracked, invalidate rects that have been selected during this drag */
-	if (!firstDragEvent && selectionRange.length < lastRange.length) {
-	    NSRect	selectDiff;
-	    
-#if 0
-	     NSLog(@"selectionRange:	    %5u	%5u\n",
-		   selectionRange.location, selectionRange.length);
-	     
-	     NSLog(@"adjustableSelectionRect: %5.f:%5.f	%5.f,%5.f\n",
-		   adjustableSelectionRect.origin.x, adjustableSelectionRect.origin.y,
-		   adjustableSelectionRect.size.width, adjustableSelectionRect.size.height);
-	     
-	     NSLog(@"lastRange:		    %5u	%5u\n",
-		   lastRange.location, lastRange.width);
-	     
-	     NSLog(@"lastAdjRect:	    %5.f:%5.f	%5.f,%5.f\n",
-		   lastAdjRect.origin.x, lastAdjRect.origin.y,
-		   lastAdjRect.size.width, lastAdjRect.size.height);
-#endif
-	    
-	    if (selectionRange.location == lastRange.location) {
-		DEBUG_MOUSE(@"above");
-		selectDiff.size.width = (lastAdjRect.origin.x - adjustableSelectionRect.origin.x) + lastAdjRect.size.width + 1;
-		selectDiff.size.height = adjustableSelectionRect.size.height;
-		selectDiff.origin.x = adjustableSelectionRect.origin.x;
-		selectDiff.origin.y = adjustableSelectionRect.origin.y;
-	    }
-	    else {
-		DEBUG_MOUSE(@"below");
-		selectDiff.size.width = (adjustableSelectionRect.origin.x - lastAdjRect.origin.x) + 2;
-		selectDiff.size.height = adjustableSelectionRect.size.height;
-		selectDiff.origin.x = lastAdjRect.origin.x - 1;
-		selectDiff.origin.y = adjustableSelectionRect.origin.y;
-	    }
-#if 0
-	     NSLog(@"selectDiff:	%5.f:%5.f	%5.f,%5.f\n\n",
-		   selectDiff.origin.x, selectDiff.origin.y,
-		   selectDiff.size.width, selectDiff.size.height);
-#endif
-	    selectDiff = NSIntersectionRect(selectDiff, [self bounds]);
-	    noSelectionDraw = YES;
-	    [self setNeedsDisplayInRect: selectDiff];
-	    noSelectionDraw = NO;
-	}
+	[self drawSelectedRegionRect: draggedSelectionRect previousSelectedRect: previousSelectedRegionRect];
 
 	/* now show what we've done */
 	[[self window] flushWindow];
@@ -1729,16 +1765,10 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
 	/* save the current mouse location, just in case we need it again */
 	oldx = mouseLocation.x + 1;//		NSLog(@" oldx2: %g\n",oldx);
-	lastRange = selectionRange;
-	lastAdjRect = adjustableSelectionRect;
-	firstDragEvent = NO;
+	previousSelectedFrames = selectedFrames;
+	previousSelectedRegionRect = draggedSelectionRect;
 
-	if (!useTimerLocation) {
-	    mouseLocation = [currentEvent locationInWindow];
-	}
-	else {
-	    mouseLocation = timerMouseLocation;
-	}
+	mouseLocation = !useTimerLocation ? [currentEvent locationInWindow] : timerMouseLocation;
 
 	if (![[self window] nextEventMatchingMask: MOVE_MASK
 					untilDate: [NSDate date]
@@ -1773,13 +1803,11 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     }
     [self unlockFocus];
     [[self window] setAcceptsMouseMovedEvents: NO];
-
-    /* if we weren't left with a selection,
-     * stick insertion point in new place
-     */
-    if (selectionRange.length < 1) {  
-	selectionRange.location = ceil(mouseDownLocation.x * (float) reductionFactor);
-	selectionRange.length = 0;
+    
+    // if we weren't left with a selection, stick insertion point in new place
+    if (selectedFrames.length < 1) {  
+	selectedFrames.location = ceil(mouseDownLocation.x * (float) reductionFactor);
+	selectedFrames.length = 0;
 	/* invalidate previous selection rect */
 	if (cachedSelectionRect.size.width > 0.) {
 	    DEBUG_MOUSE(@"cachedSelectionRect setNeedsDisplayInRect after selection\n");
@@ -1787,14 +1815,14 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	}	
     }
 #if 0
-    NSLog(@"FINAL SELECTION start at frame: %u length %u frames\n", selectionRange.location, selectionRange.length);
+    NSLog(@"FINAL SELECTION start at frame: %u length %u frames\n", selectedFrames.location, selectedFrames.length);
 #endif
     if (reductionFactor < 1) 
 	[self setNeedsDisplay: YES]; /* to align to sample boundaries! */
 
-    if (selectionRange.length < 1)
+    if (selectedFrames.length < 1)
 	[self showCursor];
-    [self tellDelegate: @selector(selectionChanged:)];
+    [self selectionChanged];
 }
 
 // This will only get called when mouseDown: returned prematurely because the mouse was clicked within the selection range
@@ -1805,8 +1833,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     NSPoint mouseDownLocation = [self convertPoint: [theEvent locationInWindow] fromView: nil];
     
     if ([theEvent clickCount] != 3) {
-	selectionRange.location = ceil((float) mouseDownLocation.x * (float) reductionFactor);
-	selectionRange.length = 0; // invalidate the selection region so it becomes a cursor.
+	selectedFrames.location = ceil((float) mouseDownLocation.x * (float) reductionFactor);
+	selectedFrames.length = 0; // invalidate the selection region so it becomes a cursor.
     }
     [self showCursor];
     DEBUG_MOUSE(@"mouseUp: setting setNeedsDisplayInRect of cachedSelectionRect\n");
@@ -1845,10 +1873,10 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     [self stop: self];
     [sound setDelegate: self];
 
-    if (selectionRange.length < 1)
+    if (selectedFrames.length < 1)
         [sound play: self];    
     else
-        [sound play: self beginSample: selectionRange.location sampleCount: selectionRange.length];
+        [sound play: self beginSample: selectedFrames.location sampleCount: selectedFrames.length];
 }
 
 - (void) pause: sender
@@ -2196,9 +2224,9 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     [self setNeedsDisplay: YES];
 }
 
-- (void) setContinuous: (BOOL) aFlag
+- (void) setContinuousSelectionUpdates: (BOOL) aFlag
 {
-    svFlags.continuous = aFlag;
+    svFlags.continuousSelectionUpdates = aFlag;
 }
 
 - (void) setDelegate: (id) anObject
@@ -2330,8 +2358,8 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
 - (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance
 {
     if (delegate) {
-        if ([delegate respondsToSelector:theMessage]) {
-            [delegate performSelector:theMessage withObject: self withObject: performance];
+        if ([delegate respondsToSelector: theMessage]) {
+            [delegate performSelector: theMessage withObject: self withObject: performance];
         }
     }
 }
@@ -2363,8 +2391,8 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
     // [self hideCursor]; /* maybe isn't on, but just in case */
     // [[self window] enableFlushWindow];
     
-    if (sound && selectionRange.length > 1) {
-        [sound deleteSamplesInRange: selectionRange];
+    if (sound && selectedFrames.length > 1) {
+        [sound deleteSamplesInRange: selectedFrames];
     }
 
     if (sound == nil) {
@@ -2377,7 +2405,7 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
 	    reductionFactor = [recordingSound samplingRate] / SAMPLE_RATE_REDUCTION;
         if (!reductionFactor)
 	    reductionFactor = 1;
-        selectionRange.location = 0;
+        selectedFrames.location = 0;
     }
 
     if (![recordingSound compatibleWithSound: sound]) {
@@ -2385,13 +2413,13 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
 			   samplingRate: [sound samplingRate]
 			   channelCount: [sound channelCount]];
     }
-    [sound insertSamples: recordingSound at: selectionRange.location];
-    selectionRange.length = [recordingSound lengthInSampleFrames];
+    [sound insertSamples: recordingSound at: selectedFrames.location];
+    selectedFrames.length = [recordingSound lengthInSampleFrames];
     
     [recordingSound release];
     recordingSound = nil;
     [self tellDelegate: @selector(didRecord:)];
-    [self invalidateCacheStartSample: selectionRange.location
+    [self invalidateCacheStartSample: selectedFrames.location
 				 end: [sound lengthInSampleFrames]];
     if (!svFlags.autoscale) 
 	[self resizeToFit];
@@ -2463,19 +2491,19 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
         if (sound == nil) {
             sound = [[Snd alloc] init];
             createdSound = YES;
-            selectionRange.location = selectionRange.length = 0;
+            selectedFrames.location = selectedFrames.length = 0;
             if (!svFlags.autoscale)
                 reductionFactor = [pastedSound samplingRate] / SAMPLE_RATE_REDUCTION;
             if (!reductionFactor)
 		reductionFactor = 1;
         }
         if (createdSound || [sound compatibleWithSound: pastedSound]) {
-            if (!createdSound && selectionRange.length > 0) {
-                [sound deleteSamplesInRange: selectionRange];
+            if (!createdSound && selectedFrames.length > 0) {
+                [sound deleteSamplesInRange: selectedFrames];
             }
             if (!createdSound) {
-                [sound insertSamples: pastedSound at: selectionRange.location];
-                [self invalidateCacheStartSample: selectionRange.location
+                [sound insertSamples: pastedSound at: selectedFrames.location];
+                [self invalidateCacheStartSample: selectedFrames.location
 					     end: [sound lengthInSampleFrames]];
             }
             else {
@@ -2483,8 +2511,8 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
 		sound = [pastedSound retain];
                 [self invalidateCache];
             }
-	    selectionRange.location = selectionRange.location + [pastedSound lengthInSampleFrames];
-            selectionRange.length = 0;
+	    selectedFrames.location = selectedFrames.location + [pastedSound lengthInSampleFrames];
+            selectedFrames.length = 0;
             if (!svFlags.autoscale)
 		[self resizeToFit: YES];
             else { /* scaleToFit does not autodisplay, but resizeToFit does */
@@ -2518,17 +2546,17 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
 
 - (BOOL) writeSelectionToPasteboardNoProvide: (NSPasteboard *) thePasteboard types: (NSArray *) pboardTypes
 {
-    if (selectionRange.length < 1) 
+    if (selectedFrames.length < 1) 
 	return NO;
 
     if (!sound)
 	return NO;
 
-    if ([sound lengthInSampleFrames] < NSMaxRange(selectionRange))
+    if ([sound lengthInSampleFrames] < NSMaxRange(selectedFrames))
 	return NO;
     
     [pasteboardSound release];
-    pasteboardSound = [[sound soundFromSamplesInRange: selectionRange] retain];
+    pasteboardSound = [[sound soundFromSamplesInRange: selectedFrames] retain];
     if (pasteboardSound == nil) {
 	NSLog(@"there was a problem copying samples\n");
 	return NO;
@@ -2552,7 +2580,7 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
     if (([SndPasteboardType isEqualToString: typeSent] || typeSent == NULL) &&
 	([SndPasteboardType isEqualToString: typeReturned] || typeReturned == NULL) ) {
 	
-	if ( ((sound && (selectionRange.length > 0)) || typeSent == NULL) &&
+	if ( ((sound && (selectedFrames.length > 0)) || typeSent == NULL) &&
              ((!svFlags.notEditable) || typeReturned == NULL) ) {
             return self;
         }
