@@ -748,8 +748,8 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
 				numFrags += numToFrags;
 		else numFrags += (numToFrags + 1);
 	}
-printf("numFromFrags: %d numToFrags: %d insertFragOffset %d startSample %d insertFrag %d\n",
-		numFromFrags, numToFrags, insertFragOffset, startSample, insertFrag);
+//printf("numFromFrags: %d numToFrags: %d insertFragOffset %d startSample %d insertFrag %d\n",
+//		numFromFrags, numToFrags, insertFragOffset, startSample, insertFrag);
 
 	if (!(newssList = malloc((numFrags + 1) * sizeof(SndSoundStruct *)))) {
 		return SND_ERR_CANNOT_ALLOC;
