@@ -33,14 +33,18 @@ output sample (initialized as 0.0) from the current input sample:
 
 Note that the two samples have their own scalers:  
 
-&#183;	<i>b0</i>, the filter's gain, scales the input sample.  Effective gain
+<ul>
+<li><i>b0</i>, the filter's gain, scales the input sample.  Effective gain
 values are between 0.0 and 1.0 (a negative gain is the same as its absolute
 value, but with a 180 degree phase shift).
+</li>
 
-&#183;	<i>a1</i>, the filter's coefficient<i>,</i> scales the previous output
+<li><i>a1</i>, the filter's coefficient<i>,</i> scales the previous output
 sample.  If <i>a1</i> is less than 0.0, the OnepoleUG is a low-pass filter; if
 it's greater than 0.0, the object is a high-pass filter.  For stability, the
 value of <i>a1</i> should be between -1.0 and 1.0 (non-inclusive).
+</li>
+</ul>
 
 Similar to the OnepoleUG is the OnezeroUG; it, too, is either a low-pass or a
 high-pass filter, but the frequency roll-off is gentler than with a OnepoleUG.  
@@ -83,29 +87,28 @@ the sign of the coefficent is switched in the OnezeroUG.
 -setOutput:aPatchPoint;
 /* Sets filter output. */
 
-
 /*!
   @method setB0:
-  @param  (double)value is an id.
+  @param  value is a double.
   @result Returns <b>self</b>.
   @discussion Sets the filter's gain.  Effective gain values are between 0.0 and
               1.0 (a negative gain is the same as its absolute value, but with a
               180 degree phase shift).  
 */
--setB0:(double)val;
+-setB0:(double) value;
 /* Sets gain of filter. */
 
 
 /*!
   @method setA1:
-  @param  (double)value is an id.
+  @param  value is a double.
   @result Returns <b>self</b>.
   @discussion Sets the filter's coefficient.   If <i>value</i> is less than 0.0,
               the OnepoleUG is a low-pass filter; if it's greater than 0.0, the
               object is a high-pass filter.  For stability, the <i>value</i>
               should be between -1.0 and 1.0.  
 */
--setA1:(double)val;
+-setA1:(double)value;
 /* Sets gain of delayed output sample. */
 
 /*!
@@ -142,7 +145,9 @@ the sign of the coefficent is switched in the OnezeroUG.
   @discussion This is a convenient method that adjusts the filter's gain and
               coefficient such that a constant <i>brightness</i> value produces
               the same number and relative amplitudes of a tone's harmonics
-              regardless of the value of <i>frequency</i>.  For example, in a
+              regardless of the value of <i>frequency</i> as described
+	      in Jaffe/Smith, Computer Music Journal Vol. 7, No. 2,
+	      Summer 1983. For example, in a
               musical phrase during which the brightness of the synthesized notes
               shouldn't be perceived to change, you would invoke this method once
               per note passing a constant <i>brightness</i> value (the
@@ -150,11 +155,7 @@ the sign of the coefficent is switched in the OnezeroUG.
               by the pitches of the notes).  
 */
 -setBrightness:(double)gain forFreq:(double)freq;
-/* This is a convenient way to use a onepole filter as a frequency-dependent
-   brightness control, as described in Jaffe/Smith, Computer Music Journal
-   Vol. 7, No. 2, Summer 1983. 
-
-   You specify the gain at the specified fundamental frequency and the 
+/* You specify the gain at the specified fundamental frequency and the 
    appropriate filter frequency response is selected for you. By keeping
    the gain constant and varying the frequency, you can have a uniform
    amplitude and brightness percept (i.e. a "dynamic level").  
