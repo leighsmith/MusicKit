@@ -352,12 +352,12 @@ Represents Sound</title>
 This structure defines the soundfile formats
 and the sound pasteboard type.  It's also used to describe sounds in
 Interface Builder.  In addition, each instance of the
-<productname>SndKit</productname>'s <classname>Sound</classname> class
+<productname>SndKit</productname>'s <classname>Snd</classname> class
 encapsulates a <structname>SndSoundStruct</structname> and provides
 methods to access and modify its attributes.</para>
 
 <para>Basic sound operations, such as playing, recording, and
-cut-and-paste editing, are most easily performed by a <classname>Sound</classname> object.
+cut-and-paste editing, are most easily performed by a <classname>Snd</classname> object.
 In many cases, the <productname>SndKit</productname> obviates the need
 for in-depth understanding of the <structname>SndSoundStruct</structname> architecture.  For
 example, if you simply want to incorporate sound effects into an
@@ -603,7 +603,7 @@ through the <function>SNDStartPlaying()</function> function.</para>
 
 <listitem><para><constant>SND_FORMAT_DISPLAY</constant> format is used
 by the <productname>SndKit</productname>'s
-<classname>SoundView</classname> class.  Such sounds can't be
+<classname>SndView</classname> class.  Such sounds can't be
 played.</para>
 </listitem>
 
@@ -676,13 +676,14 @@ operating system, and other such necessities.  It's designed to
 accommodate both casual use of sound effects as well as detailed
 examination and manipulation of sound data.</para>
 
-<para>The <productname>SndKit</productname> consists of three classes:
-<classname>Sound</classname>, <classname>SoundView</classname>, and <classname>SoundMeter</classname>.</para>
+<para>The <productname>SndKit</productname> consists of three main classes:
+<classname>Snd</classname>, <classname>SndView</classname>, and
+<classname>SndMeter</classname>.</para>
 
 <sect2 id="TheSoundClass">
-<title>The <classname>Sound</classname> Class</title>
+<title>The <classname>Snd</classname> Class</title>
 
-<para>The <classname>Sound</classname> class provides a number of methods that let you
+<para>The <classname>Snd</classname> class provides a number of methods that let you
 access, modify, and perform sound data.  The methods fall into four
 categories:</para>
 
@@ -700,7 +701,7 @@ categories:</para>
 </listitem>
 </itemizedlist>
 
-<para>While a <classname>Sound</classname> object uses the
+<para>While a <classname>Snd</classname> object uses the
 <structname>SndSoundStruct</structname> structure to represent its
 sound, you only need to be familiar with this structure if you're
 directly manipulating sound data.</para>
@@ -708,8 +709,8 @@ directly manipulating sound data.</para>
 <sect3 id="LocatingAndStoringSounds">
 <title>Locating and Storing Sounds</title>
 
-<para>Each <classname>Sound</classname> object represents a single sound.  The <classname>Sound</classname> class
-provides four ways to install a sound in a <classname>Sound</classname> object.  You
+<para>Each <classname>Snd</classname> object represents a single sound.  The <classname>Snd</classname> class
+provides four ways to install a sound in a <classname>Snd</classname> object.  You
 can:</para>
 
 <itemizedlist>
@@ -726,7 +727,7 @@ can:</para>
 <para>Sound recording (and playback) is described in the next section.
 Described here are the methods that let you read sounds from a
 soundfile or Mach-O segment and retrieve them from the pasteboard.  As
-a shortcut to finding sounds, the <classname>Sound</classname> class provides a global naming
+a shortcut to finding sounds, the <classname>Snd</classname> class provides a global naming
 mechanism that lets you identify and locate sounds by name.  </para>
 
 <para>Also described here are methods that let you store your sound by writing it to a soundfile or placing it on the pasteboard.</para>
@@ -736,24 +737,24 @@ mechanism that lets you identify and locate sounds by name.  </para>
 
 <para>Soundfiles are files on a disk that contain sound data.  By
 convention, soundfile names are given a &ldquo;.snd&rdquo; extension.
-To read a soundfile into a <classname>Sound</classname> object, simply create the object and
+To read a soundfile into a <classname>Snd</classname> object, simply create the object and
 send it the <emphasis role="bold">readSoundfile:</emphasis>
 message:</para>
 
 <programlisting>
-#import &lt;sound/sound.h&gt;               /* you must import this file */
+#import &lt;SndKit/SndKit.h&gt;               /* you must import this file */
 
 . . .
 
-id  aSound = [[Sound alloc] init];     /* create a Sound object */
-int = [aSound readSoundfile:"KneeSqueak.snd"];   /* read a file */
+Snd  *aSound = [[Snd alloc] init];     /* create a Snd object */
+int result = [aSound readSoundfile: @"KneeSqueak.snd"];   /* read a file */
 </programlisting>
 
 <para>The data in the named soundfile is read into the
-<classname>Sound</classname> object.  The given file name is a
+<classname>Snd</classname> object.  The given file name is a
 complete UNIX pathname and must include the extension; in the example,
 the soundfile is searched for in the current working directory.  Like
-many of the <classname>Sound</classname> methods, <emphasis
+many of the <classname>Snd</classname> methods, <emphasis
 role="bold">readSoundfile:</emphasis> returns an error code; the
 complete list of errors codes is given in the description of the
 <function>SNDSoundError()</function> C function in
@@ -763,80 +764,49 @@ Function References</ulink>. Success is indicated by the code
 <constant>SND_ERR_NONE</constant>.</para>
 
 <para>These two operations, initializing a
-<classname>Sound</classname> object and reading a soundfile, are
+<classname>Snd</classname> object and reading a soundfile, are
 combined in the <emphasis role="bold">initFromSoundfile:</emphasis>
 method:</para>
 
 <programlisting>
-id  aSound = [[Sound alloc] initFromSoundfile:"KneeSqueak.snd"];
+Snd *aSound = [[Snd alloc] initFromSoundfile: @"KneeSqueak.snd"];
 </programlisting>
 
 <para>The method returns <emphasis role="bold">nil</emphasis> if the
 soundfile isn't found or if it can't be read.  You can read a new
-soundfile into an existing <classname>Sound</classname> object at any
+soundfile into an existing <classname>Snd</classname> object at any
 time; the object's old sound is discarded.</para>
 
-<para>NeXT provides a number of short sound effects (useful as system
+<para>Apple provides a number of short sound effects (useful as system
 beeps) that are stored in the directory <filename
-role=directory>/NextLibrary/Sounds</filename>. You can audition a
+role=directory>/System/Library/Sounds</filename>. You can audition a
 soundfile by running the <command>sndplay</command> program from a
-Terminal or Shell window.  For example:</para>
+<application>Terminal</application> shell window.  For example:</para>
 
-<para>sndplay /NextLibrary/Sounds/Frog.snd</para>
+<screen>
+sndplay /System/Library/Sounds/Frog.aiff
+</screen>
 
 <para>Writing a soundfile from the data in a sound object is done by
 invoking the <emphasis role="bold">writeSoundfile:</emphasis>
 method:</para>
 
 <programlisting>
-[mySound writeSoundfile:"FleaSigh.snd"];
+[mySound writeSoundfile: @"FleaSigh.snd"];
 </programlisting>
 
-<para>Even if the <classname>Sound</classname> object contains
+<para>Even if the <classname>Snd</classname> object contains
 fragmented data, the data in the soundfile will be compact.  However,
-the <classname>Sound</classname> object's data will remain
+the <classname>Snd</classname> object's data will remain
 fragmented.</para>
 </sect4>
 
-<sect4 id="MachO">
-<title>The Mach-O Sound Segment</title>
-
-<para>Reading a sound from the Mach-O sound segment is much like
-reading a soundfile: Like soundfiles, Mach-O sounds have a
-&ldquo;.snd&rdquo; extension.  To read a Mach-0 sound, you invoke the
-<emphasis role="bold">initFromMach0:</emphasis> method:</para>
-
-<programlisting>
-id  mySound = [[Sound alloc] initFromMachO:"SonicBoom.snd"];
-</programlisting>
-
-<para>The Mach-O sound segment of your application is searched for the
-named sound.  If it isn't found, the method returns <emphasis
-role="bold">nil</emphasis>.</para>
-
-<para>You can install a sound (from a soundfile) into the Mach-O
-segment by supplying the <emphasis role="bold">-segcreate</emphasis>
-option when loading your application.  For example:</para>
-
-<para>cc ... -segcreate __SND SonicBoom.snd SonicBoom.snd </para>
-
-<para><emphasis role="bold">__SND</emphasis> is the name of the Mach-O
-sound segment.  The first instance of <emphasis
-role="bold">SonicBoom.snd</emphasis> names the section of the Mach-O
-segment into which the soundfile is loaded.  This is followed by the
-name of the soundfile (which must already exist).  If you add a
-soundfile to your application through the Projects window in Interface
-Builder, the sound will automatically be included in the <emphasis
-role="bold">make</emphasis> script.  Compiling a soundfile into your
-application lets you transport the application without regard for the
-original location of the file in the file system.</para>
-</sect4>
 <sect4 id="Pasteboard">
 <title>The Pasteboard</title>
 
-<para>Placing a <classname>Sound</classname> object on the pasteboard
+<para>Placing a <classname>Snd</classname> object on the pasteboard
 lets you copy its data between running applications.  To place a
-<classname>Sound</classname> on the pasteboard, invoke the <emphasis
+<classname>Snd</classname> on the pasteboard, invoke the <emphasis
 role="bold">writeToPasteboard</emphasis> method:</para>
 
 <programlisting>
@@ -846,11 +816,11 @@ role="bold">writeToPasteboard</emphasis> method:</para>
 <para>The object's data is compacted (if it's fragmented) and copied.
 The copy is then placed on the pasteboard.</para>
 
-<para>To read data from the pasteboard into a <classname>Sound</classname>, invoke the
+<para>To read data from the pasteboard into a <classname>Snd</classname>, invoke the
 <emphasis role="bold">initFromPasteboard:</emphasis> method:</para>
 
 <programlisting>
-id  mySound = [[Sound alloc] initFromPasteboard];
+id  mySound = [[Snd alloc] initFromPasteboard];
 </programlisting>
 
 <para>The sound data currently on the pasteboard is copied into the
@@ -864,16 +834,16 @@ role="bold">nil</emphasis>.</para>
 <sect4 id="NamedSoundList">
 <title>The Named Sound List</title>
 
-<para>The <classname>Sound</classname> class maintains an
-application-wide list of named <classname>Sound</classname> objects
+<para>The <classname>Snd</classname> class maintains an
+application-wide list of named <classname>Snd</classname> objects
 called the <emphasis>named Sound list</emphasis>.  The <emphasis
 role="bold">addName:Sound:</emphasis> class method lets you name a
-<classname>Sound</classname> object and add it to the named Sound
+<classname>Snd</classname> object and add it to the named Sound
 list:</para>
 
 <programlisting>
-/* Add a Sound to the named Sound list. */
-id namedSound = [Sound addName:"PopTop" sound:mySound];
+/* Add a Snd to the named Sound list. */
+id namedSound = [Snd addName: @"PopTop" sound: mySound];
 
 /* Check for failure. */
 if (namedSound == nil)
@@ -881,68 +851,74 @@ if (namedSound == nil)
 </programlisting>
 
 <para>The names in the named Sound list are unique; if you try to add
-a <classname>Sound</classname> by a name that's already in use, the
+a <classname>Snd</classname> by a name that's already in use, the
 effort is denied and <emphasis role="bold">nil</emphasis> is
 returned.</para>
 
-<para>You can also name a <classname>Sound</classname> and place it on
+<para>You can also name a <classname>Snd</classname> and place it on
 the named Sound list by sending <emphasis
 role="bold">setName:</emphasis> to the object:</para>
 
 <programlisting>
-id  namedSound = [mySound setName:"RedRover"];
+id  namedSound = [mySound setName: @"RedRover"];
 </programlisting>
 
 <para><emphasis role="bold">setName:</emphasis> can be used to change
-the name of a <classname>Sound</classname> that's already on the named
+the name of a <classname>Snd</classname> that's already on the named
 Sound list.</para>
 
 <para>The <emphasis role="bold">name</emphasis> method retrieves a
-<classname>Sound</classname> object's name, whether given in a <emphasis
+<classname>Snd</classname> object's name, whether given in a <emphasis
 role="bold">setName:</emphasis> message or through the <emphasis
 role="bold">addName:sound:</emphasis> method.</para>
 
-<para>Named <classname>Sound</classname>s are visible to your entire
-application.  To retrieve a named <classname>Sound</classname> and
-load a copy of its data into a new <classname>Sound</classname>
+<para>Named <classname>Snd</classname>s are visible to your entire
+application.  To retrieve a named <classname>Snd</classname> and
+load a copy of its data into a new <classname>Snd</classname>
 object, invoke the <emphasis role="bold">findSoundFor:
 </emphasis>method:</para>
 
 <programlisting>
-id  newRedButton = [Sound findSoundFor:"RedButton"];
+id  newRedButton = [Snd findSoundFor: @"RedButton"];
 </programlisting>
 
 <para>If <emphasis role="bold">findSoundFor:</emphasis> fails to find
-the <classname>Sound</classname> in the named Sound list, it gives its
-argument (the <classname>Sound</classname> name) a &ldquo;.snd&rdquo;
-suffix and looks for a named section in the Mach-O sound segment.  If
-it's not found in the Mach-O segment, a soundfile (again, with the
-&ldquo;.snd&rdquo; extension) is searched for in these directories (in
+the <classname>Snd</classname> in the named Sound list, it gives its
+argument (the <classname>Snd</classname> name) a &ldquo;.snd&rdquo;
+suffix and looks for a soundfile in these directories (in
 order):</para>
 
-<para>1.	~/Library/Sounds/ </para>
+<itemizedlist>
+<listitem><para><filename class=directory>~/Library/Sounds/</filename></para>
+</listitem>
 
-<para>2.	/LocalLibrary/Sounds/ </para>
+<listitem><para><filename class=directory>/LocalLibrary/Sounds/ (on NeXTStep)</filename></para></listitem>
 
-<para>3.	/NextLibrary/Sounds/</para>
+<listitem><para><filename class=directory>/NextLibrary/Sounds/ (on NeXTStep)</filename></para></listitem>
+
+<listitem><para><filename class=directory>/Library/Sounds/ (on MacOS X)</filename></para></listitem>
+
+<listitem><para><filename class=directory>/System/Library/Sounds/ (on
+MacOS X)</filename></para></listitem>
+</itemizedlist>
 
 <para>(<emphasis role="bold">~</emphasis> represents the user's home directory.)</para>
 
-<para>A <classname>Sound</classname> found through <emphasis
+<para>A <classname>Snd</classname> found through <emphasis
 role="bold">findSoundFor:</emphasis> is automatically added to the
 named Sound list.</para>
 
-<para>To remove a named <classname>Sound</classname> from the named
+<para>To remove a named <classname>Snd</classname> from the named
 Sound list, invoke <emphasis
 role="bold">removeSoundForName:</emphasis>, passing the name of the
 object that you want to remove.  Removing a named
-<classname>Sound</classname> neither frees the
-<classname>Sound</classname> nor changes the object's notion of its
+<classname>Snd</classname> neither frees the
+<classname>Snd</classname> nor changes the object's notion of its
 name (which it stores as an instance variable).</para>
 
-<para>Identifying and locating <classname>Sound</classname>s through
+<para>Identifying and locating <classname>Snd</classname>s through
 the named Sound list is generally the most efficient way to access
-sound data.  The data in a named <classname>Sound</classname> is
+sound data.  The data in a named <classname>Snd</classname> is
 shared by all the objects that retrieve it.</para>
 
 </sect4>
@@ -950,12 +926,12 @@ shared by all the objects that retrieve it.</para>
 <sect3 id="RecordingAndPlaying">
 <title>Recording and Playing</title>
 
-<para>To record a sound into a <classname>Sound</classname> object,
+<para>To record a sound into a <classname>Snd</classname> object,
 simply create the object and send it the <emphasis
 role="bold">record</emphasis> message:</para>
 
 <programlisting>
-id  mySound = [[Sound alloc] init];
+id  mySound = [[Snd alloc] init];
 int errorCode = [mySound record];
 </programlisting>
 
@@ -968,20 +944,20 @@ immediately while the recording is performed by a background thread.
 indicates the success or failure of the attempt to begin
 recording; <constant>SND_ERR_NONE</constant> indicates success.</para>
 
-<para>The recording continues until the <classname>Sound</classname>
+<para>The recording continues until the <classname>Snd</classname>
 object receives the <emphasis role="bold">stop</emphasis> message or
-until the <classname>Sound</classname> object can accommodate no more
+until the <classname>Snd</classname> object can accommodate no more
 data.  By default, the receiver of the <emphasis
 role="bold">record</emphasis> message is always set to accommodate ten
 minutes of 8 kHz mu-law sound (the type of sound data sent from the
-CODEC).  You can set the size of the <classname>Sound</classname>
+CODEC).  You can set the size of the <classname>Snd</classname>
 object, prior to recording, to specify a different recording length.
 This is done through the <emphasis
 role="bold">setDataSize:dataFormat:samplingRate:channelCount:infoSize:</emphasis>
 method.</para>
 
 <para>To play a sound, send the <emphasis role="bold">play</emphasis>
-message to the <classname>Sound</classname> object:</para>
+message to the <classname>Snd</classname> object:</para>
 
 <programlisting>
 int errorCode = [mySound play];
@@ -990,26 +966,26 @@ int errorCode = [mySound play];
 <para>Like recording, playback is performed by a background thread and
 the <emphasis role="bold">play</emphasis> method returns an error
 code.  Playback continues until the entire sound is played or until
-the <classname>Sound</classname> object that initiated the playback
+the <classname>Snd</classname> object that initiated the playback
 receives the <emphasis role="bold">stop</emphasis> message.</para>
 
-<para>A single <classname>Sound</classname> object can only perform
+<para>A single <classname>Snd</classname> object can only perform
 one recording or playback operation at a time, thus the function of
 the <emphasis role="bold">stop</emphasis> method is never ambiguous:
-If the <classname>Sound</classname> is playing, <emphasis
+If the <classname>Snd</classname> is playing, <emphasis
 role="bold">stop</emphasis> stops the playback; if it's recording, it
 stops the recording.</para>
 
 <para>You can temporarily suspend a playback or recording by sending
 the <emphasis role="bold">pause</emphasis> message to a
-<classname>Sound</classname> object.  Like <emphasis
+<classname>Snd</classname> object.  Like <emphasis
 role="bold">stop</emphasis>, the <emphasis
 role="bold">pause</emphasis> message halts whatever activity the
-<classname>Sound</classname> is currently engaged in; however, unlike
+<classname>Snd</classname> is currently engaged in; however, unlike
 <emphasis role="bold">stop</emphasis>, the
-<classname>Sound</classname> doesn't forget where it was.  This allows
+<classname>Snd</classname> doesn't forget where it was.  This allows
 the <emphasis role="bold">resume </emphasis>message to cause the
-<classname>Sound</classname> to continue its activity from the place
+<classname>Snd</classname> to continue its activity from the place
 at which it was paused.</para>
 
 <para>The <emphasis role="bold">record</emphasis>, <emphasis
@@ -1020,16 +996,16 @@ described in the next section) should only be used if you have a
 running <classname>NSApplication</classname> object.  To create a
 command-line program (similar to <command>sndrecord</command> or
 <command>sndplay</command>), you can use methods to create
-<classname>Sound</classname> objects and read sound data, but you
+<classname>Snd</classname> objects and read sound data, but you
 should use the C functions <function>SNDStartRecording()</function>,
 <function>SNDStartPlaying()</function>, and
 <function>SNDStop()</function> to perform the
-<classname>Sound</classname>.</para>
+<classname>Snd</classname>.</para>
 
 <sect4 id="ActionMethods">
 <title>Action Methods</title>
 
-<para>The <classname>Sound</classname> class methods <emphasis
+<para>The <classname>Snd</classname> class methods <emphasis
 role="bold">record:</emphasis>, <emphasis
 role="bold">play:</emphasis>, <emphasis role="bold">pause:</emphasis>,
 <emphasis role="bold">resume:</emphasis>, and <emphasis
@@ -1045,12 +1021,12 @@ the target object.  In the following example, the three methods are
 assigned as action messages to three different
 <classname>NSControl</classname> objects&horbar;in this case,
 <classname>NSButton</classname>s.  The same
-<classname>Sound</classname> object is assigned as the Buttons'
+<classname>Snd</classname> object is assigned as the Buttons'
 target:</para>
 
 <programlisting>
-/* Create a Sound object ... */
-id  mySound = [[Sound alloc] init];
+/* Create a Snd object ... */
+id  mySound = [[Snd alloc] init];
 
 /* ...  and three NSButtons.  */
 id  recordButton = [[NSButton alloc] init],
@@ -1058,18 +1034,18 @@ id  recordButton = [[NSButton alloc] init],
     stopButton = [[NSButton alloc] init];
 
 /* Set the action messages.  */
-[recordButton setAction:@selector(record:)];
-[playButton setAction:@selector(play:)];
-[stopButton setAction:@selector(stop:)];
+[recordButton setAction: @selector(record:)];
+[playButton setAction: @selector(play:)];
+[stopButton setAction: @selector(stop:)];
 
 /* Set the targets.  */
-[recordButton setTarget:mySound];
-[playButton setTarget:mySound];
-[stopButton setTarget:mySound];
+[recordButton setTarget: mySound];
+[playButton setTarget: mySound];
+[stopButton setTarget: mySound];
 </programlisting>
 
 <para>In response to the user's clicking the different
-<classname>NSButton</classname>s, the <classname>Sound</classname>
+<classname>NSButton</classname>s, the <classname>Snd</classname>
 object starts recording, starts playing, or stops one of these
 operations.</para>
 
@@ -1077,18 +1053,18 @@ operations.</para>
 <sect4 id="Delegate">
 <title>The Delegate</title>
 
-<para>A <classname>Sound</classname> can have a delegate object.  A
-<classname>Sound</classname>'s delegate receives, asynchronously, the
-following messages as the <classname>Sound</classname> records or
+<para>A <classname>Snd</classname> can have a delegate object.  A
+<classname>Snd</classname>'s delegate receives, asynchronously, the
+following messages as the <classname>Snd</classname> records or
 plays:</para>
 
 <itemizedlist>
 <listitem><para><emphasis role="bold">willPlay:</emphasis> is sent
-just before the <classname>Sound</classname> begins playing.</para>
+just before the <classname>Snd</classname> begins playing.</para>
 </listitem>
 
 <listitem><para><emphasis role="bold">didPlay:</emphasis> is sent when
-the <classname>Sound</classname> finishes playing.</para>
+the <classname>Snd</classname> finishes playing.</para>
 </listitem>
 
 <listitem><para><emphasis role="bold">willRecord:</emphasis> is sent
@@ -1104,7 +1080,7 @@ playback or recording generates an error.</para>
 </listitem>
 </itemizedlist>
 
-<para>To set a <classname>Sound</classname>'s delegate object, invoke the <emphasis
+<para>To set a <classname>Snd</classname>'s delegate object, invoke the <emphasis
 role="bold">setDelegate:</emphasis> method:</para>
 
 <programlisting>
@@ -1118,24 +1094,24 @@ implements the method that the message invokes.</para>
 <sect3 id="Editing">
 <title>Editing</title>
 
-<para>The <classname>Sound</classname> class defines methods that
+<para>The <classname>Snd</classname> class defines methods that
 support cut, copy, and paste operations for sampled sound data:</para>
 
 <itemizedlist>
 <listitem><para><emphasis role="bold">copySamples:at:count:</emphasis>
-replaces the <classname>Sound</classname>'s data with a copy of a
+replaces the <classname>Snd</classname>'s data with a copy of a
 portion of the data in its first argument, which must also be a
-<classname>Sound</classname> object.</para>
+<classname>Snd</classname> object.</para>
 </listitem>
 
 <listitem><para><emphasis role="bold">insertSamples:at:</emphasis>
 inserts a copy of the first argument's sound data into the receiving
-<classname>Sound</classname> object.</para>
+<classname>Snd</classname> object.</para>
 </listitem>
 
 <listitem><para><emphasis
 role="bold">deleteSamplesAt:count:</emphasis> deletes a portion of the
-<classname>Sound</classname>'s data.</para>
+<classname>Snd</classname>'s data.</para>
 </listitem>
 </itemizedlist>
 
@@ -1144,23 +1120,23 @@ type error codes (recall that <constant>SND_ERROR_NONE</constant>
 indicates success).</para>
 
 <tip><para>The operations described here are also implemented in a
-more convenient form in the <classname>SoundView</classname> class;
-for example, replacing a portion of a <classname>Sound</classname>
-object with a portion of another <classname>Sound</classname> object
+more convenient form in the <classname>SndView</classname> class;
+for example, replacing a portion of a <classname>Snd</classname>
+object with a portion of another <classname>Snd</classname> object
 requires all three methods listed above.  By operating on a
 user-defined selection and using the pasteboard, the
-<classname>SoundView</classname> implements this operation in a single
+<classname>SndView</classname> implements this operation in a single
 <emphasis role="bold">paste:</emphasis> method.  The
-<classname>SoundView</classname> methods are less general than those
-in <classname>Sound</classname>, but if you want to include a simple
+<classname>SndView</classname> methods are less general than those
+in <classname>Snd</classname>, but if you want to include a simple
 graphic sound editor in your application, you should use the
-<classname>SoundView</classname> methods rather than
+<classname>SndView</classname> methods rather than
 these.</para></tip>
 
 <sect4 id="Delete">
 <title>Delete</title>
 
-<para>Deleting a portion of a <classname>Sound</classname>'s data is
+<para>Deleting a portion of a <classname>Snd</classname>'s data is
 direct; you simply invoke <emphasis
 role="bold">deleteSamplesAt:count:</emphasis>.  For example:</para>
 
@@ -1178,7 +1154,7 @@ the second argument is the number of samples to delete.</para>
 <sect4 id="CopyAndPaste">
 <title>Copy and Paste</title>
 
-<para>Copying a portion of one <classname>Sound</classname> and pasting it into
+<para>Copying a portion of one <classname>Snd</classname> and pasting it into
 another&horbar;or into itself, for that matter&horbar;requires the use
 of both <emphasis role="bold">copySamples:at:count</emphasis> and
 <emphasis role="bold">insertSamples:at:</emphasis>.  In the following
@@ -1187,11 +1163,11 @@ repeated:</para>
 
 <programlisting>
 /* Create a stutter at the beginning of mySound. */
-id tmpSound = [[Sound alloc] init];
-int errorCode = [tmpSound copySamples:mySound at:0 count:1000];
+id tmpSound = [[Snd alloc] init];
+int errorCode = [tmpSound copySamples: mySound at: 0 count: 1000];
 
 if (errorCode == SND_ERROR_NONE)
-    errorCode = [mySound insertSamples:tmpSound at:0];
+    errorCode = [mySound insertSamples: tmpSound at: 0];
 [tmpSound free];
 </programlisting>
 
@@ -1208,7 +1184,7 @@ role="bold">mySound</emphasis>, creating a repetition of the first
 of the argument into the receiver.  Thus, the argument can be freed
 after inserting.</para>
 
-<para>The two <classname>Sound</classname> objects involved in the
+<para>The two <classname>Snd</classname> objects involved in the
 <emphasis role="bold">insertSamples:at:</emphasis> method (the
 receiver and the first argument) must be compatible: They must have
 the same format, sampling rate, and channel count.  If possible, the
@@ -1220,7 +1196,7 @@ in <ulink url="&SKFunctionReferences;">
 <productname>SndKit</productname> Function References</ulink> for a
 list of the conversions that are supported).  An error code indicating
 that the insertion failed is returned if the two
-<classname>Sound</classname>s aren't compatible or if the inserted
+<classname>Snd</classname>s aren't compatible or if the inserted
 data can't be converted.</para>
 
 </sect4>
@@ -1228,7 +1204,7 @@ data can't be converted.</para>
 <title>Replace</title>
 
 <para>Replacing is like copying and pasting, except that a region of
-the pasted-into <classname>Sound</classname> is destroyed to
+the pasted-into <classname>Snd</classname> is destroyed to
 accommodate the new data.  In the following example, the beginning of
 <emphasis role="bold">oneSound</emphasis> is replaced with a copy of
 the beginning of <emphasis role="bold">twoSound</emphasis>:</para>
@@ -1253,14 +1229,14 @@ if (tmpCode == SND_ERROR_NONE) {
 <title>Utility Methods</title>
 
 <para>The editing methods described above only work on
-<classname>Sound</classname>s that contain sampled data.  The
+<classname>Snd</classname>s that contain sampled data.  The
 <emphasis role="bold">isEditable</emphasis> method is provided to
-quickly determine whether a <classname>Sound</classname> object can be
+quickly determine whether a <classname>Snd</classname> object can be
 edited.  The method returns YES if the object can be edited, NO if it
 can't.</para>
 
 <para>The <emphasis role="bold">compatibleWith:</emphasis> method
-takes a <classname>Sound</classname> object as its argument and
+takes a <classname>Snd</classname> object as its argument and
 returns YES if the argument and the receiver are compatible.  (The
 method also returns YES if one of the objects is empty; in other
 words, it's OK to insert samples into an empty object.)  This method
@@ -1271,37 +1247,37 @@ role="bold">insertSound:at:</emphasis> method.</para>
 role="bold">sampleCount</emphasis>, which returns the number of
 <emphasis>sample frames</emphasis> contained in the receiver.  A
 sample frame is a channel-independent count of the samples in a
-<classname>Sound</classname>.  For example, sending <emphasis
+<classname>Snd</classname>.  For example, sending <emphasis
 role="bold">sampleCount</emphasis> to a two-channel
-<classname>Sound</classname> that contains three seconds worth of data
+<classname>Snd</classname> that contains three seconds worth of data
 returns the same value as sending it to a one-channel
-<classname>Sound</classname> that also contains three seconds of data
-(given that the two <classname>Sound</classname>s have the same
+<classname>Snd</classname> that also contains three seconds of data
+(given that the two <classname>Snd</classname>s have the same
 sampling rate), even though the two-channel
-<classname>Sound</classname> actually contains twice as much
+<classname>Snd</classname> actually contains twice as much
 data.</para>
 
 </sect4>
 <sect4 id="OtherEditingMethods">
 <title>Other Editing Methods</title>
 
-<para>The <classname>Sound</classname> class defines three more
+<para>The <classname>Snd</classname> class defines three more
 editing methods:</para>
 
 <itemizedlist>
 <listitem><para><emphasis role="bold">copy</emphasis> returns a new
-<classname>Sound</classname> object that's a copy of the
+<classname>Snd</classname> object that's a copy of the
 receiver.</para></listitem>
 
 <listitem><para><emphasis role="bold">copySound:</emphasis> takes a
-<classname>Sound</classname> object as an argument and replaces the
+<classname>Snd</classname> object as an argument and replaces the
 data in the receiver with the data in its argument.  Since the entire
 range of data in the receiver is replaced, it needn't be editable, nor
-must the two <classname>Sound</classname>s be
+must the two <classname>Snd</classname>s be
 compatible.</para></listitem>
 
 <listitem><para><emphasis role="bold">deleteSamples</emphasis> can
-only be sent to an editable <classname>Sound</classname>.  It deletes
+only be sent to an editable <classname>Snd</classname>.  It deletes
 the receiver's sound data.</para></listitem>
 </itemizedlist>
 
@@ -1309,34 +1285,34 @@ the receiver's sound data.</para></listitem>
 <sect4 id="Fragmentation">
 <title>Fragmentation</title>
 
-<para>A <classname>Sound</classname>'s data is normally contiguous in
-memory.  However, when you edit a <classname>Sound</classname> object,
+<para>A <classname>Snd</classname>'s data is normally contiguous in
+memory.  However, when you edit a <classname>Snd</classname> object,
 its data can become fragmented, or discontiguous.  Fragmentation is
 explained in the description of the
 <structname>SndSoundStruct</structname>, earlier in this chapter.
-Briefly, fragmentation lets you edit <classname>Sound</classname>s
+Briefly, fragmentation lets you edit <classname>Snd</classname>s
 without incurring the cost of moving large sections of data in memory.
-However, fragmented <classname>Sound</classname>s can be less
+However, fragmented <classname>Snd</classname>s can be less
 efficient to play.  The <emphasis
 role="bold">needsCompacting</emphasis> and <emphasis
 role="bold">compactSamples</emphasis> methods are provided to
-determine if a <classname>Sound</classname> is fragmented and to
-compact it.  Note that compacting a large <classname>Sound</classname>
+determine if a <classname>Snd</classname> is fragmented and to
+compact it.  Note that compacting a large <classname>Snd</classname>
 that has been mercilessly fragmented can take a noticeably long
 time.</para>
 </sect4>
 </sect3>
 </sect2>
 <sect2 id="TheSoundViewClass">
-<title>The <classname>SoundView</classname> Class</title>
+<title>The <classname>SndView</classname> Class</title>
 
-<para>The <classname>SoundView</classname> class provides a mechanism
+<para>The <classname>SndView</classname> class provides a mechanism
 for displaying the sound data contained in a
-<classname>Sound</classname> object.  While
-<classname>SoundView</classname> inherits from the
+<classname>Snd</classname> object.  While
+<classname>SndView</classname> inherits from the
 <productname>Application Kit</productname>'s
 <classname>NSView</classname> class, it implements a number of methods
-that are also defined in <classname>Sound</classname>, such as
+that are also defined in <classname>Snd</classname>, such as
 <emphasis role="bold">play:</emphasis>, <emphasis
 role="bold">record:</emphasis>, and <emphasis
 role="bold">stop:</emphasis>.  In addition, it implements editing
@@ -1344,31 +1320,31 @@ methods such as <emphasis role="bold">cut:</emphasis>, <emphasis
 role="bold">copy:</emphasis>, and <emphasis
 role="bold">paste:</emphasis>.</para>
 
-<para><classname>SoundView</classname>s are designed to be used within
+<para><classname>SndView</classname>s are designed to be used within
 a <classname>NSScrollView</classname>.  While you can create a
-<classname>SoundView</classname> without placing it in a
+<classname>SndView</classname> without placing it in a
 <classname>NSScrollView</classname>, its utility&horbar;particularly
-as it's used to display a large <classname>Sound</classname>&horbar;is
+as it's used to display a large <classname>Snd</classname>&horbar;is
 limited.</para>
 
 <sect3 id="CreatingAndDisplayingASoundView">
-<title>Creating and Displaying a <classname>SoundView</classname></title>
+<title>Creating and Displaying a <classname>SndView</classname></title>
 
 <para>To display a sound, you create a new
-<classname>SoundView</classname> with a particular frame, give it a
-<classname>Sound</classname> object to display (through <emphasis
+<classname>SndView</classname> with a particular frame, give it a
+<classname>Snd</classname> object to display (through <emphasis
 role="bold">setSound:</emphasis>), and then send the <emphasis
 role="bold">display</emphasis> message to the
-<classname>SoundView</classname>:</para>
+<classname>SndView</classname>:</para>
 
 <programlisting>
-/* Create a new SoundView object. */
-id  mySoundView = [[SoundView alloc] initFrame:&amp;svRect];
+/* Create a new SndView object. */
+id  mySoundView = [[SndView alloc] initFrame: &amp;svRect];
 
-/* Set its Sound object.  */
+/* Set its Snd object.  */
 [mySoundView setSound:mySound];
 
-/* Display the Sound object's sound data. */
+/* Display the Snd object's sound data. */
 [mySoundView display];
 </programlisting>
 
@@ -1377,13 +1353,13 @@ defined <structname>NSRect</structname>.  If autodisplaying is turned
 on (as set through <classname>NSView</classname>'s <emphasis
 role="bold">setAutodisplay:</emphasis> method), you needn't send the
 <emphasis role="bold">display</emphasis> message; simply setting the
-<classname>Sound</classname> will cause the
-<classname>SoundView</classname> to be displayed.</para>
+<classname>Snd</classname> will cause the
+<classname>SndView</classname> to be displayed.</para>
 
 <para>For most complete sounds, the length of the
-<classname>Sound</classname>'s data in samples is greater than the
-horizontal length of the <classname>SoundView</classname> in display
-units.  The <classname>SoundView</classname> employs a reduction
+<classname>Snd</classname>'s data in samples is greater than the
+horizontal length of the <classname>SndView</classname> in display
+units.  The <classname>SndView</classname> employs a reduction
 factor to determine the ratio of samples to display units and plots
 the minimum and maximum amplitude values of the samples within that
 ratio.  For example, a reduction factor of 10.0 means that the minimum
@@ -1397,7 +1373,7 @@ role="bold">setReductionFactor:</emphasis> method.</para>
 </emphasis>changes the time scale of the object.  As you increase the
 reduction factor, more &ldquo;sound-per-inch&rdquo; is displayed.  Of
 course, since more samples are used in computing the average
-amplitude, the resolution in a <classname>SoundView</classname> with a
+amplitude, the resolution in a <classname>SndView</classname> with a
 heightened reduction factor is degraded.  Conversely, reducing the
 reduction factor displays fewer samples per display unit but with an
 improved resolution.  You should be aware that changing the reduction
@@ -1405,36 +1381,36 @@ factor on a large sound can take a noticeably long time.</para>
 
 </sect3>
 <sect3 id="SoundViewDimensions">
-<title><classname>SoundView</classname> Dimensions</title>
+<title><classname>SndView</classname> Dimensions</title>
 
-<para>In a <classname>SoundView</classname>, time runs from left to
+<para>In a <classname>SndView</classname>, time runs from left to
 right; amplitude is represented on the y-axis, with 0.0 amplitude in
 the (vertical) center.  When you set a
-<classname>SoundView</classname>'s <classname>Sound</classname>, the
+<classname>SndView</classname>'s <classname>Snd</classname>, the
 amplitude data that's displayed is automatically scaled to fit within
-the given height of the <classname>SoundView</classname>.</para>
+the given height of the <classname>SndView</classname>.</para>
 
-<para>The manner in which a <classname>SoundView</classname>'s
+<para>The manner in which a <classname>SndView</classname>'s
 horizontal dimension is computed depends on the object's <emphasis
 role="bold">autoscale</emphasis> flag.  If autoscaling is turned off,
-the length of a <classname>SoundView</classname>'s frame is resized to
-fit the length of the <classname>Sound</classname> object's data while
+the length of a <classname>SndView</classname>'s frame is resized to
+fit the length of the <classname>Snd</classname> object's data while
 maintaining a constant reduction factor.  In other words, a
-<classname>SoundView</classname> that's displaying a
-<classname>Sound</classname> that contains 10000 samples will be twice
-as long as one with a <classname>Sound</classname> that contains 5000
+<classname>SndView</classname> that's displaying a
+<classname>Snd</classname> that contains 10000 samples will be twice
+as long as one with a <classname>Snd</classname> that contains 5000
 samples, given the same reduction factor in either
-<classname>SoundView</classname>.  </para>
+<classname>SndView</classname>.  </para>
 
 <para>Whenever the displayed data changes, due to editing or
-recording, the <classname>SoundView</classname> is resized to fit the
+recording, the <classname>SndView</classname> is resized to fit the
 length of the new data.  This is particularly useful in a
-<classname>SoundView</classname> that's inside a
+<classname>SndView</classname> that's inside a
 <classname>NSScrollView</classname>: The
 <classname>NSScrollView</classname> determines the portion of data
-that's actually displayed, while the <classname>SoundView</classname>
+that's actually displayed, while the <classname>SndView</classname>
 maintains a constant time scale.  Changing the reduction factor with
-autoscaling turned off causes the <classname>SoundView</classname> to
+autoscaling turned off causes the <classname>SndView</classname> to
 zoom in or out on the displayed data.</para>
 
 <para>You can enable autoscaling by sending the message:</para>
@@ -1445,9 +1421,9 @@ zoom in or out on the displayed data.</para>
 </programlisting>
 
 <para>With <emphasis role="bold">autoscale</emphasis> enabled, the
-<classname>SoundView</classname>'s frame size is maintained regardless
-of the length of the <classname>SoundView</classname>'s
-<classname>Sound</classname> data.  Instead, the reduction
+<classname>SndView</classname>'s frame size is maintained regardless
+of the length of the <classname>SndView</classname>'s
+<classname>Snd</classname> data.  Instead, the reduction
 factor<emphasis role="bold"> </emphasis>is recomputed so the length of
 the data will fit within the frame.  When autoscaling is on, invoking
 <emphasis role="bold">setReductionFactor:</emphasis> has no effect.
@@ -1457,10 +1433,10 @@ the data will fit within the frame.  When autoscaling is on, invoking
 <sect3 id="DisplayModes">
 <title>Display Modes</title>
 
-<para>A <classname>SoundView</classname> can display a sound as a
+<para>A <classname>SndView</classname> can display a sound as a
 continuous waveform, such as you would see on an oscilloscope, or as
 an outline of its maximum and minimum amplitudes.  You set a
-<classname>SoundView</classname>'s display mode by sending it the
+<classname>SndView</classname>'s display mode by sending it the
 <emphasis role="bold">setDisplayMode:</emphasis> message with one of
 the following <productname>SndKit</productname> constants as an
 argument:</para>
@@ -1494,13 +1470,13 @@ argument:</para>
 
 </sect3>
 <sect3 id="TheSoundViewSelection">
-<title>The <classname>SoundView</classname> Selection</title>
+<title>The <classname>SndView</classname> Selection</title>
 
-<para>The <classname>SoundView</classname> class provides a selection
+<para>The <classname>SndView</classname> class provides a selection
 mechanism.  You can selectively enable the selection mechanism for
-each <classname>SoundView</classname> object by sending the <emphasis
+each <classname>SndView</classname> object by sending the <emphasis
 role="bold">setEnabled:YES</emphasis> message.  When you drag in an
-enabled <classname>SoundView</classname> display, the selected region
+enabled <classname>SndView</classname> display, the selected region
 is highlighted.  The method <emphasis
 role="bold">getSelection:size:</emphasis> returns, by reference, the
 number of the first sample and the number of samples in the
