@@ -178,7 +178,7 @@
 
     [window orderOut:self];
     [([NSColorPanel sharedColorPanelExists] ? [NSColorPanel sharedColorPanel] : nil) orderOut:self];
-    [[[NSApp delegate] document] setColors];
+    [(SoundDocument *) [[NSApp delegate] document] setColors];
 	
     return self;
 }

@@ -15,7 +15,6 @@
 #import "SoundDocument.h"
 #import "SpectrumDocument.h"
 #import "SpectrumView.h"
-#import "WaterfallView.h"
 #import "ScrollingSpectrum.h"
 
 #import <AppKit/AppKit.h>
@@ -463,9 +462,8 @@
 
 - (IBAction) wfFrameSliderMoved: (id) sender
 {
-    int temp, startSamp;
+    int temp = [sender intValue], startSamp;
     
-    temp = [sender intValue];
     if (currentFrame == temp || temp > totalFrames - 1)
 	return;
     currentFrame = temp;

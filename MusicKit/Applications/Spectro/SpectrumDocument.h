@@ -23,13 +23,14 @@
 #import <SndKit/SndKit.h>
 #import "SpectrumView.h"
 #import "SignalProcessor.h"
+#import "WaterfallView.h"
 
 @interface SpectrumDocument: NSObject
 {
     IBOutlet id spectrumWindow;
     IBOutlet id scrollSpectrum;
     IBOutlet id waterfallWindow;
-    IBOutlet id myWaterfallView;
+    IBOutlet WaterfallView *myWaterfallView;
     SignalProcessor *mySignalProcessor;
     Snd *mySound;
     IBOutlet id delegate;
