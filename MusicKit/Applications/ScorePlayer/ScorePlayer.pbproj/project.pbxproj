@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		018584A1004EBFCCCFED3B96 = {
 			children = (
@@ -561,8 +561,8 @@
 			productName = ScorePlayer;
 			productReference = 11E07F0CFFA3719CCFED3B93;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -656,7 +656,7 @@
 				11E07F12FFA3719CCFED3B93,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11E07F0FFFA3719CCFED3B93 = {
 			fileRef = 11E07EE3FFA3719CCFED3B93;
@@ -708,7 +708,7 @@
 				01B5F067006A9033CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11E07F14FFA3719CCFED3B93 = {
 			fileRef = 11E07EEAFFA3719CCFED3B93;
@@ -756,7 +756,7 @@
 				11E07F29FFA3719CCFED3B93,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11E07F25FFA3719CCFED3B93 = {
 			fileRef = 11E07EDEFFA3719CCFED3B93;
@@ -809,7 +809,7 @@
 				7B2063820190CB91002A0496,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11E07F2BFFA3719CCFED3B93 = {
 			fileRef = 11E07F05FFA3719CCFED3B93;
@@ -846,7 +846,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //110
 //111
