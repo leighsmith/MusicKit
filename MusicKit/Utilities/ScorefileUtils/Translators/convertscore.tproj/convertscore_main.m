@@ -130,6 +130,7 @@ const char * const help = "\n"
 "        [-p] write optimized scorefile (.playscore) format \n"
 "        [-s] write scorefile (.score) format \n"
 "        [-t] convert tempo changes to time tags, defaulting tempo to 60BPM\n"
+"        [-n] write key number names in symbolic format, defaulting to numeric\n"
 "        [-o <output file>] \n"
 "\n";
 
@@ -170,7 +171,8 @@ int main (int argc, const char *argv[])
     enum fileFormat outFormat = none,inFormat = none;
     int i;
     MKScore *aScore;
-    int absoluteTempo = NO;	/* by default, we use the tempo from the */
+    BOOL writeKeyNames = NO;
+    BOOL absoluteTempo = NO;	/* by default, we use the tempo from the */
     				/* midifile & convert the time-tags without */
 				/* considering the tempo. */
     if (argc == 1) {
@@ -179,17 +181,19 @@ int main (int argc, const char *argv[])
     }
     for (i=1; i<(argc-1); i++) {
 	if ((strcmp(argv[i],"-m") == 0))  /* midi */
-	  outFormat = midi;
+            outFormat = midi;
 	else if ((strcmp(argv[i],"-p") == 0)) /* optimized scorefile */
-	  outFormat = playscore;
-	else if (strcmp(argv[i],"-s") == 0) 
-	  outFormat = score;
+            outFormat = playscore;
+	else if (strcmp(argv[i],"-s") == 0)
+            outFormat = score;
 	else if (strcmp(argv[i],"-t") == 0)
-	  absoluteTempo = YES;
+            absoluteTempo = YES;
+        else if (strcmp(argv[i],"-n") == 0)
+            writeKeyNames = YES;
 	else if (strcmp(argv[i],"-o") == 0)  {
 	    i++;
-	    if (i < argc) 
-	      outputFile = [NSString stringWithCString: argv[i]];
+	    if (i < argc)
+                outputFile = [NSString stringWithCString: argv[i]];
 	}
     }
     inputFile = [NSString stringWithCString: argv[argc-1]];
@@ -198,52 +202,51 @@ int main (int argc, const char *argv[])
 
     inFormat = determineInputFormat(inputFile);
     [MKScore setMidifilesEvaluateTempo: absoluteTempo];
+    MKWriteKeyNumNames(writeKeyNames);
     aScore = [MKScore score];
 
     if (outFormat == none)
         outFormat = (inFormat == playscore) ? score : playscore;
-    fprintf(stderr,"Converting from %s to %s format.\n",
-	    formatStr(inFormat),
-	    formatStr(outFormat));
+    fprintf(stderr,"Converting from %s to %s format.\n", formatStr(inFormat), formatStr(outFormat));
     switch (inFormat) {
-      case score:
-      case playscore:
-          if (![aScore readScorefile: inputFile])  {
-               fprintf(stderr,"Fix scorefile errors and try again.\n");
-               exit(1);
-          }
-          break;
-      case midi: {
-          MKNote *aNoteInfo = [[MKNote alloc] init];
-          NSArray *parts;
-          if (![aScore readMidifile: inputFile])  {
-              fprintf(stderr,"This doesn't look like a midi file.\n");
-              exit(1);
-          }
-          [aNoteInfo setPar: MK_synthPatch toString: @"midi0"];
-          printf("%d parts\n", [aScore partCount]);
-          parts = [aScore parts];
-          [parts makeObjectsPerformSelector: @selector(setInfoNote:) withObject: aNoteInfo];
+    case score:
+    case playscore:
+        if (![aScore readScorefile: inputFile])  {
+            fprintf(stderr,"Fix scorefile errors and try again.\n");
+            exit(1);
         }
         break;
-      case none:
+    case midi: {
+        MKNote *aNoteInfo = [[MKNote alloc] init];
+        NSArray *parts;
+        if (![aScore readMidifile: inputFile])  {
+            fprintf(stderr,"This doesn't look like a midi file.\n");
+            exit(1);
+        }
+        [aNoteInfo setPar: MK_synthPatch toString: @"midi0"];
+        printf("%d parts\n", [aScore partCount]);
+        parts = [aScore parts];
+        [parts makeObjectsPerformSelector: @selector(setInfoNote:) withObject: aNoteInfo];
+        break;
+    }
+    case none:
         fprintf(stderr, "Internal error, no inputFormat\n");
         exit(1);
     }
     switch (outFormat) {
-      case score:
-	if (![aScore writeScorefile: outputFile])  
-	  errorFlag = 1;
-	break;
-      case playscore:
-	if (![aScore writeOptimizedScorefile: outputFile])  
-	  errorFlag = 1;
-	break;
-      case midi:
-	if (![aScore writeMidifile: outputFile])  
-	  errorFlag = 1;
-	break;
-      case none:
+    case score:
+        if (![aScore writeScorefile: outputFile])
+            errorFlag = 1;
+        break;
+    case playscore:
+        if (![aScore writeOptimizedScorefile: outputFile])
+            errorFlag = 1;
+        break;
+    case midi:
+        if (![aScore writeMidifile: outputFile])
+            errorFlag = 1;
+        break;
+    case none:
         fprintf(stderr, "Internal error, no inputFormat\n");
         exit(1);
     }
