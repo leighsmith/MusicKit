@@ -168,8 +168,8 @@ static int ioTags = 1000;
     tag = 0;
 
     if (performancesArray == nil) {
-      performancesArray     = [[NSMutableArray alloc] init];
-      performancesArrayLock = [[NSLock alloc] init];
+      performancesArray     = [NSMutableArray new];
+      performancesArrayLock = [NSLock new];
     }
     else
       [performancesArray removeAllObjects];
@@ -202,6 +202,33 @@ static int ioTags = 1000;
   
   return self;
 }
+
+- initWithAudioBuffer: (SndAudioBuffer*) aBuffer
+{
+  self = [self init];
+  if (soundStruct == NULL)
+    if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
+      [[NSException exceptionWithName:@"Sound Error"
+                               reason:@"Can't allocate memory for Snd class"
+                             userInfo:nil] raise];
+
+  soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr.
+  soundStruct->dataLocation = 0;
+  soundStruct->dataSize     = 0;
+  soundStruct->dataFormat   = [aBuffer dataFormat];
+  soundStruct->samplingRate = [aBuffer samplingRate];
+  soundStruct->channelCount = [aBuffer channelCount];
+
+  [self setDataSize: [aBuffer lengthInBytes]
+         dataFormat: [aBuffer dataFormat]
+       samplingRate: [aBuffer samplingRate]
+       channelCount: [aBuffer channelCount]
+           infoSize: 0];
+
+  memcpy([self data], [aBuffer bytes], [aBuffer lengthInBytes]);  
+  return self;
+}
+
 
 - initFromSoundfile:(NSString *)filename
 {
@@ -1188,10 +1215,10 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (unsigned char *)data
 {
-    if (!soundStruct) return NULL;
-    if (soundStruct->dataFormat == SND_FORMAT_INDIRECT)
-            return (char *)soundStruct->dataLocation;
-    return (char *)soundStruct + soundStruct->dataLocation;
+  if (!soundStruct) return NULL;
+  if (soundStruct->dataFormat == SND_FORMAT_INDIRECT)
+    return (char *)soundStruct->dataLocation;
+  return (char *)soundStruct + soundStruct->dataLocation;
 }
 
 - (int)dataSize
@@ -1338,7 +1365,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   void* dataPtr       = [self data] + samSize * r.location;
   int   lengthInBytes = r.length * samSize;
   SndSoundStruct s;
-  
+
   memcpy(&s,soundStruct,sizeof(SndSoundStruct));
   s.dataSize = lengthInBytes;
   [ab initWithFormat: &s data: dataPtr];

@@ -101,7 +101,8 @@ architecture, as described in the <b>SndStruct</b> header.
   */
     SndSoundStruct *soundStruct;  
 /*! @var soundStructSize the length of the structure in bytes */
-    int soundStructSize;	 
+    int soundStructSize;
+
 /*! @var priority the priority of the sound */
     int priority;		 
 /*! @var delegate the target of notification messages */
@@ -1081,6 +1082,8 @@ architecture, as described in the <b>SndStruct</b> header.
   @result An SndAudioBuffer containing the samples in the range r.
 */
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r;
+
+- initWithAudioBuffer: (SndAudioBuffer*) aBuffer;
 
 @end
 
