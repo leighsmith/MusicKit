@@ -20,9 +20,7 @@
 #include <AppKit/NSPasteboard.h>
 #include <AppKit/NSApplication.h>
 
-#ifndef USE_NEXTSTEP_SOUND_IO
-NSString *SndPasteboardType = @"NXSoundPboardType";
-#endif
+NSString *SndPasteboardType = @"SndPasteboardType";
 
 @implementation Snd(Pasteboard)
 
@@ -37,7 +35,7 @@ NSString *SndPasteboardType = @"NXSoundPboardType";
     * hold the data...
     */
     /* an alternative method of providing the data here is to NOT compact,
-    * but to write the data to a stream (  NXStream *ts ) and send the stream to 
+    * but to write the data to a stream (  NSData *ts ) and send the stream to 
     * the pasteboard. I'll leave it like it is for now.
     */
     /* here I assume that the header will be in host form, and the sound data
@@ -45,15 +43,15 @@ NSString *SndPasteboardType = @"NXSoundPboardType";
     * to share the pasteboard between dissimilar machines...
     */
     BOOL ret;
-    NSMutableData *ts = [NSMutableData dataWithCapacity:soundStructSize];
+    NSMutableData *ts = [NSMutableData dataWithCapacity: soundStructSize];
     
-    //	[self compactSamples];
-    [self writeSoundToData:ts];
-    [thePboard declareTypes:[NSArray arrayWithObject:SndPasteboardType] owner:nil];	
+    // [self compactSamples];
+    [self writeSoundToData: ts];
+    [thePboard declareTypes: [NSArray arrayWithObject: SndPasteboardType] owner: nil];	
     
-    ret = [thePboard setData:ts forType:SndPasteboardType];
+    ret = [thePboard setData: ts forType: SndPasteboardType];
     if (!ret) {
-        printf("Sound paste error\n");
+        NSLog(@"Sound paste error\n");
     }
 }
 
