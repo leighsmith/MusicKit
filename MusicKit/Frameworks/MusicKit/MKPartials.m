@@ -1,22 +1,34 @@
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
   Defined In: The MusicKit
 
   Description:
+   MKPartials, a subclass of MKWaveTable, accepts a set of arrays containing
+   the amplitude and frequency ratios and initial phases of a set of partials
+   representing a waveform.  If one of the getData methods is called 
+   (inherited from the MKWaveTable object), a wavetable is additively synthesized 
+   and returned. 
+   
+   By "frequency ratios", we mean that when this object is passed to a unit 
+   generator, the resulting component frequencies of the waveform will be 
+   these numbers times the unit generator's overall frequency value.  
+   Similarly, the resulting component amplitudes will be the "amplitude 
+   ratios" times the unit generator's overall amplitude term.
+
   Original Author: David Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.7  2000/11/25 22:46:58  leigh
+  Standardised comment header
+
   Revision 1.6  2000/10/11 07:32:26  skot
   Fixed link error
 
@@ -71,17 +83,6 @@ Modification history:
 #import "sin.c"
 
 @implementation  MKPartials:MKWaveTable
-/* Partials, a subclass of Wave, accepts a set of arrays containing
-   the amplitude and frequency ratios and initial phases of a set of partials
-   representing a waveform.  If one of the getData methods is called 
-   (inherited from the Wave object), a wavetable is additively synthesized 
-   and returned. 
-   
-   By "frequency ratios", we mean that when this object is passed to a unit 
-   generator, the resulting component frequencies of the waveform will be 
-   these numbers times the unit generator's overall frequency value.  
-   Similarly, the resulting component amplitudes will be the "amplitude 
-   ratios" times the unit generator's overall amplitude term.  */
 
 #define NORMALFORM(_self) if ((_self)->dbMode) normalform(_self)
 
