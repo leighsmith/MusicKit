@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.23  2001/04/15 01:55:50  leighsmith
+  Revamped to use NSRunLoop limit dates directly rather than NSTimers and corrected a race condition on locking
+
   Revision 1.22  2001/04/11 23:25:54  leighsmith
   Converted stopping code to NSCondition, avoiding port direction problems with NSMessagePort
 
@@ -120,9 +123,6 @@
   11/5/94/daj -  Changed thread endgame
 */
 
-//#import <mach/mach.h>
-//#import <mach/mach_error.h>
-//#import <setjmp.h>
 #import "ConductorPrivate.h"
 #import "_musickit.h"
 #import "_error.h"
@@ -132,7 +132,6 @@
 static NSRecursiveLock *musicKitLock = nil;
 static NSThread *musicKitThread = nil;
 static NSThread *lockingThread = nil;
-static NSTimer *threadTimedEntry = nil;
 // static NSLock *musicKitAbortCondition = nil;  // for now unused.
 
 // Locking definitions.
@@ -144,7 +143,8 @@ static NSTimer *threadTimedEntry = nil;
 
 
 // thread priority
-#define PRIORITY_THREADING 0  // LMS: disabled until we find an OpenStep way of changing thread priority...i.e forever.
+// LMS: disabled until we find an OpenStep way of changing thread priority...i.e probably forever.
+#define PRIORITY_THREADING 0  
 
 #if PRIORITY_THREADING
 static float threadPriorityFactor = 0.0;
@@ -157,13 +157,6 @@ static int oldPriority = MAXINT;
 static int oldPolicy = INVALID_POLICY;
 #endif
 
-#if 0 // disabled since this is nasty and should be handled via GnuStep anyway.
-#define macosxserver (defined(__ppc__) && defined(ppc))
-#if macosxserver || WIN32 || m68k || i386
-#define NSMessagePort NSPort  // fudge around old concrete NSPort for MacOsX-Server or OpenStep
-#endif
-#endif
-
 // Defines ports used in several methods to communicate in one direction and in one thread each.
 // represents sending messages from the application (i.e main) thread to the MK separate conductor thread.
 static NSPort *appToMKPort = nil;  
@@ -171,6 +164,13 @@ static NSPort *appToMKPort = nil;
 static NSPort *MKToAppPort = nil;
 static NSString *interThreadThreshold = nil;
 static NSConnection *appConnection = nil;
+
+// Methods used to communicate to the MusicKit thread. Used with NSConnection.
+@protocol MusicKitConductorThreadManagement
++ (void) _wakeUpMKThread;
+@end
+
+Class separateThreadedConductorProxy = nil;
 
 /* Forward declarations */ 
 static void adjustTimedEntry(double nextMsgTime);
@@ -289,21 +289,23 @@ static BOOL musicKitHasLock(void)
 
 // Fires a message to the MusicKit thread to wake it out of it's slumber.
 // Typically this occurs from a pause scheduling a wait till the end of time (MK_ENDOFTIME).
-/* LMS: I think this comment still holds. I don't think it really matters.
-   The way this is currently implemented, an extra context switch
-   gets done. The alternative is to not send the message until
-   the _MKUnlock(). But this is more complicated (since multiple
-   messages may cancel each other out) and should be left
-   as an optimization, if needed.
-*/
 static void sendMessageToWakeUpMKThread(void)
 {
-    /*  We send the message only when someone other than the Music Kit has
-	the lock. If we're not in performance, the value of musicKitThread
-	and lockingThread will both be nil. The assumption here
-	is that the caller has the lock if we are in performance. */
-    if (separateThread && !musicKitHasLock()) {  // Ensure MK doesn't have the lock        
-        [(Class)[appConnection rootProxy] _wakeUpMKThread];
+    // We send the message only when someone other than the Music Kit has
+    // the lock. If we're not in performance, the value of musicKitThread
+    // and lockingThread will both be nil. The assumption here
+    // is that the caller has the lock if we are in performance.
+    
+    // Ensure MK doesn't have the lock
+    if (separateThread && !musicKitHasLock()) {
+        // NSLog(@"Sending message to wake up MK thread\n");
+        // There is the possibility the MusicKit thread times out its current run loop
+        // and waits on the lock, between the application thread gaining the lock in
+        // killMusicKitThread and before we can send _wakeUpMKThread. If sending the
+        // _wakeUpMKThread message blocks waiting on the MusicKit thread's run loop to
+        // consume the message, the application will never release the lock causing deadlock.
+        // We avoid this using setRequestTimeout: on the NSConnection of the proxy.
+        [separateThreadedConductorProxy _wakeUpMKThread];
     }
 }
 
@@ -322,20 +324,20 @@ static void killMusicKitThread(void)
     lockIt();
     // Since we've got the lock, we know that the Music Kit thread is either
     // in a NSRunLoop wait or waiting for the lock.
-    sendMessageToWakeUpMKThread();             /* Get the MK thread out of its deep sleep (if paused). */
-    // Can't use thread_abort() here because it's possible (unlikely) that thread has not
-    // even received the initial lock yet!
+    sendMessageToWakeUpMKThread();             /* Get the MK thread out of its run loop deep sleep. */
     unlockIt(recursive);
 }
 
-static BOOL separateThreadedAndNotInMusicKitThread(void)
+static BOOL notInMusicKitThread(void)
 {
     return (musicKitThread != nil && ![musicKitThread isEqual: [NSThread currentThread]]); 
 }
 
 BOOL separateThreadedAndInMusicKitThread(void)
 {
-    return ([musicKitThread isEqual: [NSThread currentThread]]);
+    return (separateThread && 
+            musicKitThread != nil &&
+            [musicKitThread isEqual: [NSThread currentThread]]);
 }
 
 /* Destroys the timed entry. */
@@ -350,7 +352,7 @@ static void removeTimedEntry(int arg)
     case exitThread:
         if (MKIsTraced(MK_TRACECONDUCTOR))
             NSLog(@"Exiting separate thread\n");
-        if (separateThreadedAndNotInMusicKitThread())
+        if (separateThread && notInMusicKitThread())
             killMusicKitThread();
         break;
     default:
@@ -408,14 +410,12 @@ void _MKRemovePort(NSPort *aPort)
     [aPort autorelease];
 }
 
-/* The following method wakeups the MK thread when it is sleeping in a timed entry in a run loop.
+/* The following method wakeups the MK thread when it is sleeping in a run loop.
  */
 + (void) _wakeUpMKThread
 {
-    // NSLog(@"Attempting to wakeup MKThread, limit date %@\n",
-    //     [[NSRunLoop currentRunLoop] limitDateForMode: interThreadThreshold]);
-    // invalidating a NSTimer which is used to sleep a NSRunLoop pops the loop out.
-    [threadTimedEntry invalidate]; 
+    if (MKIsTraced(MK_TRACECONDUCTOR))
+        NSLog(@"MK thread wakeup call\n");
 }
 
 static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2)
@@ -529,11 +529,16 @@ static void initializeBackgroundThread()
         _MKErrorf(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
     
     appConnection = [[NSConnection alloc] initWithReceivePort: MKToAppPort sendPort: appToMKPort];
-    [appConnection setRootObject: appProxy];  // for receiving messages from MK thread
+    [appConnection setRootObject: appProxy];  // for receiving messages from MK thread to the application thread.
+    // 1 second *should* be plenty of time for a NSConnection message to be processed correctly.
+    // Any longer than this and we assume the message is blocked waiting on the queue to free, in which case
+    // the lock should be released.
+    [appConnection setRequestTimeout: 1.0];      
 
     if (interThreadThreshold == nil)
         interThreadThreshold = NSDefaultRunLoopMode;
-    // Do we even need this?
+    // We should probably do the following, if we start monkeying with the interThreadThreshold
+    // aka the run loop mode.
     // [appConnection addRequestMode: interThreadThreshold];
 }
 
@@ -631,46 +636,36 @@ static void resetPriority(void)
         // set to NO. In the application thread case, we also send a message
         // (with sendMessageToWakeUpMKThread) to kick the MusicKit thread outta bed.
 
-        /**************************** GOODNIGHT ***************************/
         timeToWait = ([MKConductor isPaused] ? MK_ENDOFTIME :
                       ([MKConductor isClocked] ? _MKTheTimeToWait(condQueue->nextMsgTime) : 0.0));
 
         if (MKIsTraced(MK_TRACECONDUCTOR))
             NSLog(@"timeToWait in seconds %lf\n", timeToWait);
-        // We better have the lock and we know we  want to give it up. By making this
-        // nonrecursive, we actually make the code more forgiving here.
-        unlockIt(nonrecursive); 
 
-        // if we need to wait longer than 100uSec, use the timer, this is just a zero check.
-	if(timeToWait > 0.00001) { 
-            threadTimedEntry = [[NSTimer timerWithTimeInterval: timeToWait
-                                                        target: [MKConductor class]
-                                                      selector: @selector(masterConductorBody:)
-                                                      userInfo: nil
-                                                       repeats: NO] retain];
-            // NSLog(@"threadTimedEntry %@, target %d\n", threadTimedEntry, [MKConductor class]);
-            [theLoop addTimer: threadTimedEntry forMode: interThreadThreshold];
+        // if we need to wait longer than 100 uSec, use the RunLoop, this is just a zero check.
+	if(timeToWait > 0.0001) { 
+            // We better have the lock and we know we want to give it up.
+            unlockIt(recursive); 
 
-            // This wakes up when a message arrives, checking the appToMKPort and other _MKAddPort added NSPorts
+            /**************************** GOODNIGHT ***************************/
+            // This wakes up when a message arrives, checking the mkConnection and _MKAddPort added NSPorts
             // until timeout. On waking, the masterConductorBody will be performed. 
-            // To prematurely end the run loop we need to invalidate the timer.
-            [theLoop acceptInputForMode: interThreadThreshold 
-                             beforeDate: [theLoop limitDateForMode: interThreadThreshold]];
-	}
-	else {
-            [MKConductor masterConductorBody: nil];
-	}
+            [theLoop runMode: interThreadThreshold 
+                  beforeDate: [NSDate dateWithTimeIntervalSinceNow: timeToWait]];
 
-        /**************************** IT'S MORNING! *************************/
-        /* If the desire is to exit the thread, this will be
-           accomplished by the setting of inPerformance to false.
-           If the desire is to pause the thread, this will be
-           accomplished by the setting of timedEntry to MK_ENDOFTIME.
-           If the desire is to reposition the thread, this will be
-           accomplished by the setting of timedEntry to the new
-           time. */
-        // NSLog(@"Exited runloop probably with timeout, waiting on lock\n");
-        lockIt();
+            /**************************** IT'S MORNING! *************************/
+            // If the desire is to exit the thread, this will be
+            // accomplished by the setting of inPerformance to false.
+            // If the desire is to pause the thread, this will be
+            // accomplished by the setting of timedEntry to MK_ENDOFTIME.
+            // If the desire is to reposition the thread, this will be
+            // accomplished by the setting of timedEntry to the new
+            // time.
+            // NSLog(@"Exited runloop either with timeout or NSConnection, waiting on lock\n");
+            lockIt();
+	}
+        // TODO Could put a check if we aborted, preventing calling masterConductorBody
+        [MKConductor masterConductorBody: nil];
     }
     if (MKIsTraced(MK_TRACECONDUCTOR))
         NSLog(@"Exited the inPerformance loop\n");
@@ -687,6 +682,11 @@ static void launchThread(void)
     // As MKConductor class method, or should it be an instance method?
     [NSThread detachNewThreadSelector: @selector(separateThreadLoop) toTarget: [MKConductor self] withObject: nil];
     unlockIt(nonrecursive);
+    separateThreadedConductorProxy = (Class)[appConnection rootProxy];
+    // This reduces communication between application and MusicKit threads,
+    // making this closer to a single message send.
+    // Unfortunately class objects don't seem to be managed.
+    // [separateThreadedConductorProxy setProtocolForProxy: @protocol(MusicKitConductorThreadManagement)];
 }
 
 // @end
