@@ -36,6 +36,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/07/22 00:34:05  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.5  2000/05/13 17:19:10  leigh
   stricter typing
 
@@ -527,7 +530,7 @@ void _MKCheckInit(void)
     MKSetTrace([defaults integerForKey:@"MKTrace"]);
 
     /*sb: I don't think we need to register anything here. */
-    MKSetErrorStream(NULL);
+    MKSetErrorStream(nil);
     /* We don't try and use the Appkit error mechanism. It's not well-suited to real-time. */
 //  NXRegisterErrorReporter( MK_ERRORBASE, MK_ERRORBASE+1000,_MKWriteError);
     globalParseNameTable = [[_MKNameTable alloc] initWithCapacity: GLOBALTABLESIZE];

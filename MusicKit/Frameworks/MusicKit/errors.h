@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/07/22 00:32:20  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.6  2000/04/07 23:11:53  leigh
   Cleaned up
 
@@ -90,7 +93,7 @@ extern id MKError(NSString *msg);
 
 extern void MKSetErrorStream(NSMutableData *aStream);
     /* Sets the Music Kit error stream. 
-       NULL means stderr. The Music Kit initialization sets the error 
+       nil means stderr. The Music Kit initialization sets the error 
        stream to stderr. Note that during a multi-threaded Music Kit 
        performance, errors invoked from the Music Kit thread are not sent
        to the error stream. Use MKSetErrorProc to see them. */

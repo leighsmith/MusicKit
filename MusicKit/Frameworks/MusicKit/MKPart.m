@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2000/07/22 00:32:21  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.11  2000/05/27 19:15:10  leigh
   Code cleanup
 
@@ -130,7 +133,6 @@ Modification history:
 */
 
 #import "_musickit.h"  
-//#import <objc/HashTable.h>
 #import "ScorePrivate.h"
 #import "NotePrivate.h"
 #import "PartPrivate.h"

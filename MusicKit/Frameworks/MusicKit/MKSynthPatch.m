@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/07/22 00:32:21  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.6  2000/04/16 04:24:28  leigh
   Removed assignment in condition warning
 
@@ -1130,16 +1133,6 @@ static id getClassWithoutWarning(NSString *clname)
  */
 {
     return NSClassFromString(clname);
-#if 0
-    NXHashTable *hTab = objc_getClasses();
-    NXHashState state = NXInitHashState(hTab);
-    char *name = [clname cString];
-    Class data;
-    while (NXNextHashState(hTab, &state, (void **)&data)) 
-	if (strcmp(data->name,name) == 0)
-	    return (id)data;
-    return nil;
-#endif
 }
 
 + findSynthPatchClass:(NSString *)className

@@ -43,6 +43,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/07/22 00:33:37  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.7  2000/05/27 19:12:56  leigh
   Converted taggedPatches and controllerTable to NSMutableDictionary from HashTable
 
@@ -986,8 +989,8 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 }
 
 -getUpdates:(MKNote **)aNoteUpdate controllerValues:(NSMutableDictionary **) controllers
-/* Returns by reference the NoteUpdate used to store the accumulated 
-   noteUpdate state. Also returns by reference the HashTable used to 
+/* Returns by reference the NoteUpdate used to store the accumulated
+   noteUpdate state. Also returns by reference the NSMutableDictionary used to 
    store the state of the controllers. Any alterations to the returned
    objects will effect future phrases. The returned objects must not
    be freed. */

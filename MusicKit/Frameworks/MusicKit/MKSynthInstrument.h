@@ -45,6 +45,9 @@
  Modification history:
 
   $Log$
+  Revision 1.7  2000/07/22 00:33:37  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.6  2000/05/27 19:12:56  leigh
   Converted taggedPatches and controllerTable to NSMutableDictionary from HashTable
 
@@ -67,7 +70,6 @@
 
 #import "MKInstrument.h"
 #import "MKNote.h"
-//#import <objc/HashTable.h>
 
 @interface MKSynthInstrument : MKInstrument
 {

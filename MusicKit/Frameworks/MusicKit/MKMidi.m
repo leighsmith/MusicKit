@@ -66,6 +66,9 @@
 Modification history:
 
   $Log$
+  Revision 1.24  2000/07/22 00:32:20  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.23  2000/06/23 20:30:30  leigh
   Added fixes for OpenStep MIDI
 
@@ -1425,7 +1428,7 @@ static id openMidi(MKMidi *self)
     * queued behind any notes that have already been queued up.)
     */
 {
-    id aList;
+    NSMutableArray *aList;
     int i,cnt,j;
     if (!MIDIOUTPTR(self) || deviceStatus != MK_devRunning)
       return nil;

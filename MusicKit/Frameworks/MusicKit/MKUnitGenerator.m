@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/07/22 00:32:21  leigh
+  Minor doco and typing cleanups.
+
   Revision 1.7  2000/05/06 01:11:10  leigh
   Parenthetised to remove warnings
 
@@ -129,8 +132,7 @@ static int sendUGTimed(DSPFix48 *aTimeStamp,MKLeafUGStruct *classInfo,
 	DSP_UNTIL_ERROR(_DSPReloc(*data,fixups[i],fixupCount[i], loadAddresses));
     data = classInfo->data;        /* Now send code */
     if ((d = data[(int)DSP_LC_P])) { /* ploop */
-	DSP_UNTIL_ERROR
-	  (_DSPMKSendUnitGeneratorWithLooperTimed(aTimeStamp,
+	DSP_UNTIL_ERROR(_DSPMKSendUnitGeneratorWithLooperTimed(aTimeStamp,
 						  DSPLCtoMS[(int)DSP_LC_P],
 						  loadAddresses[(int)DSP_LC_P],
 						  d->data,d->wordCount,
