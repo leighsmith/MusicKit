@@ -14,6 +14,7 @@
     id midiPathNameTextBox;
     id keymapPathNameTextBox;
     id playButton;
+    id pauseButton;
     id tempoSlider;
     id driverPopup;
     double currentTempo;
@@ -22,6 +23,7 @@
 
 - init;
 - (void) transport: (id) sender;
+- (void) pause: (id) sender;
 - (void) applicationWillTerminate: (NSNotification *) aNotification;
 - (void) applicationDidFinishLaunching:(NSNotification *) aNotification; 
 - (void) setTempo: (id) sender;

@@ -222,9 +222,29 @@
 
     if([sender state] == NSOnState) {
         [self startPlaying];
+        [pauseButton setEnabled: YES];
     }
     else {
         [self stopPlaying];
+        [pauseButton setEnabled: NO];
+    }
+}
+
+// pause or resume a currently playing sequence.
+- (void) pause: (id) sender
+{
+    if([MKConductor isPaused]) { // resume
+        NSLog(@"...resuming play\n");
+        [MKConductor lockPerformance];
+        [MKConductor resumePerformance];
+        [MKConductor unlockPerformance];
+    }
+    else {  // pause
+        NSLog(@"...pausing play\n");
+        [MKConductor lockPerformance];
+        [midiInstrument allNotesOff];
+        [MKConductor pausePerformance];
+        [MKConductor unlockPerformance];
     }
 }
 
@@ -288,32 +308,27 @@
 //@implementation MIDIFileController(ConductorDelegate)
 - conductorWillSeek:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorWillSeek) to:self argCount:0];
     return self;
 }
 
 - conductorDidSeek:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidSeek) to:self argCount:0];
     return self;
 }
 
 - conductorDidReverse:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidReverse) to:self argCount:0];
     return self;
 }
 
 - conductorDidPause:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidPause) to:self argCount:0];
     [midiInstrument allNotesOff];
     return self;
 }
 
 - conductorDidResume:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidResume) to:self argCount:0];
     return self;
 }
 
