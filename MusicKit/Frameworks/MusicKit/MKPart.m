@@ -15,6 +15,9 @@ Modification history:
  Now in CVS - musickit.sourceforge.net
 
  $Log$
+ Revision 1.24  2002/03/14 00:08:55  leighsmith
+ Removed warning on redefining OBJECTATINDEX macro by using single version
+
  Revision 1.23  2002/03/12 22:59:03  sbrandon
  Added -hash and -isEqual methods so that MKPart objects can be used
  successfully as keys in NSMutableDictionaries. Previously this failed and
@@ -386,12 +389,13 @@ static void removeNote(MKPart *self,id aNote);
     return val;
 }
 
+#define OBJECTATINDEX(_o,_x)  (*objectAtIndex)((_o), oaiSel, (_x))
+
 - (BOOL) isEqual:(MKPart *) anObject
 {
     unsigned i,count;
     SEL oaiSel;
     IMP objectAtIndex;
-#define OBJECTATINDEX(_o,_x)  (*objectAtIndex)((_o), oaiSel, (_x))
     id othernotes;
     if (!anObject)                           return NO;
     if (self == anObject)                    return YES;
@@ -412,23 +416,22 @@ static void removeNote(MKPart *self,id aNote);
     return YES;
 }
 
-
 static void unsetPartLinks(MKPart *aPart)
 {
   id notes = aPart->notes;
   int i,count;
-# define OBJECTATINDEX(x)  (*objectAtIndex)(notes, oaiSel, (x))
 
   if (notes) {
     SEL oaiSel = @selector(objectAtIndex:);
     IMP objectAtIndex = [notes methodForSelector: oaiSel];
     count = [notes count];
     for (i = 0 ; i < count ; i++) {
-      [OBJECTATINDEX(i) _setPartLink:nil order:0];
+      [OBJECTATINDEX(notes, i) _setPartLink:nil order:0];
     }
   }
-# undef OBJECTATINDEX
 }
+
+# undef OBJECTATINDEX
 
 -releaseNotes
   /* TYPE: Editing
