@@ -54,19 +54,16 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
          _SharedSynthInfo.h _error.h _midi.h _musickit.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
-         dspwrap.h errors.h keynums.h midiTranslation.h midi_driver.h\
-         midi_spec.h mididriver.h mididriver_types.h midifile.h\
-         names.h noDVal.h orch.h params.h pitches.h scorefileObject.h\
-         timeunits.h tokens.h
+         dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
+         midifile.h names.h noDVal.h orch.h params.h pitches.h\
+         scorefileObject.h timeunits.h tokens.h
 
-CFILES = sin.c fastFFT.c mididriver_nonMig.c mididriver_replyServer.c\
-         mididriverServer.c mididriverUser.c
+CFILES = sin.c fastFFT.c
 
 OTHERSRCS = Makefile Makefile.postamble Makefile.preamble\
             _synthElementMethods.m equalTempered.m h.template\
-            lock_primitives.h lock_primitives.m m.template make.sh\
-            mtcConductor.m mtcConductorPrivate.m mtcMidi.m\
-            mtcMidiPrivate.m noteDispatcherMethods.m\
+            m.template make.sh mtcConductor.m mtcConductorPrivate.m\
+            mtcMidi.m mtcMidiPrivate.m noteDispatcherMethods.m\
             noteRecorderMethods.m orchControl.m orchloopbeginUGInclude.m\
             parNames.m partialsDBInclude.m platform.make\
             synthElementCFuncs.m synthElementMethods.m timetagInclude.m\
@@ -98,11 +95,11 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -FC:/Apple/Local/Library/Frameworks\
                   -F/Local/Library/Frameworks
 FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
-             -framework SndKit -framework System
+             -framework MKPerformMIDI -framework SndKit\
+             -framework System
 PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  classFuncs.h dsp_types.h dspwrap.h errors.h keynums.h\
-                 midiTranslation.h midi_driver.h midi_spec.h\
-                 mididriver.h mididriver_types.h midifile.h names.h\
+                 midiTranslation.h midi_spec.h midifile.h names.h\
                  noDVal.h orch.h params.h pitches.h scorefileObject.h\
                  timeunits.h MKOrchestra.h MKConductor.h\
                  MKConductorDelegate.h MKNote.h MKInstrument.h\
