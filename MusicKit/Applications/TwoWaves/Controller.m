@@ -237,7 +237,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
         case 5:
             num1 = (float)TRIANGLE(SAMPLING_RATE,freq1,amp1,i);
         }
-        pointer[i] = NSSwapHostShortToBig(num1);
+        pointer[i] = num1;
     }
     return [newSoundA autorelease];
 }
@@ -317,7 +317,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
             case 5:
                 num2 = (float)TRIANGLE(SAMPLING_RATE, freq2, amp2,i);
             }
-            pointer[i] = NSSwapHostShortToBig(num1 + num2);
+            pointer[i] = num1 + num2;
         }
     }
     somethingChanged = NO;
