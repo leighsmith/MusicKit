@@ -16,6 +16,11 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/07/02 16:36:46  sbrandon
+  - NSHashTableCallBacks cannot on GNUSTEP contain NULL values at this time.
+    This affected MKNotes and their parameters. I have implemented a couple
+    of bogus void functions with which which to replace the NULL functions.
+
   Revision 1.13  2001/02/03 02:34:30  leigh
   Cleaned up error checking message
 
@@ -254,7 +259,17 @@ static void freeFun(NSHashTable *info, void *data)
     _MKFreeParameter((_MKParameter *) data);
 }
 
+#ifdef GNUSTEP
+/* sbrandon: GNUSTEP, as at 07/2001, does not check for NULL functions
+ * in hash table callbacks before calling them. I'll submit a bugfix
+ * for GNUSTEP, but for now I'll make a workaround here.
+ */
+static void voidHashFun(NSHashTable *info, const void *data) {}
+static NSString *voidDescFun(NSHashTable *info, const void *data) {return nil;}
+static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,voidHashFun,freeFun,voidDescFun};
+#else
 static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,NULL,freeFun,NULL};
+#endif
 
 static NSHashTable *allocHashTable(void)
     /* alloc a new table. */
