@@ -3,6 +3,7 @@
 //  $Id$
 //
 //  Description:
+//    See headerdoc description in SndAudioProcessorDelay.h for description.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
@@ -22,11 +23,12 @@
 // delayWithLength:feedback:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ delayWithLength: (const long) nSams feedback: (const float) fFB
++ delayWithLength: (const long) nSams feedback: (const float) newFeedback
 {
-  SndAudioProcessorDelay* delay = [[SndAudioProcessorDelay alloc] init];
-  [delay setLength: nSams andFeedback: fFB];
-  return [delay autorelease];
+    SndAudioProcessorDelay* delay = [[SndAudioProcessorDelay alloc] init];
+    
+    [delay setLength: nSams andFeedback: newFeedback];
+    return [delay autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +37,9 @@
 
 - init
 {
-  if (lock == nil) {
+  if (processingLock == nil) {
     [super initWithParamCount: dlyNumParams name: @"Delay"];
-    lock = [[NSLock alloc] init];
+    processingLock = [[NSLock alloc] init];
   }
   [self setLength: 11025 andFeedback: 0.25];
   return self;
@@ -66,7 +68,7 @@
 - (void) dealloc
 {
   [self freemem];
-  [lock release];
+  [processingLock release];
   [super dealloc];
 }
 
@@ -76,21 +78,20 @@
 
 - setLength: (const long) nSams andFeedback: (const float) fFB
 {
-  [lock lock];
-  
-  [self freemem];
-  feedback = fFB;
-  chanL = (float*) malloc(sizeof(float*)*nSams);
-  chanR = (float*) malloc(sizeof(float*)*nSams);
-  memset(chanL,0,sizeof(float*)*nSams);
-  memset(chanR,0,sizeof(float*)*nSams);
-  readPos  = 1;
-  writePos = 0;
-//  printf("Delay init with length: %li and feedback: %f\n",length,feedback);
-
-  [lock unlock];
-
-  return self;
+    [processingLock lock];
+    
+    [self freemem];
+    feedback = fFB;
+    chanL = (float*) calloc(nSams, sizeof(float *));
+    chanR = (float*) calloc(nSams, sizeof(float *));
+    readPos  = 1;
+    writePos = 0;
+    length = nSams;
+    // NSLog(@"Delay init with length: %li and feedback: %f\n", length, feedback);
+    
+    [processingLock unlock];
+    
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,38 +146,44 @@
 //                outputBuffer: (SndAudioBuffer*) outB
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                        outputBuffer: (SndAudioBuffer*) outB
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB 
+                        outputBuffer: (SndAudioBuffer *) outB
 {
-  [lock lock];
-
+    [processingLock lock];
+    
     // no processing? copy data!
-  if ([outB lengthInSampleFrames] == [inB lengthInSampleFrames] &&
-      [outB channelCount]    == [inB channelCount]    &&
-      [outB dataFormat]      == [inB dataFormat]      &&
-      [inB dataFormat]       == SND_FORMAT_FLOAT      &&
-      [inB channelCount]     == 2) {
-      
-      float *inD  = (float*) [inB  bytes];
-      float *outD = (float*) [outB bytes];
-      long   len  = [inB  lengthInSampleFrames], i;
-      
-      for (i=0;i<len*2;i+=2) {
-        outD[i]   = inD[i]   + chanL[readPos];
-        outD[i+1] = inD[i+1] + chanR[readPos];
-        
-        chanL[writePos] = outD[i]   * feedback; 
-        chanR[writePos] = outD[i+1] * feedback; 
-        
-        if ((++writePos) >= length) writePos = 0;
-        if ((++readPos)  >= length) readPos  = 0;
-      }
-      [lock unlock];
-      return TRUE;
+    //TODO [outB hasSameFormatAsBuffer: inB] checks sample rate also.
+    if ([outB lengthInSampleFrames] == [inB lengthInSampleFrames] &&
+	[outB channelCount]         == [inB channelCount]    &&
+	[outB dataFormat]           == [inB dataFormat]      &&
+	[inB dataFormat]            == SND_FORMAT_FLOAT      &&
+	[inB channelCount]          == 2) {
+	
+	float *inD  = (float*) [inB  bytes];
+	float *outD = (float*) [outB bytes];
+	long lengthInFrames  = [inB  lengthInSampleFrames], sampleIndex;
+	
+	// NSLog(@"in SndAudioProcessorDelay processReplacingInputBuffer:\n");
+	
+	for (sampleIndex = 0; sampleIndex < lengthInFrames * 2; sampleIndex += 2) {
+	    outD[sampleIndex]   = inD[sampleIndex]   + chanL[readPos];
+	    outD[sampleIndex+1] = inD[sampleIndex+1] + chanR[readPos];
+	    
+	    chanL[writePos] = outD[sampleIndex]   * feedback; 
+	    chanR[writePos] = outD[sampleIndex+1] * feedback; 
+	    //NSLog(@"chanL[%d] %f, chanR[] %f\n", writePos, chanL[writePos], chanR[writePos]);
+	    
+	    if ((++writePos) >= length)
+		writePos = 0;
+	    if ((++readPos)  >= length)
+		readPos  = 0;
+	}
+	[processingLock unlock];
+	return TRUE;
     }
-  [lock unlock];
-  NSLog(@"SndAudioProcessorDelay::processreplacing: ERR: Buffers have different formats\n");
-  return FALSE;
+    [processingLock unlock];
+    NSLog(@"SndAudioProcessorDelay::processreplacing: ERR: Buffers have different formats\n");
+    return FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
