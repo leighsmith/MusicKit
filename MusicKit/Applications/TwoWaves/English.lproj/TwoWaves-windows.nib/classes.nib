@@ -1,0 +1,64 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                changeLength = id; 
+                play = id; 
+                playA = id; 
+                playB = id; 
+                updateNums = id; 
+                updateSliders = id; 
+                waveChanged = id; 
+            }; 
+            CLASS = Controller; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                freqNum1 = id; 
+                freqNum2 = id; 
+                freqSlide1 = id; 
+                freqSlide2 = id; 
+                mesgBox = id; 
+                playsound = id; 
+                playsoundA = id; 
+                playsoundB = id; 
+                sLength = id; 
+                sound1 = id; 
+                sound2 = id; 
+                sound3 = id; 
+                tempfile = id; 
+                volNum1 = id; 
+                volNum2 = id; 
+                volSlide1 = id; 
+                volSlide2 = id; 
+                waveType1 = id; 
+                waveType2 = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                copy = id; 
+                cut = id; 
+                delete = id; 
+                didPlay = id; 
+                didRecord = id; 
+                hadError = id; 
+                paste = id; 
+                pause = id; 
+                play = id; 
+                record = id; 
+                resume = id; 
+                selectAll = id; 
+                stop = id; 
+                willPlay = id; 
+                willRecord = id; 
+            }; 
+            CLASS = SndView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; sound = id; }; 
+            SUPERCLASS = NSView; 
+        }
+    ); 
+    IBVersion = 1; 
+}
