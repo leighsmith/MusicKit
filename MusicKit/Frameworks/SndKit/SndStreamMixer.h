@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndStreamMixer.h
-//  SndKit
+//  $Id$
 //
-//  Created by skot on Tues Mar 27 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Original Author: SKoT McDonald <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -61,12 +61,15 @@
 
 /*!
   @method     processInBuffer:outBuffer:nowTime:
-  @abstract
-  @discussion
-  @param      inB
-  @param      outB
-  @param      t
-  @result     self.
+  @abstract   Mixes together all clients currently exposed output buffers.
+  @discussion After mixing all client exposed output buffers, processInBuffer:outBuffer:nowTime
+              then applies any audio processing to the mix. Each client then receives the message
+              startProcessingNextBufferWithInput:nowTime:, passing the input buffer, to generate
+              the next buffer.
+  @param      inB The input buffer filled with recorded audio.
+  @param      outB The output buffer to fill for playback.
+  @param      t The current now time.
+  @result     Returns self.
 */
 - processInBuffer: (SndAudioBuffer*) inB
         outBuffer: (SndAudioBuffer*) outB
