@@ -1,18 +1,32 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+
+  Description: 
+    A pseudo-performer that does its work by managing a set of MKPartPerformers.
+    Many of the methods resemble MKPerformer methods, but they operate by
+    doing a broadcast to the contained MKPartPerformers.
+
+    Note that while MKScorePerformer resembles a MKPerformer, it is not identical
+    to a MKPerformer and some care must be taken when using it. For example,
+    the method -noteSenders returns the MKNoteSenders of the MKPartPerformers.
+    The MKScorePerformer itself does not have any MKNoteSenders. Thus, to find
+    the name of one of these, you have to specify the owner as the
+    MKPartPerformer, not as the MKScorePerformer. If you use the MKNoteSender
+    owner method to determine the owner, you won't have any problem.
+ 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* Modification history:
 
    $Log$
+   Revision 1.3  1999/09/04 22:42:22  leigh
+   extra doco from implementation ivar descriptions
+
    Revision 1.2  1999/07/29 01:16:42  leigh
    Added Win32 compatibility, CVS logs, SBs changes
 
@@ -47,56 +61,13 @@
 #import "ScorePerformerPrivate.h"
 
 @implementation MKScorePerformer:NSObject
-  /* A pseudo-performer that does its work by managing a set of PartPerformers.
-     Many of the methods resemble Performer methods, but they operate by
-     doing a broadcast to the contained PartPerformers.
-
-     Note that while ScorePerformer resembles a Performer, it is not identical
-     to a Performer and some care must be taken when using it. For example,
-     the method -noteSenders returns the NoteSenders of the PartPerformers.
-     The ScorePerformer itself does not have any NoteSenders. Thus, to find
-     the name of one of these, you have to specify the owner as the
-     PartPerformer, not as the ScorePerformer. If you use the MKNoteSender
-     owner method to determine the owner, you won't have any problem.
-   */
-{
-    MKPerformerStatus status; /* The object's status. */
-    NSMutableArray *partPerformers;/* A Set of PartPerformers. */
-    id score;         /* The Score to which we're assigned. */
-    double firstTimeTag; /* The smallest timeTag value considered for
-			   performance, as last broadcast to the 
-			   PartPerformers. */
-    double lastTimeTag;   /* The greatest timeTag value considered for 
-			   performance, as last broadcast to the 
-			   PartPerformers.  */
-    double timeShift;	/* The offset time for the object in beats,
-			   as last broadcast to the PartPerformers. */
-    double duration;    /* The duration of the object in beats,
-			   as last broadcast to the PartPerformers. */
-    id conductor;     /* Conductor last broadcast to PartPerformers. */
-    id delegate;
-    id partPerformerClass;
-    BOOL _reservedScorePerformer1;     
-    MKMsgStruct * _deactivateMsgPtr;
-    void *_reservedScorePerformer3; 
-}
-#define _archiveScore _reservedScorePerformer1 /* Unused */
 
 +new
 {
     self = [super allocWithZone:NSDefaultMallocZone()];
     [self init];
-//    [self initialize]; //sb: removed. Unnec.
     return self;
 }
-
-#if 0
-- (void)initialize 
-  /* For backwards compatibility */
-{ 
-    
-} 
-#endif
 
 -init
 {
@@ -591,7 +562,6 @@ static void unsetPartPerformers(MKScorePerformer *self)
      if (status == MK_inactive) /* This is needed to prevent deactivate being
     				   called twice as explained above. */
     	return self;
-//    [self deactivate];  // LMS was deactivateSelf but that is now redundant.
     status = MK_inactive;
     _deactivateMsgPtr = MKCancelMsgRequest(_deactivateMsgPtr);
     if ([delegate respondsToSelector:@selector(performerDidDeactivate:)])

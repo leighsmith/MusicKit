@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/04 22:44:52  leigh
+  extra doco from implementation ivar descriptions
+
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -42,21 +45,20 @@
  * 
  */ 
 {
-    MKPerformerStatus status; /* The object's status. */
-    NSMutableArray *partPerformers; /* A List of the object's PartPerformer instances. */
-    id score; /* The Score with which this object is associated. */     
-    double firstTimeTag; /* Smallest timeTag considered for performance. */
-    double lastTimeTag; /* Greatest timeTag considered for performance. */
-    double timeShift; /* Performance time offset in beats. */
-    double duration; /* Maximum performance duration in beats. */
-    id conductor; /* The object's Conductor (its PartPerformers' Conductor).*/
+    MKPerformerStatus status;       /* The object's status. */
+    NSMutableArray *partPerformers; /* An array of the object's MKPartPerformer instances. */
+    id score;             /* The MKScore with which this object is associated. */     
+    double firstTimeTag;  /* The smallest timeTag value considered for
+                             performance, as last broadcast to the MKPartPerformers. */
+    double lastTimeTag;   /* The greatest timeTag value considered for
+                             performance, as last broadcast to the MKPartPerformers. */
+    double timeShift;	  /* The Performance offset time for the object in beats, as last broadcast to the MKPartPerformers. */
+    double duration;      /* The Maximum performance duration in beats, as last broadcast to the MKPartPerformers. */
+    id conductor; /* The object's MKConductor (its PartPerformers' MKConductor). last broadcast to MKPartPerformers.*/
     id delegate;  /* The object's delegate. */
-    id partPerformerClass; /* The PartPerformer subclass used. */ 
-
+    id partPerformerClass; /* The PartPerformer subclass used. */
     /* The following is for internal use only */
-    BOOL _reservedScorePerformer1;     
     MKMsgStruct * _deactivateMsgPtr;
-    void *_reservedScorePerformer3; 
 }
 
 - init; 
