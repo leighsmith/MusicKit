@@ -747,6 +747,11 @@
 	memcpy((void *) toSound + toSound->dataLocation, [bufferToConvert bytes], [bufferToConvert lengthInBytes]);
 	soundStruct = toSound;
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+	
+	soundFormat.dataFormat = toFormat;
+	soundFormat.frameCount = [bufferToConvert lengthInSampleFrames];
+	soundFormat.sampleRate = toRate;
+	soundFormat.channelCount = toChannelCount;
 	loopStartIndex *= stretchFactor;  // adjust the loop pointers if the sound was resampled.
 	loopEndIndex *= stretchFactor;
 	return SND_ERR_NONE;
