@@ -286,14 +286,35 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 */
 + midi;
 
-  /* theme and variations of initialising an allocated instance */
+/*!
+  @method initOnDevice:hostName:
+  @abstract Initialises an allocated instance for a named MIDI device on a named host.
+  @param devName An NSString naming the device. This should be that obtained from +<b>getDriverNames</b>.
+  @param hostName An NSString naming the host machine that is running the MIDI device. Currently unused.
+  @result Returns an initialised instance.
+ */
 - initOnDevice: (NSString *) devName hostName: (NSString *) hostName;
+
+/*!
+  @method initOnDevice:
+  @abstract Initialises an allocated instance for a named MIDI device on the local host.
+  @param devName An NSString naming the device. This should be that obtained from +<b>getDriverNames</b>.
+  @result Returns an initialised instance.
+ */
 - initOnDevice: (NSString *) devName;
+
+/*!
+  @method init
+  @abstract Initialises an allocated instance on the default MIDI device on the local host.
+  @result Returns an initialised instance.
+ */
 - init;
 
-  /* free object, closing device if it is not already closed. */
-- (void)dealloc;
-
+/*!
+  @method dealloc
+  @abstract free object, closing device if it is not already closed. 
+ */
+- (void) dealloc;
 
 /*!
   @method deviceStatus
@@ -355,10 +376,9 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 
 /*!
   @method close
-  @result Returns an id.
   @discussion Waits for the receiver's output queue to empty and then closes the
               receiver, sets its status to MK_devClosed, and releases the device
-              port.  Returns the receiver.
+              port. 
 */
 - (void) close;
 
@@ -394,7 +414,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               If setOutputTimed:NO is sent, events are sent to the driver with a time
               stamp of 0, indicating they are to be played as soon as they are received.
 
-              See also:  -<b>setOutputTimed</b>
+              See also:  -<b>setOutputTimed:</b>
 */
 - (BOOL) outputIsTimed;
 
@@ -462,9 +482,8 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 */
 - (NSArray *) noteSenders;
   
-- (void)handleMachMessage:(void *)machMessage;
- /*sb: added 30/6/98 to replace MidiIn function */
-
+/* sb: added 30/6/98 to replace MidiIn function */
+- (void) handleMachMessage: (void *) machMessage;
 
 /*!
   @method setUseInputTimeStamps:
@@ -541,14 +560,14 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               receive MK_sysActiveSensing, send [aMidiObj
               acceptSys:MK_activeSensing].  
 */
--acceptSys:(MKMidiParVal)param;
+- acceptSys: (MKMidiParVal) param;
 
 /*!
   @method localDeltaT
   @result Returns a double.
   @discussion Returns the receiver's local delta time in seconds
 */
--(double)localDeltaT;
+- (double) localDeltaT;
 
 /*!
   @method setLocalDeltaT:
@@ -561,7 +580,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               Has no effect if the receiver is not in outputIsTimed mode. 
               The default local delta time is 0.0.
 */
--setLocalDeltaT:(double)value;
+- setLocalDeltaT: (double) value;
 
 /*!
   @method setMergeInput:
@@ -580,7 +599,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   @discussion If the receiver is running, blocks until all enqueued MIDI data has
               been sent to the MIDI cable.
 */
--awaitQueueDrain;
+- awaitQueueDrain;
 
 /*!
   @method allNotesOffBlast
@@ -599,7 +618,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               cable for every key number and MIDI channel for which an unmatched
               MIDI noteOn was previously sent.
 */
--allNotesOff;
+- allNotesOff;
 
 /*!
   @method time
@@ -614,7 +633,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               invoked.    See also:  MKSetDeltaTMode(), MKSetDeltaT() and
               MKConductor.
 */
--(double)time;
+- (double) time;
 
 /*!
   @method getMTCFormat:hours:min:sec:frames:
@@ -632,7 +651,11 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               <i>deltaT</i> mode is <b>MK_DELTAT_SCHEDULER_ADVANCE</b>, the
               returned value has <i>deltaT</i> added to it. 
 */
-- getMTCFormat:(short *)format hours:(short*)h min:(short *)m sec:(short *)s frames:(short *)f;
+- getMTCFormat: (short *) format
+	 hours: (short *) h
+	   min: (short *) m
+	   sec: (short *) s
+	frames: (short *) f;
 
 /*!
   @method synchConductor
@@ -641,13 +664,11 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               MKConductor, this method returns that MKConductor.  Otherwise, it
               returns <b>nil</b>.
 */
--synchConductor;
-
-// Returns NSArrays of all available driver names and their unit numbers
+- synchConductor;
 
 /*!
   @method getDriverNames
-  @result Returns a NSArray *.
+  @result Returns an NSArray instance.
   @discussion Returns the array all available driver names and their
               unit numbers added to the system.  The arrays and
               strings are copied and autoreleased.
@@ -677,16 +698,15 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 
 /*!
   @method getDriverUnits
-  @result Returns a NSArray *.
+  @result Returns a NSArray instance.
   @discussion Returns the array of driver unit numbers added to the system.
 */
 + (NSArray *) getDriverUnits;
 
 /*!
   @method driverName
-  @result Returns an NSString *.
+  @result Returns an NSString instance.
   @discussion Returns the name of the MIDI driver associated with this instance of MKMidi.
-              The string is not copied and should not be freed.
 */
 - (NSString *) driverName;
 
@@ -695,11 +715,11 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   @result Returns an int.
   @discussion Returns the unit associated with this instance of MKMidi.
 */
--(int)driverUnit;
+- (int) driverUnit;
 
 /*!
     @method description
-    @result Returns an NSString.
+    @result Returns an NSString instance.
     @discussion Returns description of which device, the unit and the host the MKMidi
                 object has been initialised on
 */
@@ -712,4 +732,5 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 - (void) downloadDLS: (NSArray *) dlsPatches;
 
 @end
+
 #endif
