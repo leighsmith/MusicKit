@@ -49,11 +49,6 @@ CONDITIONS OF THIS AGREEMENT.
 #import "SndMuLaw.h"
 #import "SndResample.h"
 
-#ifdef USE_MACH_MEMORY_ALLOCATION
-#import <mach/mach_interface.h>
-#import <mach/mach_init.h>
-#endif
-
 #define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
 #ifdef WIN32
 #define LASTCHAR        '\\'
