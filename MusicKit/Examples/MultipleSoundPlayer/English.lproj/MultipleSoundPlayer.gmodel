@@ -1,0 +1,2223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>Object    1</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object    2</string>
+			<string>Object   76</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object    2</key>
+	<dict>
+		<key>className</key>
+		<string>NSApplication</string>
+		<key>isa</key>
+		<string>IMCustomObject</string>
+		<key>realObject</key>
+		<string>Object    3</string>
+	</dict>
+	<key>Object    3</key>
+	<dict>
+		<key>delegate</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>NSApplication</string>
+		<key>keyWindow</key>
+		<string>nil</string>
+		<key>mainMenu</key>
+		<string>Object   44</string>
+		<key>mainWindow</key>
+		<string>nil</string>
+		<key>windows</key>
+		<string>Object    4</string>
+	</dict>
+	<key>Object    4</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object    5</string>
+			<string>Object   25</string>
+			<string>Object   42</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object    5</key>
+	<dict>
+		<key>backgroundColor</key>
+		<string>Object   24</string>
+		<key>backingType</key>
+		<string>2</string>
+		<key>contentFrame</key>
+		<string>{x=378.000000; y=310.000000; width=407.000000; height=230.000000}</string>
+		<key>contentView</key>
+		<string>Object    6</string>
+		<key>frameAutosaveName</key>
+		<string>nil</string>
+		<key>hidesOnDeactivate</key>
+		<string>NO</string>
+		<key>initialFirstResponder</key>
+		<string>Object    6</string>
+		<key>isAutodisplay</key>
+		<string>YES</string>
+		<key>isReleasedWhenClosed</key>
+		<string>NO</string>
+		<key>isVisible</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSWindow</string>
+		<key>level</key>
+		<string>0</string>
+		<key>maxSize</key>
+		<string>{width=340282346638528859811704183484516925440.000000; height=340282346638528859811704183484516925440.000000}</string>
+		<key>minSize</key>
+		<string>{width=0.000000; height=22.000000}</string>
+		<key>representedFilename</key>
+		<string></string>
+		<key>styleMask</key>
+		<string>12</string>
+		<key>title</key>
+		<string>Multiple Sound Playback</string>
+	</dict>
+	<key>Object    6</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=407.000000; height=230.000000}</string>
+		<key>frame</key>
+		<string>{x=0.000000; y=0.000000; width=407.000000; height=230.000000}</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSView</string>
+		<key>nextKeyView</key>
+		<string>Object   22</string>
+		<key>nextResponder</key>
+		<string>Object    5</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object    7</string>
+		<key>superview</key>
+		<string>nil</string>
+	</dict>
+	<key>Object    7</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object    8</string>
+			<string>Object   22</string>
+			<string>Object   13</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object    8</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>9</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=105.000000; height=32.000000}</string>
+		<key>cell</key>
+		<string>Object    9</string>
+		<key>frame</key>
+		<string>{x=288.000000; y=182.000000; width=105.000000; height=32.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSButton</string>
+		<key>nextKeyView</key>
+		<string>Object   13</string>
+		<key>nextResponder</key>
+		<string>Object    6</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object   22</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object    6</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object    9</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>alignment</key>
+		<string>2</string>
+		<key>alternateImage</key>
+		<string>nil</string>
+		<key>alternateTitle</key>
+		<string></string>
+		<key>delay</key>
+		<string>0.200000</string>
+		<key>entryType</key>
+		<string>0</string>
+		<key>font</key>
+		<string>Object   10</string>
+		<key>highlightsBy</key>
+		<string>14</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>imagePosition</key>
+		<string>0</string>
+		<key>interval</key>
+		<string>0.025000</string>
+		<key>isBezeled</key>
+		<string>NO</string>
+		<key>isBordered</key>
+		<string>YES</string>
+		<key>isContinuous</key>
+		<string>NO</string>
+		<key>isEditable</key>
+		<string>NO</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isScrollable</key>
+		<string>NO</string>
+		<key>isSelectable</key>
+		<string>NO</string>
+		<key>isTransparent</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSButtonCell</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>keyEquivalentFont</key>
+		<string>Object   11</string>
+		<key>keyEquivalentModifierMask</key>
+		<string>0</string>
+		<key>sendActionMask</key>
+		<string>0</string>
+		<key>showsStateBy</key>
+		<string>0</string>
+		<key>state</key>
+		<string>0</string>
+		<key>stringValue</key>
+		<string>0</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Play</string>
+		<key>type</key>
+		<string>1</string>
+		<key>wraps</key>
+		<string>YES</string>
+	</dict>
+	<key>Object   10</key>
+	<dict>
+		<key>isa</key>
+		<string>NSFont</string>
+		<key>name</key>
+		<string>LucidaGrande</string>
+		<key>size</key>
+		<string>12.000000</string>
+	</dict>
+	<key>Object   11</key>
+	<dict>
+		<key>isa</key>
+		<string>NSFont</string>
+		<key>name</key>
+		<string>Helvetica</string>
+		<key>size</key>
+		<string>12.000000</string>
+	</dict>
+	<key>Object   12</key>
+	<dict>
+		<key>elements</key>
+		<array/>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   13</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>18</string>
+		<key>backgroundColor</key>
+		<string>Object   21</string>
+		<key>borderType</key>
+		<string>2</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=367.000000; height=157.000000}</string>
+		<key>documentView</key>
+		<string>Object   20</string>
+		<key>frame</key>
+		<string>{x=20.000000; y=20.000000; width=367.000000; height=157.000000}</string>
+		<key>hasHorizontalScroller</key>
+		<string>YES</string>
+		<key>hasVerticalScroller</key>
+		<string>YES</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSScrollView</string>
+		<key>nextKeyView</key>
+		<string>Object   14</string>
+		<key>nextResponder</key>
+		<string>Object    6</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object    8</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object    6</string>
+	</dict>
+	<key>Object   14</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=15.000000}</string>
+		<key>cell</key>
+		<string>nil</string>
+		<key>frame</key>
+		<string>{x=1.000000; y=141.000000; width=350.000000; height=15.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSScroller</string>
+		<key>nextKeyView</key>
+		<string>Object   15</string>
+		<key>nextResponder</key>
+		<string>Object   13</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object   13</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   13</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   15</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>backgroundColor</key>
+		<string>Object   21</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=17.000000}</string>
+		<key>copiesOnScroll</key>
+		<string>YES</string>
+		<key>documentView</key>
+		<string>Object   17</string>
+		<key>drawsBackground</key>
+		<string>YES</string>
+		<key>frame</key>
+		<string>{x=1.000000; y=0.000000; width=350.000000; height=17.000000}</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSClipView</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   13</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object   14</string>
+		<key>subviews</key>
+		<string>Object   16</string>
+		<key>superview</key>
+		<string>Object   13</string>
+	</dict>
+	<key>Object   16</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   17</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   17</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=17.000000}</string>
+		<key>frame</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=17.000000}</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSTableHeaderView</string>
+		<key>nextKeyView</key>
+		<string>Object   18</string>
+		<key>nextResponder</key>
+		<string>Object   15</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object   15</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   15</string>
+	</dict>
+	<key>Object   18</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>backgroundColor</key>
+		<string>Object   21</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=124.000000}</string>
+		<key>copiesOnScroll</key>
+		<string>YES</string>
+		<key>documentView</key>
+		<string>Object   20</string>
+		<key>drawsBackground</key>
+		<string>YES</string>
+		<key>frame</key>
+		<string>{x=1.000000; y=17.000000; width=350.000000; height=124.000000}</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSClipView</string>
+		<key>nextKeyView</key>
+		<string>Object   20</string>
+		<key>nextResponder</key>
+		<string>Object   13</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   19</string>
+		<key>superview</key>
+		<string>Object   13</string>
+	</dict>
+	<key>Object   19</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   20</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   20</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=124.000000}</string>
+		<key>cell</key>
+		<string>nil</string>
+		<key>frame</key>
+		<string>{x=0.000000; y=0.000000; width=350.000000; height=124.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSTableView</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   18</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object   18</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   18</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   21</key>
+	<dict>
+		<key>alpha</key>
+		<string>1.000000</string>
+		<key>blue</key>
+		<string>1.000000</string>
+		<key>brightness</key>
+		<string>1.000000</string>
+		<key>colorSpaceName</key>
+		<string>NSCalibratedRGBColorSpace</string>
+		<key>green</key>
+		<string>1.000000</string>
+		<key>hue</key>
+		<string>0.000000</string>
+		<key>isa</key>
+		<string>NSColor</string>
+		<key>red</key>
+		<string>1.000000</string>
+		<key>saturation</key>
+		<string>0.000000</string>
+	</dict>
+	<key>Object   22</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>12</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=173.000000; height=32.000000}</string>
+		<key>cell</key>
+		<string>Object   23</string>
+		<key>frame</key>
+		<string>{x=14.000000; y=182.000000; width=173.000000; height=32.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSButton</string>
+		<key>nextKeyView</key>
+		<string>Object    8</string>
+		<key>nextResponder</key>
+		<string>Object    6</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>Object    6</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object    6</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   23</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>alignment</key>
+		<string>2</string>
+		<key>alternateImage</key>
+		<string>nil</string>
+		<key>alternateTitle</key>
+		<string></string>
+		<key>delay</key>
+		<string>0.200000</string>
+		<key>entryType</key>
+		<string>0</string>
+		<key>font</key>
+		<string>Object   10</string>
+		<key>highlightsBy</key>
+		<string>14</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>imagePosition</key>
+		<string>0</string>
+		<key>interval</key>
+		<string>0.025000</string>
+		<key>isBezeled</key>
+		<string>NO</string>
+		<key>isBordered</key>
+		<string>YES</string>
+		<key>isContinuous</key>
+		<string>NO</string>
+		<key>isEditable</key>
+		<string>NO</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isScrollable</key>
+		<string>NO</string>
+		<key>isSelectable</key>
+		<string>NO</string>
+		<key>isTransparent</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSButtonCell</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>keyEquivalentFont</key>
+		<string>Object   11</string>
+		<key>keyEquivalentModifierMask</key>
+		<string>0</string>
+		<key>sendActionMask</key>
+		<string>4</string>
+		<key>showsStateBy</key>
+		<string>0</string>
+		<key>state</key>
+		<string>0</string>
+		<key>stringValue</key>
+		<string>0</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Choose Sound Files</string>
+		<key>type</key>
+		<string>1</string>
+		<key>wraps</key>
+		<string>YES</string>
+	</dict>
+	<key>Object   24</key>
+	<dict>
+		<key>colorSpaceName</key>
+		<string>NSPatternColorSpace</string>
+		<key>isa</key>
+		<string>NSColor</string>
+	</dict>
+	<key>Object   25</key>
+	<dict>
+		<key>backgroundColor</key>
+		<string>Object   24</string>
+		<key>backingType</key>
+		<string>2</string>
+		<key>contentFrame</key>
+		<string>{x=167.000000; y=658.000000; width=317.000000; height=168.000000}</string>
+		<key>contentView</key>
+		<string>Object   26</string>
+		<key>frameAutosaveName</key>
+		<string>nil</string>
+		<key>hidesOnDeactivate</key>
+		<string>NO</string>
+		<key>initialFirstResponder</key>
+		<string>nil</string>
+		<key>isAutodisplay</key>
+		<string>YES</string>
+		<key>isReleasedWhenClosed</key>
+		<string>NO</string>
+		<key>isVisible</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSWindow</string>
+		<key>level</key>
+		<string>0</string>
+		<key>maxSize</key>
+		<string>{width=340282346638528859811704183484516925440.000000; height=340282346638528859811704183484516925440.000000}</string>
+		<key>minSize</key>
+		<string>{width=213.000000; height=129.000000}</string>
+		<key>representedFilename</key>
+		<string></string>
+		<key>styleMask</key>
+		<string>14</string>
+		<key>title</key>
+		<string>About Multiple Sound Player</string>
+	</dict>
+	<key>Object   26</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=317.000000; height=168.000000}</string>
+		<key>frame</key>
+		<string>{x=0.000000; y=0.000000; width=317.000000; height=168.000000}</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSView</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   25</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   27</string>
+		<key>superview</key>
+		<string>nil</string>
+	</dict>
+	<key>Object   27</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   28</string>
+			<string>Object   33</string>
+			<string>Object   36</string>
+			<string>Object   39</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   28</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=277.000000; height=29.000000}</string>
+		<key>cell</key>
+		<string>Object   29</string>
+		<key>delegate</key>
+		<string>nil</string>
+		<key>errorAction</key>
+		<string>nil</string>
+		<key>frame</key>
+		<string>{x=20.000000; y=119.000000; width=277.000000; height=29.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSTextField</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   26</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   26</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   29</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>alignment</key>
+		<string>2</string>
+		<key>backgroundColor</key>
+		<string>Object   31</string>
+		<key>drawsBackground</key>
+		<string>NO</string>
+		<key>entryType</key>
+		<string>0</string>
+		<key>font</key>
+		<string>Object   30</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isBezeled</key>
+		<string>NO</string>
+		<key>isBordered</key>
+		<string>NO</string>
+		<key>isContinuous</key>
+		<string>NO</string>
+		<key>isEditable</key>
+		<string>NO</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isScrollable</key>
+		<string>NO</string>
+		<key>isSelectable</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSTextFieldCell</string>
+		<key>sendActionMask</key>
+		<string>0</string>
+		<key>state</key>
+		<string>0</string>
+		<key>stringValue</key>
+		<string>Multiple Sound Player</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>textColor</key>
+		<string>Object   32</string>
+		<key>type</key>
+		<string>1</string>
+		<key>wraps</key>
+		<string>YES</string>
+	</dict>
+	<key>Object   30</key>
+	<dict>
+		<key>isa</key>
+		<string>NSFont</string>
+		<key>name</key>
+		<string>LucidaGrande-Bold</string>
+		<key>size</key>
+		<string>24.000000</string>
+	</dict>
+	<key>Object   31</key>
+	<dict>
+		<key>alpha</key>
+		<string>1.000000</string>
+		<key>blue</key>
+		<string>0.000000</string>
+		<key>brightness</key>
+		<string>0.000000</string>
+		<key>colorSpaceName</key>
+		<string>NSCalibratedRGBColorSpace</string>
+		<key>green</key>
+		<string>0.000000</string>
+		<key>hue</key>
+		<string>0.000000</string>
+		<key>isa</key>
+		<string>NSColor</string>
+		<key>red</key>
+		<string>0.000000</string>
+		<key>saturation</key>
+		<string>0.000000</string>
+	</dict>
+	<key>Object   32</key>
+	<dict>
+		<key>alpha</key>
+		<string>1.000000</string>
+		<key>blue</key>
+		<string>0.000000</string>
+		<key>brightness</key>
+		<string>0.000000</string>
+		<key>colorSpaceName</key>
+		<string>NSCalibratedRGBColorSpace</string>
+		<key>green</key>
+		<string>0.000000</string>
+		<key>hue</key>
+		<string>0.000000</string>
+		<key>isa</key>
+		<string>NSColor</string>
+		<key>red</key>
+		<string>0.000000</string>
+		<key>saturation</key>
+		<string>0.000000</string>
+	</dict>
+	<key>Object   33</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=159.000000; height=22.000000}</string>
+		<key>cell</key>
+		<string>Object   34</string>
+		<key>delegate</key>
+		<string>nil</string>
+		<key>errorAction</key>
+		<string>nil</string>
+		<key>frame</key>
+		<string>{x=74.000000; y=89.000000; width=159.000000; height=22.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSTextField</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   26</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   26</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   34</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>alignment</key>
+		<string>0</string>
+		<key>backgroundColor</key>
+		<string>Object   31</string>
+		<key>drawsBackground</key>
+		<string>NO</string>
+		<key>entryType</key>
+		<string>0</string>
+		<key>font</key>
+		<string>Object   35</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isBezeled</key>
+		<string>NO</string>
+		<key>isBordered</key>
+		<string>NO</string>
+		<key>isContinuous</key>
+		<string>NO</string>
+		<key>isEditable</key>
+		<string>NO</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isScrollable</key>
+		<string>NO</string>
+		<key>isSelectable</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSTextFieldCell</string>
+		<key>sendActionMask</key>
+		<string>0</string>
+		<key>state</key>
+		<string>0</string>
+		<key>stringValue</key>
+		<string>A SndKit example</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>textColor</key>
+		<string>Object   32</string>
+		<key>type</key>
+		<string>1</string>
+		<key>wraps</key>
+		<string>YES</string>
+	</dict>
+	<key>Object   35</key>
+	<dict>
+		<key>isa</key>
+		<string>NSFont</string>
+		<key>name</key>
+		<string>LucidaGrande</string>
+		<key>size</key>
+		<string>18.000000</string>
+	</dict>
+	<key>Object   36</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=274.000000; height=34.000000}</string>
+		<key>cell</key>
+		<string>Object   37</string>
+		<key>delegate</key>
+		<string>nil</string>
+		<key>errorAction</key>
+		<string>nil</string>
+		<key>frame</key>
+		<string>{x=17.000000; y=20.000000; width=274.000000; height=34.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSTextField</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   26</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   26</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   37</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>alignment</key>
+		<string>2</string>
+		<key>backgroundColor</key>
+		<string>Object   31</string>
+		<key>drawsBackground</key>
+		<string>NO</string>
+		<key>entryType</key>
+		<string>0</string>
+		<key>font</key>
+		<string>Object   38</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isBezeled</key>
+		<string>NO</string>
+		<key>isBordered</key>
+		<string>NO</string>
+		<key>isContinuous</key>
+		<string>NO</string>
+		<key>isEditable</key>
+		<string>NO</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isScrollable</key>
+		<string>NO</string>
+		<key>isSelectable</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSTextFieldCell</string>
+		<key>sendActionMask</key>
+		<string>0</string>
+		<key>state</key>
+		<string>0</string>
+		<key>stringValue</key>
+		<string>By Leigh M. Smith &lt;leigh@tomandandy.com&gt;</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>textColor</key>
+		<string>Object   32</string>
+		<key>type</key>
+		<string>1</string>
+		<key>wraps</key>
+		<string>YES</string>
+	</dict>
+	<key>Object   38</key>
+	<dict>
+		<key>isa</key>
+		<string>NSFont</string>
+		<key>name</key>
+		<string>LucidaGrande</string>
+		<key>size</key>
+		<string>13.000000</string>
+	</dict>
+	<key>Object   39</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>NO</string>
+		<key>autoresizingMask</key>
+		<string>0</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=148.000000; height=14.000000}</string>
+		<key>cell</key>
+		<string>Object   40</string>
+		<key>delegate</key>
+		<string>nil</string>
+		<key>errorAction</key>
+		<string>nil</string>
+		<key>frame</key>
+		<string>{x=83.000000; y=67.000000; width=148.000000; height=14.000000}</string>
+		<key>ignoresMultiClick</key>
+		<string>NO</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSTextField</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   26</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>Object   26</string>
+		<key>tag</key>
+		<string>0</string>
+	</dict>
+	<key>Object   40</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>alignment</key>
+		<string>0</string>
+		<key>backgroundColor</key>
+		<string>Object   31</string>
+		<key>drawsBackground</key>
+		<string>NO</string>
+		<key>entryType</key>
+		<string>0</string>
+		<key>font</key>
+		<string>Object   41</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isBezeled</key>
+		<string>NO</string>
+		<key>isBordered</key>
+		<string>NO</string>
+		<key>isContinuous</key>
+		<string>NO</string>
+		<key>isEditable</key>
+		<string>NO</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isScrollable</key>
+		<string>NO</string>
+		<key>isSelectable</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSTextFieldCell</string>
+		<key>sendActionMask</key>
+		<string>0</string>
+		<key>state</key>
+		<string>0</string>
+		<key>stringValue</key>
+		<string>http://www.musickit.org</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>textColor</key>
+		<string>Object   32</string>
+		<key>type</key>
+		<string>1</string>
+		<key>wraps</key>
+		<string>YES</string>
+	</dict>
+	<key>Object   41</key>
+	<dict>
+		<key>isa</key>
+		<string>NSFont</string>
+		<key>name</key>
+		<string>LucidaGrande</string>
+		<key>size</key>
+		<string>11.000000</string>
+	</dict>
+	<key>Object   42</key>
+	<dict>
+		<key>backgroundColor</key>
+		<string>Object   31</string>
+		<key>backingType</key>
+		<string>2</string>
+		<key>contentFrame</key>
+		<string>{x=0.000000; y=0.000000; width=19.000000; height=19.000000}</string>
+		<key>contentView</key>
+		<string>Object   43</string>
+		<key>frameAutosaveName</key>
+		<string>nil</string>
+		<key>hidesOnDeactivate</key>
+		<string>NO</string>
+		<key>initialFirstResponder</key>
+		<string>nil</string>
+		<key>isAutodisplay</key>
+		<string>NO</string>
+		<key>isReleasedWhenClosed</key>
+		<string>NO</string>
+		<key>isVisible</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSWindow</string>
+		<key>level</key>
+		<string>0</string>
+		<key>maxSize</key>
+		<string>{width=340282346638528859811704183484516925440.000000; height=340282346638528859811704183484516925440.000000}</string>
+		<key>minSize</key>
+		<string>{width=0.000000; height=0.000000}</string>
+		<key>representedFilename</key>
+		<string></string>
+		<key>styleMask</key>
+		<string>0</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   43</key>
+	<dict>
+		<key>autoresizesSubviews</key>
+		<string>YES</string>
+		<key>autoresizingMask</key>
+		<string>18</string>
+		<key>bounds</key>
+		<string>{x=0.000000; y=0.000000; width=19.000000; height=19.000000}</string>
+		<key>frame</key>
+		<string>{x=0.000000; y=0.000000; width=19.000000; height=19.000000}</string>
+		<key>interfaceStyle</key>
+		<string>0</string>
+		<key>isa</key>
+		<string>NSView</string>
+		<key>nextKeyView</key>
+		<string>nil</string>
+		<key>nextResponder</key>
+		<string>Object   42</string>
+		<key>postsBoundsChangedNotifications</key>
+		<string>YES</string>
+		<key>postsFrameChangedNotifications</key>
+		<string>YES</string>
+		<key>previousKeyView</key>
+		<string>nil</string>
+		<key>subviews</key>
+		<string>Object   12</string>
+		<key>superview</key>
+		<string>nil</string>
+	</dict>
+	<key>Object   44</key>
+	<dict>
+		<key>autoenablesItems</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenu</string>
+		<key>itemArray</key>
+		<string>Object   45</string>
+		<key>title</key>
+		<string>MultipleSoundPlayer-macos</string>
+	</dict>
+	<key>Object   45</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   46</string>
+			<string>Object   61</string>
+			<string>Object   72</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   46</key>
+	<dict>
+		<key>action</key>
+		<string>submenuAction:</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>Object   47</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>Object   47</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   47</key>
+	<dict>
+		<key>autoenablesItems</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenu</string>
+		<key>itemArray</key>
+		<string>Object   48</string>
+		<key>title</key>
+		<string>Apple</string>
+	</dict>
+	<key>Object   48</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   49</string>
+			<string>Object   52</string>
+			<string>Object   53</string>
+			<string>Object   55</string>
+			<string>Object   56</string>
+			<string>Object   57</string>
+			<string>Object   58</string>
+			<string>Object   59</string>
+			<string>Object   60</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   49</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>About Multiple Sound Player</string>
+	</dict>
+	<key>Object   50</key>
+	<dict>
+		<key>isa</key>
+		<string>NSImage</string>
+		<key>name</key>
+		<string>NSMenuCheckmark</string>
+		<key>size</key>
+		<string>{width=9.000000; height=8.000000}</string>
+	</dict>
+	<key>Object   51</key>
+	<dict>
+		<key>isa</key>
+		<string>NSImage</string>
+		<key>name</key>
+		<string>NSMenuMixedState</string>
+		<key>size</key>
+		<string>{width=7.000000; height=2.000000}</string>
+	</dict>
+	<key>Object   52</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   53</key>
+	<dict>
+		<key>action</key>
+		<string>submenuAction:</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>Object   54</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>Object   54</string>
+		<key>title</key>
+		<string>Services</string>
+	</dict>
+	<key>Object   54</key>
+	<dict>
+		<key>autoenablesItems</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenu</string>
+		<key>itemArray</key>
+		<string>Object   12</string>
+		<key>title</key>
+		<string>Services</string>
+	</dict>
+	<key>Object   55</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   56</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string>h</string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Hide Application</string>
+	</dict>
+	<key>Object   57</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Hide Others</string>
+	</dict>
+	<key>Object   58</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Show All</string>
+	</dict>
+	<key>Object   59</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   60</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string>q</string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Quit Application</string>
+	</dict>
+	<key>Object   61</key>
+	<dict>
+		<key>action</key>
+		<string>submenuAction:</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>Object   62</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>Object   62</string>
+		<key>title</key>
+		<string>Window</string>
+	</dict>
+	<key>Object   62</key>
+	<dict>
+		<key>autoenablesItems</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenu</string>
+		<key>itemArray</key>
+		<string>Object   63</string>
+		<key>title</key>
+		<string>Window</string>
+	</dict>
+	<key>Object   63</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   64</string>
+			<string>Object   65</string>
+			<string>Object   66</string>
+			<string>Object   67</string>
+			<string>Object   68</string>
+			<string>Object   69</string>
+			<string>Object   70</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   64</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string>w</string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Close Window</string>
+	</dict>
+	<key>Object   65</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Zoom Window</string>
+	</dict>
+	<key>Object   66</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string>m</string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Minimize Window</string>
+	</dict>
+	<key>Object   67</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   68</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Arrange in Front</string>
+	</dict>
+	<key>Object   69</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>NO</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string></string>
+	</dict>
+	<key>Object   70</key>
+	<dict>
+		<key>action</key>
+		<string>makeKeyAndOrderFront:</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   71</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>Object    5</string>
+		<key>title</key>
+		<string>Multiple Sound Playback</string>
+	</dict>
+	<key>Object   71</key>
+	<dict>
+		<key>isa</key>
+		<string>NSImage</string>
+		<key>name</key>
+		<string>NSMenuWindowDirtyState</string>
+		<key>size</key>
+		<string>{width=3.000000; height=3.000000}</string>
+	</dict>
+	<key>Object   72</key>
+	<dict>
+		<key>action</key>
+		<string>submenuAction:</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string></string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>Object   73</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>Object   73</string>
+		<key>title</key>
+		<string>Help</string>
+	</dict>
+	<key>Object   73</key>
+	<dict>
+		<key>autoenablesItems</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenu</string>
+		<key>itemArray</key>
+		<string>Object   74</string>
+		<key>title</key>
+		<string>Help</string>
+	</dict>
+	<key>Object   74</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   75</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   75</key>
+	<dict>
+		<key>action</key>
+		<string>nil</string>
+		<key>image</key>
+		<string>nil</string>
+		<key>isEnabled</key>
+		<string>YES</string>
+		<key>isa</key>
+		<string>NSMenuItem</string>
+		<key>keyEquivalent</key>
+		<string>a</string>
+		<key>mixedStateImage</key>
+		<string>Object   51</string>
+		<key>offStateImage</key>
+		<string>nil</string>
+		<key>onStateImage</key>
+		<string>Object   50</string>
+		<key>representedObject</key>
+		<string>nil</string>
+		<key>state</key>
+		<string>0</string>
+		<key>submenu</key>
+		<string>nil</string>
+		<key>tag</key>
+		<string>0</string>
+		<key>target</key>
+		<string>nil</string>
+		<key>title</key>
+		<string>Help</string>
+	</dict>
+	<key>Object   76</key>
+	<dict>
+		<key>className</key>
+		<string>SoundPlayerController</string>
+		<key>isa</key>
+		<string>IMCustomObject</string>
+	</dict>
+	<key>Object   77</key>
+	<dict>
+		<key>elements</key>
+		<array>
+			<string>Object   78</string>
+			<string>Object   80</string>
+			<string>Object   82</string>
+			<string>Object   84</string>
+			<string>Object   86</string>
+			<string>Object   88</string>
+			<string>Object   90</string>
+			<string>Object   92</string>
+			<string>Object   94</string>
+			<string>Object   96</string>
+			<string>Object   98</string>
+			<string>Object  100</string>
+			<string>Object  102</string>
+			<string>Object  104</string>
+		</array>
+		<key>isa</key>
+		<string>NSMutableArray</string>
+	</dict>
+	<key>Object   78</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   79</string>
+		<key>source</key>
+		<string>Object   66</string>
+	</dict>
+	<key>Object   79</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>performMiniaturize:</string>
+	</dict>
+	<key>Object   80</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   81</string>
+		<key>source</key>
+		<string>Object   64</string>
+	</dict>
+	<key>Object   81</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>performClose:</string>
+	</dict>
+	<key>Object   82</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   83</string>
+		<key>source</key>
+		<string>Object   68</string>
+	</dict>
+	<key>Object   83</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>arrangeInFront:</string>
+	</dict>
+	<key>Object   84</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   85</string>
+		<key>source</key>
+		<string>Object   75</string>
+	</dict>
+	<key>Object   85</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>showHelp:</string>
+	</dict>
+	<key>Object   86</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   87</string>
+		<key>source</key>
+		<string>Object   65</string>
+	</dict>
+	<key>Object   87</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>performZoom:</string>
+	</dict>
+	<key>Object   88</key>
+	<dict>
+		<key>destination</key>
+		<string>Object   76</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   89</string>
+		<key>source</key>
+		<string>Object    8</string>
+	</dict>
+	<key>Object   89</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>playSound:</string>
+	</dict>
+	<key>Object   90</key>
+	<dict>
+		<key>destination</key>
+		<string>Object    8</string>
+		<key>isa</key>
+		<string>IMOutletConnector</string>
+		<key>label</key>
+		<string>Object   91</string>
+		<key>source</key>
+		<string>Object   76</string>
+	</dict>
+	<key>Object   91</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>playButton</string>
+	</dict>
+	<key>Object   92</key>
+	<dict>
+		<key>destination</key>
+		<string>Object   76</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   93</string>
+		<key>source</key>
+		<string>Object   22</string>
+	</dict>
+	<key>Object   93</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>chooseSoundFile:</string>
+	</dict>
+	<key>Object   94</key>
+	<dict>
+		<key>destination</key>
+		<string>Object   20</string>
+		<key>isa</key>
+		<string>IMOutletConnector</string>
+		<key>label</key>
+		<string>Object   95</string>
+		<key>source</key>
+		<string>Object   76</string>
+	</dict>
+	<key>Object   95</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>soundFileNameTextBox</string>
+	</dict>
+	<key>Object   96</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   97</string>
+		<key>source</key>
+		<string>Object   58</string>
+	</dict>
+	<key>Object   97</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>unhideAllApplications:</string>
+	</dict>
+	<key>Object   98</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object   99</string>
+		<key>source</key>
+		<string>Object   56</string>
+	</dict>
+	<key>Object   99</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>hide:</string>
+	</dict>
+	<key>Object  100</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object  101</string>
+		<key>source</key>
+		<string>Object   60</string>
+	</dict>
+	<key>Object  101</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>terminate:</string>
+	</dict>
+	<key>Object  102</key>
+	<dict>
+		<key>destination</key>
+		<string>nil</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object  103</string>
+		<key>source</key>
+		<string>Object   57</string>
+	</dict>
+	<key>Object  103</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>hideOtherApplications:</string>
+	</dict>
+	<key>Object  104</key>
+	<dict>
+		<key>destination</key>
+		<string>Object   25</string>
+		<key>isa</key>
+		<string>IMControlConnector</string>
+		<key>label</key>
+		<string>Object  105</string>
+		<key>source</key>
+		<string>Object   49</string>
+	</dict>
+	<key>Object  105</key>
+	<dict>
+		<key>isa</key>
+		<string>NSMutableString</string>
+		<key>string</key>
+		<string>makeKeyAndOrderFront:</string>
+	</dict>
+	<key>RootObject</key>
+	<dict>
+		<key>Connections</key>
+		<string>Object   77</string>
+		<key>Objects</key>
+		<string>Object    1</string>
+		<key>isa</key>
+		<string>GMModel</string>
+	</dict>
+	<key>TopLevelObjects</key>
+	<array>
+		<string>RootObject</string>
+	</array>
+	<key>Version</key>
+	<string>1</string>
+</dict>
+</plist>
