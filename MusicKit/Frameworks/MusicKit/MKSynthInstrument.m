@@ -43,6 +43,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/05/27 19:12:56  leigh
+  Converted taggedPatches and controllerTable to NSMutableDictionary from HashTable
+
   Revision 1.6  2000/05/24 03:46:23  leigh
   Removed use of Storage, replacing with SynthPatchList object
 
@@ -93,9 +96,6 @@ Modification history:
   11/17/92/daj - Added allNotesOff.  Also minor changes to shut up compiler warnings.
   11/28/96/daj - Minor optimization 
 */
-
-//#import <objc/Storage.h>
-#import <objc/HashTable.h>
 
 #import "_musickit.h"
 #import "_error.h"
@@ -225,8 +225,8 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     if ([self retainCount] == 2) {
         [self abort];
         [updates release];
-        [controllerTable free];//sb: free these 2 because they are old-style hashtables
-        [taggedPatches free];
+        [controllerTable release];
+        [taggedPatches release];
         [_patchLists release];
         [super release]; /* release the "alloc" copy */
         _MKOrchRemoveSynthIns(self); /* release the "array" copy, which will now dealloc */
@@ -243,8 +243,8 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     _MKLinkUnreferencedClasses([MKSynthPatch class]);
     [super init];
     _patchLists = initPatchLists(nil);
-    taggedPatches = [HashTable newKeyDesc:"i"];
-    controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
+    taggedPatches = [[NSMutableDictionary dictionary] retain];
+    controllerTable = [[NSMutableDictionary dictionary] retain];
     [self addNoteReceiver:aNoteRec];
     [aNoteRec release];
     updates = [MKGetNoteClass() new];  /* For remembering partUpdate parameter values on this channel. */
@@ -259,10 +259,9 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
      has no synth patches allocated. */
 {
     MKSynthInstrument *newObj = [super copyWithZone:zone];
-    newObj->_patchLists = [NSMutableArray array];
-//      [Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR cString]];
-    newObj->taggedPatches = [HashTable newKeyDesc:"i"];
-    newObj->controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
+    newObj->_patchLists = [[NSMutableArray array] retain];
+    newObj->taggedPatches = [[NSMutableDictionary dictionary] retain];
+    newObj->controllerTable = [[NSMutableDictionary dictionary] retain];
     newObj->updates = [MKGetNoteClass() new];  
     /* For remembering no-tag noteUpdate parameter values on this channel. */
     [newObj->updates setNoteType:MK_noteUpdate];
@@ -359,8 +358,8 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
 			&aPatchList->activeNewest,
 			&aPatchList->activeOldest,
 			_MK_ACTIVELIST);
-    if (oldNoteTag != MAXINT) 
-      [self->taggedPatches removeKey:(const void *)oldNoteTag];
+    if (oldNoteTag != MAXINT)
+        [self->taggedPatches removeObjectForKey: [NSNumber numberWithInt: oldNoteTag]];
     _MKSynthPatchSetInfo(*currentPatch,newNoteTag,self);
     /* This function returns self almost all the time. The exception is 
        when the preemption happens right now and the SynthPatch noteOn
@@ -456,8 +455,8 @@ static void alternatePatchMsg(void)
     noteTag = [aNote noteTag];
     curNoteType = [aNote noteType];
 
-    if (noteTag != MAXINT)       
-      currentPatch =  (id)[taggedPatches valueForKey:(const void *)noteTag];
+    if (noteTag != MAXINT)
+        currentPatch = [taggedPatches objectForKey: [NSNumber numberWithInt: noteTag]];
     else switch(curNoteType) {
       case MK_noteDur:
       case MK_noteUpdate:
@@ -591,9 +590,8 @@ static void alternatePatchMsg(void)
 				&aPatchList->activeOldest,_MK_ACTIVELIST);
     		[currentPatch release]; /* since we had received a retained patch */
 	      /* Add to taggedPatchSet. */
-	      if (noteTag != MAXINT) 
-		[taggedPatches insertKey:(const void *)noteTag value:
-		 (void *)currentPatch];
+	      if (noteTag != MAXINT)
+                    [taggedPatches setObject: currentPatch forKey: [NSNumber numberWithInt: noteTag]];
 	      if (phraseStatus == MK_phraseOnPreempt)
 		return self;
 	      [currentPatch controllerValues:controllerTable];
@@ -639,8 +637,7 @@ static void alternatePatchMsg(void)
 		    controlVal = MKGetNoteParAsInt(updates,MK_controlVal);
 		    [updates removePar:MK_controlChange];
 		    if (controlVal != MAXINT)  {
-			[controllerTable insertKey:(const void *)controller 
-		         value:(void *)controlVal];
+                        [controllerTable setObject: [NSNumber numberWithInt: controlVal] forKey: [NSNumber numberWithInt: controller]];
 			[updates removePar:MK_controlVal];
 		    }
 		}
@@ -871,8 +868,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
    clears controller info.
  */
 {
-//    [controllerTable removeAllObjects];
-    [controllerTable empty];//sb: empty instead of removeAllObjects cos it's a HashTable
+    [controllerTable removeAllObjects];
     [updates release];
     updates = [MKGetNoteClass() new];  
     [updates setNoteType:MK_noteUpdate];
@@ -989,7 +985,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
     return aPatchList->manualCount;
 }
 
--getUpdates:(MKNote **)aNoteUpdate controllerValues:(HashTable **)controllers
+-getUpdates:(MKNote **)aNoteUpdate controllerValues:(NSMutableDictionary **) controllers
 /* Returns by reference the NoteUpdate used to store the accumulated 
    noteUpdate state. Also returns by reference the HashTable used to 
    store the state of the controllers. Any alterations to the returned
@@ -1020,7 +1016,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
      See write:. */
 {
     [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"SynthInstrument"] == VERSION2){
+    if ([aDecoder versionForClassName:@"MKSynthInstrument"] == VERSION2){
 	[aDecoder decodeValuesOfObjCTypes:"#sc",&synthPatchClass,&allocMode,
 		    &retainUpdates];
 	if (retainUpdates) 
@@ -1028,9 +1024,9 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
     }
     /* from awake (sb) */
     _patchLists = initPatchLists(nil);
-    taggedPatches = [HashTable newKeyDesc:"i"];
+    taggedPatches = [[NSMutableDictionary dictionary] retain];
     if (!controllerTable)
-      controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
+        controllerTable = [[NSMutableDictionary dictionary] retain];
     if (!updates) {
         updates = [MKGetNoteClass() new];
         [updates setNoteType:MK_noteUpdate];
@@ -1040,27 +1036,6 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 /****/
     return self;
 }
-
-//- awake
-  /* Makes unarchived object ready for use. */
-//{
-    /* See initialize above. */
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-//    [super awake];
-/*
-    _patchLists = initPatchLists(nil);
-    taggedPatches = [HashTable newKeyDesc:"i"];
-    if (!controllerTable)
-      controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
-    if (!updates) {
-	updates = [MKGetNoteClass() new];
-	[updates setNoteType:MK_noteUpdate];
-    }
-    orchestra = _MKClassOrchestra();
-    _MKOrchAddSynthIns(self);
- */
-//    return self;
-//}
 
 @end
 
@@ -1089,7 +1064,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 {
     SynthPatchList *aPatchList = getList(self,aTemplate);
     if (noteTag != MAXINT)
-      [taggedPatches removeKey:(void *)noteTag];
+        [taggedPatches removeObjectForKey: [NSNumber numberWithInt: noteTag]];
     if (!aPatchList) {            /* This happens if the synthPatchClass is 
 				     changed. */
 	SynthPatchList *orphanList = (SynthPatchList *)[_patchLists objectAtIndex:0];

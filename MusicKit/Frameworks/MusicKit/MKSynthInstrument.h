@@ -45,6 +45,9 @@
  Modification history:
 
   $Log$
+  Revision 1.6  2000/05/27 19:12:56  leigh
+  Converted taggedPatches and controllerTable to NSMutableDictionary from HashTable
+
   Revision 1.5  2000/05/24 03:46:23  leigh
   Removed use of Storage, replacing with SynthPatchList object
 
@@ -64,17 +67,17 @@
 
 #import "MKInstrument.h"
 #import "MKNote.h"
-#import <objc/HashTable.h>
+//#import <objc/HashTable.h>
 
 @interface MKSynthInstrument : MKInstrument
 {
-    id synthPatchClass;          /* class used to create patches. */
-    unsigned short allocMode;    /* One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
-    HashTable * taggedPatches;   /* HashTable mapping noteTags to SynthPatches */
-    HashTable * controllerTable; /* HashTable mapping MIDI controllers to values */
-    id updates;                  /* Note for storing common (no noteTag) updates. */
-    BOOL retainUpdates;          /* NO if updates and controllerTable are cleared after each performance. */
-    MKOrchestra *orchestra;      /* Orchestra to allocate SynthPatches from */
+    id synthPatchClass;                   /* class used to create patches. */
+    unsigned short allocMode;             /* One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
+    NSMutableDictionary *taggedPatches;   /* Dictionary mapping noteTags to MKSynthPatches */
+    NSMutableDictionary *controllerTable; /* Dictionary mapping MIDI controllers to values */
+    MKNote *updates;                      /* MKNote for storing common (no noteTag) updates. */
+    BOOL retainUpdates;                   /* NO if updates and controllerTable are cleared after each performance. */
+    MKOrchestra *orchestra;               /* MKOrchestra to allocate MKSynthPatches from */
 
     /* The following for internal use only */
     NSMutableArray *_patchLists;
@@ -228,14 +231,14 @@ Returns the recevier's allocation mode, one of MK_AUTOALLOC or MK_MANUALALLOC.
 /* Returns whether the noteUpdate and controller state is retained from
    performance to performance. */
 
--getUpdates:(MKNote **)aNoteUpdate controllerValues:(HashTable **)controllers;
-/* Returns by reference the Note used to store the accumulated 
-   noteUpdate state. Also returns by reference the HashTable used to 
+-getUpdates:(MKNote **)aNoteUpdate controllerValues:(NSMutableDictionary **) controllers;
+/* Returns by reference the MKNote used to store the accumulated 
+   noteUpdate state. Also returns by reference the NSDictionary used to 
    store the state of the controllers. Any alterations to the returned
    objects will effect future phrases. The returned objects should be 
    used only immediately after they are returned. If clearUpdates is
    sent or the performance ends, the objects may be emptied or freed by the 
-   SynthInstrument.  */
+   MKSynthInstrument.  */
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
   /* 
