@@ -44,22 +44,20 @@
  */
 
 //#define USE_MACH_MEMORY_ALLOCATION
-#import <MKPerformSndMIDI/PerformSound.h>
 #import "SndKitDefines.h"
 #import "SndFormat.h"
 
 #ifdef GNUSTEP
 # import <Foundation/NSArray.h>
-# import "sounderror.h"
 # include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 # include <stdio.h>     /* for FILE */
 #else
 # ifndef USE_NEXTSTEP_SOUND_IO
 #  import <Foundation/Foundation.h>
-#  import "sounderror.h"
 # endif
 #endif /* GNUSTEP */
 
+#import "SndError.h"
 #import "SndEndianFunctions.h"
 
 /*!
