@@ -18,6 +18,9 @@
   Modification history:
 
   $Log$
+  Revision 1.27  2002/04/08 17:35:44  sbrandon
+  added newline at end of file
+
   Revision 1.26  2002/03/20 17:05:11  sbrandon
   New delegate message passing system, between any thread and the
   appkit thread. This is basically the same as that in the SndKit
