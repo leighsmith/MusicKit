@@ -58,12 +58,12 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 - (void)setEnvelopeClass:(id)aClass
 {
     envClass = aClass;
-    bpBeforeOrEqual = (BpBeforeOrEqualIMP)[envClass instanceMethodFor:bpBeforeOrEqualSel];
-    bpAfter = (BpAfterIMP)[envClass instanceMethodFor:bpAfterSel];
-    flagsForBp = (FlagsForBpIMP)[envClass instanceMethodFor:flagsForBpSel];
-    yForBp = (YForBpIMP)[envClass instanceMethodFor:yForBpSel];
-    yForX = (YForXIMP)[envClass instanceMethodFor:yForXSel];
-    xForBp = (XForBpIMP)[envClass instanceMethodFor:xForBpSel];
+    bpBeforeOrEqual = (BpBeforeOrEqualIMP)[envClass instanceMethodForSelector:bpBeforeOrEqualSel];
+    bpAfter = (BpAfterIMP)[envClass instanceMethodForSelector:bpAfterSel];
+    flagsForBp = (FlagsForBpIMP)[envClass instanceMethodForSelector:flagsForBpSel];
+    yForBp = (YForBpIMP)[envClass instanceMethodForSelector:yForBpSel];
+    yForX = (YForXIMP)[envClass instanceMethodForSelector:yForXSel];
+    xForBp = (XForBpIMP)[envClass instanceMethodForSelector:xForBpSel];
 }
 
 - (id)envelopeClass
