@@ -17,17 +17,15 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/11/10 23:12:11  leigh
+  First stab at CoreMIDI support, changed return and port types to be more transparent.
+
   Revision 1.1  2000/10/29 06:06:37  leigh
   Replaced the C code with ObjC so we can pass NSPorts
 
-  Revision 1.2  2000/05/05 22:41:09  leigh
-  kludge around type definitions
-
-  Revision 1.1  2000/03/11 01:42:20  leigh
-  Initial Release
-
 */
 #include "midi_driver.h"
+#include <CoreMIDI/MIDIServices.h>
 
 #define FUNCLOG 1
 
@@ -41,16 +39,86 @@ FILE *debug; // precedes extern "C".
 extern "C" {
 #endif 
 
-  //static REFERENCE_TIME quantumFactor; // multiplicative factor difference between MusicKit quantum and REFERENCE_TIME
-  //static REFERENCE_TIME datumRefTime;
-  //static int datumMSecTime;
+// multiplicative factor difference between MusicKit quantum and MIDITimeStamp
+static MIDITimeStamp   quantumFactor; 
+static MIDITimeStamp   datumRefTime;
+static int             datumMSecTime;
+
+static MIDIClientRef   client = NULL;   // handle indicating we are a client of the MIDI server.
+static MIDIPortRef     outPort = NULL;
+static MIDIPortRef     inPort = NULL;
+static MIDIEndpointRef claimedDestinationUnit = NULL;
+static MIDIEndpointRef claimedSourceUnit = NULL;
+static MKMDReplyFunctions *userFuncs;   // functions to be called on reception from the driver.
+
+static MKMDReplyPort   dataReplyPort;	// NSPort-like port to reply received MIDI on.
+static port_t          queue_port;	// port_t port to reply when queue is available.
+
+// TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
+static int timeStampToMKTime(timeStamp)
+{
+    return (int) (timeStamp - datumRefTime) / quantumFactor;
+}
+
+// called on reception of MIDI packets.
+static void readProc(const MIDIPacketList *pktlist, void *refCon, void *connRefCon)
+{
+    unsigned int packetIndex;
+    int dataIndex;
+
+//    if (outPort != NULL && claimedDestinationUnit != NULL) {
+//    if (userFuncs->dataReply) {
+    if (1) {
+        MIDIPacket *packet = (MIDIPacket *)pktlist->packet;	// remove const (!)
+        for (packetIndex = 0; packetIndex < pktlist->numPackets; ++packetIndex) {
+            MKMDRawEvent *events = (MKMDRawEvent *) malloc(sizeof(MKMDRawEvent) * packet->length);
+
+            printf("received packet of %d: ", packet->length);
+            for (dataIndex = 0; dataIndex < packet->length; ++dataIndex) {
+                printf("%02X ", packet->data[dataIndex]);
+                events[dataIndex].byte = packet->data[dataIndex];
+                events[dataIndex].time = timeStampToMKTime(packet->timeStamp);
+            }
+            printf("\n");
+            claimedSourceUnit = 0; // determine from refCon and connRefCon
+            free(events);
+            packet = MIDIPacketNext(packet);
+        }
+    }
+}
 
 // retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
 PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
-    static char *silentDriver = "silent MIDI Driver";
+    const char **driverList;
+    int i, n;
+    CFStringRef pname, pmanuf, pmodel;
+    char name[64], manuf[64], model[64];
+	
+    // enumerate devices 
+    n = MIDIGetNumberOfDevices();
+    driverList = (char **) calloc(n, sizeof(char *));
+    for (i = 0; i < n; ++i) {
+        MIDIDeviceRef dev = MIDIGetDevice(i);
+        
+        MIDIObjectGetStringProperty(dev, kMIDIPropertyName, &pname);
+        MIDIObjectGetStringProperty(dev, kMIDIPropertyManufacturer, &pmanuf);
+        MIDIObjectGetStringProperty(dev, kMIDIPropertyModel, &pmodel);
+        
+        CFStringGetCString(pname, name, sizeof(name), 0);
+        CFStringGetCString(pmanuf, manuf, sizeof(manuf), 0);
+        CFStringGetCString(pmodel, model, sizeof(model), 0);
+        driverList[i] = [[NSString stringWithFormat: @"%@ %@ %@", pmanuf, pname, pmodel] cString];
+        CFRelease(pname);
+        CFRelease(pmanuf);
+        CFRelease(pmodel);
+
+        printf("driver[%d] = %s\n", i, driverList[i]);
+    }
+
     *selectedDriver = 0;
-    return &silentDriver;
+    
+    return driverList;
 }
 
 // returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
@@ -67,45 +135,47 @@ PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 }
 
 /* Routine MKMDBecomeOwner */
-PERFORM_API kern_return_t MKMDBecomeOwner (
+PERFORM_API MKMDReturn MKMDBecomeOwner (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port)
 {
+    // create client and ports
+
 #ifdef FUNCLOG
-  if(debug == NULL) {
-    // create a means to see where we are without having to tiptoe around the MS debugger.
-    if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
-      return MKMD_ERROR_UNKNOWN_ERROR;
-  }
-  fprintf(debug, "MKMDBecomeOwner called\n");
+    if(debug == NULL) {
+        // create a means to see where we are without having to tiptoe around the MS debugger.
+        if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
+            return MKMD_ERROR_UNKNOWN_ERROR;
+    }
+    fprintf(debug, "MKMDBecomeOwner called\n");
 #endif
-  // TODO check the ports properly
-//    if(!PMinitialise()) {
-//      return MKMD_ERROR_BUSY;
-//    }
-//  datumRefTime = PMGetCurrentTime();
-  return KERN_SUCCESS;
+
+    // NSApplicationName
+    MIDIClientCreate(CFSTR("MusicKit - This has to be whatever the app is"), NULL, NULL, &client);	
+    MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort);
+    MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort);
+
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDReleaseOwnership */
-PERFORM_API kern_return_t MKMDReleaseOwnership (
+PERFORM_API MKMDReturn MKMDReleaseOwnership (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port)
 {
 #ifdef FUNCLOG
-  // TODO check the ports properly
-  fprintf(debug, "MKMDReleaseOwnership called\n");
-  fclose(debug); // hopefully save what we did.
+    // TODO check the ports properly
+    fprintf(debug, "MKMDReleaseOwnership called\n");
+    fclose(debug); // hopefully save what we did.
 #endif
-//  if(!PMterminate()) {
-//      return MKMD_ERROR_BUSY;
-//    }
-//    else
-    return KERN_SUCCESS;
+    if(MIDIClientDispose(client) != noErr)
+        return MKMD_ERROR_BUSY;
+    else
+        return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetClockMode */
-PERFORM_API kern_return_t MKMDSetClockMode (
+PERFORM_API MKMDReturn MKMDSetClockMode (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
@@ -114,28 +184,37 @@ PERFORM_API kern_return_t MKMDSetClockMode (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDSetClockMode called %d\n", clock_mode);
 #endif
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
+}
+
+#include <CarbonCore/CarbonCore.h> // only needed for AbsoluteTime definitions.
+
+MIDITimeStamp MIDIGetCurrentTime(void)
+{
+    AbsoluteTime now = UpTime();
+    return UnsignedWideToUInt64(now);
 }
 
 /* Routine MKMDGetClockTime */
-PERFORM_API kern_return_t MKMDGetClockTime (
+PERFORM_API MKMDReturn MKMDGetClockTime (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	int *time)
 {
-  //  REFERENCE_TIME currentRefTime;
+    MIDITimeStamp currentRefTime;
+
+    currentRefTime = MIDIGetCurrentTime();
+    *time = timeStampToMKTime(currentRefTime);
 
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDGetClockTime called\n");
+    fprintf(debug, "MKMDGetClockTime called currentRefTime = %f time = %d\n", 
+        (double) currentRefTime, *time);
 #endif
-  //  currentRefTime = PMGetCurrentTime();
-  // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
-  // *time = (int) (currentRefTime - datumRefTime) / quantumFactor;
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDGetMTCTime */
-PERFORM_API kern_return_t MKMDGetMTCTime (
+PERFORM_API MKMDReturn MKMDGetMTCTime (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short *format,
@@ -147,87 +226,118 @@ PERFORM_API kern_return_t MKMDGetMTCTime (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDGetMTCTime called\n");
 #endif
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetClockTime */
-PERFORM_API kern_return_t MKMDSetClockTime (
+PERFORM_API MKMDReturn MKMDSetClockTime (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	int time)
 {
-  // defines datum to associate the integer time to the nanosecond time
-  //datumRefTime = PMGetCurrentTime();
-  //datumMSecTime = time;
+    // defines datum to associate the integer time to the nanosecond time
+    datumRefTime = MIDIGetCurrentTime();
+    datumMSecTime = time;
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %d\n", time, 0);
+    fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %f\n", time, (double) datumRefTime);
 #endif
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* SimpleRoutine MKMDRequestAlarm */
-PERFORM_API kern_return_t MKMDRequestAlarm (
+PERFORM_API MKMDReturn MKMDRequestAlarm (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	port_t reply_port,
 	int time)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDRequestAlarm called %d\n", time);
+    fprintf(debug, "MKMDRequestAlarm called %d\n", time);
 #endif
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDStartClock */
-PERFORM_API kern_return_t MKMDStartClock (
+PERFORM_API MKMDReturn MKMDStartClock (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port)
 {
-  // TODO check the ports properly
+    // TODO check the ports properly
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDStartClock called\n");
+    fprintf(debug, "MKMDStartClock called\n");
 #endif
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDStopClock */
-PERFORM_API kern_return_t MKMDStopClock (
+PERFORM_API MKMDReturn MKMDStopClock (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port)
 {
-  // TODO check the ports properly
+    // TODO check the ports properly
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDStopClock called\n");
+    fprintf(debug, "MKMDStopClock called\n");
 #endif
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDClaimUnit */
-PERFORM_API kern_return_t MKMDClaimUnit (
+PERFORM_API MKMDReturn MKMDClaimUnit (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit)
 {
+    ItemCount destinationCount;
+    ItemCount sourceCount;
+    ItemCount i;
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDClaimUnit called %d\n", unit);
+    fprintf(debug, "MKMDClaimUnit called %d\n", unit);
 #endif
-  return KERN_SUCCESS;
+    // find the first destination
+    destinationCount = MIDIGetNumberOfDestinations();
+    if (destinationCount > 0) {
+        // should be unit?
+        claimedDestinationUnit = MIDIGetDestination(unit);
+    }
+
+    if (claimedDestinationUnit != NULL) {
+        CFStringRef pname;
+        char name[64]; // TODO what is the size?
+
+        MIDIObjectGetStringProperty(claimedDestinationUnit, kMIDIPropertyName, &pname);
+        CFStringGetCString(pname, name, sizeof(name), 0);
+        CFRelease(pname);
+        printf("Output to %s\n", name);
+    }
+    else {
+        printf("No MIDI destinations present\n");
+    }
+
+    // open connections from all sources
+    sourceCount = MIDIGetNumberOfSources();
+    printf("%ld sources\n", sourceCount);
+    for (i = 0; i < sourceCount; ++i) {
+        MIDIEndpointRef src = MIDIGetSource(i);
+        MIDIPortConnectSource(inPort, src, NULL);
+    }
+	
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDReleaseUnit */
-PERFORM_API kern_return_t MKMDReleaseUnit (
+PERFORM_API MKMDReturn MKMDReleaseUnit (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDReleaseUnit called\n");
+    fprintf(debug, "MKMDReleaseUnit %d called\n", unit);
 #endif
-  return TRUE;
+    return TRUE;
 }
 
 /* Routine MKMDRequestExceptions */
-PERFORM_API kern_return_t MKMDRequestExceptions (
+PERFORM_API MKMDReturn MKMDRequestExceptions (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	port_t error_port)
@@ -235,85 +345,101 @@ PERFORM_API kern_return_t MKMDRequestExceptions (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestExceptions called\n");
 #endif
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDRequestData */
-PERFORM_API kern_return_t MKMDRequestData (
+PERFORM_API MKMDReturn MKMDRequestData (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
-	port_t reply_port)
+	MKMDReplyPort reply_port)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDRequestData called\n");
+    fprintf(debug, "MKMDRequestData called\n");
 #endif
-  return KERN_SUCCESS;
+    // reply_port is nil when indicating no data is to be returned.
+    dataReplyPort = reply_port;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSendData */
 // Each event consists of a time stamp per byte. This was done to allow slowing byte output
 // to stop choking synths with sysex messages. Nowdays it would seem better just to specify
 // an inter-byte delay and specify the start time of the channel byte.
-PERFORM_API kern_return_t MKMDSendData (
+PERFORM_API MKMDReturn MKMDSendData (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
 	MKMDRawEventPtr data,
 	unsigned int dataCnt)
 {
-  //  unsigned int msgIndex;
-  //unsigned char *buffer;
-  //REFERENCE_TIME dmTime;
+    unsigned int msgIndex;
+    MIDITimeStamp playTime;
+    Byte *buffer;
+    static Byte pbuf[512];
+    MIDIPacketList *pktlist = (MIDIPacketList *) pbuf;
+    MIDIPacket *packet;
 
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDSendData called with %d events @ time %d\n", dataCnt, data[0].time);
+    fprintf(debug, "MKMDSendData called with %d events @ time %d\n", dataCnt, data[0].time);
 #endif
 
-  // need to convert the times, extract the data and pack back into buffer.
-  //buffer = (unsigned char *) malloc(dataCnt);
-  //for(msgIndex = 0; msgIndex < dataCnt; msgIndex++) {
-  //  buffer[msgIndex] = data[msgIndex].byte;
-  // }
-  // we erronously assume all events specified in a single call are intended
-  // to be sent immediately one after another.
-  //dmTime = (data[0].time - datumMSecTime) * quantumFactor + datumRefTime;
+    if((packet = MIDIPacketListInit(pktlist)) == NULL) {
+        return MKMD_ERROR_UNKNOWN_ERROR;
+    }
+
+    // need to convert the times, extract the data and pack back into buffer.
+    buffer = (Byte *) malloc(dataCnt);
+    for(msgIndex = 0; msgIndex < dataCnt; msgIndex++) {
+        buffer[msgIndex] = data[msgIndex].byte;
 #ifdef FUNCLOG
-  //fprintf(debug,"Current time %I64d\n", PMGetCurrentTime());
+        fprintf(debug, "%02X ", buffer[msgIndex]);
 #endif
-  //if(!PMPackMessageForPlay(dmTime, buffer, dataCnt)) {
-  //  free(buffer);
-  //  return MKMD_ERROR_UNKNOWN_ERROR;
-  //}
-  // once the buffer has been packed, it can be discarded as packing copies the data.
-  //free(buffer);
-  //if(!PMPlayBuffer())
-  //  return MKMD_ERROR_UNKNOWN_ERROR;
+    }
+
+    // we erronously assume all events specified in a single call are intended
+    // to be sent immediately one after another.
+    playTime = (data[0].time - datumMSecTime) * quantumFactor + datumRefTime;
 #ifdef FUNCLOG
-  fprintf(debug,"MKMDSendData returning ok\n");
+    fprintf(debug, "\nCurrent time %f\n", (double) playTime);
 #endif
-  return 0;
+    packet = MIDIPacketListAdd(pktlist, sizeof(pbuf), packet, playTime, dataCnt, buffer);
+    if(packet == NULL) {
+        free(buffer);
+        return MKMD_ERROR_UNKNOWN_ERROR;
+    }
+    if(MIDISend(outPort, claimedDestinationUnit, pktlist) != noErr) {
+        free(buffer);
+        return MKMD_ERROR_UNKNOWN_ERROR;
+    }
+    // once the buffer has been packed, it can be discarded as packing copies the data.
+    free(buffer);
+#ifdef FUNCLOG
+    fprintf(debug,"MKMDSendData returning ok\n");
+#endif
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDGetAvailableQueueSize */
-PERFORM_API kern_return_t MKMDGetAvailableQueueSize (
+PERFORM_API MKMDReturn MKMDGetAvailableQueueSize (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
 	int *size)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDGetAvailableQueueSize called\n");
+  fprintf(debug, "MKMDGetAvailableQueueSize called %d\n", unit);
 #endif
   // return the queue size
   //if(!PMGetAvailableQueueSize(size)) {
   //  return MKMD_ERROR_UNKNOWN_ERROR;
   //}
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDRequestQueueNotification */
-PERFORM_API kern_return_t MKMDRequestQueueNotification (
+PERFORM_API MKMDReturn MKMDRequestQueueNotification (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
@@ -323,11 +449,11 @@ PERFORM_API kern_return_t MKMDRequestQueueNotification (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestQueueNotification called %d\n", size);
 #endif
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDClearQueue */
-PERFORM_API kern_return_t MKMDClearQueue (
+PERFORM_API MKMDReturn MKMDClearQueue (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit)
@@ -335,11 +461,11 @@ PERFORM_API kern_return_t MKMDClearQueue (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDClearQueue called\n");
 #endif
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDFlushQueue */
-PERFORM_API kern_return_t MKMDFlushQueue (
+PERFORM_API MKMDReturn MKMDFlushQueue (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit)
@@ -347,11 +473,11 @@ PERFORM_API kern_return_t MKMDFlushQueue (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDFlushQueue called\n");
 #endif
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetSystemIgnores */
-PERFORM_API kern_return_t MKMDSetSystemIgnores (
+PERFORM_API MKMDReturn MKMDSetSystemIgnores (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
@@ -360,51 +486,66 @@ PERFORM_API kern_return_t MKMDSetSystemIgnores (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDSetSystemIgnores called 0x%x sys_ignores\n", sys_ignores);
 #endif
-  return KERN_SUCCESS;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetClockQuantum */
-PERFORM_API kern_return_t MKMDSetClockQuantum (
+PERFORM_API MKMDReturn MKMDSetClockQuantum (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	int microseconds)
 {
-  // REFERENCE_TIME measured in 100ns units, I don't understand why MS needs such accuracy as it is well beyond perception...
-  //quantumFactor = microseconds * 10;
+    // MIDITimeStamp measured in 100nS units, 
+//    quantumFactor = ((MIDITimeStamp) microseconds) * 10;
+    quantumFactor = ((MIDITimeStamp) microseconds);
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %d 100ns units\n", microseconds, 0);
+    fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %f ? units\n",
+        microseconds, (double) quantumFactor);
 #endif
-  return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
-PERFORM_API kern_return_t MKMDAwaitReply(port_t port_set, MKMDReplyFunctions *funcs, int timeout)
+// This should wait until a reply is received on port_set.
+PERFORM_API MKMDReturn MKMDAwaitReply(port_t port_set, MKMDReplyFunctions *funcs, int timeout)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
+    fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
 #endif
-  return KERN_SUCCESS;
+    queue_port = port_set;
+    return MKMD_SUCCESS;
 }
 
-PERFORM_API kern_return_t MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs)
+// Here we do is save up the reply functions.
+PERFORM_API MKMDReturn MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDHandleReply called\n");
+    fprintf(debug, "MKMDHandleReply called\n");
 #endif
-  return KERN_SUCCESS;
+    userFuncs = funcs;
+// probably need to look at the msg to determine what to do.
+#if 0
+    if (userFuncs->dataReply) {
+        (*(userFuncs->dataReply))([dataReplyPort machPort], claimedSourceUnit, events, packet->length);
+    }
+    if (userFuncs->alarmReply) {
+	(*(userFuncs->alarmReply))(reply_port,time,actualTime);
+    }
+    if (userFuncs->queueReply) {
+	(*(userFuncs->queueReply))(reply_port,unit);
+    }
+    if (userFuncs->exceptionReply) {
+	(*(userFuncs->exceptionReply))(reply_port,exception);
+    }
+#endif
+    return MKMD_SUCCESS;
 }
 
 /*
- Since DLS is a MMA spec, a case can be made to make it cross-platform. Rather than falling into
- emulating the DirectMusic API, an Objective C equivalent class paradigm is the best approach.
- Therefore we will need the ability to manage DLS collections and instruments at a cross-platform level.
-
- "Working with DLS data requires knowledge of the DLS specification and file structure. 
- For detailed information on these topics, see the document entitled Downloadable Sounds Level 1, published
- by the MIDI Manufacturers Association."
+ Download the DLS instruments
  */
-PERFORM_API kern_return_t MKMDDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
+PERFORM_API MKMDReturn MKMDDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
 {
-    return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 #ifdef __cplusplus
