@@ -1,0 +1,27 @@
+#!/usr/bin/sh
+# MKPerformSndMIDI framework installation script.
+#
+# This script emulates creating an OpenStep framework on Win32 when the
+# development system is not ProjectBuilder.
+# It will create the appropriate installation directories and copy the headers
+# and library files.
+#
+# Leigh Smith <leigh@tomandandy.com> 
+
+FRAMEWORKNAME=MKPerformSndMIDI
+
+# there should be a way of determinin which build should be installed.
+BUILDTYPE=Debug
+
+# where Frameworks and Executables will reside
+LOCAL_DEVELOPER_LIB=/Local/Developer
+
+HEADERFILES="midi_driver.h soundstruct.h PerformSound.h"
+
+# create all the needed directories if they are not not already there
+mkdir -p $LOCAL_DEVELOPER_LIB/Frameworks/$FRAMEWORKNAME.framework/Headers
+
+cp $BUILDTYPE/$FRAMEWORKNAME.lib $LOCAL_DEVELOPER_LIB/Frameworks/$FRAMEWORKNAME.framework
+cp $HEADERFILES $LOCAL_DEVELOPER_LIB/Frameworks/$FRAMEWORKNAME.framework/Headers
+
+cp $BUILDTYPE/$FRAMEWORKNAME.dll $LOCAL_DEVELOPER_LIB/Executables
