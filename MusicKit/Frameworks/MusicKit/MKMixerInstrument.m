@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.12  2002/03/06 19:02:05  leighsmith
+ Added extra NULL parameter to match new prototype for resample()
+
  Revision 1.11  2002/01/29 16:21:49  sbrandon
  fixed small retain/release problem (theoretical crasher)
 
@@ -524,7 +527,8 @@ static int timeToSamp(Snd *s,double time)
 			 NO, 	      /* Not large filter */
 			 NULL,     /* No filter file supplied */
                          [inSound soundStruct],
-                         [newSoundFileSamples currentSample]);
+                         [newSoundFileSamples currentSample],
+                         NULL);
 
 		[newSoundFileSamples setSound: outSound];
 		[newSoundFileSamples setProcessingEndSample: outSampleFrames * [inSound channelCount]];
