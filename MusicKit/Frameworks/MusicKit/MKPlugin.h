@@ -28,7 +28,7 @@
 
 @protocol MusicKitPlugin
 + (NSString *) protocolVersion;
-- setDelegate:(id)delegate;
+- (void) setDelegate:(id)delegate;
 - (NSArray*)fileSavingSuffixes;
 - (NSArray*)fileOpeningSuffixes;
 - (MKScore*)openFileName:(NSString *)f forScore:(MKScore*)s;
