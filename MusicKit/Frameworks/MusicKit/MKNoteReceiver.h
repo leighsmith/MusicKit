@@ -52,6 +52,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/05/06 01:15:25  leigh
+  Typed ivars to reduce warnings
+
   Revision 1.4  2000/04/22 20:14:00  leigh
   Properly typed connections returning an NSArray
 
@@ -67,12 +70,14 @@
 
 #import <Foundation/NSObject.h>
 
+@class MKInstrument;
+
 @interface MKNoteReceiver: NSObject
 {
-    id noteSenders;       /* List of connected MKNoteSenders. */
-    BOOL isSquelched;     /* YES if the object is squelched. */
-    id owner;             /* Instrument that owns MKNoteReceiver. */
-
+    NSMutableArray *noteSenders;      /* Array of connected MKNoteSenders. */
+    BOOL isSquelched;                 /* YES if the object is currently squelched. */
+    MKInstrument *owner;              /* MKInstrument that owns MKNoteReceiver. */
+    /* NoteFilter or Performer owning this PerfLink. */
     /* The following is for internal use only.  */
     void *_myData;
 }
