@@ -33,6 +33,11 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/07/02 17:03:17  sbrandon
+  - For GNUStep (ifdef'd it) use [MKTuningSystem _transpose:val] instead of
+    [MKTuningSystem transpose:val] because GNUStep has difficulties with
+    class methods that have the same signatures as instance methods.
+
   Revision 1.14  2001/05/22 22:27:56  leighsmith
   Added string.h to avoid warning on GnuStep
 
@@ -2824,7 +2829,11 @@ tune(void)
 	    error(MK_sfNoTuneErr,curToken());
 	    val = 0; /* This stmt can never be reached, but makes compiler happy */
 	}
-	[MKTuningSystem transpose:val];
+#ifdef GNUSTEP
+	[MKTuningSystem _transpose:val]; /* GNUSTEP silliness: can't call transpose because it conflicts with NSResponder:-transpose */
+#else
+        [MKTuningSystem transpose:val];
+#endif
     }
     else {
 	id var = tokenVal->symbol;
@@ -4182,4 +4191,3 @@ NSMutableData * MKFindScorefile(NSString *name) /*sb: used to return int (fd) */
 #endif
 
 #endif
-
