@@ -39,6 +39,9 @@
 Modification history:
 
  $Log$
+ Revision 1.4  2000/04/22 20:14:58  leigh
+ Verified sound was non-nil before releasing...duh
+
  Revision 1.3  2000/04/20 21:34:53  leigh
  Replaced SFInfoStruct with expanded MKSamples, plugged memory leaks
 
@@ -96,9 +99,10 @@ enum {applyEnvBefore = 0,applyEnvAfter = 1,scaleEnvToFit = 2};
 - (void) dealloc
 {
     [SFInfoStorage release];
-    if(outSoundStruct)
+    if(outSoundStruct) // could be set NULL in afterPerformance
         SndFree(outSoundStruct);
-    [sound release];
+    if(sound)
+        [sound release]; // when sound is being allocated we should release this
     [stream release];  
     if(defaultFile)
         [defaultFile release];	      /* default sound file name */
@@ -221,7 +225,7 @@ static void swapIt(short *data,int howMany)
 	    else
                 [aSFInfo setCurrentSample: [aSFInfo currentSample] + ((inFileLastBuf) ? inDataRemaining : curBufSize)];
 	}
-	swapIt(samps,curBufSize);
+	swapIt(samps, curBufSize);
         [stream appendBytes: (void *) samps length: curBufSize * sizeof(short)];
 	curOutSamp += curBufSize;
     }
@@ -269,7 +273,7 @@ static void swapIt(short *data,int howMany)
     /* Put an envelope on a signal. */
     int n;
     short *end, *segend;
-    short *data = (short *)[[info sound] data]+ [info currentSample];
+    short *data = (short *)[[info sound] data] + [info currentSample];
     int intamp;
     double amp, inc;
     int nchans = [[info sound] channelCount];
@@ -408,8 +412,7 @@ static int timeToSamp(Snd *s,double time)
 	         */
                 Snd *inSound = [newSFInfo sound];
                 Snd *outSound = [[[Snd alloc] init] autorelease];
-	        int bearing = (MKIsNoteParPresent(aNote, MK_bearing) ? 
-	      		 MKGetNoteParAsInt(aNote, MK_bearing) : 0);
+	        int bearing = (MKIsNoteParPresent(aNote, MK_bearing) ? MKGetNoteParAsInt(aNote, MK_bearing) : 0);
 	        int sampCount = ([newSFInfo processingEndSample] - [newSFInfo currentSample]);
 	        [outSound
                      setDataSize:sampCount*sizeof(short)*2
@@ -424,7 +427,6 @@ static int timeToSamp(Snd *s,double time)
                 [newSFInfo setSound: outSound];     // inSound is released by setSound
                 [newSFInfo setProcessingEndSample: sampCount * 2]; /* Stereo */
 		[newSFInfo setAmplitude: 1.0];     /* Amp factored in above */
-                // [inSound release]; 
 	    }
             else {
 	        NSLog(@"Error: File %@ has %d channels and channelCount is %d.\n",
