@@ -157,10 +157,14 @@ NSScrollView.
 
  <H2>SndView is incompatible in these ways:</H2>
  <UL>
- <LI> The bounds rectangle is not scaled the same as SoundView's is. SoundView scales it's bounds so that (y = 0) runs through the centre of the view, and the maximum +y and -y limits correspond to the limits of the format of the sound it is displaying. SndView does not scale at all. It could be changed quite easily. As it is, this breaks any subclasses of SoundView that draw into the view.
+ <LI> The bounds rectangle is not scaled the same as SoundView's is. SoundView scales it's bounds so that (y = 0) runs through the centre of the view, and the maximum +y and -y limits
+      correspond to the limits of the format of the sound it is displaying. SndView does not scale at all. It could be changed quite easily. As it is, this breaks any subclasses of 
+      SoundView that draw into the view.
  <LI> "drawSamples from:to:" is not implemented (yet). But all you would have to do would be to invalidate the caches for that area (if necessary), and -display: the SndView
  <LI> Because of the caching mechanism, if you change samples "behind SndView's back" you must invalidate the cache for the affected samples, with "invalidateCacheStartSample:end:" before displaying.
- <LI> SoundView considers the left and right channels of the sound individually when it comes to finding maximum and minimum values for display. This makes display at some resolutions look very odd, and it's not really intuitive, although at low resolutions it does have the side effect of in fact showing both channels (one as maximum and 1 as minimum). SndView on the other hand shows either only one channel, or the average of both channels. Ideally it should have the option of showing both.
+ <LI> SoundView considers the left and right channels of the sound individually when it comes to finding maximum and minimum values for display. 
+      This makes display at some resolutions look very odd, and it's not really intuitive, although at low resolutions it does have the side effect of in fact showing both channels
+      (one as maximum and 1 as minimum). SndView on the other hand shows either only one channel, or the average of both channels. Ideally it should have the option of showing both.
  </UL>
 
  <H2>The optimization mechanism:</H2>
@@ -191,12 +195,13 @@ NSScrollView.
  <LI> I have put any thought into the setting of zones. If anyone would like to advise on this I'd be happy to hear from you.
  <LI> The mechanism for retrieving data from fragmented sound files is (I think) rather elegant and should be really fast.
  <LI> The archival -read and -write methods are untested.
- <LI> Support for "floating point" and "double" sound format files is included, but is untested.
+ <LI> Support for "floating point" and "double" sound format files is included.
  </UL>
 
  <H2>Future Enhancements for SndView</H2>
  <UL>
- <LI> SndView should be able to accept SoundStructs instead of / as well as Sound objects. This would open the door for opening a memory mapped stream to read a sound file, then passing the stream to SndView. Saves having to load the entire file into memory before it is displayed (though once it has been displayed, there's no difference to the amount of actual memory/swap space used).
+ <LI> Support for direct from disk Snd subclasses. Saves having to load the entire file into memory before it is displayed 
+ (though once it has been displayed, there's no difference to the amount of actual memory/swap space used).
  <LI> SndView should utilise a control/cell paradigm so that channels can be displayed separately within the view.
  </UL>
  
@@ -248,14 +253,15 @@ NSScrollView.
 
 #define DEFAULT_RECORD_SECONDS 5
 
-@interface SndView: NSView
+@interface SndView: NSView <NSCoding>
 {
     /*! @var sound The sound to display. */
     Snd       	*sound;
-    Snd 	*scratchSound;
     Snd		*pasteboardSound;
     id 		delegate;
-    NSRect	selectionRect;
+    /*! @var selectionRange The region of the sound (in frames) selected (and displayed highlighted) for copy/paste/drag operations. */
+    NSRange	selectionRange;
+    /*! @var displayMode The form of display, either SND_SOUNDVIEW_MINMAX or SND_SOUNDVIEW_WAVE */
     int		displayMode;
 
     /*! @var backgroundColour Colour used as a non image background. */
@@ -286,7 +292,7 @@ NSScrollView.
         unsigned int  notOptimizedForSpeed:1;
     } svFlags;
     
-    NSTimer 	*teNum; /* for flashing cursor */
+    NSTimer 	*cursorFlashTimer; /* for flashing cursor */
     int		optThreshold;
     int		optSkip;
     int		stereoMode;
@@ -453,18 +459,18 @@ NSScrollView.
               one of the display messages defined by the NSView
               class.
 */
-- (void) drawRect: (NSRect)rects;
+- (void) drawRect: (NSRect) rects;
 
 /*!
   @method getSelection:size:
-  @param  firstSample is an int *.
-  @param  sampleCount is an int *.
+  @param  firstSample is an unsigned int *.
+  @param  sampleCount is an unsigned int *.
   @discussion Returns the selection by reference. The index of the selection's
               first sample (counting from 0) is returned in <i>firstSample</i>.
               The size of the selection in samples is returned in
               <i>sampleCount</i>. 
 */
-- getSelection: (int *)firstSample size: (int *)sampleCount;
+- (void) getSelection: (unsigned int *) firstSample size: (unsigned int *) sampleCount;
 
 /*!
   @method setSelection:size:
@@ -482,7 +488,7 @@ NSScrollView.
   @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
-- hadError:sender;
+- hadError: sender;
 
 /*!
   @method initWithFrame:
@@ -550,7 +556,9 @@ NSScrollView.
               first being converted.
 */
 - (BOOL) isPlayable;
+
 - (float) getDefaultRecordTime;
+- (void) setDefaultRecordTime: (float) seconds;
 
 /*!
   @method mouseDown:
@@ -767,7 +775,6 @@ NSScrollView.
 */
 - (void) setDelegate: (id) anObject;
 
-- (void) setDefaultRecordTime: (float) seconds;
 
 /*!
   @method setDisplayMode:
