@@ -48,7 +48,7 @@
 #define DBUG(x)  /* PRINT(x) */
 #define DBUGX(x) /* PRINT(x) */
 
-#define PA_USE_HIGH_LATENCY   (0)
+#define PA_USE_HIGH_LATENCY   (1)
 
 #if PA_USE_HIGH_LATENCY
 #define PA_WIN_9X_LATENCY     (500)
@@ -66,7 +66,9 @@ static  gUnderCallbackCounter = 0;
 #endif
 
 /************************************************* Definitions ********/
+#ifndef GNUSTEP
 typedef struct internalPortAudioStream internalPortAudioStream;
+#endif
 typedef struct internalPortAudioDevice
 {
 	GUID                             pad_GUID;
@@ -585,7 +587,9 @@ static void CALLBACK Pa_TimerCallback(UINT uID, UINT uMsg, DWORD dwUser, DWORD d
 {
 	internalPortAudioStream   *past;
 	PaHostSoundControl  *pahsc;
-
+#ifdef GNUSTEP
+        GSRegisterCurrentThread();
+#endif
 #if PA_SIMULATE_UNDERFLOW
 	gUnderCallbackCounter++;
 	if( (gUnderCallbackCounter >= UNDER_START_GAP) &&
@@ -689,7 +693,7 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 		goto error;
 	}
 	
-	DBUG(("PaHost_OpenStream: pahsc_MinFramesPerHostBuffer = %d\n", pahsc->pahsc_MinFramesPerHostBuffer ));
+//	DBUG(("PaHost_OpenStream: pahsc_MinFramesPerHostBuffer = %d\n", pahsc->pahsc_MinFramesPerHostBuffer ));
 	minNumBuffers = Pa_GetMinNumBuffers( past->past_FramesPerUserBuffer, past->past_SampleRate );
 	past->past_NumUserBuffers = ( minNumBuffers > past->past_NumUserBuffers ) ? minNumBuffers : past->past_NumUserBuffers;
 
