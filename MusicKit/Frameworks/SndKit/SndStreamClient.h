@@ -391,7 +391,7 @@ automatic start up and and shut down of lower-level streaming services.
     @param      d
     @result     self
 */
-- setDelegate: (id) d;
+- (void) setDelegate: (id) d;
 
 /*!
     @method    delegate

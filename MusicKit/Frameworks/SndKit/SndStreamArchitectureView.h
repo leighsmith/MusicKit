@@ -110,7 +110,7 @@
   @param      delegate
   @result     self
 */
-- setDelegate: (id) delegate;
+- (void) setDelegate: (id) delegate;
 /*!
   @method     delegate
   @abstract   To come

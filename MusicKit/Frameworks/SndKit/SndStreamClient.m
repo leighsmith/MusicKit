@@ -719,15 +719,13 @@ int get_bus_speed()
 // delegate mutator/accessor methods
 ////////////////////////////////////////////////////////////////////////////////
 
-- setDelegate: (id) d
+- (void) setDelegate: (id) d
 {
   delegate = d;
   bDelegateRespondsToOutputBufferSkipSelector = ( delegate != nil && 
       [delegate respondsToSelector: @selector(outputBufferSkipped)] );
   bDelegateRespondsToInputBufferSkipSelector  = ( delegate != nil &&
       [delegate respondsToSelector: @selector(inputBufferSkipped)] );
-
-  return self;
 }
 
 - (id) delegate
