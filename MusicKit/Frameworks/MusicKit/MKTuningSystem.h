@@ -66,23 +66,6 @@ configure the MIDI instrument).
 
 #import "keynums.h"
 
-/* Tuning and freq conversion */
-
-extern double MKAdjustFreqWithPitchBend(double freq, int pitchBend, double sensitivity);
- /* Return the result of adjusting freq by the amount specified in
-    pitchBend. PitchBend is interpreted in the context of the current
-    value of sensitivity. */
-
-/*!
-  @function MKTranspose
-  @abstract Transpose a frequency up by the specified number of semitones. 
-  @param freq Starting frequency in Hz.
-  @param semiTonesUp The number of 12 tone equal tempered semitones to transpose freq upwards.
-         A negative value will transpose the note down.
- */
-extern double MKTranspose(double freq, double semiTonesUp);
-
-
 @interface MKTuningSystem : NSObject
 {
     /*! @var frequencies NSArray object of frequencies, indexed by keyNum. */
@@ -273,5 +256,27 @@ extern double MKTranspose(double freq, double semiTonesUp);
 + (int) findPitchVar: (id) aVar;
 
 @end
+
+/* Functions for tuning and frequency conversion */
+
+/*!
+  @function MKTranspose
+  @abstract Transpose a frequency up by the specified number of semitones. 
+  @param freq Starting frequency in Hz.
+  @param semiTonesUp The number of 12 tone equal tempered semitones to transpose freq upwards.
+                     A negative value will transpose the note down.
+ */
+double MKTranspose(double freq, double semiTonesUp);
+
+/*!
+  @function MKAdjustFreqWithPitchBend
+  @abstract Return the result of adjusting freq by the amount specified in pitchBend. 
+  @discussion PitchBend is interpreted in the context of the current value of sensitivity. 
+  @param freq A Frequency in Hertz.
+  @param pitchBend A MIDI pitch bend value, interpreted according to sensitivity.
+  @param sensitivity Sensitivity is in semitones.
+  @result Returns the new frequency in Hertz.
+ */
+double MKAdjustFreqWithPitchBend(double freq, int pitchBend, double sensitivity);
 
 #endif

@@ -370,67 +370,22 @@ retrieve the MKNote class with <b>MKGetNoteClass()</b>.
 */
 #ifndef __MK_Note_H___
 #define __MK_Note_H___
+
 #import <Foundation/Foundation.h>
-
 #import <Foundation/NSObject.h>
-
 #import "MKConductor.h"
-
- /* NoteTag allocation. */
-extern unsigned MKNoteTag(void);
-extern unsigned MKNoteTags(unsigned n);
-
- /* dB to amp conversion. E.g. MKdB(-60) returns ca. .001 and MKdB(0.0) returns
-  * 1.0. */
-extern double MKdB(double dB);          
-
- /* Maps MIDI value (such as velocity) onto an amplitude scaler such that 
-    64->1.0, 127->10.0, and 0->0. This is primarily designed for scaling 
-    amplitude by a value derived from MIDI velocity. */
-extern double MKMidiToAmp(int midiValue);
-
- /* Same as above, but uses sensitivity to control how much effect 
-    midiValue has.  */
-extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
-
- /* Maps an amplitude scaler onto velocity such that
-    MKAmpToMidi(MKMidiToAmp(x)) == x
-    */
-extern int MKAmpToMidi(double amp);
-
- /* Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler 
-    such that 64->0.1, 127->1.0, and 0->0. */
-extern double MKMidiToAmpAttenuation(int midiValue);
-
-/*!
-@discussion
-Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler
- such that 64->0.1, 127->1.0, and 0->0. Uses sensitivity to control how much effect 
-    midiValue has.  */
-extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, 
-						    double sensitivity);
-
- /* Maps an amplitude scaler onto velocity such that
-    MKAmpAttenuationToMidi(MKMidiToAmpAttenuation(x)) == x
-    */
-extern int MKAmpAttenuationToMidi(double amp);
-
-typedef enum _MKNoteType {
-    MK_noteDur = 257, MK_noteOn, MK_noteOff, MK_noteUpdate, MK_mute} 
-MKNoteType;
-
-extern int MKHighestPar(void);
- /* Returns the parameter tag of the highest numbered parameter.  This 
-  * can be used, for example, to print the names of all known parameters
-  * as follows:
-  *
-  * for (i=0; i<=MKHighestPar(); i++) printf([MKNote parNameForTag:i]);
-  */
-
 #import "params.h"
 
 #define BITS_PER_INT 32
 #define MK_MKPARBITVECTS ((((int)MK_appPars-1)/ BITS_PER_INT)+1)
+
+typedef enum _MKNoteType {
+    MK_noteDur = 257,
+    MK_noteOn,
+    MK_noteOff,
+    MK_noteUpdate,
+    MK_mute
+} MKNoteType;
 
 typedef enum _MKDataType {     /* Data types supported by MKNotes */
     MK_noType = ((int)MK_sysReset + 1),
@@ -439,10 +394,10 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
     MK_int,
     MK_object,
     MK_envelope, 
-    MK_waveTable}
-MKDataType;
+    MK_waveTable
+} MKDataType;
 
-@interface MKNote : NSObject
+@interface MKNote: NSObject
 {
 /*! @var noteType The MKNote's noteType. */
     MKNoteType noteType;
@@ -1331,6 +1286,65 @@ the section entitled Music Tables
 
 @end
 
+/* NoteTag allocation. */
+extern unsigned MKNoteTag(void);
+extern unsigned MKNoteTags(unsigned n);
+
+/*!
+ @function MKdB
+ @abstract dB to amp conversion. 
+ @discussion For example, MKdB(-60) returns ca. .001 and MKdB(0.0) returns 1.0. 
+ */
+extern double MKdB(double dB);          
+
+/*!
+ @function MKMidiToAmp
+ @abstract Maps MIDI value (such as velocity) onto an amplitude scaler such that 64->1.0, 127->10.0, and 0->0. 
+ @discussion This is primarily designed for scaling amplitude by a value derived from MIDI velocity. 
+ */
+extern double MKMidiToAmp(int midiValue);
+
+/*!
+ @function MKMidiToAmpWithSensitivity
+ @abstract Same as MKMidiToAmp, but uses sensitivity to control how much effect midiValue has.
+ */
+extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
+
+/*!
+ @function MKAmpToMidi
+ @abstract Maps an amplitude scaler onto velocity such that MKAmpToMidi(MKMidiToAmp(x)) == x
+ */
+extern int MKAmpToMidi(double amp);
+
+/*!
+ @function MKMidiToAmpAttenuation
+ @abstract Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler such that 64->0.1, 127->1.0, and 0->0. 
+ */
+extern double MKMidiToAmpAttenuation(int midiValue);
+
+/*!
+ @function MKMidiToAmpAttenuationWithSensitivity
+ @discussion Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler
+ such that 64->0.1, 127->1.0, and 0->0. Uses sensitivity to control how much effect 
+ midiValue has. 
+ */
+extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensitivity);
+
+/*!
+ @function MKAmpAttenuationToMidi
+ @abstract Maps an amplitude scaler onto velocity such that MKAmpAttenuationToMidi(MKMidiToAmpAttenuation(x)) == x
+ */
+extern int MKAmpAttenuationToMidi(double amp);
+
+/*!
+ @function MKHighestPar
+ @abstract Returns the parameter tag of the highest numbered parameter.
+ @discussion This can be used, for example, to print the names of all known parameters as follows:
+ 
+ for (i = 0; i <= MKHighestPar(); i++) printf([MKNote parNameForTag: i]);
+ */
+extern int MKHighestPar(void);
+
 extern NSHashEnumerator *MKInitParameterIteration(id aNote);
 extern int MKNextParameter(id aNote, NSHashEnumerator *aState);
  /* These functions provide iteration over the parameters of a Note. 
@@ -1369,6 +1383,5 @@ extern id MKGetNoteParAsEnvelope(id aNote,int par);
 extern id MKGetNoteParAsWaveTable(id aNote,int par);
 extern id MKGetNoteParAsObject(id aNote,int par);
 extern BOOL MKIsNoteParPresent(id aNote,int par);
-
 
 #endif
