@@ -1,0 +1,6 @@
+Class = SndViewP;			/* (a subclass of IBPalette) */
+NibFile = SndViewP;			/* (a nib file name) */
+/* Icon =;				(a tiff/eps file name) */
+/* ExportClasses = ();			(a list of class names) */
+/* ExportImages = ();			(a list of icon names) */
+/* ExportSounds = ();			(a list of sound names) */
