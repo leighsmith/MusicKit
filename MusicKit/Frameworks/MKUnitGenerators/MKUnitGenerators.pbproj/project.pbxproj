@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		01C5E68E014D6D02CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,6 +24,16 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//010
+//011
+//012
+//013
+//014
+//0E0
+//0E1
+//0E2
+//0E3
+//0E4
 		0E53905D014AEFD1CFED3B96 = {
 			buildStyles = (
 				01C5E68E014D6D02CFED3B96,
@@ -31,7 +42,7 @@
 			isa = PBXProject;
 			mainGroup = 0E53905E014AEFD1CFED3B96;
 			productRefGroup = 0E5390B9014AEFD1CFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				0E5390BB014AEFD1CFED3B96,
 			);
@@ -619,7 +630,6 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Volumes/manray/Local/Library/Frameworks";
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -629,8 +639,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);

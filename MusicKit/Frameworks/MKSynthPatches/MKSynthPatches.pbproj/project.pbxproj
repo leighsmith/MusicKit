@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		21D929F80122F440CFED3B96 = {
 			buildStyles = (
@@ -13,7 +13,7 @@
 			isa = PBXProject;
 			mainGroup = 21D929F90122F440CFED3B96;
 			productRefGroup = 21D92A3A0122F440CFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				21D92A3C0122F440CFED3B96,
 			);
@@ -398,7 +398,6 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(HOME)/Library/Frameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Network/Servers/whiteley/Volumes/whiteley/Local/Library/Frameworks";
 				FRAMEWORK_VERSION = A;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -408,8 +407,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -970,11 +967,22 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//210
+//211
+//212
+//213
+//214
+//2B0
+//2B1
+//2B2
+//2B3
+//2B4
 		2B2342CF0122F4B2CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
