@@ -48,6 +48,7 @@ OF THIS AGREEMENT.
 #import "SndAudioProcessorDelay.h"
 #import "SndAudioProcessorDistortion.h"
 #import "SndAudioProcessorFlanger.h"
+#import "SndAudioProcessorNoiseGate.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioProcessorToneGenerator.h"
