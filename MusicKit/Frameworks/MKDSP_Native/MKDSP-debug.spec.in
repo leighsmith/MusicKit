@@ -1,0 +1,16 @@
+%define mkdsp_release 1
+Summary: Debug version of pre-requisite Objective-C library for the MusicKit.
+Release: %{mkdsp_release}
+Copyright: Public Domain (but see enclosed copyright information and http://www.musickit.org/license.html)
+Group: Development/Libraries
+Source: http://prdownloads.sourceforge.net/musickit/%{gs_name}-%{gs_version}.tar.gz
+Packager: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+
+%description 
+This package holds (mainly) stubs for DSP synthesis functions. On NeXTSTEP,
+the DSP framework held code for talking to the Motorola DSP56k chip. It
+should really be deprecated, except that future host-based DSP routines
+may use a similar API.
+
+# create the specfile from this file with "make specfile", or the whole
+# rpm in a oner with "RPM_TOPDIR=/usr/src/redhat make rpm" (as root).
