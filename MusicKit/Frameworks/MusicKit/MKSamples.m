@@ -186,7 +186,7 @@ id MKGetSamplesClass(void)
     length = 0; /* This ensures that the superclass recomputes cached buffers. */ 
     sound = [aSoundObj copy];
 #if PRECONVERT
-    [sound convertToFormat: SND_FORMAT_LINEAR_16
+    [sound convertToSampleFormat: SND_FORMAT_LINEAR_16
               samplingRate: [sound samplingRate]
               channelCount: 1];
 #endif

@@ -29,7 +29,8 @@
 
 @implementation MKMixerInstrument
 
-#define MIXING_BUFFER_SIZE 8192   // size (in samples per frame) of temporary mixing buffer.
+// size (in samples per frame) of temporary mixing buffer. Can't be too big or SndAudioUnitProcessor will complain.
+#define MIXING_BUFFER_SIZE 1024   
 
 // parameters used in mixing
 static int beginMixingAtParam = 0;
@@ -37,6 +38,7 @@ static int loopingParam = 0;
 
 + (void) initialize
 {
+    [super initialize];
     beginMixingAtParam = [MKNote parTagForName: @"timeOffset"]; 
     loopingParam = [MKNote parTagForName: @"looping"];
 }
@@ -134,12 +136,15 @@ static long secondsToFrames(Snd *s, double time)
 	while ((sampleToMix = [sampleEnumerator nextObject])) {
 	    untilFrame = MAX([sampleToMix processingEndSample] - [sampleToMix currentSample] + currentMixFrame, untilFrame);
 	}
+	untilTime = untilFrame / soundFormat.sampleRate; // reassign untilTime.
     }
 
     // Progress across the time line, in buffer region increments.
     // NSLog(@"currentMixFrame = %d, untilFrame = %d\n", currentMixFrame, untilFrame);
     while (currentMixFrame < untilFrame) {
 	NSArray *noteTagsList = [samplesToMix allKeys];
+	double currentMixTime = currentMixFrame / soundFormat.sampleRate;
+	
 	currentBufferSize = MIN(untilFrame - currentMixFrame, MIXING_BUFFER_SIZE);
 	mixInBuffer = [[SndAudioBuffer alloc] initWithDataFormat: soundFormat.dataFormat
 						    channelCount: soundFormat.channelCount
@@ -178,7 +183,7 @@ static long secondsToFrames(Snd *s, double time)
 	    [premixAudioFader setAmp: [sampleToMix amplitude] clearingEnvelope: NO];
 	    // Convert the bearing to a bipolar normalized balance between left and right channels.
 	    [premixAudioFader setBalance: [sampleToMix panBearing] / 45.0 clearingEnvelope: NO];
-	    [soundProcessorChain processBuffer: inBuffer forTime: untilTime];
+	    [soundProcessorChain processBuffer: inBuffer forTime: currentMixTime];
 
 	    // Now mix in the buffer.
 	    framesMixed = [mixInBuffer mixWithBuffer: inBuffer];
@@ -188,7 +193,7 @@ static long secondsToFrames(Snd *s, double time)
 	    [mixAudioFader setAmp: amplitude clearingEnvelope: NO];
 	    [mixAudioFader setBalance: balance clearingEnvelope: NO];
 
-	    [mixedProcessorChain processBuffer: framesMixed forTime: untilTime];
+	    [mixedProcessorChain processBuffer: mixInBuffer forTime: currentMixTime];
 #endif	    
 	    
 	    if (inLastBufferOfSound) {      /* This sound's done. */
@@ -299,12 +304,30 @@ static long secondsToFrames(Snd *s, double time)
 	    NSLog(@"Warning: resampling more than 5 octaves.\n");
     }
     [newSound setConversionQuality: SndConvertHighQuality];
-    [newSound convertToFormat: soundFormat.dataFormat
+    [newSound convertToSampleFormat: soundFormat.dataFormat
 		 samplingRate: (fabs(resamplingFactor - 1.0) > 0.0001) ? [newSound samplingRate] * resamplingFactor : [newSound samplingRate]
 		 channelCount: soundFormat.channelCount];
 
     [samplesToMix setObject: newSoundFileSamples forKey: [NSNumber numberWithInt: [thisNote noteTag]]]; 
     [newSoundFileSamples autorelease]; // we are through with it, the samplesToMix will retain it as it needs.
+    return YES;
+}
+
+- (BOOL) mixNoteUpdate: (MKNote *) noteReceived
+{
+    // Update the amplitude, bearing etc of the particular MKSample in the samplesToMix dictionary, using the noteTag as the key.
+    MKSamples *sampleToModify = [samplesToMix objectForKey: [NSNumber numberWithInt: [noteReceived noteTag]]];
+    
+    if ([noteReceived isParPresent: MK_amp]) 
+	[sampleToModify setAmplitude: defaultAmplitude = [noteReceived parAsDouble: MK_amp]]; 
+    if ([noteReceived isParPresent: MK_bearing]) 
+	[sampleToModify setPanBearing: defaultBearing = [noteReceived parAsDouble: MK_bearing]]; 
+    if ([noteReceived isParPresent: MK_filename])
+	defaultFile = [noteReceived parAsStringNoCopy: MK_filename];
+    if ([noteReceived isParPresent: MK_freq1])
+	defaultOriginalFrequency = [noteReceived parAsDouble: MK_freq1];
+    if ([noteReceived isParPresent: MK_freq0])
+	defaultNewFrequency = [noteReceived parAsDouble: MK_freq0];    
     return YES;
 }
 
@@ -322,20 +345,7 @@ static long secondsToFrames(Snd *s, double time)
 	[self mixNewNote: noteReceived];
 	break;
     case MK_noteUpdate: {
-	// Update the amplitude, bearing etc of the particular MKSample in the samplesToMix dictionary, 
-	// using the noteTag as the key.
-	MKSamples *sampleToModify = [samplesToMix objectForKey: [NSNumber numberWithInt: [noteReceived noteTag]]];
-	
-	if ([noteReceived isParPresent: MK_amp]) 
-	    [sampleToModify setAmplitude: defaultAmplitude = [noteReceived parAsDouble: MK_amp]]; 
-	if ([noteReceived isParPresent: MK_bearing]) 
-	    [sampleToModify setPanBearing: defaultBearing = [noteReceived parAsDouble: MK_bearing]]; 
-	if ([noteReceived isParPresent: MK_filename])
-	    defaultFile = [noteReceived parAsStringNoCopy: MK_filename];
-	if ([noteReceived isParPresent: MK_freq1])
-	    defaultOriginalFrequency = [noteReceived parAsDouble: MK_freq1];
-	if ([noteReceived isParPresent: MK_freq0])
-	    defaultNewFrequency = [noteReceived parAsDouble: MK_freq0];
+	[self mixNoteUpdate: noteReceived];
 	break;
     }
     default: // do nothing with independent note offs
