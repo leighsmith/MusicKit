@@ -51,7 +51,9 @@ and binary distributions. Likewise if the distribution web site changes.
 -->
 
     <author>
-      <firstname>Leigh</firstname> <othername role=mi>M.</othername> <surname>Smith</surname>
+      <firstname>Leigh</firstname>
+      <othername role=mi>M.</othername>
+      <surname>Smith</surname>
       <affiliation>
         <orgname>
 <ulink url="http://www.tomandandy.com">
@@ -73,9 +75,11 @@ tomandandy music inc.
 </orgname>
 	<address>
           <street>89 Greene Street</street>
-          <city>New York</city>, <state>NY</state>
-          <postcode>10012</postcode> <country>USA</country>
-          <phone>+1-212-334-0421</phone> 
+          <city>New York</city>,
+          <state>NY</state>
+          <postcode>10012</postcode>
+          <country>USA</country>
+          <phone>+1-212-431-3535</phone> 
           <fax>+1-212-431-4115</fax> (Fax)
           <email>leigh@tomandandy.com</email>
         </address>
@@ -298,6 +302,22 @@ mixer, sample rate converter, etc.
 ScoreFile, a textual scripting language for music. 
 </para>
 	</listitem>
+        <listitem>
+          <para>
+Connectable audio processing modules (&ldquo;plugins&rdquo") including
+standard audio effects such as reverb.
+</para>
+        </listitem>
+        <listitem>
+          <para>
+<acronym>MP3</acronym> streaming of audio output to web servers using
+the <ulink url=http://www.icecast.org>icecast</url> library. The
+portions of the library used are <acronym>LGPL</acronym>, not
+<acronym>GPL</acronym> and so do not compromise the
+<productname>MusicKit</productname> <link
+linkend="license">license</link>
+</para>
+        </listitem>
       </itemizedlist>
     </sect2>
 
@@ -322,9 +342,9 @@ ScoreFile, a textual scripting language for music.
         <listitem>
           <para>
             <ulink url="http://www.eecs.umich.edu/~mrozek/nextmusic/NxtSndMusProgs.html">
-               Sound and Music Programs for NextStep
+               Sound and Music Programs for <productname>NeXTStep</productname>
             </ulink> 
-            &horbar; a database outlining where other <productname>MusicKit</productname> and DSP
+            &horbar; a database outlining where other <productname>MusicKit</productname> and <acronym>DSP</acronym>
             software can be found on the Net.
           </para>
         </listitem>
@@ -392,9 +412,11 @@ Documentation
 	<listitem>
 	  <para>
 The file 
+<ulink url=&mkweb;/ChangeLog>
 <filename>
 Documentation/ChangeLog
 </filename>
+</ulink>
 lists changes and is generated from the CVS logs.
 </para>
       </listitem>
@@ -447,11 +469,9 @@ function and <productname>Objective-C</productname> class.
 	Conference papers and lecture slides in
 	<acronym>PDF</acronym> or <acronym>HTML</acronym> are listed
 	in the <link linkend=bibliography>bibliography</link>.
-</para>
+        </para>
       </sect3>
     </sect2>
-
-
   </sect1>
 
   <sect1 id="platforms">
@@ -549,9 +569,14 @@ url="http://www.gnustep.org">GnuStep</ulink> library is partially
 completed and looking for more volunteers. A performance framework
 (<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
 <ulink url="http://www.cs.cmu.edu/~music/portmusic/">PortAudio</ulink>
-library has been partially completed, porting the <productname>MusicKit</productname> to Intel
-Linux. Streaming sound works, but MIDI needs
-further work, please help!
+library has been partially completed, porting the
+<productname>MusicKit</productname> to
+<productname>Intel</productname>
+<productname>Linux</productname>. Streaming sound works, but
+<acronym>MIDI</acronym> needs further work, please help! Potentially
+other platforms can work (<productname>Solaris</productname>,
+<productname>FreeBSD</productname>, <productname>AIX</productname>
+etc) if they are supported in the PortAudio library and GnuStep.
 </para>
     </sect2>
   </sect1>
@@ -959,7 +984,7 @@ the MK source:
               The 
 <ulink url="http://www.sourceforge.net/projects/sox">SoX</ulink>
 sound tools library provides sound file format conversion.
-Newer versions of will probably just work.
+Newer versions will probably just work.
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -983,7 +1008,9 @@ Newer versions of will probably just work.
             </term>
 	      <listitem>
 		<para>
-              The MacOS X frameworks (including the <productname>SndKit</productname>).
+              The MacOS X frameworks (including the
+              <productname>SndKit</productname>), applications,
+              command line tools and documentation.
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -1558,6 +1585,7 @@ We are interested in applications, unit generators, synth patches, etc.
 If you do not have e-mail access, you can send media to the address of
 the author at the start of this document.
 </para>
+
 <para>
 If you have discovered a bug, please report it via the
 <productname>sourceforge</productname> bug tracker.
