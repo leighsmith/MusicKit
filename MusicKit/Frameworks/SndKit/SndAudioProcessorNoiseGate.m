@@ -1,14 +1,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessorNoiseGate.m
-//  SndKit
+//  $Id$
 //
-//  Created by SKoT McDonald on Fri Jan 11 2002.
-//  Copyright (c) 2001 tomandandy. All rights reserved.
+//  Description:
+//    Based on the 1999 C++ Vellocet VNoiseGate Cubase VST plugin by
+//    Vellocet / SKoT McDonald <skot@vellocet.com>
+//    http://www.vellocet.com
 //
-//  Based on the 1999 C++ Vellocet VNoiseGate Cubase VST plugin by
-//  Vellocet / SKoT McDonald <skot@vellocet.com>
-//  http://www.vellocet.com
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2002, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,10 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessor.m
-//  SndKit
+//  $Id$
 //
-//  Created by SKoT McDonald on Tue Mar 27 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Description:
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright

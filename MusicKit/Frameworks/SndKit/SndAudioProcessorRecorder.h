@@ -1,13 +1,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessorRecorder.h
-//  SndKit
+//  $Id$
 //
-//  Created by skot on Wed Dec 05 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Description:
 //
-//  Permission is granted to use and modify this code for commercial and 
-//  non-commercial purposes so long as the author attribution and copyright 
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
 //  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////

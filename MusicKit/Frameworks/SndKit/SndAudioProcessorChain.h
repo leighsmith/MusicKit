@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessorChain.h
-//  SndKit
+//  $Id$
 //
-//  Created by skot on Tues Mar 27 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and non-commercial
 //  purposes so long as the author attribution and copyright messages remain intact and
@@ -22,9 +22,9 @@
 @class SndAudioFader;
 
 /*!
-@class SndAudioProcessorChain
-@abstract
-@discussion To come
+  @class SndAudioProcessorChain
+  @abstract Holds a collection of serially "chained" SndAudioProcessors with a final SndAudioFader at the end of the chain.
+  @discussion To come
 */
 @interface SndAudioProcessorChain : NSObject {
 /*! @var   audioProcessorArray */

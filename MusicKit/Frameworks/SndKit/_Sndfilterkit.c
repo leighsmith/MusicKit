@@ -1,5 +1,8 @@
 /*
- filterkit.c (library "filterkit.a"):  Kaiser-windowed low-pass filter support.
+ $Id$
+ 
+ Description:
+   Kaiser-windowed low-pass filter support.
 
  Original License:
    Copyright (c) 1984, Julius Smith
@@ -33,7 +36,7 @@
    POSSIBILITY OF SUCH DAMAGE.
 
  Subsequent changes:
-   Copyright (c)1999-2002 tomandandy inc.
+   Copyright (c) 1999, The MusicKit Project.  All rights reserved.
  
  */
 /* filterkit.c

@@ -1,20 +1,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessorReverb.h
-//  SndKit
+//  $Id$
 //
-//  Created by skot on Wed Mar 28 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Description:
+//    FreeVerb-based
+//    FreeVerb originally written by Jezar at Dreampoint, June 2000
+//    http://www.dreampoint.co.uk
 //
-//  Permission is granted to use and modify this code for commercial and 
-//  non-commercial purposes so long as the author attribution and copyright 
+//    TODO: make the ObjC to C++ bridge unnecessary!!
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
 //  messages remain intact and accompany all relevant code.
-//
-//  FreeVerb-based
-//  FreeVerb originally written by Jezar at Dreampoint, June 2000
-//  http://www.dreampoint.co.uk
-//
-//  TODO: make the ObjC to C++ bridge unnecessary!!
 //
 ////////////////////////////////////////////////////////////////////////////////
 

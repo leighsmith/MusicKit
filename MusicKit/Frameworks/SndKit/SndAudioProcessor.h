@@ -1,16 +1,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessor.h
-//  SndKit
+//  $Id$
 //
-//  Created by skot on Tues Mar 27 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Description:
+//    Heavily inspired by Steinberg's VST effects plugins for the moment
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
-//  non-commercial purposes so long as the author attribution and copyright 
+//  non-commercial purposes so long as the author attribution and copyright
 //  messages remain intact and accompany all relevant code.
-//
-//  Heavily inspired by Steinberg's VST effects plugins for the moment
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +45,7 @@
 @method registerAudioProcessorClass:
  @abstract Registers an SndAudioProcessor class
  @discussion Automatically called by the SndAudioProcessor init method,
- so any subclasses will automatically register themselves once instanciated.
+ so any subclasses will automatically register themselves once instantiated.
  @param fxclass The class of an SndAudioProcessor
 */
 + (void) registerAudioProcessorClass: (id) fxclass;

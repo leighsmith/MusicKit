@@ -1,18 +1,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioProcessorMP3Encoder.m
-//  SndKit
+//  $Id$
 //
-//  Created by SKoT McDonald <skot@tomandandy.com> on Mon Oct 01 2001.
-//  Copyright (c) 2001 SndKit project
+//  Description:
+//    Requires the libshout library produced by the Icecast
+//    mp3 shoutcasting library (see http://www.icecast.org),
+//    and the LAME MP3 encoder / decoder (http://www.lame.org)
 //
-//  Permission is granted to use and modify this code for commercial and 
-//  non-commercial purposes so long as the author attribution and copyright 
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
 //  messages remain intact and accompany all relevant code.
-//
-//  Requires the libshout library produced by the Icecast 
-//  mp3 shoutcasting library (see http://www.icecast.org), 
-//  and the LAME MP3 encoder / decoder (http://www.lame.org)
 //
 ////////////////////////////////////////////////////////////////////////////////
 

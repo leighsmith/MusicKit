@@ -33,7 +33,7 @@
    POSSIBILITY OF SUCH DAMAGE.
 
  Subsequent changes:
-   Copyright (c)1999-2002 tomandandy inc.
+   Copyright (c) 1999, The MusicKit Project.  All rights reserved.
 
  Description:
    Sampling Rate Conversion Subroutines
@@ -72,6 +72,9 @@
  Modification History:
 
   $Log$
+  Revision 1.3  2003/05/12 17:23:27  leighsmith
+  Updated copyright message and CVS Id
+
   Revision 1.2  2002/03/06 11:45:48  sbrandon
   changed resample routines in 2 ways:
   - now only operate on host endian data
