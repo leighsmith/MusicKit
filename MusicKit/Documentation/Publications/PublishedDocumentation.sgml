@@ -171,7 +171,11 @@ Music Conference describing some of the uses to which the
 the Music Kit and the Ariel QuintProcessor</title>
   </bibliomset>
   <bibliomset relation=proceedings>
-    <title>NW Expo</title>
+    <title>Proceedings of the 1993 International Computer Music Conference</title>
+    <publisher>
+        <publishername>International Computer Music Association</publishername>
+       <address>Tokyo, Japan</address>
+    </publisher>
     <pubdate>1993</pubdate>
   </bibliomset>
   <bibliomset relation=online>
