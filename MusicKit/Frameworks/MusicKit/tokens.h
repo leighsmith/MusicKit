@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 17:53:25  sbrandon
+  - added newline onto end of file
+
   Revision 1.2  1999/07/29 01:26:18  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
