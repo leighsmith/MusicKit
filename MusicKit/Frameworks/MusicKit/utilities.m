@@ -12,11 +12,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.14  2000/11/25 22:42:43  leigh
+  Doco cleanup
+
   Revision 1.13  2000/07/22 00:25:02  leigh
   Now properly manages error stream assignments.
 
@@ -832,22 +836,19 @@ NSString *_MKErrorStringFile(void)
 }
 
 
-int _MKFindAppWrapperFile(NSString *fileName,NSString **returnName)
+int _MKFindAppWrapperFile(NSString *fileName, NSString **returnName)
 	/* fileName should include extension.
 	 * returnNameBuffer should be of size MAXPATHLEN + 1.
 	 * This function returns 1 and sets returnNameBuffer if successful.
-         * If unsuccessful, resturns 0.
+         * If unsuccessful, returns 0.
          */
 {
-//	int err;
-	id bundle = [NSBundle mainBundle];
+	NSBundle *bundle = [NSBundle mainBundle];
         NSString *retName;
 	if (!bundle)
    	   return 0;
-//#warning DONE StringConversion: This call to -[NXBundle getPath:forResource:ofType:] has been converted to the similar NSBundle method.  The conversion has been made assuming that the variable called returnName will be changed into an (NSString *).  You must change the type of the variable called returnName by hand.
         retName = [bundle pathForResource:fileName ofType:@""];
         returnName = &retName;
-//	err = ((*returnName = [bundle pathForResource:fileName ofType:@""]) != nil);
 	return (retName != nil);
 }
 

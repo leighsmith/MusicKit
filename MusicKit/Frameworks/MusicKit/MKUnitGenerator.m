@@ -1,37 +1,41 @@
 /*
   $Id$
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
 
   Description:
-    This is an abstract superclass from which particular UnitGenerators
-    inherit. You never create instances of UnitGenerator or any 
+    This is an abstract superclass from which particular MKUnitGenerators
+    inherit. You never create instances of MKUnitGenerator or any 
     of its subclasses directly. They are created automatically by the 
-    Orchestra object in response to messages such as allocUnitGenerator:
+    MKOrchestra object in response to messages such as allocUnitGenerator:
     The subclass needs to provide a number of methods. 
     In particular, he may want to override
-    -runSelf
-    -idleSelf
-    -finishSelf
+      -runSelf
+      -idleSelf
+      -finishSelf
     and
-    -init
+      -init
 
     In addition to the subclass responsibility methods given below, the 
     subclass designer will probably want to provide methods for poking 
     values into the DSP (e.g. an oscillator would have a setFreq:
     method.) The utility dspwrap (not provided in release 0.9) 
-    simplifies the task of writing UnitGenerator subclasses.
+    simplifies the task of writing MKUnitGenerator subclasses.
 
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.9  2000/11/25 22:40:48  leigh
+  Doco cleanup
+
   Revision 1.8  2000/07/22 00:32:21  leigh
   Minor doco and typing cleanups.
 
@@ -77,7 +81,6 @@ Modification history:
 
 #import "UnitGeneratorPrivate.h"
 #import "_musickit.h"
-//#import <streams/streams.h>
 #import <Foundation/NSException.h> /*sb: for assertions? */
 
 #define INT(_x) ((int)_x)
