@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 2.0  2004/12/06 18:09:03  leighsmith
+  Beginning of rewrite to use the SndKit for native synthesis
+
   Revision 1.5  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -48,7 +51,6 @@ extern BOOL _MKOrchLateDeltaTMode(id theOrch); /* See MKOrchestra.m ***SIGH*** *
 @interface MKOrchestra(Private)
 
 +(NSMutableArray **)_addTemplate:aNewTemplate ;
-+allocFromZone:(NSZone *)zone onDSP:(unsigned short)index;
 -_adjustOrchTE:(int)yesOrNo reset:(int)reset;
 -_notifyAbort;
 -_clearNotification;
