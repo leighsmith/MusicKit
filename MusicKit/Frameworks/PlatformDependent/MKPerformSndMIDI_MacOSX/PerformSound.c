@@ -20,18 +20,11 @@
 */
 /*
 // $Log$
-// Revision 1.9  2001/04/06 18:16:06  skotmcdonald
-// Added input stream functionality to SndStreaming system. Note that as
-// MacOSX reports the default audio in as a separate device to the audio out,
-// CoreAudio generates two callbacks to the vendBuffersToStreamManagerIOProc
-// function. To achieve synchronous IO in this case, the input buffer is
-// stored in a local buffer until the next output buffer callback occurs, at
-// which time both the local input and the core audio output buffers are sent
-// upward together. Note this assumes the input and output buffers have been
-// sent to the same size!!! (have to add some enforcing code later...)
+// Revision 1.10  2001/04/06 21:56:58  skotmcdonald
+// Fixed local input buffer size bug
 //
-// Many coreaudio interfacing functions made in/out dual purpose, some extra
-// feedback fns added too.
+// Revision 1.9  2001/04/06 18:16:06  skotmcdonald
+// Added input stream functionality to SndStreaming system. 
 //
 // Revision 1.8  2001/03/21 02:59:43  leigh
 // Removed old debugging info
@@ -77,6 +70,8 @@ extern "C" {
 #define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
 #define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
 
+#define DEFAULT_BUFFERSIZE 16384
+
 #define PADDING 3          // make sure this matches PADFORMAT changes below (including \0)
 #define PADFORMAT "%s: %s"
 
@@ -109,6 +104,7 @@ static unsigned int driverIndex = 0;
 static int          numOfDevices;
 static SNDPlayingSound singlePlayingSound;
 static int          bufferSizeInFrames;
+static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
 
 static AudioStreamBasicDescription outputStreamBasicDescription;
 static AudioDeviceID outputDeviceID;
@@ -121,6 +117,9 @@ static AudioDeviceID inputDeviceID;
 static SNDStreamProcessor streamProcessor;
 static void *streamUserData;
 static double firstSampleTime = -1.0; // indicates this has not been assigned.
+
+static float *fInputBuffer = NULL;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // getCoreAudioErrorString
@@ -232,8 +231,6 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
 // easy way to do the conversion without anyone writing their own converter.
 ////////////////////////////////////////////////////////////////////////////////
 
-float fBlatantHackBuffer[10000];
-
 static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                           const AudioTimeStamp *inNow,
                           const AudioBufferList *inInputData,
@@ -266,10 +263,10 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         
         // to tell the client the format it is receiving.
         
-        if (inInputData->mNumberBuffers == NULL)
+        if (inInputData->mNumberBuffers == 0)
           inStream.streamData = NULL;
         else {
-          memcpy(fBlatantHackBuffer, inInputData->mBuffers[0].mData, 32768);
+          memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
         }
         // to tell the client the format it should send.
         
@@ -280,7 +277,7 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
           SNDStreamNativeFormat(&outStream.streamFormat);   
           SNDStreamNativeFormat(&inStream.streamFormat);    
         
-          inStream.streamData  = fBlatantHackBuffer;  
+          inStream.streamData  = fInputBuffer;  
           outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
         
           // hand over the stream buffers to the processor/stream manager.
@@ -494,7 +491,6 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     OSStatus CAstatus;
     UInt32 propertySize;
     Boolean propertyWritable;
-    UInt32 bufferSizeInBytes;
 
     /* fetch the buffer size for informational purposes */
     CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
@@ -569,8 +565,6 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     UInt32 propertySize;
     Boolean propertyWritable;
     
-    memset(fBlatantHackBuffer, 0, sizeof(float)*10000);
-
     if(!retrieveDriverList())
         return FALSE;
     
@@ -635,9 +629,9 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true))
         return FALSE;
 
-    if(!setBufferSize(outputDeviceID, 16384, false))
+    if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false))
         return FALSE;
-    if(!setBufferSize(inputDeviceID, 16384, true))
+    if(!setBufferSize(inputDeviceID, bufferSizeInBytes, true))
         return FALSE;
         
     return TRUE;
@@ -837,10 +831,15 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 {
     BOOL r = TRUE;
     OSStatus CAstatus;
-
+    
     if(!initialised)
         return FALSE;  // invalid sound structure.
- 
+
+    if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
+      return FALSE;
+    
+    memset(fInputBuffer,0,bufferSizeInBytes);
+
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
     
@@ -885,6 +884,9 @@ PERFORM_API BOOL SNDStreamStop(void)
 {
     BOOL r = TRUE;
     OSStatus CAstatus;
+    
+    free(fInputBuffer);
+    fInputBuffer = NULL;
 
     CAstatus = AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
     if (CAstatus) {
