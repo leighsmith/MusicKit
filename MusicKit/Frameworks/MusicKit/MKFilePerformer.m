@@ -4,14 +4,18 @@
 #endif
 
 /*
-  FilePerformer.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.3  1999/07/29 01:11:58  leigh
+  removed last _extraVars fluff, added CVS log
 
   10/26/89/daj - Added class method fileExtensions for binary scorefile
                  support.
@@ -119,9 +123,7 @@ Modification history:
 			   performance.  */
     double lastTimeTag;   /* The greatest timeTag value considered for 
 			   performance.  */
-    void *_reservedFilePerformer1;
 }
-#define _extraVars _reservedFilePerformer1
 
 /* METHOD TYPES
  * Initializing a FilePerformer
@@ -186,7 +188,6 @@ Modification history:
 {
     if (filename)
       [filename release];
-    free(_extraVars);
     [super dealloc];
 }
 
