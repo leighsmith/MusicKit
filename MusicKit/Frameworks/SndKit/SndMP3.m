@@ -29,7 +29,7 @@
 
 @implementation SndMP3
 
-int bitrateLookupTable[16][6] = {
+static int bitrateLookupTable[16][6] = {
   { MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD },
   {  32,  32,  32,  32,   8,   8 },
   {  64,  48,  40,  48,  16,  16 },
@@ -223,7 +223,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 // readSoundfile:
 ////////////////////////////////////////////////////////////////////////////////
 
-- readSoundfile: (NSString*) filename
+- (int) readSoundfile: (NSString*) filename
 {
   int growSize = 44100 * 4;
   int pcmSize  = growSize;

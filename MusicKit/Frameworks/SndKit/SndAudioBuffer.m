@@ -741,7 +741,7 @@ return self;
                          factor: (double) deltaTime
                          offset: (double) offset
 {
-  int i, chan;
+  int i;
   int inchans  = [aBuffer channelCount];
   int outchans = [tempBuffer channelCount];
   int lengthInSampleFrames = [tempBuffer lengthInSampleFrames];

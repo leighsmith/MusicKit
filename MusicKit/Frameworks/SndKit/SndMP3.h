@@ -26,7 +26,7 @@
 - (int) sampleCount;
 - (int) channelCount;
 - (double) samplingRate;
-- readSoundfile: (NSString*) filename;
+- (int) readSoundfile: (NSString*) filename;
 - (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion;
 
 @end
