@@ -10,7 +10,7 @@
     Objective C SndKit interface rather this one...do yourself a favour, 
     learn ObjC - it's simple, its fun, its better than Java..
 
-  Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
+  Original Author: Leigh M. Smith, <leigh@leighsmith.com>
 
   10 July 1999, Copyright (c) 1999 The MusicKit Project.
 
@@ -59,7 +59,7 @@ static AudioHardwareIOProcStreamUsage *inputStreamIOProcUsage;
 static SNDStreamProcessor streamProcessor;
 static void          *streamUserData;
 static double        firstSampleTime = -1.0; // indicates this has not been assigned.
-static float         *fInputBuffer = NULL;
+static float         *inputBuffer = NULL;
 static BOOL          isMuted = FALSE;
 static NSLock        *inputLock = nil;
 
@@ -144,8 +144,8 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
             // number of input buffers, whereas the latter can describe the streams on potentially a different device.
 	    // TODO The whole approach of using two vending IOProcs which initiate one stream manager callback needs rethinking.
             if(bufferIndex < inInputData->mNumberBuffers && inputStreamIOProcUsage->mStreamIsOn[bufferIndex]) {
-		// TODO we only copy across the first buffers data to fInputBuffer.
-                memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+		// TODO we only copy across the first buffers data to inputBuffer.
+                memcpy(inputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
 	    }
             else {
                 inStream.streamData = NULL;
@@ -159,10 +159,10 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
         if(outputStreamIOProcUsage->mStreamIsOn[bufferIndex]) {
             // to tell the client the format it should send.
 
-	    SNDStreamNativeFormat(&outStream.streamFormat);
-	    SNDStreamNativeFormat(&inStream.streamFormat);
+	    SNDStreamNativeFormat(&outStream);
+	    SNDStreamNativeFormat(&inStream);
 
-	    inStream.streamData  = fInputBuffer;
+	    inStream.streamData  = inputBuffer;
 	    outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
             
 	    [inputLock lock];
@@ -171,7 +171,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 #if DEBUG_CALLBACK
 		NSLog(@"[SND] vend no input initialized zeroing input buffer...\n");
 #endif		
-		memset(fInputBuffer, 0, bufferSizeInBytes);
+		memset(inputBuffer, 0, bufferSizeInBytes);
 	    }
 
 	    // hand over the stream buffers to the processor/stream manager.
@@ -212,7 +212,7 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
 #if DEBUG_CALLBACK    
     NSLog(@"[SND] starting vendInputBuffersToStreamManagerIOProc...\n");
 #endif
-    if (fInputBuffer) {
+    if (inputBuffer) {
         SNDStreamBuffer inStream; //, outStream;
         int bufferIndex;
 
@@ -229,7 +229,7 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                     inStream.streamData = NULL;
                 else {
                     [inputLock lock];
-                    memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+                    memcpy(inputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
                     [inputLock unlock];
                 }
             }
@@ -466,7 +466,7 @@ static BOOL getAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStr
     }
 
     if((*ioProcStreamUsage = (AudioHardwareIOProcStreamUsage *) malloc(propertySize)) == NULL) {
-        NSLog(@"Unable to malloc input buffer of %ld\n", bufferSizeInBytes);
+        NSLog(@"Unable to malloc ioProcStreamUsage buffer of %ld\n", propertySize);
         return FALSE;
     }
 
@@ -627,11 +627,11 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     return TRUE;
 }
 
-BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
+BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes)
 {
     if (isDeviceRunning(outputDeviceID, FALSE))
 	return FALSE;
-    bufferSizeInBytes = liBufferSizeInBytes;
+    bufferSizeInBytes = newBufferSizeInBytes;
     if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false)) {
 	NSLog(@"output device - error setting buffer size\n");
 	return FALSE;
@@ -815,27 +815,19 @@ PERFORM_API void SNDSetMute(BOOL aFlag)
 
 // Return in a NULL stream buffer the format of the sound data preferred by
 // the operating system. For CoreAudio, we use the basicDescription.
-// TODO PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat)
-PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
+PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat)
 {
     if (!initialised)
 	SNDInit(TRUE);
 
-    streamFormat->magic        = SND_MAGIC;
-    streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
-    /* Number of bytes of data in a buffer */
-    streamFormat->dataSize     = bufferSizeInFrames * outputStreamBasicDescription.mBytesPerFrame;
-    streamFormat->dataFormat   = SND_FORMAT_FLOAT;
-    streamFormat->samplingRate = outputStreamBasicDescription.mSampleRate;
-    streamFormat->channelCount = outputStreamBasicDescription.mChannelsPerFrame;
-    streamFormat->info[0]      = '\0';
-    
     // The bytes per frame is implicitly set by the dataFormat value.
-    //streamFormat->dataFormat = SND_FORMAT_FLOAT;
-    //streamFormat->frameCount = bufferSizeInFrames;
-    //streamFormat->sampleRate = outputStreamBasicDescription.mSampleRate;
-    //streamFormat->channelCount = outputStreamBasicDescription.mChannelsPerFrame;
-    //streamFormat->streamData = NULL;
+    streamFormat->dataFormat   = SND_FORMAT_FLOAT;
+    /* Number of channel independent sample frames in a buffer */
+    streamFormat->frameCount   = bufferSizeInFrames;
+    streamFormat->sampleRate   = outputStreamBasicDescription.mSampleRate;
+    streamFormat->channelCount = outputStreamBasicDescription.mChannelsPerFrame;
+    // Rather than setting the stream data explicitly NULL, we just leave it.
+    // streamFormat->streamData = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -857,11 +849,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         return FALSE;  // invalid sound structure.
 
     // Even if we don't have input, we still need an input buffer to send up empty to the rest of the arch.
-    if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL) {
+    if ((inputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL) {
         NSLog(@"Unable to malloc input buffer of %ld\n", bufferSizeInBytes);
         return FALSE;
     }
-    memset(fInputBuffer, 0, bufferSizeInBytes);
+    memset(inputBuffer, 0, bufferSizeInBytes);
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
@@ -950,12 +942,12 @@ PERFORM_API BOOL SNDStreamStop(void)
     
     if (CAstatus) {
         NSLog(@"SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
-        r =  FALSE;
+        r = FALSE;
     }
     firstSampleTime = -1.0;  
     if (inputInit) {
-        free(fInputBuffer);
-        fInputBuffer = NULL;
+        free(inputBuffer);
+        inputBuffer = NULL;
     }
 #if DEBUG_STARTSTOPMSG    
     NSLog(@"[SND] Stream Stopped: %s\n", r ? "OK" : "ERR");
