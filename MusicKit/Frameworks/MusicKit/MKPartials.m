@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/10/04 06:16:15  skot
+  Added description selectors
+
   Revision 1.3  2000/06/09 18:06:29  leigh
   Added braces to reduce finicky compiler warnings
 
@@ -160,6 +163,20 @@ id MKGetPartialsClass(void)
   dbMode = NO;
   tableType = MK_oscTable;
   return self;
+}
+
+// SKoT: Added 4 Oct 2000
+- (NSString*) description
+{
+    int i;
+    NSString *s = [NSString localizedStringWithFormat: @"MKPartial with %i partials: [", partialCount];
+
+    for (i = 0; i < partialCount; i++) 
+        s = [s stringByAppendingString:
+            [NSString localizedStringWithFormat: @"{%.2f,%.2f}",freqRatios[i], ampRatios[i]]];
+
+    [s stringByAppendingString: @"]"];
+    return s;
 }
 
 static void putArray(int partialCount,NSCoder *aTypedStream,double *arr) /*sb: originally converted as NSArchiver, not NSCoder */

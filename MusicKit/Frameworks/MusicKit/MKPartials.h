@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2000/10/04 06:16:15  skot
+  Added description selectors
+
   Revision 1.2  1999/07/29 01:25:48  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -61,6 +64,8 @@
 
 - (void)dealloc; 
   /* Frees the receiver and all its arrays. */
+
+- (NSString*) description;
 
 -(double)highestFreqRatio;
   /* Returns the highest (i.e., largest absolute value) freqRatio.  

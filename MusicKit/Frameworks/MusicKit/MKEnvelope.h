@@ -12,6 +12,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/10/04 06:16:15  skot
+  Added description selectors
+
   Revision 1.3  2000/04/02 16:50:32  leigh
   Cleaned up doco
 
@@ -64,6 +67,7 @@ MKEnvStatus;
 -(double)attackDur;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
+- (NSString*) description;
 
  /* The following methods are obsolete */
 //- (void)initialize;

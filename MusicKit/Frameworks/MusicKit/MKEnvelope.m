@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/10/04 06:16:15  skot
+  Added description selectors
+
   Revision 1.3  2000/04/02 16:50:32  leigh
   Cleaned up doco
 
@@ -85,6 +88,23 @@ Modification history:
     defaultSmoothing = MK_DEFAULTSMOOTHING;
     return self;
 }
+
+// SKoT: Added 4 Oct 2000
+
+- (NSString*) description
+{
+    long i;
+    NSString *s = [NSString localizedStringWithFormat: @"MKEnvelope with %i points: [", pointCount];
+
+    for (i = 0; i < pointCount; i++)
+        s = [s stringByAppendingString:
+            [NSString localizedStringWithFormat: @"{%.2f,%.2f}",xArray[i], yArray[i]]];
+
+    [s stringByAppendingString: @"]"];
+ 
+   return s;    
+}
+
 
 static void putArray(int pointCount,NSCoder *aTypedStream,double *arr) /*sb: originally converted as NSArchiver, not NSCoder */
 {
