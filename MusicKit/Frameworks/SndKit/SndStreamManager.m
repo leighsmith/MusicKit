@@ -94,7 +94,6 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) startStreaming
 {
-    // TO DO:
     // Tell MKPerformSndAndMidi to start sending us buffers, register the
     // processAudioAtTime selector as the callback for it to use.
     // keep a copy of the format we decided to open to build the initial
