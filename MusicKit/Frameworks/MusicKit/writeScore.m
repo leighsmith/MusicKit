@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/01/29 16:47:33  sbrandon
+  ensured we retain and release stream (NSMutableData) and _binaryIndecies variables (fixed leak)
+
   Revision 1.7  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -83,7 +86,7 @@ _MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShif
     if (!fileStream) 
       return NULL;
     _MK_MALLOC(p,_MKScoreOutStruct,1);
-    p->_stream = fileStream;             
+    p->_stream = [fileStream retain];             
     p->_nameTable = _MKNewScorefileParseTable();
     /* We need keyword and such symbols here to make sure there's no
        collission with such symbols when file is written. */
@@ -204,6 +207,8 @@ _MKScoreOutStruct *_MKFinishScoreOut(_MKScoreOutStruct * p, BOOL writeEnd)
 	  }
 	}
 	_MKFreeScorefileTable(p->_nameTable);
+        [p->_stream release];
+        [p->_binaryIndecies release];
 //#warning StreamConversion: NXFlush should be converted to an NSData method
 //	NXFlush(p->_stream);
 	free(p);
