@@ -4,11 +4,23 @@
 //  SndKit
 //
 //  Created by SKoT McDonald on Fri Dec 21 2001.
-//  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2001 tomandandy. All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+#import "SndStreamArchitectureView.h"
 #import "SndAudioProcessorInspector.h"
+#import "SndAudioProcessorDelay.h"
+#import "SndAudioProcessorDistortion.h"
+#import "SndAudioProcessorFlanger.h"
+#import "SndAudioProcessorMP3Encoder.h"
+#import "SndAudioProcessorReverb.h"
+#import "SndAudioProcessorRecorder.h"
+#import "SndAudioProcessorToneGenerator.h"
+
+static NSMutableArray *fxClassesArray;
 
 @implementation SndAudioProcessorInspector
  
@@ -29,11 +41,31 @@
     id tcN = [tableColumns objectAtIndex: 0];
     id tcV = [tableColumns objectAtIndex: 1];
     [tcN setIdentifier: @"Name"];
-    [tcN setEditable: FALSE];
+    [tcN setEditable: NO];
     [tcV setIdentifier: @"Value"];
-    [tcV setEditable: FALSE];
+    [tcV setEditable: NO];
   }
   [sndArchView setDelegate: self];
+
+  if (fxClassesArray == nil) {
+    fxClassesArray = [[NSMutableArray alloc] init];
+    [fxClassesArray addObject: [SndAudioProcessorFlanger class]];
+    [fxClassesArray addObject: [SndAudioProcessorDelay class]];
+    [fxClassesArray addObject: [SndAudioProcessorDistortion class]];
+    [fxClassesArray addObject: [SndAudioProcessorReverb class]];
+    [fxClassesArray addObject: [SndAudioProcessorRecorder class]];
+    [fxClassesArray addObject: [SndAudioProcessorToneGenerator class]];
+    [fxClassesArray addObject: [SndAudioProcessorMP3Encoder class]];
+  }
+
+  {
+    int i,c = [fxClassesArray count];
+    [fxChooser removeAllItems];
+    for (i=0;i<c;i++) {
+      [fxChooser addItemWithObjectValue: [[fxClassesArray objectAtIndex: i] className]];
+    }
+    [fxChooser selectItemAtIndex: 0];
+  }
   return self;
 }
 
@@ -123,7 +155,7 @@
 - parameterTableAction: (id) sender
 {
   int r = [parameterTableView clickedRow];
-  printf("row: %i\n",r);
+//  printf("row: %i\n",r);
   if (theAudProc != nil) {
     [parameterValueSilder setFloatValue:  [theAudProc paramValue: r]];
     [parameterValueSilder setNeedsDisplay: YES];
@@ -181,13 +213,45 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// didSelectObject:
 ////////////////////////////////////////////////////////////////////////////////
 
 - didSelectObject: (id) sndAudioArchObject
 {
   if ([sndAudioArchObject isKindOfClass: [SndAudioProcessor class]])
     [self setAudioProcessor: sndAudioArchObject];
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// onAddFxButton:
+////////////////////////////////////////////////////////////////////////////////
+
+- onAddFxButton: (id) sender
+{
+  id currentObj = [sndArchView currentlySelectedAudioArchObject];
+  
+  if ([currentObj isKindOfClass: [SndStreamClient class]] ||
+      [currentObj isKindOfClass: [SndStreamMixer class]]) {
+    id fxClass = [fxClassesArray objectAtIndex: [fxChooser indexOfSelectedItem]];
+    SndAudioProcessor *newFX = [[fxClass alloc] init];
+    [[currentObj audioProcessorChain] addAudioProcessor: newFX];
+  }
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// onDelFxButton:
+////////////////////////////////////////////////////////////////////////////////
+
+- onDelFxButton: (id) sender
+{
+  id currentObj = [sndArchView currentlySelectedAudioArchObject];
+  if ([currentObj isKindOfClass: [SndAudioProcessor class]]) {
+    SndAudioProcessorChain* apc = [currentObj audioProcessorChain];
+    [sndArchView clearCurrentlySelectedAudioArchObject];
+    [apc removeAudioProcessor: currentObj];
+  }
   return self;
 }
 
