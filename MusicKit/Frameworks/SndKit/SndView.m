@@ -29,6 +29,7 @@ OF THIS AGREEMENT.
 ******************************************************************************/
 
 #import "SndView.h"
+#import <math.h>
 
 #if !defined(QUARTZ_RENDERING) && !defined(GNUSTEP)
 #define USE_PS_USER_PATHS
