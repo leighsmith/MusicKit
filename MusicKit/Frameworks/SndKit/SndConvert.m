@@ -48,8 +48,6 @@ OF THIS AGREEMENT.
 #import <libc.h>
 #endif
 
-//#import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-
 #ifndef USE_NEXTSTEP_SOUND_IO
 #import "sounderror.h"
 #endif
@@ -57,6 +55,7 @@ OF THIS AGREEMENT.
 #endif /* GNUSTEP */
 
 #import "SndFunctions.h"
+#import "SndMuLaw.h"
 #import "SndResample.h"
 #import "SndAudioBuffer.h"
 
@@ -86,7 +85,7 @@ void SndChangeSampleRate(const SndSoundStruct *fromSound,
 			 BOOL largeFilter,
 			 BOOL interpolateFilter,
 			 BOOL linearInterpolation,
-			 void *alternativeInput,
+			 void *inputPtr,
 			 short *outPtr)
 {
     int fromChannelCount = fromSound->channelCount;
@@ -97,15 +96,15 @@ void SndChangeSampleRate(const SndSoundStruct *fromSound,
     double fromSampleRate = fromSound->samplingRate;
     double toSampleRate = toSound->samplingRate;
 
-    if (fromDataFormat == SND_FORMAT_INDIRECT) {
+    if (fromDataFormat == SND_FORMAT_INDIRECT) {  // TODO this can be removed with SndSoundStruct
         fromDataFormat = ((SndSoundStruct *)(*((SndSoundStruct **) fromDataLocation)))->dataFormat;
         fromDataSize = SndSampleCount(fromSound) * fromChannelCount * SndSampleWidth(fromDataFormat);
     }
 
     if (fromSampleRate != toSampleRate) {
 	double stretchFactor = toSampleRate / fromSampleRate;
-	int inCount = SndBytesToSamples(fromDataSize, fromChannelCount, fromDataFormat);
-	int outCount = stretchFactor * inCount + 1;
+	int inSampleCount = SndBytesToSamples(fromDataSize, fromChannelCount, fromDataFormat);
+	int outSampleCount = stretchFactor * inSampleCount + 1;
 
 	/* interpolateFilter: YES = interpolate within filter.
 	 * linearInterp: YES = fast mode.
@@ -113,10 +112,10 @@ void SndChangeSampleRate(const SndSoundStruct *fromSound,
 	 * filterFile: NULL = use internal filter.
 	 */
 	char *filterFile = NULL;
-	int outCountReal = resample(stretchFactor, outPtr, inCount, outCount, MIN(fromChannelCount, toChannelCount),
-				interpolateFilter, linearInterpolation, largeFilter, filterFile, fromSound, 0, alternativeInput);
+	int outCountReal = resample(stretchFactor, outPtr, inSampleCount, outSampleCount, MIN(fromChannelCount, toChannelCount),
+				interpolateFilter, linearInterpolation, largeFilter, filterFile, fromSound, 0, inputPtr);
 
-	NSLog(@"Completed resample stretching by %lf. inCount = %d outCount = %d outCountReal = %d\n", stretchFactor, inCount, outCount, outCountReal);
+	// NSLog(@"Completed resample stretching by %lf. inSampleCount = %d outSampleCount = %d outCountReal = %d\n", stretchFactor, inSampleCount, outSampleCount, outCountReal);
 	toSound->dataFormat = SND_FORMAT_LINEAR_16; /* this is the output format */
 	toSound->channelCount = MIN(fromChannelCount, toChannelCount); /* channel count is reduced if nec */
 	toSound->dataSize = outCountReal * toSound->channelCount * SndSampleWidth(SND_FORMAT_LINEAR_16);
@@ -166,7 +165,7 @@ void SndChannelDecrease(void *inPtr, void *outPtr, int numberOfSampleFrames, int
 			sum += ((signed char *) inPtr)[baseIndex + n];
 			break;
 		    case SND_FORMAT_MULAW_8: /* endian ok */
-			sum += SndiMulaw(((unsigned char *) inPtr)[baseIndex + n]);
+			sum += SndMuLawToLinear(((unsigned char *) inPtr)[baseIndex + n]);
 			break;
 		    case SND_FORMAT_LINEAR_16:
 			sum += ((SND_HWORD *) inPtr)[baseIndex + n];
@@ -207,7 +206,7 @@ void SndChannelDecrease(void *inPtr, void *outPtr, int numberOfSampleFrames, int
 		    sum = 0;
 		    break;
 		case SND_FORMAT_MULAW_8:
-		    ((unsigned char *) outPtr)[frame * newNumChannels + m] = (unsigned char)SndMulaw((short)(sum / chansToSum));
+		    ((unsigned char *) outPtr)[frame * newNumChannels + m] = (unsigned char)SndLinearToMuLaw((short)(sum / chansToSum));
 		    sum = 0;
 		    break;
 		case SND_FORMAT_LINEAR_32:
@@ -298,29 +297,29 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 	    case SND_FORMAT_LINEAR_8:
 		LOOP_BACKWARD_THRU_SOUND {
 		    ((signed char *)toPtr)[i] = (signed char)
-		    ((short)SndiMulaw(((unsigned char *)fromPtr)[i]) >> 8);
+		    ((short)SndMuLawToLinear(((unsigned char *)fromPtr)[i]) >> 8);
 		}
 		break;
 	    case SND_FORMAT_LINEAR_16:
 		LOOP_BACKWARD_THRU_SOUND {
 		    ((signed short *)toPtr)[i] = (signed short)
-		    SndiMulaw(((unsigned char *)fromPtr)[i]);
+		    SndMuLawToLinear(((unsigned char *)fromPtr)[i]);
 		}
 		break;
 	    case SND_FORMAT_LINEAR_32:
 		LOOP_BACKWARD_THRU_SOUND {
 		    ((signed int *)toPtr)[i] = (signed int)
-		    SndiMulaw(((unsigned char *)fromPtr)[i]) << 16;
+		    SndMuLawToLinear(((unsigned char *)fromPtr)[i]) << 16;
 		}
 		break;
 	    case SND_FORMAT_FLOAT:
 		LOOP_BACKWARD_THRU_SOUND {
-		    ((float *)toPtr)[i] = (float)SndiMulaw(((unsigned char *)fromPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
+		    ((float *)toPtr)[i] = (float)SndMuLawToLinear(((unsigned char *)fromPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
 		}
 		break;
 	    case SND_FORMAT_DOUBLE:
 		LOOP_BACKWARD_THRU_SOUND {
-		    ((double *)toPtr)[i] = (double)SndiMulaw(((unsigned char *)fromPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
+		    ((double *)toPtr)[i] = (double)SndMuLawToLinear(((unsigned char *)fromPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
 		}
 		break;
 	    }
@@ -439,27 +438,27 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 	    switch(fromDataFormat) {
 	    case SND_FORMAT_LINEAR_8:
 		LOOP_FORWARD_THRU_SOUND {
-		    ((unsigned char *)toPtr)[i] = (unsigned char) SndMulaw((int)(((signed char *) fromPtr)[i]) << 8);
+		    ((unsigned char *)toPtr)[i] = (unsigned char) SndLinearToMuLaw((int)(((signed char *) fromPtr)[i]) << 8);
 		}
 		break;
 	    case SND_FORMAT_LINEAR_16:
 		LOOP_FORWARD_THRU_SOUND {
-		    ((unsigned char *)toPtr)[i] = (unsigned char) SndMulaw(((signed short *) fromPtr)[i]);
+		    ((unsigned char *)toPtr)[i] = (unsigned char) SndLinearToMuLaw(((signed short *) fromPtr)[i]);
 		}
 		break;
 	    case SND_FORMAT_LINEAR_32:
 		LOOP_FORWARD_THRU_SOUND {
-		    ((unsigned char *)toPtr)[i] = (unsigned char) SndMulaw(((signed int *) fromPtr)[i] >> 16);
+		    ((unsigned char *)toPtr)[i] = (unsigned char) SndLinearToMuLaw(((signed int *) fromPtr)[i] >> 16);
 		}
 		break;
 	    case SND_FORMAT_FLOAT:
 		LOOP_FORWARD_THRU_SOUND {
-		    ((unsigned char *)toPtr)[i] = (unsigned char) SndiMulaw(((float *) fromPtr)[i] * 32767.0f);
+		    ((unsigned char *)toPtr)[i] = (unsigned char) SndMuLawToLinear(((float *) fromPtr)[i] * 32767.0f);
 		}
 		break;
 	    case SND_FORMAT_DOUBLE:
 		LOOP_FORWARD_THRU_SOUND {
-		    ((unsigned char *)toPtr)[i] = (unsigned char) SndiMulaw(((double *) fromPtr)[i] * 32767.0f);
+		    ((unsigned char *)toPtr)[i] = (unsigned char) SndMuLawToLinear(((double *) fromPtr)[i] * 32767.0f);
 		}
 		break;
 	    }
@@ -642,22 +641,16 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	// do sampling rate conversion
 	BOOL largeFilter = NO, interpFilter = YES, linearInterpolation = NO;
 	double stretchFactor = toSampleRate / fromSampleRate;
-	long dataItems = sampleFrames * channelCount;
+	long dataItems = (sampleFrames / stretchFactor) * channelCount;
 	SndSoundStruct *toSoundStruct;
 	SndSoundStruct *fromSoundStruct;
 
-	NSLog(@"convertBytes: from format %d channels %d sample rate %lf, to %@\n", fromDataFormat, fromChannelCount, fromSampleRate, self);
-
-	if(stretchFactor > 1.0) {  // If we are going to expand the number of samples, reallocate.
-	    [data release];
-	    data = [[NSMutableData dataWithLength: dataItems * stretchFactor * SndSampleWidth(SND_FORMAT_LINEAR_16)] retain];
-	    toDataPtr = [data mutableBytes] + bufferByteRange.location;
-	}
+	// NSLog(@"convertBytes: from format %d channels %d sample rate %lf, to %@\n", fromDataFormat, fromChannelCount, fromSampleRate, self);
 
 	// This is just used for now until we replace SndSoundStructs with direct parameter passing to SndChangeSampleRate().
 	SndAlloc(&fromSoundStruct, 0, fromDataFormat, fromSampleRate, fromChannelCount, 4);
-	fromSoundStruct->dataSize = bufferByteRange.length;
-	SndAlloc(&toSoundStruct, 0, SND_FORMAT_LINEAR_16, toSampleRate, channelCount, 4);
+	fromSoundStruct->dataSize = dataItems * SndSampleWidth(fromDataFormat);
+	SndAlloc(&toSoundStruct, 0, SND_FORMAT_LINEAR_16, toSampleRate, toChannelCount, 4);
 	
 	// We only use the fromSound, toSound parameters to transport the data formats, channel counts and sampling rates.
 	// The memory pointers are passed in the last two parameters.
@@ -670,7 +663,9 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	// replace the old data with the new sample rate converted data.
 	byteCount = toSoundStruct->dataSize;  // assign this here in case we don't do any conversion in convertToFormat:channelCount:
 	fromDataPtr = toDataPtr; // This will then do the channel count conversion in place, which is ok by SndChangeChannelCount().
-	NSLog(@"convertBytes: now %@\n", self);
+	// channelCount = toSoundStruct->channelCount;
+	// NSLog(@"convertBytes: now %@\n", self);
+	// channelCount = toChannelCount;
     }
 
     if(fromChannelCount != toChannelCount) {
