@@ -303,9 +303,9 @@ movements, then insert it into the SndAudioProcessorChain later.
                  endTime:(double)endRampTime;
 
 - (int) paramCount;
-- (float) paramValue: (int) index;
-- (NSString*) paramName: (int) index;
-- setParam: (int) index toValue: (float) v;
+- (float) paramValue: (const int) index;
+- (NSString*) paramName: (const int) index;
+- setParam: (const int) index toValue: (const float) v;
 
 /*!
     @method processReplacingInputBuffer:outputBuffer:

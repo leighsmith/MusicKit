@@ -113,7 +113,7 @@
 // setParam
 //////////////////////////////////////////////////////////////////////////////
 
-- (void) setParam: (const int) index toValue: (const float) value
+- setParam: (const int) index toValue: (const float) value
 {
   switch (index) {
     case distort_kBoostAmount:
@@ -131,6 +131,7 @@
       m_fHardness = value;
       break;
   }
+  return self;
 }
 
 //////////////////////////////////////////////////////////////////////////////

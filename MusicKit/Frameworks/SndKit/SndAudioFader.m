@@ -427,17 +427,17 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     return 0;
 }
 
-- (float) paramValue: (int) index
+- (float) paramValue: (const int) index
 {
     return 0;
 }
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
     return nil;
 }
 
-- setParam: (int) index toValue: (float) v
+- setParam: (const int) index toValue: (const float) v
 {
     return self;
 }

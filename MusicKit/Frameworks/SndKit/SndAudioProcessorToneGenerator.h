@@ -82,7 +82,7 @@ enum {
   @discussion
   @result
 */
-- (void)  setParam: (const int) index toValue: (const float) value;
+- setParam: (const int) index toValue: (const float) value;
 /*!
   @method     paramValue:
   @abstract

@@ -75,7 +75,7 @@ double freqparam2freq(float freq)
 // setParam
 //////////////////////////////////////////////////////////////////////////////
 
-- (void)  setParam: (const int) index toValue: (const float) value
+- setParam: (const int) index toValue: (const float) value
 {
   switch (index) {
     case toneGen_kFreq:  freq     = value;
@@ -85,6 +85,7 @@ double freqparam2freq(float freq)
     case toneGen_kPhase: phase    = value; break;
     case toneGen_kWave:  waveform = value; break;
   }
+  return self;
 }
 
 //////////////////////////////////////////////////////////////////////////////
