@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/01 00:31:26  leigh
+  Replaced getTime with NSDate use
+
   Revision 1.3  2000/01/19 19:56:42  leigh
   Replaced mach port based millisecond timing with NSThread approach
 
@@ -115,7 +118,7 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
      */
     [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(1000 * 2/24.0)/1000.0]];
     adjustTime();
-    sysTime = getTime();
+    sysTime = [[NSDate date] retain];
     MTCTime = [self->MTCSynch _time];
     [mtcHelper setTimeSlip:0];
     if (shouldSeek) {

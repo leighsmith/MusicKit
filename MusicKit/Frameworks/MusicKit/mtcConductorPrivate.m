@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/01 00:31:34  leigh
+  Replaced getTime with NSDate use
+
   Revision 1.4  1999/09/24 05:36:24  leigh
   Uses new MKPerformSndMIDI framework
 
@@ -149,7 +152,7 @@ static double slipThreshold = .01;
 	return self;
     }
     else {
-	NSDate *newSysTime = getTime();
+	NSDate *newSysTime = [NSDate date];
 	double newMTCTime = [MTCSynch _time];
 	/* Using [MTCSynch _time] works MUCH better than using actualTime!
 	 * Apparently, the time it takes to get the mach message from the
@@ -177,7 +180,7 @@ static double slipThreshold = .01;
     if (MKIsTraced(MK_TRACEMIDI))
       fprintf(stderr,"Slipping MIDI time code time by %f\n",v);
     _pauseOffset += v;
-    sysTime = getTime();
+    sysTime = [[NSDate date] retain];
     MTCTime = [MTCSynch _time];
     repositionCond(self,beatToClock(self,PEEKTIME(_msgQueue))); 
     return self;
