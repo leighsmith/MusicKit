@@ -14,7 +14,7 @@
 
 #import <MusicKit/MusicKit.h>
 #import <MusicKit/midi_spec.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "Fm1vi.h"
 #import "_Fm1i.h"
   

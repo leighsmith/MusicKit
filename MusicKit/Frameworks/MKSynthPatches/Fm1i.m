@@ -77,7 +77,7 @@
 
 #import <MusicKit/MusicKit.h>
 #import <MusicKit/midi_spec.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "_Fm1i.h"
   
 @implementation Fm1i

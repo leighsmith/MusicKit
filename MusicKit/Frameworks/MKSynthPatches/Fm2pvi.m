@@ -11,7 +11,7 @@
 #import <MusicKit/MusicKit.h>
 #import <MusicKit/midi_spec.h>
 #import <objc/HashTable.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "Fm2pvi.h"
 
 @implementation Fm2pvi:MKSynthPatch

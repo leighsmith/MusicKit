@@ -3,7 +3,7 @@
  * Here we encapsulate the vibrato additions to Shape.
  */
 
-#import <unitgenerators/unitgenerators.h> 
+#import <MKUnitGenerators/MKUnitGenerators.h> 
 #import <MusicKit/midi_spec.h>
 #import <math.h>
 

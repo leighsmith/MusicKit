@@ -1,10 +1,7 @@
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
 
 #import <MusicKit/MusicKit.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "DBWave1v.h"
 #import "_Wave1i.h"
 

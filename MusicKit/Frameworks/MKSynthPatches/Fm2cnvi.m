@@ -13,7 +13,7 @@
 #import <libc.h>                   /* Has random() */
 #import <MusicKit/midi_spec.h>
 #import <objc/HashTable.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "Fm2cnvi.h"
 
 @implementation Fm2cnvi:MKSynthPatch

@@ -10,7 +10,7 @@
 #import <MusicKit/MusicKit.h>
 #import <MusicKit/midi_spec.h>
 #import <objc/HashTable.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "Simp.h"
 
 @implementation Simp:MKSynthPatch

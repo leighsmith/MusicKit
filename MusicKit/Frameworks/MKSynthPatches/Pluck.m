@@ -23,7 +23,7 @@
 /* Pluck with shared noise */
 
 // #define INLINE_MATH 1 /* Workaround for exp() bug. */
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import <MusicKit/midi_spec.h>
 #import "Pluck.h"
 #import "_MKList.h" /* sb: addition. This is a minimal List object (6 objects max) */

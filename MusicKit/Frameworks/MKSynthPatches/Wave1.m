@@ -12,7 +12,7 @@
 */
 
 #import <MusicKit/MusicKit.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "Wave1.h"
 #import "_Wave1i.h"
   

@@ -13,7 +13,7 @@
 
 #import <MusicKit/MusicKit.h>
 #import <MusicKit/midi_spec.h>
-#import <unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 #import "Wave1vi.h"
 #import "_Wave1i.h"
   

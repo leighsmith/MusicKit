@@ -6,10 +6,10 @@
  */
 
 #import <MusicKit/MusicKit.h>
-#import <unitgenerators/Out1aUGx.h>
-#import <unitgenerators/Out1bUGy.h>
-#import <unitgenerators/In1qpUGx.h>
-#import <unitgenerators/In1qpUGy.h>
+#import <MKUnitGenerators/Out1aUGx.h>
+#import <MKUnitGenerators/Out1bUGy.h>
+#import <MKUnitGenerators/In1qpUGx.h>
+#import <MKUnitGenerators/In1qpUGy.h>
 
 #import "ArielQPMix.h"
 

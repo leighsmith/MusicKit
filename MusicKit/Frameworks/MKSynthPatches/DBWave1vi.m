@@ -16,8 +16,8 @@
 #import <MusicKit/MusicKit.h>
 #import <MusicKit/midi_spec.h>
 #import <objc/HashTable.h>
-//#import <MusicKit/unitgenerators/unitgenerators.h>
-#import <unitgenerators/unitgenerators.h>
+//#import <MusicKit/MKUnitGenerators/MKUnitGenerators.h>
+#import <MKUnitGenerators/MKUnitGenerators.h>
 //#import <appkit/nextstd.h>
 #import "DBWave1vi.h"
 /* Database of analyzed timbres */
