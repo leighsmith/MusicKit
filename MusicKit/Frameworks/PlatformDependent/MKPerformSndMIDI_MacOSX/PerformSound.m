@@ -90,22 +90,24 @@ static BOOL getDeviceProperty(AudioDeviceID deviceID, BOOL isInput, AudioDeviceP
     UInt32 propertySize;
     Boolean propertyWritable;
 
+    // NSLog(@"getDeviceProperty test AudioDeviceGetProperty \'%4.4s\'\n", (char *) (&propertyType));    
+
     CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, propertyType, &propertySize, &propertyWritable);
     if (CAstatus) {
-        NSLog(@"getDeviceProperty AudioDeviceGetPropertyInfo property %4s: %s\n", (char *) propertyType, getCoreAudioErrorStr(CAstatus));
+        NSLog(@"getDeviceProperty AudioDeviceGetPropertyInfo property \'%4.4s\': %s\n", (char *) (&propertyType), getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
     if(propertySize > maxBufferSize) {
-        NSLog(@"getDeviceProperty property %4s: size %d larger than available buffer size %d\n",
-            (char *) propertyType, propertySize, maxBufferSize);
+        NSLog(@"getDeviceProperty property \'%4.4s\': size %d larger than available buffer size %d\n",
+            (char *) (&propertyType), propertySize, maxBufferSize);
         return FALSE;
     }
     
     CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, propertyType, &propertySize, buffer);
     
     if (CAstatus) {
-        NSLog(@"getDeviceProperty AudioDeviceGetProperty %4s: %s\n", (char *) propertyType, getCoreAudioErrorStr(CAstatus));
+        NSLog(@"getDeviceProperty AudioDeviceGetProperty \'%4.4s\': %s\n", (char *) (&propertyType), getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
