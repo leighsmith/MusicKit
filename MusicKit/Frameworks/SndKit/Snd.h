@@ -1,14 +1,14 @@
 /*
-	Snd.h
+  $Id$
+
 	Substantially based on Sound Kit, Release 2.0
 	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
 	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
 */
 
-//#import <Foundation/NSObject.h>
 #import <Foundation/Foundation.h>
-#import <objc/hashtable.h>
-#import <Foundation/NSBundle.h>
+//#import <Foundation/NSObject.h>
+//#import <Foundation/NSBundle.h>
 
 /* The following define maps most sound I/O functions to the SoundKit counterparts,
  * for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
