@@ -27,6 +27,8 @@
 #define MP3_BITRATEINDEX_BAD  0
 #define MP3_BITRATEINDEX_FREE 15
 
+static NSLock *decoderLock;
+
 @implementation SndMP3
 
 + (NSArray *) soundFileExtensions
@@ -187,6 +189,8 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   if (self) {
     frameLocations = NULL;
     frameLocationsCount = 0;
+    if (decoderLock == nil)
+      decoderLock = [NSLock new];
   }
   return self;
 }
@@ -230,6 +234,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 
 - (int) readSoundfile: (NSString*) filename
 {
+  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
   int growSize = 44100 * 4;
   int pcmSize  = growSize;
 //  NSDate *startDate = [NSDate date];
@@ -242,6 +247,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     [pcmData release];
     pcmData = nil;
   }
+  [decoderLock lock];
   lame_decode_init();  
   mp3Data = [[NSData alloc] initWithContentsOfMappedFile: filename]; // ho-ho, memory mapping! :)
 
@@ -292,6 +298,8 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
            sams_created_total, [pcmData length], -[startDate timeIntervalSinceNow]);
 #endif
   }
+  [decoderLock unlock];
+  [localPool release];
   return SND_ERR_NONE;
 }
 
