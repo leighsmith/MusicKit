@@ -1,0 +1,31 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                browserAction = id; 
+                onParameterValueSlider = id; 
+                onProcessorActive = id; 
+                parameterTableAction = id; 
+            }; 
+            CLASS = SndAudioProcessorInspector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                parameterTableView = id; 
+                parameterValueSilder = id; 
+                processorActive = id; 
+                processorName = id; 
+                sndArchView = id; 
+            }; 
+            SUPERCLASS = NSDocumentController; 
+        }, 
+        {
+            CLASS = SndStreamArchitectureView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {currentSndArchObject = id; delegate = id; }; 
+            SUPERCLASS = NSView; 
+        }, 
+        {CLASS = SndStreamArchitectureViewDelegateProtocol; LANGUAGE = ObjC; }
+    ); 
+    IBVersion = 1; 
+}
