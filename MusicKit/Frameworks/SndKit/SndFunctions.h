@@ -377,8 +377,12 @@ int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame
 SNDKIT_API int SndWriteSoundfile(NSString *path, SndSoundStruct *sound);
 
 /*!
-@function SndSwapSoundToHost
- @abstract To come 
+  @function SndSwapBigEndianSoundToHost
+  @abstract Swaps the sound data in big endian format to host (native) format.
+  @discussion Sound data is held internally in the SndKit in "host" or "native" format, either big or little endian,
+              depending on the processor architecture. The SndSwapBigEndianSoundToHost() function will
+              convert the supplied data from big endian format, typically received by network reception or some other
+              application where the endian format is known to the most efficient native format. This is a no-op on big endian machines.
  @param dest
  @param src
  @param sampleCount
@@ -386,15 +390,19 @@ SNDKIT_API int SndWriteSoundfile(NSString *path, SndSoundStruct *sound);
  @param dataFormat
  @result
  */
-SNDKIT_API int SndSwapSoundToHost(void *dest,
+SNDKIT_API int SndSwapBigEndianSoundToHost(void *dest,
                                   void *src,
                                    int sampleCount,
                                    int channelCount,
                                    int dataFormat);
 
 /*!
-@function  SndSwapHostToSound
- @abstract To come 
+  @function SndSwapHostToBigEndianSound
+  @abstract Swaps the sound data in host (native) format to big endian format.
+  @discussion Sound data is held internally in the SndKit in "host" or "native" format, either big or little endian,
+              depending on the processor architecture. The SndSwapHostToBigEndianSound() function will
+			  convert the supplied data to big endian format, typically suitable for network transmission or some other
+			  application where the endian format must be known. This is a no-op on big endian machines.
  @param dest
  @param src
  @param sampleCount
@@ -402,7 +410,7 @@ SNDKIT_API int SndSwapSoundToHost(void *dest,
  @param dataFormat
  @result 
  */
-SNDKIT_API int SndSwapHostToSound(void *dest,
+SNDKIT_API int SndSwapHostToBigEndianSound(void *dest,
                                   void *src,
                                    int sampleCount,
                                    int channelCount,

@@ -61,6 +61,7 @@ CONDITIONS OF THIS AGREEMENT.
 #define LASTCHAR        '/'
 #endif
 
+// TODO int SndFrameSize(SndFormat format)
 int SndFrameSize(SndSoundStruct* format)
 {
   if (format != NULL)
@@ -71,38 +72,38 @@ int SndFrameSize(SndSoundStruct* format)
 
 int SndSampleWidth(int format)
 {
-  switch (format) {
+    switch (format) {
     case SND_FORMAT_MULAW_8:
     case SND_FORMAT_LINEAR_8:
-      return 1;
-      break;
+        return 1;
+        break;
     case SND_FORMAT_EMPHASIZED:
     case SND_FORMAT_COMPRESSED:
     case SND_FORMAT_COMPRESSED_EMPHASIZED:
     case SND_FORMAT_DSP_DATA_16:
     case SND_FORMAT_LINEAR_16:
-      return 2;
-      break;
+        return 2;
+        break;
     case SND_FORMAT_LINEAR_24:
     case SND_FORMAT_DSP_DATA_24:
-      return 3;
-      break;
+        return 3;
+        break;
     case SND_FORMAT_LINEAR_32:
     case SND_FORMAT_DSP_DATA_32:
-      return 4;
-      break;
+        return 4;
+        break;
     case SND_FORMAT_FLOAT:
-      return sizeof(float);
-      break;
+        return sizeof(float);
+        break;
     case SND_FORMAT_DOUBLE:
-      return sizeof(double);
-      break;
+        return sizeof(double);
+        break;
     default: /* just in case */
-      return 2;
-      break;
-  }
-  /* never reaches here */
-  return 2;
+        return 2;
+        break;
+    }
+    /* never reaches here */
+    return 2;
 }
 
 NSString *SndFormatName(int dataFormat, BOOL verbose)
@@ -154,17 +155,18 @@ SndFormat SndFormatOfSNDStreamBuffer(SNDStreamBuffer *streamBuffer)
         streamBuffer->channelCount,
         streamBuffer->sampleRate
     };
+    
     return format;
 }
 
 float SndConvertDecibelsToLinear(float db)
 {
-  return (float)pow(10.0, (double)db/20.0);
+    return (float) pow(10.0, (double)db/20.0);
 }
 
 float SndConvertLinearToDecibels(float lin)
 {
-  return (float)(20.0 * log10((double)lin));
+    return (float) (20.0 * log10((double) lin));
 }
 
 void *SndGetDataAddresses(int sample,
@@ -945,7 +947,7 @@ short SndiMulaw(unsigned char mulawValue)
   return (short)SndMuLawToLinear(mulawValue);
 }
 
-int SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount, int dataFormat)
+int SndSwapBigEndianSoundToHost(void *dest, void *src, int sampleCount, int channelCount, int dataFormat)
 {
 #ifdef __BIG_ENDIAN__
   return SND_ERR_NONE;
@@ -978,7 +980,8 @@ int SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount,
   return SND_ERR_BAD_FORMAT;
 #endif
 }
-int SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount, int dataFormat)
+
+int SndSwapHostToBigEndianSound(void *dest, void *src, int sampleCount, int channelCount, int dataFormat)
 {
 #ifdef __BIG_ENDIAN__
   return SND_ERR_NONE;
@@ -1012,4 +1015,4 @@ int SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount,
 
 #endif
 }
-
+        
