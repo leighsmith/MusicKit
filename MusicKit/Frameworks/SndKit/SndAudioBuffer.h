@@ -28,6 +28,10 @@
 */
 @interface SndAudioBuffer : NSObject
 {
+/*! @var byteCount  */
+  unsigned int byteCount;
+/*! @var maxByteCount  */
+  unsigned int maxByteCount;
 /*! @var samplingRate  */
   double samplingRate;
 /*! @var dataFormat */
@@ -103,7 +107,7 @@
 - initWithFormat: (SndSoundStruct*) f data: (void*) d;
 
 /*!
-  @method     initWithFormat:data:
+  @method     initWithBuffer:
   @abstract   Initialization method
   @discussion
   @param      b
@@ -143,9 +147,14 @@
   @param      buff
   @param      start
   @param      end
+  @param      exp if TRUE, receiver is allowed to expand <i>buff</i> in place
+                  if required to change format before mixing.
   @result     self.
 */
-- mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end;
+- mixWithBuffer: (SndAudioBuffer*) buff
+      fromStart: (long) start
+          toEnd: (long) end
+      canExpand: (BOOL) exp;
 
 /*!
   @method   mixWithBuffer:
@@ -172,6 +181,18 @@
   @result     self.
 */
 - copyData: (SndAudioBuffer*) ab;
+
+/*!
+  @method     copyBytes:count:format:
+  @abstract   copies bytes from the char* array given
+  @discussion grows the internal NSMutableData object as necessary
+  @param      bytes the char* array to copy from
+  @param      count the number of bytes to copy from the array
+  @param      format pointer to a SndSoundStruct containing valid channelCount,
+              samplingRate and dataFormat variables.
+  @result     self.
+*/
+- copyBytes: (char*) bytes count:(unsigned int)count format:(SndSoundStruct *)f;
 
 /*!
   @method     lengthInSamples
