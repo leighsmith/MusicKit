@@ -150,7 +150,7 @@
       dataLength = length;
 
     if (length < 0)
-      NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length < 0");
+      NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0", length);
     [data setLength: length];
     memcpy([data mutableBytes], ptr, dataLength);
     byteCount = maxByteCount = dataLength;
@@ -192,7 +192,7 @@
     if (data != nil)
       [data release];
     if (f->dataSize < 0)
-      NSLog(@"SndAudioBuffer::initWithFormat: ERR - f->dataSize < 0");
+      NSLog(@"SndAudioBuffer::initWithFormat: ERR - f->dataSize (%d) < 0", f->dataSize);
 
 
     if (d == NULL) {
@@ -708,7 +708,7 @@ return self;
   long newLengthInBytes = frameSizeInBytes * newSampleFrameCount;
 
   if (newSampleFrameCount < 0) {
-    NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount < 0!");
+    NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
   }
   
   if (byteCount > newLengthInBytes)
