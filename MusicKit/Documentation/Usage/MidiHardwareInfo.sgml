@@ -1,0 +1,162 @@
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN">
+
+<!--
+The MusicKit MIDI information article, in the original DocBook SGML source.
+
+Edit this file, not the HTML, RTF or LaTeX output.
+
+$Id$
+-->
+
+<article id="MIDIHardwareInfo">
+
+  <artheader>
+<title><acronym>MIDI</acronym> Hardware Setup Guidelines</title>
+</artheader>
+
+<sect1 id="IdentifyingMIDIdrivers">
+    <title>Identifying <acronym>MIDI</acronym> Drivers</title>
+    <para>
+The <acronym>MIDI</acronym> units are assigned to a set of
+&ldquo;<acronym>MIDI</acronym> indecies&rdquo;, beginning with 0.
+(Note that this is distinct from the &ldquo;unit&rdquo; numbers.) If
+there is only one <acronym>MIDI</acronym> card, there is no ambiguity.
+However, if there is more than one card, the user's defaults data base
+determines which <acronym>MIDI</acronym> card or cards should be used.
+For example, in the example given above, a user's defaults data base
+may have:</para>
+
+<para>MusicKit MIDI0 Mididriver1</para>
+<para>MusicKit MIDI2 Mididriver0</para>
+
+    <para>
+This means that the default <acronym>MIDI</acronym> device is the one
+on the 2nd <acronym>MIDI</acronym> card that you installed.  Also,
+notice that there may be &ldquo;holes&rdquo;&horbar;in this example,
+there is no MIDI1.  Indecies up to 15 may be used, which means you may
+have up to 16 <acronym>MIDI</acronym> cards.
+</para>
+  </sect1>
+  <sect1 id="UsingMIDIonNeXTHardware">
+    <title>Using <acronym>MIDI</acronym> on <hardware>NeXT</hardware> Hardware</title> 
+
+    <para>
+Standard Macintosh <acronym>MIDI</acronym> interfaces and cables may
+not work on the NeXT hardware.  A number of interfaces have been
+specially-designed for the NeXT.  We suggest you purchase one.  Two
+sources we recommend are the following:</para>
+
+    <orderedlist>
+      <listitem>
+	<para>
+<productname>Midi LINK</productname> ($129 + $5 S/H) provides one
+<acronym>MIDI</acronym> input and two <acronym>MIDI</acronym> outputs
+and features three <acronym>LED</acronym>'s on the front panel to
+indicate power and the presence of <acronym>MIDI</acronym> data in and
+out of the device.</para>
+
+<para>If you would like to place an order then please send cheque to:</para>
+
+<para>LINK Engineering		Tel: (604) 291-3817</para>
+<para>14762 McDonald Ave.,	Fax: (604) 291-4951</para>
+<para>White Rock, B.C.  V4B 2C8	Email: collings@cs.sfu.ca</para>
+<para>CANADA</para>
+      </listitem>
+      <listitem>
+	<para>
+The <company>RCN</company> interface has two <acronym>MIDI</acronym> outs, a
+<acronym>MIDI</acronym> in and a <acronym>MIDI</acronym> thru, plus
+three <acronym>LED</acronym>'s on the front panel to indicate power and the presence of
+<acronym>MIDI</acronym> data in and out of the device.</para>
+
+<para>Dr. Rupert C. Nieberle</para>
+<para>Realtime Computing and Nets</para>
+<para>Skalitzerstrasse 62 </para>
+<para>D 1000 Berlin 36</para>
+      </listitem>
+      <listitem>
+	<para>
+If you're feeling adventurous, you might make your own interface.
+While the NeXT 030 (as well as the Macintosh and the ISPW) use the
+RS-422 interface, the NeXT 040 uses the RS-423.  In RS-422, the
+signals are transmitted in differential mode, there a + signal and a -
+signal. RS-423 is asymmetrical, only the - signal is transmitted.  One
+approach is to build <acronym>MIDI</acronym> interfaces according to
+RS-422. Then you can have cables that transmit RS-422 to RS-423 for
+NeXT '040 and other cables that transmit the full RS-422 for Macintosh
+or 030 NeXT.</para>
+
+<para>Pierre Dutilleux contributed the cable wiring in <xref id="NeXTcable">.
+He notes that the <hardware>Opcode Studio Plus 2</hardware> receives and sends
+only the + signal, which might be fine for RS-422 such as Macintosh,
+but is totally incompatible with RS-423 such as NeXT '040.</para>
+
+<figure id="NeXTcable">
+<title>NeXT serial port <acronym>MIDI</acronym> cable wiring</title>
+<mediaobject>
+<imageobject><imagedata fileref="Images/NeXTMIDI_cable.eps"></imageobject>
+<imageobject><imagedata fileref="Images/NeXTMIDI_cable.gif"></imageobject>
+<textobject><phrase>Cable Wiring Image</phrase></textobject>
+</mediaobject>
+</figure>
+
+
+<para>We built therefore <acronym>MIDI</acronym> interfaces according to RS-422. We have
+cables that wire this RS-422 to RS-423 for NeXT '040 and other cables
+that transmitt the full RS-422 for Macintosh and ISPW.</para>
+
+<sect1 id="UsingMidiOnIntelBasedHardware">
+<title>Using <acronym>MIDI</acronym> On <productname>Intel</productname>-Based Hardware</title>
+
+<para>To use <acronym>MIDI</acronym> on <productname>NeXTStep 3.X/OpenStep 4.X for
+Intel Processors</productname>, you must first install the drivers on your machine
+as follows:</para>
+
+    <orderedlist>
+      <listitem>
+	<para>
+Double click on
+<filename>/LocalLibrary/Devices/Mididriver.config</filename>. Type the
+root password. It will tell you driver was successfully
+installed. Click OK.  You've now &ldquo;installed&rdquo; the driver.</para>
+      </listitem>
+      <listitem id="step2">
+<para>
+In <application>Configure.app</application>, Click
+Other. Click Add... Click Add.  Select the driver (from the &ldquo;other&rdquo;
+category) and make sure that the I/O port corresponds to your hardware
+configuration.  From Menu/Configuration, select Save.  You've now
+&ldquo;added the driver&rdquo;. </para>
+      </listitem>
+      <listitem>
+	<para>
+If you have multiple <acronym>MIDI</acronym> cards, repeat <xref
+id="step2">, making sure to assign a different I/O address to each
+instance of the driver.  The first will be given the name
+Mididriver0. The second will be given the name Mididriver1, etc.  The
+trailing number is called the &ldquo;unit&rdquo;.
+</para>
+      </listitem>
+
+      <listitem>
+<para>Reboot. Drivers are now installed and usable.</para>
+      </listitem>
+    </orderedlist>
+  </sect1>
+  <sect1 id="UsingMIDIOnMacOSXPublicBeta">
+    <title>Using <acronym>MIDI</acronym> On <productname>MacOS X
+    Public Beta</productname></title>
+    <para>
+To be added:
+CoreAudio/SampleUSBDriver
+MIDISPORT2x2.plugin
+</para>
+  </sect1>
+  <sect1 id="UsingMIDIOnLinux">
+    <title>Using <acronym>MIDI</acronym> On
+    <productname>Linux</productname></title>
+    <para>
+Description forthcoming.
+</para>
+  </sect1>
+</article>
