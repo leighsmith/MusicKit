@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2000/11/21 19:48:56  leigh
+  Improved release methods description
+
   Revision 1.10  2000/06/09 15:01:03  leigh
   typed the parameter returned by -parts
 
@@ -86,34 +89,28 @@
 
 - releaseNotes; 
  /* 
- Removes and frees the MKNotes contained in the receiver's MKParts.
- Also frees the receiver's info MKNote.  Returns the receiver.
+ Removes and releases the MKNotes contained in the receiver's MKParts.
+ Also releases the receiver's info MKNote.  Returns the receiver.
  */
 
 - releaseParts; 
  /* 
- Removes and frees the receiver's MKParts and the MKNotes contained therein.
- Doesn't free the receiver's info MKNote.  MKParts that are currently
- being performed by a MKPartPerformer aren't freed.
+ Removes and releases the receiver's MKParts and the MKNotes contained therein.
+ Doesn't release the receiver's info MKNote.  MKParts that are currently
+ being performed by a MKPartPerformer aren't released.
  Returns the receiver.
  */
 
 - releasePartsOnly; 
  /* 
- Removes and frees the receiver's Parts but doesn't free the Notes contained
- therein.  Parts that are currently being performed by a PartPerformer aren't
- freed.  Returns the receiver.  
- */
-
-- releaseSelfOnly; 
- /* 
- Frees the receiver but not its Parts nor their Notes.  The info Note isn't
+ Removes and releases the receiver's MKParts but doesn't free the MKNotes contained
+ therein.  MKParts that are currently being performed by a MKPartPerformer aren't
  freed.  Returns the receiver.  
  */
 
 - (void)removeAllObjects; 
  /* 
- Removes the receiver's Parts but doesn't free them.
+ Removes the receiver's MKParts.
  Returns the receiver.
   */
 
