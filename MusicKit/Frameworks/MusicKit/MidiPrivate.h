@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2002/09/25 17:38:09  leighsmith
+  Made setupMTC and tearDownMTC methods rather than functions to avoid warnings of private ivar use
+
   Revision 1.3  2000/11/13 23:26:25  leigh
   Better documentation of _MK_MIDI_QUANTUM
 
@@ -31,11 +34,13 @@
 
 @interface MKMidi(Private)
 
--_alarm:(double)requestedTime;   
--_setSynchConductor:aCond;
-+(BOOL)_disableThreadChange;
--_setMTCOffset:(double)offset;
--(double)_time;
+- _alarm: (double) requestedTime;   
+- _setSynchConductor: aCond;
++ (BOOL) _disableThreadChange;
+- _setMTCOffset: (double) offset;
+- (double) _time;
+- (BOOL) tearDownMTC;
+- (BOOL) setUpMTC;
 
 @end
 

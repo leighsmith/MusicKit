@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2002/09/25 17:38:10  leighsmith
+  Made setupMTC and tearDownMTC methods rather than functions to avoid warnings of private ivar use
+
   Revision 1.12  2002/01/29 16:46:12  sbrandon
   changed all uses of _MKErrorf to use NSString args.
 
@@ -56,7 +59,7 @@ Modification history:
 
 static MKMidi *mtcMidi = nil;
 
-// LMS these will no longer be called due to the change to handleMachMessage. We should call them from the handler or 
+// LMS TODO these will no longer be called due to the change to handleMachMessage. We should call them from the handler or 
 // incorporate their functionality into the handler.
 #if 0
 static void my_alarm_reply(mach_port_t replyPort, int requestedTime, int actualTime)
@@ -175,58 +178,59 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     if (deviceStatus == MK_devClosed) /* We'll set up later */
       return self;
     if (aCond) {
-	setUpMTC(self);
+	[self setUpMTC];
 	if (deviceStatus == MK_devRunning)
 	  resumeMidiClock(self);
     }
-    else tearDownMTC(self);
+    else
+	[self tearDownMTC];
     return self;
 }
 
-@end
-
-static BOOL setUpMTC(MKMidi *self)
+- (BOOL) setUpMTC
 {
-    self->exceptionPort = [[NSPort port] retain];
-    if (self->exceptionPort == nil) {
+    exceptionPort = [[NSPort port] retain];
+    if (exceptionPort == nil) {
 	_MKErrorf(MK_machErr,OPEN_ERROR, @"Unable to open exceptionPort", @"setUpMTC");
 	return NO;
     }
-    self->alarmPort = [[NSPort port] retain];
-    if (self->alarmPort == nil) {
+    alarmPort = [[NSPort port] retain];
+    if (alarmPort == nil) {
         _MKErrorf(MK_machErr,OPEN_ERROR, @"Unable to open alarmPort", @"setUpMTC");
         return NO;
     }
-    self->alarmTimeValid = NO;
-    self->alarmPending = NO;
+    alarmTimeValid = NO;
+    alarmPending = NO;
     // 2nd arg was midiAlarm, changed to self as it handleMachMessage - LMS
 #if MKMD_RECEPTION_USING_PORTS
-    _MKAddPort(self->alarmPort, self, 0, self, _MK_DPSPRIORITY);
+    _MKAddPort(alarmPort, self, 0, self, _MK_DPSPRIORITY);
     // 2nd arg was midiException, changed to self as it handleMachMessage - LMS
-    _MKAddPort(self->exceptionPort, self, 0, self, _MK_DPSPRIORITY);
+    _MKAddPort(exceptionPort, self, 0, self, _MK_DPSPRIORITY);
 #endif
     addedPortsCount += 2;
     return YES;
 }
 
-static BOOL tearDownMTC(MKMidi *self)
+- (BOOL) tearDownMTC
 {
-    MKMDRequestExceptions((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], MKMD_PORT_NULL);
+    MKMDRequestExceptions((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], MKMD_PORT_NULL);
 #if MKMD_RECEPTION_USING_PORTS
-    _MKRemovePort(self->exceptionPort);
+    _MKRemovePort(exceptionPort);
 #endif
-    [self->exceptionPort release];
+    [exceptionPort release];
     /* Could call MKMDStopClock here? */
-    MKMDRequestAlarm((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], MKMD_PORT_NULL, 0);
-    self->alarmPending = NO;
-    self->alarmTimeValid = NO;
+    MKMDRequestAlarm((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], MKMD_PORT_NULL, 0);
+    alarmPending = NO;
+    alarmTimeValid = NO;
 #if MKMD_RECEPTION_USING_PORTS
-    _MKRemovePort(self->alarmPort);
+    _MKRemovePort(alarmPort);
     addedPortsCount -= 2;
 #endif
-    [self->alarmPort release];
+    [alarmPort release];
     return YES;
 }
+
+@end
 
 //static int resumeMidiClock(extraInstanceVars *ivars); /* Forward decl */
 

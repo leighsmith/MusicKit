@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.47  2002/09/25 17:38:09  leighsmith
+  Made setupMTC and tearDownMTC methods rather than functions to avoid warnings of private ivar use
+
   Revision 1.46  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -346,8 +349,6 @@ static unsigned int systemDefaultDriverNum;   // index into the midiDriverNames 
 static double mtcTimeOffset = 0;
 
 /* Some forward decls */
-static BOOL tearDownMTC(MKMidi *self);
-static BOOL setUpMTC(MKMidi *self);
 void handleCallBack(void *midiObj);
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -458,7 +459,7 @@ static int closeMidiDev(MKMidi *self)
     if (OUTPUTENABLED(self->ioMode))  
 	[self->queuePort release];
     if ([self unitHasMTC])
-        tearDownMTC(self);
+        [self tearDownMTC];
     if ([otherUnits count] == 0) 
         somebodyElseHasOwnership = NO;
     else {
@@ -615,7 +616,7 @@ static MKMDReturn openMidiDev(MKMidi *self)
 	}
     }
     if ([self unitHasMTC])
-      setUpMTC(self);
+	[self setUpMTC];
     return MKMD_SUCCESS;
 }    
 
