@@ -7,7 +7,7 @@
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -32,21 +32,43 @@
 */
 @interface SndPlayer : SndStreamClient
 {
-/*! @var             toBePlayed An array of pending SndPerformance objects */
+/*! @var             toBePlayed An array of pending SndPerformance objects. */
     NSMutableArray  *toBePlayed;
-/*! @var             playing An array of active SndPerformance objects */
+/*! @var             playing An array of actively playing SndPerformance objects. */
     NSMutableArray  *playing;
-/*! @var             playinglock Provides thread safety on the SndPerformance arrays. */
-    NSRecursiveLock *playingLock; // controls access to the toBePlayed and playing arrays.
-/*! @var             bRemainConnectedToManager */
+/*! @var             playinglock Provides thread safety on the SndPerformance arrays.
+	             It controls access to the toBePlayed and playing arrays.
+ */
+    NSRecursiveLock *playingLock;
+/*! @var             bRemainConnectedToManager Indicates the SndPlayer disconnection behaviour
+	             when no sounds remain in the pending or play arrays.
+*/
     BOOL             bRemainConnectedToManager;
-/*! @var             removalArray */
+/*! @var             removalArray Holds those performances which will be removed after completing playback.
+	             TODO I'm guessing this is an ivar rather than just a local variable to save time creating the object,
+	             by reusing it? Strikes me it would be efficient to simply release the damn thing than to actually
+	             empty it each time. This needs testing.
+ */
     NSMutableArray  *removalArray;
-/*! @var             tempBuffer; */
-    SndAudioBuffer  *tempBuffer;
+/*! @var             nativelyFormattedStreamingBuffer The audio buffer used to hold audio
+	             retrieved from a performance. As the name suggests, it will be in the
+	             format expected by the streaming hardware.
+ */
+    SndAudioBuffer  *nativelyFormattedStreamingBuffer;
 
+/*! @var             bAutoStartManager Indicates that the SndStreamManager should be automatically
+	             started when playing of sounds first begins.
+ */
     BOOL bAutoStartManager;
+/*! @var	     preemptingPerformance Holds a performance that is causing preemption in the output queue.
+	             This occurs when attempting to perform a sound immediately, causing cancellation of queued
+	             streaming buffers. The cancellation of the output queue forces all currently sounding performances
+	             to have their playIndexes reset <i>except</i> for the performance that caused the preemption
+	             in the first place.
+ */
+    SndPerformance *preemptingPerformance;
 }
+
 /*!
   @method     player
   @abstract   Factory method
@@ -169,7 +191,7 @@
               pending sound performances are added to the play queue, they
               will pause at their start position.
   @param      s The sound to pause.
-  @result     Self.
+  @result     Returns self.
 */
 - pauseSnd: (Snd*) s;
 /*!
@@ -186,7 +208,7 @@
               remain in the pending or play arrays. 
   @discussion By default, the SndPlayer remains connected to the stream 
               manager, which in turn means that streaming is still active. 
-              If you are only playing sounds occassionaly, you may not wish 
+              If you are only playing sounds occassionally, you may not wish 
               to incur this slight overhead. The trade off is that if 
               disconnection is set to be the behaviour, you will have a higher
               performance cost when starting the play back of a new sound in 
@@ -194,13 +216,45 @@
               streaming is started up.
 */
 - setRemainConnectedToManager: (BOOL) b;
+
+/*!
+  @method remainConnectedToManager;
+  @discussion Indicates the current setting if the SndPlayer will remain connected to
+              the stream manager when no sounds are pending or playing.
+  @result Returns TRUE if the SndPlayer will remain connected to the stream manager when
+          no sounds are pending or playing, FALSE if it will disconnect.
+*/
+- (BOOL) remainConnectedToManager;
+ 
 /*!
  @method addPerformance:
- @param  aPerformance
- */
+ @discussion Adds the performance to the list of those currently being played.
+ @param  aPerformance A SndPerformance instance.
+*/
 - addPerformance: (SndPerformance*) aPerformance;
 
-- setAutoStartManager: (BOOL) b;
+/*!
+  @method     preemptQueuedStream
+  @discussion Resets the playIndexes of all currently playing performances back to where
+              the preemption occurs.
+  @result     Returns the number of seconds that the stream has been preempted by.
+*/
+- (double) preemptQueuedStream;
+
+/*!
+  @method setAutoStartManager:
+  @discussion Assigns whether to automatically start the SndStreamManager controlling the
+              the synthesis process when a sound is first played.
+  @param yesOrNo If yesOrNo is YES, the SndStreamManager will be automatically started, if NO, it will not be.
+ */
+- setAutoStartManager: (BOOL) yesOrNo;
+
+/*!
+  @method autoStartManager
+  @discussion Returns the current state of whether the SndStreamManager will be automatically
+              started when the SndPlayer is started.
+  @result Returns YES if the SndStreamManager will be automatically started, NO if not.
+ */
 - (BOOL) autoStartManager;
 
 @end
