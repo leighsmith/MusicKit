@@ -1,7 +1,7 @@
 /*
   $Id$
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
 
   Description:
     A score contains a collection of Parts and has methods for manipulating
@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/02/08 03:16:05  leigh
+  Improved MIDI file writing, generating separate tempo track with Part info entries
+
   Revision 1.5  1999/10/10 01:10:22  leigh
   MIDI mode messages read from SMF0 files now receive MK_midiChan parameters so MKScores read from SMF1 or SMF0 behave the same.
 
@@ -337,10 +340,12 @@ static void writeNotes();
 	    _MKWriteInt(aStream,lowTag);
 	    _MKWriteInt(aStream,highTag);
 	}
-	else [aStream appendData:[[NSString stringWithFormat:@"%s = %d %s %d;\n", _MKTokNameNoCheck(_MK_noteTagRange),lowTag,
-		      _MKTokNameNoCheck(_MK_to),highTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	else 
+            [aStream appendData:[[NSString stringWithFormat:@"%s = %d %s %d;\n", 
+                      _MKTokNameNoCheck(_MK_noteTagRange), lowTag,
+		      _MKTokNameNoCheck(_MK_to), highTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     }
-    writeNotes(aStream,self,p,firstTimeTag,lastTimeTag,timeShift);
+    writeNotes(aStream, self, p, firstTimeTag, lastTimeTag, timeShift);
     _MKFinishScoreOut(p,YES);            /* Doesn't close aStream. */
     return self;
 }
@@ -350,24 +355,21 @@ static void writeNotes();
  binary:(BOOL)isBinary
 {
     NSMutableData *stream = [NSMutableData data];
-//    int fd;
     BOOL success;
-/*    stream = _MKOpenFileStream(aFileName,&fd,NX_WRITEONLY,
-                               (isBinary) ? [_MK_BINARYSCOREFILEEXT cString] :
-                               [_MK_SCOREFILEEXT cString],YES);
- */
-//    if (!stream)
-//       return nil;
+
     [self _writeScorefileStream:stream firstTimeTag:firstTimeTag 
-   lastTimeTag:lastTimeTag timeShift:timeShift binary:isBinary];
+          lastTimeTag:lastTimeTag timeShift:timeShift binary:isBinary];
 
     success = _MKOpenFileStreamForWriting(aFileName,
-                               (isBinary) ? _MK_BINARYSCOREFILEEXT :
-                               _MK_SCOREFILEEXT,stream,YES);
-//    [stream release];
-    if (!success)
-      _MKErrorf(MK_cantCloseFileErr,aFileName);
-    return self;
+                               (isBinary) ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT,
+                               stream, YES);
+    // [stream release]; // this should be ok to do, but somehow isn't - indicative of a bigger leak elsewhere.
+    if (!success) {
+        _MKErrorf(MK_cantCloseFileErr, aFileName);
+        return nil;
+    }
+    else
+        return self;
 }
 
 -writeScorefile:(NSString *)aFileName 
@@ -547,30 +549,102 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 
 }
 
+#define T timeInQuanta(fileStructP,(t+timeShift))
+#define STRPAR MKGetNoteParAsStringNoCopy
+#define INTPAR MKGetNoteParAsInt
+#define DOUBLEPAR MKGetNoteParAsDouble
+#define INRANGE(_par) (_par >= 128 && _par <= 159)	
+#define PRESENT(_par) (parBits & (1<<(_par - 128)))
+#define WRITETEXT(_meta,_par) MKMIDIFileWriteText(fileStructP,T,(_meta),STRPAR(curNote,(_par)))
+
+/* Write a single MKNote to the MIDI file, tagged appropriately */
+static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *curNote, double timeShift,
+ int defaultChan)
+{
+    int chan;
+    unsigned parBits;
+    double t;
+
+    /* First handle normal midi */
+    chan = INTPAR(curNote,MK_midiChan);
+    t = [curNote timeTag];
+    _MKWriteMidiOut(curNote, t+timeShift, ((chan == MAXINT) ? defaultChan : chan), p, nil);
+    /* Now check for meta-events. */
+    parBits= [curNote parVector:4];
+    if (parBits) {
+        if (PRESENT(MK_text))
+          WRITETEXT(MKMIDI_text,MK_text);
+        if (PRESENT(MK_title))
+          WRITETEXT(MKMIDI_sequenceOrTrackName,MK_title);
+        if (PRESENT(MK_instrumentName))
+          WRITETEXT(MKMIDI_instrumentName,MK_instrumentName);
+        if (PRESENT(MK_lyric))
+          WRITETEXT(MKMIDI_lyric,MK_lyric);
+        if (PRESENT(MK_cuePoint))
+          WRITETEXT(MKMIDI_cuePoint,MK_cuePoint);
+        if (PRESENT(MK_marker))
+          WRITETEXT(MKMIDI_marker,MK_marker);
+        if (PRESENT(MK_timeSignature)) {
+            unsigned int nn, dd, cc, bb, allData;
+            NSString *timeSigString = STRPAR(curNote, MK_timeSignature);
+            NSScanner *timeSigScan;
+            if(timeSigString == nil) {
+                allData = 0;
+            }
+            else {
+                timeSigScan = [NSScanner scannerWithString: timeSigString];
+                [timeSigScan scanInt: &nn];  // numerator
+                [timeSigScan scanInt: &dd];  // denominator
+                [timeSigScan scanInt: &cc];  // ?? to check against SMF spec
+                [timeSigScan scanInt: &bb];  // ?? to check against SMF spec
+                allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
+            }
+            MKMIDIFileWriteSig(fileStructP,T,MKMIDI_timeSig, allData);
+        }
+        if (PRESENT(MK_keySignature)) {
+            NSString *keySigString = STRPAR(curNote,MK_keySignature);
+            NSScanner *keySigScan;
+            unsigned int sf, mi, allData;
+            if(keySigString == nil) {
+                allData = 0;
+            }
+            else {
+                keySigScan = [NSScanner scannerWithString: keySigString];
+                [keySigScan scanInt: &sf];  // ??
+                [keySigScan scanInt: &mi];  // ??
+                allData = (sf << 8) | mi;
+            }
+            MKMIDIFileWriteSig(fileStructP, T, MKMIDI_keySig, allData);
+        }
+        if (PRESENT(MK_tempo))
+          MKMIDIFileWriteTempo(fileStructP,T, DOUBLEPAR(curNote,MK_tempo));
+    }
+}
+
+
 -writeMidifileStream:(NSMutableData *)aStream firstTimeTag:(double)firstTimeTag
  lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift
     /* Write midi on aStream. */
 {
     _MKMidiOutStruct *p;
     void *fileStructP;
-#   if _MK_MAKECOMPILERHAPPY 
     double t = 0;
-    id anInfo = nil;
-#   else
-    double t;
-    id anInfo;
-#   endif
+    MKNote *anInfo = nil;
     NSString *title = nil;
-    int defaultChan,chan;
-    unsigned parBits;
+    int defaultChan;
     double tempo;
-    id aPart,notes,curPart;
-    register id curNote;
-
+    MKPart *aPart, *curPart;
+    NSArray *notes;
+    MKNote *curNote;
     unsigned i,j, n,m;
+
+    NSAssert((INRANGE(MK_tempo) && INRANGE(MK_lyric) &&
+                INRANGE(MK_cuePoint) && INRANGE(MK_marker) &&
+                INRANGE(MK_timeSignature) &&
+                INRANGE(MK_keySignature)), @"Illegal use of parVector.");
+
     if (!aStream) 
       return nil;
-//    title = NULL;
     tempo = 60;
     if (info) {
 	if ([info isParPresent:MK_title])
@@ -578,13 +652,13 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 	if (title == nil) { /* Try using tempo track part name */
 	    id aPart = [parts objectAtIndex:0];
 	    if (aPart)
-	      title = (NSString *)MKGetObjectName(aPart);
+	      title = (NSString *) MKGetObjectName(aPart);
 	}
-	if ([info isParPresent:MK_tempo])
-	  tempo = [info parAsDouble:MK_tempo];
+	if ([info isParPresent: MK_tempo])
+	  tempo = [info parAsDouble: MK_tempo];
     }
     p = _MKInitMidiOut();
-    if (!(fileStructP = MKMIDIFileBeginWriting(aStream,1,title,[MKScore midifilesEvaluateTempo]))) {
+    if (!(fileStructP = MKMIDIFileBeginWriting(aStream, 1, title, [MKScore midifilesEvaluateTempo]))) {
 	_MKFinishMidiOut(p);
 	return nil;
     }
@@ -603,16 +677,13 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     p->_putSysExcl = putSysExcl;
     p->_sendBufferedData = sendBufferedData;
     MKMIDIFileWriteTempo(fileStructP,0,tempo);
-#   define STRPAR MKGetNoteParAsStringNoCopy
-#   define INTPAR MKGetNoteParAsInt
-#   define DOUBLEPAR MKGetNoteParAsDouble
     if (info) {
-	if ([info isParPresent:MK_copyright])
-	  MKMIDIFileWriteText(fileStructP,0,MKMIDI_copyright,
-			       STRPAR(info,MK_copyright));
+        if ([info isParPresent:MK_copyright])
+            MKMIDIFileWriteText(fileStructP, 0, MKMIDI_copyright, STRPAR(info,MK_copyright));
+        if ([info isParPresent:MK_text])
+            MKMIDIFileWriteText(fileStructP, 0, MKMIDI_text, STRPAR(info,MK_text));
 	if ([info isParPresent:MK_sequence])
-	  MKMIDIFileWriteSequenceNumber(fileStructP,
-					 INTPAR(anInfo,MK_sequence));
+	    MKMIDIFileWriteSequenceNumber(fileStructP, INTPAR(info,MK_sequence));
 	if ([info isParPresent:MK_smpteOffset]) {
             unsigned int hr, mn, sec, fr, ff;
             NSString *smpteString = STRPAR(info, MK_smpteOffset);
@@ -631,93 +702,38 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
             MKMIDIFileWriteSMPTEoffset(fileStructP,hr,mn,sec,fr,ff);
 	}
     }
+    MKMIDIFileEndWritingTrack(fileStructP, lastTimeTag < MK_ENDOFTIME ? lastTimeTag : 0); // 0 end time is a little kludgy
+
     for (i = 0; i < n; i++) {
         curPart = [parts objectAtIndex:i];
 	if ([curPart noteCount] == 0)
             continue;
-	/* Don't start a new track for the first track -- we've already
-	   started it above with the MKMIDIFileBeginWriting(). */
-
-        if (curPart != [parts objectAtIndex:0])
-            MKMIDIFileBeginWritingTrack(fileStructP,
-					 (NSString *)MKGetObjectName(curPart));
+        MKMIDIFileBeginWritingTrack(fileStructP, (NSString *) MKGetObjectName(curPart));
 	aPart = [curPart copy]; /* Need to copy to split notes. */
 	[aPart splitNotes]; 
 	[aPart sort];
 	notes = [aPart notesNoCopy];
 	anInfo = [aPart infoNote];
 	defaultChan = 1;
-	if (anInfo)
-            if ([anInfo isParPresent:MK_midiChan])
-                defaultChan = [anInfo parAsInt:MK_midiChan];
-#       define T timeInQuanta(fileStructP,(t+timeShift))
+	if (anInfo) {
+            if ([anInfo isParPresent: MK_midiChan]) {
+                defaultChan = [anInfo parAsInt: MK_midiChan];
+	    }
+	    // If the time of the part info note has not been set, it becomes 0,
+            // otherwise use whatever is there, hopefully user knows best.
+            if([anInfo timeTag] >= MK_ENDOFTIME) {
+                [anInfo setTimeTag: 0];
+            }
+            writeNoteToMidifile(p, fileStructP, anInfo, timeShift, defaultChan);
+	}
         m = [notes count];
         for (j = 0; j < m; j++) {
             curNote = [notes objectAtIndex:j];
-            if ((t = [curNote timeTag]) >= firstTimeTag)
+            if ((t = [curNote timeTag]) >= firstTimeTag) {
                 if (t > lastTimeTag)
                     break;
-                else { 
-		/* First handle normal midi */
-                    chan= INTPAR(curNote,MK_midiChan);
-                    _MKWriteMidiOut(curNote,t+timeShift,
-				((chan == MAXINT) ? defaultChan : chan),
-				p,nil);
-		/* Now check for meta-events. */
-                    parBits= [curNote parVector:4];
-#              define INRANGE(_par) (_par >= 128 && _par <= 159)	
-#              define PRESENT(_par) (parBits & (1<<(_par - 128)))
-#              define WRITETEXT(_meta,_par) \
-                    MKMIDIFileWriteText(fileStructP,T,_meta,STRPAR(curNote,_par))
-                        NSAssert((INRANGE(MK_tempo) && INRANGE(MK_lyric) &&
-			   INRANGE(MK_cuePoint) && INRANGE(MK_marker) &&
-			   INRANGE(MK_timeSignature) && 
-			   INRANGE(MK_keySignature)), @"Illegal use of parVector.");
-		if (parBits) { 
-		    if (PRESENT(MK_text))
-		      WRITETEXT(MKMIDI_text,MK_text);
-		    if (PRESENT(MK_instrumentName))
-		      WRITETEXT(MKMIDI_instrumentName,MK_instrumentName);
-		    if (PRESENT(MK_lyric))
-		      WRITETEXT(MKMIDI_lyric,MK_lyric);
-		    if (PRESENT(MK_cuePoint))
-		      WRITETEXT(MKMIDI_cuePoint,MK_cuePoint);
-		    if (PRESENT(MK_marker))
-		      WRITETEXT(MKMIDI_marker,MK_marker);
-		    if (PRESENT(MK_timeSignature)) {
-                        unsigned int nn, dd, cc, bb, allData;
-                        NSString *timeSigString = STRPAR(curNote, MK_timeSignature);
-                        NSScanner *timeSigScan;
-			if(timeSigString == nil) {
-			    allData = 0;
-			}
-			else {
-			    timeSigScan = [NSScanner scannerWithString: timeSigString];
-                            [timeSigScan scanInt: &nn];  // numerator
-                            [timeSigScan scanInt: &dd];  // denominator
-                            [timeSigScan scanInt: &cc];  // ?? to check against SMF spec
-                            [timeSigScan scanInt: &bb];  // ?? to check against SMF spec
-                            allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
-			}
-                        MKMIDIFileWriteSig(fileStructP,T,MKMIDI_timeSig, allData);
-		    }
-		    if (PRESENT(MK_keySignature)) {
-                        NSString *keySigString = STRPAR(curNote,MK_keySignature);
-                        NSScanner *keySigScan;
-                        unsigned int sf, mi, allData;
-                        if(keySigString == nil) {
-                            allData = 0;
-			}
-                        else {
-                            keySigScan = [NSScanner scannerWithString: keySigString];
-                            [keySigScan scanInt: &sf];  // ??
-                            [keySigScan scanInt: &mi];  // ??
-                            allData = (sf << 8) | mi;
-                        }
-                        MKMIDIFileWriteSig(fileStructP, T, MKMIDI_keySig, allData);
-		    }
-		    if (PRESENT(MK_tempo))
-		      MKMIDIFileWriteTempo(fileStructP,T, DOUBLEPAR(curNote,MK_tempo));
+                else {
+                    writeNoteToMidifile(p, fileStructP, curNote, timeShift, defaultChan);
 		}
 	    }
         }
@@ -1269,20 +1285,20 @@ static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruc
     MKPart *currentPart;
     unsigned n = [aScore->parts count], i;
     BOOL timeBounds = ((firstTimeTag != 0) || (lastTimeTag != MK_ENDOFTIME));
-    NSMutableArray *allNotes = [NSMutableArray arrayWithCapacity:[aScore noteCount]];
-    NSMutableArray *listOfLists = [NSMutableArray arrayWithCapacity:[aScore->parts count]];
+    NSMutableArray *allNotes = [NSMutableArray arrayWithCapacity: [aScore noteCount]];
+    NSMutableArray *listOfLists = [NSMutableArray arrayWithCapacity: [aScore->parts count]];
     id aPart,aList;
     MKNote *currentNote;
     for (i = 0; i < n; i++) {
         currentPart = [aScore->parts objectAtIndex:i];
 	if (timeBounds) 
-	  aList = [currentPart firstTimeTag:firstTimeTag lastTimeTag:lastTimeTag];
+	    aList = [currentPart firstTimeTag:firstTimeTag lastTimeTag:lastTimeTag];
 	else {
-		[currentPart sort];
-		aList = [currentPart notesNoCopy];
+	    [currentPart sort];
+	    aList = [currentPart notesNoCopy];
 	}
 	if (aList)
-	  [listOfLists addObject:aList];
+	    [listOfLists addObject:aList];
 	_MKWritePartDecl(currentPart,p,[currentPart infoNote]);
     }
     merge(listOfLists,allNotes);
