@@ -125,16 +125,26 @@ static NSMutableArray *fxClassesArray = nil;
     [super dealloc];
 }
 
+- copyWithZone: (NSZone *) zone
+{
+    SndAudioProcessor *newProcessor = [[[self class] allocWithZone: zone] initWithParameterDictionary: [self paramDictionary]
+												 name: [self name]];
+
+    [newProcessor setActive: [self isActive]];
+    return newProcessor; // no need to autorelease (by definition, "copy" is retained)
+}
+
 - (void) describeParameters
 {
     int parameterCount = [self paramCount];
     int parameterIndex;
     
-    for(parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++)
+    for(parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++) {
+	NSString *paramLable = [self paramLabel: parameterIndex];
 	NSLog(@"Parameter %d: %@: %@ %@\n", parameterIndex, 
-	      [self paramName: parameterIndex], 
-	      [self paramDisplay: parameterIndex],
-	      [self paramLabel: parameterIndex]);
+	      [self paramName: parameterIndex], [self paramDisplay: parameterIndex],
+	      paramLable == nil ? @"" : paramLable);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -228,14 +238,15 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (NSString *) paramDisplay: (const int) index
 {
-  /* Example:
-  switch (index) {
+    /* Example:
+    switch (index) {
     case kYourParamKeyForAttenuation:
       return [NSString stringWithFormat: @"%03f", linearToDecibels(attenuation)];
       break;
-  }
-  */
-  return nil;
+    }
+    */
+    // Default to displaying a float unaltered.
+    return [NSString stringWithFormat: @"%03f", [self paramValue: index]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
