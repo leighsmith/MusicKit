@@ -32,10 +32,10 @@
 /*!
 @class SndAudioProcessorInspector
 @abstract An inspector window for SndAudioProcessors
-@discussion Inspector has an SndAudioArchitectureView allowing user to select
+@discussion SndAudioProcessorInspector has an SndAudioArchitectureView allowing user to select
             the SndAudioProcessor of interest, whose parameters are then displayed
-            in the tableview. A slider allows the user to change the Cubase VST
-            styled float params in the range [0,1]. This will change to utilize
+            in the tableview. A slider allows the user to change the "VST
+            styled" float params in the range [0, 1]. This will change to utilize
             the newer NSValue styled parameter API shortly.
 */
 @interface SndAudioProcessorInspector : NSObject {
@@ -66,7 +66,7 @@
   @method     defaultAudioProcessorInspector
   @abstract   To come
   @discussion To come
-  @result     id to the defualt SndAudioProcessorInspector.
+  @result     id to the default SndAudioProcessorInspector.
 */
 + defaultAudioProcessorInspector;
 
@@ -111,41 +111,6 @@
 */
 - parameterTableAction: (id) sender;
 /*!
-  @method     tableView:didClickTableColumn:
-  @abstract
-  @discussion
-  @param      tableView
-  @param      tableColumn
-  @result
-*/
-- (void) tableView: (NSTableView*) tableView didClickTableColumn: (NSTableColumn*) tableColumn;
-/*!
-  @method     tableView:objectValueForTableColumn:row:
-  @abstract
-  @discussion
-  @param      aTableView
-  @param      aTableColumn
-  @param      rowIndex
-  @result
-*/
-- (id) tableView: (NSTableView*) aTableView objectValueForTableColumn: (NSTableColumn*) aTableColumn row: (int) rowIndex;
-/*!
-  @method     numberOfRowsInTableView:
-  @abstract
-  @discussion To come
-  @param      aTableView
-  @result     The number of parameters SndAudioProcessor 
-*/
-- (int) numberOfRowsInTableView: (NSTableView*) aTableView;
-/*!
-  @method     didSelectObject:
-  @abstract
-  @discussion To come
-  @param      sndAudioArchObject
-  @result     self
-*/
-- didSelectObject: (id) sndAudioArchObject;
-/*!
   @method     onAddFxButton:
   @abstract   Adds an SndAudioProcessor of the Chooser's  currently selected type
               to the currently selected object in the SndStreamArchitectureView,
@@ -165,18 +130,6 @@
   @result     self
 */
 - onDelFxButton: (id) sender;
-
-@end
-
-@interface SndAudioProcessor(Inspection)
-
-/*!
-  @method     inspect
-  @abstract   Sets the SndAudioProcessorInspector's current inspection target to
-              self.
-  @discussion If the inspector window is not visible, it is created.
-*/
-- (SndAudioProcessorInspector*) inspect;
 
 @end
 

@@ -60,52 +60,54 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// init
+// initWithAudioProcessor:
 ////////////////////////////////////////////////////////////////////////////////
 
-- init
+- initWithAudioProcessor: (SndAudioProcessor *) anAudProc
 {
     if (defaultInspector != nil)
 	self = defaultInspector;
     else {
 	self = [super init];
 	
-	[NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
-	[window makeKeyAndOrderFront:self];
-	{
-	    NSArray *tableColumns = [parameterTableView tableColumns];
-	    id tcN = [tableColumns objectAtIndex: 0];
-	    id tcV = [tableColumns objectAtIndex: 1];
-	    [tcN setIdentifier: @"Name"];
-	    [tcN setEditable: NO];
-	    [tcV setIdentifier: @"Value"];
-	    [tcV setEditable: NO];
-	}
-	[sndArchView setDelegate: self];
-	
-	{
-	    NSArray *fxClassesArray = [SndAudioProcessor fxClasses];
-	    int i, c = [fxClassesArray count];
-	    [fxChooser removeAllItems];
-	    for (i = 0; i < c; i++) {
-		NSString *className = NSStringFromClass([[fxClassesArray objectAtIndex: i] class]);
-		[fxChooser addItemWithObjectValue: className];
+	if([NSBundle loadNibNamed: @"SndAudioProcessorInspector" owner: self]) {
+	    [window makeKeyAndOrderFront: self];
+	    {
+		NSArray *tableColumns = [parameterTableView tableColumns];
+		id tcN = [tableColumns objectAtIndex: 0];
+		id tcV = [tableColumns objectAtIndex: 1];
+		
+		[tcN setIdentifier: @"Name"];
+		[tcN setEditable: NO];
+		[tcV setIdentifier: @"Value"];
+		[tcV setEditable: NO];
 	    }
-	    [fxChooser selectItemAtIndex: 0];
+	    [sndArchView setDelegate: self];
+	    
+	    {
+		NSArray *fxClassesArray = [SndAudioProcessor fxClasses];
+		int i, c = [fxClassesArray count];
+		
+		[fxChooser removeAllItems];
+		for (i = 0; i < c; i++) {
+		    NSString *className = NSStringFromClass([[fxClassesArray objectAtIndex: i] class]);
+		    [fxChooser addItemWithObjectValue: className];
+		}
+		[fxChooser selectItemAtIndex: 0];
+	    }	    
 	}
     }
+    [self setAudioProcessor: anAudProc];
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// initWithAudioProcessor:
+// init
 ////////////////////////////////////////////////////////////////////////////////
 
-- initWithAudioProcessor: (SndAudioProcessor*) anAudProc
+- init
 {
-  self = [self init];
-  [self setAudioProcessor: anAudProc];
-  return self;
+    return [self initWithAudioProcessor: nil];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,25 +288,3 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 ////////////////////////////////////////////////////////////////////////////////
 
 @end // Of SndAudioProcessorInspector implementation
-
-////////////////////////////////////////////////////////////////////////////////
-// SndAudioProcessor(Inspection)
-////////////////////////////////////////////////////////////////////////////////
-
-@implementation SndAudioProcessor(Inspection)
-
-//////////////////////////////////////////////////////////////////////////////
-// inspect
-//
-// Hmmm, is this worth having?? - SKoT rethinks.
-//////////////////////////////////////////////////////////////////////////////
-
-- (SndAudioProcessorInspector*) inspect
-{
-  return [[SndAudioProcessorInspector alloc] initWithAudioProcessor: self];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-
