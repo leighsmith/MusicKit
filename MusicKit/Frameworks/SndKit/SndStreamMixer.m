@@ -163,7 +163,7 @@
 
 - (SndAudioProcessorChain*) audioProcessorChain
 {
-  return processorChain;
+  return [[processorChain retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
