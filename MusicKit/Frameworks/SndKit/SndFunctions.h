@@ -14,8 +14,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
-#import "_Sndlibst.h"
-
 //#define USE_MACH_MEMORY_ALLOCATION
 
 #import <MKPerformSndMIDI/PerformSound.h>

@@ -27,6 +27,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import <Foundation/Foundation.h>
 
 #import "SndFunctions.h"
+#import "_Sndlibst.h"
 #import "SndResample.h"
 #import <objc/zone.h>
 
@@ -174,7 +175,7 @@ const char *SndStructDescription(SndSoundStruct *s)
     static char message[256];
     
     sprintf(message, "%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
-        (s->magic != SND_MAGIC) ? "struct lacking magic number: " : "",
+        (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
         s->dataLocation, s->dataSize, s->dataFormat,
         s->samplingRate, s->channelCount, s->info);
     return message;
@@ -187,29 +188,29 @@ void SndPrintStruct(SndSoundStruct *s)
 
 int SndPrintFrags(SndSoundStruct *sound)
 {
-	SndSoundStruct **ssList;
-	SndSoundStruct *theStruct;
-	int count = 0, i = 0, df;
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int count = 0, i = 0, df;
 
-	if (!sound) return SND_ERR_NOT_SOUND;
-	if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    if (!sound) return SND_ERR_NOT_SOUND;
+    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
     df = sound->dataFormat;
-	if (df != SND_FORMAT_INDIRECT) {
-		printf("not fragmented\n");
-		return SND_ERR_NONE;
-	}
-	/* more complicated */
-	ssList = (SndSoundStruct **)sound->dataLocation;
-	df = ssList[0]->dataFormat;
-	while ((theStruct = ssList[i++]) != NULL) {
-		printf("**** Frag %d: starts at byte %d\n",i-1,count);
-		count += theStruct->dataSize;
-		printf("...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
-		printf("channels: %d sample frames: %d samples in tot: %d\n",
-			theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
-			theStruct->dataSize/theStruct->channelCount);
-		}
-	return SND_ERR_NONE;
+    if (df != SND_FORMAT_INDIRECT) {
+        printf("not fragmented\n");
+        return SND_ERR_NONE;
+    }
+    /* more complicated */
+    ssList = (SndSoundStruct **)sound->dataLocation;
+    df = ssList[0]->dataFormat;
+    while ((theStruct = ssList[i++]) != NULL) {
+        printf("**** Frag %d: starts at byte %d\n",i-1,count);
+        count += theStruct->dataSize;
+        printf("...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
+        printf("channels: %d sample frames: %d samples in tot: %d\n",
+                theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
+                theStruct->dataSize/theStruct->channelCount);
+    }
+    return SND_ERR_NONE;
 }
 
 int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, int *width)
@@ -228,24 +229,24 @@ int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, int *w
 
 int SndFree(SndSoundStruct *sound)
 {
-	SndSoundStruct **ssList;
-	SndSoundStruct *theStruct;
-	int i = 0;
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int i = 0;
 
-	if (!sound) return SND_ERR_NOT_SOUND;
-	if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-	/* simple case: */
-	if (sound->dataFormat != SND_FORMAT_INDIRECT) {
-		free(sound);
-		return SND_ERR_NONE;
-		}
-	/* more complicated */
-	ssList = (SndSoundStruct **)sound->dataLocation;
-	while ((theStruct = ssList[i++]) != NULL)
-		free(theStruct);
-	free(ssList);
-	free(sound);
-	return SND_ERR_NONE;
+    if (!sound) return SND_ERR_NOT_SOUND;
+    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    /* simple case: */
+    if (sound->dataFormat != SND_FORMAT_INDIRECT) {
+            free(sound);
+            return SND_ERR_NONE;
+            }
+    /* more complicated */
+    ssList = (SndSoundStruct **)sound->dataLocation;
+    while ((theStruct = ssList[i++]) != NULL)
+            free(theStruct);
+    free(ssList);
+    free(sound);
+    return SND_ERR_NONE;
 }
 
 int SndAlloc(SndSoundStruct **sound, int dataSize, int dataFormat,
