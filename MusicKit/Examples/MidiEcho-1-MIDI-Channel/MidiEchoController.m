@@ -2,7 +2,7 @@
  $Id$
  
  Description:
-   MidiEcho is an example of a Music Kit performance where the interactive
+   MidiEcho-1-Channel is an example of a MusicKit performance where the interactive
    response time needs to be as fast as possible, even if at the expense of 
    a bit of timing indeterminacy. Therefore, the MKConductor is clocked and 
    MKMidi is untimed (i.e. no delays are introduced in the MKMidi object). 
@@ -14,12 +14,9 @@
    we would be if we were recording the MIDI (See MidiRecord). 
  */
 
-#import <AppKit/AppKit.h>
-#import <MusicKit/MusicKit.h>
-#import "MyApp.h"
-#import "EchoFilter.h"
+#import "MidiEchoController.h"
 
-@implementation MyApp
+@implementation MidiEchoController
 
 static NSString *dev = @"midi0"; /* Serial port B -- the default. */
 static float delay = .1;
@@ -30,17 +27,16 @@ static void handleMKError(NSString *msg)
 	[NSApp terminate: NSApp];
 }
 
-- showInfoPanel:sender
+- (IBAction) showInfoPanel: (id) sender
 {
     [NSBundle loadNibNamed: @"Info.nib" owner: self];
     [infoPanel orderFront: sender];
-    return self;
 }
 
-- go:sender
+- (IBAction) go: (id) sender
 {
     if ([MKConductor inPerformance])  
-    	return self;
+    	return;
 
     MKSetErrorProc(handleMKError); /* Intercept Music Kit errors. */
        
@@ -50,13 +46,13 @@ static void handleMKError(NSString *msg)
     /* Open it for input and output */
     [midi open];
 
-    /* We use a NoteFilter subclass to make the echoes. */
+    /* We use a MKNoteFilter subclass to make the echoes. */
     myFilter = [[EchoFilter alloc] init];
     [myFilter setDelay: delay];
 
-    /* Connect up the MKMidi NoteSender for channel 1 to the NoteReceiver
-       of the NoteFilter.  Connect up the NoteFilter noteSender to the  
-       NoteReceiver of MKMidi for channel 1. */
+    /* Connect up the MKMidi NoteSender for channel 1 to the MKNoteReceiver
+       of the MKNoteFilter.  Connect up the MKNoteFilter noteSender to the  
+       MKNoteReceiver of MKMidi for channel 1. */
     [[midi channelNoteSender: 1] connect:[myFilter noteReceiver]];
     [[myFilter noteSender] connect: [midi channelNoteReceiver: 1]];
 
@@ -77,12 +73,11 @@ static void handleMKError(NSString *msg)
     /* Start up MKMidi */
     [midi run];
 
-    /* Start the MKConductor  */
+    /* Start the MKConductor */
     [MKConductor startPerformance];
-    return self;
 }
 
-- setMidiDev: sender
+- (IBAction) setMidiDev: (id) sender
 {
     if ([[sender selectedCell] tag])
 	dev = @"midi0";
@@ -96,16 +91,14 @@ static void handleMKError(NSString *msg)
 	myFilter = nil;
 	[self go: self]; /* Start us up again. */
     }
-    return self;
 }
 
-- setDelayFrom:sender
+- (IBAction) setDelayFrom: (id) sender
   /* This is invoked from the text field. Sets the delay used by the NoteFilter
    */
 {
     delay = [sender floatValue];
     [myFilter setDelay: delay];
-    return self;
 }
 
 @end
