@@ -109,9 +109,11 @@
 	    NSLog(@"[mixer] mixing buffer %@\n", currentlyExposedOutputBuffer);
 #endif
 	    if (currentlyExposedOutputBuffer != nil) {
-		long framesMixed = [outB mixWithBuffer: currentlyExposedOutputBuffer];
 #if SNDSTREAMMIXER_DEBUG
+		long framesMixed = [outB mixWithBuffer: currentlyExposedOutputBuffer];
 		NSLog(@"[mixer] Mixed %ld frames\n", framesMixed);
+#else
+		[outB mixWithBuffer: currentlyExposedOutputBuffer];
 #endif
 	    }
 	    else {
