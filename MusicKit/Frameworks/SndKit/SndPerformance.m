@@ -76,6 +76,27 @@ playingAtTime: (double) t
     startAtIndex = beginIndex;
     playIndex    = beginIndex;
     endAtIndex   = endIndex;
+    deltaTime    = 1.0;
+  }
+  return self;
+}
+
+- initWithSnd: (Snd *) s
+     playTime: (double) _playTime
+startPosition: (double) startPosition
+     duration: (double) duration
+    deltaTime: (double) _deltaTime;
+{
+  self = [super init];
+  if (self) {
+    double samplingRate = [s samplingRate];
+    snd          = [s retain];
+    playTime     = _playTime;
+    deltaTime    = _deltaTime;
+
+    startAtIndex = samplingRate * startPosition;
+    playIndex    = startAtIndex;
+    endAtIndex   = startAtIndex + samplingRate * duration / deltaTime;
   }
   return self;
 }
@@ -88,8 +109,10 @@ playingAtTime: (double) t
 {
   if (snd)
     [snd release];
+  snd = nil;
   if (audioProcessorChain)
     [audioProcessorChain release];
+  audioProcessorChain = nil;
   [super dealloc];
 }
 
@@ -109,6 +132,7 @@ playingAtTime: (double) t
   newPerformance->playIndex    = playIndex;
   newPerformance->startAtIndex = startAtIndex;
   newPerformance->endAtIndex   = endAtIndex;
+  newPerformance->deltaTime    = deltaTime;
   return newPerformance; // no need to autorelease (by definition, "copy" is retained)
 }
 
@@ -125,7 +149,8 @@ playingAtTime: (double) t
   BOOL equal = ((SndPerformance *) anotherPerformance)->snd == snd &&
   ((SndPerformance *) anotherPerformance)->playTime == playTime &&
   ((SndPerformance *) anotherPerformance)->startAtIndex == startAtIndex &&
-  ((SndPerformance *) anotherPerformance)->endAtIndex == endAtIndex;
+  ((SndPerformance *) anotherPerformance)->endAtIndex == endAtIndex &&
+  ((SndPerformance *) anotherPerformance)->deltaTime == deltaTime ;
   // NSLog(@"checking if equal %@ vs. %@ = %s\n", self, anotherPerformance, equal ? "YES" : "NO");
   return equal;
 }
@@ -148,6 +173,16 @@ playingAtTime: (double) t
   return [[snd retain] autorelease];
 }
 
+- (double) deltaTime
+{
+  return deltaTime;
+}
+
+- (void) setDeltaTime: (double) _deltaTime
+{
+  deltaTime = _deltaTime;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // playTime
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +202,7 @@ playingAtTime: (double) t
 // playIndex
 ////////////////////////////////////////////////////////////////////////////////
 
-- (long) playIndex
+- (double) playIndex
 {
   return playIndex;
 }
@@ -176,7 +211,7 @@ playingAtTime: (double) t
 // setPlayIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setPlayIndex: (long) newPlayIndex
+- (void) setPlayIndex: (double) newPlayIndex
 {
   playIndex = newPlayIndex;
 }

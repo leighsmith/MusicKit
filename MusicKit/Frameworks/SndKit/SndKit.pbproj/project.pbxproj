@@ -248,6 +248,7 @@
 				011279830168CEA1CFED3B94,
 				3AE3B96C007931DBCFED3B8B,
 				B52BE0CC01F775D6002A0494,
+				B5345E8A025A5A37002A0494,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -630,6 +631,7 @@
 				011279840168CEA1CFED3B94,
 				0112798A0169158CCFED3B94,
 				B52BE0CD01F775D6002A0494,
+				B5345E8B025A5A37002A0494,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -1635,6 +1637,18 @@
 		};
 		B52BE0FD01F8D0AD002A0494 = {
 			fileRef = B52BE0FC01F8D0AC002A0494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B5345E8A025A5A37002A0494 = {
+			isa = PBXFileReference;
+			name = libmad.a;
+			path = /usr/local/lib/libmad.a;
+			refType = 0;
+		};
+		B5345E8B025A5A37002A0494 = {
+			fileRef = B5345E8A025A5A37002A0494;
 			isa = PBXBuildFile;
 			settings = {
 			};

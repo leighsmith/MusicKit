@@ -35,7 +35,7 @@
 /*! @var    startIndex */
     long    startAtIndex;
 /*! @var 				playIndex */
-    long    playIndex;
+    double  playIndex;
 /*! @var 				endAtIndex */
     long    endAtIndex;
 /*! @var 				paused */
@@ -43,6 +43,8 @@
     // TODO playState should be here, not Snd.
 /*! @var audioProcessorChain */
     SndAudioProcessorChain *audioProcessorChain;
+
+    double  deltaTime;
 }
 
 /*!
@@ -55,7 +57,6 @@
     @result     Returns the newly created instance if able to initialise, nil if unable.
 */
 + (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) seconds;
-
 /*!
     @method   performanceOfSnd:playingAtTime:endAtIndex:
     @abstract   Create and return an autoreleased instance of SndPerformance with a sound
@@ -89,6 +90,13 @@
     @result     Returns self if able to initialise, nil if unable.
 */
 - initWithSnd: (Snd *) s playingAtTime: (double) t beginAtIndex: (long) beginIndex endAtIndex: (long) endIndex;
+
+- initWithSnd: (Snd *) s
+     playTime: (double) playTime
+startPosition: (double) startPosition
+     duration: (double) duration
+    deltaTime: (double) deltaTime;
+
 /*!
     @method   snd
     @abstract   Returns the Snd instance being played in this performance.
@@ -105,19 +113,23 @@
 
 - setPlayTime: (double) t;
 
+- (double) deltaTime;
+- (void) setDeltaTime: (double) _deltaTime;
+
+
 /*!
     @method   playIndex
     @abstract   Returns the sample to start playing from.
     @result     Returns the sample index to start playing from.
 */
-- (long) playIndex;
+- (double) playIndex;
 
 /*!
     @method   setPlayIndex:
     @abstract   Sets the sample to start playing from.
     @param      newPlayIndex The sample index that playing should begin from.
 */
-- (void) setPlayIndex: (long) newPlayIndex;
+- (void) setPlayIndex: (double) newPlayIndex;
 
 /*!
     @method   endAtIndex
@@ -145,7 +157,6 @@
     @param      inSeconds The time interval when to stop the performance.
 */
 - (void) stopInFuture: (double) inSeconds;
-
 /*!
     @method stopNow
 */
