@@ -51,6 +51,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/04/07 18:32:20  leigh
+  Upgraded logging to NSLog
+
   Revision 1.6  2000/02/07 00:29:53  leigh
   removed _MKHighestPar()
 
@@ -215,8 +218,8 @@ int _MKGetPar(NSString *aName,_ParName **aPar)
 	    parArrSize = highestPar + EXPANDAMT;
 	}
 	parIds[highestPar] = *aPar;
-	if (_MKTrace() & MK_TRACEPARS)
-	  fprintf(stderr,"Adding new parameter %s\n",(*aPar)->s);
+        if (MKIsTraced(MK_TRACEPARS))
+	  NSLog(@"Adding new parameter %s\n",(*aPar)->s);
 	return highestPar;
     }
 }
@@ -295,7 +298,7 @@ _MKParameter *_MKFreeParameter(_MKParameter *param)
 	int i;
 	for (i=0; i<_cachePtr; i++) 
 	  if (_cache[i] == param) {
-	    fprintf(stderr,"Attempt to free freed parameter.\n");
+	    NSLog(@"Attempt to free freed parameter.\n");
 	    return NULL;
 	}
     }
