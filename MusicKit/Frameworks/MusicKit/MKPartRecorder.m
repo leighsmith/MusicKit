@@ -17,6 +17,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.9  2004/10/25 16:22:50  leighsmith
+   Updated for new ivar name
+
    Revision 1.8  2001/09/06 21:27:47  leighsmith
    Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -189,15 +192,14 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
 - _realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* Private */
 {
-    if (!_noteSeen) {
-	[MKConductor _afterPerformanceSel:@selector(_afterPerformance) 
-       to:self argCount:0];
-	[_scoreRecorder _firstNote:aNote];
-	[part _addPerformanceObj:self];
-	[self firstNote:aNote];
-	_noteSeen = YES;
+    if (!noteSeen) {
+	[MKConductor _afterPerformanceSel: @selector(_afterPerformance) to: self argCount: 0];
+	[_scoreRecorder _firstNote: aNote];
+	[part _addPerformanceObj: self];
+	[self firstNote: aNote];
+	noteSeen = YES;
     }
-    return [self realizeNote:aNote fromNoteReceiver:aNoteReceiver];
+    return [self realizeNote: aNote fromNoteReceiver: aNoteReceiver];
 }
 
 -_afterPerformance
@@ -205,7 +207,7 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
 {
     [part _removePerformanceObj:self];
     [self afterPerformance];
-    _noteSeen = NO;
+    noteSeen = NO;
     return self;
 }
 
@@ -216,7 +218,7 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
     aNote = [aNote copyWithZone: NSDefaultMallocZone()];
     [aNote setTimeTag: _MKTimeTagForTimeUnit(aNote, timeUnit, compensatesDeltaT)];
     if ([aNote noteType] == MK_noteDur) 
-        [aNote setDur: _MKDurForTimeUnit(aNote,timeUnit)];
+        [aNote setDur: _MKDurForTimeUnit(aNote, timeUnit)];
     [part addNote: aNote];
     return self;
 }

@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2004/10/25 16:22:50  leighsmith
+  Updated for new ivar name
+
   Revision 1.9  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -224,17 +227,17 @@ Modification history:
     return info;
 }
 
--setInfoNote:(MKNote *) aNote forNoteReceiver: (MKNoteReceiver *) aNR
+- setInfoNote: (MKNote *) aNote forNoteReceiver: (MKNoteReceiver *) aNR
   /* Sets Info for partName corresponding to specified NoteReceiver.
      If in performance or if aNR is not a NoteReceiver of the 
      receiver, generates an error and returns nil. 
      If the receiver is in performance, does nothing and returns nil. 
      aNote is copied. The old info, if any, is freed. */
 {
-    if (_noteSeen || (![self isNoteReceiverPresent:aNR]))
+    if (noteSeen || (![self isNoteReceiverPresent: aNR]))
       return nil;
     [PARTINFO(aNR) release]; 
-    [aNR _setData:(void *)[aNote copy]];
+    [aNR _setData: (void *) [aNote copy]];
     return self;
 }
 

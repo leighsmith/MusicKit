@@ -49,6 +49,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2004/10/25 16:22:50  leighsmith
+  Updated for new ivar name
+
   Revision 1.6  2002/01/29 16:07:54  sbrandon
   simplified retain/autorelease usage (not bugfixes)
 
@@ -164,7 +167,7 @@ Modification history:
     [super dealloc];
 }
 
--setFile:(NSString *)aName
+- setFile: (NSString *) aName
   /* TYPE: Modifying; Associates the receiver with file aName.
    * Associates the receiver with file aName. The string is copied.
    * The file is opened when the first MKNote is realized
@@ -178,8 +181,8 @@ Modification history:
    * in this case. Otherwise, returns the receiver.
    */
 {
-    if (_noteSeen)
-      return nil;
+    if (noteSeen)
+	return nil;
     [filename autorelease];
     filename = [aName retain];
     if (stream) {
@@ -190,7 +193,7 @@ Modification history:
 }
 
 
--setStream:(NSMutableData *)aStream
+- setStream: (NSMutableData *) aStream
   /* TYPE: Modifying; Associates the receiver with file pointer aStream.
    * Associates the receiver with the file pointer aStream.
    * You must open and close the file yourself.
@@ -199,9 +202,9 @@ Modification history:
    * in this case. Otherwise, returns the receiver. 
    */
 {
-    if (_noteSeen)
-      return nil;
-    [self setFile:nil];
+    if (noteSeen)
+	return nil;
+    [self setFile: nil];
     [stream autorelease];
     stream = [aStream retain];
     return self;
