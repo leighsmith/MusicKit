@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/08/07 16:18:48  leighsmith
+  Corrected encoding of an NSArray of noteSenders
+
   Revision 1.8  2001/04/19 17:10:19  leighsmith
   Removed redundant (given NSObject reference counting) receiveAndFreeNote methods
 
@@ -283,14 +286,11 @@ Modification history:
      NXWriteObjectReference(). */
 {
     NSString *str;
-    unsigned cnt = [noteSenders count], i;
 
     str = MKGetObjectName(self);
-    [aCoder encodeValuesOfObjCTypes:"i",&cnt];
-    for (i = 0; i < cnt; i++)
-        [aCoder encodeConditionalObject:[noteSenders objectAtIndex:i]];
-    [aCoder encodeValuesOfObjCTypes:"@c",&str,&isSquelched];
-    [aCoder encodeConditionalObject:owner];
+    [aCoder encodeConditionalObject: noteSenders];
+    [aCoder encodeValuesOfObjCTypes: "@c", &str, &isSquelched];
+    [aCoder encodeConditionalObject: owner];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -299,17 +299,13 @@ Modification history:
      See write:. */
 {
     NSString *str;
-    int possibleCount,i;
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnecessary */
-    if ([aDecoder versionForClassName:@"NoteReceiver"] == VERSION2) {
-	[aDecoder decodeValuesOfObjCTypes:"i",&possibleCount];
-        noteSenders = [[NSMutableArray arrayWithCapacity:possibleCount] retain];
-	for (i=0; i<possibleCount; i++) 
-	  [noteSenders addObject:[[aDecoder decodeObject] retain]];
-	[aDecoder decodeValuesOfObjCTypes:"@c",&str,&isSquelched];
+
+    if ([aDecoder versionForClassName: @"MKNoteReceiver"] == VERSION2) {
+        noteSenders = [[aDecoder decodeObject] retain];
+
+	[aDecoder decodeValuesOfObjCTypes: "@c", &str, &isSquelched];
 	if (str) {
-	    MKNameObject(str,self);
-//	    free(str);
+	    MKNameObject(str, self);
 	}
 	owner = [[aDecoder decodeObject] retain];
     } 
@@ -318,7 +314,7 @@ Modification history:
 
 @end
 
-
+
 @implementation MKNoteReceiver(Private)
 
 -_setOwner:obj
