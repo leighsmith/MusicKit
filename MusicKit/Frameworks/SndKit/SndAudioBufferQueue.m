@@ -14,7 +14,9 @@ enum {
     ABQ_hasData
 };
 
-
+#ifdef __MINGW32__
+# define NSConditionLock SndConditionLock
+#endif
 
 @implementation SndAudioBufferQueue
 

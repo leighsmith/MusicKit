@@ -35,10 +35,15 @@ typedef enum {
 /*! @var processedBuffers Array of processed buffers (post consumption) */
     NSMutableArray  *processedBuffers;
 /*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
+#ifndef __MINGW32__
     NSConditionLock *pendingBuffersLock;
 /*! @var processedBuffersLock Lock for thread safety around processed buffers array */
     NSConditionLock *processedBuffersLock;
 /*! @var numBuffers Total number of buffers in the queue, both pending and processed */
+#else
+    SndConditionLock *pendingBuffersLock;
+    SndConditionLock *processedBuffersLock;
+#endif
     int              numBuffers;
 }
 
