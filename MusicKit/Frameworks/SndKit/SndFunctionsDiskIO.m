@@ -153,173 +153,175 @@ BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *lo
  }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// SndReadRange()
 ////////////////////////////////////////////////////////////////////////////////
 
 int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int startFrame, int frameCount, BOOL bReadData)
 {
-  SndSoundStruct *s;
-  int lenRead, oldFrameCount;
-  int samplesRead;
-  int headerLen;
-  struct st_soundstream informat;
-  st_sample_t *readBuffer;
-  char *storePtr;
-  int i, samplesToReadCount;
-  BOOL bUnsigned = FALSE;
+    SndSoundStruct *s;
+    long numOfSamplesActuallyRead, oldFrameCount;
+    long samplesRead;
+    int headerLen;
+    struct st_soundstream informat;
+    st_sample_t *readBuffer;
+    char *storePtr;
+    long i, totalNumOfSamplesToRead;
+    BOOL bUnsigned = FALSE;
 
-  *sound = NULL;
-  if (fp == NULL)
-    return SND_ERR_CANNOT_OPEN;
+    *sound = NULL;
+    if (fp == NULL)
+	return SND_ERR_CANNOT_OPEN;
 
-  
-  st_initformat(&informat);
-  informat.fp = fp;
-  informat.seekable = YES;
-  /* use a default file type in the absence of an explicit type -- the user shouldn't
-    be forced to use file extensions -- snd is native to SndKit */
-  informat.filetype = (*fileTypeStr != '\0') ? (char *) fileTypeStr : "snd";
-  informat.info.rate = 0;
-  informat.info.size = -1;
-  informat.info.encoding = -1;
-  informat.info.channels = -1;
-  informat.comment = NULL;
-  informat.swap = 0;
-  informat.filename = "input";
+    st_initformat(&informat);
+    informat.fp = fp;
+    informat.seekable = YES;
+    /* use a default file type in the absence of an explicit type -- the user shouldn't
+	be forced to use file extensions -- snd is native to SndKit */
+    informat.filetype = (*fileTypeStr != '\0') ? (char *) fileTypeStr : "snd";
+    informat.info.rate = 0;
+    informat.info.size = -1;
+    informat.info.encoding = -1;
+    informat.info.channels = -1;
+    informat.comment = NULL;
+    informat.swap = 0;
+    informat.filename = "input";
 
-  if(st_gettype(&informat) != ST_SUCCESS)
-      return SND_ERR_CANNOT_OPEN;
+    if(st_gettype(&informat) != ST_SUCCESS)
+	return SND_ERR_CANNOT_OPEN;
 
-  /* Read and write starters can change their formats. */
-  (* informat.h->startread)(&informat);
-  st_checkformat(&informat);
+    /* Read and write starters can change their formats. */
+    (* informat.h->startread)(&informat);
+    st_checkformat(&informat);
 
-  headerLen = sizeof(SndSoundStruct);
-  if (informat.comment) {
-    headerLen += strlen(informat.comment) - 4 + 1; // -4 for the 4 bytes defined with SndSoundStruct, +1 for \0
-                                                   // if(headerLen < sizeof(SndSoundStruct))
-                                                   // headerLen = sizeof(SndSoundStruct)
-  }
-  if (!(s = malloc(headerLen))) return SND_ERR_CANNOT_ALLOC;
-  /* endianess is handled within startread() */
-  s->magic        = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
-  s->dataLocation = 0;
-  s->dataFormat   = sk_ausunencoding(informat.info.size, informat.info.encoding);
-  bUnsigned       = informat.info.encoding == ST_ENCODING_UNSIGNED;
-  s->samplingRate = informat.info.rate;
-  s->channelCount = informat.info.channels;
-  s->dataSize     = informat.info.size * informat.length; // whole sound for the moment
-  if (informat.comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
-    strcpy(s->info, informat.comment);
-  else
-    s->info[0] = '\0';
-
+    headerLen = sizeof(SndSoundStruct);
+    if (informat.comment) {
+	headerLen += strlen(informat.comment) - 4 + 1; // -4 for the 4 bytes defined with SndSoundStruct, +1 for \0
+    }
+    if (!(s = malloc(headerLen))) return SND_ERR_CANNOT_ALLOC;
+    /* endianess is handled within startread() */
+    s->magic        = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
+    s->dataLocation = 0;
+    s->dataFormat   = sk_ausunencoding(informat.info.size, informat.info.encoding);
+    bUnsigned       = informat.info.encoding == ST_ENCODING_UNSIGNED;
+    s->samplingRate = informat.info.rate;
+    s->channelCount = informat.info.channels;
+    s->dataSize     = informat.info.size * informat.length; // whole sound for the moment
+    if (informat.comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
+	strcpy(s->info, informat.comment);
+    else
+	s->info[0] = '\0';
+    
   // Sox read() always returns arrays of st_sample_t integers for each sample which the SndKit should eventually adopt
   // to enable 24 bit operation.
   // For now, we kludge it to 16 bit integers until we have sound drivers that will manage the extra precision.
-
+    
   // SKoT: slight update here - let's use the informat.length estimate as the canonical length of the sound!
   //       saves much reallocing.
 
-  if (bReadData) {
-    long readChunkSize = SNDREADCHUNKSIZE * sizeof(st_sample_t);
-    s->dataLocation = headerLen;
-    if ((readBuffer = (st_sample_t *) malloc(readChunkSize)) == NULL)
-      return SND_ERR_CANNOT_ALLOC;
-//    memset(readBuffer, 0, readChunkSize);
-    //        printf("Samples: %li samplesize:%i\n",informat.length,informat.info.size);
+    if (bReadData) {
+	long readChunkSizeInBytes = SNDREADCHUNKSIZE * sizeof(st_sample_t);
 
-    samplesRead = 0; // samplesRead represents ? excluding header.
-    if (startFrame > informat.length) {
-      printf("SndRead: startFrame > length (%i vs %i)\n", startFrame, informat.length);
-      return SND_ERR_CANNOT_READ;
-    }
-    if (frameCount < 0) {
-      frameCount = informat.length - startFrame;
-    }
-    oldFrameCount = frameCount;
-    if (startFrame + frameCount > informat.length) {
-#if DEBUG_MESSAGES      
-      printf("SndRead: startFrame + frameCount > length (%i + %i vs %i) - truncating\n",
-             startFrame, frameCount, informat.length);
-#endif      
-      frameCount = informat.length - startFrame;
-    }
+	s->dataLocation = headerLen;
+	if ((readBuffer = (st_sample_t *) malloc(readChunkSizeInBytes)) == NULL)
+	    return SND_ERR_CANNOT_ALLOC;
+	// memset(readBuffer, 0, readChunkSizeInBytes);
+	// printf("Samples: %li samplesize:%i\n",informat.length,informat.info.size);
 
-    samplesToReadCount = frameCount * informat.info.channels; 
-    s = realloc((char *)s, headerLen + samplesToReadCount * informat.info.size);
-//    memset(((char*)s) + headerLen, 0, samplesToReadCount * informat.info.size);
-//    printf("Allocating: %li\n", samplesToReadCount * informat.info.size);
-    (*informat.h->seek)(&informat, startFrame * informat.info.channels);
-    do {
-      int c, samsToRead = SNDREADCHUNKSIZE;
-      storePtr = (char *)s + headerLen + samplesRead * informat.info.channels;
-      /* Read chunk of input data. */
-      if (samsToRead > frameCount * informat.info.channels)
-        samsToRead = frameCount * informat.info.channels;
-      lenRead = (*informat.h->read)(&informat, readBuffer, (st_sample_t) samsToRead);
-      if (lenRead <= 0)
-        return SND_ERR_CANNOT_READ;
-      c = lenRead;
-      if (samplesRead + lenRead > samplesToReadCount)
-        c = samplesToReadCount - samplesRead;
+	samplesRead = 0; // represents the number of samples read so far (excluding header size).
+	if (startFrame > informat.length) {
+	    printf("SndRead: startFrame > length (%i vs %i)\n", startFrame, informat.length);
+	    return SND_ERR_CANNOT_READ;
+	}
+	if (frameCount < 0) {
+	    frameCount = informat.length - startFrame;
+	}
+	oldFrameCount = frameCount;
+	if (startFrame + frameCount > informat.length) {
+#if DEBUG_MESSAGES
+	    printf("SndRead: startFrame + frameCount > length (%i + %i vs %i) - truncating\n",
+	    startFrame, frameCount, informat.length);
+#endif
+	    frameCount = informat.length - startFrame;
+	}
 
-      switch (s->dataFormat) {
-        case SUN_LIN_8:
-          for(i = 0; i < c; i++) {
-            int sample = ST_SAMPLE_TO_SIGNED_BYTE(readBuffer[i]);
-            *((char *) storePtr) =  sample; // kludged assuming 16 bits.
-            storePtr += informat.info.size;
-          }
-          break;
-        case SUN_LIN_16:
-          for(i = 0; i < c; i++) {
-            int sample = ST_SAMPLE_TO_SIGNED_WORD(readBuffer[i]);
-            *((short *) storePtr) =  sample; // kludged assuming 16 bits.
-            storePtr += informat.info.size;
-          }
-          break;
-        case SUN_LIN_32:
-          for(i = 0; i < c; i++) {
-            long int sample = ST_SAMPLE_TO_SIGNED_DWORD(readBuffer[i]);
-            *((long *) storePtr) =  sample; // kludged assuming 16 bits.
-            storePtr += informat.info.size;
-          }
-          break;
-        case SUN_FLOAT:
-          for(i = 0; i < c; i++) {
-            float sample = ST_SAMPLE_TO_FLOAT_DWORD(readBuffer[i]);
-            *((float *) storePtr) =  sample; // kludged assuming 16 bits.
-            storePtr += informat.info.size;
-          }
-          break;
-        default:
-          NSLog(@"SndFunctionsDiskIO: Argh! Can't convert this stuff I'm reading!");
-      }
-      
-      samplesRead += lenRead;
-      if (samplesRead >= samplesToReadCount)
-        break;
-    } while(lenRead == SNDREADCHUNKSIZE); // sound files exactly modulo SNDREADCHUNKSIZE will read 0 bytes next time thru.
+	totalNumOfSamplesToRead = frameCount * informat.info.channels;
+	if((s = realloc((char *) s, headerLen + totalNumOfSamplesToRead * informat.info.size)) == NULL)
+	    return SND_ERR_CANNOT_ALLOC;
 
-    s->dataSize = samplesRead * informat.info.size;
-    //        s = realloc((char *)s, headerLen + s->dataSize);
-    free(readBuffer);
+        // memset(((char*)s) + headerLen, 0, totalNumOfSamplesToRead * informat.info.size);
+        // printf("Allocating: %li\n", totalNumOfSamplesToRead * informat.info.size);
+	(*informat.h->seek)(&informat, startFrame * informat.info.channels);
 
-    if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
-      printf("Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
-             (unsigned long)(informat.info.rate), st_sizes_str[(int)(informat.info.size)],
-             st_encodings_str[(int)(informat.info.encoding)], informat.info.channels,
-             (informat.info.channels > 1) ? "channels" : "channel");
-      if (informat.comment)
-        printf("Input file: comment \"%s\"\n", informat.comment);
-      SndPrintStruct(s);
-    }
-  } // end if bReadData
+	// Read a series of buffers, each numOfSamplesToRead long.
+	do {
+	    int numOfSamplesToConvert, numOfSamplesToRead = SNDREADCHUNKSIZE;
 
-  *sound = s;
-  (* informat.h->stopread)(&informat);
-  return SND_ERR_NONE;
+	    // Determine where to save converted data. samplesRead = the number of channels * number of frames read.
+	    storePtr = (char *) s + headerLen + samplesRead * informat.info.size;
+	    /* Read chunk of input data less than or equal to the size of the buffer. */
+	    if (numOfSamplesToRead > frameCount * informat.info.channels)
+		numOfSamplesToRead = frameCount * informat.info.channels;
+	    numOfSamplesActuallyRead = (*informat.h->read)(&informat, readBuffer, (st_sample_t) numOfSamplesToRead);
+	    if (numOfSamplesActuallyRead <= 0)
+		return SND_ERR_CANNOT_READ;
+	    numOfSamplesToConvert = numOfSamplesActuallyRead;
+	    if (samplesRead + numOfSamplesActuallyRead > totalNumOfSamplesToRead)
+		numOfSamplesToConvert = totalNumOfSamplesToRead - samplesRead;
+
+	    switch (s->dataFormat) {
+	    case SUN_LIN_8:
+		for(i = 0; i < numOfSamplesToConvert; i++) {
+		    int sample = ST_SAMPLE_TO_SIGNED_BYTE(readBuffer[i]);
+		    *((char *) storePtr) =  sample; // kludged assuming 16 bits.
+		    storePtr += informat.info.size;
+		}
+		break;
+	    case SUN_LIN_16:
+		for(i = 0; i < numOfSamplesToConvert; i++) {
+		    int sample = ST_SAMPLE_TO_SIGNED_WORD(readBuffer[i]);
+		    *((short *) storePtr) = sample; // kludged assuming 16 bits.
+		    storePtr += informat.info.size;
+		}
+		break;
+	    case SUN_LIN_32:
+		for(i = 0; i < numOfSamplesToConvert; i++) {
+		    long int sample = ST_SAMPLE_TO_SIGNED_DWORD(readBuffer[i]);
+		    *((long *) storePtr) =  sample; // kludged assuming 16 bits.
+		    storePtr += informat.info.size;
+		}
+		break;
+	    case SUN_FLOAT:
+		for(i = 0; i < numOfSamplesToConvert; i++) {
+		    float sample = ST_SAMPLE_TO_FLOAT_DWORD(readBuffer[i]);
+		    *((float *) storePtr) =  sample; // kludged assuming 16 bits.
+		    storePtr += informat.info.size;
+		}
+		break;
+	    default:
+		NSLog(@"SndFunctionsDiskIO: Argh! Can't convert this stuff I'm reading!");
+	    }
+
+	    samplesRead += numOfSamplesActuallyRead;
+	} while(samplesRead < totalNumOfSamplesToRead && numOfSamplesActuallyRead == SNDREADCHUNKSIZE); 
+	// sound files exactly modulo SNDREADCHUNKSIZE will read 0 bytes next time thru.
+
+	s->dataSize = samplesRead * informat.info.size;
+	free(readBuffer);
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
+	    NSLog(@"Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
+	    (unsigned long)(informat.info.rate), st_sizes_str[(int)(informat.info.size)],
+	    st_encodings_str[(int)(informat.info.encoding)], informat.info.channels,
+	    (informat.info.channels > 1) ? "channels" : "channel");
+	    if (informat.comment)
+		NSLog(@"Input file: comment \"%s\"\n", informat.comment);
+	    SndPrintStruct(s);
+	}
+    } // end if bReadData
+    
+    *sound = s;
+    (* informat.h->stopread)(&informat);
+    return SND_ERR_NONE;
 }
 
 /* called from util.c:fail */
@@ -332,7 +334,7 @@ void cleanup()
 
 int SndReadSoundfileRange(const char *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData)
 {
-  int error,error2;
+  int errorReading, errorClosing;
   FILE *fp;
   SndSoundStruct *aSound;
   const char *filetype;
@@ -352,11 +354,12 @@ int SndReadSoundfileRange(const char *path, SndSoundStruct **sound, int startFra
   else /* Default to "auto" */
     filetype = "auto";
 
-  error = SndReadRange(fp, &aSound, filetype, startFrame, frameCount, bReadData);
-  error2 = fclose(fp);
-  if (error2 == EOF) return SND_ERR_UNKNOWN;
+  errorReading = SndReadRange(fp, &aSound, filetype, startFrame, frameCount, bReadData);
+  errorClosing = fclose(fp);
+  if (errorClosing == EOF)
+      return SND_ERR_UNKNOWN;
   *sound = aSound;
-  return error;
+  return errorReading;
 }
 
 int SndReadSoundfile(const char *path, SndSoundStruct **sound)
@@ -430,10 +433,10 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
   
   {
   int i;
-  long readChunkSize = SNDREADCHUNKSIZE * sizeof(st_sample_t);
+  long readChunkSizeInBytes = SNDREADCHUNKSIZE * sizeof(st_sample_t);
   long sampleCount = SndSampleCount(sound) * sound->channelCount;
   void *data = (char *)sound + sound->dataLocation;
-  st_sample_t *writeBuffer = malloc(readChunkSize);
+  st_sample_t *writeBuffer = malloc(readChunkSizeInBytes);
   
   if (!writeBuffer) {
     fprintf(stderr,"Malloc failed in writeSOXsound\n");
