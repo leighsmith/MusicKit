@@ -290,6 +290,14 @@
 - didFinishStreaming;
 
 /*!
+    @method audioProcessorChain
+    @abstract Accessor
+    @discussion
+    @result Reference to the data member audioProcessorChain
+*/
+- (SndAudioProcessorChain*) audioProcessorChain;
+
+/*!
     @method     setDelegate:
     @abstract
     @param      d
