@@ -217,29 +217,12 @@ SNDKIT_API int SndAlloc(SndSoundStruct **sound,
                                    int infoSize);
 
 /*!
-@function SndReadHeader
- @abstract To come 
- @param f
- @param sound
- @result
- */
-SNDKIT_API int SndReadHeader(NSString *path,
-                         SndSoundStruct **sound,
-                             const char *fileTypeStr);
-
-/*!
-@function SndReadSoundfile
+@function SndWriteSampleData
  @abstract To come 
  @param path
  @param sound
  @result
  */
-SNDKIT_API int SndReadSoundfile(NSString *path, SndSoundStruct **sound);
-
-SNDKIT_API int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
-
-SNDKIT_API int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCode);
-
 SNDKIT_API int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat);
 
 /*!
