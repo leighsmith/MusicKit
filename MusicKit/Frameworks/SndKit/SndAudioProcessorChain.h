@@ -19,6 +19,7 @@
 
 @class SndAudioBuffer;
 @class SndAudioProcessor;
+@class SndAudioFader;
 
 /*!
     @class
@@ -31,7 +32,9 @@
 @interface SndAudioProcessorChain : NSObject {
     NSMutableArray    *audioProcessorArray;
     BOOL               bBypass;
-    SndAudioBuffer    *tempBuffer; 
+    SndAudioBuffer    *tempBuffer;
+    SndAudioFader     *postFader;
+    double             nowTime;
 }
 
 /*!
@@ -102,13 +105,17 @@
 - removeAllProcessors;
 
 /*!
-    @method processBuffer:
+    @method processBuffer:forTime:
     @abstract
-    @discussion
+    @discussion The t parameter tells the processor chain at what time
+                the buffer is destined to start to be played. This
+                matches up with the time the SndStreamClients were given
+                for generating this same buffer.
     @param (SndAudioBuffer*) buff
+    @param (double) t
     @result self.
 */
-- processBuffer: (SndAudioBuffer*) buff;
+- processBuffer: (SndAudioBuffer*) buff forTime:(double) t;
 
 /*!
     @method processorCount
@@ -141,6 +148,23 @@
     @param (BOOL) b
 */
 - (void) setBypass: (BOOL) b;
+
+/*!
+    @method postFader
+    @abstract
+    @discussion
+    @result id of the postFader object at the end of the chain
+*/
+- (SndAudioFader *) postFader;
+
+/*!
+    @method nowTime
+    @abstract
+    @discussion
+    @result double indicating the start time of the buffer being
+            processed.
+*/
+- (double) nowTime;
 
 @end
 
