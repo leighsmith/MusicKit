@@ -21,7 +21,6 @@
 
 #import <Foundation/Foundation.h>
 #include "PerformSoundPrivate.h"
-#include "sounderror.h"
 #include "portaudio.h"
 #include <stdio.h>
 
