@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.2  2000/04/20 21:34:53  leigh
+ Replaced SFInfoStruct with expanded MKSamples, plugged memory leaks
+
  Revision 1.1  2000/04/16 21:18:36  leigh
  First version using SndKit incorporated into the MusicKit framework
 
@@ -68,6 +71,8 @@ Modification history:
  writingToStream: (NSMutableData *) aStream;
 
 -init;
+
+- (void) dealloc;
 
 -firstNote:aNote;
   /* This is invoked when first note is received during performance */
