@@ -49,6 +49,20 @@
 			settings = {
 			};
 		};
+		018584A1004EBFCCCFED3B96 = {
+			children = (
+				11E07F01FFA3719CCFED3B93,
+			);
+			isa = PBXVariantGroup;
+			name = ScorePlayer.strings;
+			refType = 4;
+		};
+		018584A2004EBFCCCFED3B96 = {
+			fileRef = 018584A1004EBFCCCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		0AB3E78B004B3A57CFED3B96 = {
 			buildRules = (
 			);
@@ -329,7 +343,7 @@
 		11E07EFFFFA3719CCFED3B93 = {
 			children = (
 				11E07F00FFA3719CCFED3B93,
-				11E07F01FFA3719CCFED3B93,
+				018584A1004EBFCCCFED3B96,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -342,7 +356,8 @@
 		};
 		11E07F01FFA3719CCFED3B93 = {
 			isa = PBXFileReference;
-			path = ScorePlayer.strings;
+			name = English;
+			path = English.lproj/ScorePlayer.strings;
 			refType = 4;
 		};
 		11E07F04FFA3719CCFED3B93 = {
@@ -569,7 +584,7 @@
 				11E07F20FFA3719CCFED3B93,
 				11E07F21FFA3719CCFED3B93,
 				11E07F22FFA3719CCFED3B93,
-				11E07F23FFA3719CCFED3B93,
+				018584A2004EBFCCCFED3B96,
 				013F475BFFD5AEFDCFED3B96,
 				013F475FFFD5AF5CCFED3B96,
 				013F4760FFD5AF5CCFED3B96,
@@ -664,12 +679,6 @@
 		};
 		11E07F22FFA3719CCFED3B93 = {
 			fileRef = 11E07F00FFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F23FFA3719CCFED3B93 = {
-			fileRef = 11E07F01FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 			};
