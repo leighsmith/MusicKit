@@ -513,7 +513,7 @@ typedef enum {
 - (BOOL) compatibleWithSound: (Snd *) aSound;
 
 /*!
-  @method convertToFormat:samplingRate:channelCount:
+  @method convertToSampleFormat:samplingRate:channelCount:
   @param  newFormat is an SndSampleFormat.
   @param  newRate is a double.
   @param  newChannelCount is an int.
@@ -529,20 +529,20 @@ typedef enum {
               <LI>CODEC mu-law to and from linear formats.</LI>
 	      </UL>
  */
-- (int) convertToFormat: (SndSampleFormat) newFormat
+- (int) convertToSampleFormat: (SndSampleFormat) newFormat
 	   samplingRate: (double) newRate
 	   channelCount: (int) newChannelCount;
 
 /*!
-  @method convertToFormat:
+  @method convertToSampleFormat:
   @param  newFormat is an SndSampleFormat.
   @result Returns an integer indicating any error or SND_ERR_NONE if the conversion worked.
   @discussion This is the same as
-              <b>convertToFormat:samplingRate:channelCount:</b>,
+              <b>convertToSampleFormat:samplingRate:channelCount:</b>,
               except that only the format is changed. An error code is
               returned.  
 */
-- (int) convertToFormat: (SndSampleFormat) newFormat;
+- (int) convertToSampleFormat: (SndSampleFormat) newFormat;
 
 /*!
   @method nativeFormat
@@ -710,7 +710,7 @@ typedef enum {
 
 /*!
   @method setConversionQuality:
-  @abstract Sets the conversion quality performed by convertToFormat:
+  @abstract Sets the conversion quality performed by convertToSampleFormat:
   @param quality Sets the conversion quality to a SndConversionQuality enumerated type.
   @discussion Default is SndConvertLowQuality.
  */
@@ -718,7 +718,7 @@ typedef enum {
 
 /*!
   @method conversionQuality
-  @abstract Returns the current conversion quality performed by convertToFormat:
+  @abstract Returns the current conversion quality performed by convertToSampleFormat:
   @result Returns a SndConversionQuality enumerated type.
 */
 - (SndConversionQuality) conversionQuality;

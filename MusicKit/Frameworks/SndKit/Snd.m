@@ -635,7 +635,7 @@
     return NO;
 }
 
-- (int) convertToFormat: (SndSampleFormat) toFormat
+- (int) convertToSampleFormat: (SndSampleFormat) toFormat
 	   samplingRate: (double) toRate
 	   channelCount: (int) toChannelCount
 {
@@ -651,7 +651,7 @@
     /* SndConvertLowQuality: fastest conversion, non-interpolated */
     /* SndConvertMediumQuality: medium conversion, small filter, uses interpolation */
     /* SndConvertHighQuality: slow, accurate conversion, large filter, uses interpolation */
-    error = [bufferToConvert convertToFormat: toFormat
+    error = [bufferToConvert convertToSampleFormat: toFormat
 				channelCount: toChannelCount
                                 samplingRate: toRate
                               useLargeFilter: conversionQuality == SndConvertHighQuality
@@ -684,9 +684,9 @@
     return SND_ERR_UNKNOWN;
 }
 
-- (int) convertToFormat: (SndSampleFormat) aFormat
+- (int) convertToSampleFormat: (SndSampleFormat) aFormat
 {
-    return [self convertToFormat: aFormat
+    return [self convertToSampleFormat: aFormat
                     samplingRate: soundFormat.sampleRate
                     channelCount: soundFormat.channelCount];
 }
@@ -703,7 +703,7 @@
 {
     SndFormat nativeFormat = [Snd nativeFormat];
 
-    return [self convertToFormat: nativeFormat.dataFormat
+    return [self convertToSampleFormat: nativeFormat.dataFormat
                     samplingRate: nativeFormat.sampleRate
                     channelCount: nativeFormat.channelCount];
 }
