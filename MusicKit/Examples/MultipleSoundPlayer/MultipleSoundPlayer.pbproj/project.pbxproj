@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		014B4C1BFED5DBD9CFED3B93 = {
 			buildStyles = (
@@ -203,8 +203,8 @@
 			productName = MultipleSoundPlayer;
 			productReference = 23B62B560028B6EACFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -245,7 +245,7 @@
 				014B4C37FED5DBD9CFED3B93,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014B4C37FED5DBD9CFED3B93 = {
 			fileRef = 014B4C22FED5DBD9CFED3B93;
@@ -259,7 +259,7 @@
 				014B4C39FED5DBD9CFED3B93,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014B4C39FED5DBD9CFED3B93 = {
 			fileRef = 014B4C26FED5DBD9CFED3B93;
@@ -274,7 +274,7 @@
 				014B4C3CFED5DBD9CFED3B93,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014B4C3BFED5DBD9CFED3B93 = {
 			fileRef = 014B4C20FED5DBD9CFED3B93;
@@ -300,7 +300,7 @@
 				198406D3004716D3CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014B4C3EFED5DBD9CFED3B93 = {
 			fileRef = 014B4C33FED5DBD9CFED3B93;
@@ -319,7 +319,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //010
 //011
