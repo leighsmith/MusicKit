@@ -193,6 +193,7 @@
 			refType = 4;
 		};
 		01B5F066006A9033CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = English;
 			path = Help/English.lproj/ScorePlayer.sgml;
@@ -248,6 +249,7 @@
 				0AB3E78B004B3A57CFED3B96,
 				0AB3E78C004B3A57CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 11E07EDCFFA3719CCFED3B93;
 			productRefGroup = 11E07F0BFFA3719CCFED3B93;
@@ -284,21 +286,25 @@
 			refType = 4;
 		};
 		11E07EDEFFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Animator.m;
 			refType = 4;
 		};
 		11E07EDFFFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ErrorLog.m;
 			refType = 4;
 		};
 		11E07EE0FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MKAlert.m;
 			refType = 4;
 		};
 		11E07EE1FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScorePlayerController.m;
 			refType = 4;
@@ -315,21 +321,25 @@
 			refType = 4;
 		};
 		11E07EE3FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Animator.h;
 			refType = 4;
 		};
 		11E07EE4FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ErrorLog.h;
 			refType = 4;
 		};
 		11E07EE5FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MKAlert.h;
 			refType = 4;
 		};
 		11E07EE6FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScorePlayerController.h;
 			refType = 4;
@@ -343,6 +353,7 @@
 			refType = 4;
 		};
 		11E07EE8FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScorePlayer_main.m;
 			refType = 4;
@@ -473,6 +484,7 @@
 			refType = 4;
 		};
 		11E07F01FFA3719CCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/ScorePlayer.strings;
@@ -645,7 +657,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		11E07F0EFFA3719CCFED3B93 = {
 			buildActionMask = 2147483647;
