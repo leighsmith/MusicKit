@@ -10,6 +10,52 @@
 
     Note that the MKConductor must be clocked to use MKMidi.
 
+    Explanation of NeXTStep/OpenStep Intel support (not Win32):
+
+    On the DSP, we use "soft" integers to map to "hard" driver/unit pairs.
+    Here, we pass in a device 'name' in the form "midiN", where N is an integer.
+    On the NeXT hardware, "midi" is a "hard" driver name and "N" is a hard unit
+    number.  So, to maintain backward compatibility, we keep this interface, but
+    we consider "midi" to be a signal to use soft numbering.
+
+    Therefore, the algorithm is:
+
+    If we're running on an Intel machine,
+    look at root of name (everything up to the final integer).
+    If it's "midi", assume the final number is "soft".
+    Otherwise, if name is "Mididriver", use root of the name as driver and int as unit.
+    (Currently, we actually accept anything that's not "midi" as equivalent
+    to "Mididriver")
+
+    Note: For now, we can just support the "soft" form.
+
+    Further discussion:  The elaborate support here for shared ownership stems
+    from the fact that, unlike with DSP drivers, the MIDI driver is also a time
+    base.  That means that it must be shared among all instances.
+    This complicates matters if we ever have more than one driver (as opposed to
+    multiple instances of one driver.)  For now, I'm going to punt on that. If
+    the situation ever comes up, we may have to factor the time stuff out of the
+    driver and make a separate time server, which will be hard, seeing how MIDI
+    time code must be parsed, etc.
+
+    There is another subtle difference between MIDI and DSP handling.
+    In the case of MIDI, we are perfectly happy to allocate objects for bogus
+    midi objects.  We don't find out they're bogus until we try to open them.
+
+    Note that the support for MIDI devices on different hosts will not work for
+    Intel machines.  Hence if the host machine (the one the MusicKit app
+    is running on) is an Intel machine, we ignore the hostName.
+
+    Also, if a NeXT host tries to access a MIDI driver on an Intel machine, it
+    will fail because there's no device "midiN" on Intel.
+
+    For Win32, the "driver" within the MKPerformSndMIDI framework interfacing to
+    DirectMusic will return a list of DirectMusic "ports", which can be hardware MIDI
+    interfaces, PCM ROM playback engines on soundcards, the Microsoft Sound Synthesiser
+    etc. The device name can be either a port description string (exactly matching one of
+    the driverNames), or can be "midiX" i.e. the soft form described above, where X is the
+    0 base index referring to a driver.
+
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
@@ -20,6 +66,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2000/04/26 01:24:25  leigh
+  Removed use of HashTable, fixed memory leak in factory methods
+
   Revision 1.19  2000/04/22 20:15:25  leigh
   user defaults standardised to MK prefix
 
@@ -126,7 +175,6 @@ Modification history:
   09/7/94/daj -  Updated to not use libsys functions.
   10/31/98/lms - Major reorganization for OpenStep conventions, allocation and classes.
 */
-#import <objc/HashTable.h>
 #import <mach/mach_error.h>
 #import <Foundation/NSUserDefaults.h>
 
@@ -188,54 +236,6 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 
 #define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 // FIXME LMS
 
-/* Mach stuff */
-
-/* Explanation of NeXTStep/OpenStep Intel support (not Win32):
-
-   On the DSP, we use "soft" integers to map to "hard" driver/unit pairs.
-   Here, we pass in a device 'name' in the form "midiN", where N is an integer.
-   On the NeXT hardware, "midi" is a "hard" driver name and "N" is a hard unit
-   number.  So, to maintain backward compatibility, we keep this interface, but
-   we consider "midi" to be a signal to use soft numbering.
-
-   Therefore, the algorithm is:
-
-   If we're running on an Intel machine, 
-   look at root of name (everything up to the final integer).
-   If it's "midi", assume the final number is "soft".
-   Otherwise, if name is "Mididriver", use root of the name as driver and int as unit.
-   (Currently, we actually accept anything that's not "midi" as equivalent
-   to "Mididriver")
-   
-   Note: For now, we can just support the "soft" form.
-
-   Further discussion:  The elaborate support here for shared ownership stems
-   from the fact that, unlike with DSP drivers, the MIDI driver is also a time
-   base.  That means that it must be shared among all instances.  
-   This complicates matters if we ever have more than one driver (as opposed to
-   multiple instances of one driver.)  For now, I'm going to punt on that. If
-   the situation ever comes up, we may have to factor the time stuff out of the
-   driver and make a separate time server, which will be hard, seeing how MIDI
-   time code must be parsed, etc.
-   
-   There is another subtle difference between MIDI and DSP handling.  
-   In the case of MIDI, we are perfectly happy to allocate objects for bogus 
-   midi objects.  We don't find out they're bogus until we try to open them.
-
-   Note that the support for MIDI devices on different hosts will not work for
-   Intel machines.  Hence if the host machine (the one the MusicKit app 
-   is running on) is an Intel machine, we ignore the hostName.  
-
-   Also, if a NeXT host tries to access a MIDI driver on an Intel machine, it
-   will fail because there's no device "midiN" on Intel.
-
-   LMS: For Win32, the "driver" within the MKPerformSndMIDI framework interfacing to
-   DirectMusic will return a list of DirectMusic "ports", which can be hardware MIDI
-   interfaces, PCM ROM playback engines on soundcards, the Microsoft Sound Synthesiser
-   etc. The device name can be either a port description string (exactly matching one of
-   the driverNames), or can be "midiX" i.e. the soft form described above, where X is the
-   0 base index referring to a driver. 
-*/   
 #define DEFAULT_SOFT_NAME @"midi0"
 #if m68k
 #define DRIVER_NAME @"mididriver"
@@ -491,13 +491,16 @@ static int openMidiDev(MKMidi *self)
 
 static timeVars *getTimeInfoFromHost(NSString *hostname)
 {
-    static id timeInfoTable = nil;
+    static NSMutableDictionary *timeInfoTable = nil;
     timeVars *p;
+    NSData *timeVarsEncoded;
+
     if (!timeInfoTable) /* Mapping from hostname to tvs pointer */
-      timeInfoTable = [HashTable newKeyDesc:"*" valueDesc:"!"];  // FIXME convert to NSDictionary LMS
-    if ((p = [timeInfoTable valueForKey:(void *) [hostname cString]]))
-      return p;
+        timeInfoTable = [[NSMutableDictionary dictionary] retain];
+    if ((timeVarsEncoded = [timeInfoTable objectForKey: hostname]))
+        return (timeVars *) [timeVarsEncoded bytes];
     _MK_CALLOC(p,timeVars,1);
+    // [timeInfoTable setObject: p forKey: hostname];
     return p;
 }
 
@@ -1313,18 +1316,18 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 + midiOnDevice:(NSString *) devName host:(NSString *) hostName
 {
     self = [MKMidi alloc];
-    return [self initOnDevice: devName hostName: hostName];
+    return [[self initOnDevice: devName hostName: hostName] autorelease];
 }
 
 + midiOnDevice:(NSString *) devName
 {
     self = [MKMidi alloc];
-    return [self initOnDevice:devName];
+    return [[self initOnDevice:devName] autorelease];
 }
 
 + midi
 {
-    return [self midiOnDevice: DEFAULT_SOFT_NAME];
+    return [[self midiOnDevice: DEFAULT_SOFT_NAME] autorelease];
 }
 
 - copyWithZone:(NSZone *)zone
