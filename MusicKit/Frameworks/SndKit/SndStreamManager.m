@@ -105,7 +105,7 @@ static SndStreamManager *sm = nil;
     /* might as well set up the delegate background thread now too */
 
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING
-    if ([[NSRunLoop currentRunLoop] currentMode] != nil) {
+    if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
 	    printf("looks like we're running in a run loop\n");
         delegateMessageArray = [[NSMutableArray alloc] init];
         managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
@@ -311,7 +311,7 @@ static SndStreamManager *sm = nil;
             bg_sem  = 0;
             
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING            
-            if ([[NSRunLoop currentRunLoop] currentMode] != nil) {
+            if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
                 [bgdm_threadLock lock];
                 bgdm_sem = BGDM_abortNow;
                 [bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
@@ -374,7 +374,7 @@ static SndStreamManager *sm = nil;
     NSMethodSignature *aSignature;
 	NSInvocation *anInvocation;
 	
-	if ([[NSRunLoop currentRunLoop] currentMode] == nil) {
+	if ([[NSRunLoop currentRunLoop] currentMode] == nil && NSApp == nil) {
 	    return;
 	}
 
