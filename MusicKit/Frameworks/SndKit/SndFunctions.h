@@ -75,7 +75,7 @@ SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte,
 int		SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount);
 unsigned char SndMulaw(short linearValue);
 short	SndiMulaw(unsigned char mulawValue);
-int		SndRead(FILE *fp, SndSoundStruct **sound, char *filetype);
+int		SndRead(FILE *fp, SndSoundStruct **sound, const char *filetype);
 int		SndReadHeader(int fd, SndSoundStruct **sound);
 int		SndReadSoundfile(const char *path, SndSoundStruct **sound);
 int		SndWriteHeader(int fd, SndSoundStruct *sound);
