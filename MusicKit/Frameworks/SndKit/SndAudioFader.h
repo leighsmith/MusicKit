@@ -47,6 +47,22 @@ typedef struct _UEE {
     float           bearingY;
 } SndUnifiedEnvelopeEntry;
 
+/* Squeeze the last drop of performance out of this class by caching IMPs.
+ * See also +initialize and -init for the initialization of selectors, which
+ * are static "class" variables.
+ * To use, cache the following:
+ *  bpBeforeOrEqual = [ENVCLASS instanceMethodForSelector:bpBeforeOrAfterSel];
+ * then use like this:
+ *  y = bpbeforeOrEqual(myEnv,bpBeforeOrAfterSel,myX);
+ */
+typedef int (*BpBeforeOrEqualIMP)(id, SEL, double);
+typedef int (*BpAfterIMP)(id, SEL, double);
+typedef int (*FlagsForBpIMP)(id, SEL, int);
+typedef float (*YForBpIMP)(id, SEL, int);
+typedef float (*YForXIMP)(id, SEL, double);
+typedef float (*XForBpIMP)(id, SEL, int);
+
+
 @interface SndAudioFader : SndAudioProcessor
 {
   id     envClass; /* Class object used in initialising new envelopes */
@@ -60,7 +76,20 @@ typedef struct _UEE {
   NSLock *lock; // locks changes to the envelope objects (?)
   NSLock *bearingEnvLock;
   NSLock *ampEnvLock;
+
+@public
+  BpBeforeOrEqualIMP  bpBeforeOrEqual;
+  BpAfterIMP          bpAfter;
+  FlagsForBpIMP       flagsForBp;
+  YForBpIMP           yForBp;
+  YForXIMP            yForX;
+  XForBpIMP           xForBp;
 }
+
++ (void)setEnvelopeClass:(id)aClass;
++ (id)envelopeClass;
+- (void)setEnvelopeClass:(id)aClass;
+- (id)envelopeClass;
 
 /*
  * "instantaneous" getting and setting; applies from start of buffer
