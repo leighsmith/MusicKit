@@ -1,8 +1,11 @@
 # Compilation Sequence
-cd dsp
+cd PlatformDependent/MKPerformSndMIDI_$(PLATFORM)
+make install
+cd MKDSP
 make install
 cd MusicKit
 make install
-cd unitgenerators
+cd MKUnitGenerators
 make install
-cd SynthPatches
+cd MKSynthPatches
+make install
