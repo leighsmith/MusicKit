@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/04/17 22:52:23  leigh
+  Cleaned out some redundant stuff
+
   Revision 1.4  2000/04/12 00:36:28  leigh
   Hacked to use either SndKit or NSSound, depending on which is more complete on each platform, added uglySamplerTimingHack, hopefully this is only a momentary lapse of reason
 
@@ -94,13 +97,14 @@
 - reset;
 - (int) voiceCount;
 - (void) setVoiceCount: (int) newVoiceCount;
-- clearAll:sender;
-- releaseSounds;
 - prepareSoundWithNote: (MKNote *) aNote;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 - (void) sound: (WorkingSoundClass *) sound didFinishPlaying:(BOOL)aBool;
 - (void) encodeWithCoder:(NSCoder *) coder;
 - (id) initWithCoder:(NSCoder *) decoder;
+- performerDidDeactivate: (id) sender;
+- performerDidActivate: (id) sender;
+
 @end
 
 
