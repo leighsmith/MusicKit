@@ -1,10 +1,52 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A MKSynthPatch contains a List of unit generators which behave as
+    a functional unit.
+    SynthPatches are not created by the application. Rather, they
+    are created by the Orchestra. The Orchestra is also
+    responsible for filling the MKSynthPatch instance with UnitGenerator and
+    SynthData instances. It does this on the basis of a template provided by the
+    MKSynthPatch class method +patchTemplate. The subclass designer implements
+    this method to provide a PatchTemplate which specifies what the mix of
+    UnitGenerators and SynthData objects should
+    be, in what order it should be allocated, and how to connect them up.
+    (See PatchTemplate.)
+    The MKSynthPatch instance, thus, is List
+    containing the UnitGenerators and SynthData objects in the order they were
+    specified in the template and connected as specified in the temlate.
+
+    SynthPatches can be in one of three states:
+    MK_running
+    MK_finishing
+    MK_idle
+
+    The subclass may supply methods to be invoked at the initialiation
+    (creation), noteOn, noteOff, noteUpdate and end-of-note (noteEnd) times, as
+    described below.
+
+    SynthPatches are ordinarilly used in conjunction with a Conducted
+    performance
+    by using a SynthInstrument. The SynthInstrument manages the allocation
+    of SynthPatches in response to incoming Notes. Alternatively, SynthPatches
+    may be used in a stand-alone fashion. In this case, you must allocate the
+    MKSynthPatch by sending the Orchestra the -allocSynthPatch: or
+    allocSynthPatch:patchTemplate: method.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  2000/03/24 21:11:35  leigh
+  Cleanups of doco, removed the objc_loadmodules include causing compilation probs on MOXS 1.2
+
   Revision 1.2  1999/07/29 01:25:51  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -29,63 +71,33 @@ typedef enum _MKPhraseStatus {
 MKPhraseStatus;
 
 @interface MKSynthPatch : NSObject
-/* A MKSynthPatch contains a List of unit generators which behave as
-   a functional unit. 
-   SynthPatches are not created by the application. Rather, they
-   are created by the Orchestra. The Orchestra is also
-   responsible for filling the MKSynthPatch instance with UnitGenerator and
-   SynthData instances. It does this on the basis of a template provided by the
-   MKSynthPatch class method +patchTemplate. The subclass designer implements
-   this method to provide a PatchTemplate which specifies what the mix of 
-   UnitGenerators and SynthData objects should
-   be, in what order it should be allocated, and how to connect them up.
-   (See PatchTemplate.)
-   The MKSynthPatch instance, thus, is List 
-   containing the UnitGenerators and SynthData objects in the order they were
-   specified in the template and connected as specified in the temlate. 
-
-   SynthPatches can be in one of three states:
-   MK_running
-   MK_finishing
-   MK_idle
-
-   The subclass may supply methods to be invoked at the initialiation 
-   (creation), noteOn, noteOff, noteUpdate and end-of-note (noteEnd) times, as
-   described below.
-
-   SynthPatches are ordinarilly used in conjunction with a Conducted 
-   performance
-   by using a SynthInstrument. The SynthInstrument manages the allocation
-   of SynthPatches in response to incoming Notes. Alternatively, SynthPatches
-   may be used in a stand-alone fashion. In this case, you must allocate the
-   MKSynthPatch by sending the Orchestra the -allocSynthPatch: or
-   allocSynthPatch:patchTemplate: method.
-
-   */
 {
-    NSMutableArray *synthElements;    /* List of UnitGenerator and SynthData objects. */
-    id synthInstrument;   /* The SynthInstrument object that owns the object,
-                        if any. */
-    int noteTag;           /* The object's current noteTag. */
-    MKSynthStatus status;  /* The object's status. */
-    id patchTemplate;      /* The object's PatchTemplate. */     
-    BOOL isAllocated;      /* YES if the object is allocated. */  
-    id orchestra;          /* Orchestra on which the object is allocated. */
+    NSMutableArray *synthElements;    // List of MKUnitGenerator and MKSynthData objects.
+    id synthInstrument;    // The MKSynthInstrument object currently in possession of the MKSynthPatch or nil if none.
+    int noteTag;           // Tag of notes currently implemented by this MKSynthPatch.
+    MKSynthStatus status;  // Status of patch. One of MK_running, MK_finishing or MK_idle.
+                           // You should never set it explicitly in your subclass.
+    id patchTemplate;      // MKPatchTemplate of this patch.
+    BOOL isAllocated;      // YES if the object is allocated.
+    id orchestra;          // MKOrchestra instance on which the object is allocated and on which this MKSynthPatch is running.
 
     /* The following for internal use only */
-    unsigned short _whichList; 
-    int _orchIndex;            
-    id _next;                  
-    MKMsgStruct *_noteEndMsgPtr;
-    MKMsgStruct *_noteDurMsgPtr;
+    unsigned short _whichList;  // Which list am I on?
+    int _orchIndex;             // Which DSP?
+    id _next;                   // Used internally for linked list of active SynthPatches.
+
+    // Used to unqueue noteEnd request. If non-null, we have seen a noteOff but are not yet noteEnd.
+    MKMsgStruct *_noteEndMsgPtr; 
+
+    // Used to unqueue noteOff:aNote request. Non-null if we have seen a noteDur recently.
+    // Used to remember tagged NoteOffs auto-generated from NoteDurs.
+    MKMsgStruct *_noteDurMsgPtr;  
+
     id _sharedKey;
-    id _reservedSynthPatch7;
     MKMsgStruct *_notePreemptMsgPtr;
-    BOOL _reservedSynthPatch9;
     short _phraseStatus;
-    void *_reservedSynthPatch11;
 }
- 
+
 +new;
 + allocWithZone:(NSZone *)zone;
 +alloc;

@@ -1,19 +1,54 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A SynthPatch contains a List of unit generators which behave as
+    a functional unit.
+    SynthPatches are not created by the application. Rather, they
+    are created by the Orchestra. The Orchestra is also
+    responsible for filling the SynthPatch instance with UnitGenerator and
+    SynthData instances. It does this on the basis of a template provided by the
+    SynthPatch class method +patchTemplate. The subclass designer implements
+    this method to provide a PatchTemplate which specifies what the mix of
+    UnitGenerators and SynthData objects should
+    be, in what order it should be allocated, and how to connect them up.
+    (See PatchTemplate.)
+    The SynthPatch instance, thus, is List
+    containing the UnitGenerators and SynthData objects in the order they were
+    specified in the template and connected as specified in the temlate.
+
+    SynthPatches can be in one of three states:
+    MK_running
+    MK_finishing
+    MK_idle
+
+    The subclass may supply methods to be invoked at the initialiation
+    (creation), noteOn, noteOff, noteUpdate and end-of-note (noteEnd) times, as
+    described below.
+
+    SynthPatches are ordinarilly used in conjunction with a Conducted
+    performance
+    by using a SynthInstrument. The SynthInstrument manages the allocation
+    of SynthPatches in response to incoming Notes. Alternatively, SynthPatches
+    may be used in a stand-alone fashion. In this case, you must allocate the
+    SynthPatch by sending the Orchestra the -allocSynthPatch: or
+    allocSynthPatch:patchTemplate: method.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.5  2000/03/24 21:11:35  leigh
+  Cleanups of doco, removed the objc_loadmodules include causing compilation probs on MOXS 1.2
+
   Revision 1.4  1999/09/04 22:45:36  leigh
   modules is now const char to stop warnings
 
@@ -80,83 +115,18 @@ Modification history:
 #import "NotePrivate.h"
 #import "SynthPatchPrivate.h"
 
-#import <objc/objc-load.h> // for objc_loadModules - to replace with Foundation approach
+//#import <objc/objc-load.h> // for objc_loadModules - to replace with Foundation approach
 
 #define PERMS 0660 /* RW for owner and group. */
 #define HOME_SYNTHPATCH_DIR @"/Library/Music/SynthPatches/"
 #define LOCAL_SYNTHPATCH_DIR @"/Local/Library/Music/SynthPatches/"
-#define EXTENSION @"o"
+#define SYNTHPATCH_EXTENSION @"o"
 
 #import <stdio.h>
 
 #define SOUND_OUT_PAUSE_BUG 1
 
-@implementation MKSynthPatch:NSObject
-/* A SynthPatch contains a List of unit generators which behave as
-   a functional unit. 
-   SynthPatches are not created by the application. Rather, they
-   are created by the Orchestra. The Orchestra is also
-   responsible for filling the SynthPatch instance with UnitGenerator and
-   SynthData instances. It does this on the basis of a template provided by the
-   SynthPatch class method +patchTemplate. The subclass designer implements
-   this method to provide a PatchTemplate which specifies what the mix of 
-   UnitGenerators and SynthData objects should
-   be, in what order it should be allocated, and how to connect them up.
-   (See PatchTemplate.)
-   The SynthPatch instance, thus, is List 
-   containing the UnitGenerators and SynthData objects in the order they were
-   specified in the template and connected as specified in the temlate. 
-
-   SynthPatches can be in one of three states:
-   MK_running
-   MK_finishing
-   MK_idle
-
-   The subclass may supply methods to be invoked at the initialiation 
-   (creation), noteOn, noteOff, noteUpdate and end-of-note (noteEnd) times, as
-   described below.
-
-   SynthPatches are ordinarilly used in conjunction with a Conducted 
-   performance
-   by using a SynthInstrument. The SynthInstrument manages the allocation
-   of SynthPatches in response to incoming Notes. Alternatively, SynthPatches
-   may be used in a stand-alone fashion. In this case, you must allocate the
-   SynthPatch by sending the Orchestra the -allocSynthPatch: or
-   allocSynthPatch:patchTemplate: method.
-
-   */
-{
-    NSMutableArray *synthElements;     /* List of UnitGenerators and SynthData objects. Do not alter it. */
-    id synthInstrument;    /* SynthInstrument currently in possession of
-			      the SynthPatch or nil if none. */
-    int noteTag;           /* Tag of notes currently implemented by this SynthPatch. */
-    MKSynthStatus status;  /* Status of patch. One of 
-				MK_running,
-				MK_finishing or MK_idle. 
-				You should never
-				set it explicitly in your subclass. */
-    id patchTemplate;           /* PatchTemplate of this patch. */
-    BOOL isAllocated;        /* YES if allocated. */
-    id orchestra;           /* The Orchestra instance on which this SynthPatch
-			       is running. */
-    unsigned short _whichList; /* Which list am I on? */
-    int _orchIndex;            /* Which DSP. */
-    id _next;                  /* Used internally for linked list of 
-				  active SynthPatches. */
-    MKMsgStruct *_noteEndMsgPtr;/* Used to unqueue noteEnd request.  
-				   If non-null, we have seen a noteOff
-				   but are not yet noteEnd. */
-    MKMsgStruct *_noteDurMsgPtr;/* Used to unqueue noteOff:aNote request. 
-				   Non-null if we have seen a 
-				   noteDur recently. Used to remember tagged 
-				   NoteOffs auto-generated from NoteDurs. */
-    id _sharedKey;
-    id _reservedSynthPatch7;
-    MKMsgStruct *_notePreemptMsgPtr;
-    BOOL _reservedSynthPatch9;
-    short _phraseStatus;
-    void *_reservedSynthPatch11;
-}
+@implementation MKSynthPatch
 
 /* Low-level functions for canceling msgs. The conductor class is passed
    in as a (dubious) optimization. */
@@ -368,8 +338,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      Ordinarily sent only by SynthInstrument.
      */
 {
-    _phraseStatus = 
-      ((status == MK_idle) ? MK_phraseOn : MK_phraseRearticulate);
+    _phraseStatus = ((status == MK_idle) ? MK_phraseOn : MK_phraseRearticulate);
     if (noteOnGuts(self,aNote)) {
 	cancelMsgs(self);
 	return self;
@@ -1132,19 +1101,19 @@ static BOOL findClass(NSString *name, NSString **filename)
     BOOL ok;
     NSString *p;
     int addExt = 0;
-    if (![[name pathExtension] isEqualToString:EXTENSION])
+    if (![[name pathExtension] isEqualToString:SYNTHPATCH_EXTENSION])
       addExt = 1;
-    ok = tryIt(filename,EXTENSION,name,addExt,nil,nil);
+    ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,nil,nil);
     if (ok) 
       return ok;
     if (![name isAbsolutePath]) { /* There's hope */
         if (p = NSHomeDirectory()) {
-            ok = tryIt(filename,EXTENSION,name,addExt,p,HOME_SYNTHPATCH_DIR);
+            ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,p,HOME_SYNTHPATCH_DIR);
 	    if (ok) 
 	      return ok;
 	}
 	
-        ok = tryIt(filename,EXTENSION,name,addExt,LOCAL_SYNTHPATCH_DIR,nil);
+        ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,LOCAL_SYNTHPATCH_DIR,nil);
 	if (ok) 
 	  return ok;
     }
