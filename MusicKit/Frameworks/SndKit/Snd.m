@@ -1,38 +1,46 @@
-/******************************************************************************
-$Id$
+////////////////////////////////////////////////////////////////////////////////
+//
+// $Id$
+// 
+// Description: Main class defining a sound object.
+// 
+// Original Author: Stephen Brandon
+// 
+// LEGAL:
+// This framework and all source code supplied with it, except where specified,
+// are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
+// to use the source code for any purpose, including commercial applications, as
+// long as you reproduce this notice on all such software.
+// 
+// Software production is complex and we cannot warrant that the Software will be
+// error free.  Further, we will not be liable to you if the Software is not fit
+// for the purpose for which you acquired it, or of satisfactory quality. 
+// 
+// WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+// WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+// OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+// PARTIES RIGHTS.
+// 
+// If a court finds that we are liable for death or personal injury caused by our
+// negligence our liability shall be unlimited.  
+// 
+// WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+// OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+// POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+// NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+// DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
+// CONDITIONS OF THIS AGREEMENT.
+// 
+// Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+// 
+// Legal Statement Covering Additions by The MusicKit Project:
+//
+//    Permission is granted to use and modify this code for commercial and
+//    non-commercial purposes so long as the author attribution and copyright
+//    messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-Description: Main class defining a sound object.
-
-Original Author: Stephen Brandon
-
-LEGAL:
-This framework and all source code supplied with it, except where specified,
-are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
-to use the source code for any purpose, including commercial applications, as
-long as you reproduce this notice on all such software.
-
-Software production is complex and we cannot warrant that the Software will be
-error free.  Further, we will not be liable to you if the Software is not fit
-for the purpose for which you acquired it, or of satisfactory quality. 
-
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
-WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
-OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
-PARTIES RIGHTS.
-
-If a court finds that we are liable for death or personal injury caused by our
-negligence our liability shall be unlimited.  
-
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
-OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
-POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
-NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
-DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
-CONDITIONS OF THIS AGREEMENT.
-
-Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
-
-******************************************************************************/
 /* HISTORY
  * ..is now contained in the cvs log.
  * pre cvs:
@@ -65,14 +73,10 @@ Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
 
-// MKPERFORMSND_USE_STREAMING == 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
+// Turn on for debugging output.
+#define SND_DEBUG_LOOPING 0
 
 @implementation Snd
-
-#if !MKPERFORMSND_USE_STREAMING
-static NSMutableDictionary *playRecTable = nil;
-static int ioTags = 1000;
-#endif
 
 + soundNamed:(NSString *)aName
 {
@@ -131,17 +135,16 @@ static int ioTags = 1000;
     conversionQuality = SndConvertLowQuality;
     delegate = nil;
     status = SND_SoundInitialized;
-	info = nil;
-
+    info = nil;
     currentError = 0;
     tag = 0;
 
     if (performancesArray == nil) {
-		performancesArray     = [NSMutableArray new];
-		performancesArrayLock = [NSLock new];
+	performancesArray     = [[NSMutableArray array] retain];
+	performancesArrayLock = [NSLock new];
     }
     else
-		[performancesArray removeAllObjects];
+	[performancesArray removeAllObjects];
 
     // initialize loop points to legal values
     loopWhenPlaying = NO;
@@ -289,12 +292,18 @@ static int ioTags = 1000;
         if ([[SndTable defaultSndTable] soundNamed: name] == self)
             [[SndTable defaultSndTable] removeSoundForName: name];
         [name release];
+	name = nil;
     }
-    if (soundStruct) SndFree(soundStruct);
+    if (soundStruct)
+	SndFree(soundStruct);
     [performancesArray release];
     performancesArray = nil;
     [performancesArrayLock release];
     performancesArrayLock = nil;
+    [info release];
+    info = nil;
+    //[delegate release]; // We don't retain it so we don't release it.
+    //delegate = nil;
     [super dealloc];
 }
 
@@ -408,7 +417,7 @@ static int ioTags = 1000;
     SndSwapBigEndianSoundToHost(d, d, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
 /* Here I archive data to coder as CHAR rather than exact data
  * type. Why? Well, I don't want it swapping data for me! I always want the
  * internal data representation to be big endian.
@@ -421,22 +430,21 @@ static int ioTags = 1000;
     int df;
     int i,j=0;
 
-    [aCoder encodeConditionalObject:delegate];
-    [aCoder encodeObject:name];
+    [aCoder encodeConditionalObject: delegate];
+    [aCoder encodeObject: name];
 
     df = soundStruct->dataFormat;
     if (df == SND_FORMAT_INDIRECT) headerSize = soundStruct->dataSize;
     else headerSize = soundStruct->dataLocation;
     /* make new header with swapped bytes if nec */
-    if (!(s = malloc(headerSize))) [[NSException exceptionWithName:@"Sound Error"
-                                                          reason:@"Can't allocate memory for Snd class"
-                                                          userInfo:nil] raise];
-    memmove(s, soundStruct,headerSize);
+    if (!(s = malloc(headerSize))) [[NSException exceptionWithName: @"Sound Error"
+							    reason: @"Can't allocate memory for Snd class"
+                                                          userInfo: nil] raise];
+    memmove(s, soundStruct, headerSize);
     if (df == SND_FORMAT_INDIRECT) {
         int newCount = 0;
         i = 0;
-        s->dataFormat = ((SndSoundStruct *)(*((SndSoundStruct **)
-                        (soundStruct->dataLocation))))->dataFormat;
+        s->dataFormat = ((SndSoundStruct *)(*((SndSoundStruct **) (soundStruct->dataLocation))))->dataFormat;
         ssList = (SndSoundStruct **)soundStruct->dataLocation;
         while ((theStruct = ssList[i++]) != NULL)
             newCount += theStruct->dataSize;
@@ -467,7 +475,7 @@ static int ioTags = 1000;
     }
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
 {
     SndSoundStruct *s;
     int finalSize;
@@ -581,86 +589,6 @@ static int ioTags = 1000;
     info = [newInfoString copy];
 }
 
-#if !MKPERFORMSND_USE_STREAMING
-// Since these two functions come in from the cold, they need warm and snug autorelease pools...
-int beginFun(SNDStreamBuffer *sound, int tag, int err)
-{
-    Snd *theSnd;
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
-    // NSLog(@"beginFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
-    if (err) {
-        [theSnd _setStatus:SND_SoundStopped];
-        [theSnd tellDelegate:@selector(hadError:)];
-    }
-    else {
-        [theSnd _setStatus:SND_SoundPlaying];
-        [theSnd tellDelegate:@selector(willPlay:)];
-    }
-    [pool release];
-    return 0;
-}
-
-int endFun(SNDStreamBuffer *sound, int tag, int err)
-{
-    Snd *theSnd;
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSNumber *tagNumber = [NSNumber numberWithInt: tag];
-
-    theSnd = [playRecTable objectForKey: tagNumber];
-    // NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
-    [theSnd _setStatus:SND_SoundStopped];
-    if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
-    if (err) [theSnd tellDelegate:@selector(hadError:)];
-    else [theSnd tellDelegate:@selector(didPlay:)];
-    [playRecTable removeObjectForKey: tagNumber];
-    /* bug fix for SoundKit: if DSP was used, its access is not
-     * released as it should be. So I just automatically release it
-     * here, whether or not it was used. Generally it's used for real-time
-     * rate conversion for playback. (maybe recording etc too???)
-     */
-    err = SNDTerminate(3);
-    if(err) {
-        NSLog(@"Unreserving error %d\n", err);
-    }
-    // NSLog(@"theSnd = %x, err = %d\n", theSnd, err);
-    ((Snd *)theSnd)->tag = 0;
-    [pool release];
-    return 0;
-}
-
-int beginRecFun(SNDStreamBuffer *sound, int tag, int err)
-{
-    Snd *theSnd;
-    theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
-    if (err) {
-        [theSnd _setStatus:SND_SoundStopped];
-        [theSnd tellDelegate:@selector(hadError:)];
-    }
-    else {
-        [theSnd _setStatus:SND_SoundRecording];
-        [theSnd tellDelegate:@selector(willRecord:)];
-    }
-    return 0;
-}
-
-int endRecFun(SNDStreamBuffer *sound, int tag, int err)
-{
-    Snd *theSnd;
-    NSNumber *tagNumber = [NSNumber numberWithInt: tag];
-
-    theSnd = [playRecTable objectForKey: tagNumber];
-    [theSnd _setStatus:SND_SoundStopped];
-    printf("End recording error: %d\n",err);
-    if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
-    if (err) [theSnd tellDelegate:@selector(hadError:)];
-    else [(Snd *)theSnd tellDelegate:@selector(didRecord:)];
-    [playRecTable removeObjectForKey: tagNumber];
-    ((Snd *)theSnd)->tag = 0;
-    return 0;
-}
-#endif
-
 // Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
 // All other play methods are convenience wrappers around this.
 - (SndPerformance *) playInFuture: (double) inSeconds 
@@ -731,40 +659,9 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 // Legacy method for SoundKit compatability
 - play: sender
 {
-#if !MKPERFORMSND_USE_STREAMING
-    int err;
-    if (!soundStruct)
-        return self;
-    status = SND_SoundPlayingPending;
-    if (!playRecTable) {
-        playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
-        [playRecTable retain];
-    }
-    
-    tag = ioTags;
-    // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
-    // We use an NSDictionary rather than a HashTable for strict OpenStep support.
-    [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-    err = SNDTerminate(3);
-    if(err) {
-        NSLog(@"Unreserving error %d\n", err);
-    }
-    err = SNDStartPlaying((SndSoundStruct *)soundStruct,
-            ioTags++ /*	int tag			*/,
-            1 /*	int priority	*/,
-            0 /*	int preempt		*/, 
-            (SNDNotificationFun) beginFun,
-            (SNDNotificationFun) endFun);
-    if (err) {
-        NSLog(@"Playback error %d\n",err);
-        return nil;
-    }
-    return self;
-#else
     // do something with sender?
     [self playInFuture: 0.0];
     return self;
-#endif
 }
 
 // Legacy method for SoundKit compatability
@@ -776,34 +673,9 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 
 - record: sender
 {
-#if !MKPERFORMSND_USE_STREAMING
-    int err;
-    if (!playRecTable) {
-        playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
-        [playRecTable retain];
-    }
-
-    if (soundStruct) {
-        err = SndAlloc(&soundStruct,
-                (int)((float)SND_RATE_CODEC*600.0 + 1),
-                SND_FORMAT_MULAW_8,
-                SND_RATE_CODEC,1,4);
-        if (err) return nil;
-    }
-    tag = ioTags;
-    [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-    status = SND_SoundRecordingPending;
-    err = SNDStartRecording((SndSoundStruct *)soundStruct,
-            ioTags++, /*	int tag			*/
-            9, /*	int priority	*/
-            1, /*	int preempt		*/
-            (SNDNotificationFun) beginRecFun,
-            (SNDNotificationFun) endRecFun);
-    return self;
-#else
     NSLog(@"Not yet implemented!\n");
+    // [self recordInFuture: 0.0];
     return self;
-#endif
 }
 
 - (int) record
@@ -814,11 +686,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 
 - (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
 {
-#if !MKPERFORMSND_USE_STREAMING
-    return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
-#else
     return [performance playIndex];
-#endif
 }
 
 - (int) status
@@ -852,7 +720,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
         [self tellDelegate: @selector(didRecord:)];	
     }
   // SKoT: I commented this out as the player may have PENDING performances to
-  // deal with as well - in wich case the SND won't have a playing status.
+  // deal with as well - in which case the SND won't have a playing status.
   // Basically yet another reason to move playing status stuff out of the snd obj.
 //    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
         [[SndPlayer defaultSndPlayer] stopSnd: self withTimeOffset: inSeconds];
@@ -861,28 +729,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 
 - (void) stop: (id) sender
 {
-#if !MKPERFORMSND_USE_STREAMING
-    NSNumber *tagNumber = [NSNumber numberWithInt: tag];
-
-    if (tag) {
-        SNDStop(tag);
-    }
-    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
-        [playRecTable removeObjectForKey: tagNumber];
-        status = SND_SoundStopped;
-        [self tellDelegate:@selector(didRecord:)];      
-    }
-    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
-        [playRecTable removeObjectForKey: tagNumber];
-        status = SND_SoundStopped;
-        [self tellDelegate:@selector(didPlay:)];        
-    }
-    if(tag) {
-        tag = 0;
-    }
-#else
     [self stopInFuture: 0.0];
-#endif
 }
 
 - (int) stop
@@ -943,14 +790,21 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
         return SND_ERR_CANNOT_OPEN;
 
+    // TODO this needs to retrieve loop pointers and an info NSString.
     err = SndReadSoundfile(filename, &soundStruct);
 
     // NSLog(@"%@\n", SndStructDescription(soundStruct));
     if (!err) {
-		// Set ivars after reading the file.
-		info = [[NSString stringWithCString: (char *)(soundStruct->info)] retain];
+	// Set ivars after reading the file.
+	info = [[NSString stringWithCString: (char *)(soundStruct->info)] retain];
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+	// TODO These are only needed until the soundStruct parameter to SndReadSoundfile becomes a SndFormat.
+	soundFormat.sampleRate = soundStruct->samplingRate;
+	soundFormat.channelCount = soundStruct->channelCount;
+	soundFormat.dataFormat = soundStruct->dataFormat;
+	soundFormat.frameCount = SndFrameCount(soundStruct);
         // This is probably a bit kludgy but it will do for now.
+	// TODO when we can retrieve the loop indexes from the sound file, this should become the default value.
         loopEndIndex = [self lengthInSampleFrames] - 1;
     }
     return err;
@@ -1179,41 +1033,46 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 
 - (id) copyWithZone: (NSZone *) zone
 {
-    id newSound = [[[self class] allocWithZone: zone] init];
-    
-    [newSound copySound:self];
-    return newSound;
-}
-
-- (int) copySound: (Snd *) aSnd
-{
+    Snd *newSound = [[[self class] allocWithZone: zone] init];
     int err;
-    SndSoundStruct *fromSound;
     
-    status = SND_SoundInitialized;
-    if (aSnd)
-        if (soundStruct == [aSnd soundStruct]) return SND_ERR_NONE;
-    if (soundStruct) {
-        err = SndFree(soundStruct);
-        soundStruct = NULL;
-        soundStructSize = 0;
-        if (err) return err;
-    }
-    if (!aSnd) {
-        return SND_ERR_NONE;
+    newSound->status = SND_SoundInitialized;
+    if (newSound->soundStruct) {
+        err = SndFree(newSound->soundStruct);
+        newSound->soundStruct = NULL;
+        newSound->soundStructSize = 0;
+        if (err)
+	    return nil;
     }
 
-    if (!(fromSound = [aSnd soundStruct])) {
-        return SND_ERR_NONE;
+    err = SndCopySound(&(newSound->soundStruct), soundStruct);
+    if (err) {
+	return nil;
     }
-    err = SndCopySound(&soundStruct,fromSound);
-    if (!err) {
-        if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else
-            soundStructSize = soundStruct->dataSize;		
-    }
-    return err;
+    if (newSound->soundStruct->dataFormat != SND_FORMAT_INDIRECT)
+	newSound->soundStructSize = newSound->soundStruct->dataLocation + newSound->soundStruct->dataSize;
+    else
+	newSound->soundStructSize = newSound->soundStruct->dataSize;		
+    
+    // Duplicate all other ivars
+    newSound->soundFormat = soundFormat;
+    [newSound setInfo: [self info]];
+    
+    newSound->priority = priority;		 
+    [newSound setDelegate: [self delegate]];		 
+    [newSound setName: [self name]];
+    newSound->conversionQuality = conversionQuality;
+        
+    newSound->loopWhenPlaying = loopWhenPlaying;
+    newSound->loopStartIndex = loopStartIndex;
+    newSound->loopEndIndex = loopEndIndex;
+
+    newSound->useVolumeWhenPlaying = useVolumeWhenPlaying;
+    newSound->allChannelsVolume = allChannelsVolume;
+    newSound->useBalanceWhenPlaying = useBalanceWhenPlaying;
+    newSound->balance = balance;
+    
+    return newSound;
 }
 
 - (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount
@@ -1422,20 +1281,6 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
   return [performancesArray count];
 }
 
-- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r
-{
-  SndAudioBuffer *ab  = [SndAudioBuffer alloc];
-  int   samSize       = SndFrameSize(soundStruct);
-  void* dataPtr       = [self data] + samSize * r.location;
-  int   lengthInBytes = r.length * samSize;
-  SndSoundStruct s;
-
-  memcpy(&s, soundStruct, sizeof(SndSoundStruct));
-  s.dataSize = lengthInBytes;
-  [ab initWithSoundStruct: &s data: dataPtr];
-
-  return [ab autorelease];
-}
 
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
 		intoFrameRange: (NSRange) bufferFrameRange
@@ -1489,6 +1334,114 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     }
 }
 
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) bufferToFill
+		intoFrameRange: (NSRange) bufferFrameRange
+	        samplesInRange: (NSRange) sndFrameRange
+		       looping: (BOOL) isLooping
+		loopStartIndex: (long) thisLoopStartIndex
+		  loopEndIndex: (long) thisLoopEndIndex
+{
+    long fillBufferToLength = bufferFrameRange.length;
+    // long framesUntilEndOfLoop = loopEndIndex - sndFrameRange.location + 1;
+    // Determine number of frames in the loop, checking for resampling shortening that number.
+    double stretchFactor = [bufferToFill samplingRate] / [self samplingRate];
+    long framesUntilEndOfLoop = (thisLoopEndIndex - sndFrameRange.location + 1) * (stretchFactor < 1.0 ? stretchFactor : 1.0);
+    BOOL atEndOfLoop = isLooping && (bufferFrameRange.length >= framesUntilEndOfLoop);
+    // numOfSamplesFilled and numOfSamplesRead can differ if we resample in fillAudioBuffer.
+    long numOfSamplesFilled = 0;
+    long numOfSamplesRead = 0;
+    // specifies to fillAudioBuffer: and insertIntoAudioBuffer: the range of Snd samples permissible to read from.
+    NSRange samplesToReadRange;
+    
+    if (atEndOfLoop) {	// retrieve up to the end of the loop
+	fillBufferToLength = framesUntilEndOfLoop;
+    }
+    // specify the final boundary in the Snd fillAudioBuffer: can not read beyond.
+    samplesToReadRange.location = sndFrameRange.location;
+    samplesToReadRange.length = isLooping ? framesUntilEndOfLoop : sndFrameRange.length;
+    
+#if SND_DEBUG_LOOPING
+    NSLog(@"[SndPerformance][SYNTH THREAD] sndFrameRange.location = %ld, sndFrameRange.length = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
+	  sndFrameRange.location, sndFrameRange.length, bufferFrameRange.length, fillBufferToLength, framesUntilEndOfLoop);
+#endif
+    
+    // Negative or zero buffer length means the endAtIndex was moved before or to the current sndFrameRange.location,
+    // so we should skip any mixing and stop.
+    // Nowdays, with better checking on the updates of sndFrameRange.length and sndFrameRange.location this should never occur,
+    // so this check is probably redundant, but hey, it adds robustness which translates into saving someones
+    // ears from hearing noise.
+    if (sndFrameRange.location >= 0 && bufferFrameRange.length > 0 && fillBufferToLength > 0) {
+	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
+	numOfSamplesRead = [self fillAudioBuffer: bufferToFill
+				       toLength: fillBufferToLength
+				 samplesInRange: samplesToReadRange];
+	numOfSamplesFilled = fillBufferToLength;
+#if SND_DEBUG_LOOPING
+	{
+	    //NSLog(@"bufferToFill %@, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
+	    //    bufferToFill, numOfSamplesFilled, numOfSamplesRead);
+	    long i;
+	    for (i = 0; i < numOfSamplesFilled; i++)
+		NSLog(@"%f\n", [bufferToFill sampleAtFrameIndex: i channel: 0]);
+	}
+#endif
+	
+	if(atEndOfLoop) {
+	    // If we are at the end of the loop, copy in zero or more (when the loop is small) loop regions 
+	    // then any remaining beginning of the loop.
+	    int loopLength = thisLoopEndIndex - thisLoopStartIndex + 1;
+	    long fillBufferFrom = fillBufferToLength;
+	    long remainingLengthToFillWithLoop = bufferFrameRange.length - fillBufferFrom;
+	    
+	    // Reset sndFrameRange.location to the start of the loop. We do this before the loop in case we do no loops,
+	    // in the singular case that the loop ends at the end of a buffer, requiring no insertion of loop
+	    // regions for this buffer.
+	    sndFrameRange.location = thisLoopStartIndex;   
+	    while(remainingLengthToFillWithLoop > 0 && loopLength > 0) {
+		NSRange loopRegion;
+		
+		// give the range of Snd samples permissible to read from.
+		samplesToReadRange.location = thisLoopStartIndex;
+		samplesToReadRange.length = loopLength;
+		// give the range to fill in the buffer
+		loopRegion.location = fillBufferFrom;
+		loopRegion.length = MIN(remainingLengthToFillWithLoop, loopLength);
+		
+		numOfSamplesRead = [self insertIntoAudioBuffer: bufferToFill
+					       intoFrameRange: loopRegion
+					       samplesInRange: samplesToReadRange];
+#if SND_DEBUG_LOOPING
+		{
+		    long i;
+		    
+		    NSLog(@"%@ loopRegion.location = %ld, loopRegion.length = %ld, sndFrameRange.location = %ld, fillBufferFrom = %d, remainingLengthToFillWithLoop = %d\n",
+			  bufferToFill, loopRegion.location, loopRegion.length, sndFrameRange.location, fillBufferFrom, remainingLengthToFillWithLoop);
+		    for (i = fillBufferFrom - 5; i < fillBufferFrom + 5; i++)
+			NSLog(@"buffer[%ld] = %e\n", i, [bufferToFill sampleAtFrameIndex: i channel: 0]);
+		}
+#endif
+		numOfSamplesFilled += loopRegion.length;
+		sndFrameRange.location += numOfSamplesRead;
+		fillBufferFrom += loopRegion.length; 
+		remainingLengthToFillWithLoop -= loopRegion.length;
+	    }
+	}
+	else
+	    sndFrameRange.location += numOfSamplesRead;  // Update the read index accounting for change from resampling.
+		
+#if SND_DEBUG_LOOPING
+	NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, old sndFrameRange.location %d for %d, val at start = %f\n",
+	      0, fillBufferToLength, samplesToReadRange.location, numOfSamplesFilled,
+	      (((short *) [self data])[samplesToReadRange.location]) / (float) 32768);
+#endif
+    }
+    else
+	sndFrameRange.location += bufferFrameRange.length;  // If there is a problem, push the sndFrameRange.location forward, we may improve...somehow...
+    
+    //NSLog(@"retrieved numOfSamplesFilled = %ld\n", numOfSamplesFilled);
+    return numOfSamplesFilled;    
+}
+
 - (long) fillAudioBuffer: (SndAudioBuffer *) buff
 		toLength: (long) fillLength
           samplesInRange: (NSRange) readFromSndSample
@@ -1532,6 +1485,28 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     return [self lengthInSampleFrames];
 }
 
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
+					  looping: (BOOL) isLooping
+{
+    SndAudioBuffer *newAudioBuffer  = [SndAudioBuffer audioBufferWithDataFormat: soundFormat.dataFormat
+								   channelCount: soundFormat.channelCount
+								   samplingRate: soundFormat.sampleRate
+								     frameCount: sndFrameRange.length];
+    NSRange bufferFrameRange = { 0, sndFrameRange.length };
+    
+    [self insertIntoAudioBuffer: newAudioBuffer
+		 intoFrameRange: bufferFrameRange
+		 samplesInRange: sndFrameRange
+			looping: isLooping
+		 loopStartIndex: loopStartIndex
+		   loopEndIndex: loopEndIndex];
+    return newAudioBuffer;
+}
+
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
+{
+    return [self audioBufferForSamplesInRange: sndFrameRange looping: NO];
+}
 
 - (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo
 {
