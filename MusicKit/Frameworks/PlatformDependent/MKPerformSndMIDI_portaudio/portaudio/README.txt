@@ -66,28 +66,13 @@ Test Programs
 	pa_tests/patest_dither.c = hear effects of dithering (unlikely)
 	pa_tests/patest_pink.c = fun with pink noise
 	pa_tests/patest_record.c = record and playback some audio
+	pa_tests/patest_maxsines.c = how many sine waves can we play? Tests Pa_GetCPULoad().
 	pa_tests/patest_sine.c = output a sine wave in a simple PA app
 	pa_tests/patest_rw.c = blocking read/write
 	pa_tests/patest_wire.c = pass input to output, wire simulator
 
-Building PortAudio for DirectSound on PC
+For information on compiling programs with PortAudio, please see the
+tutorial at:
 
-	PortAudio uses DirectSound so you must have a recent copy of DirectX
-	from Microsoft installed on your computer.
-
-	You must link your program with "dsound.lib" and "winmm.lib".
-
-	Compile together:
-		pa_win_ds\pa_dsound.c
-		pa_win_ds\dsound_wrapper.c
-		pa_common\pa_lib.c
-
-Building PortAudio for SoundManager on Apple Macintosh
-
-	Compile together:
-		pa_mac\pa_mac.c
-		pa_common\pa_lib.c
-
-	Link with:
-		SoundLib
+  http://www.portaudio.com/docs/pa_tutorial.html
 

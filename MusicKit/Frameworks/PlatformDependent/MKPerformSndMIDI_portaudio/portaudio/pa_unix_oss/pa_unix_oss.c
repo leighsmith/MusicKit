@@ -38,13 +38,52 @@ Modfication History
 		     use pthread_join() after thread shutdown.
   5/29/2001 - Phil - query for multiple devices, multiple formats,
                      input mode and input+output mode working,
-		     Pa_GetCPULoad() implemented,
+		     Pa_GetCPULoad() implemented.
+  PLB20010817 - Phil & Janos Haber - don't halt if test of sample rate fails.
+  SB20010904 - Stephen Brandon - mods needed for GNUSTEP and SndKit
+  JH20010905 - Janos Haber - FreeBSD mods
+  2001-09-22 - Heiko - (i.e. Heiko Purnhagen <purnhage@tnt.uni-hannover.de> ;-)
+                       added 24k and 16k to ratesToTry[]
+		       fixed Pa_GetInternalDevice()
+		       changed DEVICE_NAME_BASE from /dev/audio to /dev/dsp
+		       handled SNDCTL_DSP_SPEED in Pq_QueryDevice() more graceful
+		       fixed Pa_StreamTime() for paqa_errs.c
+		       fixed numCannel=2 oddity and error handling in Pa_SetupDeviceFormat()
+		       grep also for HP20010922 ...
+  PLB20010924 - Phil - merged Heiko's changes
+                       removed sNumDevices and potential related bugs,
+		       use getenv("PA_MIN_LATENCY_MSEC") to set desired latency,
+		       simplify CPU Load calculation by comparing real-time to framesPerBuffer,
+		       always close device when querying even if error occurs,
+  PLB20010927 - Phil - Improved negotiation for numChannels.
+  SG20011005 - Stewart Greenhill - set numChannels back to reasonable value after query.
+		       
+  
 TODO
-O- set fragment size based on user selected numBuffers, and maybe on environment variable
-O- change Pa_StreamTime() to query device
+O- change Pa_StreamTime() to query device (patest_sync.c)
 O- put semaphore lock around shared data?
 O- handle native formats better
+O- handle stereo-only device better ???
+O- what if input and output of a device capabilities differ (e.g. es1371) ???
 */
+/*
+	PROPOSED - should we add this to "portaudio.h". Problem with 
+	Pa_QueryDevice() not having same driver name os Pa_OpenStream().
+
+	A PaDriverInfo structure can be passed to the underlying device
+	on the Pa_OpenStream() call. The contents and interpretation of
+	the structure is determined by the PA implementation.
+*/
+typedef struct PaDriverInfo /* PROPOSED */
+{
+/* Size of structure. Allows driver to extend the structure without breaking existing applications. */
+	int           size;
+/* Can be used to request a specific device name. */
+	const char   *name;
+	unsigned long data;
+} PaDriverInfo;
+
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,23 +100,40 @@ O- handle native formats better
 #include <unistd.h> 
 #include <signal.h> 
 #include <stdio.h> 
-#include <stdlib.h> 
-#include <linux/soundcard.h> 
+#include <stdlib.h>
+
+#ifdef __linux__
+#include <linux/soundcard.h>
+#else
+#include <machine/soundcard.h> /* JH20010905 */
+#endif
+
 #include <sched.h> 
 #include <pthread.h> 
-                           
+                     
+/* Some versions of OSS do not define AFMT_S16_NE. Assume little endian. FIXME - check CPU*/     
+#ifndef AFMT_S16_NE
+	#define AFMT_S16_NE AFMT_S16_LE
+#endif
+
 #define PRINT(x)   { printf x; fflush(stdout); }
 #define ERR_RPT(x) PRINT(x)
-#define DBUG(x)     /* PRINT(x) */
-#define DBUGX(x)    /* PRINT(x) */
+#define DBUG(x)    /* PRINT(x) */
+#define DBUGX(x)   /* PRINT(x) */
 
 #define BAD_DEVICE_ID (-1)
 
+#define MIN_LATENCY_MSEC   (100)
 #define MIN_TIMEOUT_MSEC   (100)
 #define MAX_TIMEOUT_MSEC   (1000)
 
 /************************************************* Definitions ********/
-#define DEVICE_NAME_BASE            "/dev/audio"
+#ifdef __linux__
+	#define DEVICE_NAME_BASE            "/dev/dsp"
+#else
+	#define DEVICE_NAME_BASE            "/dev/audio"
+#endif
+
 #define MAX_CHARS_DEVNAME           (32)
 #define MAX_SAMPLE_RATES            (10)
 typedef struct internalPortAudioDevice
@@ -99,15 +155,12 @@ typedef struct PaHostSoundControl
 	unsigned int     pahsc_BytesPerInputBuffer;    /* native buffer size in bytes */
 	unsigned int     pahsc_BytesPerOutputBuffer;   /* native buffer size in bytes */
 /* For measuring CPU utilization. */
-	struct itimerval pahsc_EntryTime;
-	struct itimerval pahsc_LastExitTime;
-	long             pahsc_InsideCountSum;
-	long             pahsc_TotalCountSum;
+	struct timeval   pahsc_EntryTime;
+	double           pahsc_InverseMicrosPerBuffer; /* 1/Microseconds of real-time audio per user buffer. */
 } PaHostSoundControl;
 
 /************************************************* Shared Data ********/
 /* FIXME - put Mutex around this shared data. */
-static int sNumDevices = 0;
 static int sDeviceIndex = 0;
 static internalPortAudioDevice *sDeviceList = NULL;
 static int sDefaultInputDeviceID = paNoDevice;
@@ -129,64 +182,42 @@ static void Pa_StartUsageCalculation( internalPortAudioStream   *past )
 	PaHostSoundControl *pahsc = (PaHostSoundControl *) past->past_DeviceData;
 	if( pahsc == NULL ) return;
 /* Query system timer for usage analysis and to prevent overuse of CPU. */
-	getitimer( ITIMER_REAL, &pahsc->pahsc_EntryTime );
+	gettimeofday( &pahsc->pahsc_EntryTime, NULL );
 }
 
-static long SubtractTime_AminusB( struct itimerval *timeA, struct itimerval *timeB )
+static long SubtractTime_AminusB( struct timeval *timeA, struct timeval *timeB )
 {
-	long secs = timeA->it_value.tv_sec - timeB->it_value.tv_sec;
+	long secs = timeA->tv_sec - timeB->tv_sec;
 	long usecs = secs * 1000000;
-	usecs += (timeA->it_value.tv_usec - timeB->it_value.tv_usec);
+	usecs += (timeA->tv_usec - timeB->tv_usec);
 	return usecs;
 }
 
+/******************************************************************************
+** Measure fractional CPU load based on real-time it took to calculate
+** buffers worth of output.
+*/
 static void Pa_EndUsageCalculation( internalPortAudioStream   *past )
 {
-	struct itimerval currentTime;
-	long  insideCount;
-	long  totalCount;
-/*
-** Measure CPU utilization during this callback.
-*/
+	struct timeval currentTime;
+	long  usecsElapsed;
+	double newUsage;
+
 #define LOWPASS_COEFFICIENT_0   (0.95)
 #define LOWPASS_COEFFICIENT_1   (0.99999 - LOWPASS_COEFFICIENT_0)
 
 	PaHostSoundControl *pahsc = (PaHostSoundControl *) past->past_DeviceData;
 	if( pahsc == NULL ) return;
 
-	if( getitimer( ITIMER_REAL, &currentTime ) == 0 )
+	if( gettimeofday( &currentTime, NULL ) == 0 )
 	{
-		if( past->past_IfLastExitValid )
-		{
-			insideCount = SubtractTime_AminusB( &pahsc->pahsc_EntryTime, &currentTime );
-			pahsc->pahsc_InsideCountSum += insideCount;
-			totalCount =  SubtractTime_AminusB( &pahsc->pahsc_LastExitTime, &currentTime );
-			pahsc->pahsc_TotalCountSum += totalCount;
-			DBUG(("insideCount = %d, totalCount = %d\n", insideCount, totalCount ));
-/* Low pass filter the result because sometimes we get called several times in a row.
- * That can cause the TotalCount to be very low which can cause the usage to appear
- * unnaturally high. So we must filter numerator and denominator separately!!!
- */
- 			if( pahsc->pahsc_InsideCountSum > 0 )
-			{
-				past->past_AverageInsideCount = (( LOWPASS_COEFFICIENT_0 * past->past_AverageInsideCount) +
-					(LOWPASS_COEFFICIENT_1 * pahsc->pahsc_InsideCountSum));
-				past->past_AverageTotalCount = (( LOWPASS_COEFFICIENT_0 * past->past_AverageTotalCount) +
-					(LOWPASS_COEFFICIENT_1 * pahsc->pahsc_TotalCountSum));
-					
-				past->past_Usage = past->past_AverageInsideCount / past->past_AverageTotalCount;
-				
-				pahsc->pahsc_InsideCountSum = 0;
-				pahsc->pahsc_TotalCountSum = 0;
-			}
-		}
-		past->past_IfLastExitValid = 1;
+		usecsElapsed = SubtractTime_AminusB( &currentTime, &pahsc->pahsc_EntryTime );
+	/* Use inverse because it is faster than the divide. */
+		newUsage =  usecsElapsed * pahsc->pahsc_InverseMicrosPerBuffer;
+		
+		past->past_Usage = (LOWPASS_COEFFICIENT_0 * past->past_Usage) +
+			(LOWPASS_COEFFICIENT_1 * newUsage);
 	}
-	
-	pahsc->pahsc_LastExitTime.it_value.tv_sec = 100;
-	pahsc->pahsc_LastExitTime.it_value.tv_usec = 0;
-	setitimer( ITIMER_REAL, &pahsc->pahsc_LastExitTime, NULL );
-	past->past_IfLastExitValid = 1;
 }
 /****************************************** END CPU UTILIZATION *******/
 
@@ -197,14 +228,15 @@ static void Pa_EndUsageCalculation( internalPortAudioStream   *past )
  */
 static PaError Pa_QueryDevice( const char *deviceName, internalPortAudioDevice *pad )
 {
+	int result = paHostError;
 	int numBytes;
 	int tempDevHandle;
 	int numChannels, maxNumChannels;
 	int format;
 	int numSampleRates;
 	int sampleRate;
-	int numRatesToTry = 7;
-	int ratesToTry[7] = {96000, 48000, 44100, 32000, 22050, 11025, 8000};
+	int numRatesToTry;
+	int ratesToTry[9] = {96000, 48000, 44100, 32000, 24000, 22050, 16000, 11025, 8000};
 	int i;
 
 /* douglas: 
@@ -225,25 +257,64 @@ static PaError Pa_QueryDevice( const char *deviceName, internalPortAudioDevice *
 	if (ioctl(tempDevHandle, SNDCTL_DSP_GETFMTS, &format) == -1)
 	{
 		ERR_RPT(("Pa_QueryDevice: could not get format info\n" ));
-		return 0;
+		goto error;
 	}
 	if( format & AFMT_U8 )     pad->pad_Info.nativeSampleFormats |= paUInt8;
 	if( format & AFMT_S16_NE ) pad->pad_Info.nativeSampleFormats |= paInt16;
 
-/* Start with 16 as a hard coded upper number of channels.
-	numChannels should return the actual upper limit.
-   Stephen Brandon: causes problems on my machine -- I'll start with 2
+/* Negotiate for the maximum number of channels for this device. PLB20010927
+ * Consider up to 16 as the upper number of channels.
+ * Variable numChannels should contain the actual upper limit after the call.
+ * Thanks to John Lazzaro and Heiko Purnhagen for suggestions.
  */
-	numChannels = 2;
-	if (ioctl(tempDevHandle, SNDCTL_DSP_CHANNELS, &numChannels) == -1)
+	maxNumChannels = 0;
+	for( numChannels = 1; numChannels <= 16; numChannels++ )
 	{
-		ERR_RPT(("Pa_QueryDevice: SNDCTL_DSP_CHANNELS failed\n" ));
-		return paHostError;
+		int temp = numChannels;
+		DBUG(("Pa_QueryDevice: use SNDCTL_DSP_CHANNELS, numChannels = %d\n", numChannels ))
+		if(ioctl(tempDevHandle, SNDCTL_DSP_CHANNELS, &temp) < 0 )
+		{
+		/* ioctl() failed so bail out if we already have stereo */
+			if( numChannels > 2 ) break;
+		}
+		else
+		{
+		/* ioctl() worked but bail out if it does not support numChannels.
+		 * We don't want to leave gaps in the numChannels supported.
+		 */
+			if( (numChannels > 2) && (temp != numChannels) ) break;
+			DBUG(("Pa_QueryDevice: temp = %d\n", temp ))
+			if( temp > maxNumChannels ) maxNumChannels = temp; /* Save maximum. */
+		}
 	}
-	pad->pad_Info.maxOutputChannels = numChannels;
-	DBUG(("Pa_QueryDevice: maxOutputChannels = %d\n", 
-		pad->pad_Info.maxOutputChannels))
-		
+	
+/* The above negotiation may fail for an old driver so try this older technique. */
+	if( maxNumChannels < 1 )
+	{
+		int stereo = 1;
+		if(ioctl(tempDevHandle, SNDCTL_DSP_STEREO, &stereo) < 0)
+		{
+			maxNumChannels = 1;
+		}
+		else
+		{
+			maxNumChannels = (stereo) ? 2 : 1;
+		}
+		DBUG(("Pa_QueryDevice: use SNDCTL_DSP_STEREO, maxNumChannels = %d\n", maxNumChannels ))
+	}
+	
+	pad->pad_Info.maxOutputChannels = maxNumChannels;
+	DBUG(("Pa_QueryDevice: maxNumChannels = %d\n", maxNumChannels))
+
+/* During channel negotiation, the last ioctl() may have failed. This can
+ * also cause sample rate negotiation to fail. Hence the following, to return
+ * to a supported number of channels. SG20011005 */
+	{
+		int temp = maxNumChannels;
+		if( temp > 2 ) temp = 2; /* use most reasonable default value */
+		ioctl(tempDevHandle, SNDCTL_DSP_CHANNELS, &temp);
+	}
+
 /* FIXME - for now, assume maxInputChannels = maxOutputChannels.
  *    Eventually do separate queries for O_WRONLY and O_RDONLY
 */
@@ -253,47 +324,49 @@ static PaError Pa_QueryDevice( const char *deviceName, internalPortAudioDevice *
 		pad->pad_Info.maxInputChannels))
 
 
-/* douglas:
-	again, i'm not sure if there's any way other than brute force to
-	do this. i'll do: 96k, 48k, 44.1k, 32k, 22050, 11025 and 8k
-*/
-
+/* Determine available sample rates by trying each one and seeing result.
+ */
 	numSampleRates = 0;
-
+	numRatesToTry = sizeof(ratesToTry)/sizeof(int);
 	for (i = 0; i < numRatesToTry; i++)
 	{
 		sampleRate = ratesToTry[i];
 		
-		if (ioctl(tempDevHandle, SNDCTL_DSP_SPEED, &sampleRate) == -1)
+		if (ioctl(tempDevHandle, SNDCTL_DSP_SPEED, &sampleRate) >= 0 ) /* PLB20010817 */
 		{
-			ERR_RPT(("Pa_QueryDevice: SNDCTL_DSP_SPEED ioctl call failed.\n" ));
-			return paHostError;
-		}
-		
-		if (sampleRate == ratesToTry[i])
-		{
-			DBUG(("Pa_QueryDevice: got sample rate: %d\n", sampleRate))
-			pad->pad_SampleRates[numSampleRates] = (float)ratesToTry[i];
-			numSampleRates++;
+			if (sampleRate == ratesToTry[i])
+			{
+				DBUG(("Pa_QueryDevice: got sample rate: %d\n", sampleRate))
+				pad->pad_SampleRates[numSampleRates] = (float)ratesToTry[i];
+				numSampleRates++;
+			}
 		}
 	}
 
 	DBUG(("Pa_QueryDevice: final numSampleRates = %d\n", numSampleRates))
+	if (numSampleRates==0)   /* HP20010922 */
+	{
+		ERR_RPT(("Pa_QueryDevice: no supported sample rate (or SNDCTL_DSP_SPEED ioctl call failed).\n" ));
+		goto error;
+	}
 
 	pad->pad_Info.numSampleRates = numSampleRates;
 	pad->pad_Info.sampleRates = pad->pad_SampleRates;
 	
 	pad->pad_Info.name = deviceName;
 
+	result = paNoError;
+	
+error:
 /* We MUST close the handle here or we won't be able to reopen it later!!!  */
 	close(tempDevHandle);
 
-	return paNoError;
+	return result;
 }
 
 /*********************************************************************
  * Determines the number of available devices by trying to open
- * each "/dev/dsp#" in order until it fails.
+ * each "/dev/dsp#" or "/dsp/audio#" in order until it fails.
  * Add each working device to a singly linked list of devices.
  */
 static PaError Pa_QueryDevices( void )
@@ -301,13 +374,13 @@ static PaError Pa_QueryDevices( void )
 	internalPortAudioDevice *pad, *lastPad;
 	int      numBytes;
 	int      go = 1;
+	int      numDevices = 0;
 	PaError  testResult;
 	PaError  result = paNoError;
 	
 	sDefaultInputDeviceID = paNoDevice;
 	sDefaultOutputDeviceID = paNoDevice;
 
-	sNumDevices = 0;
 	lastPad = NULL;
 	
 	while( go )
@@ -318,13 +391,13 @@ static PaError Pa_QueryDevices( void )
 		memset( pad, 0, sizeof(internalPortAudioDevice) );
 		
 /* Build name for device. */
-		if( sNumDevices == 0 )
+		if( numDevices == 0 )
 		{
 			sprintf( pad->pad_DeviceName, DEVICE_NAME_BASE);
 		}
 		else
 		{
-			sprintf( pad->pad_DeviceName, DEVICE_NAME_BASE "%d", sNumDevices );
+			sprintf( pad->pad_DeviceName, DEVICE_NAME_BASE "%d", numDevices );
 		}
 		
 		DBUG(("Try device %s\n", pad->pad_DeviceName ));
@@ -341,7 +414,7 @@ static PaError Pa_QueryDevices( void )
 		}
 		else
 		{
-			sNumDevices += 1;
+			numDevices += 1;
 		/* Add to linked list of devices. */
 			if( lastPad )
 			{
@@ -362,8 +435,19 @@ static PaError Pa_QueryDevices( void )
 /*************************************************************************/
 int Pa_CountDevices()
 {
-	if( sNumDevices <= 0 ) Pa_Initialize();
-	return sNumDevices;
+	int numDevices = 0;
+	internalPortAudioDevice *pad;
+	
+	if( sDeviceList == NULL ) Pa_Initialize();
+/* Count devices in list. */
+	pad = sDeviceList;
+	while( pad != NULL )
+	{
+		pad = pad->pad_Next;
+		numDevices++;
+	}
+	
+	return numDevices;
 }
 
 static internalPortAudioDevice *Pa_GetInternalDevice( PaDeviceID id )
@@ -371,7 +455,11 @@ static internalPortAudioDevice *Pa_GetInternalDevice( PaDeviceID id )
 	internalPortAudioDevice *pad;
 	if( (id < 0) || ( id >= Pa_CountDevices()) ) return NULL;
 	pad = sDeviceList;
-	while( id-- >= 0 ) pad = pad->pad_Next;
+	while( id > 0 )
+	{
+		pad = pad->pad_Next;
+		id--;
+	}
 	return pad;
 }
 
@@ -386,7 +474,7 @@ const PaDeviceInfo* Pa_GetDeviceInfo( PaDeviceID id )
 
 static PaError Pa_MaybeQueryDevices( void )
 {
-	if( sNumDevices == 0 )
+	if( sDeviceList == NULL )
 	{
 		return Pa_QueryDevices();
 	}
@@ -395,7 +483,7 @@ static PaError Pa_MaybeQueryDevices( void )
 
 PaDeviceID Pa_GetDefaultInputDeviceID( void )
 {
-	//return paNoDevice;
+	/* return paNoDevice; */
 	return 0;
 }
 
@@ -419,11 +507,11 @@ static PaError Pa_AudioThreadProc( internalPortAudioStream   *past )
 	PaError				result = 0;
 	PaHostSoundControl             *pahsc;
  	short				bytes_read = 0;
-	//Stephen Brandon: for GNUSTEP, register thread
+ 
 #ifdef GNUSTEP
-	GSRegisterCurrentThread();
+	GSRegisterCurrentThread(); /* SB20010904 */
 #endif
- 	
+	
 	pahsc = (PaHostSoundControl *) past->past_DeviceData;
 	if( pahsc == NULL ) return paInternalError;
 
@@ -470,8 +558,9 @@ static PaError Pa_AudioThreadProc( internalPortAudioStream   *past )
 
 	past->past_IsActive = 0;
 	DBUG(("leaving thread.\n"));
+	
 #ifdef GNUSTEP
-	GSUnregisterCurrentThread();
+	GSUnregisterCurrentThread();  /* SB20010904 */
 #endif
 	return 0;
 }
@@ -482,18 +571,7 @@ static PaError Pa_SetupDeviceFormat( int devHandle, int numChannels, int sampleR
 	PaError result = paNoError;
 	int     tmp;
 
-/* Set fragment length to shorter than default so we get decent latency.
-	(2<<16) - We want two fragments 
-	13      - The size of fragment is 2^13 = 8192 bytes 
-*/ 
-	tmp=(2<<16)+13; 
-	if(ioctl(devHandle,SNDCTL_DSP_SETFRAGMENT,&tmp) == -1)
-	{
-		ERR_RPT(("Pa_SetupDeviceFormat: could not SNDCTL_DSP_SETFRAGMENT\n" ));
-		/* Don't return an error. Best to just continue and hope for the best. */
-	}
-
-	
+/* Set format, channels, and rate in this order to keep OSS happy. */
 /* Set data format. FIXME - handle more native formats. */
 	tmp = AFMT_S16_NE;		
 	if( ioctl(devHandle,SNDCTL_DSP_SETFMT,&tmp) == -1)
@@ -509,23 +587,104 @@ static PaError Pa_SetupDeviceFormat( int devHandle, int numChannels, int sampleR
 	
 
 /* Set number of channels. */
-	numChannels = 2;
+	tmp = numChannels;
 	if (ioctl(devHandle, SNDCTL_DSP_CHANNELS, &numChannels) == -1)
 	{
-		ERR_RPT(("Pa_SetupDeviceFormat: could not SNDCTL_DSP_STEREO\n" ));
+		ERR_RPT(("Pa_SetupDeviceFormat: could not SNDCTL_DSP_CHANNELS\n" ));
+		return paHostError;
+	}
+	if( tmp != numChannels)
+	{
+		ERR_RPT(("Pa_SetupDeviceFormat: HW does not support %d channels\n", numChannels ));
 		return paHostError;
 	}
 	
 /* Set playing frequency. 44100, 22050 and 11025 are safe bets. */
-	tmp = sampleRate; 
-	if( ioctl(devHandle,SNDCTL_DSP_SPEED,&tmp) == -1)
+	tmp = sampleRate;
+ 	if( ioctl(devHandle,SNDCTL_DSP_SPEED,&tmp) == -1)
+ 	{
+		ERR_RPT(("Pa_SetupDeviceFormat: could not SNDCTL_DSP_SPEED\n" ));
+		return paHostError;
+	}
+	if( tmp != sampleRate)
 	{
-		ERR_RPT(("Pa_SetupDeviceFormat: could not SNDCTL_DSP_STEREO\n" ));
+		ERR_RPT(("Pa_SetupDeviceFormat: HW does not support %d Hz sample rate\n",sampleRate ));
 		return paHostError;
 	}
 	
 	return result;
 }		
+
+static int CalcHigherLogTwo( int n )
+{
+	int log2 = 0;
+	while( (1<<log2) < n ) log2++;
+	return log2;
+}
+
+/*******************************************************************************************
+** Set number of fragments and size of fragments to achieve desired latency.
+*/
+static void Pa_SetLatency( int devHandle, int numBuffers, int framesPerBuffer, int channelsPerFrame  )
+{
+	int     tmp;
+	int     numFrames , bufferSize, powerOfTwo;
+
+/* Increase size of buffers and reduce number of buffers to reduce latency inside driver. */
+	while( numBuffers > 8 )
+	{
+		numBuffers = (numBuffers + 1) >> 1;
+		framesPerBuffer = framesPerBuffer << 1;
+	}
+	
+/* calculate size of buffers in bytes */
+	bufferSize = framesPerBuffer * channelsPerFrame * sizeof(short); /* FIXME */
+	
+/* Calculate next largest power of two */
+	powerOfTwo = CalcHigherLogTwo( bufferSize );
+	DBUG(("Pa_SetLatency: numBuffers = %d, framesPerBuffer = %d, powerOfTwo = %d\n",
+		numBuffers, framesPerBuffer, powerOfTwo ));
+
+/* Encode info into a single int */
+	tmp=(numBuffers<<16) + powerOfTwo;
+	
+	if(ioctl(devHandle,SNDCTL_DSP_SETFRAGMENT,&tmp) == -1)
+	{
+		ERR_RPT(("Pa_SetLatency: could not SNDCTL_DSP_SETFRAGMENT\n" ));
+		/* Don't return an error. Best to just continue and hope for the best. */
+		ERR_RPT(("Pa_SetLatency: numBuffers = %d, framesPerBuffer = %d, powerOfTwo = %d\n",
+			numBuffers, framesPerBuffer, powerOfTwo ));
+	}
+}
+
+/*************************************************************************
+** Determine minimum number of buffers required for this host based
+** on minimum latency. Latency can be optionally set by user by setting
+** an environment variable. For example, to set latency to 200 msec, put:
+**
+**    set PA_MIN_LATENCY_MSEC=200
+**
+** in the cshrc file.
+*/
+#define PA_LATENCY_ENV_NAME  ("PA_MIN_LATENCY_MSEC")
+
+int Pa_GetMinNumBuffers( int framesPerBuffer, double framesPerSecond )
+{
+	int minBuffers;
+	int minLatencyMsec = MIN_LATENCY_MSEC;
+	char *minLatencyText = getenv(PA_LATENCY_ENV_NAME);
+	if( minLatencyText != NULL )
+	{
+		PRINT(("PA_MIN_LATENCY_MSEC = %s\n", minLatencyText ));
+		minLatencyMsec = atoi( minLatencyText );
+		if( minLatencyMsec < 1 ) minLatencyMsec = 1;
+		else if( minLatencyMsec > 5000 ) minLatencyMsec = 5000;
+	}
+	
+	minBuffers = (int) ((minLatencyMsec * framesPerSecond) / ( 1000.0 * framesPerBuffer ));
+	if( minBuffers < 2 ) minBuffers = 2;
+	return minBuffers;
+}
 
 /*******************************************************************/
 PaError PaHost_OpenStream( internalPortAudioStream   *past )
@@ -576,10 +735,13 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 		}
 	}
 	
-	//DBUG(("PaHost_OpenStream: pahsc_MinFramesPerHostBuffer = %d\n", pahsc->pahsc_MinFramesPerHostBuffer ));
+	/* DBUG(("PaHost_OpenStream: pahsc_MinFramesPerHostBuffer = %d\n", pahsc->pahsc_MinFramesPerHostBuffer )); */
 	minNumBuffers = Pa_GetMinNumBuffers( past->past_FramesPerUserBuffer, past->past_SampleRate );
 	past->past_NumUserBuffers = ( minNumBuffers > past->past_NumUserBuffers ) ? minNumBuffers : past->past_NumUserBuffers;
 
+	pahsc->pahsc_InverseMicrosPerBuffer = past->past_SampleRate / (1000000.0 * past->past_FramesPerUserBuffer);
+	DBUG(("pahsc_InverseMicrosPerBuffer = %g\n", pahsc->pahsc_InverseMicrosPerBuffer ));
+	
 /* ------------------------- OPEN DEVICE -----------------------*/
 	    
 	/* just output */
@@ -598,6 +760,9 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 				result = paHostError;
 				goto error;
 			} 
+			Pa_SetLatency( pahsc->pahsc_OutputHandle,
+				past->past_NumUserBuffers, past->past_FramesPerUserBuffer,
+				past->past_NumOutputChannels );
 			result = Pa_SetupDeviceFormat( pahsc->pahsc_OutputHandle,
 				past->past_NumOutputChannels, (int)past->past_SampleRate );
 		}
@@ -615,6 +780,9 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 				result = paHostError;
 				goto error;
 			} 
+			Pa_SetLatency( pahsc->pahsc_OutputHandle,
+				past->past_NumUserBuffers, past->past_FramesPerUserBuffer,
+				past->past_NumOutputChannels );
 			result = Pa_SetupDeviceFormat( pahsc->pahsc_OutputHandle,
 				past->past_NumOutputChannels, (int)past->past_SampleRate );
 		}
@@ -630,6 +798,9 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 				result = paHostError;
 				goto error;
 			} 
+			Pa_SetLatency( pahsc->pahsc_OutputHandle,
+				past->past_NumUserBuffers, past->past_FramesPerUserBuffer,
+				past->past_NumInputChannels );
 			result = Pa_SetupDeviceFormat( pahsc->pahsc_InputHandle,
 				past->past_NumInputChannels, (int)past->past_SampleRate );
 		}
@@ -706,13 +877,16 @@ PaError PaHost_StopEngine( internalPortAudioStream *past, int abort )
 /* Join thread to recover memory resources. */
 	if( pahsc->pahsc_ThreadPID != -1 )
 	{
-		if ( !pthread_equal( pahsc->pahsc_ThreadPID, pthread_self() ) ) {
+	/* This check is needed for GNUSTEP - SB20010904 */
+		if ( !pthread_equal( pahsc->pahsc_ThreadPID, pthread_self() ) )
+		{
 			hres = pthread_join( pahsc->pahsc_ThreadPID, NULL );
 		}
 		else {
 			DBUG(("Play thread was stopped from itself - can't do pthread_join()\n"));
 			hres = 0;
 		}
+
 		if( hres != 0 )
 		{
 			result = paHostError;
@@ -789,25 +963,6 @@ PaError PaHost_CloseStream( internalPortAudioStream   *past )
 	return paNoError;
 }
 
-/*************************************************************************
-** Determine minimum number of buffers required for this host based
-** on minimum latency. Latency can be optionally set by user by setting
-** an environment variable. For example, to set latency to 200 msec, put:
-**
-**    set PA_MIN_LATENCY_MSEC=200
-**
-** in the AUTOEXEC.BAT file and reboot.
-** If the environment variable is not set, then the latency will be determined
-** based on the OS. Windows NT has higher latency than Win95.
-*/
-#define PA_LATENCY_ENV_NAME  ("PA_MIN_LATENCY_MSEC")
-
-int Pa_GetMinNumBuffers( int framesPerBuffer, double sampleRate )
-{
-
-	return 2;
-}
-
 /*************************************************************************/
 PaError PaHost_Term( void )
 {
@@ -822,7 +977,6 @@ PaError PaHost_Term( void )
 		pad = nextPad;
 	}
 	sDeviceList = NULL;
-	sNumDevices = 0;
 	return 0;
 }
 
@@ -882,6 +1036,12 @@ PaTimestamp Pa_StreamTime( PortAudioStream *stream )
 /* FIXME - return actual frames played, not frames generated.
 ** Need to query the output device somehow.
 */
+	if( past == NULL ) return paBadStreamPtr;
 	return past->past_FrameCount;
 }
 
+/***********************************************************************/
+long Pa_GetHostError( void )
+{
+	return (long) sPaHostError;
+}

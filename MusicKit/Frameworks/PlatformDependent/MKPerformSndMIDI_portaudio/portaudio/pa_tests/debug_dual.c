@@ -107,7 +107,9 @@ static int patestCallback(	void *inputBuffer, void *outputBuffer,
 	}
 	return 0;
 }
-PaError TestStart( PortAudioStream * streamPtr, PaDeviceID devID, paTestData *data );
+
+PaError TestStart( PortAudioStream **streamPtr, PaDeviceID devID,
+             paTestData *data );
 /*******************************************************************/
 int main(void);
 int main(void)

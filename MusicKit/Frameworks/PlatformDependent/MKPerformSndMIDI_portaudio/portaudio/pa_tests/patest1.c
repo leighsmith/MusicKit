@@ -75,10 +75,8 @@ int main(int argc, char* argv[])
                 paFloat32,      /* 32 bit floating point output */
                 NULL,
                 44100.,
-//				22050,          /* half second buffers */
-//				4,              /* four buffers */
-				512,          /* half second buffers */
-				0,              /* four buffers */
+				512,            /* small buffers */
+				0,              /* let PA determine number of buffers */
                 paClipOff,      /* we won't output out of range samples so don't bother clipping them */
                 patest1Callback,
                 &data );

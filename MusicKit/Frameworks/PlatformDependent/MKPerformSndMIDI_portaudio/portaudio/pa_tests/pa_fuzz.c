@@ -61,6 +61,7 @@ float CubicAmplifier( float input )
 		temp = input - 1.0f;
 		output = (temp * temp * temp) + 1.0f;
 	}
+
 	return output;
 }
 #define FUZZ(x) CubicAmplifier(CubicAmplifier(CubicAmplifier(CubicAmplifier(x))))

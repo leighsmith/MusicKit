@@ -170,7 +170,7 @@ typedef double PaTimestamp;
 	between calls to Pa_Initialize() and Pa_Terminate().
 */
 
-const PaDeviceInfo* Pa_GetDeviceInfo( PaDeviceID id );
+const PaDeviceInfo* Pa_GetDeviceInfo( PaDeviceID devID );
 
 /*
 	PortAudioCallback is implemented by clients of the portable audio api.
@@ -278,11 +278,13 @@ typedef void PortAudioStream;
 	possible this corresponds to the framesPerBuffer parameter passed to the
 	callback function.
 
-	numberOfBuffers is the number of buffers used for multibuffered
-	communication with the platform specific audio routines. This parameter is
-	provided only as a guide - and does not imply that an implementation must
-	use multibuffered i/o when reliable double buffering is available (such as
-	SndPlayDoubleBuffer() on the Macintosh.)
+	numberOfBuffers is the number of buffers used for 
+	multibuffered communication with the platform specific audio 
+	routines. If you pass zero, then an optimum value will be 
+	chosen for you internally. This parameter is provided only 
+	as a guide - and does not imply that an implementation must 
+	use multibuffered i/o when reliable double buffering is 
+	available (such as SndPlayDoubleBuffer() on the Macintosh.) 
 
 	streamFlags may contain a combination of flags ORed together.
 	These flags modify the behavior of the
@@ -350,7 +352,7 @@ PaError Pa_CloseStream( PortAudioStream* );
 
 /*
  	Pa_StartStream() and Pa_StopStream() begin and terminate audio processing.
-	When Pa_StopStream() returns, all pending audio buffers have been played.
+	Pa_StopStream() waits until all pending audio buffers have been played.
     Pa_AbortStream() stops playing immediately without waiting for pending
     buffers to complete.
 */

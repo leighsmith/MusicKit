@@ -38,11 +38,11 @@
 #include "portaudio.h"
 #define OUTPUT_DEVICE       (Pa_GetDefaultOutputDeviceID())
 //#define OUTPUT_DEVICE       (11)
-#define NUM_SECONDS         (16)
+#define NUM_SECONDS         (8)
 #define SLEEP_DUR           (800)
 #define SAMPLE_RATE         (44100)
 #define FRAMES_PER_BUFFER   (256)
-#if 0
+#if 1
 #define MIN_LATENCY_MSEC    (200)
 #define NUM_BUFFERS         ((MIN_LATENCY_MSEC * SAMPLE_RATE) / (FRAMES_PER_BUFFER * 1000))
 #else

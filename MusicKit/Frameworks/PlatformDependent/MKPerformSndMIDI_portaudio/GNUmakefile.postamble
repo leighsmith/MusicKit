@@ -14,6 +14,11 @@
 #Modification history:
 #
 #  $Log$
+#  Revision 1.3  2002/01/09 12:14:40  sbrandon
+#  updated portaudio from v15b to v17. This primarily fixes bugs in the linux
+#  (now called the unix) implementation, but there are other changes which
+#  may help the win_ds version too.
+#
 #  Revision 1.2  2001/10/31 17:26:19  sbrandon
 #  - now autodetects whether compiling on mingw32 or unix, and includes either
 #    pa_linux_oss or ps_win_ds portaudio code.
@@ -23,8 +28,6 @@
 #  Revision 1.1  2001/07/02 22:03:48  sbrandon
 #  - initial revision. Still a work in progress, but does allow the MusicKit
 #    and SndKit to compile on GNUstep.
-#
-#
 
 #   GNUmakefile.postamble
 #
@@ -40,7 +43,7 @@
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_win_ds
 else
-  MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_linux_oss
+  MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_unix_oss
 endif
 
 before-all::

@@ -32,7 +32,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -41,7 +40,6 @@
 #include <unknwn.h>
 #include "dsound_wrapper.h"
 #include "pa_trace.h"
-
 /************************************************************************************/
 void DSW_Term( DSoundWrapper *dsw )
 {
@@ -52,7 +50,6 @@ void DSW_Term( DSoundWrapper *dsw )
 		IDirectSoundBuffer_Release( dsw->dsw_OutputBuffer );
 		dsw->dsw_OutputBuffer = NULL;
 	}
-
 #if SUPPORT_AUDIO_CAPTURE
 	if (dsw->dsw_InputBuffer)
 	{
@@ -60,38 +57,32 @@ void DSW_Term( DSoundWrapper *dsw )
 		IDirectSoundCaptureBuffer_Release( dsw->dsw_InputBuffer );
 		dsw->dsw_InputBuffer = NULL;
 	}
-
 	if (dsw->dsw_pDirectSoundCapture)
 	{
 		IDirectSoundCapture_Release( dsw->dsw_pDirectSoundCapture );
 		dsw->dsw_pDirectSoundCapture = NULL;
 	}
 #endif /* SUPPORT_AUDIO_CAPTURE */
-
 	if (dsw->dsw_pDirectSound)
 	{
 		IDirectSound_Release( dsw->dsw_pDirectSound );
 		dsw->dsw_pDirectSound = NULL;
 	}
 }
-
 /************************************************************************************/
 HRESULT DSW_Init( DSoundWrapper *dsw )
 {
 	memset( dsw, 0, sizeof(DSoundWrapper) );
 	return 0;
 }
-
 /************************************************************************************/
 HRESULT DSW_InitOutputDevice( DSoundWrapper *dsw, LPGUID lpGUID )
 {
 // Create the DS object
 	HRESULT hr = DirectSoundCreate( lpGUID, &dsw->dsw_pDirectSound, NULL );
 	if( hr != DS_OK ) return hr;
-
 	return hr;
 }
-
 /************************************************************************************/
 HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int nChannels, int bytesPerBuffer )
 {
@@ -106,20 +97,17 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 	DSBUFFERDESC   secondaryDesc;
 	unsigned char* pDSBuffData;
 	LARGE_INTEGER  counterFrequency;
-
 	dsw->dsw_OutputSize = bytesPerBuffer;
 	dsw->dsw_OutputRunning = FALSE;
 	dsw->dsw_OutputUnderflows = 0;
 	dsw->dsw_FramesWritten = 0;
 	dsw->dsw_BytesPerFrame = nChannels * sizeof(short);
-
 // We were using getForegroundWindow() but sometimes the ForegroundWindow may not be the
 // applications's window. Also if that window is closed before the Buffer is closed
 // then DirectSound can crash. (Thanks for Scott Patterson for reporting this.)
 // So we will use GetDesktopWindow() which was suggested by Miller Puckette.
 //	hWnd = GetForegroundWindow();
 	hWnd = GetDesktopWindow();
-
 // Set cooperative level to DSSCL_EXCLUSIVE so that we can get 16 bit output, 44.1 KHz.
 // Exclusize also prevents unexpected sounds from other apps during a performance.
 	if ((hr = IDirectSound_SetCooperativeLevel( dsw->dsw_pDirectSound,
@@ -127,7 +115,6 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 	{
 		return hr;
 	}
-
 // -----------------------------------------------------------------------
 // Create primary buffer and set format just so we can specify our custom format.
 // Otherwise we would be stuck with the default which might be 8 bit or 22050 Hz.
@@ -137,11 +124,9 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 	primaryDesc.dwFlags       = DSBCAPS_PRIMARYBUFFER; // all panning, mixing, etc done by synth
 	primaryDesc.dwBufferBytes = 0;
 	primaryDesc.lpwfxFormat   = NULL;
-
 // Create the buffer
 	if ((result = IDirectSound_CreateSoundBuffer( dsw->dsw_pDirectSound,
 			&primaryDesc, &pPrimaryBuffer, NULL)) != DS_OK) return result;
-
 // Define the buffer format
 	wfFormat.wFormatTag = WAVE_FORMAT_PCM;
 	wfFormat.nChannels = nChannels;
@@ -150,10 +135,8 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 	wfFormat.nBlockAlign = wfFormat.nChannels * wfFormat.wBitsPerSample / 8;
 	wfFormat.nAvgBytesPerSec = wfFormat.nSamplesPerSec * wfFormat.nBlockAlign;
 	wfFormat.cbSize = 0;  /* No extended format info. */
-
 // Set the primary buffer's format
 	if((result = IDirectSoundBuffer_SetFormat( pPrimaryBuffer, &wfFormat)) != DS_OK) return result;
-
 // ----------------------------------------------------------------------
 // Setup the secondary buffer description
 	ZeroMemory(&secondaryDesc, sizeof(DSBUFFERDESC));
@@ -161,21 +144,16 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 	secondaryDesc.dwFlags =  DSBCAPS_GLOBALFOCUS | DSBCAPS_GETCURRENTPOSITION2;
 	secondaryDesc.dwBufferBytes = bytesPerBuffer;
 	secondaryDesc.lpwfxFormat = &wfFormat;
-
 // Create the secondary buffer
 	if ((result = IDirectSound_CreateSoundBuffer( dsw->dsw_pDirectSound,
 			&secondaryDesc, &dsw->dsw_OutputBuffer, NULL)) != DS_OK) return result;
-
 // Lock the DS buffer
-	if ((result = IDirectSoundBuffer_Lock( dsw->dsw_OutputBuffer, 0, dsw->dsw_OutputSize, (LPVOID)&pDSBuffData,
+	if ((result = IDirectSoundBuffer_Lock( dsw->dsw_OutputBuffer, 0, dsw->dsw_OutputSize, (LPVOID*)&pDSBuffData,
 	  &dwDataLen, NULL, 0, 0)) != DS_OK) return result;
-
 // Zero the DS buffer
 	ZeroMemory(pDSBuffData, dwDataLen);
-
 // Unlock the DS buffer
 	if ((result = IDirectSoundBuffer_Unlock( dsw->dsw_OutputBuffer, pDSBuffData, dwDataLen, NULL, 0)) != DS_OK) return result;
-
 	if( QueryPerformanceFrequency( &counterFrequency ) )
 	{
 		int framesInBuffer = bytesPerBuffer / (nChannels * sizeof(short));
@@ -186,7 +164,6 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 	{
 		dsw->dsw_CounterTicksPerBuffer.QuadPart = 0;
 	}
-
 // Let DSound set the starting write position because if we set it to zero, it looks like the
 // buffer is full to begin with. This causes a long pause before sound starts when using large buffers.
 	hr = IDirectSoundBuffer_GetCurrentPosition( dsw->dsw_OutputBuffer, &playCursor, &dsw->dsw_WriteOffset );
@@ -195,16 +172,13 @@ HRESULT DSW_InitOutputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int 
 		return hr;
 	}
 	dsw->dsw_FramesWritten = dsw->dsw_WriteOffset / dsw->dsw_BytesPerFrame;
-
 	/* printf("DSW_InitOutputBuffer: playCursor = %d, writeCursor = %d\n", playCursor, dsw->dsw_WriteOffset ); */
 	return DS_OK;
 }
-
 /************************************************************************************/
 HRESULT DSW_StartOutput( DSoundWrapper *dsw )
 {
 	HRESULT        hr;
-
 	QueryPerformanceCounter( &dsw->dsw_LastPlayTime );
 	dsw->dsw_LastPlayCursor = 0;
 	dsw->dsw_FramesPlayed = 0;
@@ -213,7 +187,6 @@ HRESULT DSW_StartOutput( DSoundWrapper *dsw )
 	{
 		return hr;
 	}
-
 // Start the buffer playback in a loop.
 	if( dsw->dsw_OutputBuffer != NULL )
 	{
@@ -227,7 +200,6 @@ HRESULT DSW_StartOutput( DSoundWrapper *dsw )
 	
 	return 0;
 }
-
 /************************************************************************************/
 HRESULT DSW_StopOutput( DSoundWrapper *dsw )
 {
@@ -239,7 +211,6 @@ HRESULT DSW_StopOutput( DSoundWrapper *dsw )
 	}
 	else return 0;
 }
-
 /************************************************************************************/
 HRESULT DSW_QueryOutputSpace( DSoundWrapper *dsw, long *bytesEmpty )
 {
@@ -248,7 +219,6 @@ HRESULT DSW_QueryOutputSpace( DSoundWrapper *dsw, long *bytesEmpty )
 	DWORD   writeCursor;
 	long    numBytesEmpty;
 	long    playWriteGap;
-
 // Query to see how much room is in buffer.
 // Note: Even though writeCursor is not used, it must be passed to prevent DirectSound from dieing
 // under WinNT. The Microsoft documentation says we can pass NULL but apparently not.
@@ -260,11 +230,9 @@ HRESULT DSW_QueryOutputSpace( DSoundWrapper *dsw, long *bytesEmpty )
 	}
 	AddTraceMessage("playCursor", playCursor);
 	AddTraceMessage("dsw_WriteOffset", dsw->dsw_WriteOffset);
-
 // Determine size of gap between playIndex and WriteIndex that we cannot write into.
 	playWriteGap = writeCursor - playCursor;
 	if( playWriteGap < 0 ) playWriteGap += dsw->dsw_OutputSize; // unwrap
-
 /* DirectSound doesn't have a large enough playCursor so we cannot detect wrap-around. */
 /* Attempt to detect playCursor wrap-around and correct it. */
 	if( dsw->dsw_OutputRunning && (dsw->dsw_CounterTicksPerBuffer.QuadPart != 0) )
@@ -275,7 +243,6 @@ HRESULT DSW_QueryOutputSpace( DSoundWrapper *dsw, long *bytesEmpty )
 		long            bytesPlayed;
 		long            bytesExpected;
 		long            buffersWrapped;
-
 		QueryPerformanceCounter( &currentTime );
 		elapsedTime.QuadPart = currentTime.QuadPart - dsw->dsw_LastPlayTime.QuadPart;
 		dsw->dsw_LastPlayTime = currentTime;
@@ -296,11 +263,8 @@ HRESULT DSW_QueryOutputSpace( DSoundWrapper *dsw, long *bytesEmpty )
 	/* Maintain frame output cursor. */
 		dsw->dsw_FramesPlayed += (bytesPlayed / dsw->dsw_BytesPerFrame);
 	}
-
 	numBytesEmpty = playCursor - dsw->dsw_WriteOffset;
 	if( numBytesEmpty < 0 ) numBytesEmpty += dsw->dsw_OutputSize; // unwrap offset
-
-
 /* Have we underflowed? */
 	if( numBytesEmpty > (dsw->dsw_OutputSize - playWriteGap) )
 	{
@@ -312,12 +276,9 @@ HRESULT DSW_QueryOutputSpace( DSoundWrapper *dsw, long *bytesEmpty )
 		dsw->dsw_WriteOffset = writeCursor;
 		numBytesEmpty = dsw->dsw_OutputSize - playWriteGap;
 	}
-
 	*bytesEmpty = numBytesEmpty;
 	return hr;
 }
-
-
 /************************************************************************************/
 HRESULT DSW_ZeroEmptySpace( DSoundWrapper *dsw )
 {
@@ -327,11 +288,9 @@ HRESULT DSW_ZeroEmptySpace( DSoundWrapper *dsw )
 	DWORD dwsize1 = 0;
 	DWORD dwsize2 = 0;
 	long  bytesEmpty;
-
 	hr = DSW_QueryOutputSpace( dsw, &bytesEmpty ); // updates dsw_FramesPlayed
 	if (hr != DS_OK) return hr;
 	if( bytesEmpty == 0 ) return DS_OK;
-
 	// Lock free space in the DS
 	hr = IDirectSoundBuffer_Lock( dsw->dsw_OutputBuffer, dsw->dsw_WriteOffset, bytesEmpty, (void **) &lpbuf1, &dwsize1,
 		(void **) &lpbuf2, &dwsize2, 0);
@@ -348,10 +307,8 @@ HRESULT DSW_ZeroEmptySpace( DSoundWrapper *dsw )
 		IDirectSoundBuffer_Unlock( dsw->dsw_OutputBuffer, lpbuf1, dwsize1, lpbuf2, dwsize2);
 		dsw->dsw_FramesWritten += bytesEmpty / dsw->dsw_BytesPerFrame;
 	}
-
 	return hr;
 }
-
 /************************************************************************************/
 HRESULT DSW_WriteBlock( DSoundWrapper *dsw, char *buf, long numBytes )
 {
@@ -360,7 +317,6 @@ HRESULT DSW_WriteBlock( DSoundWrapper *dsw, char *buf, long numBytes )
 	LPBYTE lpbuf2 = NULL;
 	DWORD dwsize1 = 0;
 	DWORD dwsize2 = 0;
-
 	// Lock free space in the DS
 	hr = IDirectSoundBuffer_Lock( dsw->dsw_OutputBuffer, dsw->dsw_WriteOffset, numBytes, (void **) &lpbuf1, &dwsize1,
 		(void **) &lpbuf2, &dwsize2, 0);
@@ -377,21 +333,17 @@ HRESULT DSW_WriteBlock( DSoundWrapper *dsw, char *buf, long numBytes )
 		IDirectSoundBuffer_Unlock( dsw->dsw_OutputBuffer, lpbuf1, dwsize1, lpbuf2, dwsize2);
 		dsw->dsw_FramesWritten += numBytes / dsw->dsw_BytesPerFrame;
 	}
-
 	return hr;
 }
-
 /************************************************************************************/
 DWORD DSW_GetOutputStatus( DSoundWrapper *dsw )
 {
 	DWORD status;
-
 	if (IDirectSoundBuffer_GetStatus( dsw->dsw_OutputBuffer, &status ) != DS_OK)
 		return( DSERR_INVALIDPARAM );
 	else
 		return( status );
 }
-
 #if SUPPORT_AUDIO_CAPTURE
 /* These routines are used to support audio input.
  * Do NOT compile these calls when using NT4 because it does
@@ -402,17 +354,14 @@ HRESULT DSW_InitInputDevice( DSoundWrapper *dsw, LPGUID lpGUID )
 {
 	HRESULT hr = DirectSoundCaptureCreate(  lpGUID, &dsw->dsw_pDirectSoundCapture,   NULL );
 	if( hr != DS_OK ) return hr;
-
 	return hr;
 }
-
 /************************************************************************************/
 HRESULT DSW_InitInputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int nChannels, int bytesPerBuffer )
 {
 	DSCBUFFERDESC  captureDesc;
 	WAVEFORMATEX   wfFormat;
 	HRESULT        result;
-
 // Define the buffer format
 	wfFormat.wFormatTag      = WAVE_FORMAT_PCM;
 	wfFormat.nChannels       = nChannels;
@@ -421,9 +370,7 @@ HRESULT DSW_InitInputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int n
 	wfFormat.nBlockAlign     = wfFormat.nChannels * (wfFormat.wBitsPerSample / 8);
 	wfFormat.nAvgBytesPerSec = wfFormat.nSamplesPerSec * wfFormat.nBlockAlign;
 	wfFormat.cbSize          = 0;   /* No extended format info. */
-
 	dsw->dsw_InputSize = bytesPerBuffer;
-
 // ----------------------------------------------------------------------
 // Setup the secondary buffer description
 	ZeroMemory(&captureDesc, sizeof(DSCBUFFERDESC));
@@ -431,16 +378,12 @@ HRESULT DSW_InitInputBuffer( DSoundWrapper *dsw, unsigned long nFrameRate, int n
 	captureDesc.dwFlags =  0;
 	captureDesc.dwBufferBytes = bytesPerBuffer;
 	captureDesc.lpwfxFormat = &wfFormat;
-
 	// Create the capture buffer
 	if ((result = IDirectSoundCapture_CreateCaptureBuffer( dsw->dsw_pDirectSoundCapture,
 		&captureDesc, &dsw->dsw_InputBuffer, NULL)) != DS_OK) return result;
-
 	dsw->dsw_ReadOffset = 0;  // reset last read position to start of buffer
-
 	return DS_OK;
 }
-
 /************************************************************************************/
 HRESULT DSW_StartInput( DSoundWrapper *dsw )
 {
@@ -451,7 +394,6 @@ HRESULT DSW_StartInput( DSoundWrapper *dsw )
 	}
 	else return 0;
 }
-
 /************************************************************************************/
 HRESULT DSW_StopInput( DSoundWrapper *dsw )
 {
@@ -462,7 +404,6 @@ HRESULT DSW_StopInput( DSoundWrapper *dsw )
 	}
 	else return 0;
 }
-
 /************************************************************************************/
 HRESULT DSW_QueryInputFilled( DSoundWrapper *dsw, long *bytesFilled )
 {
@@ -470,7 +411,6 @@ HRESULT DSW_QueryInputFilled( DSoundWrapper *dsw, long *bytesFilled )
 	DWORD capturePos;
 	DWORD readPos;
 	long  filled;
-
 // Query to see how much data is in buffer.
 // We don't need the capture position but sometimes DirectSound doesn't handle NULLS correctly
 // so let's pass a pointer just to be safe.
@@ -481,11 +421,9 @@ HRESULT DSW_QueryInputFilled( DSoundWrapper *dsw, long *bytesFilled )
 	}
 	filled = readPos - dsw->dsw_ReadOffset;
 	if( filled < 0 ) filled += dsw->dsw_InputSize; // unwrap offset
-
 	*bytesFilled = filled;
 	return hr;
 }
-
 /************************************************************************************/
 HRESULT DSW_ReadBlock( DSoundWrapper *dsw, char *buf, long numBytes )
 {
@@ -494,7 +432,6 @@ HRESULT DSW_ReadBlock( DSoundWrapper *dsw, char *buf, long numBytes )
 	LPBYTE lpbuf2 = NULL;
 	DWORD dwsize1 = 0;
 	DWORD dwsize2 = 0;
-
 	// Lock free space in the DS
 	hr = IDirectSoundCaptureBuffer_Lock ( dsw->dsw_InputBuffer, dsw->dsw_ReadOffset, numBytes, (void **) &lpbuf1, &dwsize1,
 		(void **) &lpbuf2, &dwsize2, 0);
@@ -512,5 +449,4 @@ HRESULT DSW_ReadBlock( DSoundWrapper *dsw, char *buf, long numBytes )
 	}
 	return hr;
 }
-
 #endif /* SUPPORT_AUDIO_CAPTURE */

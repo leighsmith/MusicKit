@@ -1,6 +1,6 @@
 /*
- * patest_sine.c
- * Play a 441 Hz sine wave using the Portable Audio api for several seconds.
+ * patest_maxsines.c
+ * How many sine waves can we calculate and play in less than 80% CPU Load.
  *
  * Authors:
  *    Ross Bencina <rossb@audiomulch.com>
@@ -37,18 +37,21 @@
 #include <stdio.h>
 #include <math.h>
 #include "portaudio.h"
-#define NUM_SECONDS   (4)
+
+#define MAX_SINES     (500)
 #define SAMPLE_RATE   (44100)
 #define FRAMES_PER_BUFFER  (512)
 #ifndef M_PI
 #define M_PI  (3.14159265)
 #endif
-#define TABLE_SIZE   (200)
-typedef struct {
-	float sine[TABLE_SIZE];
-	int left_phase;
-	int right_phase;
-}paTestData;
+#define TWOPI (M_PI * 2.0)
+
+typedef struct paTestData
+{
+	int numSines;
+	double phases[MAX_SINES];
+} paTestData;
+
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
@@ -60,17 +63,33 @@ static int patestCallback(   void *inputBuffer, void *outputBuffer,
 	paTestData *data = (paTestData*)userData;
 	float *out = (float*)outputBuffer;
 	unsigned long i;
+	int j;
 	int finished = 0;
 	(void) outTime; /* Prevent unused variable warnings. */
 	(void) inputBuffer;
+	
 	for( i=0; i<framesPerBuffer; i++ )
 	{
-		*out++ = data->sine[data->left_phase];		/* left */
-		*out++ = data->sine[data->right_phase];		/* right */
-		data->left_phase += 1;
-		if( data->left_phase >= TABLE_SIZE ) data->left_phase -= TABLE_SIZE;
-		data->right_phase += 3; /* higher pitch so we can distinguish left and right. */
-		if( data->right_phase >= TABLE_SIZE ) data->right_phase -= TABLE_SIZE;
+		float output = 0.0;
+		double phaseInc = 0.02;
+		double phase;
+		for( j=0; j<data->numSines; j++ )
+		{
+		/* Advance phase of next oscillator. */
+			phase = data->phases[j];
+			phase += phaseInc;
+			if( phase > TWOPI ) phase -= TWOPI;
+			
+			phaseInc *= 1.02;
+			if( phaseInc > 0.5 ) phaseInc *= 0.5;
+			
+		/* This is not a very efficient way to calc sines. */
+			output += (float) sin( phase );
+			data->phases[j] = phase;
+		}
+		
+		
+		*out++ = (float) (output / data->numSines);
 	}
 	return finished;
 }
@@ -81,15 +100,11 @@ int main(void)
 {
 	PortAudioStream *stream;
 	PaError err;
-	paTestData data;
-	int i;
+	paTestData data = {0};
+	double load;
 	printf("PortAudio Test: output sine wave. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
 	/* initialise sinusoidal wavetable */
-	for( i=0; i<TABLE_SIZE; i++ )
-	{
-		data.sine[i] = (float) sin( ((double)i/(double)TABLE_SIZE) * M_PI * 2. );
-	}
-	data.left_phase = data.right_phase = 0;
+
 	err = Pa_Initialize();
 	if( err != paNoError ) goto error;
 	err = Pa_OpenStream(
@@ -99,7 +114,7 @@ int main(void)
 				paFloat32,		/* 32 bit floating point input */
 				NULL,
 				Pa_GetDefaultOutputDeviceID(), /* default output device */
-				2,          /* stereo output */
+				1,          /* mono output */
 				paFloat32,      /* 32 bit floating point output */
 				NULL,
 				SAMPLE_RATE,
@@ -111,8 +126,15 @@ int main(void)
 	if( err != paNoError ) goto error;
 	err = Pa_StartStream( stream );
 	if( err != paNoError ) goto error;
-	printf("Play for %d seconds.\n", NUM_SECONDS );
-	Pa_Sleep( NUM_SECONDS * 1000 );
+	
+	do
+	{
+		data.numSines++;
+		Pa_Sleep( 200 );
+		
+		load = Pa_GetCPULoad( stream );
+		printf("numSines = %d, CPU load = %f\n", data.numSines, load );
+	} while( load < 0.8 );
 	
 	err = Pa_StopStream( stream );
 	if( err != paNoError ) goto error;

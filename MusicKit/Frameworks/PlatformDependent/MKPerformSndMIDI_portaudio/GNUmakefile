@@ -17,6 +17,11 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.7  2002/01/09 12:14:39  sbrandon
+#  updated portaudio from v15b to v17. This primarily fixes bugs in the linux
+#  (now called the unix) implementation, but there are other changes which
+#  may help the win_ds version too.
+#
 #  Revision 1.6  2001/11/21 23:08:45  sbrandon
 #  added MKPerformSndMIDIDefines.h as an installed header (oops)
 #
@@ -77,7 +82,7 @@ ifeq (mingw32, $(GNUSTEP_TARGET_OS))
 else
   $(MY_NAME)_C_FILES = PerformMIDI.c \
                 portaudio/pa_common/pa_lib.c \
-                portaudio/pa_linux_oss/pa_linux_oss.c \
+                portaudio/pa_unix_oss/pa_unix_oss.c \
                 portaudio/pa_common/pa_trace.c
 endif
 		

@@ -1,6 +1,7 @@
 /*
  * patest_leftright.c
  * Play different tone sine waves that alternate between left and right channel.
+ * The low tone should be on the left channel.
  *
  * Authors:
  *    Ross Bencina <rossb@audiomulch.com>
@@ -61,11 +62,11 @@ static int patestCallback(   void *inputBuffer, void *outputBuffer,
 {
 	paTestData *data = (paTestData*)userData;
 	float *out = (float*)outputBuffer;
-	int i;
-	int framesToCalc;
+	unsigned long i;
 	int finished = 0;
 	(void) outTime; /* Prevent unused variable warnings. */
 	(void) inputBuffer;
+
 	for( i=0; i<framesPerBuffer; i++ )
 	{
 		if( data->toggle )
@@ -139,7 +140,7 @@ int main(void)
 	{
 		printf("Countdown = %d, Toggle = %d\n", data.countDown, data.toggle );
 		fflush( stdout );
-		Pa_Sleep( 250 );
+		Pa_Sleep( 1000/4 );
 		timeout -= 1;
 	}
 	

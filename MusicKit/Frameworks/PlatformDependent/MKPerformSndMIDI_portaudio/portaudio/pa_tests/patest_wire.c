@@ -44,8 +44,8 @@
 ** full duplex audio (simultaneous record and playback).
 ** And some only support full duplex at lower sample rates.
 */
-#define SAMPLE_RATE  (22050)
-#define FRAMES_PER_BUFFER  (256)
+#define SAMPLE_RATE  (44100)
+#define FRAMES_PER_BUFFER  (64)
 #if 1
 #define PA_SAMPLE_TYPE  paFloat32
 typedef float SAMPLE;

@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en]C-gatewaynet  (Win98; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.77 [en]C-gatewaynet  (Win98; U) [Netscape]">
    <meta name="Author" content="Phil Burk">
    <meta name="Description" content="Tutorial for PortAudio, a cross platform, open-source, audio I/O library.It provides a very simple API for recording and/or playing sound using a simple callback function.">
    <meta name="KeyWords" content="audio, tutorial, library, portable, open-source, DirectSound,sound, music, JSyn, synthesis,">
@@ -21,12 +21,11 @@ PortAudio Tutorial</h1></center>
 </table></center>
 
 <h2>
-Compiling for Windows</h2>
+Compiling for Windows (WMME or DirectSound)</h2>
 
-<blockquote>[Skip this page if you are not using Windows]
-<p>To compile PortAudio for Windows, you can choose between two options.
-One implementation uses the DirectSound API. The other uses the Windows
-MultiMedia Extensions API (aka WMME or WAVE).
+<blockquote>To compile PortAudio for Windows, you can choose between two
+options. One implementation uses the DirectSound API. The other uses the
+Windows MultiMedia Extensions API (aka WMME or WAVE).
 <p>Some advantages of using DirectSound are that DirectSound may have lower
 latency than WMME, and supports effects processing plugins. But one disadvantage
 is that DirectSound is not installed on all PCs, and is not well supported
@@ -45,8 +44,8 @@ files to your project:
 <b>DirectSound</b> - If you want to use the DirectSound implementation
 of PortAudio then you must have a recent copy of the free
 <a href="http://www.microsoft.com/directx/download.asp">DirectX</a>
-from Microsoft installed on your computer. To compile an application add
-the following source files to your project:
+SDK for Developers from Microsoft installed on your computer. To compile
+an application add the following source files to your project:
 <blockquote>
 <pre>pa_win_ds\dsound_wrapper.c
 pa_win_ds\pa_dsound.c</pre>
@@ -59,6 +58,6 @@ You may try compiling the "pa_tests\patest_saw.c" file first because it
 is the simplest.</blockquote>
 <font size=+2><a href="http://www.portaudio.com/">home</a> |
 <a href="pa_tutorial.html">contents</a>
-| <a href="pa_tut_mac.html">previous</a> |&nbsp; <a href="pa_tut_linux.html">next</a></font>
+| <a href="pa_tut_over.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en]C-gatewaynet  (Win98; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.77 [en]C-gatewaynet  (Win98; U) [Netscape]">
    <meta name="Author" content="Phil Burk">
    <meta name="Description" content="Tutorial for PortAudio, a cross platform, open-source, audio I/O library.It provides a very simple API for recording and/or playing sound using a simple callback function.">
    <meta name="KeyWords" content="audio, tutorial, library, portable, open-source, DirectSound,sound, music, JSyn, synthesis,">
@@ -29,7 +29,7 @@ that works on Windows and Macintosh, and perhaps other platforms by the
 time you read this. This means that you can write a simple 'C' program
 to process or generate an audio signal, and that program can run on several
 different computers just by recompiling the source code.
-<p>Here are the the steps to writing a PortAudio application:
+<p>Here are the steps to writing a PortAudio application:
 <ol>
 <li>
 Write a callback function that will be called by PortAudio when audio processing
@@ -63,9 +63,24 @@ not preferred for large applications because it requires that you launch
 a thread to perform the synthesis. Launching a thread may be difficult
 on non-multi-tasking systems such as the Macintosh prior to MacOS X.
 <p>Let's continue by building a simple application that will play a sawtooth
-wave.</blockquote>
+wave.
+<p>Please select the page for the implementation you would like to use:
+<ul>
+<li>
+<a href="pa_tut_pc.html">Windows (WMME or DirectSound)</a></li>
+
+<li>
+<a href="pa_tut_mac.html">Macintosh SoundManager</a></li>
+
+<li>
+<a href="pa_tut_asio.html">ASIO on Windows or Macintosh</a></li>
+
+<li>
+<a href="pa_tut_oss.html">Unix OSS</a></li>
+</ul>
+</blockquote>
 <font size=+2><a href="http://www.portaudio.com/">home</a> |
-<a href="pa_tutorial.html">contents</a> | <a href="pa_tutorial.html">previous</a> |&nbsp;
-<a href="pa_tut_mac.html">next</a></font>
+<a href="pa_tutorial.html">contents</a>
+| <a href="pa_tutorial.html">previous</a></font>
 </body>
 </html>

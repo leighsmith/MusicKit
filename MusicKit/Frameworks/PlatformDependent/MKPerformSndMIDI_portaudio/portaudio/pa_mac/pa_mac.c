@@ -38,6 +38,9 @@
    PLB20010415 - Device Scan was crashing for anything other than siBadSoundInDevice, but some Macs may return other errors!
    PLB20010420 - Fix TIMEOUT in record mode.
    PLB20010420 - Change CARBON_COMPATIBLE to TARGET_API_MAC_CARBON
+   PLB20010907 - Pass unused event to WaitNextEvent to prevent Mac OSX crash. Thanks Dominic Mazzoni.
+   PLB20010908 - Use requested number of input channels. Thanks Dominic Mazzoni.
+   PLB20011009 - Use NewSndCallBackUPP() for CARBON
 */
 /*
 COMPATIBILITY
@@ -371,7 +374,7 @@ static PaError PaMac_QueryOutputDeviceInfo( Component identifier, internalPortAu
 	
 	memset( ipad, 0, sizeof(internalPortAudioDevice) );
 	
-	dev->structVersion = 0;
+	dev->structVersion = 1;
 	dev->maxInputChannels = 0;
 	dev->maxOutputChannels = 2;
 	dev->nativeSampleFormats = paInt16; /* FIXME - query to see if 24 or 32 bit data can be handled. */
@@ -994,7 +997,13 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 		}
 		
 	/* Install our callback function pointer straight into the sound channel structure */
-		pahsc->pahsc_OutputCompletionProc = NewSndCallBackProc (PaMac_OutputCompletionProc);
+/* Use new CARBON name for callback procedure. */
+#if TARGET_API_MAC_CARBON
+		pahsc->pahsc_OutputCompletionProc = NewSndCallBackUPP(PaMac_OutputCompletionProc);
+#else
+		pahsc->pahsc_OutputCompletionProc = NewSndCallBackProc(PaMac_OutputCompletionProc);
+#endif
+		
 		pahsc->pahsc_Channel->callBack = pahsc->pahsc_OutputCompletionProc;
 	    	
 		pahsc->pahsc_BytesPerOutputHostBuffer = pahsc->pahsc_FramesPerHostBuffer * past->past_NumOutputChannels * sizeof(int16);
@@ -1033,13 +1042,13 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 		{
 			char *buf = (char *) PaHost_AllocateFastMemory(pahsc->pahsc_BytesPerInputHostBuffer);
 			if ( buf == NULL )
-	    	{
+			{
 				ERR_RPT(("PaHost_OpenStream: could not allocate input  buffer. Size = \n", pahsc->pahsc_BytesPerInputHostBuffer ));
-	    		goto memerror;
-	    	}
-	    	pahsc->pahsc_InputMultiBuffer.buffers[i] = buf;
-	    }
-    	pahsc->pahsc_InputMultiBuffer.numBuffers = pahsc->pahsc_NumHostBuffers;
+				goto memerror;
+			}
+			pahsc->pahsc_InputMultiBuffer.buffers[i] = buf;
+		}
+		pahsc->pahsc_InputMultiBuffer.numBuffers = pahsc->pahsc_NumHostBuffers;
 		    
 		err = SPBOpenDevice( (const unsigned char *) &noname, siWritePermission, &mRefNum); /* FIXME - use name so we get selected device */
 // FIXME err = SPBOpenDevice( (const unsigned char *) sDevices[past->past_InputDeviceID].pad_Info.name, siWritePermission, &mRefNum);
@@ -1063,7 +1072,8 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 			DBUG(("PaHost_OpenStream: setting siActiveChannels returned 0x%x. Error ignored.\n", err ));
 		}
 		
-		tempS = 2;
+	/* PLB20010908 - Use requested number of input channels. Thanks Dominic Mazzoni. */
+		tempS = past->past_NumInputChannels;
 		err = SPBSetDeviceInfo(mRefNum, siNumberChannels, (Ptr) &tempS);
 		if (err)
 		{
@@ -1177,6 +1187,7 @@ static int PaMac_GetMinNumBuffers( int minFramesPerHostBuffer, int framesPerUser
 /*************************************************************************/
 void Pa_Sleep( int32 msec )
 {
+	EventRecord   event;
 	int32 sleepTime, endTime;
 /* Convert to ticks. Round up so we sleep a MINIMUM of msec time. */
 	sleepTime = ((msec * 60) + 999) / 1000;
@@ -1185,7 +1196,10 @@ void Pa_Sleep( int32 msec )
 	do
 	{
 		DBUGX(("Sleep for %d ticks.\n", sleepTime ));
-		WaitNextEvent( 0, NULL, sleepTime, NULL );  /* Use this just to sleep without getting events. */
+/* Use WaitNextEvent() to sleep without getting events. */
+/* PLB20010907 - Pass unused event to WaitNextEvent instead of NULL to prevent
+ * Mac OSX crash. Thanks Dominic Mazzoni. */
+		WaitNextEvent( 0, &event, sleepTime, NULL );  
 		sleepTime = endTime - TickCount();
 	} while( sleepTime > 0 );
 }

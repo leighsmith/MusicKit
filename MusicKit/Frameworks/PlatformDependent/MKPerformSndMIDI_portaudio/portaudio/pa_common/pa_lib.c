@@ -32,6 +32,7 @@
 
 /* Modification History:
  PLB20010422 - apply Mike Berry's changes for CodeWarrior on PC
+ PLB20010820 - fix dither and shift for recording PaUInt8 format 
 */
 
 #include <stdio.h>
@@ -102,8 +103,11 @@ PaError PaHost_ValidateSampleRate( PaDeviceID id, double requestedFrameRate,
 	long bestRateIndex;
 	const PaDeviceInfo *pdi;
 	pdi = Pa_GetDeviceInfo( id );
-	if( pdi == NULL ) return paInvalidDeviceId;
-	
+	if( pdi == NULL )
+	{
+		return paInvalidDeviceId;
+	}
+
 	if( pdi->numSampleRates == -1 )
 	{
 	/* Is it out of range? */
@@ -163,7 +167,10 @@ PaError Pa_OpenStream(
 	if( inputDriverInfo != NULL ) return paHostError; /* REVIEW */
 	if( outputDriverInfo != NULL ) return paHostError; /* REVIEW */
 	if( (inputDeviceID < 0) && ( outputDeviceID < 0) ) return paInvalidDeviceId;
-	if( (outputDeviceID >= Pa_CountDevices()) || (inputDeviceID >= Pa_CountDevices()) ) return paInvalidDeviceId;
+	if( (outputDeviceID >= Pa_CountDevices()) || (inputDeviceID >= Pa_CountDevices()) )
+	{
+		return paInvalidDeviceId;
+	}
 	if( (numInputChannels <= 0) && ( numOutputChannels <= 0) ) return paInvalidChannelCount;
 
 #if SUPPORT_AUDIO_CAPTURE
@@ -567,7 +574,7 @@ long Pa_CallConvertInt16( internalPortAudioStream   *past,
 					for( i=0; i<samplesPerBuffer; i++ )
 					{
 						temp = nativeInputBuffer[i];
-						temp += Pa_TriangularDither() >> 7;
+						temp += Pa_TriangularDither() >> 8; /* PLB20010820 */
 						temp = ((temp < -0x8000) ? -0x8000 : ((temp > 0x7FFF) ? 0x7FFF : temp));
 						inBufPtr[i] = (char)(temp >> 8);
 					}
@@ -593,9 +600,9 @@ long Pa_CallConvertInt16( internalPortAudioStream   *past,
 					for( i=0; i<samplesPerBuffer; i++ )
 					{
 						temp = nativeInputBuffer[i];
-						temp += Pa_TriangularDither() >> 7;
+						temp += Pa_TriangularDither() >> 8; /* PLB20010820 */
 						temp = ((temp < -0x8000) ? -0x8000 : ((temp > 0x7FFF) ? 0x7FFF : temp));
-						inBufPtr[i] = (unsigned char)(temp + 0x80);
+						inBufPtr[i] = (unsigned char)((temp>>8) + 0x80); /* PLB20010820 */
 					}
 				}
 				break;
@@ -742,7 +749,7 @@ long Pa_CallConvertFloat32( internalPortAudioStream   *past,
 /* Get native data from DirectSound. */
 	if( (past->past_NumInputChannels > 0) && (nativeInputBuffer != NULL) )
 	{
-		inputBuffer = nativeInputBuffer;  // FIXME
+		inputBuffer = nativeInputBuffer;  /* FIXME */
 	}
 	
 /* Are we doing output time? */
@@ -766,7 +773,7 @@ long Pa_CallConvertFloat32( internalPortAudioStream   *past,
 
 	past->past_FrameCount += (PaTimestamp) past->past_FramesPerUserBuffer;
 
-/* Convert to native format if necessary. */ // FIXME	
+/* Convert to native format if necessary. */  /* FIXME */	
 	return userResult;
 }
 

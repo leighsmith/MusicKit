@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.77 [en]C-gatewaynet  (Win98; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en]C-gatewaynet  (Win98; U) [Netscape]">
    <meta name="Author" content="Phil Burk">
    <meta name="Description" content="Tutorial for PortAudio, a cross platform, open-source, audio I/O library.It provides a very simple API for recording and/or playing sound using a simple callback function.">
    <meta name="KeyWords" content="audio, tutorial, library, portable, open-source, DirectSound,sound, music, JSyn, synthesis,">
@@ -21,21 +21,25 @@ PortAudio Tutorial</h1></center>
 </table></center>
 
 <h2>
-Compiling for Macintosh</h2>
+Compiling for Linux</h2>
 
-<blockquote>To compile a Macintosh application with the PortAudio library,
-add the following source files to your project:
-<blockquote>
-<pre>pa_mac:pa_mac.c
-pa_common:pa_lib.c
-pa_common:portaudio.h
-pa_common:pa_host.h</pre>
+<blockquote>[Skip this page if you are not using Linux]
+<p>We currently only support the OSS audio drivers for Linux. We hope to
+someday support the newer ALSA drivers.
+<ol>
+<li>
+cd to pa_linux_oss directory</li>
+
+<li>
+Edit the Makefile and uncomment one of the tests. You may try compiling
+the "patest_sine.c" file first because it is very simple.</li>
+
+<li>
+gmake run</li>
+</ol>
 </blockquote>
-Also add the Apple <b>SoundLib</b> to your project.
-<p>You may try compiling the "pa_tests:patest_saw.c" file first because
-it is the simplest.</blockquote>
 <font size=+2><a href="http://www.portaudio.com/">home</a> |
 <a href="pa_tutorial.html">contents</a>
-| <a href="pa_tut_over.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font>
+| <a href="pa_tut_pc.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font>
 </body>
 </html>

@@ -21,19 +21,33 @@ PortAudio Tutorial</h1></center>
 </table></center>
 
 <h2>
-Compiling for Macintosh</h2>
+Compiling for ASIO (Windows or Macintosh)</h2>
 
-<blockquote>To compile a Macintosh application with the PortAudio library,
-add the following source files to your project:
+<blockquote>ASIO is a low latency audio API from Steinberg. To compile
+an ASIO application, you must first <a href="http://www.steinberg.net/developers/ASIO2SDKAbout.phtml">download
+the ASIO SDK</a> from Steinberg. You also need to obtain ASIO drivers for
+your audio device.
+<p>Note: I am using '/' as a file separator below. On Macintosh replace
+'/' with ':'. On Windows, replace '/' with '\'.
+<p>&nbsp;To use ASIO with the PortAudio library add the following source
+files to your project:
 <blockquote>
-<pre>pa_mac:pa_mac.c
-pa_common:pa_lib.c
-pa_common:portaudio.h
-pa_common:pa_host.h</pre>
+<pre>pa_asio/pa_asio.cpp</pre>
 </blockquote>
-Also add the Apple <b>SoundLib</b> to your project.
-<p>You may try compiling the "pa_tests:patest_saw.c" file first because
-it is the simplest.</blockquote>
+and also these files from the ASIO SDK:
+<blockquote>
+<pre>common/asio.cpp
+host/asiodrivers.cpp
+host/asiolist.cpp</pre>
+</blockquote>
+and add these directories to the path for include files
+<blockquote>
+<pre>asiosdk2/host/pc&nbsp;&nbsp; (for Windows)
+asiosdk2/common
+asiosdk2/host</pre>
+</blockquote>
+You may try compiling the "pa_tests/patest_saw.c" file first because it
+is the simplest.</blockquote>
 <font size=+2><a href="http://www.portaudio.com/">home</a> |
 <a href="pa_tutorial.html">contents</a>
 | <a href="pa_tut_over.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font>

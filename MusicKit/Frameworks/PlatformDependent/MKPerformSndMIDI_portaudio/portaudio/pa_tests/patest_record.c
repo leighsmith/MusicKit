@@ -2,6 +2,7 @@
  * patest_record.c
  * Record input into an array.
  * Save array to a file.
+ * Playback recorded data.
  *
  * Author: Phil Burk  http://www.softsynth.com
  *
@@ -36,16 +37,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "portaudio.h"
-// #define SAMPLE_RATE  (17932) /* Test failure to open with this value. */
+
+/* #define SAMPLE_RATE  (17932) /* Test failure to open with this value. */
 #define SAMPLE_RATE  (44100)
 #define NUM_SECONDS     (5)
+
+/* Select sample format. */
 #if 0
 #define PA_SAMPLE_TYPE  paFloat32
 typedef float SAMPLE;
-#else
+#elif 0
 #define PA_SAMPLE_TYPE  paInt16
 typedef short SAMPLE;
+#else
+#define PA_SAMPLE_TYPE  paUInt8
+typedef unsigned char SAMPLE;
 #endif
+
 typedef struct
 {
 	int          frameIndex;  /* Index into sample array. */
@@ -65,7 +73,7 @@ static int recordCallback(	void *inputBuffer, void *outputBuffer,
 	SAMPLE *rptr = (SAMPLE*)inputBuffer;
 	SAMPLE *wptr = &data->recordedSamples[data->frameIndex * data->samplesPerFrame];
 	long framesToCalc;
-	unsigned long i;
+	long i;
 	int finished;
 	unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
 		
@@ -101,6 +109,7 @@ static int recordCallback(	void *inputBuffer, void *outputBuffer,
 	data->frameIndex += framesToCalc;
 	return finished;
 }
+
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
@@ -143,9 +152,10 @@ static int playCallback(	void *inputBuffer, void *outputBuffer,
 		}
 		data->frameIndex += framesPerBuffer;
 		finished = 0;
-   }
+	}
 	return finished;
 }
+
 /*******************************************************************/
 int main(void);
 int main(void)
@@ -164,14 +174,16 @@ int main(void)
 	data.frameIndex = 0;
 	data.samplesPerFrame = 2;
 	numSamples = totalFrames * data.samplesPerFrame;
+
 	numBytes = numSamples * sizeof(SAMPLE);
-	data.recordedSamples = (short *) malloc( numBytes );
+	data.recordedSamples = (SAMPLE *) malloc( numBytes );
 	if( data.recordedSamples == NULL )
 	{
 		printf("Could not allocate record array.\n");
 		exit(1);
 	}
-	memset( data.recordedSamples, 0, numBytes );
+	for( i=0; i<numSamples; i++ ) data.recordedSamples[i] = 0;
+
 	err = Pa_Initialize();
 	if( err != paNoError ) goto error;       
 	 
@@ -189,20 +201,24 @@ int main(void)
 				SAMPLE_RATE,
 				1024,            /* frames per buffer */
 				0,               /* number of buffers, if zero then use default minimum */
-				paClipOff,       /* we won't output out of range samples so don't bother clipping them */
+				paClipOff,  /* we won't output out of range samples so don't bother clipping them */
 				recordCallback,
 				&data );
 	if( err != paNoError ) goto error;
+
 	err = Pa_StartStream( stream );
 	if( err != paNoError ) goto error;
 	printf("Now recording!!\n"); fflush(stdout);
+
 	while( Pa_StreamActive( stream ) )
 	{
 		Pa_Sleep(1000);
 		printf("index = %d\n", data.frameIndex ); fflush(stdout);
 	}
+
 	err = Pa_CloseStream( stream );
 	if( err != paNoError ) goto error;
+
 /* Measure maximum peak amplitude. */
 	max = 0;
 	average = 0;
@@ -219,6 +235,7 @@ int main(void)
 	printf("sample max amplitude = %d\n", max );
 	average = average / numSamples;
 	printf("sample average = %d\n", average );
+
 /* Write recorded data to a file. */
 #if 0
 	{
@@ -236,6 +253,7 @@ int main(void)
 		}
 	}
 #endif
+
 /* Playback recorded data.  -------------------------------------------- */
 	data.frameIndex = 0;
 	printf("Begin playback.\n"); fflush(stdout);
@@ -256,19 +274,24 @@ int main(void)
 				playCallback,
 				&data );
 	if( err != paNoError ) goto error;
+
 	if( stream )
 	{
 		err = Pa_StartStream( stream );
 		if( err != paNoError ) goto error;
 		printf("Waiting for playback to finish.\n"); fflush(stdout);
+
 		while( Pa_StreamActive( stream ) ) Pa_Sleep(100);
+
 		err = Pa_CloseStream( stream );
 		if( err != paNoError ) goto error;
 		printf("Done.\n"); fflush(stdout);
 	}
 	free( data.recordedSamples );
+
 	Pa_Terminate();
 	return 0;
+
 error:
 	Pa_Terminate();
 	fprintf( stderr, "An error occured while using the portaudio stream\n" ); 
