@@ -39,6 +39,9 @@
 Modification history:
 
  $Log$
+ Revision 1.2  2000/04/17 22:55:32  leigh
+ Added debugging information attempting to find malloc problem
+
  Revision 1.1  2000/04/16 21:18:36  leigh
  First version using SndKit incorporated into the MusicKit framework
 
@@ -46,7 +49,6 @@ Modification history:
 
 #import "_musickit.h"
 #import <SndKit/SndKit.h>
-
 #import <SndKit/SndResample.h>
  
 typedef struct _SFInfo {  /* Used to represent each input soundfile */
@@ -61,8 +63,8 @@ typedef struct _SFInfo {  /* Used to represent each input soundfile */
 
 @implementation MKMixerInstrument /* See MKMixerInstrument.h for instance variables */
 
-#define BUFFERSIZE (BUFSIZ * 8)
-static short samps[BUFFERSIZE]; /* We always write SND_FORMAT_LINEAR_16 */
+#define BUFFERSIZE (BUFSIZ * 8)   /* size (in samples per frame) of temporary mixing buffer */
+//#define BUFFERSIZE (20)   /* size (in samples per frame) of temporary mixing buffer */
 
 static int timeScalePar = 0,timeOffsetPar = 0;
 /* ### If you add a parameter, put in a declaration here */
@@ -146,7 +148,10 @@ static void swapIt(short *data,int howMany)
     }
 }
 
--_mixToTime:(double)untilTime
+//short testbuf[BUFFERSIZE];
+//short testbuf[20];
+
+- _mixToTime: (double) untilTime
 {
     /* Private method used to mix up to the current time (untilTime) */
     SFInfo *aSFInfo;           /* Pointer to current file's SFInfo */
@@ -156,6 +161,7 @@ static void swapIt(short *data,int howMany)
     BOOL inFileLastBuf;        /* Is this the last buffer for current file? */
     int inDataLastLoc;         /* Index of last usable sample in cur file */
     int inDataRemaining;       /* Size of remaining input data */
+    short *samps;              /* buffer of BUFFERSIZE used in mixing, we always write SND_FORMAT_LINEAR_16 */
 
     /* Variables used in inner loop */
     short *curOutPtr;
@@ -172,19 +178,22 @@ static void swapIt(short *data,int howMany)
 	    untilSamp = MAX(aSFInfo->lastSampLoc - aSFInfo->curLoc + curOutSamp, untilSamp);
 	}
     }
+    _MK_MALLOC(samps, short, BUFFERSIZE);
+    if(samps == NULL) {
+        NSLog(@"unable to allocate the memory for mix buffer\n");
+    }
     while (curOutSamp < untilSamp) {
 	bzero(samps,BUFFERSIZE * sizeof(short)); /* Clear out buffer */
 	curBufSize = MIN(untilSamp - curOutSamp,BUFFERSIZE);
 	for (fileNum = 0; fileNum < [SFInfoStorage count]; fileNum++) {
-	    curOutPtr = &(samps[0]);
+	    curOutPtr = samps;
 	    aSFInfo = (SFInfo *)[[SFInfoStorage objectAtIndex:fileNum] bytes];
 	    inDataLastLoc = aSFInfo->lastSampLoc;
 	    inData = (short *)[aSFInfo->sound data];
-	    inData = &(inData[aSFInfo->curLoc]);
+	    inData = inData + aSFInfo->curLoc;
 	    inDataRemaining = inDataLastLoc - aSFInfo->curLoc;
 	    inFileLastBuf = inDataRemaining < curBufSize;
-	    endOutPtr = ((inFileLastBuf) ? (curOutPtr + inDataRemaining) : 
-			 &(samps[curBufSize]));
+	    endOutPtr = (inFileLastBuf) ? (curOutPtr + inDataRemaining) : (samps + curBufSize);
 	    if (!aSFInfo->swapped) {
 	        short *inPtr = inData;
 	        short *endInPtr = inData + (endOutPtr-curOutPtr);
@@ -203,19 +212,27 @@ static void swapIt(short *data,int howMany)
 		  tmp *= aSFInfo->intAmp;
 		  tmp >>= 15;      /* intAmp has only 15 bits of magnitude */
 		  *curOutPtr++ += tmp;
-	      }
+	        }
 	    }
 	    if (inFileLastBuf) {      /* This file's done. */
-		[aSFInfo->sound release];
+                // NSLog(@"aSFInfo->sound retainCount = %d\n", [aSFInfo->sound retainCount]); // over released?
+		[aSFInfo->sound release]; 
 		[SFInfoStorage removeObjectAtIndex: fileNum--]; 
 	    }
 	    else
 		aSFInfo->curLoc += ((inFileLastBuf) ? inDataRemaining : curBufSize);
 	}
-	swapIt(samps,curBufSize);	
+	swapIt(samps,curBufSize);
+#if 0 // some wierd pointer bug is tickled here and I'm not sure it's even in this code.
+NSLog(@"current stream length = %d, length to append: %d\n", [stream length], curBufSize * sizeof(short));
+//    [stream appendBytes: (void *) testbuf length: BUFFERSIZE * sizeof(short)];
+        [stream appendBytes: (void *) testbuf length: 20 * sizeof(short)];
+#else
         [stream appendBytes: (void *) samps length: curBufSize * sizeof(short)];
+#endif
 	curOutSamp += curBufSize;
     }
+    free(samps);
     return self;
 }
 
@@ -336,7 +353,7 @@ static void swapIt(short *data,int howMany)
 {
     NSRange headerRange = {0, sizeof(*outSoundStruct)};
 
-    if (!outSoundStruct)  /* Did we never received any notes? */
+    if (!outSoundStruct)  /* Did we never receive any notes? */
 	return self;
     [self _mixToTime:MK_ENDOFTIME];
     outSoundStruct->dataSize = NSSwapHostIntToBig(curOutSamp * sizeof(short));
@@ -418,21 +435,21 @@ static int timeToSamp(Snd *s,double time)
                   Snd *outSound = [[Snd alloc] init];
 		  int bearing = (MKIsNoteParPresent(aNote,MK_bearing) ? 
 				 MKGetNoteParAsInt(aNote,MK_bearing) : 0);
-		  int samps = (newSFInfo.lastSampLoc - newSFInfo.curLoc);
+		  int sampCount = (newSFInfo.lastSampLoc - newSFInfo.curLoc);
 		  [outSound
-		     setDataSize:samps*sizeof(short)*2
+                     setDataSize:sampCount*sizeof(short)*2
 		     dataFormat:[inSound dataFormat]
 		     samplingRate:[inSound samplingRate]
 		     channelCount:2
 		     infoSize:4];
 		  [self _position:bearing inSound:inSound outSound:outSound
-		   startSamp:newSFInfo.curLoc sampCount:samps 
-		   amp:([aNote isParPresent:MK_amp])?amp:defaultAmp
-		   alreadySwapped:NO];
+                        startSamp:newSFInfo.curLoc sampCount:sampCount
+                        amp:([aNote isParPresent:MK_amp])?amp:defaultAmp
+               	        alreadySwapped:NO];
 		  newSFInfo.swapped = YES;
 		  newSFInfo.sound = outSound;
 		  newSFInfo.curLoc = 0;
-		  newSFInfo.lastSampLoc = samps * 2; /* Stereo */
+                  newSFInfo.lastSampLoc = sampCount * 2; /* Stereo */
 		  newSFInfo.intAmp = MAXSHORT;     /* Amp factored in above */
 		  [inSound release];
 	      } else {
