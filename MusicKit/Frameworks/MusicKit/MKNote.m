@@ -1,19 +1,23 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+
+  Description:
+    (See MKNote.h)
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/24 05:49:31  leigh
+  cleaned up documentation, improved description method, changed parameter type of writeNoteAux to NSString
+
   Revision 1.2  1999/07/29 01:16:37  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -280,8 +284,8 @@ static unsigned noteCachePtr = 0;
 +newSetTimeTag:(double)aTimeTag
   /* TYPE: Creating; Creates a new MKNote and sets its timeTag.
    * Creates and initializes a new (mute) MKNote object 
-   * with a timeTag value of \fIaTimeTag\fR.
-   * If \fIaTimeTag\fR is \fBMK_ENDOFTIME,\fR the timeTag isn't set.
+   * with a timeTag value of aTimeTag.
+   * If aTimeTag is MK_ENDOFTIME, the timeTag isn't set.
    * Returns the new object.
    */
 {
@@ -319,7 +323,7 @@ static unsigned noteCachePtr = 0;
 + note 
   /* TYPE: Creating; Creates a new MKNote object.
    * Creates, initializes and returns a new MKNote object.
-   * Implemented as \fBnewSetTimeTag:MK_ENDOFTIME\fR.
+   * Implemented as newSetTimeTag:MK_ENDOFTIME.
    */
 {
     return [self newSetTimeTag:MK_ENDOFTIME];
@@ -414,7 +418,7 @@ static int nAppBitVects(); /* forward ref */
 
 -split:(id *)aNoteOn :(id *)aNoteOff
   /* TYPE: Type; Splits the noteDur receiver into two Notes.
-   * If receiver isn't a noteDur, returns \fBnil\fR.   Otherwise,
+   * If receiver isn't a noteDur, returns nil.   Otherwise,
    * creates two new Notes (a noteOn and a noteOff), splits the information
    * in the receiver between the two of them, places the new Notes in the
    * arguments,
@@ -423,7 +427,7 @@ static int nAppBitVects(); /* forward ref */
    * nor otherwise affected).
    *
    * The receiver's parameters are copied into the new noteOn
-   * except for \fBMK_relVelocity\fR which, if present
+   * except for MK_relVelocity which, if present
    * in the receiver, is copied into the noteOff.
    * The noteOn takes the receiver's timeTag while the noteOff's
    * timeTag is that of the receiver plus its duration.
@@ -457,7 +461,7 @@ static double getNoteDur(id aNote);
 
 -part     
   /* TYPE: Acc; Return the receiver's Part.
-   * Returns the Part that the receiver is a member of, or \fBnil\fR if none.
+   * Returns the Part that the receiver is a member of, or nil if none.
    */
 {
     return part;
@@ -483,9 +487,9 @@ static double getNoteDur(id aNote);
 }
 
 - addToPart:aPart
-  /* TYPE: Acc; Adds the receiver to \fIaPart\fR.
+  /* TYPE: Acc; Adds the receiver to aPart.
    * Removes the receiver from the Part that it's currently 
-   * a member of and adds it to \fIaPart\fR.
+   * a member of and adds it to aPart.
    * Returns the receiver's old Part, if any. 
    */
 {
@@ -497,7 +501,7 @@ static double getNoteDur(id aNote);
 - (double)timeTag
   /* TYPE: Timing; Returns the receiver's timeTag.
    * Returns the receiver's timeTag.  If the timeTag isn't set, 
-   * returns \fBMK_ENDOFTIME\fR.
+   * returns MK_ENDOFTIME.
    */
 { 
     return timeTag;
@@ -505,9 +509,9 @@ static double getNoteDur(id aNote);
 
 - (double) setTimeTag:(double)newTimeTag    
   /* TYPE: Timing; Sets the receiver's timeTag.
-   * Sets the receiver's timeTag to \fInewTimeTag\fR and returns the old 
-   * timeTag, or \fBMK_ENDOFTIME\fR if none. 
-   * If \fInewTimeTag\fR is negative, it's clipped to 0.0.
+   * Sets the receiver's timeTag to newTimeTag and returns the old 
+   * timeTag, or MK_ENDOFTIME if none. 
+   * If newTimeTag is negative, it's clipped to 0.0.
    *
    * Note:  If the receiver is a member of a Part, 
    * it's first removed from the Part,
@@ -528,7 +532,7 @@ static double getNoteDur(id aNote);
 - removeFromPart
   /* TYPE: Acc; Removes the receiver from its Part.
    * Removes the receiver from its Part, if any.
-   * Returns the old Part, or \fBnil\fR if none. 
+   * Returns the old Part, or nil if none. 
    */
 {
     id tmp = part;
@@ -574,11 +578,11 @@ int _MKNoteCompare(const void *el1,const void *el2)
 }
 
 - (int)compare:aNote  
-  /* TYPE: Copying; Compares the receiver with \fBaNote\fR.
-   * Compares the receiver with \fIaNote\fR and returns a value as follows:
+  /* TYPE: Copying; Compares the receiver with aNote.
+   * Compares the receiver with aNote and returns a value as follows:
    *
-    *  * If the receiver's timeTag < \fIaNote\fR's timeTag, returns -1.  NSOrderedAscending
-    *  * If the receiver's timeTag > \fIaNote\fR's timeTag, returns 1.  NSOrderedDescending
+    *  * If the receiver's timeTag < aNote's timeTag, returns -1.  NSOrderedAscending
+    *  * If the receiver's timeTag > aNote's timeTag, returns 1.  NSOrderedDescending
    *
    * If their timeTags are equal, the two objects are compared 
    * by their order in the Part.
@@ -607,8 +611,8 @@ int _MKNoteCompare(const void *el1,const void *el2)
 #define ISNOTETYPE(_x) ((int)_x >= (int)MK_noteDur && (int)_x <= (int)MK_mute)
 
 - (id)setNoteType :(MKNoteType) newNoteType
- /* TYPE: Type; Sets the receiver's noteType to \fInewNoteType\fR.
-  * Sets the receiver's noteType to \fBnewNoteType\fR,
+ /* TYPE: Type; Sets the receiver's noteType to newNoteType.
+  * Sets the receiver's noteType to newNoteType,
   * which must be one of:
   *
   *  * MK_noteDur
@@ -628,12 +632,12 @@ int _MKNoteCompare(const void *el1,const void *el2)
 }
 
 -(double) setDur:(double) value
-  /* TYPE: Timing; Sets the receiver's duration to \fIvalue\fR.
-   * Sets the receiver's duration to \fIvalue\fR beats
+  /* TYPE: Timing; Sets the receiver's duration to value.
+   * Sets the receiver's duration to value beats
    * and sets its 
-   * noteType to \fBMK_noteDur\fR.
-   * \fIvalue\fR must be positive.
-   * Returns \fIvalue\fR.
+   * noteType to MK_noteDur.
+   * value must be positive.
+   * Returns value.
    */
 {       
     if (value < 0)
@@ -664,8 +668,8 @@ static double getNoteDur(MKNote *aNote)
 
 -(double)dur
   /* TYPE: Timing; Returns the receiver's duration.
-   * Returns the receiver's duration, or \fBMK_NODVAL\fR if
-   * it isn't set or if the receiver noteType isn't \fBMK_noteDur\fR.
+   * Returns the receiver's duration, or MK_NODVAL if
+   * it isn't set or if the receiver noteType isn't MK_noteDur.
    */
 {       
     return getNoteDur(self);
@@ -673,7 +677,7 @@ static double getNoteDur(MKNote *aNote)
 
 - (int)noteTag
  /* TYPE: Type; Returns the receiver's noteTag.
-  * Return the receiver's noteTag, or \fBMAXINT\fR if it isn't set.
+  * Return the receiver's noteTag, or MAXINT if it isn't set.
   */
 {
     return noteTag;
@@ -687,10 +691,10 @@ static double getNoteDur(MKNote *aNote)
 }
 
 - setNoteTag:(int)newTag
- /* TYPE: Type; Sets the receiver's noteTag to \fInewTag\fR.
-  * Sets the receiver's noteTag to \fInewTag\fR;
-  * if the noteType is \fBMK_mute\fR 
-  * it's automatically changed to \fBMK_noteUpdate\fR.
+ /* TYPE: Type; Sets the receiver's noteTag to newTag.
+  * Sets the receiver's noteTag to newTag;
+  * if the noteType is MK_mute 
+  * it's automatically changed to MK_noteUpdate.
   * Returns the receiver.
   */
 {
@@ -837,9 +841,9 @@ id MKSetNoteParToDouble(MKNote *aNote,int par,double value)
 }
 
 -setPar:(int)par toDouble:(double) value
-  /* TYPE: Parameters; Sets parameter \fIpar\fR to \fBdouble\fR \fIvalue\fR.
-   * Sets the parameter \fIpar\fR to \fIvalue\fR, which must be a
-   * \fBdouble\fR.
+  /* TYPE: Parameters; Sets parameter par to double value.
+   * Sets the parameter par to value, which must be a
+   * double.
    * Returns the receiver.
    */
 {
@@ -854,8 +858,8 @@ id MKSetNoteParToInt(MKNote *aNote,int par,int value)
 }
 
 -setPar:(int)par toInt:(int) value
-  /* TYPE: Parameters;  Sets parameter \fIpar\fR to \fBint\fR \fIvalue\fR.
-   * Set the parameter \fIpar\fR to \fIvalue\fR, which must be an \fBint\fR.
+  /* TYPE: Parameters;  Sets parameter par to int value.
+   * Set the parameter par to value, which must be an int.
    * Returns the receiver.
    */
 {       
@@ -870,9 +874,7 @@ id MKSetNoteParToString(MKNote *aNote,int par,NSString *value)
 }
 
 -setPar:(int)par toString:(NSString *) value
-  /* TYPE: Parameters; Sets parameter \fIpar\fR to a copy of \fIvalue\fR.
-   * Set the parameter \fIpar\fR to a copy of \fIvalue\fR, which must be 
-   * a \fBchar *\fR.
+  /* Set the parameter par to a copy of value, which must be a NSString.
    * Returns the receiver.
    */
 {
@@ -887,9 +889,9 @@ id MKSetNoteParToEnvelope(MKNote *aNote,int par,id envObj)
 }
 
 -setPar:(int)par toEnvelope:(id)envObj
-  /* TYPE: Parameters; Sets parameter \fIpar\fR to the Envelope \fIenvObj\fR.
-   * Points the parameter \fIpar\fR to 
-   * \fIenvObj\fR (\fBenvObj\fR isn't copied).
+  /* TYPE: Parameters; Sets parameter par to the Envelope envObj.
+   * Points the parameter par to 
+   * envObj (envObj isn't copied).
    * Scaling and offset information is retained. 
    * Returns the receiver.
    */
@@ -905,9 +907,9 @@ id MKSetNoteParToWaveTable(MKNote *aNote,int par,id waveObj)
 }
 
 -setPar:(int)par toWaveTable:(id)waveObj
-  /* TYPE: Parameters; Sets parameter \fIpar\fR to the WaveTable \fIwaveObj\fR.
-   * Points the parameter \fIpar\fR to 
-   * \fIwaveObj\fR (\fBwaveObj\fR isn't copied).
+  /* TYPE: Parameters; Sets parameter par to the WaveTable waveObj.
+   * Points the parameter par to 
+   * waveObj (waveObj isn't copied).
    * Returns the receiver.
    */
 {
@@ -923,9 +925,9 @@ id MKSetNoteParToObject(MKNote *aNote,int par,id anObj)
 }
 
 -setPar:(int)par toObject:(id)anObj
-  /* TYPE: Parameters; Sets parameter \fIpar\fR to the specified object.
-   * Points the parameter \fIpar\fR to 
-   * \fIanObj\fR (\fBanObj\fR isn't copied).
+  /* TYPE: Parameters; Sets parameter par to the specified object.
+   * Points the parameter par to 
+   * anObj (anObj isn't copied).
    * The object may be of any class, but must be able to write itself
    * out in ASCII when sent the message -writeASCIIStream:.
    * It may write itself any way it wants, as long as it can also read
@@ -958,10 +960,10 @@ double MKGetNoteParAsDouble(MKNote *aNote,int par)
 }
 
 -(double)parAsDouble:(int)par
- /* TYPE: Parameters; Returns the value of \fIpar\fR as a \fBdouble\fR.
-  * Returns a \fBdouble\fR value converted from the value
-  * of the parameter \fIpar\fR. 
-  * If the parameter isn't present, returns \fBMK_NODVAL\fR.
+ /* TYPE: Parameters; Returns the value of par as a double.
+  * Returns a double value converted from the value
+  * of the parameter par. 
+  * If the parameter isn't present, returns MK_NODVAL.
   */
 {
     return MKGetNoteParAsDouble(self,par);
@@ -977,10 +979,10 @@ return _MKParAsInt(NXHashGet((NXHashTable *)aNote->_parameters, (const void *)du
 }
 
 -(int)parAsInt:(int)par
- /* TYPE: Parameters; Returns the value of \fIpar\fR as an \fBint\fR.
-  * Returns an \fBint\fR value converted from the value
-  * of the parameter \fIpar\fR. 
-  * If the parameter isn't present, returns \fBMAXINT\fR.
+ /* TYPE: Parameters; Returns the value of par as an int.
+  * Returns an int value converted from the value
+  * of the parameter par. 
+  * If the parameter isn't present, returns MAXINT.
   */
 {
     return MKGetNoteParAsInt(self,par);
@@ -992,11 +994,10 @@ NSString *MKGetNoteParAsString(MKNote *aNote,int par)
 }
 
 -(NSString *)parAsString:(int)par
-  /* TYPE: Parameters; Returns a copy of the value of \fIpar\fR as a \fBchar *\fR.
-  * Returns a \fBchar *\fR converted from a copy of the value
-  * of the parameter \fIpar\fR. 
-  * If the parameter isn't present, returns a copy of "". 
-  */
+  /* Returns a NSString converted from a copy of the value
+   * of the parameter par. 
+   * If the parameter isn't present, returns a copy of "". 
+   */
 {
     return MKGetNoteParAsString(self,par);
 }
@@ -1006,14 +1007,13 @@ NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote,int par)
     if (!aNote || !isParPresent(aNote,par)) 
       return @"";//sb: was (char *)_MKUniqueNull(); 
     SETDUMMYPAR(par);
-    return _MKParAsStringNoCopy(NXHashGet((NXHashTable *)aNote->_parameters,
-                                          (const void *)dummyPar));
+    return _MKParAsStringNoCopy(NXHashGet((NXHashTable *)aNote->_parameters, (const void *)dummyPar));
 }
 
 -(NSString *)parAsStringNoCopy:(int)par
-  /* TYPE: Parameters; Returns the value of \fIpar\fR as a \fBchar *\fR.
-  * Returns a \fBchar *\fR to the value of the
-  * parameter \fIpar\fR.
+  /* TYPE: Parameters; Returns the value of par as a NSString.
+  * Returns a NSString to the value of the
+  * parameter par.
   * You shouldn't delete, alter, or store the value 
   * returned by this method.
   * If the parameter isn't present, returns "". 
@@ -1031,9 +1031,9 @@ id MKGetNoteParAsEnvelope(MKNote *aNote,int par)
 }
 
 -parAsEnvelope:(int)par
-  /* TYPE: Parameters; Returns \fIpar\fR's Envelope object.
-   * If \fIpar\fR is an envelope, returns its Envelope object.
-   * Otherwise returns \fBnil\fR.
+  /* TYPE: Parameters; Returns par's Envelope object.
+   * If par is an envelope, returns its Envelope object.
+   * Otherwise returns nil.
    */
 {
     return MKGetNoteParAsEnvelope(self,par);
@@ -1045,9 +1045,9 @@ id MKGetNoteParAsWaveTable(MKNote *aNote,int par)
 }
 
 -parAsWaveTable:(int)par
-  /* TYPE: Parameters; Returns \fIpar\fR's WaveTable object.
-   * If \fIpar\fR is a waveTable, returns its WaveTable object.
-   * Otherwise returns \fBnil\fR.
+  /* TYPE: Parameters; Returns par's WaveTable object.
+   * If par is a waveTable, returns its WaveTable object.
+   * Otherwise returns nil.
    */
 {
     return MKGetNoteParAsWaveTable(self,par);
@@ -1059,9 +1059,9 @@ id MKGetNoteParAsObject(MKNote *aNote,int par)
 }
 
 -parAsObject:(int)par
-  /* TYPE: Parameters; Returns \fIpar\fR's object.
-   * If \fIpar\fR is an object (including an Envelope or WaveTable), 
-   * returns its object. Otherwise returns \fBnil\fR.
+  /* TYPE: Parameters; Returns par's object.
+   * If par is an object (including an Envelope or WaveTable), 
+   * returns its object. Otherwise returns nil.
    */
 {
     return MKGetNoteParAsObject(self,par);
@@ -1073,18 +1073,18 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
 }
 
 -(BOOL)isParPresent:(int)par
-  /* TYPE: Parameters; Checks for presence of \fIpar\fR.
-   * Returns \fBYES\fR if the parameter \fIpar\fR is present in the
-   * receiver (i.e. if its value has been set), \fBNO\fR if it isn't.
+  /* TYPE: Parameters; Checks for presence of par.
+   * Returns YES if the parameter par is present in the
+   * receiver (i.e. if its value has been set), NO if it isn't.
    */
 {
     return isParPresent(self,par);
 }
 
 -(MKDataType)parType:(int)par
-   /* TYPE: Parameters; Returns the data type of \fIpar\fR.
-    * Returns the parameter data type of \fIpar\fR
-    * as an \fBMKDataType\fR:
+   /* TYPE: Parameters; Returns the data type of par.
+    * Returns the parameter data type of par
+    * as an MKDataType:
     * 
     *  * MK_double 
     *  * MK_int
@@ -1093,7 +1093,7 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
     *  * MK_waveTable
     *  * MK_object
     * 
-    * If the parameter isn't present, returns \fB_MK_undef\fR.
+    * If the parameter isn't present, returns _MK_undef.
     */
 {
     if (!isParPresent(self,par)) 
@@ -1103,10 +1103,10 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
 }
 
 -removePar:(int)par
-  /* TYPE: Parameters; Removes \fIpar\fR form the receiver.
-   * Removes the parameter \fIpar\fR from the receiver.
+  /* TYPE: Parameters; Removes par form the receiver.
+   * Removes the parameter par from the receiver.
    * Returns the receiver if the parameter was present, otherwise
-   * returns \fBnil\fR.
+   * returns nil.
    */
 {
     _MKParameter *aParameter;
@@ -1122,8 +1122,8 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
 -(unsigned)parVector:(unsigned)index
   /* TYPE: Parameters; Checks presence of a number of parameters at once.
    * Returns a bit vector indicating the presence of parameters 
-   * identified by integers (\fIindex\fR * BITS_PER_INT) through 
-   * ((\fIindex\fR  + 1) * BITS_PER_INT - 1). For example,
+   * identified by integers (index * BITS_PER_INT) through 
+   * ((index  + 1) * BITS_PER_INT - 1). For example,
    *
    * .ib
    * unsigned int parVect = [aNote checkParVector:0];
@@ -1140,10 +1140,10 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
 
 -(int)parVectorCount
    /* TYPE: Parameters; Returns the # of bit vectors for parameters.
-    * Returns the number of bit vectors (\fBunsigned int\fRs)
+    * Returns the number of bit vectors (unsigned ints)
     * indicating presence of parameters in the receiver. 
     * 
-    * See also \fBcheckParVector:\fR.
+    * See also checkParVector:.
     */
 {
     return MK_MKPARBITVECTS + nAppBitVects(self);
@@ -1152,8 +1152,8 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
 static void copyPars(); /* forward ref */
 
 -copyParsFrom:aNote
-  /* TYPE: Copying; Copies parameters and dur (if any) from \fIaNote\fR to receiver.
-   * Copies \fIaNote\fR's parameters and duration into
+  /* TYPE: Copying; Copies parameters and dur (if any) from aNote to receiver.
+   * Copies aNote's parameters and duration into
    * the receiver (Envelope and WaveTables and other objects are shared rather than copied).
    * Overwrites such values already present in the receiver.
    * Returns the receiver.
@@ -1169,15 +1169,15 @@ static void copyPars(); /* forward ref */
 #if 0
 -(double)amp
   /* TYPE: Parameters; Returns the receiver's amplitude.
-   * Returns the value of \fBMK_amp\fR if present. 
-   * If not, the return value is derived from \fBMK_velocity\fR thus:
+   * Returns the value of MK_amp if present. 
+   * If not, the return value is derived from MK_velocity thus:
    * 
-   *    \fBVel\fR       \fBAmp\fR       \fBMeaning\fR
+   *    Vel       Amp       Meaning
    *    127     1.0 (almost)    Maximum representable amplitude
    *    64        .1    mezzo-forte
    *    0       0.0     minus infinity dB
    *
-   * If \fBMK_velocity\fR is missing, returns \fBMAXDOUBLE\fR.
+   * If MK_velocity is missing, returns MAXDOUBLE.
    */
 {
     int velocity;
@@ -1192,11 +1192,11 @@ static void copyPars(); /* forward ref */
 
 -(int)velocity
   /* TYPE: Parameters; Returns the receiver velocity.
-   * Returns the value of the \fBMK_velocity\fR parameter if present.
-   * If not, derives a return value from \fBMK_amp\fR (see
-   * \fBamp\fR for the conversion table).
+   * Returns the value of the MK_velocity parameter if present.
+   * If not, derives a return value from MK_amp (see
+   * amp for the conversion table).
    *
-   * If \fBamp\fR is absent,returns \fBMAXINT\fR.
+   * If amp is absent,returns MAXINT.
    */
 {
     double similarPar;
@@ -1211,9 +1211,9 @@ static void copyPars(); /* forward ref */
 
 -(double)freq
   /* TYPE: Parameters; Returns the frequency of the receiver.
-   * Returns the value of \fBMK_freq\fR, if present.  If not,
-   * converts and returns the value of \fBMK_keyNum\fR.
-   * And if that parameter is missing, returns \fBMK_NODVAL\fR.
+   * Returns the value of MK_freq, if present.  If not,
+   * converts and returns the value of MK_keyNum.
+   * And if that parameter is missing, returns MK_NODVAL.
    */
 {
     int keyNumVal;
@@ -1228,9 +1228,9 @@ static void copyPars(); /* forward ref */
 
 -(int)keyNum
   /* TYPE: Parameters; Returns the key number of the recevier.
-   * Returns the value of \fBMK_keyNum\fR, if present.  If not,
-   * converts and returns the value of \fBMK_freq\fR.
-   * If \fBMK_freq\fR isn't present, returns \fBMAXINT\fR.
+   * Returns the value of MK_keyNum, if present.  If not,
+   * converts and returns the value of MK_freq.
+   * If MK_freq isn't present, returns MAXINT.
    */
 {
     int keyNum;
@@ -1286,8 +1286,6 @@ void _MKWriteParameters(MKNote *self,NSMutableData *aStream,_MKScoreOutStruct *p
     else [aStream appendData:[@";\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 }
 
-// #import <objc/HashTable.h>
-
 static id writeBinaryNoteAux(MKNote *self,id aPart,_MKScoreOutStruct *p)
 {
     NSMutableData *aStream = p->_stream;
@@ -1320,13 +1318,13 @@ static id writeBinaryNoteAux(MKNote *self,id aPart,_MKScoreOutStruct *p)
 }
 
 static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
-                       NSMutableData *aStream,const char *partName)
+                       NSMutableData *aStream,NSString *partName)
     /* Never invoke this function when writing a binary scorefile */
 {
     /* The part should always have a name. This is just in case of lossage. */
     if (!partName)
-      partName = "anon";
-    [aStream appendData:[[NSString stringWithFormat:@"%s ", partName] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+      partName = @"anon";
+    [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     [aStream appendData:[@"(" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     switch (self->noteType) {
       case MK_noteDur: {
@@ -1358,24 +1356,21 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
 
 -writeScorefileStream:(NSMutableData *)aStream
   /* TYPE: Display; Displays the receiver in ScoreFile format.
-   * Displays, on \fIaStream\fR, the receiver in ScoreFile format.
+   * Displays, on aStream, the receiver in ScoreFile format.
    * Returns the receiver.
    */
 {
-    return writeNoteAux(self,NULL,aStream,[MKGetObjectName(part) cString]);
+    return writeNoteAux(self,NULL,aStream,MKGetObjectName(part));
 }
 
 id _MKWriteNote2(MKNote *self,id aPart,_MKScoreOutStruct *p)
     /* Used internally for writing notes to scorefiles. */
 {
+    id tmp;
+
     if (p->_binary)
-      return writeBinaryNoteAux(self,aPart,p);
-    {
-        id tmp;
-        return writeNoteAux(self,p,p->_stream,
-                            (char *)[_MKNameTableGetObjectName(p->_nameTable,
-                                                              aPart,&tmp) cString]);
-    }
+        return writeBinaryNoteAux(self,aPart,p);
+    return writeNoteAux(self,p,p->_stream, _MKNameTableGetObjectName(p->_nameTable, aPart, &tmp));
 }
 
 /* Assorted C functions ----------------------------------------- */
@@ -1792,11 +1787,33 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
 // for debugging
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"At %lf: %s(%d) of (%@) performed by (%@)\n",
-        timeTag, _MKTokName(noteType), noteTag, part, performer];
-//    id conductor;
-// _parameters etc
-// loop thru the bitvector table and list all parameters being used and their values.
+    NSMutableString *paramString = [[NSMutableString alloc] initWithString: @"Parameters: "];
+    NSString *partString;
+    NSString *performerString;
+    void *aState = MKInitParameterIteration(self);
+//  id conductor; // if necessary.
+    int par;
+
+    if(performer != nil) 
+        performerString = [NSString stringWithFormat: @"performed by (%@)", performer];
+    else
+        performerString = @"";
+// we have self referential problem if we have defined a [MKPart description] method. For this case we want the default description method [[part super] description].
+//    if(part != nil)
+//        partString = [NSString stringWithFormat: @"of (%@)", part];
+//    else
+        partString = @"";
+    // loop thru the parameter table and list all parameters being used and their values.
+    par = MKNextParameter(self, aState);
+    do {
+        if(par != MK_noPar) {
+            [paramString appendFormat: @"%@", _MKParNameStr(par)];
+            par = MKNextParameter(self, aState);
+        }
+        [paramString appendString: (par != MK_noPar) ? @", " : @"."];
+    } while(par != MK_noPar);
+    return [NSString stringWithFormat: @"At %lf: %s(%d) %@ %@\n%@\n",
+        timeTag, _MKTokName(noteType), noteTag, partString, performerString, paramString];
 }
 
 @end
@@ -1814,9 +1831,9 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
 }
 
 -_noteOffForNoteDur
-  /* If the receiver isn't a noteDur, returns \fBnil\fR. Otherwise, returns
+  /* If the receiver isn't a noteDur, returns nil. Otherwise, returns
    * the noteOff created according to the rules described in
-   * \fB-split::\fR.
+   * -split::.
    */
  {
     MKNote *aNoteOff;
@@ -1836,8 +1853,8 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
 }
 
 -_splitNoteDurNoCopy
-  /* Same as \fB-_noteOffForNoteDur\fR except the receiver's \fBnoteType\fR 
-   * is set to \fBMK_noteOn\fR.
+  /* Same as -_noteOffForNoteDur except the receiver's noteType 
+   * is set to MK_noteOn.
    */
 {
     MKNote *aNoteOff = [self _noteOffForNoteDur];
