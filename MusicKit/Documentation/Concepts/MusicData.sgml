@@ -154,16 +154,16 @@ messages:</para>
 
 <programlisting>
 /* Of course, you have to create the MKNote first. */
-id aNote =[[MKNote alloc] init];
+MKNote *aNote =[[MKNote alloc] init];
 
 /* Set the bearing. */
-[aNote setPar:MK_bearing toDouble:45.0];
+[aNote setPar: MK_bearing toDouble: 45.0];
 
 /* or */
-[aNote setPar:MK_bearing toInt:45];
+[aNote setPar: MK_bearing toInt: 45];
 
 /* or */
-[aNote setPar:MK_bearing toString:"45"];
+[aNote setPar: MK_bearing toString: @"45"];
 </programlisting>
 
 <para>You generally set bearing as a <emphasis
@@ -226,7 +226,7 @@ and nonzero if not:</para>
 
 <programlisting>
 /* Retrieve the value of the amplitude parameter. */
-double amp = [aNote parAsDouble:MK_amp];
+double amp = [aNote parAsDouble: MK_amp];
 
 /* Test for the parameter's existence. */
 if (!MKIsNoDVal(amp))
@@ -244,8 +244,8 @@ method:</para>
 
 <programlisting>
 /* Only retrieve bearing if its value was set. */
-if ([aNote parIsPresent:MK_bearing])
-    double theBearing = [aNote parAsDouble:MK_bearing];
+if ([aNote parIsPresent: MK_bearing])
+    double theBearing = [aNote parAsDouble: MK_bearing];
 </programlisting>
       
       <sect4><title>Choosing a Value</title>
@@ -302,12 +302,12 @@ represents an object&horbar;this includes
 <classname>MKWaveTable</classname>s&horbar;is enclosed in square
 brackets (<emphasis role="bold">[]</emphasis>).  The <acronym>ASCII</acronym>
 representation of an object must not include a close bracket.  The
-method's argument is the NXStream to which the text is written.</para>
+method's argument is the <classname>NSMutableData</classname> to which the text is written.</para>
 		</listitem>
 
 <listitem><para> <emphasis role="bold">readASCIIStream:</emphasis>
 provides instructions for creating an object from its <acronym>ASCII</acronym>
-representation.  When the method is called, the argument (an NXStream)
+representation.  When the method is called, the argument (an <classname>NSMutableData</classname>)
 is pointing to the first character after the open bracket.  You should
 leave the argument pointing to the close bracket.  In other words, you
 should read in whatever you wrote out.</para>
@@ -518,13 +518,13 @@ earlier:</para>
 #import &lt;MusicKit/pitches.h&gt;
 
 /* Set the MKNote's pitch to middle C as a frequency. */
-[aNote setPar:MK_freq toDouble:261.625];
+[aNote setPar: MK_freq toDouble: 261.625];
 
 /* The same using a pitch variable. */
-[aNote setPar:MK_freq toDouble:c4];
+[aNote setPar: MK_freq toDouble: c4];
 
 /* And as a key number. */
-[aNote setPar:MK_keyNum toDouble:c4k];
+[aNote setPar: MK_keyNum toDouble: c4k];
 </programlisting>
 
 <para>The conversion between frequencies or pitch variables and key
@@ -602,13 +602,13 @@ example:</para>
 
 <programlisting>
 /* Set the amplitude of a MKNote. */
-[aNote setPar:MK_amp toDouble:0.2];
+[aNote setPar: MK_amp toDouble: 0.2];
 
 /* Retrieve amplitude. */
-double myAmp = [aNote parAsDouble:MK_amp];
+double myAmp = [aNote parAsDouble: MK_amp];
 
 /* Set the amplitude of a MKNote. */
-[aNote setPar:MK_amp toDouble:MKdB(-15.0)];
+[aNote setPar: MK_amp toDouble: MKdB(-15.0)];
 </programlisting>
 
 <para>The range of the decibel scale extends from negative infinity
@@ -679,7 +679,7 @@ time tag value at the same time:</para>
 
 <programlisting>
 /* Create a new MKNote and set the time tag value to 3.5 beats. */
-id myNote = [MKNote newSetTimeTag:3.5];
+MKNote *myNote = [MKNote newSetTimeTag: 3.5];
 </programlisting>
 
 <para>A newly created <classname>MKNote</classname> otherwise has a
@@ -770,16 +770,16 @@ noteOn, demonstrates how to create and administer note tags:</para>
 
 <programlisting>
 /* Create a noteOn and a noteOff and set their time tags. */
-id aNoteOn = [[MKNote alloc] initWithTimeTag:1.0];
-id aNoteOff = [[MKNote alloc] initWithTimeTag:3.5];
-[aNoteOn setNoteType:MK_noteOn];
-[aNoteOff setNoteType:MK_noteOff];
+MKNote *aNoteOn = [[MKNote alloc] initWithTimeTag: 1.0];
+MKNote *aNoteOff = [[MKNote alloc] initWithTimeTag: 3.5];
+[aNoteOn setNoteType: MK_noteOn];
+[aNoteOff setNoteType: MK_noteOff];
 
 /* Create a new note tag for the noteOn. */
-[aNoteOn setNoteTag:MKNoteTag()];
+[aNoteOn setNoteTag: MKNoteTag()];
 
 /* Set the noteOff note tag to that of the noteOn. */
-[aNoteOff setNoteTag:[myNoteOn noteTag]];
+[aNoteOff setNoteTag: [myNoteOn noteTag]];
 </programlisting>
 
 <para>
@@ -829,21 +829,21 @@ following example, a noteUpdate is used to change the pitch of a
 musical note represented by a noteDur:</para>
 
 <programlisting>
-id myNoteDur, myNoteUpdate;
+MKNote *myNoteDur, *myNoteUpdate;
 
 /* Create a MKNote with a time tag and set its pitch, and duration. */
-myNoteDur = [[MKNote alloc] initWithTimeTag:1.0];
-[myNoteDur setPar:MK_freq toDouble:c4];
-[myNoteDur setDur:3.0];
+myNoteDur = [[MKNote alloc] initWithTimeTag: 1.0];
+[myNoteDur setPar: MK_freq toDouble: c4];
+[myNoteDur setDur: 3.0];
 
 /* Create a noteUpdate with a time tag and set its pitch. */
-myNoteUpdate = [[MKNote alloc] initWithTimeTag:2.5];
-[myNoteUpdate setNoteType:MK_noteUpdate];
-[myNoteUpdate setPar:MK_freq toDouble:d4];
+myNoteUpdate = [[MKNote alloc] initWithTimeTag: 2.5];
+[myNoteUpdate setNoteType: MK_noteUpdate];
+[myNoteUpdate setPar: MK_freq toDouble: d4];
 
 /* Set the note tags to the same value. */
-[myNoteDur setNoteTag:MKNoteTag()];
-[myNoteUpdate setNoteTag:[myNoteDur noteTag]];
+[myNoteDur setNoteTag: MKNoteTag()];
+[myNoteUpdate setNoteTag: [myNoteDur noteTag]];
 </programlisting>
 
 <para>The effect of the two <classname>MKNote</classname>s is a
@@ -953,14 +953,14 @@ of x values and y values:</para>
 
 <programlisting>
 /* Create an MKEnvelope object. */
-id anEnvelope = [[MKEnvelope alloc] init];
+MKEnvelope *anEnvelope = [[MKEnvelope alloc] init];
 
 /* Create and instantiate arrays for the x and y values. */
 double xVals[] = {0.0, 1.0, 4.0, 5.0};
 double yVals[] = {0.0, 1.0, 1.0, 0.0};
 
 /* Define the MKEnvelope with data. */
-[anEnvelope setPointCount:4 xArray:xVals yArray:yVals];
+[anEnvelope setPointCount: 4 xArray: xVals yArray: yVals];
 </programlisting>
 
 <para>The elements in the x and y arrays are paired in the order
@@ -1002,16 +1002,16 @@ role="bold">MK_ampEnv</emphasis> parameter:</para>
 
 <programlisting>
 /* Create a MKNote and an MKEnvelope. */
-id aNote = [[MKNote alloc] init];
-id anEnvelope = [[MKEnvelope alloc] init];
+MKNote *aNote = [[MKNote alloc] init];
+MKEnvelope *anEnvelope = [[MKEnvelope alloc] init];
 
 /* Create x and y value arrays and define the MKEnvelope. */
 double xVals = {0.0, 1.0, 4.0, 5.0};
 double yVals = {0.0, 1.0, 1.0, 0.0};
-[anEnvelope pointCount:4 xArray:xVals yArray:yVals];
+[anEnvelope pointCount: 4 xArray: xVals yArray: yVals];
 
 /* Set the MKEnvelope to control aNote's amplitude. */
-[aNote setPar:MK_ampEnv toEnvelope:anEnvelope];
+[aNote setPar: MK_ampEnv toEnvelope: anEnvelope];
 </programlisting>
 
 <para>The <classname>MKEnvelope</classname> defined here is the same
@@ -1080,10 +1080,10 @@ the value of <emphasis role="bold">MK_amp</emphasis> (only):</para>
 
 <programlisting>
 /* Set the amplitude MKEnvelope (as previously defined). */
-[aNote setPar:MK_ampEnv toEnvelope:anEnvelope];
+[aNote setPar: MK_ampEnv toEnvelope: anEnvelope];
 
 /* The value of MK_amp sets the value when y is 1.0. */
-[aNote setPar:MK_amp toDouble:0.15];
+[aNote setPar: MK_amp toDouble: 0.15];
 </programlisting>
 
 <para>During synthesis, <emphasis role="bold">aNote</emphasis>'s
@@ -1149,11 +1149,11 @@ double xVals = {0.0, 1.0, 2.0};
 double yVals = {0.0, 1.0, 0.0};
 
 /* Define the MKEnvelope and set the MK_amp constant. */
-[anEnvelope pointCount:3 xArray:xVals yArray:yVals];
-[aNote setPar:MK_amp toDouble:0.15];
+[anEnvelope pointCount: 3 xArray: xVals yArray: yVals];
+[aNote setPar: MK_amp toDouble: 0.15];
 
 /* Set the MKEnvelope's stickpoint. */
-[anEnvelope setStickpoint:1];
+[anEnvelope setStickpoint: 1];
 </programlisting>
 
 <para>The argument to <emphasis role="bold">setStickpoint:</emphasis>
@@ -1499,15 +1499,15 @@ follows:</para>
 <programlisting>
 double xVals = {0.0, 1.0};
 double yVals = {0.0, 2.0};
-id anEnvelope = [[MKEnvelope alloc] init];
+MKEnvelope *anEnvelope = [[MKEnvelope alloc] init];
 
-[anEnvelope setPointCount:2 xArray:xVals yArray:yVals];
+[anEnvelope setPointCount: 2 xArray: xVals yArray: yVals];
 </programlisting>
 
 <para>The message</para>
 
 <programlisting>
-double interpY = [anEnvelope lookupYForX:0.5];
+double interpY = [anEnvelope lookupYForX: 0.5];
 </programlisting>
 
 <para>returns 1.0.  The computation is illustrated in <xref linkend="figure3-13"></para>
@@ -1540,7 +1540,7 @@ the same <classname>MKEnvelope</classname>), the message</para>
 
 <programlisting>
 /* Specify an x for which there is no y. */
-double interpY = [anEnvelope lookupYForX:1.5];
+double interpY = [anEnvelope lookupYForX: 1.5];
 </programlisting>
 
 <para>returns 2.0, as it also would for any argument greater than 1.0.
@@ -1759,9 +1759,9 @@ partials decrease in amplitude as they increase in frequency.</para>
 
 <programlisting>
 /* Create the MKPartials object. */
-id aPartials = [MKPartials new];
-double freqs[] = {1.0,2.0,3.0,4.0,5.0,6.0};
-double amps[] = {1.0,0.5,0.25,0.12,0.06,0.03};
+MKPartials *aPartials = [MKPartials new];
+double freqs[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+double amps[] = {1.0, 0.5, 0.25, 0.12, 0.06, 0.03};
 
 /* Fill the object with data. */
 [aPartials setPartialCount: 6
@@ -1803,14 +1803,14 @@ method:</para>
 . . .
 
 /* Create a MKSamples object and a Snd object. */
-id aSamples = [MKSamples new];
-id aSound = [Snd new];
+MKSamples *aSamples = [MKSamples new];
+Snd *aSound = [Snd new];
 
 /* Fill the Snd with data. */
 . . .
 
 /* Associate the Snd with the MKSamples. */
-[aSamples setSound:aSound];
+[aSamples setSound: aSound];
 </programlisting>
 
 <para>A copy of the <classname>Snd</classname> object is created and
@@ -1849,10 +1849,10 @@ role="bold">MK_waveform</emphasis> parameter:</para>
 
 <programlisting>
 /* Create a MKNote. */
-id aNote = [MKNote new];
+MKNote *aNote = [MKNote new];
 
 /* Set its MK_waveform value. */
-[aNote setPar:MK_waveform toWaveTable:aPartials];
+[aNote setPar: MK_waveform toWaveTable: aPartials];
 </programlisting>
 
 <para>In this example, the value of <emphasis
@@ -1928,9 +1928,9 @@ single <classname>MKNote</classname> can only belong to one
 messaging either object:</para>
 
 <programlisting>
-[myNote addToPart:myPart];
+[myNote addToPart: myPart];
 /* is the same as */
-[myPart addNote:myNote];
+[myPart addNote: myNote];
 </programlisting>
 
 <para>Since a <classname>MKNote</classname> object can only belong to
@@ -2034,7 +2034,7 @@ argument.</para>
 	  </listitem>
 <listitem><para> <emphasis
 role="bold">writeScorefileStream:</emphasis> takes a stream pointer
-(NXStream *) argument.</para>
+(<classname>NSMutableData</classname> *) argument.</para>
 	  </listitem>
 	</itemizedlist>
 <para>The first of these opens and closes the file for you.  Every
@@ -2057,7 +2057,7 @@ a section of a <classname>MKScore</classname> to a stream).  For
 example:</para>
 
 <programlisting>
-[myScore writeScorefile: "Adagio.score"
+[myScore writeScorefile: @"Adagio.score"
            firstTimeTag: 3.5
             lastTimeTag: 10.2
               timeShift: 0.0]
@@ -2107,7 +2107,7 @@ reading a scorefile are analogous to those for writing:</para>
 a file name argument.</para>
 	  </listitem>
 <listitem><para> <emphasis role="bold">readScorefileStream:</emphasis>
-takes an NXStream pointer argument.</para>
+takes an <classname>NSMutableData</classname> pointer argument.</para>
 	  </listitem>
 	</itemizedlist>
 <para>When you read a scorefile into a <classname>MKScore</classname>
@@ -2121,7 +2121,7 @@ role="bold">firstTimeTag:lastTimeTag:timeShift:</emphasis> keywords.
 For example:</para>
 
 <programlisting>
-[myScore readScorefile: "Adagio.score"
+[myScore readScorefile: @"Adagio.score"
           firstTimeTag: 6.5
            lastTimeTag: MK_ENDOFTIME
              timeShift: -6.5]
@@ -2174,19 +2174,19 @@ methods:</para>
 <programlisting>
 /* Create a MKPart, two MKNotes, and an id for return values. */
 MKPart *aPart = [MKPart new],
-MKNote *aNote = [MKNote newSetTimeTag:2.0];
-MKNote *bNote = [MKNote newSetTimeTag:3.0];
+MKNote *aNote = [MKNote newSetTimeTag: 2.0];
+MKNote *bNote = [MKNote newSetTimeTag: 3.0];
 MKNote *returnNote;
 
 /* Add the MKNotes to the MKPart. */
-[aPart addNote:bNote];
-[aPart addNote:aNote];
+[aPart addNote: bNote];
+[aPart addNote: aNote];
 
 /* Retrieve the MKNote at time 1.5.  (Returns nil; no such MKNote.) */
-returnNote = [aPart atTime:1.5];
+returnNote = [aPart atTime: 1.5];
 
 /* Retrieve the MKNote at or after 1.5.  (Returns aNote.)  */
-returnNote = [aPart atOrAfterTime:1.5];
+returnNote = [aPart atOrAfterTime: 1.5];
 </programlisting>
 
 <para>You can also retrieve a <classname>MKNote</classname> by its
@@ -2200,7 +2200,7 @@ the message <emphasis role="bold">nth:</emphasis> to the
 message</para>
 
 <programlisting>
-[aPart nth:1]
+[aPart nth: 1]
 </programlisting>
 
 <para>returns <emphasis role="bold">bNote</emphasis>, the second
@@ -2232,11 +2232,11 @@ turn:</para>
 
 <programlisting>
 /* Initially set aNote to the first MKNote in the MKPart. */ 
-MKNote *aNote = [aPart nth:0];
+MKNote *aNote = [aPart nth: 0];
 
 /* Access each MKNote in the MKPart and change it to MK_mute. */ 
-while(aNote = [aPart next:aNote])
-    [aNote setNoteType:MK_mute];
+while(aNote = [aPart next: aNote])
+    [aNote setNoteType: MK_mute];
 </programlisting>
 
 <para><emphasis role="bold">next:</emphasis> returns <emphasis
@@ -2250,13 +2250,13 @@ example can be rewritten as follows:</para>
 
 <programlisting>
 /* Create a Sequence over the MKPart's MKNotes. */ 
-id notes = [aPart notes];
+NSArray *notes = [aPart notes];
 int noteCount = [aPart noteCount];
 int i;
 
 /* Access each MKNote in the Sequence and change its note type. */
 for (i = 0; i &lt; noteCount; i++)
-    [[notes objectAtIndex:i] setNoteType:MK_mute];
+    [[notes objectAtIndex: i] setNoteType: MK_mute];
 </programlisting>
 
       </sect3>
@@ -2436,17 +2436,17 @@ manage timing.</para>
 #import &lt;MusicKit/MusicKit.h&gt;
 #import &lt;MusicKit/keynums.h&gt;
 
-MKMidi *aMidi = [[MKMidi alloc] init]; /* Create MKMidi object */
-MKNote *aNote = [[MKNote alloc] init]; /* Create a MKNote */
+MKMidi *aMidi = [[MKMidi alloc] init];     /* Create MKMidi object */
+MKNote *aNote = [[MKNote alloc] init];     /* Create a MKNote */
 
-[aMidi run];                           /* Start it up */
-[aNote setNoteTag:MKNoteTag()];        /* Set tag */
-[aNote setPar:MK_keyNum toInt:c4k];    /* Set key number */
-[aNote setPar:MK_velocity toInt:64];   /* Set velocity */
+[aMidi run];                               /* Start it up */
+[aNote setNoteTag: MKNoteTag()];           /* Set tag */
+[aNote setPar: MK_keyNum toInt: c4k];      /* Set key number */
+[aNote setPar: MK_velocity toInt: 64];     /* Set velocity */
 
-[aNote setPar:MK_midiChan toInt:1];    /* MIDI channel */
-[aNote setNoteType:MK_noteOn];         /* Set type */
-[[aMidi noteReceiver] receiveNote:aNote]; /* Send it */
+[aNote setPar: MK_midiChan toInt: 1];      /* MIDI channel */
+[aNote setNoteType: MK_noteOn];            /* Set type */
+[[aMidi noteReceiver] receiveNote: aNote]; /* Send it */
 
 [aMidi close];
 </programlisting>
@@ -2549,32 +2549,32 @@ gradual pitch bend.</para>
 #import &lt;MusicKit/keynums.h&gt;
 
 int i;
-MKMidi *aMidi = [[MKMidi alloc] init];   /* Create MKMidi object */
-MKNote *aNote = [[MKNote alloc] init];   /* Create a Note */
-MKNote *pbNote = [[MKNote alloc] init];  /* Another one */
+MKMidi *aMidi = [[MKMidi alloc] init];    /* Create MKMidi object */
+MKNote *aNote = [[MKNote alloc] init];    /* Create a Note */
+MKNote *pbNote = [[MKNote alloc] init];   /* Another one */
 
-#define SEND(note)[[aMidi noteReceiver] receiveNote:note]
+#define SEND(note) [[aMidi noteReceiver] receiveNote: note]
 
-[aMidi run];                             /* Start it up */
+[aMidi run];                              /* Start it up */
 
-[aNote setNoteTag:MKNoteTag()];          /* Set tag */
-[aNote setPar:MK_keyNum toInt:c4k];      /* Set key number */
-[aNote setPar:MK_velocity toInt:64];     /* Set velocity */
-[aNote setPar:MK_midiChan toInt:1];      /* MIDI channel */
-[aNote setNoteType:MK_noteOn];           /* Set type */
+[aNote setNoteTag: MKNoteTag()];          /* Set tag */
+[aNote setPar: MK_keyNum toInt: c4k];     /* Set key number */
+[aNote setPar: MK_velocity toInt: 64];    /* Set velocity */
+[aNote setPar: MK_midiChan toInt: 1];     /* MIDI channel */
+[aNote setNoteType: MK_noteOn];           /* Set type */
 
 SEND(aNote);
 
 [pbNote setNoteType:MK_noteUpdate];
 [pbNote setPar:MK_midiChan toInt:1];     /* MIDI channel */
 
-for (i=0; i&lt;0x3fff; i++) {
-    [pbNote setPar:MK_pitchBend toInt:i]; /* Bend */
+for (i = 0; i &lt; 0x3fff; i++) {
+    [pbNote setPar: MK_pitchBend toInt: i]; /* Bend */
     SEND(pbNote);
     usleep(10000);                       /* Wait 10 milliseconds */
 }
 
-[aNote setNoteType:MK_noteOff];          /* Now stop the note */
+[aNote setNoteType: MK_noteOff];          /* Now stop the note */
 SEND(aNote);
 [aMidi close];
 </programlisting>
@@ -2712,8 +2712,8 @@ main() {
     MKNote *aNote = [[MKNote alloc] init];  /* Create a MKNote */
 
     [aMidi run];                            /* Start it up */
-    [aNote setPar:MK_sysExclusive toString:"f0,8,13,f7"];
-    [[aMidi noteReceiver] receiveNote:aNote]; /* Send it */
+    [aNote setPar: MK_sysExclusive toString: @"f0,8,13,f7"];
+    [[aMidi noteReceiver] receiveNote: aNote]; /* Send it */
     [aMidi close];
 
     exit(0);
