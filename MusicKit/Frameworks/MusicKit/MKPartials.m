@@ -26,6 +26,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/07/02 16:38:54  sbrandon
+  MKPartials.m
+
   Revision 1.7  2000/11/25 22:46:58  leigh
   Standardised comment header
 
