@@ -204,7 +204,7 @@ int main (int argc, const char * argv[])
 
         // Wait for stream manager to go inactive, signalling the sound has finished playing
         while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
-          sleep(1); 
+          [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
           waitCount++;
           if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
         }
