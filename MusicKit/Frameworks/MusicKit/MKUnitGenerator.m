@@ -1,19 +1,40 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
   HEADER FILES: musickit.h
+
+  Description:
+    This is an abstract superclass from which particular UnitGenerators
+    inherit. You never create instances of UnitGenerator or any 
+    of its subclasses directly. They are created automatically by the 
+    Orchestra object in response to messages such as allocUnitGenerator:
+    The subclass needs to provide a number of methods. 
+    In particular, he may want to override
+    -runSelf
+    -idleSelf
+    -finishSelf
+    and
+    -init
+
+    In addition to the subclasss responsibility methods given below, the 
+    subclass designer will probably want to provide methods for poking 
+    values into the DSP (e.g. an oscillator would have a setFreq:
+    method.) The utility dspwrap (not provided in release 0.9) 
+    simplifies the task of writing UnitGenerator subclasses.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/26 19:58:53  leigh
+  DSPMemoryNames changed to be a function for Win32
+
   Revision 1.2  1999/07/29 01:16:44  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -48,46 +69,6 @@ Modification history:
 #import "_SharedSynthInfo.h"
 
 @implementation MKUnitGenerator:NSObject
-/* This is an abstract superclass from which particular UnitGenerators
-   inherit. You never create instances of UnitGenerator or any 
-   of its subclasses directly. They are created automatically by the 
-   Orchestra object in response to messages such as allocUnitGenerator:
-   The subclass needs to provide a number of methods. 
-   In particular, he may want to override
-   -runSelf
-   -idleSelf
-   -finishSelf
-   and
-   -init
-
-   In addition to the subclasss responsibility methods given below, the 
-   subclass designer will probably want to provide methods for poking 
-   values into the DSP (e.g. an oscillator would have a setFreq:
-   method.) The utility dspwrap (not provided in release 0.9) 
-   simplifies the task of writing UnitGenerator subclasses.
-   */
-{
-    /* DO NOT CHANGE THE POSITION OF THE FOLLOWING BLOCK OF IVARS! */
-    id synthPatch;      /* The SynthPatch to which the receiver
-			     belongs, if any. */
-    id orchestra;       /* The Orchestra in which the receiver executes. */
-    unsigned short _orchIndex;
-    unsigned short _synthPatchLoc;
-    id _sharedKey;
-    BOOL _protected;
-    int _instanceNumber;
-    /* END OF INVARIANT IVARS */
-
-    BOOL isAllocated;
-    MKUGArgStruct *args;   /* Pointer to the first of a block of 
-			     MKUGArgStructs. Each of these corresponds to 
-			     a unit generator memory argment. */
-    MKSynthStatus status;
-    MKOrchMemStruct relocation;
-    MKLeafUGStruct *_classInfo; /* Same as [[self class] classInfo]. 
-				   Stored in instance as an optimization. */ 
-    id _next;                   /* For available linked lists. */
-}
 
 #define ISDATA NO /* Needed by synthElementMethod.m */
 
@@ -772,8 +753,8 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 	  return _MKErrorf(MK_ugArgSpaceMismatchErr,
 			   (((int)memP->memSpace < (int)DSP_MS_Num 
 			     && (int)memP->memSpace > (int)DSP_MS_N) ? 
-			    DSPMemoryNames[(int)memP->memSpace] : "invalid"),
-			   DSPMemoryNames[(int)argP->addressMemSpace],
+			    ((int)memP->memSpace) : "invalid"),
+			   DSPMemoryNames((int)argP->addressMemSpace),
 			   argName(self,argNum),[NSStringFromClass([self class]) cString]);
     }
     if (optimize(self,argNum,argP,memP->address,0))
@@ -996,7 +977,7 @@ extern int _MKOrchestraGetNoops(void);
 	for (i = 0; i < argCount; i++) {
 	    addrP = &(argP->addrStruct);
 	    [s appendData:[[NSString stringWithFormat:@"_SYMBOL %s\n",
-                DSPMemoryNames[addrP->memSpace]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+                DSPMemoryNames(addrP->memSpace)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	    [s appendData:[[NSString stringWithFormat:@"UG%d_%s I %06X\n",
                 _instanceNumber,
                 sp->name,
@@ -1047,7 +1028,7 @@ extern int _MKOrchestraGetNoops(void);
 		    (addr==(loadAddresses[fixup->locationCounter]+
 			    (*data)->wordCount)))
 		  continue;  /* If it's a label to the next UG, let that UG give label */
-		[s appendData:[[NSString stringWithFormat:@"_SYMBOL %s\n", DSPMemoryNames[DSPLCtoMS[i+DSP_LC_P]]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+		[s appendData:[[NSString stringWithFormat:@"_SYMBOL %s\n", DSPMemoryNames(DSPLCtoMS[i+DSP_LC_P])] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 		[s appendData:[[NSString stringWithFormat:@"UG%d_RelAddr%d I %06X\n", _instanceNumber,++relAddrNum,
 			 addr] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	    }
