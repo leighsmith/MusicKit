@@ -134,8 +134,6 @@ static int ioTags = 1000;
 	info = nil;
 
     currentError = 0;
-    _scratchSnd = NULL;
-    _scratchSize = 0;
     tag = 0;
 
     if (performancesArray == nil) {
@@ -158,44 +156,44 @@ static int ioTags = 1000;
 }
 
 - initWithFormat: (SndSampleFormat) format
-		channels: (int) channels
-		  frames: (int) frames
+    channelCount: (int) channels
+	  frames: (int) frames
     samplingRate: (float) samplingRate
 {
-	self = [self init];
-	if(self != nil) {
+    self = [self init];
+    if(self != nil) {
 #if 1 // while we still use soundStruct
-		if (soundStruct == NULL) {
-			if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
-				[[NSException exceptionWithName: @"Sound Error"
-										 reason: @"Can't allocate memory for Snd class"
-									   userInfo: nil] raise];
-		}
-		
-		// TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
-		// it should eventually be removed now we use Sox for File I/O.
-		soundStruct->magic        = SND_MAGIC;
-		soundStruct->dataLocation = 0; 
-		soundStruct->dataSize     = 0;
-		soundStruct->dataFormat   = format;
-		soundStruct->samplingRate = (int) samplingRate;
-		soundStruct->channelCount = channels;
-		[self setDataSize: SndFramesToBytes(frames, channels, format)
-			   dataFormat: format
-			 samplingRate: (int) samplingRate
-			 channelCount: channels
-				 infoSize: 0];
-#endif
-		soundFormat.dataFormat = format;
-		soundFormat.sampleRate = samplingRate;
-		soundFormat.channelCount = channels;
-		soundFormat.frameCount = frames;
-		// info = @""; // TODO, should we just leave it nil, rather than empty?
+	if (soundStruct == NULL) {
+	    if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
+		[[NSException exceptionWithName: @"Sound Error"
+					 reason: @"Can't allocate memory for Snd class"
+				       userInfo: nil] raise];
 	}
-	return self;
+	
+	// TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
+	// it should eventually be removed now we use Sox for File I/O.
+	soundStruct->magic        = SND_MAGIC;
+	soundStruct->dataLocation = 0; 
+	soundStruct->dataSize     = 0;
+	soundStruct->dataFormat   = format;
+	soundStruct->samplingRate = (int) samplingRate;
+	soundStruct->channelCount = channels;
+	[self setDataSize: SndFramesToBytes(frames, channels, format)
+	       dataFormat: format
+	     samplingRate: (int) samplingRate
+	     channelCount: channels
+		 infoSize: 0];
+#endif
+	soundFormat.dataFormat = format;
+	soundFormat.sampleRate = samplingRate;
+	soundFormat.channelCount = channels;
+	soundFormat.frameCount = frames;
+	// info = @""; // TODO, should we just leave it nil, rather than empty?
+    }
+    return self;
 }
 
-- initWithAudioBuffer: (SndAudioBuffer*) aBuffer
+- initWithAudioBuffer: (SndAudioBuffer *) aBuffer
 {
   self = [self init];
   if (soundStruct == NULL)
@@ -204,7 +202,7 @@ static int ioTags = 1000;
                                reason: @"Can't allocate memory for Snd class"
                              userInfo: nil] raise];
 
-  soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr.
+  soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr. Cos' no-one got off their arse to fix it yet.
   soundStruct->dataLocation = 0;
   soundStruct->dataSize     = 0;
   soundStruct->dataFormat   = [aBuffer dataFormat];
@@ -237,6 +235,7 @@ static int ioTags = 1000;
 {
   self = [self init];
   if (self != nil) {
+      // TODO this should actually read HTTP, FTP URLs also.
     if ([self readSoundfile: [url path]] != SND_ERR_NONE) {
       [self release];
       return nil;
@@ -265,9 +264,9 @@ static int ioTags = 1000;
     return SndFileExtensions();
 }
 
-+ (NSString*) defaultFileExtension
++ (NSString *) defaultFileExtension
 {
-    return @"snd"; // TODO this should probably be determined at run time based on the operating system
+    return @"au"; // TODO this should probably be determined at run time based on the operating system
 }
 
 + (BOOL) isPathForSoundFile: (NSString *) path
@@ -292,7 +291,6 @@ static int ioTags = 1000;
         [name release];
     }
     if (soundStruct) SndFree(soundStruct);
-    if (_scratchSnd) SndFree(_scratchSnd);
     [performancesArray release];
     performancesArray = nil;
     [performancesArrayLock release];
@@ -303,8 +301,11 @@ static int ioTags = 1000;
 // for debugging
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ (%@ %@)", [super description], name,
-		(soundStruct != NULL) ? SndStructDescription(soundStruct) : @""];
+    return [NSString stringWithFormat: @"%@ (%@ %@)", 
+	[super description],
+	name != nil ? name : @"(unnamed)",
+	(soundStruct != NULL) ? SndStructDescription(soundStruct) : @""];
+    // TODO SndFormatDescription(format)
 }
 
 - readSoundFromData: (NSData *) stream
@@ -576,8 +577,8 @@ static int ioTags = 1000;
 
 - (void) setInfo: (NSString *) newInfoString
 {
-	[info release];
-	info = [newInfoString copy];
+    [info release];
+    info = [newInfoString copy];
 }
 
 #if !MKPERFORMSND_USE_STREAMING
@@ -1088,7 +1089,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     /* SndConvertMediumQuality: medium conversion, small filter, uses interpolation */
     /* SndConvertHighQuality: slow, accurate conversion, large filter, uses interpolation */
     error = [bufferToConvert convertToFormat: toFormat
-                                channelCount: toChannelCount
+				channelCount: toChannelCount
                                 samplingRate: toRate
                               useLargeFilter: conversionQuality == SndConvertHighQuality
                            interpolateFilter: conversionQuality != SndConvertLowQuality
@@ -1268,6 +1269,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     return (soundStruct->dataFormat == SND_FORMAT_INDIRECT);
 }
 
+// TODO should be named: - (void *) bytes
 - (unsigned char *) data
 {
   if (!soundStruct) return NULL;
@@ -1299,14 +1301,14 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     return df;
 }
 
-- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer*) buff
+- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff
 {
     if (buff == nil)
 	return FALSE;
     else
-	return (soundStruct->dataFormat   == [buff dataFormat]  ) &&
-	       (soundStruct->channelCount == [buff channelCount]) &&
-	       (soundStruct->samplingRate == [buff samplingRate]);
+	return ([self dataFormat]   == [buff dataFormat]  ) &&
+	       ([self channelCount] == [buff channelCount]) &&
+	       ([self samplingRate] == [buff samplingRate]);
 }
 
 - (int) setDataSize: (int) newDataSize
@@ -1420,7 +1422,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
   return [performancesArray count];
 }
 
-- (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r
 {
   SndAudioBuffer *ab  = [SndAudioBuffer alloc];
   int   samSize       = SndFrameSize(soundStruct);
@@ -1466,7 +1468,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 	long framesRead = [buff convertBytes: sndDataPtr
 			      intoFrameRange: bufferFrameRange
 			          fromFormat: [self dataFormat]
-			            channels: [self channelCount]
+				channelCount: [self channelCount]
 			        samplingRate: [self samplingRate]];
 	
 	//NSLog(@"buffer to fill %@ mismatched to %@, converted, read %ld\n", buff, self, framesRead);
@@ -1500,6 +1502,36 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 			intoFrameRange: bufferRange
 		        samplesInRange: readFromSndSample];
 }
+
+- (long) insertAudioBuffer: (SndAudioBuffer *) buffer
+	    intoFrameRange: (NSRange) writeIntoSndFrameRange
+{    
+    if(![self hasSameFormatAsBuffer: buffer]) { // If not the same, do a data conversion.
+	NSLog(@"mismatched buffer %@ and snd %@ formats, format conversion needs implementation\n", buffer, self);
+    }
+
+    memcpy([self data] + writeIntoSndFrameRange.location, [buffer bytes], writeIntoSndFrameRange.length);
+    return [self lengthInSampleFrames];
+}
+
+- (long) appendAudioBuffer: (SndAudioBuffer *) buffer
+{    
+    // If not the same, do a data conversion.
+    if(![self hasSameFormatAsBuffer: buffer]) {
+	NSLog(@"mismatched buffer %@ and snd %@ formats, format conversion needs implementation\n", buffer, self);
+    }
+    else {
+	Snd *fromSound = [[Snd alloc] initWithAudioBuffer: buffer];
+	
+	if(SndInsertSamples([self soundStruct], [fromSound soundStruct], [self lengthInSampleFrames]) != SND_ERR_NONE) {
+	    NSLog(@"appendAudioBuffer: Unable to insert samples\n");
+	    return 0;
+	}
+	[fromSound release];
+    }
+    return [self lengthInSampleFrames];
+}
+
 
 - (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo
 {

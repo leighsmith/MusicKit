@@ -132,7 +132,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 */
 
 /*!
-  @enum       SNDSoundConversion
+  @enum       SndConversionQuality
   @abstract   Sound conversion quality codes
   @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
   @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
@@ -167,7 +167,7 @@ typedef enum {
 /*! @var soundFormat The parameters defining the format of the sound. */
     SndFormat soundFormat;
 /*! @var info A descriptive information string read from a sound file. */
-	NSString *info;
+    NSString *info;
 /*! @var soundStructSize the length of the structure in bytes */
     int soundStructSize;
 
@@ -179,10 +179,6 @@ typedef enum {
     int status;			 
 /*! @var name The name of the sound */
     NSString *name;
-/*! @var _scratchSnd */
-    SndSoundStruct *_scratchSnd;
-/*! @var _scratchSize */
-    int _scratchSize;
 /*! @var currentError */
     int currentError;
 /*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
@@ -220,15 +216,6 @@ typedef enum {
 /*! @var tag A unique identifier tag for the Snd */
     int tag;
 }
-
-
-
-/*
- * Macho segment name where sounds may be.
- */
-#ifndef NX_SOUND_SEGMENT_NAME
-#define NX_SOUND_SEGMENT_NAME "__SND"
-#endif
 
 /*
  * --------------- Factory Methods
@@ -393,14 +380,14 @@ typedef enum {
 - initFromSoundURL: (NSURL *) url;
 
 /*!
-  @method initWithFormat:channels:frames:samplingRate:
+  @method initWithFormat:channelCount:frames:samplingRate:
   @param  format
   @param  channels
   @param  frames
   @param  samplingRate
 */
 - initWithFormat: (SndSampleFormat) format
-        channels: (int) channels
+        channelCount: (int) channels
           frames: (int) frames
     samplingRate: (float) samplingRate;
 
@@ -420,7 +407,7 @@ typedef enum {
 /*!
   @method writeSoundToStream:
   @param  stream is an NSMutableData instance.
-  @discussion Writes the Snd's name (if any), priority, SndSoundStruct, and
+  @discussion Writes the Snd's name (if any), priority, sample format, and
               sound data (if any) to the NSMutableData <i>stream</i>.
 */
 - writeSoundToStream: (NSMutableData *) stream;
@@ -772,7 +759,7 @@ typedef enum {
   @method writeSoundfile:
   @param  filename is a NSString *.
   @result Returns an int.
-  @discussion Writes the Snd's contents (its SndSoundStruct and sound data) to
+  @discussion Writes the Snd's contents (its sample format and sound data) to
               the sound file <i>filename</i>. An error code is
               returned.
 */
@@ -782,7 +769,7 @@ typedef enum {
   @method writeToPasteboard:
   @param  thePboard is a NSPasteboard *.
   @result Returns an int.
-  @discussion Puts a copy of the Snd's contents (its SndSoundStruct and sound
+  @discussion Puts a copy of the Snd's contents (its sample format and sound
               data) on the pasteboard maintained by the NSPasteboard object
               <i>thePboard</i>. If the Snd is fragmented, it's compacted before
               the copy is created. An error code is returned.
@@ -1244,6 +1231,24 @@ typedef enum {
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
 		intoFrameRange: (NSRange) bufferFrameRange
 		samplesInRange: (NSRange) sndFrameRange;
+
+/*!
+  @method insertAudioBuffer:intoFrameRange:
+  @abstract Copies in the given SndAudioBuffer into the Snd instance.
+  @param buffer The SndAudioBuffer to copy sound from.
+  @param writeIntoSndFrameRange The range of frames to copy. Can not be longer than the buffer.
+  @result Returns the new size of the buffer.
+ */
+- (long) insertAudioBuffer: (SndAudioBuffer *) buffer
+	    intoFrameRange: (NSRange) writeIntoSndFrameRange;
+
+/*!
+  @method appendAudioBuffer:
+  @abstract Appends the given SndAudioBuffer to the end of the Snd instance.
+  @param buffer The SndAudioBuffer to copy sound from.
+  @result Returns the new size of the buffer.
+ */
+- (long) appendAudioBuffer: (SndAudioBuffer *) buffer;
 
 /*!
   @method initWithAudioBuffer:
