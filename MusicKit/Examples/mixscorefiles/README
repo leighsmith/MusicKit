@@ -15,12 +15,11 @@ For example, to select the notes between time .2 and 2 (inclusive) and shift the
 The -f, -s and -l arguments apply to the preceeding file in the list.
 Consider the following example:
 
-	mixscorefiles -i file1.score -f .2 -i file2.score \
-		-f 1 -o outputFile.score
+	mixscorefiles -i file1.score -f .2 -i file2.score -f 1 -o outputFile.score
 
 This means "mix file1.score from .2 to the end of the file with file2.score from 1 to the end of the file and write the result into the outputFile.score".
 
-Example scorefiles you can use with this program may be found on the directory /LocalLibrary/Music/Scores. 
+Example scorefiles you can use with this program may be found on the directory /Local/Library/Music/Scores. 
 
 There are some special considerations when mixing scorefiles.  If you mix two scorefiles, each of which uses the DSP to its fullest, and you mix the results so they are overlapping, the result will not be playable, because it would require more synthesis power than the DSP can provide.  In this case, you can use playscore to write each file out as a soundfile and then use the mixsounds programming example to mix them.  
 
@@ -30,6 +29,6 @@ EXAMPLE
 
 Try this:
 
-mixscorefiles -i /LocalLibrary/Music/Scores/Emma.score -i /LocalLibrary/Music/Scores/Emma.score -s 2.5 -o round.score 
+mixscorefiles -i /Local/Library/Music/Scores/Emma.score -i /Local/Library/Music/Scores/Emma.score -s 2.5 -o round.score 
 
 Then edit round.score and remove parameter "synthPatchCount:1," from each part info statement.  Then play it with playscore or ScorePlayer.
