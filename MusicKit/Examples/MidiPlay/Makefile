@@ -9,37 +9,55 @@
 
 NAME = MidiPlay
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+ICONSECTIONS =	-sectcreate __ICON app $(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Resources/NSDefaultApplicationIcon.tiff
 
-LOCAL_RESOURCES = Info.nib MidiPlay.nib
+English_RESOURCES = MidiPlay.nib Info.nib
 
-GLOBAL_RESOURCES = mkmon_A_32k.dsp mkmon_A_8k.dsp
+LANGUAGES = English
 
-CLASSES = MidiFilter.m MyApp.m
+GLOBAL_RESOURCES = mkmon_A_32k.dsp mkmon_A_8k.dsp mkmon_A_192k.dsp\
+                   mkmon_A_turtlebeachms.dsp mkmon_A_arielpc56d.dsp\
+                   mkmon_A_ilinki56.dsp
 
-HFILES = MidiFilter.h MyApp.h
+CLASSES = MidiFilter.m MidiPlayController.m
+
+HFILES = MidiFilter.h MidiPlayController.h
 
 MFILES = MidiPlay_main.m
 
 OTHERSRCS = MidiPlay.iconheader README
 
 
-MAKEFILEDIR = /NextDeveloper/Makefiles/app
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app /usr/lib/NextStep/Workspace.app/application.tiff
-
-LIBS = -lsynthpatches -lunitgenerators -lmusickit -ldsp -lNeXT_s -lDriver
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
+MAKEFILE = app.make
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
+LIBS = 
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
+FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
+             -framework MKPerformSndMIDI -framework MusicKit
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
+
 -include Makefile.preamble
 
-include $(MAKEFILEDIR)/app.make
+include $(MAKEFILEDIR)/$(MAKEFILE)
 
 -include Makefile.postamble
 

@@ -1,0 +1,3609 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 26;
+	objects = {
+		00D5A006FED5ABC1CFED3B93 = {
+			isa = PBXProject;
+			mainGroup = 00D5A007FED5ABC1CFED3B93;
+			productRefGroup = 00D5A008FED5ABC1CFED3B93;
+			projectDirPath = .;
+			targets = (
+				00D5A0C5FED5ABC1CFED3B93,
+			);
+		};
+		00D5A007FED5ABC1CFED3B93 = {
+			children = (
+				00D5A008FED5ABC1CFED3B93,
+				00D5A00AFED5ABC1CFED3B93,
+				00D5A042FED5ABC1CFED3B93,
+				00D5A0A1FED5ABC1CFED3B93,
+				00D5A0A4FED5ABC1CFED3B93,
+				00D5A0A6FED5ABC1CFED3B93,
+				00D5A0BEFED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = MusicKit;
+			refType = 4;
+		};
+		00D5A008FED5ABC1CFED3B93 = {
+			children = (
+				00D5A009FED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		00D5A009FED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			path = MusicKit.framework;
+			refType = 3;
+		};
+		00D5A00AFED5ABC1CFED3B93 = {
+			children = (
+				00D5A00BFED5ABC1CFED3B93,
+				00D5A00CFED5ABC1CFED3B93,
+				00D5A00DFED5ABC1CFED3B93,
+				00D5A00EFED5ABC1CFED3B93,
+				00D5A00FFED5ABC1CFED3B93,
+				00D5A010FED5ABC1CFED3B93,
+				00D5A011FED5ABC1CFED3B93,
+				00D5A012FED5ABC1CFED3B93,
+				00D5A013FED5ABC1CFED3B93,
+				00D5A014FED5ABC1CFED3B93,
+				00D5A015FED5ABC1CFED3B93,
+				00D5A016FED5ABC1CFED3B93,
+				00D5A017FED5ABC1CFED3B93,
+				00D5A018FED5ABC1CFED3B93,
+				00D5A019FED5ABC1CFED3B93,
+				00D5A01AFED5ABC1CFED3B93,
+				00D5A01BFED5ABC1CFED3B93,
+				00D5A01CFED5ABC1CFED3B93,
+				00D5A01DFED5ABC1CFED3B93,
+				00D5A01EFED5ABC1CFED3B93,
+				02CDDD26FEF14087CFED3B93,
+				02CDDD2AFEF1622CCFED3B93,
+				00D5A01FFED5ABC1CFED3B93,
+				00D5A020FED5ABC1CFED3B93,
+				00D5A021FED5ABC1CFED3B93,
+				00D5A022FED5ABC1CFED3B93,
+				00D5A023FED5ABC1CFED3B93,
+				00D5A024FED5ABC1CFED3B93,
+				00D5A025FED5ABC1CFED3B93,
+				00D5A026FED5ABC1CFED3B93,
+				00D5A027FED5ABC1CFED3B93,
+				00D5A028FED5ABC1CFED3B93,
+				00D5A029FED5ABC1CFED3B93,
+				00D5A02AFED5ABC1CFED3B93,
+				00D5A02BFED5ABC1CFED3B93,
+				00D5A02CFED5ABC1CFED3B93,
+				00D5A02DFED5ABC1CFED3B93,
+				00D5A02EFED5ABC1CFED3B93,
+				00D5A02FFED5ABC1CFED3B93,
+				00D5A030FED5ABC1CFED3B93,
+				00D5A031FED5ABC1CFED3B93,
+				00D5A032FED5ABC1CFED3B93,
+				00D5A033FED5ABC1CFED3B93,
+				00D5A034FED5ABC1CFED3B93,
+				00D5A035FED5ABC1CFED3B93,
+				00D5A036FED5ABC1CFED3B93,
+				02CDDD2EFEF166B5CFED3B93,
+				00D5A037FED5ABC1CFED3B93,
+				00D5A038FED5ABC1CFED3B93,
+				00D5A039FED5ABC1CFED3B93,
+				00D5A03AFED5ABC1CFED3B93,
+				00D5A03BFED5ABC1CFED3B93,
+				00D5A03CFED5ABC1CFED3B93,
+				00D5A03DFED5ABC1CFED3B93,
+				00D5A03EFED5ABC1CFED3B93,
+				00D5A03FFED5ABC1CFED3B93,
+				00D5A040FED5ABC1CFED3B93,
+				00D5A041FED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		00D5A00BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ArielQP.m;
+			refType = 4;
+		};
+		00D5A00CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = DSPSerialPortDevice.m;
+			refType = 4;
+		};
+		00D5A00DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKConductor.m;
+			refType = 4;
+		};
+		00D5A00EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKEnvelope.m;
+			refType = 4;
+		};
+		00D5A00FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKFilePerformer.m;
+			refType = 4;
+		};
+		00D5A010FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKFileWriter.m;
+			refType = 4;
+		};
+		00D5A011FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKInstrument.m;
+			refType = 4;
+		};
+		00D5A012FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKMidi.m;
+			refType = 4;
+		};
+		00D5A013FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKMixerInstrument.m;
+			refType = 4;
+		};
+		00D5A014FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKMTCPerformer.m;
+			refType = 4;
+		};
+		00D5A015FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNote.m;
+			refType = 4;
+		};
+		00D5A016FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNoteFilter.m;
+			refType = 4;
+		};
+		00D5A017FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNoteReceiver.m;
+			refType = 4;
+		};
+		00D5A018FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNoteSender.m;
+			refType = 4;
+		};
+		00D5A019FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKOrchestra.m;
+			refType = 4;
+		};
+		00D5A01AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPart.m;
+			refType = 4;
+		};
+		00D5A01BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartPerformer.m;
+			refType = 4;
+		};
+		00D5A01CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartRecorder.m;
+			refType = 4;
+		};
+		00D5A01DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartials.m;
+			refType = 4;
+		};
+		00D5A01EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartialsWaveshapingTable.m;
+			refType = 4;
+		};
+		00D5A01FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPatchTemplate.m;
+			refType = 4;
+		};
+		00D5A020FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPerformer.m;
+			refType = 4;
+		};
+		00D5A021FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSamplerInstrument.m;
+			refType = 4;
+		};
+		00D5A022FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSamples.m;
+			refType = 4;
+		};
+		00D5A023FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScore.m;
+			refType = 4;
+		};
+		00D5A024FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorePerformer.m;
+			refType = 4;
+		};
+		00D5A025FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScoreRecorder.m;
+			refType = 4;
+		};
+		00D5A026FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorefilePerformer.m;
+			refType = 4;
+		};
+		00D5A027FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorefileWriter.m;
+			refType = 4;
+		};
+		00D5A028FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSynthData.m;
+			refType = 4;
+		};
+		00D5A029FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSynthInstrument.m;
+			refType = 4;
+		};
+		00D5A02AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSynthPatch.m;
+			refType = 4;
+		};
+		00D5A02BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKTimbre.m;
+			refType = 4;
+		};
+		00D5A02CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKTuningSystem.m;
+			refType = 4;
+		};
+		00D5A02DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKUnitGenerator.m;
+			refType = 4;
+		};
+		00D5A02EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKWaveTable.m;
+			refType = 4;
+		};
+		00D5A02FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = OrchloopbeginUG.m;
+			refType = 4;
+		};
+		00D5A030FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MKAppProxy.m;
+			refType = 4;
+		};
+		00D5A031FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MKNameTable.m;
+			refType = 4;
+		};
+		00D5A032FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MTCHelper.m;
+			refType = 4;
+		};
+		00D5A033FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _OrchloopbeginUG.m;
+			refType = 4;
+		};
+		00D5A034FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _ParName.m;
+			refType = 4;
+		};
+		00D5A035FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _ScorefileVar.m;
+			refType = 4;
+		};
+		00D5A036FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _SharedSynthInfo.m;
+			refType = 4;
+		};
+		00D5A037FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = conversion.m;
+			refType = 4;
+		};
+		00D5A038FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = midifile.m;
+			refType = 4;
+		};
+		00D5A039FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = noteRecorderCFuncs.m;
+			refType = 4;
+		};
+		00D5A03AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = parseMidi.m;
+			refType = 4;
+		};
+		00D5A03BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = parseScore.m;
+			refType = 4;
+		};
+		00D5A03CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = time.m;
+			refType = 4;
+		};
+		00D5A03DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = tokenNames.m;
+			refType = 4;
+		};
+		00D5A03EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = utilities.m;
+			refType = 4;
+		};
+		00D5A03FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = writeBinary.m;
+			refType = 4;
+		};
+		00D5A040FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = writeMidi.m;
+			refType = 4;
+		};
+		00D5A041FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = writeScore.m;
+			refType = 4;
+		};
+		00D5A042FED5ABC1CFED3B93 = {
+			children = (
+				00D5A043FED5ABC1CFED3B93,
+				00D5A044FED5ABC1CFED3B93,
+				00D5A045FED5ABC1CFED3B93,
+				00D5A046FED5ABC1CFED3B93,
+				00D5A047FED5ABC1CFED3B93,
+				00D5A048FED5ABC1CFED3B93,
+				00D5A049FED5ABC1CFED3B93,
+				00D5A04AFED5ABC1CFED3B93,
+				00D5A04BFED5ABC1CFED3B93,
+				00D5A04CFED5ABC1CFED3B93,
+				00D5A04DFED5ABC1CFED3B93,
+				00D5A04EFED5ABC1CFED3B93,
+				00D5A04FFED5ABC1CFED3B93,
+				00D5A050FED5ABC1CFED3B93,
+				00D5A051FED5ABC1CFED3B93,
+				00D5A052FED5ABC1CFED3B93,
+				00D5A053FED5ABC1CFED3B93,
+				00D5A054FED5ABC1CFED3B93,
+				00D5A055FED5ABC1CFED3B93,
+				00D5A056FED5ABC1CFED3B93,
+				00D5A057FED5ABC1CFED3B93,
+				00D5A058FED5ABC1CFED3B93,
+				00D5A059FED5ABC1CFED3B93,
+				00D5A05AFED5ABC1CFED3B93,
+				02CDDD27FEF14087CFED3B93,
+				02CDDD2CFEF16257CFED3B93,
+				00D5A05BFED5ABC1CFED3B93,
+				00D5A05CFED5ABC1CFED3B93,
+				00D5A05DFED5ABC1CFED3B93,
+				00D5A05EFED5ABC1CFED3B93,
+				00D5A05FFED5ABC1CFED3B93,
+				00D5A060FED5ABC1CFED3B93,
+				00D5A061FED5ABC1CFED3B93,
+				00D5A062FED5ABC1CFED3B93,
+				00D5A063FED5ABC1CFED3B93,
+				00D5A064FED5ABC1CFED3B93,
+				00D5A065FED5ABC1CFED3B93,
+				00D5A066FED5ABC1CFED3B93,
+				00D5A067FED5ABC1CFED3B93,
+				00D5A068FED5ABC1CFED3B93,
+				00D5A069FED5ABC1CFED3B93,
+				00D5A06AFED5ABC1CFED3B93,
+				00D5A06BFED5ABC1CFED3B93,
+				00D5A06CFED5ABC1CFED3B93,
+				00D5A06DFED5ABC1CFED3B93,
+				00D5A06EFED5ABC1CFED3B93,
+				00D5A06FFED5ABC1CFED3B93,
+				00D5A070FED5ABC1CFED3B93,
+				00D5A071FED5ABC1CFED3B93,
+				00D5A072FED5ABC1CFED3B93,
+				00D5A073FED5ABC1CFED3B93,
+				00D5A074FED5ABC1CFED3B93,
+				00D5A075FED5ABC1CFED3B93,
+				00D5A076FED5ABC1CFED3B93,
+				00D5A077FED5ABC1CFED3B93,
+				00D5A078FED5ABC1CFED3B93,
+				00D5A079FED5ABC1CFED3B93,
+				00D5A07AFED5ABC1CFED3B93,
+				00D5A07BFED5ABC1CFED3B93,
+				00D5A07CFED5ABC1CFED3B93,
+				00D5A07DFED5ABC1CFED3B93,
+				00D5A07EFED5ABC1CFED3B93,
+				02CDDD2FFEF166B5CFED3B93,
+				00D5A07FFED5ABC1CFED3B93,
+				00D5A080FED5ABC1CFED3B93,
+				00D5A081FED5ABC1CFED3B93,
+				00D5A082FED5ABC1CFED3B93,
+				00D5A083FED5ABC1CFED3B93,
+				00D5A084FED5ABC1CFED3B93,
+				00D5A085FED5ABC1CFED3B93,
+				00D5A086FED5ABC1CFED3B93,
+				00D5A087FED5ABC1CFED3B93,
+				00D5A088FED5ABC1CFED3B93,
+				00D5A089FED5ABC1CFED3B93,
+				00D5A08AFED5ABC1CFED3B93,
+				00D5A08BFED5ABC1CFED3B93,
+				00D5A08CFED5ABC1CFED3B93,
+				00D5A08DFED5ABC1CFED3B93,
+				00D5A08EFED5ABC1CFED3B93,
+				00D5A08FFED5ABC1CFED3B93,
+				00D5A090FED5ABC1CFED3B93,
+				00D5A091FED5ABC1CFED3B93,
+				00D5A092FED5ABC1CFED3B93,
+				00D5A093FED5ABC1CFED3B93,
+				00D5A094FED5ABC1CFED3B93,
+				00D5A095FED5ABC1CFED3B93,
+				00D5A096FED5ABC1CFED3B93,
+				00D5A097FED5ABC1CFED3B93,
+				00D5A098FED5ABC1CFED3B93,
+				00D5A099FED5ABC1CFED3B93,
+				00D5A09AFED5ABC1CFED3B93,
+				00D5A09BFED5ABC1CFED3B93,
+				00D5A09CFED5ABC1CFED3B93,
+				00D5A09DFED5ABC1CFED3B93,
+				00D5A09EFED5ABC1CFED3B93,
+				00D5A09FFED5ABC1CFED3B93,
+				00D5A0A0FED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		00D5A043FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ArielQP.h;
+			refType = 4;
+		};
+		00D5A044FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ConductorPrivate.h;
+			refType = 4;
+		};
+		00D5A045FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = DSPSerialPortDevice.h;
+			refType = 4;
+		};
+		00D5A046FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = EnvelopePrivate.h;
+			refType = 4;
+		};
+		00D5A047FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = InstrumentPrivate.h;
+			refType = 4;
+		};
+		00D5A048FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKConductor.h;
+			refType = 4;
+		};
+		00D5A049FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKConductorDelegate.h;
+			refType = 4;
+		};
+		00D5A04AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKDeviceStatus.h;
+			refType = 4;
+		};
+		00D5A04BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKEnvelope.h;
+			refType = 4;
+		};
+		00D5A04CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKFilePerformer.h;
+			refType = 4;
+		};
+		00D5A04DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKFileWriter.h;
+			refType = 4;
+		};
+		00D5A04EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKInstrument.h;
+			refType = 4;
+		};
+		00D5A04FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKMTCPerformer.h;
+			refType = 4;
+		};
+		00D5A050FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKMidi.h;
+			refType = 4;
+		};
+		00D5A051FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKMixerInstrument.h;
+			refType = 4;
+		};
+		00D5A052FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNote.h;
+			refType = 4;
+		};
+		00D5A053FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNoteFilter.h;
+			refType = 4;
+		};
+		00D5A054FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNoteReceiver.h;
+			refType = 4;
+		};
+		00D5A055FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKNoteSender.h;
+			refType = 4;
+		};
+		00D5A056FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKOrchestra.h;
+			refType = 4;
+		};
+		00D5A057FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPart.h;
+			refType = 4;
+		};
+		00D5A058FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartPerformer.h;
+			refType = 4;
+		};
+		00D5A059FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartRecorder.h;
+			refType = 4;
+		};
+		00D5A05AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPartials.h;
+			refType = 4;
+		};
+		00D5A05BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPatchTemplate.h;
+			refType = 4;
+		};
+		00D5A05CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPerformer.h;
+			refType = 4;
+		};
+		00D5A05DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPerformerDelegate.h;
+			refType = 4;
+		};
+		00D5A05EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSamplerInstrument.h;
+			refType = 4;
+		};
+		00D5A05FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSamples.h;
+			refType = 4;
+		};
+		00D5A060FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScore.h;
+			refType = 4;
+		};
+		00D5A061FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorePerformer.h;
+			refType = 4;
+		};
+		00D5A062FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScoreRecorder.h;
+			refType = 4;
+		};
+		00D5A063FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorefileObject.h;
+			refType = 4;
+		};
+		00D5A064FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorefilePerformer.h;
+			refType = 4;
+		};
+		00D5A065FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKScorefileWriter.h;
+			refType = 4;
+		};
+		00D5A066FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSynthData.h;
+			refType = 4;
+		};
+		00D5A067FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSynthInstrument.h;
+			refType = 4;
+		};
+		00D5A068FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKSynthPatch.h;
+			refType = 4;
+		};
+		00D5A069FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKTimbre.h;
+			refType = 4;
+		};
+		00D5A06AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKTuningSystem.h;
+			refType = 4;
+		};
+		00D5A06BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKUnitGenerator.h;
+			refType = 4;
+		};
+		00D5A06CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKWaveTable.h;
+			refType = 4;
+		};
+		00D5A06DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MidiPrivate.h;
+			refType = 4;
+		};
+		00D5A06EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = MusicKit.h;
+			refType = 4;
+		};
+		00D5A06FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = NotePrivate.h;
+			refType = 4;
+		};
+		00D5A070FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = NoteReceiverPrivate.h;
+			refType = 4;
+		};
+		00D5A071FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = OrchestraPrivate.h;
+			refType = 4;
+		};
+		00D5A072FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = OrchloopbeginUG.h;
+			refType = 4;
+		};
+		00D5A073FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = PartPerformerPrivate.h;
+			refType = 4;
+		};
+		00D5A074FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = PartPrivate.h;
+			refType = 4;
+		};
+		00D5A075FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = PartRecorderPrivate.h;
+			refType = 4;
+		};
+		00D5A076FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = PartialsPrivate.h;
+			refType = 4;
+		};
+		00D5A077FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = PatchTemplatePrivate.h;
+			refType = 4;
+		};
+		00D5A078FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = PerformerPrivate.h;
+			refType = 4;
+		};
+		00D5A079FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ScorePerformerPrivate.h;
+			refType = 4;
+		};
+		00D5A07AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ScorePrivate.h;
+			refType = 4;
+		};
+		00D5A07BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ScoreRecorderPrivate.h;
+			refType = 4;
+		};
+		00D5A07CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = ScorefilePerformerPrivate.h;
+			refType = 4;
+		};
+		00D5A07DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = SynthDataPrivate.h;
+			refType = 4;
+		};
+		00D5A07EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = SynthInstrumentPrivate.h;
+			refType = 4;
+		};
+		00D5A07FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = SynthPatchPrivate.h;
+			refType = 4;
+		};
+		00D5A080FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = TuningSystemPrivate.h;
+			refType = 4;
+		};
+		00D5A081FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = UnitGeneratorPrivate.h;
+			refType = 4;
+		};
+		00D5A082FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _ArielQP.h;
+			refType = 4;
+		};
+		00D5A083FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _DSPMK.h;
+			refType = 4;
+		};
+		00D5A084FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MKAppProxy.h;
+			refType = 4;
+		};
+		00D5A085FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MKNameTable.h;
+			refType = 4;
+		};
+		00D5A086FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MKParameter.h;
+			refType = 4;
+		};
+		00D5A087FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _MTCHelper.h;
+			refType = 4;
+		};
+		00D5A088FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _OrchloopbeginUG.h;
+			refType = 4;
+		};
+		00D5A089FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _ParName.h;
+			refType = 4;
+		};
+		00D5A08AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _ScorefileVar.h;
+			refType = 4;
+		};
+		00D5A08BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _SharedSynthInfo.h;
+			refType = 4;
+		};
+		00D5A08CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _error.h;
+			refType = 4;
+		};
+		00D5A08DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _midi.h;
+			refType = 4;
+		};
+		00D5A08EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _musickit.h;
+			refType = 4;
+		};
+		00D5A08FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _noteRecorder.h;
+			refType = 4;
+		};
+		00D5A090FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _scorefile.h;
+			refType = 4;
+		};
+		00D5A091FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _time.h;
+			refType = 4;
+		};
+		00D5A092FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = classFuncs.h;
+			refType = 4;
+		};
+		00D5A093FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = dsp_types.h;
+			refType = 4;
+		};
+		00D5A094FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = dspwrap.h;
+			refType = 4;
+		};
+		00D5A095FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = errors.h;
+			refType = 4;
+		};
+		00D5A096FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = keynums.h;
+			refType = 4;
+		};
+		00D5A097FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = midiTranslation.h;
+			refType = 4;
+		};
+		00D5A098FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = midi_spec.h;
+			refType = 4;
+		};
+		00D5A099FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = midifile.h;
+			refType = 4;
+		};
+		00D5A09AFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = names.h;
+			refType = 4;
+		};
+		00D5A09BFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = noDVal.h;
+			refType = 4;
+		};
+		00D5A09CFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = orch.h;
+			refType = 4;
+		};
+		00D5A09DFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = params.h;
+			refType = 4;
+		};
+		00D5A09EFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = pitches.h;
+			refType = 4;
+		};
+		00D5A09FFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = timeunits.h;
+			refType = 4;
+		};
+		00D5A0A0FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = tokens.h;
+			refType = 4;
+		};
+		00D5A0A1FED5ABC1CFED3B93 = {
+			children = (
+				00D5A0A2FED5ABC1CFED3B93,
+				00D5A0A3FED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		00D5A0A2FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = sin.c;
+			refType = 4;
+		};
+		00D5A0A3FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = fastFFT.c;
+			refType = 4;
+		};
+		00D5A0A4FED5ABC1CFED3B93 = {
+			children = (
+				00D5A0A5FED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+		};
+		00D5A0A5FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = Localized.strings;
+			refType = 4;
+		};
+		00D5A0A6FED5ABC1CFED3B93 = {
+			children = (
+				00D5A0A7FED5ABC1CFED3B93,
+				00D5A0A8FED5ABC1CFED3B93,
+				00D5A0A9FED5ABC1CFED3B93,
+				00D5A0AAFED5ABC1CFED3B93,
+				00D5A0ABFED5ABC1CFED3B93,
+				00D5A0ACFED5ABC1CFED3B93,
+				00D5A0ADFED5ABC1CFED3B93,
+				00D5A0AEFED5ABC1CFED3B93,
+				00D5A0AFFED5ABC1CFED3B93,
+				00D5A0B0FED5ABC1CFED3B93,
+				00D5A0B1FED5ABC1CFED3B93,
+				00D5A0B2FED5ABC1CFED3B93,
+				00D5A0B3FED5ABC1CFED3B93,
+				00D5A0B4FED5ABC1CFED3B93,
+				00D5A0B5FED5ABC1CFED3B93,
+				00D5A0B6FED5ABC1CFED3B93,
+				00D5A0B7FED5ABC1CFED3B93,
+				00D5A0B8FED5ABC1CFED3B93,
+				00D5A0B9FED5ABC1CFED3B93,
+				00D5A0BAFED5ABC1CFED3B93,
+				00D5A0BBFED5ABC1CFED3B93,
+				00D5A0BCFED5ABC1CFED3B93,
+				00D5A0BDFED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		00D5A0A7FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		00D5A0A8FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		00D5A0A9FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		00D5A0AAFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = _synthElementMethods.m;
+			refType = 4;
+		};
+		00D5A0ABFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = equalTempered.m;
+			refType = 4;
+		};
+		00D5A0ACFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		00D5A0ADFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		00D5A0AEFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = make.sh;
+			refType = 4;
+		};
+		00D5A0AFFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = mtcConductor.m;
+			refType = 4;
+		};
+		00D5A0B0FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = mtcConductorPrivate.m;
+			refType = 4;
+		};
+		00D5A0B1FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = mtcMidi.m;
+			refType = 4;
+		};
+		00D5A0B2FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = mtcMidiPrivate.m;
+			refType = 4;
+		};
+		00D5A0B3FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = noteDispatcherMethods.m;
+			refType = 4;
+		};
+		00D5A0B4FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = noteRecorderMethods.m;
+			refType = 4;
+		};
+		00D5A0B5FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = orchControl.m;
+			refType = 4;
+		};
+		00D5A0B6FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = orchloopbeginUGInclude.m;
+			refType = 4;
+		};
+		00D5A0B7FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = parNames.m;
+			refType = 4;
+		};
+		00D5A0B8FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = partialsDBInclude.m;
+			refType = 4;
+		};
+		00D5A0B9FED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = platform.make;
+			refType = 4;
+		};
+		00D5A0BAFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = synthElementCFuncs.m;
+			refType = 4;
+		};
+		00D5A0BBFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = synthElementMethods.m;
+			refType = 4;
+		};
+		00D5A0BCFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = timetagInclude.m;
+			refType = 4;
+		};
+		00D5A0BDFED5ABC1CFED3B93 = {
+			isa = PBXFileReference;
+			path = separateThread.m;
+			refType = 4;
+		};
+		00D5A0BEFED5ABC1CFED3B93 = {
+			children = (
+				00D5A0BFFED5ABC1CFED3B93,
+				00D5A0C0FED5ABC1CFED3B93,
+				00D5A0C1FED5ABC1CFED3B93,
+				00D5A0C2FED5ABC1CFED3B93,
+				00D5A0C3FED5ABC1CFED3B93,
+				00D5A0C4FED5ABC1CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		00D5A0BFFED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Local/Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		00D5A0C0FED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = SndKit.framework;
+			path = /System/Library/Frameworks/SndKit.framework;
+			refType = 0;
+		};
+		00D5A0C1FED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MKDSP.framework;
+			path = /Local/Library/Frameworks/MKDSP.framework;
+			refType = 0;
+		};
+		00D5A0C2FED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		00D5A0C3FED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		00D5A0C4FED5ABC1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = System.framework;
+			path = /System/Library/Frameworks/System.framework;
+			refType = 0;
+		};
+		00D5A0C5FED5ABC1CFED3B93 = {
+			buildPhases = (
+				00D5A0C6FED5ABC1CFED3B93,
+				00D5A125FED5ABC1CFED3B93,
+				00D5A127FED5ABC1CFED3B93,
+				00D5A161FED5ABC1CFED3B93,
+				00D5A168FED5ABC1CFED3B93,
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)//Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" /Local/Library/Frameworks \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = /Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit_3.3_Headers;
+				LIBRARY_SEARCH_PATHS = ./;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "-Wall";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRINCIPAL_CLASS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = framework;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXFrameworkTarget;
+			name = "MusicKit (Framework)";
+			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productName = MusicKit;
+			productReference = 00D5A009FED5ABC1CFED3B93;
+			productSettings = {
+				CFBundleDevelopmentRegion = English;
+				CFBundleExecutable = MusicKit;
+				CFBundleGetInfoString = "";
+				CFBundleIconFile = "";
+				CFBundleIdentifier = "";
+				CFBundleInfoDictionaryVersion = 6.0;
+				CFBundleName = "";
+				CFBundlePackageType = FMWK;
+				CFBundleShortVersionString = "";
+				CFBundleSignature = "????";
+				CFBundleVersion = 0.0.1d1;
+			};
+			shouldUseHeadermap = 0;
+		};
+		00D5A0C6FED5ABC1CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D5A0C7FED5ABC1CFED3B93,
+				00D5A0C8FED5ABC1CFED3B93,
+				00D5A0C9FED5ABC1CFED3B93,
+				00D5A0CAFED5ABC1CFED3B93,
+				00D5A0CBFED5ABC1CFED3B93,
+				00D5A0CCFED5ABC1CFED3B93,
+				00D5A0CDFED5ABC1CFED3B93,
+				00D5A0CEFED5ABC1CFED3B93,
+				00D5A0CFFED5ABC1CFED3B93,
+				00D5A0D0FED5ABC1CFED3B93,
+				00D5A0D1FED5ABC1CFED3B93,
+				00D5A0D2FED5ABC1CFED3B93,
+				00D5A0D3FED5ABC1CFED3B93,
+				00D5A0D4FED5ABC1CFED3B93,
+				00D5A0D5FED5ABC1CFED3B93,
+				00D5A0D6FED5ABC1CFED3B93,
+				00D5A0D7FED5ABC1CFED3B93,
+				00D5A0D8FED5ABC1CFED3B93,
+				00D5A0D9FED5ABC1CFED3B93,
+				00D5A0DAFED5ABC1CFED3B93,
+				00D5A0DBFED5ABC1CFED3B93,
+				00D5A0DCFED5ABC1CFED3B93,
+				00D5A0DDFED5ABC1CFED3B93,
+				00D5A0DEFED5ABC1CFED3B93,
+				00D5A0DFFED5ABC1CFED3B93,
+				00D5A0E0FED5ABC1CFED3B93,
+				00D5A0E1FED5ABC1CFED3B93,
+				00D5A0E2FED5ABC1CFED3B93,
+				00D5A0E3FED5ABC1CFED3B93,
+				00D5A0E4FED5ABC1CFED3B93,
+				00D5A0E5FED5ABC1CFED3B93,
+				00D5A0E6FED5ABC1CFED3B93,
+				00D5A0E7FED5ABC1CFED3B93,
+				00D5A0E8FED5ABC1CFED3B93,
+				00D5A0E9FED5ABC1CFED3B93,
+				00D5A0EAFED5ABC1CFED3B93,
+				00D5A0EBFED5ABC1CFED3B93,
+				00D5A0ECFED5ABC1CFED3B93,
+				00D5A0EDFED5ABC1CFED3B93,
+				00D5A0EEFED5ABC1CFED3B93,
+				00D5A0EFFED5ABC1CFED3B93,
+				00D5A0F0FED5ABC1CFED3B93,
+				00D5A0F1FED5ABC1CFED3B93,
+				00D5A0F2FED5ABC1CFED3B93,
+				00D5A0F3FED5ABC1CFED3B93,
+				00D5A0F4FED5ABC1CFED3B93,
+				00D5A0F5FED5ABC1CFED3B93,
+				00D5A0F6FED5ABC1CFED3B93,
+				00D5A0F7FED5ABC1CFED3B93,
+				00D5A0F8FED5ABC1CFED3B93,
+				00D5A0F9FED5ABC1CFED3B93,
+				00D5A0FAFED5ABC1CFED3B93,
+				00D5A0FBFED5ABC1CFED3B93,
+				00D5A0FCFED5ABC1CFED3B93,
+				00D5A0FDFED5ABC1CFED3B93,
+				00D5A0FEFED5ABC1CFED3B93,
+				00D5A0FFFED5ABC1CFED3B93,
+				00D5A100FED5ABC1CFED3B93,
+				00D5A101FED5ABC1CFED3B93,
+				00D5A102FED5ABC1CFED3B93,
+				00D5A103FED5ABC1CFED3B93,
+				00D5A104FED5ABC1CFED3B93,
+				00D5A105FED5ABC1CFED3B93,
+				00D5A106FED5ABC1CFED3B93,
+				00D5A107FED5ABC1CFED3B93,
+				00D5A108FED5ABC1CFED3B93,
+				00D5A109FED5ABC1CFED3B93,
+				00D5A10AFED5ABC1CFED3B93,
+				00D5A10BFED5ABC1CFED3B93,
+				00D5A10CFED5ABC1CFED3B93,
+				00D5A10DFED5ABC1CFED3B93,
+				00D5A10EFED5ABC1CFED3B93,
+				00D5A10FFED5ABC1CFED3B93,
+				00D5A110FED5ABC1CFED3B93,
+				00D5A111FED5ABC1CFED3B93,
+				00D5A112FED5ABC1CFED3B93,
+				00D5A113FED5ABC1CFED3B93,
+				00D5A114FED5ABC1CFED3B93,
+				00D5A115FED5ABC1CFED3B93,
+				00D5A116FED5ABC1CFED3B93,
+				00D5A117FED5ABC1CFED3B93,
+				00D5A118FED5ABC1CFED3B93,
+				00D5A119FED5ABC1CFED3B93,
+				00D5A11AFED5ABC1CFED3B93,
+				00D5A11BFED5ABC1CFED3B93,
+				00D5A11CFED5ABC1CFED3B93,
+				00D5A11DFED5ABC1CFED3B93,
+				00D5A11EFED5ABC1CFED3B93,
+				00D5A11FFED5ABC1CFED3B93,
+				00D5A120FED5ABC1CFED3B93,
+				00D5A121FED5ABC1CFED3B93,
+				00D5A122FED5ABC1CFED3B93,
+				00D5A123FED5ABC1CFED3B93,
+				00D5A124FED5ABC1CFED3B93,
+				02CDDD28FEF14087CFED3B93,
+				02CDDD2DFEF16257CFED3B93,
+				02CDDD30FEF166B5CFED3B93,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		00D5A0C7FED5ABC1CFED3B93 = {
+			fileRef = 00D5A043FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0C8FED5ABC1CFED3B93 = {
+			fileRef = 00D5A044FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0C9FED5ABC1CFED3B93 = {
+			fileRef = 00D5A045FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0CAFED5ABC1CFED3B93 = {
+			fileRef = 00D5A046FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0CBFED5ABC1CFED3B93 = {
+			fileRef = 00D5A047FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0CCFED5ABC1CFED3B93 = {
+			fileRef = 00D5A048FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0CDFED5ABC1CFED3B93 = {
+			fileRef = 00D5A049FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0CEFED5ABC1CFED3B93 = {
+			fileRef = 00D5A04AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0CFFED5ABC1CFED3B93 = {
+			fileRef = 00D5A04BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D0FED5ABC1CFED3B93 = {
+			fileRef = 00D5A04CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D1FED5ABC1CFED3B93 = {
+			fileRef = 00D5A04DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D2FED5ABC1CFED3B93 = {
+			fileRef = 00D5A04EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D3FED5ABC1CFED3B93 = {
+			fileRef = 00D5A04FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D4FED5ABC1CFED3B93 = {
+			fileRef = 00D5A050FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D5FED5ABC1CFED3B93 = {
+			fileRef = 00D5A051FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D6FED5ABC1CFED3B93 = {
+			fileRef = 00D5A052FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D7FED5ABC1CFED3B93 = {
+			fileRef = 00D5A053FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D8FED5ABC1CFED3B93 = {
+			fileRef = 00D5A054FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0D9FED5ABC1CFED3B93 = {
+			fileRef = 00D5A055FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0DAFED5ABC1CFED3B93 = {
+			fileRef = 00D5A056FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0DBFED5ABC1CFED3B93 = {
+			fileRef = 00D5A057FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0DCFED5ABC1CFED3B93 = {
+			fileRef = 00D5A058FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0DDFED5ABC1CFED3B93 = {
+			fileRef = 00D5A059FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0DEFED5ABC1CFED3B93 = {
+			fileRef = 00D5A05AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0DFFED5ABC1CFED3B93 = {
+			fileRef = 00D5A05BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E0FED5ABC1CFED3B93 = {
+			fileRef = 00D5A05CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E1FED5ABC1CFED3B93 = {
+			fileRef = 00D5A05DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E2FED5ABC1CFED3B93 = {
+			fileRef = 00D5A05EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E3FED5ABC1CFED3B93 = {
+			fileRef = 00D5A05FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E4FED5ABC1CFED3B93 = {
+			fileRef = 00D5A060FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E5FED5ABC1CFED3B93 = {
+			fileRef = 00D5A061FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E6FED5ABC1CFED3B93 = {
+			fileRef = 00D5A062FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E7FED5ABC1CFED3B93 = {
+			fileRef = 00D5A063FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E8FED5ABC1CFED3B93 = {
+			fileRef = 00D5A064FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0E9FED5ABC1CFED3B93 = {
+			fileRef = 00D5A065FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0EAFED5ABC1CFED3B93 = {
+			fileRef = 00D5A066FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0EBFED5ABC1CFED3B93 = {
+			fileRef = 00D5A067FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0ECFED5ABC1CFED3B93 = {
+			fileRef = 00D5A068FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0EDFED5ABC1CFED3B93 = {
+			fileRef = 00D5A069FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0EEFED5ABC1CFED3B93 = {
+			fileRef = 00D5A06AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0EFFED5ABC1CFED3B93 = {
+			fileRef = 00D5A06BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F0FED5ABC1CFED3B93 = {
+			fileRef = 00D5A06CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F1FED5ABC1CFED3B93 = {
+			fileRef = 00D5A06DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F2FED5ABC1CFED3B93 = {
+			fileRef = 00D5A06EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F3FED5ABC1CFED3B93 = {
+			fileRef = 00D5A06FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F4FED5ABC1CFED3B93 = {
+			fileRef = 00D5A070FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F5FED5ABC1CFED3B93 = {
+			fileRef = 00D5A071FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F6FED5ABC1CFED3B93 = {
+			fileRef = 00D5A072FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F7FED5ABC1CFED3B93 = {
+			fileRef = 00D5A073FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F8FED5ABC1CFED3B93 = {
+			fileRef = 00D5A074FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0F9FED5ABC1CFED3B93 = {
+			fileRef = 00D5A075FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0FAFED5ABC1CFED3B93 = {
+			fileRef = 00D5A076FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0FBFED5ABC1CFED3B93 = {
+			fileRef = 00D5A077FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0FCFED5ABC1CFED3B93 = {
+			fileRef = 00D5A078FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0FDFED5ABC1CFED3B93 = {
+			fileRef = 00D5A079FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0FEFED5ABC1CFED3B93 = {
+			fileRef = 00D5A07AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A0FFFED5ABC1CFED3B93 = {
+			fileRef = 00D5A07BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A100FED5ABC1CFED3B93 = {
+			fileRef = 00D5A07CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A101FED5ABC1CFED3B93 = {
+			fileRef = 00D5A07DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A102FED5ABC1CFED3B93 = {
+			fileRef = 00D5A07EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A103FED5ABC1CFED3B93 = {
+			fileRef = 00D5A07FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A104FED5ABC1CFED3B93 = {
+			fileRef = 00D5A080FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A105FED5ABC1CFED3B93 = {
+			fileRef = 00D5A081FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A106FED5ABC1CFED3B93 = {
+			fileRef = 00D5A082FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A107FED5ABC1CFED3B93 = {
+			fileRef = 00D5A083FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A108FED5ABC1CFED3B93 = {
+			fileRef = 00D5A084FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A109FED5ABC1CFED3B93 = {
+			fileRef = 00D5A085FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A10AFED5ABC1CFED3B93 = {
+			fileRef = 00D5A086FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A10BFED5ABC1CFED3B93 = {
+			fileRef = 00D5A087FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A10CFED5ABC1CFED3B93 = {
+			fileRef = 00D5A088FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A10DFED5ABC1CFED3B93 = {
+			fileRef = 00D5A089FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A10EFED5ABC1CFED3B93 = {
+			fileRef = 00D5A08AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A10FFED5ABC1CFED3B93 = {
+			fileRef = 00D5A08BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A110FED5ABC1CFED3B93 = {
+			fileRef = 00D5A08CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A111FED5ABC1CFED3B93 = {
+			fileRef = 00D5A08DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A112FED5ABC1CFED3B93 = {
+			fileRef = 00D5A08EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A113FED5ABC1CFED3B93 = {
+			fileRef = 00D5A08FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A114FED5ABC1CFED3B93 = {
+			fileRef = 00D5A090FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A115FED5ABC1CFED3B93 = {
+			fileRef = 00D5A091FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A116FED5ABC1CFED3B93 = {
+			fileRef = 00D5A092FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A117FED5ABC1CFED3B93 = {
+			fileRef = 00D5A093FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A118FED5ABC1CFED3B93 = {
+			fileRef = 00D5A094FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A119FED5ABC1CFED3B93 = {
+			fileRef = 00D5A095FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A11AFED5ABC1CFED3B93 = {
+			fileRef = 00D5A096FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A11BFED5ABC1CFED3B93 = {
+			fileRef = 00D5A097FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A11CFED5ABC1CFED3B93 = {
+			fileRef = 00D5A098FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A11DFED5ABC1CFED3B93 = {
+			fileRef = 00D5A099FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A11EFED5ABC1CFED3B93 = {
+			fileRef = 00D5A09AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A11FFED5ABC1CFED3B93 = {
+			fileRef = 00D5A09BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A120FED5ABC1CFED3B93 = {
+			fileRef = 00D5A09CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A121FED5ABC1CFED3B93 = {
+			fileRef = 00D5A09DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A122FED5ABC1CFED3B93 = {
+			fileRef = 00D5A09EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A123FED5ABC1CFED3B93 = {
+			fileRef = 00D5A09FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A124FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0A0FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A125FED5ABC1CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D5A126FED5ABC1CFED3B93,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		00D5A126FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0A5FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A127FED5ABC1CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D5A128FED5ABC1CFED3B93,
+				00D5A129FED5ABC1CFED3B93,
+				00D5A12AFED5ABC1CFED3B93,
+				00D5A12BFED5ABC1CFED3B93,
+				00D5A12CFED5ABC1CFED3B93,
+				00D5A12DFED5ABC1CFED3B93,
+				00D5A12EFED5ABC1CFED3B93,
+				00D5A12FFED5ABC1CFED3B93,
+				00D5A130FED5ABC1CFED3B93,
+				00D5A131FED5ABC1CFED3B93,
+				00D5A132FED5ABC1CFED3B93,
+				00D5A133FED5ABC1CFED3B93,
+				00D5A134FED5ABC1CFED3B93,
+				00D5A135FED5ABC1CFED3B93,
+				00D5A136FED5ABC1CFED3B93,
+				00D5A137FED5ABC1CFED3B93,
+				00D5A138FED5ABC1CFED3B93,
+				00D5A139FED5ABC1CFED3B93,
+				00D5A13AFED5ABC1CFED3B93,
+				00D5A13BFED5ABC1CFED3B93,
+				00D5A13CFED5ABC1CFED3B93,
+				00D5A13DFED5ABC1CFED3B93,
+				00D5A13EFED5ABC1CFED3B93,
+				00D5A13FFED5ABC1CFED3B93,
+				00D5A140FED5ABC1CFED3B93,
+				00D5A141FED5ABC1CFED3B93,
+				00D5A142FED5ABC1CFED3B93,
+				00D5A143FED5ABC1CFED3B93,
+				00D5A144FED5ABC1CFED3B93,
+				00D5A145FED5ABC1CFED3B93,
+				00D5A146FED5ABC1CFED3B93,
+				00D5A147FED5ABC1CFED3B93,
+				00D5A148FED5ABC1CFED3B93,
+				00D5A149FED5ABC1CFED3B93,
+				00D5A14AFED5ABC1CFED3B93,
+				00D5A14BFED5ABC1CFED3B93,
+				00D5A14CFED5ABC1CFED3B93,
+				00D5A14DFED5ABC1CFED3B93,
+				00D5A14EFED5ABC1CFED3B93,
+				00D5A14FFED5ABC1CFED3B93,
+				00D5A150FED5ABC1CFED3B93,
+				00D5A151FED5ABC1CFED3B93,
+				00D5A152FED5ABC1CFED3B93,
+				00D5A153FED5ABC1CFED3B93,
+				00D5A155FED5ABC1CFED3B93,
+				00D5A156FED5ABC1CFED3B93,
+				00D5A157FED5ABC1CFED3B93,
+				00D5A158FED5ABC1CFED3B93,
+				00D5A159FED5ABC1CFED3B93,
+				00D5A15AFED5ABC1CFED3B93,
+				00D5A15BFED5ABC1CFED3B93,
+				00D5A15CFED5ABC1CFED3B93,
+				00D5A15DFED5ABC1CFED3B93,
+				00D5A15EFED5ABC1CFED3B93,
+				00D5A15FFED5ABC1CFED3B93,
+				00D5A160FED5ABC1CFED3B93,
+				02CDDD29FEF14087CFED3B93,
+				02CDDD2BFEF1622CCFED3B93,
+				02CDDD31FEF16853CFED3B93,
+				02CDDD32FEF16853CFED3B93,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		00D5A128FED5ABC1CFED3B93 = {
+			fileRef = 00D5A00BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A129FED5ABC1CFED3B93 = {
+			fileRef = 00D5A00CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A12AFED5ABC1CFED3B93 = {
+			fileRef = 00D5A00DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A12BFED5ABC1CFED3B93 = {
+			fileRef = 00D5A00EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A12CFED5ABC1CFED3B93 = {
+			fileRef = 00D5A00FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A12DFED5ABC1CFED3B93 = {
+			fileRef = 00D5A010FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A12EFED5ABC1CFED3B93 = {
+			fileRef = 00D5A011FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A12FFED5ABC1CFED3B93 = {
+			fileRef = 00D5A012FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A130FED5ABC1CFED3B93 = {
+			fileRef = 00D5A013FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A131FED5ABC1CFED3B93 = {
+			fileRef = 00D5A014FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A132FED5ABC1CFED3B93 = {
+			fileRef = 00D5A015FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A133FED5ABC1CFED3B93 = {
+			fileRef = 00D5A016FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A134FED5ABC1CFED3B93 = {
+			fileRef = 00D5A017FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A135FED5ABC1CFED3B93 = {
+			fileRef = 00D5A018FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A136FED5ABC1CFED3B93 = {
+			fileRef = 00D5A019FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A137FED5ABC1CFED3B93 = {
+			fileRef = 00D5A01AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A138FED5ABC1CFED3B93 = {
+			fileRef = 00D5A01BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A139FED5ABC1CFED3B93 = {
+			fileRef = 00D5A01CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A13AFED5ABC1CFED3B93 = {
+			fileRef = 00D5A01DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A13BFED5ABC1CFED3B93 = {
+			fileRef = 00D5A01EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A13CFED5ABC1CFED3B93 = {
+			fileRef = 00D5A01FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A13DFED5ABC1CFED3B93 = {
+			fileRef = 00D5A020FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A13EFED5ABC1CFED3B93 = {
+			fileRef = 00D5A021FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A13FFED5ABC1CFED3B93 = {
+			fileRef = 00D5A022FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A140FED5ABC1CFED3B93 = {
+			fileRef = 00D5A023FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A141FED5ABC1CFED3B93 = {
+			fileRef = 00D5A024FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A142FED5ABC1CFED3B93 = {
+			fileRef = 00D5A025FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A143FED5ABC1CFED3B93 = {
+			fileRef = 00D5A026FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A144FED5ABC1CFED3B93 = {
+			fileRef = 00D5A027FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A145FED5ABC1CFED3B93 = {
+			fileRef = 00D5A028FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A146FED5ABC1CFED3B93 = {
+			fileRef = 00D5A029FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A147FED5ABC1CFED3B93 = {
+			fileRef = 00D5A02AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A148FED5ABC1CFED3B93 = {
+			fileRef = 00D5A02BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A149FED5ABC1CFED3B93 = {
+			fileRef = 00D5A02CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A14AFED5ABC1CFED3B93 = {
+			fileRef = 00D5A02DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A14BFED5ABC1CFED3B93 = {
+			fileRef = 00D5A02EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A14CFED5ABC1CFED3B93 = {
+			fileRef = 00D5A02FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A14DFED5ABC1CFED3B93 = {
+			fileRef = 00D5A030FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A14EFED5ABC1CFED3B93 = {
+			fileRef = 00D5A031FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A14FFED5ABC1CFED3B93 = {
+			fileRef = 00D5A032FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A150FED5ABC1CFED3B93 = {
+			fileRef = 00D5A033FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A151FED5ABC1CFED3B93 = {
+			fileRef = 00D5A034FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A152FED5ABC1CFED3B93 = {
+			fileRef = 00D5A035FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A153FED5ABC1CFED3B93 = {
+			fileRef = 00D5A036FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A155FED5ABC1CFED3B93 = {
+			fileRef = 00D5A038FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A156FED5ABC1CFED3B93 = {
+			fileRef = 00D5A039FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A157FED5ABC1CFED3B93 = {
+			fileRef = 00D5A03AFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A158FED5ABC1CFED3B93 = {
+			fileRef = 00D5A03BFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A159FED5ABC1CFED3B93 = {
+			fileRef = 00D5A03CFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A15AFED5ABC1CFED3B93 = {
+			fileRef = 00D5A03DFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A15BFED5ABC1CFED3B93 = {
+			fileRef = 00D5A03EFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A15CFED5ABC1CFED3B93 = {
+			fileRef = 00D5A03FFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A15DFED5ABC1CFED3B93 = {
+			fileRef = 00D5A040FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A15EFED5ABC1CFED3B93 = {
+			fileRef = 00D5A041FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A15FFED5ABC1CFED3B93 = {
+			fileRef = 00D5A0A2FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A160FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0A3FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A161FED5ABC1CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D5A162FED5ABC1CFED3B93,
+				00D5A163FED5ABC1CFED3B93,
+				00D5A164FED5ABC1CFED3B93,
+				00D5A165FED5ABC1CFED3B93,
+				00D5A166FED5ABC1CFED3B93,
+				00D5A167FED5ABC1CFED3B93,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		00D5A162FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0BFFED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A163FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0C0FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A164FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0C1FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A165FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0C2FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A166FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0C3FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A167FED5ABC1CFED3B93 = {
+			fileRef = 00D5A0C4FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D5A168FED5ABC1CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+		02CDDD26FEF14087CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPatchConnection.m;
+			refType = 4;
+		};
+		02CDDD27FEF14087CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPatchConnection.h;
+			refType = 4;
+		};
+		02CDDD28FEF14087CFED3B93 = {
+			fileRef = 02CDDD27FEF14087CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		02CDDD29FEF14087CFED3B93 = {
+			fileRef = 02CDDD26FEF14087CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		02CDDD2AFEF1622CCFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPatchEntry.m;
+			refType = 4;
+		};
+		02CDDD2BFEF1622CCFED3B93 = {
+			fileRef = 02CDDD2AFEF1622CCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		02CDDD2CFEF16257CFED3B93 = {
+			isa = PBXFileReference;
+			path = MKPatchEntry.h;
+			refType = 4;
+		};
+		02CDDD2DFEF16257CFED3B93 = {
+			fileRef = 02CDDD2CFEF16257CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		02CDDD2EFEF166B5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SynthPatchList.m;
+			refType = 4;
+		};
+		02CDDD2FFEF166B5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SynthPatchList.h;
+			refType = 4;
+		};
+		02CDDD30FEF166B5CFED3B93 = {
+			fileRef = 02CDDD2FFEF166B5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		02CDDD31FEF16853CFED3B93 = {
+			fileRef = 02CDDD2EFEF166B5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		02CDDD32FEF16853CFED3B93 = {
+			fileRef = 00D5A037FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+	};
+	rootObject = 00D5A006FED5ABC1CFED3B93;
+}

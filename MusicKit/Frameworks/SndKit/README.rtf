@@ -1,0 +1,173 @@
+{\rtf0\ansi{\fonttbl\f0\fswiss Helvetica;\f2\fmodern Ohlfs;}
+\paperw9840
+\paperh8400
+\margl120
+\margr120
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f0\b\i0\ulnone\fs24\fc0\cf0 README 1.0, 12 July 1999\
+
+\b0 \
+SndKit.framework was written to be a complete OpenSource implementation of NeXTs SoundKit. The re-write started and almost finished before the SoundKit itself was released in source code form.\
+\
+It is intended to implement (almost) all of the SNDStruct based functions of the SoundKit, as well as the Sound and SoundView classes.\
+\
+This means that the SoundMeter, NXSoundStream (and related) and NXSoundIn/Out classes are NOT supported, and probably won't ever be. The other notable omission is support for compressed sound formats.\
+\
+SndKit.framework compiles and runs on OS4.2 (black and white), YB/Windows (WebObjects 4), and Mac OSX Server. It may well compile on GNUSTEP. The SND functions are in vanilla C and should compile on anything.\
+\
+
+\b Support\
+
+\b0 \
+SndKit is not supported. Use at your own risk. See the disclaimers at the top of most source code files. I do wish to fix bugs, so please send bug reports to <S.Brandon@music.gla.ac.uk>, including as much relevant information as possible. I do not run MOSX-server here, so I can't help with Mac specific problems.\
+\
+
+\b Thanks\
+
+\b0 \
+... go to a number of people who tested out prototypes and offered comments: Leigh Smith, Sean Luke, Chris Penrose, Mmalc Crawford, Don Yactman.\
+\
+
+\b Using the SndKit\
+
+\b0 \
+Because the SndKit is based on the SoundKit, read the SoundKit docs. Then read the notes below (note renaming of functions and classes). Compile and install the SndKit framework, then compile and test the TwoWaves and Spectro applications.\
+\
+
+\b Renaming of functions and classes\
+
+\b0 \
+All implemented SNDxxx functions are renamed Sndxxx. eg SNDAlloc is now SndAlloc. This should allow you to use both the SndKit and SoundKit in a project.\
+\
+The Sound class is now Snd class.\
+\
+SoundView is now SndView.\
+\
+
+\b Supported Formats\
+\
+
+\b0 Currently, SndKit only reads/writes the NeXT/Sun snd/au file format. There are some categories on the Sound object floating around that add other formats, so these should make it into the next release. Internally, the format will almost certainly remain ".snd" format (SndSoundStruct). SndSoundStruct format encompasses 8 and 16 bit formats, ulaw, float and double, and any sampling rate and number of channels, so it's not really too limited.\
+\
+
+\b Sound I/O\
+
+\b0 \
+... on all platforms is currently kludged! The only sound playback on Windows and PPC is via saving the sound to a temp file, reading the file into a NSSound object, then playing that object. This is very inefficient, especially for large sounds, and should be considered a temporary solution. For OpenStep/Mach (eg OpenStep 4.2) platforms, the SoundKit sound I/O routines are used, but these are sometimes FLAKEY and should be considered 
+\i particularly unsupported
+\i0 .\
+\
+There is no recording facility on PPC and Windows.\
+\
+Work is going on to interface the playback and recording functions to corresponding Windows functions (YBWindows does not have SoundKit at all). It is possible to get some interfacing going between SndKit and SoundKit, while SoundKit is still supported, and this is in place for OpenStep 4.2 Mach platforms. If you are adventurous you can change the #ifdef in SndKit/Snd.h to try this on PPC. [the major problem here is that SndKit uses malloc to allocate memory, and the SoundKit uses page-aligned memory allocation. The Sound I/O routines in SoundKit rely on data being page aligned, so sometimes have trouble accepting the non-aligned data. It kinda works, most of the time, and is worse on m68k].\
+\
+
+\b Sound Conversion Features\
+
+\b0 \
+The sample rate conversion routines (in particular) come from Julius Smith (resample-1.2), but have been modified to not require compacting of fragmented sound files. Additionally, they will accept 8 bit, float and double input, although the output is always 16 bit. So although you can convert sampling rates of float data, it has to go through an intermediate 16 bit stage for the rate conversion. Sorry.\
+\
+There are 3 different qualities of sample rate conversion, the fastest being the lowest quality. The Snd object uses the fastest one (SndConvertSound()) by default, but you can set the quality to be used with the -setConversionQuality method.\
+\
+The Sound Conversion routines (in general) basically convert from any sampling rate, any number of channels (<= 16), 8, 16 bit, float and double formats to any other combination of the above, in as few passes as possible. When changing numbers of channels, you can change from 1 to many, many to 1, or any power of 2 to any other power of 2 (eg 2 to 8, 4 to 2, 2 to 16 etc).\
+/////////////////////////////////////////////////////////////////////\
+This software package (resample-1.2) is Copyright 1994 by Julius O. Smith\
+(jos@ccrma.stanford.edu), all rights reserved.  Permission to use and copy\
+is granted subject to the terms of the "GNU Software General Public\
+License" (see ftp://prep.ai.mit.edu/pub/gnu/COPYING).  In addition, we\
+request that a copy of any modified files be sent by email to\
+jos@ccrma.stanford.edu so that we may incorporate them in the CCRMA\
+version.\
+/////////////////////////////////////////////////////////////////////\
+\
+
+\b SndView Adds These Features:\
+
+\b0\fi-160\li160 · Configurable speed optimizations (see below)\
+· Non-integer reduction factors (r.f), and r.f. down to 0.04 (1 sample per 25 pixels) [SoundView only goes as low as 1]\
+· For 0.04 <= r.f < 0.34, SndView can be instructed to draw small horizontal bars at each sample (this is the default). This allows for great accuracy in specifying selections for copy/paste operations.\
+· Configurable maximum recording time\
+· Intelligent recording - converts recorded sounds to the format of the rest of the displayed sound if the format is not compatible. Queries hardware for allowable sampling rates/formats [NOT CURRENTLY SUPPORTED ON ANY PLATFORM]\
+· Can be instructed to display only left channel, only right channel, or average of both channels\
+· Triple-click does a Select-All\
+
+\fi0\li0 \
+
+\b SndView fixes these bugs:\
+
+\b0\fi-160\li160 · SndView is not susceptable to the "info length" bug (I think...)\
+· SndView copes a lot better with recording into the sound [NOT CURRENTLY SUPPORTED ON ANY PLATFORM]\
+· SndView displays "Waveform" view perfectly, without the PostScript errors that plague SoundView\
+· SndView is scrupulous about floating point numbers and rounding, and should never leave cursor "turds" on the screen\
+· SndView does not alter the length of the selection if you change r.f. Even if you extend the selection at a r.f. different to the one you created the selection at, the sample at the non-changed end will remain the same.\
+
+\fi0\li0 \
+
+\b SndView has these bugs:\
+
+\b0\fi-160\li160 · If SndView is destroyed without freeing it, and it has told the pasteboard that it has data ready for pasting (from a Copy or Cut operation) the application that requested the data will probably crash. If the application containing SndView quits normally, SndView does provide the data though (as does SoundView, I think).\
+·  With r.f. <= 1, reducing the selection while auto-scrolling leaves a horrible mess on the screen, until you take your finger off the mouse. This is because when a section of the view is drawn, it highlights the part of the new section that it thinks is within the selection rectangle. For r.f <= 1, this is not immediately obvious, and I need to force the start and end of selection rectangle in this case to be midway between samples.\
+
+\fi0\li0 \
+
+\b SndView is incompatible in these ways:\
+
+\b0\fi-160\li160 · The bounds rectangle is not scaled the same as SoundView's is. SoundView scales it's bounds so that (y = 0) runs through the centre of the view, and the maximum +y and -y limits correspond to the limits of the format of the sound it is displaying. SndView does not scale at all. It could be changed quite easily. As it is, this breaks any subclasses of SoundView that draw into the view.\
+· "drawSamples from:to:" is not implemented (yet). But all you would have to do would be to invalidate the caches for that area (if necessary), and -display: the SndView\
+· Because of the caching mechanism, if you change samples "behind SndView's back" you must invalidate the cache for the affected samples, with "invalidateCacheStartSample:end:" before displaying.\
+· SoundView considers the left and right channels of the sound individually when it comes to finding maximum and minimum values for display. This makes display at some resolutions look very odd, and it's not really intuitive, although at low resolutions it does have the side effect of in fact showing both channels (one as maximum and 1 as minimum). SndView on the other hand shows either only one channel, or the average of both channels. Ideally it should have the option of showing both.\
+
+\fi0\li0 \
+
+\b The optimization mechanism:\
+
+\b0    When the r.f. starts to climb, more samples are crammed into each horizontal pixel in the view. Each pixel shows the maximum and minimum value represented within that number of samples.\
+\
+   To display a very large sound in a small view, the r.f. may be in the 1000's. This means that eg 10,000 samples may need to be read, times the width of the view (perhaps 300).\
+   SndView seeks to reduce this number of reads by skipping samples when they are nowhere near its current maximum or minimum.\
+\
+
+\fi-160\li160 · optimization only kicks in when r.f > "threshold"\
+· At the start of the read for any particular pixel, SndView single-steps through the samples until it finds a local maximum/minimum. Thereafter it calculates 5% of the top of the peaks (or bottom of troughs), and if a particular sample is not within this "hot region", it takes bigger jumps until it finds a sample that is within the region. Once it finds this, it goes back to looking at every sample, until it moves out of the hot region again.\
+· "peak fraction" sets the percentage of the hot region (0.05 == 5%, default). Theoretically, the smaller this region, the faster the calculation, but in practice it doesn't make a lot of difference.\
+· "skip" should ideally increase in some sort of proportion to the r.f. At present it is a fixed value, but a controller object could set it to, say, sqrroot(r.f). I have not really tested this, but that's what this test application is for!\
+
+\fi0\li0 \
+
+\b The caching mechanism\
+
+\b0\fi-160\li160 · When r.f > 1, all display data is cached using the SndDisplayData and SndDisplayDataList classes.\
+· If r.f. changes, the caches are destroyed.\
+· Caches for display data after the origin of a paste or cut operation are destroyed.\
+· Adjacent caches are joined together as the user scrolls through the view\
+· Caching can make it hard to test the optimization mechanism\
+
+\fi0\li0 \
+
+\b Other Features of the Source Code\
+
+\b0\fi-160\li160 · There are #ifdefs for turning on/off the SndView UserPath support, and the timing. There's not much reason to use the timing any more really.\
+· I have put any thought into the setting of zones. If anyone would like to advise on this I'd be happy to hear from you.\
+· The mechanism for retrieving data from fragmented sound files is (I think) rather elegant and should be really fast.\
+· The archival -read and -write methods are untested.\
+· Support for "floating point" and "double" sound format files is included, but is untested.\
+
+\fi0\li0 \
+
+\b Future Enhancements for SndView\
+
+\b0\fi-160\li160 · SndView should be able to accept SoundStructs instead of / as well as Sound objects. This would open the door for opening a memory mapped stream to read a sound file, then passing the stream to SndView. Saves having to load the entire file into memory before it is displayed (though once it has been displayed, there's no difference to the amount of actual memory/swap space used).\
+· SndView should utilise a control/cell paradigm so that channels can be displayed separately within the view.\
+
+\fi0\li0 \
+\
+\
+Stephen Brandon\
+Systems Administrator,\
+Department of Music,		e-mail: S.Brandon@music.gla.ac.uk\
+14 University Gardens,			(NeXT mail welcomed)\
+University of Glasgow,		Tel: 	+44 (0)141 330 6065\
+Glasgow.			Fax:	+44 (0)141 330 3518\
+Scotland\
+G12 8QH\
+
+}

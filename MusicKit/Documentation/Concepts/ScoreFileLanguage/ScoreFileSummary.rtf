@@ -1,24 +1,26 @@
-{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Ohlfs;}
-\paperw16220
-\paperh13060
-\margl120
-\margr0
-\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh13060
+\pard
+
+\f0\fs24 \cf0 Release 2.0  Copyright 
 \f1 ã
 \f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
-
-\fs28 \
-
-\fs16 \
+\fs16 \cf0 \
 
 \fs28 \
 
 \fs16 \
 
-\pard\fs56\li2100\fc0\cf0 Appendix A\
+\fs28 \
+
+\fs16 \
+\pard\li2100\ql\qnatural
+
+\fs56 \cf0 Appendix A\
 Summary of ScoreFile Language Syntax\
 
 \fs16 \
@@ -30,26 +32,23 @@ Summary of ScoreFile Language Syntax\
 \
 \
 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 This appendix gives a succinct summary of the syntax of the ScoreFile language.  The file 
+\fs28 \cf0 This appendix gives a succinct summary of the syntax of the ScoreFile language.  The file 
 \b ScoreFileRef.rtf
 \b0  provides a general description and explanation of ScoreFile syntax and ScoreFile program organization.\
-\
-Also see 
-\b ScoreFileUpdate.rtf
-\b0  for recent additions to the language.\
+\pard\li100\ql\qnatural
 
-\fs16 \
-
-\pard\b\li100\fc0\cf0 \
+\b\fs16 \cf0 \
 \
 \
 
 \fs36 Program Structure\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 scorefile
+\i\b0\fs28 \cf0 scorefile
 \i0 :\
 	[ 
 \i header
@@ -62,10 +61,12 @@ Also see
 \i0  [ 
 \b END
 \b0  ; ] ] ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 header
+\i\fs28 \cf0 header
 \i0 :\
 	
 \i headerStatement
@@ -74,15 +75,18 @@ Also see
 \b0  [ 
 \i header
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 headerStatement
+\i\fs28 \cf0 headerStatement
 \i0 :\
 	
 \i scoreInfoStatement\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i0 	
+\i0 \cf0 	
 \i partDeclaration
 \i0  \
 	
@@ -96,8 +100,9 @@ Also see
 \i0  \
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 body
+\i\fs28 \cf0 body
 \i0 :\
 	
 \i bodyStatement
@@ -106,24 +111,28 @@ Also see
 \b0  [ 
 \i body
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 bodyStatement
+\i\fs28 \cf0 bodyStatement
 \i0 :\
 	
 \i timeStatement
 \i0  \
 	
 \i noteStatement\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i0 	
+\i0 \cf0 	
 \i headerOrBodyStatement
 \i0  \
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 headerOrBodyStatement
+\i\fs28 \cf0 headerOrBodyStatement
 \i0 :\
 	
 \i variableDeclaration
@@ -156,15 +165,17 @@ Also see
 \i endCommentStatement\
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\i0\li100\fc0\cf0 \
+\i0\b \cf0 \
 \
 
 \fs36 Header Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 scoreInfoStatement
+\i\b0\fs28 \cf0 scoreInfoStatement
 \i0 :\
 	
 \b info
@@ -173,10 +184,12 @@ Also see
 \b0  
 \i parameters
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 partDeclaration
+\i\fs28 \cf0 partDeclaration
 \i0 :\
 	
 \b part
@@ -194,10 +207,12 @@ Also see
 \b0  
 \i partList
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 partName
+\i\fs28 \cf0 partName
 \i0 :\
 	
 \i identifier\
@@ -213,10 +228,12 @@ Also see
 \b0  
 \i parameters
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 tagRangeDeclaration
+\i\fs28 \cf0 tagRangeDeclaration
 \i0 :\
 	
 \b tagRange
@@ -228,19 +245,22 @@ Also see
 \i integer\
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\i0\li100\fc0\cf0 \
+\i0\b \cf0 \
 \
 
 \fs36 Header or Body Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The large, bold brackets, braces, and parentheses in the components of the envelope, waveTable, and object declarations below are to be typed where shown.\
+\b0\fs28 \cf0 The large, bold brackets, braces, and parentheses in the components of the envelope, waveTable, and object declarations below are to be typed where shown.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 variableDeclaration
+\i\fs28 \cf0 variableDeclaration
 \i0 :\
 	
 \i dataType
@@ -271,10 +291,12 @@ Also see
 \b0  \
 	
 \b env\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 initVariableList
+\i\b0\fs28 \cf0 initVariableList
 \i0 :\
 	
 \i initVariable
@@ -283,10 +305,12 @@ Also see
 \b0  
 \i initVariableList
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 initVariable
+\i\fs28 \cf0 initVariable
 \i0 :\
 	
 \i identifier
@@ -295,10 +319,12 @@ Also see
 \b0  
 \i expression
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 envelopeDeclaration
+\i\fs28 \cf0 envelopeDeclaration
 \i0 :\
 	
 \b envelope
@@ -326,10 +352,12 @@ Also see
 \i envelopePointList
 \i0  
 \b\fs36 ] \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 envelopePointList
+\i\b0\fs28 \cf0 envelopePointList
 \i0 :\
 	
 \i envelopePoint
@@ -338,10 +366,12 @@ Also see
 \b0  
 \i envelopePointList
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 envelopePoint
+\i\fs28 \cf0 envelopePoint
 \i0 :\
 	
 \b\fs36 (
@@ -357,10 +387,12 @@ Also see
 \i smoothingValue
 \i0 ] 
 \b\fs36 )\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 waveTableDeclaration
+\i\b0\fs28 \cf0 waveTableDeclaration
 \i0 :\
 	
 \b waveTable
@@ -399,10 +431,12 @@ Also see
 \b\fs36 \}
 \b0  
 \b ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 partialsList
+\i\b0\fs28 \cf0 partialsList
 \i0 :\
 	
 \i partial
@@ -411,10 +445,12 @@ Also see
 \b0  
 \i partialsList
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 partial
+\i\fs28 \cf0 partial
 \i0 :\
 	
 \b\fs36 \{
@@ -430,10 +466,12 @@ Also see
 \i phase
 \i0  ] 
 \b\fs36 \}\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 soundfileName
+\i\b0\fs28 \cf0 soundfileName
 \i0 :\
 	
 \i fileName\
@@ -444,12 +482,14 @@ Also see
 \i0 :\
 	
 \b "
-\b0\i fileName
-\b\i0 "\
+\i\b0 fileName
+\i0\b "\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 objectDeclaration
+\i\b0\fs28 \cf0 objectDeclaration
 \i0 :\
 	
 \b object
@@ -479,19 +519,23 @@ Also see
 \i objectDescription
 \i0  
 \b\fs36 ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 objectDescription
+\i\b0\fs28 \cf0 objectDescription
 \i0 :\
 	defined by 
 \i className; 
 \i0 can contain anything except 
 \b ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 assignmentStatement
+\i\b0\fs28 \cf0 assignmentStatement
 \i0 :\
 	
 \i identifier
@@ -529,10 +573,12 @@ Also see
 \b0  
 \i expressionList
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 tuneStatement
+\i\fs28 \cf0 tuneStatement
 \i0 :\
 	
 \b tune
@@ -543,8 +589,8 @@ Also see
 \b0  
 \i expression\
 	
-\b\i0 tune
-\b0\i  expression\
+\i0\b tune
+\i\b0  expression\
 
 \fs16 \
 
@@ -552,17 +598,20 @@ Also see
 \i0 :\
 	
 \b comment\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 endCommentStatement
+\i\b0\fs28 \cf0 endCommentStatement
 \i0 :\
 	
 \b endComment\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
-
-\pard\li100\fc0\cf0 \
+\fs16 \cf0 \
+\pard\li100\ql\qnatural
+\cf0 \
 \
 \
 \
@@ -570,8 +619,9 @@ Also see
 \fs36 Body Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 timeStatement
+\i\b0\fs28 \cf0 timeStatement
 \i0 :\
 	
 \b t
@@ -599,10 +649,12 @@ Also see
 \b0  
 \i parameters
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 typeAndTag
+\i\fs28 \cf0 typeAndTag
 \i0 :\
 	
 \i duration
@@ -632,10 +684,12 @@ Also see
 \i0  ] \
 	
 \b mute\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 duration
+\i\b0\fs28 \cf0 duration
 \i0 :\
 	
 \i expression\
@@ -658,10 +712,12 @@ Also see
 \b0  
 \i parameters
 \i0  ]\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 parameter
+\i\fs28 \cf0 parameter
 \i0 :\
 	
 \i parameterName
@@ -685,8 +741,9 @@ Also see
 \i expression\
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\i0\li100\fc0\cf0 \
+\i0\b \cf0 \
 \
 \
 \
@@ -694,12 +751,14 @@ Also see
 \fs36 Operators\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Operators are shown in descending priority.  Operators on the same line are of equal priority; they're processed in the order that they occur in the scorefile.\
+\b0\fs28 \cf0 Operators are shown in descending priority.  Operators on the same line are of equal priority; they're processed in the order that they occur in the scorefile.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 operator
+\i\fs28 \cf0 operator
 \i0 :\
 	
 \i groupingOperator
@@ -729,60 +788,80 @@ Also see
 \i0 :\
 	
 \b ( )\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 prefixOperator
+\i\b0\fs28 \cf0 prefixOperator
 \i0 :\
 	
 \f1 -\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\f0\i\fs28 postfixOperator
+\f0\i\fs28 \cf0 postfixOperator
 \i0 :\
 	
 \b dB\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 arithmeticOperator
+\i\b0\fs28 \cf0 arithmeticOperator
 \i0 :\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b 	^ ~ \
+\b \cf0 	^ ~ \
 	* / % \
 	+ 
 \f1\b0 -\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\f0\i\fs28 envelopeLookupOperator
+\f0\i\fs28 \cf0 envelopeLookupOperator
 \i0 :\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b 	@\
+\b \cf0 	@\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 stringConcatenationOperator
+\i\b0\fs28 \cf0 stringConcatenationOperator
 \i0 :\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b 	&\
+\b \cf0 	&\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 assignmentOperator
+\i\b0\fs28 \cf0 assignmentOperator
 \i0 :\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b 	=\
+\b \cf0 	=\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 sequenceSeparator
+\i\b0\fs28 \cf0 sequenceSeparator
 \i0 :\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b 	,\
+\b \cf0 	,\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs16 \
+\b0\fs16 \cf0 \
 
 \fs28 \
 
@@ -791,12 +870,14 @@ Also see
 \fs28 \
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\fs36\li100\fc0\cf0 Constants, Predeclared Variables, and Special Symbols\
+\b\fs36 \cf0 Constants, Predeclared Variables, and Special Symbols\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 midiConstants
+\i\b0\fs28 \cf0 midiConstants
 \i0 :\
 	
 \i channelModeConstant
@@ -817,10 +898,12 @@ Also see
 	omniModeOn \
 	monoMode \
 	polyMode\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 systemRealTimeConstant
+\i\b0\fs28 \cf0 systemRealTimeConstant
 \i0 :\
 	
 \b sysClock \
@@ -831,10 +914,12 @@ Also see
 	sysUndefined0xfd \
 	sysActiveSensing \
 	sysReset\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3620\b0\i\fs28\li2100\fc0\cf0 otherConstants
+\i\b0\fs28 \cf0 otherConstants
 \i0 :\
 	
 \i keyNumber
@@ -847,31 +932,36 @@ Also see
 \b0 	(equal to 1)\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\i\fs28\li2100\fc0\cf0 predeclaredVariable
+\i\fs28 \cf0 predeclaredVariable
 \i0 :\
 	
 \i pitchVariable\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i0\fs28 ScoreFile reserves more than 200 keywords for the representation of pitch names and key numbers.  Rather than list the entire set of these keywords, formulas are given here that describe the form of the 
+\i0\fs28 \cf0 ScoreFile reserves more than 200 keywords for the representation of pitch names and key numbers.  Rather than list the entire set of these keywords, formulas are given here that describe the form of the 
 \i keyNumber
 \i0  and 
 \i pitchVariable
 \i0  names.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 keyNumber
+\i\fs28 \cf0 keyNumber
 \i0 :\
 	
 \i pitchVariable
-\b\i0 k\
+\i0\b k\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 pitchVariable
+\i\b0\fs28 \cf0 pitchVariable
 \i0 :\
 	
 \i pitchLetter
@@ -892,18 +982,22 @@ Also see
 	g \
 	a \
 	b\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 sharpOrFlat
+\i\b0\fs28 \cf0 sharpOrFlat
 \i0 :\
 	
 \b s \
 	f\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\i\fs28 octave
+\i\b0\fs28 \cf0 octave
 \i0 :\
 	
 \b 00\
@@ -917,27 +1011,30 @@ Also see
 	7\
 	8\
 	9\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 The ScoreFile special symbols are read-only variables that can manipulate their own value.  Special symbols should never be assigned a value in an assignment statement.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 The ScoreFile special symbols are read-only variables that can manipulate their own value.  Special symbols should never be assigned a value in an assignment statement.\
-
-\fs16 \
-
-\i\fs28 specialSymbols
+\i\fs28 \cf0 specialSymbols
 \i0 :\
 	
 \b t \
 	ran\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
-
-\pard\li100\fc0\cf0 \
+\fs16 \cf0 \
+\pard\li100\ql\qnatural
+\cf0 \
 \
 \
 \
 \
 \
 \
-
 }

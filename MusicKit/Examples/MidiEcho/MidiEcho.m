@@ -18,9 +18,9 @@
 NSString *dev = @"midi0"; /* Serial port A on NeXT hardware--the default. */
 static float delay = .1;
 
-static void handleMKError(char *msg)
+static void handleMKError(NSString *msg)
 {
-    if (!NSRunAlertPanel(@"MidiEcho", [NSString stringWithCString:msg], @"OK", @"Quit", nil, NULL))
+    if (!NSRunAlertPanel(@"MidiEcho", msg, @"OK", @"Quit", nil, NULL))
 	[NSApp terminate:NSApp];
 }
 
@@ -38,7 +38,7 @@ static void handleMKError(char *msg)
     MKSetErrorProc(handleMKError); /* Intercept Music Kit errors. */
        
     /* Get Midi object for the specified midi device */
-    midi = [Midi midiOnDevice:dev];
+    midi = [MKMidi midiOnDevice:dev];
 
     if (!midi) {
 	NSRunAlertPanel(@"MidiEcho", @"No driver present for specified device.", @"OK", nil, nil);

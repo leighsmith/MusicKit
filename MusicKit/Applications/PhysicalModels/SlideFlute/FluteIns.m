@@ -1,6 +1,6 @@
 /* The following files must be imported. */
-#import <musickit/musickit.h>    
-#import <musickit/unitgenerators/unitgenerators.h> 
+#import <MusicKit/MusicKit.h>    
+#import <MKUnitGenerators/UnitGenerators.h> 
 
 #import "FluteIns.h"
 

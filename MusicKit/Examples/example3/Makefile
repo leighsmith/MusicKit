@@ -13,8 +13,7 @@ PROJECTVERSION = 2.8
 PROJECT_TYPE = Application
 ICONSECTIONS =	-sectcreate __ICON app $(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Resources/NSDefaultApplicationIcon.tiff
 
-English_RESOURCES = example3-windows.nib example3_new.nib\
-                    example3_orig.nib
+English_RESOURCES = example3-windows.nib example3.nib
 
 LANGUAGES = English
 
@@ -40,7 +39,7 @@ PROF_LIBS = $(LIBS)
 
 
 FRAMEWORK_PATHS = -F/Local/Library/Frameworks
-FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
              -framework MKPerformSndMIDI -framework MusicKit
 
 

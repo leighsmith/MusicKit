@@ -13,11 +13,11 @@ DSPWRAP_PRODUCTS = $(DSPWRAP_MFILES) $(DSPWRAP_HFILES) $(DSPWRAP_IFILES)
 OTHER_OFILES = $(DSPWRAP_OFILES)
 OTHER_GARBAGE = $(DSPWRAP_PRODUCTS) ramp[xy].* ramp_* *.lod *.lst UG_MACROS_SUMMARY
 
-all:: $(DSPWRAP_PRODUCTS)
+# all:: $(DSPWRAP_PRODUCTS)
 
-debug $(PRODUCT).debug:: $(DSPWRAP_PRODUCTS)
+# debug $(PRODUCT).debug:: $(DSPWRAP_PRODUCTS)
 
-profile $(PRODUCT).profile:: $(DSPWRAP_PRODUCTS)
+# profile $(PRODUCT).profile:: $(DSPWRAP_PRODUCTS)
 
 $(DSPWRAP_PRODUCTS): $(DSPDIR)/ugsrc/ramp.asm
 	dspwrap -ug -macroDir $(DSPDIR)/ugsrc -noDoc -local $(DSPDIR)/smsrc $(DSPDIR)/ugsrc/ramp.asm

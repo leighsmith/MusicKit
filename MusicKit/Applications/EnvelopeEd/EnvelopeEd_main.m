@@ -2,14 +2,8 @@
    NOTE: Do NOT change this file -- Project Builder maintains it.
 */
 
-#import <AppKit/NSApplication.h>
+#import <AppKit/AppKit.h>
 
-void main(int argc, char *argv[]) {
-
-    [NSApplication sharedApplication];
-    if ([NSBundle loadNibNamed:@"EnvelopeEd.nib" owner:NSApp])
-	    [NSApp run];
-	    
-    [NSApp release];
-    exit(0);
+int main(int argc, const char *argv[]) {
+    return NSApplicationMain(argc, argv);
 }

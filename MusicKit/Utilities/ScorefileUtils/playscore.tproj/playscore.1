@@ -1,0 +1,239 @@
+.TH PLAYSCORE 1 "17 Jul 2000" "The MusicKit Project"
+.UC 4
+.SH NAME
+playscore \- play a MusicKit scorefile
+.SH SYNOPSIS
+playscore [-fqdpva] [-rtcwsn <arg>] scorefile 
+.SH DESCRIPTION
+Plays the specified scorefile on the DSP and MIDI.  If the scorefile
+isn't found in the current directory and it isn't given as a full path
+name, the following directories are searched on OpenStep 4.X machines:
+.LP
+~/Library/Music/Scores
+.LP
+/LocalLibrary/Music/Scores 
+.LP
+/NextLibrary/Music/Scores
+
+On MacOsX machines the following directories are searched:
+.LP
+~/Library/Music/Scores
+.LP
+/Local/Library/Music/Scores 
+.LP
+/Network/Library/Music/Scores
+.LP
+/System/Library/Music/Scores
+
+The actual search list of directories used will be listed in the usage message.
+.SH OPTIONS
+.TP
+.B \-d
+Debug; allocate space (on the DSP) for the DSP debugger.
+.TP
+.B \-t <arg>
+Trace; set Music Kit trace bit to <arg>.  Bits may be added.
+The meanings of the bits are as follows: 
+1, Orchestra allocation information; 2, App params
+printed when first encountered; 4, Music Kit DSP messages; 8, MIDI
+in/out/time warnings; 16, SynthInstrument preemptions msgs; 32,
+SynthInstrument messages; 64, SynthPatch library messages; 128,
+UnitGenerator library messages; 256, Conductor time messages; 512,
+print arrays loaded to DSP.
+.TP
+.B \-f
+Fast; normally, playscore reads the entire scorefile before playing;
+with the f option, notes are played as soon as they are read from the
+file.  This reduces start up time, but can also cause playback to be
+less reliable.
+.TP
+.B \-p
+Persistent; waits for DSP if it's in use.
+.TP
+.B \-q
+Quiet; error and warning messages are suppressed.
+.TP
+.B \-v
+Verbose; print DSP library error and status messages.
+.TP
+.B \-w <soundfile>
+Write as samples; the DSP sample output is written to the named
+soundfile.  The '.snd' extension is automatically appended to the file
+name.
+.TP
+.B \-c <soundfile>
+Write as commands; the DSP commands are written to the named
+soundfile.  The '.snd' extension is automatically appended to the file
+name.
+.TP
+.B \-s <deviceName>
+Specifies that sound should be sent out the DSP serial port to the
+specified device.  This flag is largely obsolete, thanks to the 
+Music Kit Preferences panel.  Devices supported are SSAD64x (Singular Solutions),
+StealthDAI2400 and GENERIC. In the case of Intel DSP cards that do not have
+NeXT-compatible DSP ports, the serial port device is automatically selected.
+An example of such a card is the TurtleBeach Multisound.
+.TP
+.B \-r <repeatCount>
+.TP
+Repeat; play the file <repeatCount> times.
+.TP
+.B \-n <dsp number>
+.TP
+DSP number; specifies that the DSPn should be used as the default DSP.
+Normally, playscore uses DSP0.   This flag should not be combined with \-a.
+.B \-a
+.TP
+All DSPs; use all available DSP cards (Intel only.)  This flag should not be
+combined with \-c, \-w or \-s.  Instead, the serial port device should be set
+with the Music Kit Preferences panel.
+.SH "INSTRUMENTS"
+The playscore program has access to the following instruments: 
+.TP
+Pluck 
+Plucked string synthesis.
+.TP 
+Wave1i
+Wave table synthesis.
+.TP
+Wave1vi
+Wave table synthesis with vibrato.
+.TP
+DBWave1vi
+Wave table synthesis with vibrato and access to the timbre data base.
+.TP
+DBWave2vi
+Like DBWave1vi, but with interpolation between two wave tables.
+.TP
+Fm1i
+Frequency modulation synthesis with arbitrary waveform.
+.TP
+Fm1vi
+Frequency modulation synthesis with arbitrary waveform and vibrato.
+.TP
+DBFm1vi
+Frequency modulation with vibrato and access to the timbre data base.
+.TP
+Fm2pvi
+Frequency modulation with two parallel modulators and vibrato.
+.TP
+Fm2cvi
+Frequency modulation synthesis with two cascaded modulators and vibrato.
+.TP
+Fm2pnvi
+Like Fm2pvi, but with an additional noise modulator.
+.TP
+Fm2cnvi
+Like Fm2cvi, but with an additional noise modulator.
+.TP
+Wave1, Wave1v, DBWave1v, Fm1v, Fm1
+These are like the corresponding patches described above, but they use
+a non\-interpolating oscillator.  This allows more simultaneous
+voices, but at lower sound\-quality.
+.TP
+Simp
+The simplest instrument:  a  single, non\-interpolating sine wave oscillator. 
+.TP 
+Waveshape
+Waveshaping (non-linear distortion) synthesis.
+.TP
+midi0
+MIDI output on the default MIDI device, MIDI0, 
+which is serial port A on NeXT hardware. On 
+Intel hardware, MIDI0 is set via the Music Kit Preferences panel.
+"midi" is a synonym for "midi0"
+.TP
+midi1
+MIDI output on the MIDI1 device, which is serial port B on NeXT hardware.
+.SH "THE SCOREFILE INFO STATEMENT"
+playscore decides which instrument to use, as well as other
+configuration information, based on the info statements in the
+scorefile.  The following scorefile info statement parameters are
+recognized:
+.TP 
+headroom         
+Headroom is a fractional number in the range -1 < = f <= 1 that
+determines how DSP resources are allocated.  As the headroom is
+decreased, the DSP becomes "bigger" but at the cost of decreased
+reliability (generally heard as degraded rhythmic integrity).
+Increasing the headroom makes synthesis more reliable, but you may
+decrease the number of simultaneous voices (the DSP becomes
+"smaller").  The default is 0.
+.TP
+samplingRate     
+This should be 44100 or 22050. The default is 22050.
+.TP
+alternativeSamplingRate     
+If present, this is used as the sampling rate for Turtle Beach cards,
+which have slower DSP memory. The alternativeSamplingRate is a simple
+way to provide a lower sampling rate for use with such cards. 
+.TP
+tempo
+The tempo is in beats per minute; the default is 60.0.
+.TP
+midiOffset
+This is a time offset in seconds for notes that are sent to an
+external MIDI synthesizer.  It's used to adjust synchronization
+between MIDI and the DSP.  Its value can be negative (shift MIDI notes
+ahead with respect to DSP synthesis) or positive (shift MIDI notes
+behind with respect to the DSP).
+.SH "THE PART INFO STATEMENT"
+Part info statements provide information that's applied to a
+particular part in the scorefile. The following part info statement
+parameters are recognized:
+.TP 
+synthPatch       
+This sets the instrument for the part; you must quote the instrument
+name, as taken from the instrument list given above.  For example,
+.IP
+synthPatch:"Pluck"
+.TP 
+synthPatchCount  
+This is the number of preallocated instruments (simultaneous voices);
+if it's omitted, the instruments are allocated as they're needed.  The
+SynthPatch count is significant for DSP instruments only.
+.TP 
+midiChan  
+This is the MIDI channel on which the part's notes are sent.  The
+value must be an integer between 1 and 16, inclusive.  The MIDI
+channel is significant for MIDI instruments only.
+.TP 
+orchestraIndex  
+If you specify the \-a switch, the orchestraIndex part info parameter is used
+to determine on which DSP to play the part. The value of this parameter is
+0 for DSP0, 1 for DSP1, etc.  You set the value of these DSP variables from
+the Music Kit Preferences panel.
+.SH FILES
+Example scorefiles are found in /Local/Library/Music/Scores.
+You may copy these files to your directory and modify them with a Music Kit program
+or a text editor.
+There are two types of files. Files of the form Examp* or *Examp* are 
+tutorial examples which illustrate the use of the software instruments.
+Other files, such as Emma.playscore and Gamelan.playscore are short demo pieces.
+.SH SEE ALSO
+.B ScorePlayer.app
+is an application very similar to playscore. However, currently, playscore is the only one of the two that can handle multiple simultaneous DSPs.
+See the Music Kit documentation on /Local/Library/Documentation/MusicKit for 
+general information about scorefiles, DSP software instruments, and MIDI.
+.SH DIAGNOSTICS
+Exit status is 0 on success, 1 if there is a problem opening the DSP
+or parsing the file.
+.SH BUGS
+Large chords (exactly simultaneous notes) may cause timing problems.
+It's better to separate them by some small amount of time.  This is
+particularly true when doing wave table synthesis.  Frequent changes
+of wave tables can cause the music to become uneven.  Very fast
+musical passages may also be problematic.  In some cases, putting a
+one-beat rest at the start of the scorefile may be helpful.  Playback
+may become unreliable if your computer is heavily loaded with other
+tasks.  For scores that are too dense or complex to play in real time,
+try using the \-c or \-w flag and then play the resulting soundfile.
+midiOffset shouldn't be necessary, but it is, for some reason.
+.SH COPYRIGHT
+Portions Copyright (c) 1992, NeXT Computer, Inc.
+Portions Copyright (c) 1994, Stanford University
+Portions Copyright (c) 2000, The MusicKit Project
+
+
+
+

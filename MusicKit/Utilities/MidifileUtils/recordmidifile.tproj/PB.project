@@ -2,10 +2,12 @@
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
         CLASSES = (recordmidifile.m); 
-        FRAMEWORKS = (Foundation.framework, MKPerformMIDI.framework, MusicKit.framework); 
+        FRAMEWORKS = (Foundation.framework, MKPerformSndMIDI.framework, MusicKit.framework); 
         FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
+        H_FILES = (); 
         OTHER_LINKED = (); 
         OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
+        SUBPROJECTS = (); 
     }; 
     LANGUAGE = English; 
     MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 

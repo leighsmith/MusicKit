@@ -18,9 +18,7 @@ English_RESOURCES = SoundTest.nib Info.nib
 
 LANGUAGES = English
 
-GLOBAL_RESOURCES = sinewave.tiff mkmon_A_32k.dsp mkmon_A_8k.dsp\
-                   mkmon_A_192k.dsp mkmon_A_turtlebeachms.dsp\
-                   mkmon_A_arielpc56d.dsp mkmon_A_ilinki56.dsp
+GLOBAL_RESOURCES = sinewave.tiff
 
 CLASSES = Animator.m RampUG.m SineGen.m
 
@@ -31,7 +29,7 @@ MFILES = SoundTest_main.m
 OTHERSRCS = Makefile Makefile.preamble README SoundTest.iconheader
 
 
-MAKEFILEDIR = $(MAKEFILEPATH)/pb_makefiles
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
 NEXTSTEP_INSTALLDIR = $(HOME)/Apps

@@ -2,16 +2,16 @@
 #ifndef UNITGENERATORS_H
 #define UNITGENERATORS_H
 
-#import <musickit/musickit.h>
-#import	<musickit/unitgenerators/Add2UGxxx.h> 
-#import <musickit/unitgenerators/Add2UGyyy.h> 
-#import <musickit/unitgenerators/AsympUGy.h> 
-#import <musickit/unitgenerators/DelayUGyxx.h> 
-#import <musickit/unitgenerators/Mul2UGyyy.h> 
-#import <musickit/unitgenerators/OscgUGyy.h> 
-#import <musickit/unitgenerators/OscgafiUGxyyy.h> 
-#import <musickit/unitgenerators/Out1aUGx.h> 
-#import <musickit/unitgenerators/Out1bUGy.h> 
+#import <MusicKit/MusicKit.h>
+#import	<MKUnitGenerators/Add2UGxxx.h> 
+#import <MKUnitGenerators/Add2UGyyy.h> 
+#import <MKUnitGenerators/AsympUGy.h> 
+#import <MKUnitGenerators/DelayUGyxx.h> 
+#import <MKUnitGenerators/Mul2UGyyy.h> 
+#import <MKUnitGenerators/OscgUGyy.h> 
+#import <MKUnitGenerators/OscgafiUGxyyy.h> 
+#import <MKUnitGenerators/Out1aUGx.h> 
+#import <MKUnitGenerators/Out1bUGy.h> 
 
 #define MK_OSCFREQSCALE 256.0 /* Used by Oscg and Oscgaf */
 #endif UNITGENERATORS_H

@@ -32,7 +32,7 @@ float zback_ground = 0.0/3.0, zdraw_gray = 3.0/3.0;
 @implementation ZPlaneView
 
 /* set up data: store circle in cache */
-+ newFrame:(NXRect*)frameRect
++ newFrame:(NSRect*)frameRect
 {    
     register int i;
     float radius, x, y;
@@ -158,7 +158,7 @@ a zero is drawn. When more poles or zeros are added, their images should be cach
 
 /* drawSelf: composite circle and draw Poles:
 */
-- drawSelf: (NXRect *) rects : (int) rectCount
+- drawSelf: (NSRect *) rects : (int) rectCount
 {     
     register int i;
     
@@ -223,7 +223,7 @@ onto the screen. Then the dragged pole or zero is redrawn in its new location */
 }
 
 /* Mousedown! Check is we hit a zero or pole, and if so, call drag routine dragP_Z */
-- mouseDown: (NXEvent *) theEvent
+- mouseDown: (NSEvent *) theEvent
 {
     NXPoint p;
     NXRect Image1, Image2;

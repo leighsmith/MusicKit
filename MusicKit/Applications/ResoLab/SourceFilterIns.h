@@ -1,7 +1,7 @@
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 
 /* Interface for SynthPatch SourceFilterIns. */
-@interface SourceFilterIns:SynthPatch
+@interface SourceFilterIns: MKSynthPatch
 {
     /* Amplitude parameters. */
 	id		ampEnv;	/* the Envelope object for amplitude */

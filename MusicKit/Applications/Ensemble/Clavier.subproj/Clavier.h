@@ -1,8 +1,8 @@
 #ifndef __MK_Clavier_H___
 #define __MK_Clavier_H___
-#import <objc/Object.h>
+#import <Foundation/Foundation.h>
 
-@interface Clavier:Object
+@interface Clavier:NSObject
     /* A Performer-like object that has three graphic piano octaves
      * with keys that can be clicked on.
      */

@@ -1,8 +1,8 @@
 #ifndef __MK_PianoOctave_H___
 #define __MK_PianoOctave_H___
-#import <AppKit/Control.h>
+#import <AppKit/NSControl.h>
 
-@interface PianoOctave : Control
+@interface PianoOctave : NSControl
     /* One octave of a piano keyboard view */
 {
     NSRect keyRects[19];	/* The rects for the keys */

@@ -1,7 +1,7 @@
 #ifndef __MK_ParamInterface_H___
 #define __MK_ParamInterface_H___
-#import <appkit/appkit.h>
-#import <musickit/musickit.h>
+#import <AppKit/AppKit.h>
+#import <MusicKit/MusicKit.h>
 
 #define NUM_MIDI_NAMES 136
 #define MK_PAR_START NUM_MIDI_NAMES
@@ -28,7 +28,7 @@ extern int beatIndexForTime(float time);
 #define BEATS		4
 #define DB			5
 
-@interface ParamInterface:ActionCell
+@interface ParamInterface:NSActionCell
 {
 	id textFields;
 	id sliders;
@@ -52,10 +52,10 @@ extern int beatIndexForTime(float time);
 - setModeAt:(int)row:(int)col to:(int)displayMode;	/* Set type at cell */
 - takeValueFrom:sender;						/* Get a value from slider or text field */
 - incrementValueFrom:sender;				/* Increment or decrement the controls */
-- setIntValue:(int)value;					/* Display the specified value */
-- setDoubleValue:(double)value;				/* Display the specified value */
-- setIntValueAt:(int)index to:(int)aValue;	/* Display one of a matrix of values */
-- setDoubleValueAt:(int)index to:(double)aValue;  /* Same */
+- (void) setIntValue:(int)value;					/* Display the specified value */
+- (void) setDoubleValue:(double)value;				/* Display the specified value */
+- (void) setIntValueAt:(int)index to:(int)aValue;	/* Display one of a matrix of values */
+- (void) setDoubleValueAt:(int)index to:(double)aValue;  /* Same */
 - setIntValueAt:(int)row:(int)col to:(int)aValue; /* Display one of a matrix of values */
 - setDoubleValueAt:(int)row:(int)col to:(double)aValue;	/* Same */
 - setIntValues:(int *)values;

@@ -11,14 +11,7 @@
         M_FILES = (); 
         OTHER_LIBS = (unitgenerators, musickit, dsp, NeXT_s, Driver); 
         OTHER_LINKED = (SoundTest_main.m); 
-        OTHER_RESOURCES = (
-            mkmon_A_32k.dsp, 
-            mkmon_A_8k.dsp, 
-            mkmon_A_192k.dsp, 
-            mkmon_A_turtlebeachms.dsp, 
-            mkmon_A_arielpc56d.dsp, 
-            mkmon_A_ilinki56.dsp
-        ); 
+        OTHER_RESOURCES = (); 
         OTHER_SOURCES = (Makefile, Makefile.preamble, README, SoundTest.iconheader); 
         PSWM_FILES = (); 
         PSW_FILES = (); 
@@ -27,7 +20,9 @@
     }; 
     GENERATEMAIN = YES; 
     LANGUAGE = English; 
+    MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles; 
     NEXTSTEP_APPICON = sinewave.tiff; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
     NEXTSTEP_DOCUMENTEXTENSIONS = (); 
     NEXTSTEP_INSTALLDIR = "$(HOME)/Apps"; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 

@@ -1,6 +1,6 @@
 /* The following files must be imported. */
-#import <musickit/musickit.h>    
-#import <musickit/unitgenerators/unitgenerators.h> 
+#import <MusicKit/MusicKit.h>    
+#import <MKUnitGenerators/UnitGenerators.h> 
 #import "BiquadUGy.h"
 
 #import "HoseIns.h"
@@ -120,14 +120,14 @@ static int		ampAsymp,   /* amplitude envelope UG */
     double	myAmpRel = [aNote parAsDouble:MK_ampAtt];
 
 
-    int		MY_envelopeSlew = [[Note class] parName: "MY_envelopeSlew"];
+    int		MY_envelopeSlew = [[MKNote class] parName: @"MY_envelopeSlew"];
     double	myEnvelopeSlew   = [aNote parAsDouble:MY_envelopeSlew];
 
-    int		MY_outAmp = [[Note class] parName: "MY_outAmp"];
-    int		MY_dLineLength = [[Note class] parName: "MY_dLineLength"];
-    int		MY_lipCoeff1 = [[Note class] parName: "MY_lipCoeff1"];
-    int		MY_lipCoeff2 = [[Note class] parName: "MY_lipCoeff2"];
-    int		MY_lipFiltGain = [[Note class] parName: "MY_lipFiltGain"];
+    int		MY_outAmp = [[MKNote class] parName: @"MY_outAmp"];
+    int		MY_dLineLength = [[MKNote class] parName: @"MY_dLineLength"];
+    int		MY_lipCoeff1 = [[MKNote class] parName: @"MY_lipCoeff1"];
+    int		MY_lipCoeff2 = [[MKNote class] parName: @"MY_lipCoeff2"];
+    int		MY_lipFiltGain = [[MKNote class] parName: @"MY_lipFiltGain"];
     double	myOutAmp   = [aNote parAsDouble:MY_outAmp];
     double	myDLineLength   = [aNote parAsDouble:MY_dLineLength];
     double	myLipCoeff1 = [aNote parAsDouble:MY_lipCoeff1];

@@ -1,6 +1,6 @@
-#import <musickit/SynthPatch.h>
+#import <MusicKit/MKSynthPatch.h>
 
-@interface FluteIns:SynthPatch
+@interface FluteIns:MKSynthPatch
 {
     /* Amplitude parameters. */
     id		ampEnv;	/* the Envelope object for amplitude */

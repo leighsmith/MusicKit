@@ -1,4 +1,5 @@
 #!/usr/bin/sh
+# $Id$
 # MKPerformSndMIDI framework installation script.
 #
 # This script emulates creating an OpenStep framework on Win32 when the
@@ -7,6 +8,7 @@
 # and library files.
 #
 # Leigh Smith <leigh@tomandandy.com> 
+#
 
 FRAMEWORKNAME=MKPerformSndMIDI
 

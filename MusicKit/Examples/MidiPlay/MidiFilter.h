@@ -2,11 +2,11 @@
 #define __MK_MidiFilter_H___
 /* Based on Ensemble MidiFilter */
 
-#import <musickit/NoteFilter.h>
+#import <MusicKit/MusicKit.h>
 
 typedef enum _actionType {STOP,THIN,PASS} actionType;
 
-@interface MidiFilter : NoteFilter
+@interface MidiFilter : MKNoteFilter
     /* A simple note filter that thins the pitchbend, aftertouch, and
        controller updates. */
 {    
@@ -15,8 +15,8 @@ typedef enum _actionType {STOP,THIN,PASS} actionType;
     unsigned minVals[131];
     double minTimes[131];
     actionType action[131];
-    id noteReceiver;
-    id noteSender;
+    MKNoteReceiver *noteReceiver;
+    MKNoteSender *noteSender;
 }
 
 @end

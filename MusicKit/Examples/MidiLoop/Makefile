@@ -43,7 +43,7 @@ PROF_LIBS = $(LIBS)
 FRAMEWORK_PATHS = -F$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks\
                   -F/Local/Users/leigh/Library/Frameworks\
                   -F/System/Library/PrivateFrameworks
-FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
              -framework MusicKit -framework SoundKit
 
 
