@@ -475,7 +475,7 @@
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -framework AppKit -seg1addr 376000";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit -seg1addr 389000";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
@@ -4704,6 +4704,7 @@
 				D84E221305B70AED002B493F,
 				D85A2F4A061F347D0065380E,
 				D88C502906C7E37100D33D99,
+				D86D23B506F229E6003565CB,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -4732,6 +4733,7 @@
 			dependencies = (
 				D84AE06E0623249D00A477FA,
 				D88C503006C7E3BF00D33D99,
+				D86D23BC06F22B5B003565CB,
 			);
 			isa = PBXAggregateTarget;
 			name = "Applications Only (Aggregate)";
@@ -6856,6 +6858,258 @@
 			isa = PBXTargetDependency;
 			target = D88FED7005A10EAF0024FD88;
 			targetProxy = D8673D8605A210D0009FFCAA;
+		};
+		D86D239D06F2293A003565CB = {
+			children = (
+				D86D23A306F2295C003565CB,
+				D86D23A606F22964003565CB,
+				D86D23A906F22979003565CB,
+				D86D23AC06F22982003565CB,
+				D86D23A006F2294C003565CB,
+			);
+			isa = PBXGroup;
+			name = TwoWaves;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23A006F2294C003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23A306F2295C003565CB = {
+			children = (
+				D86D23BF06F22BA4003565CB,
+				D86D23C006F22BA4003565CB,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23A606F22964003565CB = {
+			children = (
+				D86D23C506F22BC0003565CB,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23A906F22979003565CB = {
+			children = (
+				D86D23CE06F22BE8003565CB,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23AC06F22982003565CB = {
+			children = (
+				D86D23B706F229E6003565CB,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23B106F229E6003565CB = {
+			buildActionMask = 2147483647;
+			files = (
+				D86D23C106F22BA4003565CB,
+				D86D23CB06F22BD7003565CB,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D86D23B206F229E6003565CB = {
+			buildActionMask = 2147483647;
+			files = (
+				D86D23C206F22BA4003565CB,
+				D86D23C606F22BC0003565CB,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D86D23B306F229E6003565CB = {
+			buildActionMask = 2147483647;
+			files = (
+				D86D23DA06F238D7003565CB,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D86D23B406F229E6003565CB = {
+			buildPhases = (
+				D86D23B106F229E6003565CB,
+				D86D23B206F229E6003565CB,
+				D86D23B306F229E6003565CB,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = TwoWaves;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "TwoWaves (Application)";
+			productName = TwoWaves;
+			productReference = D86D23B506F229E6003565CB;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>TwoWaves</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.TwoWaves</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		D86D23B506F229E6003565CB = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = TwoWaves.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D86D23B706F229E6003565CB = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "TwoWaves-Info.plist";
+			path = "Applications/TwoWaves/TwoWaves-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		D86D23BB06F22B5B003565CB = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D86D23B406F229E6003565CB;
+			remoteInfo = "TwoWaves (Application)";
+		};
+		D86D23BC06F22B5B003565CB = {
+			isa = PBXTargetDependency;
+			target = D86D23B406F229E6003565CB;
+			targetProxy = D86D23BB06F22B5B003565CB;
+		};
+		D86D23BF06F22BA4003565CB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Controller.h;
+			path = Applications/TwoWaves/Controller.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23C006F22BA4003565CB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Controller.m;
+			path = Applications/TwoWaves/Controller.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23C106F22BA4003565CB = {
+			fileRef = D86D23BF06F22BA4003565CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86D23C206F22BA4003565CB = {
+			fileRef = D86D23C006F22BA4003565CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86D23C506F22BC0003565CB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = TwoWaves_main.m;
+			path = Applications/TwoWaves/TwoWaves_main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23C606F22BC0003565CB = {
+			fileRef = D86D23C506F22BC0003565CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86D23C906F22BD7003565CB = {
+			children = (
+				D86D23CA06F22BD7003565CB,
+			);
+			isa = PBXVariantGroup;
+			name = TwoWaves.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23CA06F22BD7003565CB = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/TwoWaves/English.lproj/TwoWaves.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23CB06F22BD7003565CB = {
+			fileRef = D86D23C906F22BD7003565CB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86D23CE06F22BE8003565CB = {
+			children = (
+				D86D23C906F22BD7003565CB,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D23DA06F238D7003565CB = {
+			fileRef = D837AC1F06C818B200A6CFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		D8708ADA05B310560074C18D = {
 			children = (
@@ -11932,7 +12186,7 @@
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -seg1addr 35E000";
+				OTHER_LDFLAGS = "-framework Foundation -seg1addr 370000";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
@@ -13723,6 +13977,7 @@
 				D8DB4E61059FA0D100624233,
 				D84395EA059FAA450054BEEE,
 			);
+			comments = "This is the main MacOS X Xcode project file which will build the MusicKit and SndKit frameworks, Palettes, Tools, Examples, and Applications.\n\nNot all applications are able to be compiled at the moment since the unit generators are still to be converted from 56001 DSP assembly language. This is an ongoing project.\n\nThe entire project should build without warnings.\n\nSee http://www.musickit.org for most up to date info on the MusicKit.";
 			isa = PBXGroup;
 			refType = 4;
 			sourceTree = "<group>";
@@ -13782,6 +14037,7 @@
 				D84E221205B70AED002B493F,
 				D85A2F49061F347D0065380E,
 				D88C502806C7E37100D33D99,
+				D86D23B406F229E6003565CB,
 			);
 		};
 		D8DB4E5B059FA0AA00624233 = {
@@ -13802,6 +14058,7 @@
 			children = (
 				D8AE7A6A061A1636009D0112,
 				D88C4FF206C7E0DE00D33D99,
+				D86D239D06F2293A003565CB,
 			);
 			isa = PBXGroup;
 			name = Applications;
