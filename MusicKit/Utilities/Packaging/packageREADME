@@ -7,15 +7,19 @@
 # Leigh Smith <leigh@tomandandy.com>
 #
 
-TMPDIR=/tmp/MusicKit
+# DISTRIB_DIR makes it easier to install into SourceForge.
+DISTRIB_DIR=htdocs
+TMPDIR=/tmp/$DISTRIB_DIR
 MKSRC=`pwd`
-MK_STYLESHEET=$MKSRC/Documentation/SGML/MusicKit_README.dsssl
+MK_STYLEDIR=$MKSRC/Documentation/SGML
+MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
 
 mkdir $TMPDIR
 cd $TMPDIR
 jade -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKSRC/MusicKit_README.sgml
 ln -s t1.html index.html
+cp $MK_STYLEDIR/Images/* .
 cd ..
-tar czf MusicKitREADME.tar.gz MusicKit
+tar czf MusicKitREADME.tar.gz $DISTRIB_DIR
 echo MusicKit README HTML pages packaged into /tmp/MusicKitREADME.tar.gz
 rm -r $TMPDIR
