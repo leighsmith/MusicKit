@@ -54,6 +54,9 @@
     SndAudioBuffer *decodedPCMBuffer;
     // TODO There is scope to hold the last n frames, rather than just one, if we are simultaneously performing the same SndMP3.
 
+    /*! @var pcmBufferToAccess */
+    SndAudioBuffer *pcmBufferToAccess;
+	
     /*! @var duration The duration of the sound (when decoded) in seconds. Necessary only as long as Snd uses SndSoundStructs. */
     double duration;
 
@@ -158,8 +161,14 @@
   @result Returns the performance that represents the sound playing.
  */
 - (SndPerformance *) playInFuture: (double) inSeconds
-					  beginSample: (unsigned long) begin
-					  sampleCount: (unsigned long) count;
+		      beginSample: (unsigned long) begin
+		      sampleCount: (unsigned long) count;
+
+- (void *) fragmentOfFrame: (int) frame 
+	   indexInFragment: (int *) currentFrame 
+       lastFrameInFragment: (int *) lastFrameInBlock
+		dataFormat: (SndSampleFormat *) dataFormat;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
