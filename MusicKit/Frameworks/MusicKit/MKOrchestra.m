@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/04/01 22:11:01  leigh
+  Fixed warnings from finicky compilers
+
   Revision 1.8  2000/03/24 21:13:07  leigh
   Cleaned up numeric representation of booleans
 
@@ -3389,7 +3392,7 @@ static DSPAddress getPatchMem(self,segment)
 {
     /* Get Patchpoint. Forwards call to giveDataMem if necesary. */
 #   define SIGS ((segment == MK_xPatch) ? self->_xPatch : self->_yPatch)
-    register i;
+    register int i;
     register unsigned long bVect = (segment == MK_xPatch) ? self->_xPatchAllocBits 
       : self->_yPatchAllocBits;
     for (i = 0; i < self->onChipPatchPoints; i++)

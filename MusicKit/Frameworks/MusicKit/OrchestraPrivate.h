@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/01 22:11:01  leigh
+  Fixed warnings from finicky compilers
+
   Revision 1.2  1999/07/29 01:25:54  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -29,7 +32,7 @@ Modification history:
 extern id MKOrchestraClasses(void);
 extern void _MKOrchResetPreviousLosingTemplate(id self);
 extern id _MKFreeMem(id self,MKOrchAddrStruct *mem);
-extern _MKAddTemplate(id aNewTemplate);
+extern int _MKAddTemplate(id aNewTemplate);
 extern FILE *_MKGetOrchSimulator();
 extern DSPFix48 *_MKCurSample(id orch);
 extern void _MKOrchAddSynthIns(id anIns);
