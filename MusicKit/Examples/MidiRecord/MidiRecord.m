@@ -102,7 +102,7 @@ static void handleMKError(NSString *msg) {
     [midiIn release];
     midiIn = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
     [midiIn retain];
-    NSLog([midiIn driverName]);
+    NSLog(@"setting the driver to %@\n", [midiIn driverName]);
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *) aNotification 
