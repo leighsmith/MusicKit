@@ -5,8 +5,6 @@
 
 #import "ErrorLog.h"
 #import <AppKit/AppKit.h>
-#import <stdarg.h>
-#import <objc/zone.h>
 #import <Foundation/NSBundle.h>
 
 @implementation ErrorLog
@@ -20,9 +18,8 @@
 {
     NSString *path;
     [super init];
-//#error StringConversion: This call to -[NXBundle getPath:forResource:ofType:] has been converted to the similar NSBundle method.  The conversion has been made assuming that the variable called buf will be changed into an (NSString *).  You must change the type of the variable called buf by hand.
     if (((path = [[NSBundle mainBundle] pathForResource:@"ErrorLog" ofType:@"nib"]) == nil))
-      fprintf(stderr,"Nib file missing for ScorePlayer!\n");
+        NSLog(@"Nib file missing for ScorePlayer!\n");
     else
         [NSBundle loadNibFile:path
             externalNameTable:[NSDictionary dictionaryWithObjectsAndKeys:self, @"NSOwner", nil]
