@@ -1,21 +1,30 @@
-/* Copyright 1993, CCRMA. Stanford University.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-/* 
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+
+  Original Author: David A. Jaffe
+
+  Copyright 1993, CCRMA. Stanford University.  All rights reserved.
+*/
+/*
 Modification history:
+  $Log$
+  Revision 1.3  2000/06/13 19:25:01  leigh
+  Now use SndKit and MKDSP frameworks, cleaned doco
+
 
   1/25/93/daj - Created
 */
 #import <MusicKit/MusicKit.h>
 #import "_unitGeneratorInclude.h"
 #import "_exportedPrivateMusickit.h"
-#import <dsp/dsp_memory_map.h>
+#import <MKDSP/dsp_memory_map.h>
 #import "In1bUG.h"
+
 @implementation In1bUG:MKUnitGenerator
-{ /* Instance variables go here */
-  BOOL _reservedIn1b1;
-}
+
 #define _set _reservedIn1b1
 
 enum args { sclA, oadr };

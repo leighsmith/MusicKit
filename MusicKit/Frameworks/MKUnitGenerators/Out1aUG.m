@@ -1,9 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
 Modification history:
+  $Log$
+  Revision 1.3  2000/06/13 19:25:02  leigh
+  Now use SndKit and MKDSP frameworks, cleaned doco
+
 
   11/22/89/daj - Changed to use UnitGenerator C functions for speed.	 
   04/18/90/mmm - Added missing definition of +shouldOptimize
@@ -12,12 +24,11 @@ Modification history:
 #import <MusicKit/MusicKit.h>
 #import "_unitGeneratorInclude.h"
 #import "_exportedPrivateMusickit.h"
-#import <dsp/dsp_memory_map.h>
+#import <MKDSP/dsp_memory_map.h>
 #import "Out1aUG.h"
+
 @implementation Out1aUG:MKUnitGenerator
-{ /* Instance variables go here */
-  BOOL _reservedOut1a1;
-}
+
 #define _set _reservedOut1a1
 
 enum args { sclA, iadr};

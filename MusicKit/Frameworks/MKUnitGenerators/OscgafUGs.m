@@ -1,10 +1,61 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-/* OscgafUGs - oscillators with amplitude and frequency envelopes. */
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    OscgafUGs - oscillators with amplitude and frequency envelopes.
+
+    OscgafUG<a><b><c><d>, where <a> is the output space, <b> is the amplitude
+    input space, <c> is the increment input space, and <b> is the table space.
+
+    OscgafUGs is the superclass of lookup-table unit generators which includes
+    patchpoint arguments for amplitude and frequency increment.  That
+    is, those parameters are intended to be determined by the output of some
+    other unit generator, such as AsympUG.
+
+    Amplitude control is straightforward.  The output of OscgafUG is
+    simply the value of the lookup table times whatever comes in via the
+    ampEnvInput patchpoint.
+
+    Frequency control is not so straightforward.  The number needed here is
+    not actually the frequency, but the increment, which is the amount the
+    lookup table index changes during each sample.  This number, which depends
+    on the desired frequency, the size of the lookup table, the sampling rate,
+    and the DSP word lengths, is used as the amplitude scaler to whatever
+    unit generator is going to be writing into the freqEnvInput patchpoint.
+
+    To make this easier to deal with, a method called intAtFreq:
+    is provided which returns the increment given a frequency.  The lookup
+    table must be set first, via either the setSynthData or setWaveTable
+    methods, because the length of the table must be known to perform the
+    calculation.
+
+    Another method, setIncRatio:, effectively multiplies the frequency
+    increment by its argument.  This is useful when one frequency envelope
+    must control several unit generators with different frequencies in
+    parallel.
+
+    OscgafUG is a non-interpolating oscillator. That means that its
+    fidelity depends on the size of the table (larger tables have lower
+    distortion) and the highest frequency represented in the table. For
+    high-quality synthesis, an interpolating version with the same methods,
+    OscgafiUG, is preferable.
+    However, an interpolating oscillator is also more expensive. OscgafUG
+    is useful in cases where density of texture is more important than
+    fidelity of individual sounds.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
   Modification history:
+  $Log$
+  Revision 1.3  2000/06/13 19:25:01  leigh
+  Now use SndKit and MKDSP frameworks, cleaned doco
+
   
   11/21/89/daj - Fixed bug in shared data mechanism: changed table space to
                  table segment.
@@ -33,56 +84,11 @@
 #import <MusicKit/MusicKit.h>
 #import "_exportedPrivateMusickit.h"
 #import "_unitGeneratorInclude.h"
-#import <SoundKit/SoundKit.h>
+#import <SndKit/SndKit.h>
 #import "OscgafUGs.h"
 
 @implementation OscgafUGs:MKUnitGenerator
-  /* OscgafUG<a><b><c><d>, where <a> is the output space, <b> is the amplitude
-     input space, <c> is the increment input space, and <b> is the table space.
-     
-     OscgafUGs is the superclass of lookup-table unit generators which includes 
-     patchpoint arguments for amplitude and frequency increment.  That
-     is, those parameters are intended to be determined by the output of some
-     other unit generator, such as AsympUG.  
-     
-     Amplitude control is straightforward.  The output of OscgafUG is 
-     simply the value of the lookup table times whatever comes in via the 
-     ampEnvInput patchpoint.
-     
-     Frequency control is not so straightforward.  The number needed here is
-     not actually the frequency, but the increment, which is the amount the
-     lookup table index changes during each sample.  This number, which depends
-     on the desired frequency, the size of the lookup table, the sampling rate, 
-     and the DSP word lengths, is used as the amplitude scaler to whatever
-     unit generator is going to be writing into the freqEnvInput patchpoint.
-     
-     To make this easier to deal with, a method called intAtFreq:
-     is provided which returns the increment given a frequency.  The lookup 
-     table must be set first, via either the setSynthData or setWaveTable
-     methods, because the length of the table must be known to perform the
-     calculation. 
-     
-     Another method, setIncRatio:, effectively multiplies the frequency
-     increment by its argument.  This is useful when one frequency envelope
-     must control several unit generators with different frequencies in 
-     parallel. 
-     
-     OscgafUG is a non-interpolating oscillator. That means that its
-     fidelity depends on the size of the table (larger tables have lower
-     distortion) and the highest frequency represented in the table. For
-     high-quality synthesis, an interpolating version with the same methods,
-     OscgafiUG, is preferable.
-     However, an interpolating oscillator is also more expensive. OscgafUG
-     is useful in cases where density of texture is more important than
-     fidelity of individual sounds.
-     */
-{
-    double _reservedOscgaf1;
-    double incRatio;	/* optional multiplier on frequency Scale */
-    double _reservedOscgaf2;
-    id _reservedOscgaf3;
-    int tableLength;    /* Or 0 if no table. */
-}
+
 #define _phase _reservedOscgaf1
 #define _mag _reservedOscgaf2
 #define _table _reservedOscgaf3

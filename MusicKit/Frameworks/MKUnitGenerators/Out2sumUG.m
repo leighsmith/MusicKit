@@ -1,7 +1,13 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    You instantiate a subclass of the form
+    Out2sumUG<a>, where <a> = space of input
+
+  Copyright 1988-1992, NeXT Inc.  All rights reserved.
+*/
 /* 
 Modification history:
 
@@ -14,18 +20,11 @@ Modification history:
 #import <MusicKit/MusicKit.h>
 #import "_unitGeneratorInclude.h"
 #import "_exportedPrivateMusickit.h"
-#import <dsp/dsp_memory_map.h>
+#import <MKDSP/dsp_memory_map.h>
 #import "Out2sumUG.h"
+
 @implementation Out2sumUG:MKUnitGenerator
-/* 
-	You instantiate a subclass of the form 
-	Out2sumUG<a>, where 
-	<a> = space of input
-	*/
-{
-  BOOL _reservedOut2sum1;
-  double bearingScale;
-}
+
 #define _set _reservedOut2sum1
 
 enum _args { sclA, iadr, sclB};
