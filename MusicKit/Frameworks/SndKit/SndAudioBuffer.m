@@ -522,21 +522,21 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// copyData:
+// copyDataFromBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
-- copyData: (SndAudioBuffer *) from
+- copyDataFromBuffer: (SndAudioBuffer *) from
 {
     if (from != nil) {
         if ([self hasSameFormatAsBuffer: from])
             [data setData: [from data]];
         else {
-            NSLog(@"SndAudioBuffer -copyData: Buffers are different formats from %@ to %@ - unhandled case!", from, self);
+            NSLog(@"SndAudioBuffer -copyDataFromBuffer: Buffers are different formats from %@ to %@ - unhandled case!", from, self);
             // TO DO!
         }
     }
     else
-        NSLog(@"SndAudioBuffer -copyData: ERR: param 'from' is nil!");
+        NSLog(@"SndAudioBuffer -copyDataFromBuffer: ERR: param 'from' is nil!");
     return self;
 }
 
@@ -609,41 +609,51 @@
     // [fromBuffer stereoChannels: stereoChannels];
     short *fromData = [fromBuffer bytes];
     
-    switch ([self dataFormat]) {
-	case SND_FORMAT_FLOAT: {
-	    // Our buffer is in an array of floats, numOfChannelsInBuffer per frame.
-	    // TODO we should rewrite this to manipulate the audio data as array of bytes until we need to actually do the conversion.
-	    // This is preferable to having duplicated code with just a couple of changes for type definitions and arithmetic.
-	    // So the switch statement should be moved inside the loops.
-	    float *buff = [self bytes];  
-	    unsigned long frameIndex;
-	    unsigned long sampleIndex;
-	    unsigned short channelIndex;
-	    
-	    for (frameIndex = 0; frameIndex < fromFrameRange.length; frameIndex++) {
-		long currentBufferSample = (bufferRange.location + frameIndex) * numOfChannelsInBuffer;
-		// LAME always produces stereo data in two separate buffers
-		long currentSample = (fromFrameRange.location + frameIndex) * [fromBuffer channelCount];
+    // Catch the trivial case where both buffers have the same format, if so we just copy data.
+    if([self hasSameFormatAsBuffer: fromBuffer] && bufferRange.length == fromFrameRange.length) {
+	int frameWidth = SndFrameSize([self format]);
+	void *toPtr = [self bytes] + (bufferRange.location * frameWidth);
+	void *fromPtr = [fromBuffer bytes] + (fromFrameRange.location * frameWidth);
+	
+	memcpy(toPtr, fromPtr, fromFrameRange.length * frameWidth);
+    }
+    else {
+	switch ([self dataFormat]) {
+	    case SND_FORMAT_FLOAT: {
+		// Our buffer is in an array of floats, numOfChannelsInBuffer per frame.
+		// TODO we should rewrite this to manipulate the audio data as array of bytes until we need to actually do the conversion.
+		// This is preferable to having duplicated code with just a couple of changes for type definitions and arithmetic.
+		// So the switch statement should be moved inside the loops.
+		float *buff = [self bytes];  
+		unsigned long frameIndex;
+		unsigned long sampleIndex;
+		unsigned short channelIndex;
 		
-		buff[currentBufferSample + stereoChannels[0]] = fromData[currentSample] / 32768.0;
-		buff[currentBufferSample + stereoChannels[1]] = fromData[currentSample + 1] / 32768.0;
-		// Silence any other (neither L or R) channels in the buffer.
-		for(channelIndex = 0; channelIndex < numOfChannelsInBuffer; channelIndex++) {
-		    if(channelIndex != stereoChannels[0] && channelIndex != stereoChannels[1]) {
-			// we use integer values for zero so they will cast appropriate to the size of buff[x].
-			buff[currentBufferSample + channelIndex] = 0;
+		for (frameIndex = 0; frameIndex < fromFrameRange.length; frameIndex++) {
+		    long currentBufferSample = (bufferRange.location + frameIndex) * numOfChannelsInBuffer;
+		    // LAME always produces stereo data in two separate buffers
+		    long currentSample = (fromFrameRange.location + frameIndex) * [fromBuffer channelCount];
+		    
+		    buff[currentBufferSample + stereoChannels[0]] = fromData[currentSample] / 32768.0;
+		    buff[currentBufferSample + stereoChannels[1]] = fromData[currentSample + 1] / 32768.0;
+		    // Silence any other (neither L or R) channels in the buffer.
+		    for(channelIndex = 0; channelIndex < numOfChannelsInBuffer; channelIndex++) {
+			if(channelIndex != stereoChannels[0] && channelIndex != stereoChannels[1]) {
+			    // we use integer values for zero so they will cast appropriate to the size of buff[x].
+			    buff[currentBufferSample + channelIndex] = 0;
+			}
 		    }
 		}
+		// Silence the rest of the buffer, all channels
+		for (sampleIndex = (bufferRange.location + frameIndex) * numOfChannelsInBuffer; sampleIndex < (bufferRange.location + bufferRange.length) * numOfChannelsInBuffer; sampleIndex++) {
+		    buff[sampleIndex] = 0;
+		}
+		
+		break;
 	    }
-	    // Silence the rest of the buffer, all channels
-	    for (sampleIndex = (bufferRange.location + frameIndex) * numOfChannelsInBuffer; sampleIndex < (bufferRange.location + bufferRange.length) * numOfChannelsInBuffer; sampleIndex++) {
-		buff[sampleIndex] = 0;
-	    }
-	    
-	    break;
+	    default:
+		NSLog(@"SndAudioBuffer -copyFromBuffer:intoFrameRange:fromRange: - unhandled data format %d", [self dataFormat]);
 	}
-	default:
-	    NSLog(@"SndMP3 -copyFromBuffer:intoFrameRange:fromRange: - unhandled data format %d", [self dataFormat]);
     }
     return fromFrameRange.length;
 }
@@ -680,7 +690,7 @@
 	NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
     }
     else {
-	if (format.frameCount < newSampleFrameCount)  { // enlarge the data if setting longer
+	if (format.frameCount < newSampleFrameCount) { // enlarge the data if setting longer
 	    [data setLength: newLengthInBytes];
 	    if (oldLengthInBytes < newLengthInBytes) {
 		NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};

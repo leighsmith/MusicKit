@@ -232,13 +232,13 @@ typedef enum {
 - (id) copyWithZone: (NSZone *) zone;
 
 /*!
-  @method     copyData:
+  @method     copyDataFromBuffer:
   @abstract
   @discussion
   @param      ab
   @result     self.
 */
-- copyData: (SndAudioBuffer *) ab;
+- copyDataFromBuffer: (SndAudioBuffer *) ab;
 
 /*!
   @method     copyBytes:count:format:
@@ -457,7 +457,7 @@ typedef enum {
   @result returns the new buffer instance.
  */
 - (SndAudioBuffer *) audioBufferConvertedToFormat: (SndSampleFormat) toDataFormat
-					 channelCount: (int) toChannelCount
+				     channelCount: (int) toChannelCount
 				     samplingRate: (double) toSamplingRate;
 
 /*!
@@ -489,7 +489,7 @@ typedef enum {
 - (long) convertBytes: (void *) fromDataPtr
        intoFrameRange: (NSRange) bufferFrameRange
            fromFormat: (SndSampleFormat) fromDataFormat
-             channelCount: (int) fromChannelCount
+	 channelCount: (int) fromChannelCount
          samplingRate: (double) fromSamplingRate;
 
 /*!
@@ -502,7 +502,7 @@ typedef enum {
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
 - convertToFormat: (SndSampleFormat) toDataFormat
-	 channelCount: (int) toChannelCount;
+     channelCount: (int) toChannelCount;
 
 /*!
   @method convertToFormat:channelCount:samplingRate:useLargeFilter:interpolateFilter:useLinearInterpolation:
@@ -519,7 +519,7 @@ typedef enum {
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
 - convertToFormat: (SndSampleFormat) toDataFormat
-	 channelCount: (int) toChannelCount
+     channelCount: (int) toChannelCount
      samplingRate: (double) toSampleRate
    useLargeFilter: (BOOL) largeFilter
 interpolateFilter: (BOOL) interpolateFilter
@@ -564,7 +564,6 @@ SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, SndSampleFormat 
   @param interpFilter When not in "fast" mode, controls whether or not the
                      filter coefficients are interpolated (disregarded in fast mode).
   @param fast if TRUE, uses a fast, noninterpolating resample routine.
-  @result void
  */
 SNDKIT_API void SndChangeSampleRate(const SndFormat fromSound,
 				    void *inputPtr,
@@ -593,7 +592,7 @@ SNDKIT_API void SndChangeSampleRate(const SndFormat fromSound,
  */
 SNDKIT_API void SndChannelMap (void *inPtr,
                                void *outPtr,
-                               int frames,
+                               long frames,
                                int oldNumChannels,
                                int newNumChannels,
                                SndSampleFormat df,
@@ -603,23 +602,30 @@ SNDKIT_API void SndChannelMap (void *inPtr,
 /*!
   @function SndChannelDecrease
   @abstract Decreases the number of channels in the buffer, in place.
-  @discussion Because samples are read and averaged, must be hostendian. Only
-           exact divisors are supported (anything to 1, even numbers to even numbers)
+  @discussion Because samples are read and averaged, must be hostendian. 
+	      Remaps channels in an arbitary fashion, decreasing the channels by mixing them.
+              The channel map determines which old channels are to be mixed to the new channel arrangement. 
+              This is an array of oldNumChannels length containing the indexes of the new channels.
+              Channel indexes are zero based. If an index in the map is negative, that channel is zeroed in the output.
+              For example, to map a quadraphonic file to stereo where the even numbered channels project to the left,
+              odd numbered channels to the right, the map would be 0 1 0 1.
   @param inPtr
   @param outPtr
   @param frames
   @param oldNumChannels
   @param newNumChannels
   @param df data format of buffer
-  @result does not return error code.
+  @param map An array oldNumChannels long indicating which oldNumChannel to use in the new channel. 
+             Not yet implemented: A channel index of -1 indicates zeroing (silencing) that channel.
 */
 
-SNDKIT_API void SndChannelDecrease (void *inPtr,
-				    void *outPtr,
-				    unsigned int frames,
-				    int oldNumChannels,
-				    int newNumChannels,
-				    SndSampleFormat df);
+SNDKIT_API void SndChannelDecrease(void *inPtr,
+				   void *outPtr,
+				   unsigned long frames,
+				   int oldNumChannels,
+				   int newNumChannels,
+				   SndSampleFormat df,
+				   short *map);
 
 @end
 
