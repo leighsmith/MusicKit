@@ -1038,7 +1038,7 @@ is rearticulated and the rearticulating <classname>MKNote</classname>
 	  <title>Scale and Offset</title>
 
 <para>Associated with each <classname>MKEnvelope</classname> parameter
-provided by the Music Kit are two related parameters that interpret
+provided by the <productname>MusicKit</productname> are two related parameters that interpret
 the <classname>MKEnvelope</classname>'s y values.  The names of these
 parameters are formed as <emphasis
 role="bold">MK_</emphasis><emphasis>attribute</emphasis><emphasis
@@ -1815,21 +1815,21 @@ id aSound = [Snd new];
 stored in the <classname>MKSamples</classname> object when <emphasis
 role="bold">setSound:</emphasis> is invoked, so it's important that
 you fill the <classname>Snd</classname> with data before invoking the
-method.  <xref linkend="Chapter2"> describes ways to create Sound data.</para>
+method.  <xref linkend="IntroSndKit"> describes ways to create Sound data.</para>
 
 <para>You can also associate a <classname>MKSamples</classname> with a
 <classname>Snd</classname> by reading a soundfile, through the
-<emphasis role="bold">readSoundfile:</emphasis> method.  The <classname>MKSamples</classname>
-object creates a <classname>Snd</classname> object and then reads the
-soundfile by sending <emphasis
-role="bold">newFromSoundfile:</emphasis> to the
+<emphasis role="bold">readSoundfile:</emphasis> method.  The
+<classname>MKSamples</classname> object creates a
+<classname>Snd</classname> object and then reads the soundfile by
+sending <emphasis role="bold">newFromSoundfile:</emphasis> to the
 <classname>Snd</classname>.  The argument is a UNIX pathname that must
 include the soundfile-identifying &ldquo;.snd&rdquo; extension.</para>
 
-<para>A <classname>MKSamples</classname>' <classname>Snd</classname> object must contain one
-channel of 16-bit linear, sampled data.  The length of the data (the
-number of samples) must be a power of two if it is to be used for an
-oscillator table.
+<para>A <classname>MKSamples</classname>' <classname>Snd</classname>
+object must contain one channel of 16-bit linear, sampled data.  The
+length of the data (the number of samples) must be a power of two if
+it is to be used for an oscillator table.
 </para>
       </sect3>
       <sect3><title>Setting a <classname>MKWaveTable</classname> in a
@@ -1841,8 +1841,9 @@ oscillator table.
 <classname>MKNote</classname> and then play the
 <classname>MKNote</classname> using a
 <classname>MKSynthPatch</classname> that recognizes the parameter.
-Most of the Music Kit <classname>MKSynthPatch</classname>es recognize
-the <emphasis role="bold">MK_waveform</emphasis> parameter:</para>
+Most of the <productname>MusicKit</productname>
+<classname>MKSynthPatch</classname>es recognize the <emphasis
+role="bold">MK_waveform</emphasis> parameter:</para>
 
 <programlisting>
 /* Create a MKNote. */
@@ -1870,8 +1871,8 @@ depends on the <classname>MKSynthPatch</classname> to which the
 <classname>MKNote</classname> objects.  As their names imply, a
 <classname>MKPart</classname> represents a series of
 <classname>MKNote</classname>s that are realized on the same
-<classname>MKInstrument</classname>; a <classname>MKScore</classname> represents all or part of
-a composition and consists of some number of
+<classname>MKInstrument</classname>; a <classname>MKScore</classname>
+represents all or part of a composition and consists of some number of
 <classname>MKPart</classname>s.  For storage, a
 <classname>MKScore</classname> can be written to the disk as a
 scorefile or a midifile.</para>
