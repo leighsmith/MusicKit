@@ -27,7 +27,7 @@
 #define SERVER_DEBUG 0
 
 #define HAS_DATA 1
-#define NO_DATA  2
+#define HAS_NO_DATA  2
 
 @implementation SndExpt
 
@@ -42,7 +42,7 @@
     bImageInMemory  = FALSE;
     cachedBuffer    = [SndAudioBuffer new];
     cacheLock       = [NSLock new];
-    readAheadLock   = [[NSConditionLock alloc] initWithCondition: NO_DATA];
+    readAheadLock   = [[NSConditionLock alloc] initWithCondition: HAS_NO_DATA];
     readAheadBuffer = nil;
   }
   return self;
@@ -241,7 +241,7 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 		NSLog(@"Swapped in Buffer with range: [%i, %i]",cachedBufferRange.location, cachedBufferRange.length);
 #endif
 	    }
-	    [readAheadLock unlockWithCondition: NO_DATA];
+	    [readAheadLock unlockWithCondition: HAS_NO_DATA];
 	}
 
 	if (cachedBuffer != nil) {
