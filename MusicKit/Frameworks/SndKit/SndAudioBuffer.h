@@ -40,7 +40,7 @@ typedef enum {
 /*!
   @class SndAudioBuffer
   @abstract   An in-memory audio buffer
-  @discussion A SndAudioBuffer represents sound data in memory. As distinct from a Snd class, it may hold small
+  @discussion A SndAudioBuffer represents sound data in contiguous memory. As distinct from a Snd class, it holds typically small
 	      chunks of sound data ready for signal processing or performance. Using classes such as SndAudioBufferQueue
               enables a fragmented arrangement of buffers across memory, typically for processing constraints. SndAudioBuffers
               are the closest SndKit match to the underlying audio hardware buffer. In addition to holding the sample data,
@@ -326,7 +326,7 @@ typedef enum {
 
 /*!
   @method     channelCount
-  @abstract
+  @abstract   Returns the number of channels in the audio buffer.
   @discussion
   @result     Number of channels
 */
@@ -336,9 +336,17 @@ typedef enum {
   @method     dataFormat
   @abstract   Returns the format of the sample data as a SndSampleFormat enumerated type.
   @discussion
-  @result     Data format identifier
+  @result     Data format enumerated type.
 */
 - (SndSampleFormat) dataFormat;
+
+/*!
+  @method     format
+  @abstract   Returns the format (number of frames, channels, dataFormat) of the audio buffer as a SndFormat structure.
+  @discussion
+  @result     Returns a SndFormat.
+ */
+- (SndFormat) format;
 
 /*!
   @method     bytes

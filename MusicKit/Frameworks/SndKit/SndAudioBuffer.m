@@ -384,10 +384,11 @@
 - (void *) bytes               { return [data mutableBytes]; }
 - (int) channelCount           { return format.channelCount; }
 - (double) samplingRate        { return format.sampleRate; }
+- (SndFormat) format           { return format; }
 
-  ////////////////////////////////////////////////////////////////////////////////
-  // duration
-  ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// duration
+////////////////////////////////////////////////////////////////////////////////
 
 - (double) duration
 {
@@ -583,8 +584,7 @@
 	long   sampleSize;
 	NSRange rangeInBytes;
 	
-	// sampleSize = SndFrameSize(format); // TODO when SndFrameSize takes SndFormat parameter, not SndSoundStruct.
-        sampleSize = SndFramesToBytes(1, format.channelCount, format.dataFormat);
+	sampleSize = SndFrameSize(format);
 
 	rangeInBytes.location = rangeInSamples.location * sampleSize;
 	rangeInBytes.length = rangeInSamples.length * sampleSize;
@@ -654,8 +654,7 @@
 
 - (int) frameSizeInBytes
 {
-    // TODO return SndFrameSize(format);
-    return format.channelCount * SndSampleWidth(format.dataFormat);
+    return SndFrameSize(format);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
