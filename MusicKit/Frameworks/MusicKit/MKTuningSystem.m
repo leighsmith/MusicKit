@@ -513,28 +513,23 @@ Returns self or nil if aKeyNum is out of bounds. */
     return MAXINT;
 }    
 
-#ifdef GNUSTEP
-
-+ (void) _transpose: (double) semitones
+#if 0
++(Class)_transpose:(double)semitones
     /* this is an unfortunate duplicate of the method below, because of gcc silliness
     * on GNUSTEP
     */
 {
-#if 0
-  [MKTuningSystem transpose: semitones];
-#else
-    register int keyNumIndex;
+    register int i;
     register _ScorefileVar **p = pitchVars;
     double fact = pow(2.0, semitones / 12.0);
     
     dontSort = YES;
-    for (keyNumIndex = 0; keyNumIndex < MIDI_NUMKEYS; keyNumIndex++, p++) 
-	_MKSetDoubleSFVar(*p, _MKParAsDouble(_MKSFVarGetParameter(*p)) * fact);
+    for (i=0; i<MIDI_NUMKEYS; i++, p++)
+	_MKSetDoubleSFVar(*p,_MKParAsDouble(_MKSFVarGetParameter(*p)) * fact);
     dontSort = NO;
     sortPitches(nil);
-#endif
+    return self;
 }
-
 #endif
 
 + (void) transpose: (double) semitones
