@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2000/10/11 16:56:50  leigh
+  Removed unnecessary _parameters redefinition
+
   Revision 1.9  2000/10/04 06:30:18  skot
   Added endTime method
 
@@ -213,11 +216,7 @@ MKDataType;
                              // If performer is not nil, uses [performer conductor]
 
     /* The following are for internal use only.  */
-#if 0
-    NSMutableArray *_parameters;       /* Set of parameter values. */
-#else
     NSHashTable *_parameters;       /* Set of parameter values. */
-#endif
     unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of Music Kit parameters. */
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */
     short _highAppPar; /* Highest bit in _appPars (0 if none). */
