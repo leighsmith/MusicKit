@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.4  2000/09/18 22:27:34  leigh
+  reduced warnings from unassigned instruments and performers
+
   Revision 1.3  2000/04/27 01:55:31  leigh
   Usage reflects search path for libraries, release bugs fixed, proper status displayed
 
@@ -307,7 +310,7 @@ int main(int argc, const char *argv[])
     int i,repeatCount,repeat;
     NSString *inputFile;
     int orchPar;
-    NSMutableArray *instruments;
+    NSMutableArray *instruments = nil;
     NSData *aStream;
     double midiOffset;
     BOOL weGotAnOpenOrch = NO;
@@ -322,7 +325,7 @@ int main(int argc, const char *argv[])
     int orchIndex = 0;
     NSString *outputFile = nil;
     NSString *commandsFile = nil;
-    MKPerformer *aPerformer;
+    MKPerformer *aPerformer = nil;
     double samplingRate;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
