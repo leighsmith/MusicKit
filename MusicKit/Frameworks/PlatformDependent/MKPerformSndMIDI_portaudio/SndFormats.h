@@ -15,34 +15,36 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #ifndef __SNDFORMATS__
 #define __SNDFORMATS__
 
-#define SND_FORMAT_UNSPECIFIED          (0)
-#define SND_FORMAT_MULAW_8              (1)
-#define SND_FORMAT_LINEAR_8             (2)
-#define SND_FORMAT_LINEAR_16            (3)
-#define SND_FORMAT_LINEAR_24            (4)
-#define SND_FORMAT_LINEAR_32            (5)
-#define SND_FORMAT_FLOAT                (6)
-#define SND_FORMAT_DOUBLE               (7)
-#define SND_FORMAT_INDIRECT             (8)
-#define SND_FORMAT_NESTED               (9)
-#define SND_FORMAT_DSP_CORE             (10)
-#define SND_FORMAT_DSP_DATA_8           (11)
-#define SND_FORMAT_DSP_DATA_16          (12)
-#define SND_FORMAT_DSP_DATA_24          (13)
-#define SND_FORMAT_DSP_DATA_32          (14)
-#define SND_FORMAT_DISPLAY              (16)
-#define SND_FORMAT_MULAW_SQUELCH        (17)
-#define SND_FORMAT_EMPHASIZED           (18)
-#define SND_FORMAT_COMPRESSED           (19)
-#define SND_FORMAT_COMPRESSED_EMPHASIZED (20)
-#define SND_FORMAT_DSP_COMMANDS         (21)
-#define SND_FORMAT_DSP_COMMANDS_SAMPLES (22)
-#define SND_FORMAT_ADPCM_G721           (23)
-#define SND_FORMAT_ADPCM_G722           (24)
-#define SND_FORMAT_ADPCM_G723_3         (25)
-#define SND_FORMAT_ADPCM_G723_5         (26)
-#define SND_FORMAT_ALAW_8               (27)
-#define SND_FORMAT_AES                  (28)
-#define SND_FORMAT_DELTA_MULAW_8	(29)
+typedef enum {
+    SND_FORMAT_UNSPECIFIED          = 0,
+    SND_FORMAT_MULAW_8              = 1, /* u-law encoding */
+    SND_FORMAT_LINEAR_8             = 2, /* Linear 8 bits */
+    SND_FORMAT_LINEAR_16            = 3, /* Linear 16 bits */
+    SND_FORMAT_LINEAR_24            = 4, /* Linear 24 bits */
+    SND_FORMAT_LINEAR_32            = 5, /* Linear 32 bits */
+    SND_FORMAT_FLOAT                = 6, /* IEEE FP 32 bits */
+    SND_FORMAT_DOUBLE               = 7,
+    SND_FORMAT_INDIRECT             = 8,
+    SND_FORMAT_NESTED               = 9,
+    SND_FORMAT_DSP_CORE             = 10,
+    SND_FORMAT_DSP_DATA_8           = 11,
+    SND_FORMAT_DSP_DATA_16          = 12,
+    SND_FORMAT_DSP_DATA_24          = 13,
+    SND_FORMAT_DSP_DATA_32          = 14,
+    SND_FORMAT_DISPLAY              = 16,
+    SND_FORMAT_MULAW_SQUELCH        = 17,
+    SND_FORMAT_EMPHASIZED           = 18,
+    SND_FORMAT_COMPRESSED           = 19,
+    SND_FORMAT_COMPRESSED_EMPHASIZED = 20,
+    SND_FORMAT_DSP_COMMANDS         = 21,
+    SND_FORMAT_DSP_COMMANDS_SAMPLES = 22,
+    SND_FORMAT_ADPCM_G721           = 23,
+    SND_FORMAT_ADPCM_G722           = 24,
+    SND_FORMAT_ADPCM_G723_3         = 25,
+    SND_FORMAT_ADPCM_G723_5         = 26,
+    SND_FORMAT_ALAW_8               = 27, /* a-law encoding */
+    SND_FORMAT_AES                  = 28,
+    SND_FORMAT_DELTA_MULAW_8	    = 29
+} SndSampleFormat;
 
 #endif
