@@ -1,5 +1,11 @@
 /* $Id$
- */
+  Example Application within the MusicKit
+
+  Description:
+    See MidiRecord.m for details.
+
+  Portions Copyright (c) 1999-2004, The MusicKit Project.
+*/
 
 #import <AppKit/AppKit.h>
 #import <MusicKit/MusicKit.h>
@@ -26,7 +32,7 @@
 - (void) go: sender;
 - (void) saveAs: sender;
 - (void) save: sender;
-- (void) showInfoPanel: sender;
+- (IBAction) showInfoPanel: sender;
 - (void) setDriverName: (id) sender;
 - init;
 @end
