@@ -14,6 +14,12 @@
 #Modification history:
 #
 #  $Log$
+#  Revision 1.2  2001/10/31 17:26:19  sbrandon
+#  - now autodetects whether compiling on mingw32 or unix, and includes either
+#    pa_linux_oss or ps_win_ds portaudio code.
+#  - new target: libMKPerformSndMIDI.def.new  used to auto generate windows dll
+#    export def file (rename to libMKPerformSndMIDI.def after creating)
+#
 #  Revision 1.1  2001/07/02 22:03:48  sbrandon
 #  - initial revision. Still a work in progress, but does allow the MusicKit
 #    and SndKit to compile on GNUstep.
@@ -30,11 +36,18 @@
 #
 
 # Things to do before compiling
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_win_ds
+else
+  MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_linux_oss
+endif
+
 before-all::
-	@test -d $(GNUSTEP_OBJ_DIR)/portaudio/pa_common || \
+	test -d $(GNUSTEP_OBJ_DIR)/portaudio/pa_common || \
 	mkdir -p $(GNUSTEP_OBJ_DIR)/portaudio/pa_common ; \
-	test -d $(GNUSTEP_OBJ_DIR)/portaudio/pa_linux_oss || \
-	mkdir -p $(GNUSTEP_OBJ_DIR)/portaudio/pa_linux_oss ;
+	test -d $(MK_PA_OBJ_DIR) || \
+	mkdir -p $(MK_PA_OBJ_DIR) ;
 
 # Things to do after compiling
 # after-all::
@@ -68,3 +81,12 @@ before-all::
 
 # Things to do after checking
 # after-check::
+
+libMKPerformSndMIDI.def.new: $(GNUSTEP_OBJ_DIR)/*.o \
+                             $(GNUSTEP_OBJ_DIR)/portaudio/*/*.o
+	rm -f $@
+	rm -f _tmp.def
+	cat win32-def.top > $@
+	nm $^ | grep '^........ [T] _' | sed 's/[^_]*_//' > _tmp.def
+	cat _tmp.def | grep "_class_name_" >> $@
+	rm -rf _tmp.def
