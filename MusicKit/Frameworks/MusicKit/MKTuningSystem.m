@@ -1,20 +1,27 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-*/
+  HEADER FILES: MusicKit.h
 
+  Description: 
+    Each TuningSystem object manages a mapping from keynumbers to frequencies.
+    There are MIDI_NUMKEYS individually tunable elements. The tuning system
+    which is accessed by pitch variables is referred to as the "installed
+    tuning system".
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University 
+*/
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/25 22:08:41  leigh
+  Converted from Storage to NSArray operation
+
   Revision 1.2  1999/07/29 01:16:44  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -43,19 +50,10 @@ Modification history:
 #import "_ScorefileVar.h"
 #import "tokens.h"
 #import "TuningSystemPrivate.h"
-#import <objc/Storage.h>
 //sb: (for MIDI_NUMKEYS in equaltempered */
 #import "midi_spec.h"
 
-@implementation MKTuningSystem:NSObject
-{
-    id frequencies; /* Array of frequencies, indexed by keyNum. */
-    void *_reservedTuningSystem1;
-}
-/* Each TuningSystem object manages a mapping from keynumbers to frequencies.
-   There are MIDI_NUMKEYS individually tunable elements. The tuning system
-   which is accessed by pitch variables is referred to as the "installed
-   tuning system". */
+@implementation MKTuningSystem
 
 #import "equalTempered.m"
 
@@ -246,14 +244,15 @@ BOOL _MKFreqPrintfunc(_MKParameter *param,NSMutableData *aStream,
     return YES;
 }    
 
-static void install(double *arr) 
+static void install(NSArray *arrOFreqs) 
 {
-    register double *p = arr;
-    register double *pEnd = arr + MIDI_NUMKEYS;
+    unsigned int i;
     register id *idp = pitchVars;
+
     dontSort = YES;
-    while (p < pEnd)
-      _MKSetDoubleSFVar(*idp++,*p++);
+    for(i = 0; i < MIDI_NUMKEYS; i++) {
+        _MKSetDoubleSFVar(*idp++, [[arrOFreqs objectAtIndex: i] doubleValue]);
+    }
     dontSort = NO;
     sortPitches(nil);
 }
@@ -322,6 +321,8 @@ void _MKTuningSystemInit()
 					   "8","9","10"};
     NSString * oct = [NSString stringWithCString:octaveNames[0]]; /* Pointer to const char */
     NSString * nOct = [NSString stringWithCString:octaveNames[1]];
+    NSMutableArray *equalTempered12Array;
+
     if (tuningInited)
       return; 
     tuningInited = YES;
@@ -349,7 +350,12 @@ void _MKTuningSystemInit()
 	freqToMidi[i]->freqId = pitchVars[i];
 	freqToMidi[i]->keyNum = i;
     }
-    install((double *)equalTempered12);
+    equalTempered12Array = [NSMutableArray arrayWithCapacity: MIDI_NUMKEYS];
+
+    for(i=0; i < MIDI_NUMKEYS; i++) {
+        [equalTempered12Array insertObject: [NSNumber numberWithDouble: equalTempered12[i]] atIndex: i];
+    }
+    install(equalTempered12Array);
 }
 
 #define VERSION2 2
@@ -377,8 +383,8 @@ void _MKTuningSystemInit()
     [super init];
     if (!tuningInited)
       _MKCheckInit();
-    frequencies = [Storage newCount:MIDI_NUMKEYS elementSize:8
-		description:"d"];
+    frequencies = [NSMutableArray arrayWithCapacity: MIDI_NUMKEYS];
+    [frequencies retain];
     [self setTo12ToneTempered];
     return self;
 }
@@ -392,7 +398,7 @@ void _MKTuningSystemInit()
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     /*[super encodeWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"TuningSystem"] == VERSION2) 
+    if ([aDecoder versionForClassName:@"MKTuningSystem"] == VERSION2) 
       frequencies = [[aDecoder decodeObject] retain];
     return self;
 }
@@ -400,8 +406,11 @@ void _MKTuningSystemInit()
 -setTo12ToneTempered
   /* Sets receiver to 12-tone equal-tempered tuning. */
 {
-    memcpy((double *)[frequencies elementAt:0],equalTempered12,
-	   MIDI_NUMKEYS * sizeof(double)); 
+    unsigned int i;
+
+    for(i = 0; i < MIDI_NUMKEYS; i++) {
+        [frequencies replaceObjectAtIndex: i withObject: [NSNumber numberWithDouble: equalTempered12[i]]];
+    }
     /* Copy from equalTempered12 to us. */
     return self;
 }
@@ -411,7 +420,7 @@ void _MKTuningSystemInit()
      that any changes to the contents of the receiver are not automatically
      installed. You must send install again in this case. */
 {
-    install((double *)[frequencies elementAt:0]);
+    install(frequencies);
     return self;
 }
 
@@ -427,11 +436,7 @@ void _MKTuningSystemInit()
 //    TuningSystem *newObj = [super copyWithZone:zone];
     MKTuningSystem *newObj = NSCopyObject(self, 0, zone);//sb: must check for deep copying
     
-    newObj->frequencies = [Storage newCount:MIDI_NUMKEYS elementSize:8
-			 description:"d"];
-    memcpy((double *)[newObj->frequencies elementAt:0],
-	   (double *)[frequencies elementAt:0],
-	   MIDI_NUMKEYS * sizeof(double)); 
+    newObj->frequencies = [[NSMutableArray arrayWithArray: frequencies] retain];
     return newObj;
 }
 
@@ -452,19 +457,14 @@ void _MKTuningSystemInit()
 -initFromInstalledTuningSystem
 {
     register int i;
-    register double *p;
     register id *pit;
+
     [super init];
     if (!tuningInited)
       _MKCheckInit();
-/*  frequencies = [Storage newCount:MIDI_NUMKEYS elementSize:sizeof(double)
-	       description:"d"];
-*/
-    frequencies = [Storage newCount:MIDI_NUMKEYS elementSize:8
-	       description:"d"];
-    p = (double *)[frequencies elementAt:0];
+    frequencies = [[NSMutableArray arrayWithCapacity: MIDI_NUMKEYS] retain];
     for (i=0, pit = pitchVars; i<MIDI_NUMKEYS; i++)
-      *p++ = _MKParAsDouble(_MKSFVarGetParameter(*pit++));
+        [frequencies insertObject: [NSNumber numberWithDouble: _MKParAsDouble(_MKSFVarGetParameter(*pit++))] atIndex: i];
     return self;
 }
 
@@ -483,9 +483,9 @@ void _MKTuningSystemInit()
   /* Returns freq For specified keyNum in the receiver or MK_NODVAL if the
      keyNum is illegal . */ 
 {
-    if (aKeyNum > MIDI_NUMKEYS)
+    if (aKeyNum < 0 || aKeyNum > MIDI_NUMKEYS)
       return MK_NODVAL;
-    return (*((double *)[frequencies elementAt:aKeyNum]));
+    return [[frequencies objectAtIndex: aKeyNum] doubleValue];
 }
 
 -setKeyNum:(MKKeyNum)aKeyNum toFreq:(double)freq
@@ -494,7 +494,7 @@ void _MKTuningSystemInit()
 {
     if (aKeyNum > MIDI_NUMKEYS)
       return nil;
-    (*((double *)[frequencies elementAt:aKeyNum])) = freq;
+    [frequencies insertObject: [NSNumber numberWithDouble: freq] atIndex: aKeyNum];
     return self;
 }
 
@@ -519,13 +519,12 @@ void _MKTuningSystemInit()
 {       
     register int i;
     register double fact;
-    double *arr = (double *)[frequencies elementAt:0];
     if (aKeyNum > MIDI_NUMKEYS)
       return nil;
-    for (fact = 1.0, i = aKeyNum; i >= 0; i -= 12, fact *= .5) 
-      arr[i] = freq * fact;
+    for (fact = 1.0, i = aKeyNum; i >= 0; i -= 12, fact *= .5)
+        [frequencies replaceObjectAtIndex:i withObject: [NSNumber numberWithDouble: freq * fact]];
     for (fact = 2.0, i = aKeyNum + 12; i < MIDI_NUMKEYS; i += 12, fact *= 2.0)
-      arr[i] = freq * fact;
+        [frequencies replaceObjectAtIndex:i withObject: [NSNumber numberWithDouble: freq * fact]];
     return self;
 }
 
@@ -595,11 +594,12 @@ int _MKFindPitchVar(id aVar)
      If semitones is negative, the receiver is transposed down.
      */
 {
+    unsigned int i;
     register double fact = pow(2.0,semitones/12.0);
-    register double *p = (double *)[frequencies elementAt:0];
-    register double *pEnd = p + MIDI_NUMKEYS; 
-    while (p < pEnd)
-      *p++ *= fact;
+    for(i = 0; i < MIDI_NUMKEYS; i++) {
+        [frequencies replaceObjectAtIndex:i withObject:
+            [NSNumber numberWithDouble: [[frequencies objectAtIndex: i] doubleValue] * fact]];
+    }
     return self;
 }
 

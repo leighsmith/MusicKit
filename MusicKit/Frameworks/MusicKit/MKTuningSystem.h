@@ -2,9 +2,53 @@
 /*
   $Id$
   Defined In: The MusicKit
+  HEADER FILES: MusicKit.h
+
+  Description: 
+    A TuningSystem object represents a musical tuning system by mapping
+    key numbers to frequencies.  The method setFreq:forKeyNum: defines the
+    frequency value (in hertz) for a specified key number.  To tune a key
+    number and its octaves at the same time, invoke the method
+    setFreq:forKeyNumAndOctaves:.  The frequencies in a TuningSystem
+    object don't have to increase as the key numbers increase -- you can
+    even create a TuningSystem that descends in pitch as the key numbers
+    ascend the scale.  The freqForKeyNum: method retrieves the frequency
+    value of the argument key number.  Such values are typically used to
+    set the frequency of a Note object:
+   
+    * #import <musickit/keynums.h>
+    * [aNote setPar:MK_freq toDouble:[aTuningSystem freqForKeyNum:c4k]];
+   
+    The TuningSystem class maintains a master system called the
+    installed tuning system.  By default, the installed tuning system is
+    tuned to 12-tone equal-temperament with a above middle c set to 440
+    Hz.  A key number that doesn't reference a TuningSystem object takes
+    its frequency value from the installed tuning system.  The frequency
+    value of a pitch variable is also taken from the installed system.
+    The difference between key numbers and pitch variables is explained in
+    Chapter 10, "Music."  The entire map of key numbers, pitch variables,
+    and frequency values in the default 12-tone equal-tempered system is
+    given in Appendix G, "Music Tables."
+   
+    You can install your own tuning system by sending the install
+    message to a TuningSystem instance.  Keep in mind that this doesn't
+    install the object itself, it simply copies its key number-frequency
+    map.  Subsequent changes to the object won't affect the installed
+    tuning system (unless you again send the object the install message).
+   
+    Note that while key numbers can also be used to define pitch for Notes
+    used in MIDI performance, the TuningSystem object has no affect on the
+    precise frequency of a Note sent to a MIDI instrument.  The
+    relationship between key numbers and frequencies on a MIDI instrument
+    is set on the instrument itself. (An application can, of course, use
+    the information in a TuningSystem object to configure the MIDI
+    instrument.)
 */
 /*
   $Log$
+  Revision 1.3  2000/04/25 22:08:41  leigh
+  Converted from Storage to NSArray operation
+
   Revision 1.2  1999/07/29 01:25:52  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -45,51 +89,8 @@ extern double MKTranspose(double freq,double semiTonesUp);
     A negative value will transpose the note down. */
 
 @interface MKTuningSystem : NSObject
-/* 
- * 
- * A TuningSystem object represents a musical tuning system by mapping
- * key numbers to frequencies.  The method setFreq:forKeyNum: defines the
- * frequency value (in hertz) for a specified key number.  To tune a key
- * number and its octaves at the same time, invoke the method
- * setFreq:forKeyNumAndOctaves:.  The frequencies in a TuningSystem
- * object don't have to increase as the key numbers increase -- you can
- * even create a TuningSystem that descends in pitch as the key numbers
- * ascend the scale.  The freqForKeyNum: method retrieves the frequency
- * value of the argument key number.  Such values are typically used to
- * set the frequency of a Note object:
- * 
- * * #import <musickit/keynums.h>
- * * [aNote setPar:MK_freq toDouble:[aTuningSystem freqForKeyNum:c4k]];
- * 
- * The TuningSystem class maintains a master system called the
- * installed tuning system.  By default, the installed tuning system is
- * tuned to 12-tone equal-temperament with a above middle c set to 440
- * Hz.  A key number that doesn't reference a TuningSystem object takes
- * its frequency value from the installed tuning system.  The frequency
- * value of a pitch variable is also taken from the installed system.
- * The difference between key numbers and pitch variables is explained in
- * Chapter 10, "Music."  The entire map of key numbers, pitch variables,
- * and frequency values in the default 12-tone equal-tempered system is
- * given in Appendix G, "Music Tables."
- *
- * You can install your own tuning system by sending the install
- * message to a TuningSystem instance.  Keep in mind that this doesn't
- * install the object itself, it simply copies its key number-frequency
- * map.  Subsequent changes to the object won't affect the installed
- * tuning system (unless you again send the object the install message).
- * 
- * Note that while key numbers can also be used to define pitch for Notes
- * used in MIDI performance, the TuningSystem object has no affect on the
- * precise frequency of a Note sent to a MIDI instrument.  The
- * relationship between key numbers and frequencies on a MIDI instrument
- * is set on the instrument itself. (An application can, of course, use
- * the information in a TuningSystem object to configure the MIDI
- * instrument.)
- * 
- */
 {
-    id frequencies; /* Storage object of frequencies, indexed by keyNum. */
-    void *_reservedTuningSystem1;
+    NSMutableArray *frequencies; /* Array object of frequencies, indexed by keyNum. */
 }
 
 - init;
@@ -201,7 +202,5 @@ extern double MKTranspose(double freq,double semiTonesUp);
 + new; 
 
 @end
-
-
 
 #endif
