@@ -17,6 +17,9 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.8  2002/05/09 11:49:09  sbrandon
+#  added support for rpm creation
+#
 #  Revision 1.7  2002/01/09 12:14:39  sbrandon
 #  updated portaudio from v15b to v17. This primarily fixes bugs in the linux
 #  (now called the unix) implementation, but there are other changes which
@@ -49,6 +52,9 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 
 include $(GNUSTEP_MAKEFILES)/common.make
+
+PACKAGE_NAME = MKPerformSndMIDI
+VERSION = 5.4.1
 
 #include ../Version
 #include ../config.mak
