@@ -19,6 +19,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #include "SndResample.h"
 
 #else
+#include "SndFunctions.h"
+#include "SndResample.h"
 
 #ifndef WIN32
 #import <libc.h>
