@@ -1,20 +1,24 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-  */
+  HEADER FILES: MusicKit.h
 
+  Description:
+    Interprets MIDI data according to the MIDI V1.0 Spec.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/07 18:23:28  leigh
+  Upgraded logging to NSLog
+
   Revision 1.2  1999/07/29 01:26:14  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -355,8 +359,7 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	      midiInList *l = findList(keyNum,ptr);
 	      midiInNode *newN;
 	      if (_MKTrace() & MK_TRACEMIDI) 
-		fprintf(stderr,"Two noteOns on same keyNum without "
-			"intervening noteOff.\n");
+		NSLog(@"Two noteOns on same keyNum without intervening noteOff.\n");
 	      _MK_MALLOC(newN,midiInNode,1);
 	      if (!l)
 		l = newList(ptr,keyNum);
@@ -377,7 +380,7 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	  if (l = findList(keyNum,ptr)) {
 	      /* Multiple noteOns on same chan/key? */
 	      if (_MKTrace() & MK_TRACEMIDI) 
-		fprintf(stderr,"NoteOff for multiply on keyNum.\n");
+		NSLog(@"NoteOff for multiply on keyNum.\n");
 	      if (IS_DEFAULT_TAG_OFF_SENT(ptr,chan,keyNum))  
 		/* Use element in list. */
 		noteTag = removeHeadOfList(l,ptr,keyNum);
