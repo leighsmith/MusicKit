@@ -9,14 +9,22 @@
 #
 frameworkname=MK
 packagetitle="MusicKit and SndKit Frameworks"
-OS=`uname`
-if [ $OS = "Darwin" ]; then
-    packagefrom=/Library/Frameworks
-    installinto=/Library/Frameworks
-else
-    packagefrom=/Local/Library/Frameworks
-    installinto=/Local/Library/Frameworks
-fi
+case `uname` in
+    "Darwin")
+        packagefrom=/Library/Frameworks
+        installinto=/Library/Frameworks
+	osacronym=MOX
+	;;
+    "Rhapsody")
+        packagefrom=/Local/Library/Frameworks
+        installinto=/Local/Library/Frameworks
+	osacronym=MOXS
+	;;
+    *)
+	echo "Error: unsupported operating system `uname`"
+	exit 1;
+	;;
+esac
 
 if [ x_$MKICON = x_ ]; then
     echo "Error: Environment variable MKICON must be set to point to the .tiff file used for the $packagetitle icon."
@@ -114,7 +122,7 @@ package $install_file_directory $frameworkname.info $frameworkname.tiff
 # -d $installinto
 
 # just tar the file ready for transmission, no point compressing.
-shipfile=$workingdir/$frameworkname-$appversion.pkg.tar
+shipfile=$workingdir/$frameworkname-$appversion.b.$osacronym.pkg.tar
 tar cf $shipfile $frameworkname.pkg
 
 echo "Deleting temporary files, log in as root."
