@@ -6,6 +6,9 @@
 */
 /*
   $Log$
+  Revision 1.4  1999/09/20 02:46:53  leigh
+  Added description method
+
   Revision 1.3  1999/09/04 22:02:18  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -72,7 +75,7 @@
 - setInfoNote:(MKNote *) aNote;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
-//- awake;
+- (NSString *) description;
 
  /* Obsolete methods: */
 + new; 
