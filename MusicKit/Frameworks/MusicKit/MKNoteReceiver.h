@@ -53,6 +53,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2001/09/07 18:46:05  leighsmith
+  Moved @class declarations to not clash with headerdoc - really headerdoc should only be looking for @class declarations within /*! */ comments
+
   Revision 1.10  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -81,6 +84,8 @@
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
+@class MKInstrument;
+
 /*!
   @class MKNoteReceiver
   @abstract MKNoteReceiver is an auxilliary class that completes the
@@ -136,8 +141,6 @@ their assumption of the role of MKInstrument.
 #define __MK_NoteReceiver_H___
 
 #import <Foundation/NSObject.h>
-
-@class MKInstrument;
 
 @interface MKNoteReceiver: NSObject
 {
