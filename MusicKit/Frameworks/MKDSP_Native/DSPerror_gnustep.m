@@ -1,6 +1,7 @@
 #import "MKDSPDefines.h"
 #import <Foundation/Foundation.h>
 #import "dsp_errno.h"
+#import "dsp_structs.h"
 
 #define DSP_ERRORS_FILE "/tmp/dsperrors"
 static int s_error_log_disabled = 1;  /* Stifle error print-out if nonzero */
@@ -8,6 +9,9 @@ static FILE *s_err_fp = 0;
 static char *s_err_fn = DSP_ERRORS_FILE;
 MKDSP_API int _DSPVerbose;
 MKDSP_API int DSPErrorNo;
+int DSPErrorNo;
+int _DSPVerbose;
+int DSPLCtoMS[DSP_LC_NUM] = {0,1,1,1,2,2,2,3,3,3,4,4,4};
 
 static const char LITERAL_N[] = "N";
 static const char LITERAL_X[] = "X";
