@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.2  1999/09/24 16:47:20  leigh
+  Ensures only stopping a note with a filename
+
   Revision 1.1  1999/09/22 16:06:31  leigh
   Added sample playback support
 
@@ -238,6 +241,9 @@ int MK_filename;
     Snd *existingSound;
     NSString *filePath;
 
+    // only play those notes which are samples.
+    if(![aNote isParPresent: MK_filename])
+        return nil;
     filePath = [aNote parAsString: MK_filename];
     NSLog(@"stopping file %@\n", filePath);
 
