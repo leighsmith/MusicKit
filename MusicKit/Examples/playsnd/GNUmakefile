@@ -1,3 +1,17 @@
+#
+#   $Id$
+#   Defined In: The MusicKit
+#
+#  Description:
+#    Makefile for GNUstep
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  12 October 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-commercial
+#  purposes so long as the author attribution and this copyright message remains intact
+#  and accompanies all derived code.
 
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
@@ -9,16 +23,17 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # The tools to be compiled
 TOOL_NAME = \
 	playsnd
-	
-ADDITIONAL_LIB_DIRS = #-L/usr/local/ssl/lib
-	#-L$(GNUSTEP_LOCAL_ROOT)/Library/Frameworks/SndKit.framework/
 
-ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base -lgnustep-gui -lst -g -ljpeg
+ADDITIONAL_LIB_DIRS =
+
+ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base \
+                        -lgnustep-gui -lst -ljpeg
 
 ADDITIONAL_FLAGS += -g
+ADDITIONAL_LDFLAGS += -g
 
 # The Objective-C source files to be compiled
-playsnd_OBJC_FILES = main.m
+$(TOOL_NAME)_OBJC_FILES = main.m
 
 SRCS = $(TEST_TOOL_NAME:=.m)
 
