@@ -222,13 +222,6 @@ int main (int argc, const char * argv[])
         maxWait = [s duration] + 5 + timeOffset;
         [player setRemainConnectedToManager: FALSE];
 
-        /* the following statement evaluates to nothing if snds don't need byte
-         * swapping on the current architecture (ie big endian like PPC). Still,
-         * always remember to put it in to preserve platform independence (eg for
-         * folks on Win32/Intel or Linux/Intel).
-         */
-        [s swapSndToHost];
-
         if (useReverb) {
             [pchain addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
         }

@@ -176,7 +176,6 @@ int main (int argc, const char * argv[])
         maxWait = [s duration] + 5 + timeOffset + 1;
 
         [player setRemainConnectedToManager: FALSE];
-        [s swapSndToHost];
 
         if (useReverb) {
             [[player audioProcessorChain] addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
