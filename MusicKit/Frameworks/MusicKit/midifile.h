@@ -8,13 +8,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2003 The MusicKit Project.
 */
 /*
-Modification history:
-
-  $Log$
-  Revision 1.2  1999/07/29 01:26:08  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history before CVS repository commital.
 
   02/25/90/daj - Changed to make instancable. Added sysexcl support.
   11/18/92/daj - Added evaluateTempo arg to beginWriting/reading
@@ -24,6 +21,9 @@ Modification history:
 #define MK__midifile_H___
 
 #import <Foundation/Foundation.h>
+
+/* The magic number appearing as the first 4 bytes of a MIDI file. */
+#define MK_MIDIMAGIC  ((int)1297377380)  // "MThd"
 
 /*
  * Only the two following metaevents are supported; data[0] contains one
