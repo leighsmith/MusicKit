@@ -158,42 +158,42 @@ static SndPlayer *defaultSndPlayer;
 
 - stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds
 {
-  double whenToStop;
-  double beginPlayTime;
-  long   stopAtSample;
+    double whenToStop;
+    double beginPlayTime;
+    unsigned long   stopAtSample;
 
-  if(![self isActive]) {
-    [[SndStreamManager defaultStreamManager] addClient: self];
-  }
-  [playingLock lock];
+    if(![self isActive]) {
+	[[SndStreamManager defaultStreamManager] addClient: self];
+    }
+    [playingLock lock];
 #if SNDPLAYER_DEBUG
-  NSLog(@"SndPlayer::stopPerformance - playingLock locked\n");
+    NSLog(@"SndPlayer::stopPerformance - playingLock locked\n");
 #endif
 
-  whenToStop = [self streamTime] + inSeconds;
-  beginPlayTime = [performance playTime]; // in seconds
-  if(whenToStop < beginPlayTime) {
-    // stop before we even begin, delete the performance from the toBePlayed queue
-    [toBePlayed removeObject: performance];
-  }
-  else {
-    if ([performance isPaused] || inSeconds == 0.0) {
-      [performance stopNow];
+    whenToStop = [self streamTime] + inSeconds;
+    beginPlayTime = [performance playTime]; // in seconds
+    if(whenToStop < beginPlayTime) {
+	// stop before we even begin, delete the performance from the toBePlayed queue
+	[toBePlayed removeObject: performance];
     }
     else {
-      stopAtSample = (whenToStop - beginPlayTime) * [[performance snd] samplingRate];
-      // NSLog(@"stopping at sample %ld\n", stopAtSample);
-      // check stopAtSample since it could be beyond the length of the sound.
-      // If so, leave it stop at the end of the sound.
-      if(stopAtSample < [[performance snd] lengthInSampleFrames])
-        [performance setEndAtIndex: stopAtSample];
+	if ([performance isPaused] || inSeconds == 0.0) {
+	    [performance stopNow];
+	}
+	else {
+	    stopAtSample = (whenToStop - beginPlayTime) * [[performance snd] samplingRate];
+	    // NSLog(@"stopping at sample %ld\n", stopAtSample);
+	    // check stopAtSample since it could be beyond the length of the sound.
+	    // If so, leave it stop at the end of the sound.
+	    if(stopAtSample < [[performance snd] lengthInSampleFrames])
+		[performance setEndAtIndex: stopAtSample];
+	}
     }
-  }
-  [playingLock unlock];
+    [playingLock unlock];
 #if SNDPLAYER_DEBUG
-  NSLog(@"SndPlayer::stopPerformance - playingLock unlocked\n");
+    NSLog(@"SndPlayer::stopPerformance - playingLock unlocked\n");
 #endif
-  return self;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,9 +215,9 @@ static SndPlayer *defaultSndPlayer;
 - (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt
 {
 #if SNDPLAYER_DEBUG
-  NSLog(@"SndPlayer::playSnd (1) withTimeOffset: %f\n",dt);
+  NSLog(@"SndPlayer::playSnd (1) withTimeOffset: %f\n", dt);
 #endif
-  return [self playSnd: s withTimeOffset: dt beginAtIndex: 0 endAtIndex: -1];
+  return [self playSnd: s withTimeOffset: dt beginAtIndex: 0 endAtIndex: [s lengthInSampleFrames]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,8 +226,8 @@ static SndPlayer *defaultSndPlayer;
 
 - (SndPerformance *) playSnd: (Snd *) s
               withTimeOffset: (double) dt
-                beginAtIndex: (long) beginAtIndex
-                  endAtIndex: (long) endAtIndex
+                beginAtIndex: (unsigned long) beginAtIndex
+                  endAtIndex: (unsigned long) endAtIndex
 {
   SndPerformance *perf;
   double playT;
@@ -257,8 +257,8 @@ static SndPlayer *defaultSndPlayer;
       startPositionInSeconds: (double) startPos
            durationInSeconds: (double) d
 {
-  long endIndex   = -1;
-  long startIndex = 0;
+  unsigned long endIndex   = [s lengthInSampleFrames];
+  unsigned long startIndex = 0;
 
   if (startPos > 0)
     startIndex =  startPos * [s samplingRate];
@@ -267,7 +267,7 @@ static SndPlayer *defaultSndPlayer;
 
 #if SNDPLAYER_DEBUG
   NSLog(@"SndPlayer::playSnd (3) atTimeInSeconds:%f begin:%li end:%li\n",
-          t,startIndex,endIndex);
+          t, startIndex, endIndex);
 #endif
   return [self playSnd: s
        atTimeInSeconds: t
@@ -281,15 +281,12 @@ static SndPlayer *defaultSndPlayer;
 
 - (SndPerformance *) playSnd: (Snd *) sound
              atTimeInSeconds: (double) playTime
-                beginAtIndex: (long) beginAtIndex
-                  endAtIndex: (long) endAtIndex
+                beginAtIndex: (unsigned long) beginAtIndex
+                  endAtIndex: (unsigned long) endAtIndex
 {
     SndPerformance *thePerformance;
 
     if(endAtIndex > [sound lengthInSampleFrames]) {
-	endAtIndex = [sound lengthInSampleFrames];	// Ensure the end of play can't exceed the sound data
-    }
-    if(endAtIndex == -1) {
 	endAtIndex = [sound lengthInSampleFrames];	// Ensure the end of play can't exceed the sound data
     }
     if (beginAtIndex > endAtIndex) {
@@ -297,9 +294,6 @@ static SndPlayer *defaultSndPlayer;
 	NSLog(@"SndPlayer::playSnd:atTimeInSeconds:beginAtIndex:endAtIndex: - WARNING: beginAtIndex > endAtIndex - ignoring play cmd");
 #endif
 	return nil;
-    }
-    if(beginAtIndex < 0) {
-	beginAtIndex = 0;	// Ensure the end of play can't exceed the sound data
     }
     if(![self isActive]) {
 	[[SndStreamManager defaultStreamManager] addClient: self];
@@ -371,6 +365,9 @@ static SndPlayer *defaultSndPlayer;
 	    [performance rewindPlayIndexBySamples: preemptionInSamples];
 	}
     }
+    // Now we have performed the rewinding on the other performances, we have no need to keep the preemptingPerformance.
+    [preemptingPerformance release];
+    preemptingPerformance = nil;
     [playingLock unlock];
 
     // The adjustments to the queue of streaming buffers and the clientNowTime is performed in the super class once the playing
