@@ -123,8 +123,8 @@
 
 - (void)showInfo:sender
 {
-	if (!infoPanel)
-		[NSBundle loadNibNamed:@"Info.nib" owner:self];
+	if (!infoPanel) /* or some reason the info panel does not load as simply "Info" */
+		[NSBundle loadNibNamed:@"Info-macosx" owner:self];
 	[infoPanel makeKeyAndOrderFront:self]; 
 }
 

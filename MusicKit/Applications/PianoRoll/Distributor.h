@@ -6,7 +6,7 @@
 
 @interface Distributor:NSObject
 {
-    id infoPanel;
+    IBOutlet NSWindow * infoPanel;
     id helpPanel;
     id openPanel;
     id savePanel;
