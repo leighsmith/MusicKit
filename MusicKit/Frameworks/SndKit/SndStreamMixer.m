@@ -72,11 +72,11 @@
     clientCount = [streamClients count];
 
 //    [outB mixWithBuffer: inB];
+    [outB zeroForeignBuffer];
     if (clientCount > 0) {
         for (i = 0; i < clientCount; i++) {
         
             SndStreamClient *client = [streamClients objectAtIndex: i];
-
             if ([client generatesOutput]) {
               // Look at each client's currently exposed output buffer, and add  to mix.
 
@@ -115,7 +115,6 @@
     clientCount   = [streamClients count];
     
     [streamClientsLock unlock];
-    
     return clientCount;
 }
 
