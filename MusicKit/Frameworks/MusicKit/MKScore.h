@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.14  2001/02/23 03:29:44  leigh
+  Removed redundant and dangerous releasePartsOnly method
+
   Revision 1.13  2000/11/28 19:05:49  leigh
   Added -fileExtensions, -scorefileExtensions, changed -midiExtensions to produce a NSArray of possible midifile extensions
 
@@ -98,13 +101,6 @@
  /* 
  Removes and releases the MKNotes contained in the receiver's MKParts.
  Also releases the receiver's info MKNote.  Returns the receiver.
- */
-
-- releasePartsOnly; 
- /* 
- Removes and releases the receiver's MKParts but doesn't free the MKNotes contained
- therein.  MKParts that are currently being performed by a MKPartPerformer aren't
- freed.  Returns the receiver.  
  */
 
 - (void)removeAllParts; 

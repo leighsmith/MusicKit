@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.24  2001/02/23 03:29:44  leigh
+  Removed redundant and dangerous releasePartsOnly method
+
   Revision 1.23  2000/11/28 19:02:50  leigh
   replaced malloc with _MKMalloc (which does error checking), added -fileExtensions, -scorefileExtensions, changed -midiExtensions to produce a list of possible midifile extensions
 
@@ -188,21 +191,6 @@ Modification history:
     [parts makeObjectsPerformSelector:@selector(releaseNotes)];
     [info release];
     info = nil;
-    return self;
-}
-
--releasePartsOnly
-// LMS this is highly suspect since we now are concernedwith retain counts, not actual freeing.
-    /* Releases contained MKParts, but not their notes. It is illegal
-       to free a part which is performing or which has a PartSegment which
-       is performing. Implemented as 
-       [parts makeObjectsPerformSelector:@selector(releaseSelfOnly)];
-       Returns self. */
-{
-    NSLog(@"Highly suspect [MKScore -releasePartsOnly] method called!\n");
-    [parts makeObjectsPerformSelector:@selector(_unsetScore)];
-    [parts makeObjectsPerformSelector:@selector(releaseSelfOnly)];
-    [parts removeAllObjects];
     return self;
 }
 
