@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2004/08/21 23:21:23  leighsmith
+  Corrected doco
+
   Revision 1.8  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -80,7 +83,7 @@ extern void MKSetScorefileParseErrorAbort(int cnt);
 extern void MKSetErrorProc(void (*errProc)(NSString *msg));
     /* Sets proc to be used when MKError() and _MKErrorf() are called. 
        If errProc is NULL, uses the default error proc, which writes to the 
-       Music Kit error NXStream (see MKSetErrorStream()). 
+       Music Kit error NSMutableData (see MKSetErrorStream()). 
        errProc takes one string argument. 
        When the *errProc is called in response to a Music Kit error, errno is 
        set to the MKErrno corresponding to the error. If *errProc is invoked in

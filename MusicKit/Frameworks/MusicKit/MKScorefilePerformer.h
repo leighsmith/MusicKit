@@ -34,6 +34,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2004/08/21 23:21:50  leighsmith
+  Corrected doco
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -54,7 +57,6 @@
   @class MKScorefilePerformer
   @discussion
 
-
 ScorefilePerformers are used to perform scorefiles.  When the object is
 activated, it reads the file's header and creates a NoteSender for each (unique)
 member of the <b>part</b> statement.  A NoteSender is given the same name as the
@@ -66,7 +68,7 @@ through its MKNoteSenders.  When it reaches the end of the file, the
 MKScorefilePerformer is deactivated.
 
 A MKScorefilePerformer has its own info MKNote that it fashions from the <b>info</b>
-statement in the file, and defines an NXStream on which scorefile <b>print</b>
+statement in the file, and defines an NSMutableData instance on which scorefile <b>print</b>
 statements are printed.
 */
 #ifndef __MK_ScorefilePerformer_H___
