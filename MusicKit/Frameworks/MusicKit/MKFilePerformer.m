@@ -1,19 +1,102 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A MKFilePerformer reads data from a file on the disk,
+    fashions a MKNote object from the data, and then performs
+    the MKNote.  An abstract superclass, MKFilePerformer
+    provides common functionality and declares subclass responsibilities
+    for the subclasses
+    MKMidifilePerformer and MKScorefilePerformer.
+   
+    Note: In release 1.0, MKMidifilePerformer is not provided. Use a MKScore object
+    to read a Midifile.
+   
+    A MKFilePerformer is associated with a file, either by the
+    file's name or with a file pointer.  If you assoicate
+    a MKFilePerformer with a file name (through the setFile:
+    method) the object will take care of opening and closing
+    the file for you:  the file is opened for reading when the
+    MKFilePerformer receives the activate message and closed when
+    it receives deactivate.
+   
+    The setStream: method associates a MKFilePerformer with a file
+    pointer.  In this case, opening and closing the file
+    is the responsibility of the application.  The MKFilePerformer's
+    file pointer is set to NULL after each performance
+    so you must send another
+    setStream: message in order to replay the file.
+   
+    Note:  The argument to setStream:
+    is typically a pointer to a file on the disk, but it can also
+    be a UNIX socket or pipe.
+   
+    The MKFilePerformer class declares two methods as subclass responsibilities:
+    nextNote and performNote:.
+    nextNote must be subclassed to access the next line of information
+    from the file and from it create either a MKNote object or a
+    time value.  It
+    returns the MKNote that it creates, or, in the case of a time value,
+    it sets the instance variable fileTime to represent
+    the current time in the file
+    and returns nil.
+   
+    The MKNote created by nextNote is passed as the argument
+    to performNote: which
+    is responsible
+    for performing any manipulations on the
+    MKNote and then sending it
+    by invoking sendNote:.  The return value of performNote:
+    is disregarded.
+   
+    Both nextNote and performNote: are invoked
+    by the perform method, which, recall from the Performer
+    class, is itself never called directly but is sent by a Conductor.
+    perform also checks and incorporates the time limit
+    and performance offset established by the timing window
+    variables inherited from Performer; nextNote and
+    performNote: needn't access nor otherwise be concerned
+    about these variables.
+   
+    Two other methods, initFile and finishFile, can
+    be redefined by a MKFilePerformer subclass, although neither
+    must be.  initializeFile is invoked
+    when the object is activated and should perform any special
+    initialization such as reading the file's header or magic number.
+    If initializeFile returns nil, the MKFilePerformer is deactivated.
+    The default returns the receiver.
+   
+    finishFile is invoked when the MKFilePerformer is deactivated
+    and should perform any post-performance cleanup.  Its return
+    value is disregarded.
+   
+    A MKFilePerformer reads and performs one MKNote at a time.  This
+    allows efficient performance of arbitrarily large files.
+    Compare this to the MKScore object which reads and processes the entire file
+    before performing the first note.  However, unlike the MKScore object,
+    the MKFilePerformer doesn't allow individual timing control over the
+    different MKNote streams in the file; the timing window
+    specifications inherited from MKPerformer are applied to the entire
+    file.
+   
+    Any number of MKFilePerformers can perform the
+    same file concurrently.
+ 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/02 17:05:06  leigh
+  Cleaned up doco
+
   Revision 1.3  1999/07/29 01:11:58  leigh
   removed last _extraVars fluff, added CVS log
 
@@ -32,101 +115,10 @@ Modification history:
 #import "PerformerPrivate.h"
 #import "MKFilePerformer.h"
 
-@implementation MKFilePerformer: MKPerformer
-/* A FilePerformer reads data from a file on the disk,
- * fashions a Note object from the data, and then performs
- * the Note.  An abstract superclass, FilePerformer
- * provides common functionality and declares subclass responsibilities
- * for the subclasses
- * MidifilePerformer and ScorefilePerformer.
- *
- * Note: In release 1.0, MidifilePerformer is not provided. Use a Score object
- * to read a Midifile.
- *
- * A FilePerformer is associated with a file, either by the
- * file's name or with a file pointer.  If you assoicate
- * a FilePerformer with a file name (through the \fBsetFile:\fR
- * method) the object will take care of opening and closing
- * the file for you:  the file is opened for reading when the
- * FilePerformer receives the \fBactivate\fR message and closed when
- * it receives \fBdeactivate\fR.  
- *
- * The \fBsetStream:\fR method associates a FilePerformer with a file
- * pointer.  In this case, opening and closing the file
- * is the responsibility of the application.  The FilePerformer's
- * file pointer is set to \fBNULL\fR after each performance 
- * so you must send another
- * \fBsetStream:\fR message in order to replay the file.
- *
- * Note:  The argument to \fBsetStream:\fR
- * is typically a pointer to a file on the disk, but it can also
- * be a UNIX socket or pipe.
- *
- * The FilePerformer class declares two methods as subclass responsibilities:
- * \fBnextNote\fR and \fBperformNote:\fR.
- * \fBnextNote\fR must be subclassed to access the next line of information
- * from the file and from it create either a Note object or a 
- * time value.  It 
- * returns the Note that it creates, or, in the case of a time value,
- * it sets the instance variable \fBfileTime\fR to represent
- * the current time in the file 
- * and returns \fBnil\fR.
- * 
- * The Note created by \fBnextNote\fR is passed as the argument
- * to \fBperformNote:\fR which 
- * is responsible
- * for performing any manipulations on the
- * Note and then sending it
- * by invoking \fBsendNote:\fR.  The return value of \fBperformNote:\fR
- * is disregarded.  
- *
- * Both \fBnextNote\fR and \fBperformNote:\fR are invoked 
- * by the \fBperform\fR method, which, recall from the Performer
- * class, is itself never called directly but is sent by a Conductor.
- * \fBperform\fR also checks and incorporates the time limit
- * and performance offset established by the timing window
- * variables inherited from Performer; \fBnextNote\fR and 
- * \fBperformNote:\fR needn't access nor otherwise be concerned
- * about these variables.
- *
- * Two other methods, \fBinitFile\fR and \fBfinishFile\fR, can
- * be redefined by a FilePerformer subclass, although neither
- * must be.  \fBinitializeFile\fR is invoked 
- * when the object is activated and should perform any special
- * initialization such as reading the file's header or magic number.
- * If \fBinitializeFile\fR returns \fBnil\fR, the FilePerformer is deactivated.
- * The default returns the receiver.
- *
- * \fBfinishFile\fR is invoked when the FilePerformer is deactivated
- * and should perform any post-performance cleanup.  Its return
- * value is disregarded.
- * 
- * A FilePerformer reads and performs one Note at a time.  This
- * allows efficient performance of arbitrarily large files.
- * Compare this to the 
- * Score object which reads and processes the entire file
- * before performing the first note.  However, unlike the Score object,
- * the FilePerformer doesn't allow individual timing control over the 
- * different Note streams in the file; the timing window
- * specifications inherited from Performer are applied to the entire
- * file.
- *
- * Any number of FilePerformers can perform the 
- * same file concurrently.
- */
-{
-    NSString * filename;       /* File name or NULL if the file pointer is specifed
-					  directly. */
-    double fileTime;     /* The current time in the file (in beats). */
-    id stream;           /* Pointer to the FilePerformer's file. */ /*sb: either NSMutableData or NSData */
-    double firstTimeTag; /* The smallest timeTag value considered for
-			   performance.  */
-    double lastTimeTag;   /* The greatest timeTag value considered for 
-			   performance.  */
-}
+@implementation MKFilePerformer
 
 /* METHOD TYPES
- * Initializing a FilePerformer
+ * Initializing a MKFilePerformer
  * Accessing files
  * Accessing Notes
  * Performing
@@ -163,7 +155,7 @@ Modification history:
      See write:. */
 {
     [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"FilePerformer"] == VERSION2) {
+    if ([aDecoder versionForClassName:@"MKFilePerformer"] == VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes:"*ddd",&filename,&firstTimeTag,&lastTimeTag];
     }
     return self;
@@ -171,11 +163,11 @@ Modification history:
 
 -init
   /* TYPE: Initializing; Sent automatically on instance creation.
-   * Initializes the receiver by setting \fBstream\fR and \fBfilename\fR
-   * to \fBNULL\fR.
+   * Initializes the receiver by setting stream and filename
+   * to NULL.
    * Sent by the superclass upoon creation.
    * You never invoke this method directly.
-   * An overriding subclass method should send \fB[super initDefaults]\fR
+   * An overriding subclass method should send [super initDefaults]
    * before setting its own defaults. 
    */
 {
@@ -192,9 +184,9 @@ Modification history:
 }
 
 -setFile:(NSString *)aName
-  /* TYPE: Modifying; Associates the receiver with file \fIaName\fR.
-   * Associates the receiver with file \fIaName\fR. The string is copied.
-   * The file is opened when the first Note is realized
+  /* TYPE: Modifying; Associates the receiver with file aName.
+   * Associates the receiver with file aName. The string is copied.
+   * The file is opened when the first MKNote is realized
    * (written to the file) and closed at the end of the
    * performance.
    * It's illegal to invoke this method during a performance. Returns nil
@@ -218,8 +210,8 @@ Modification history:
 
 - setStream:(id) aStream
 /* * Either NSMutableData, or NSData
-   * Sets \fBstream\fR to \fBaStream\fR and sets \fBfilename\fR to NULL.
-   * \fIaStream\fR must be open for
+   * Sets stream to aStream and sets filename to NULL.
+   * aStream must be open for
    * reading.  Returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, otherwise
    * self.
@@ -236,7 +228,7 @@ Modification history:
   /* Either NSMutableData, or NSData
    * Returns the file pointer associated with the receiver
    * or nil if it isn't set.
-   * Note that if the file was specified with \fBfile:\fR and
+   * Note that if the file was specified with file: and
    * the performer is inactive (i.e. the file isn't open), this will return
    * nil.
    */
@@ -247,9 +239,9 @@ Modification history:
 
 
 -(NSString *)file
-  /* TYPE: Querying; Returns the name set through \fBsetFile:\fR.
+  /* TYPE: Querying; Returns the name set through setFile:.
    * If the file associated with the receiver was set through 
-   * \fBsetFile:\fR,
+   * setFile:,
    * returns the file name, otherwise returns NULL.
    */
 {
@@ -281,17 +273,17 @@ Modification history:
 
 -activateSelf
   /* TYPE: Performing; Prepares the reciever for a performance.
-   * Invoked by the \fBactivate\fR method, this prepares the receiver 
+   * Invoked by the activate method, this prepares the receiver 
    * for a performance by opening the associated file (if necessary)
-   * and invoking \fBnextNote\fR until it returns 
-   * an appropriate Note -- one with 
-   * a timeTag between \fBfirstTimeTag\fR
-   * and \fBlastTimeTag\fR, inclusive.
-   * If an appropriate Note isn't found 
-   * \fB[self\ deactivate]\fR is sent. 
+   * and invoking nextNote until it returns 
+   * an appropriate MKNote -- one with 
+   * a timeTag between firstTimeTag
+   * and lastTimeTag, inclusive.
+   * If an appropriate MKNote isn't found 
+   * [self\ deactivate] is sent. 
    *
-   * You never send the \fBactivateSelf\fR message directly to 
-   * a FilePerformer.  
+   * You never send the activateSelf message directly to 
+   * a MKFilePerformer.  
    */
 {
     if (filename) {
@@ -337,10 +329,10 @@ Modification history:
 
 -perform 
   /* TYPE: Performing
-   * Grabs the next Note out of the file through \fBnextNote\fR,
+   * Grabs the next MKNote out of the file through nextNote,
    * processes it through 
-   * \fBperformNote:\fR (the method that sends the Note), and
-   * sets the value of \fBnextPerform\fR. 
+   * performNote: (the method that sends the MKNote), and
+   * sets the value of nextPerform. 
    * You may override this method to modify nextPerform, but you must
    * send [super perform].
    * You never send perform directly to an object.
@@ -363,11 +355,11 @@ Modification history:
 -performNote:(id)aNote
   /* TYPE: Accessing Notes
    * This is a subclass responsibility expected to manipulate
-   * and send \fBaNote\fR which was presumably just read from a file.
-   * It's up to the subclass to free \fIaNote\fR. 
+   * and send aNote which was presumably just read from a file.
+   * It's up to the subclass to free aNote. 
    *
-   * You never send the \fBperformNote:\fR message 
-   * directly to a FilePerformer; it's invoked by the \fBperform\fR
+   * You never send the performNote: message 
+   * directly to a MKFilePerformer; it's invoked by the perform
    * method.
    */
 {
@@ -376,13 +368,13 @@ Modification history:
 
 -(id)nextNote     
   /* TYPE: Accessing Notes
-   * This is a subclass responsibility expected to get the next Note
-   * from the file.  Should return the Note or \fBnil\fR if the
+   * This is a subclass responsibility expected to get the next MKNote
+   * from the file.  Should return the MKNote or nil if the
    * next file entry is a performance time.  In the latter case,
-   * this should update \fBfileTime\fR.
+   * this should update fileTime.
    *
-   * You never send the \fBnextNote\fR message 
-   * directly to a FilePerformer; it's invoked by the \fBperform\fR
+   * You never send the nextNote message 
+   * directly to a MKFilePerformer; it's invoked by the perform
    * method.
    */
 {
@@ -393,10 +385,10 @@ Modification history:
   /* TYPE: Performing; Preparing the file for a performance.
    * This is a subclass responsibility expected to perform 
    * any special file initialization and return the receiver.
-   * If \fBnil\fR is returned, the receiver is deactivated.
+   * If nil is returned, the receiver is deactivated.
    *
-   * You never send the \fBinitializeFile\fR message 
-   * directly to a FilePerformer; it's invoked by the \fBactivateSelf\fR
+   * You never send the initializeFile message 
+   * directly to a MKFilePerformer; it's invoked by the activateSelf
    * method.
    *
    */
@@ -406,9 +398,9 @@ Modification history:
 
 - (void)deactivate 
   /* TYPE: Performing; Cleans up after a performance.
-   * Invokes \fBfinishFile\fR, closes the file (if it was 
-   * set through \fBsetFile:\fR), and sets the file pointer
-   * to \fBNULL\fR.
+   * Invokes finishFile, closes the file (if it was 
+   * set through setFile:), and sets the file pointer
+   * to NULL.
    */
 {
    [super deactivate];  // added by LMS - never stopped the performance.
@@ -426,8 +418,8 @@ Modification history:
    * needed after a performance -- however, you shouldn't 
    * close the file pointer as part of this method.
    *
-   * You never send the \fBfinishFile\fR message directly to a
-   * FilePerformer; it's invoked by the \fBdeactivate\fR method.
+   * You never send the finishFile message directly to a
+   * MKFilePerformer; it's invoked by the deactivate method.
    */
 {
     return self;
