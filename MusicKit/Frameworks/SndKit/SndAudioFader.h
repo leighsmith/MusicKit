@@ -65,17 +65,21 @@ typedef float (*XForBpIMP)(id, SEL, int);
                 for arbitrary times in the future,
     @discussion
 
+<P>
 SndAudioFader objects can be inserted into SndAudioProcessorChains at arbitrary
 points. In addition, all SndAudioProcessorChains have a SndAudioFader which is run
-after any other user defined processors.<BR>
+after any other user defined processors.</P>
+<P>
 Because both SndStreamMixer and SndStreamClient have processor chains, both the
-overall output and the individual clients can have faders.<BR>
+overall output and the individual clients can have faders.</P>
+<P>
 SndAudioFader is built to be as efficient as possible. If it does not have to do
-any processing on the incoming stream, it does not.<BR>
+any processing on the incoming stream, it does not.</P>
+<P>
 SndAudioFader keeps track of amplitude and/or balance settings in two ways: via a
 static setting, and via an envelope system for scheduling future movements. This
-process is largely transparent to the user.<BR>
-<BR>
+process is largely transparent to the user.</P>
+<P>
 For computational ease, interpolation between breakpoints in the scheduled amplitude
 fader movements is linear. For stereo balance, the situation is similar, as the
 balance calculations are <b>not</b> adjusted for equal power. This is because balance
@@ -86,13 +90,13 @@ left channel is on full power, and the right channel loses power linearly, propo
 to the distance left of centre. The same applies to positions right of centre (the
 right channel is on full power, and the left channel drops off). One advantage of
 doing it this way is that at the centre position, both channels are at full power.
-Most panning implementations scale to root 2 (0.707) at the centre position.<BR>
-<BR>
+Most panning implementations scale to root 2 (0.707) at the centre position.</P>
+<P>
 One limitation of the faders is that the "postfader" copies (in SndStreamMixer and
 SndStreamClient) are only created once the audio streams have started to play. Thus
 the user cannot pre-load the faders with future movements. To pre-load faders before
 a stream starts to play, create a SndAudioFader programmatically, send it the fader
-movements, then insert it into the SndAudioProcessorChain later.
+movements, then insert it into the SndAudioProcessorChain later.</P>
 */
 
 @interface SndAudioFader : SndAudioProcessor
@@ -111,11 +115,11 @@ movements, then insert it into the SndAudioProcessorChain later.
 /*! @var uee */  
   SndUnifiedEnvelopeEntry *uee;
   
-/*! @var */
+/*! @var lock */
   NSLock *lock; // locks changes to the envelope objects (?)
-/*! @var */  
+/*! @var balanceEnvLock */  
   NSLock *balanceEnvLock;
-/*! @var */
+/*! @var ampEnvLock */
   NSLock *ampEnvLock;
 
 @public
