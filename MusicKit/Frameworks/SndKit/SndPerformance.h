@@ -38,7 +38,8 @@
     long    startAtIndex;
 /*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>). */
     long  playIndex;
-/*! @var endAtIndex */
+/*! @var endAtIndex The index where the sound will stop <B>before</B>. This marks the sample after the last
+	            one to be played, the sample at endAtIndex is <B>not</B> played. */
     long    endAtIndex;
 /*! @var paused */
     BOOL    paused;
@@ -75,8 +76,8 @@
               and a time to begin playing.
   @param      s The sound to be played
   @param      seconds Time in seconds to start playing the sound
-  @param      beginIndex The sample index at which to start playback
-  @param      endIndex The sample index at which to stop playback
+  @param      beginIndex The sample index at which to start playback. This sample will be played.
+  @param      endIndex The sample index at which to stop playback. This sample will not be played.
   @result     Returns the newly created instance if able to initialise, nil if unable.
 */
 + (SndPerformance *) performanceOfSnd: (Snd *) s 
@@ -171,14 +172,15 @@ startPosition: (double) startPosition
 - (long) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind;
 
 /*!
-    @method   endAtIndex
-    @abstract   Returns the sample to stop playing at.
-    @result     Returns the sample index to stop playing at.
+  @method     endAtIndex
+  @abstract   Returns the sample to stop playing at.
+  @discussion This sample is not played, that is it is typically initialised with the sound length.
+  @result     Returns the sample index to stop playing at.
 */
 - (long) endAtIndex;
 
 /*!
-  @method   startAtIndex
+  @method     startAtIndex
   @abstract   Returns the sample to start playing at.
   @result     Returns the sample index to start playing at.
 */
@@ -187,7 +189,9 @@ startPosition: (double) startPosition
 /*!
     @method   setEndAtIndex:
     @abstract Sets the sample to stop playing at.
-    @param    newEndAtIndex The sample index that playing should stop after.
+    @discussion The end at index indicates the first sample at which the playback stops, that is,
+               this sample is not played.
+    @param    newEndAtIndex The sample index that playing should stop before.
 */
 - (void) setEndAtIndex: (long) newEndAtIndex;
 
