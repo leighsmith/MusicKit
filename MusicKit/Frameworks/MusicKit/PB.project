@@ -1,6 +1,6 @@
 {
     CURRENTLY_ACTIVE_VERSION = YES; 
-    DEPLOY_WITH_VERSION_NAME = A; 
+    DEPLOY_WITH_VERSION_NAME = 5.1.4; 
     DYNAMIC_CODE_GEN = YES; 
     English_RESOURCES = {}; 
     FILESTABLE = {
@@ -57,7 +57,8 @@
             utilities.m, 
             writeBinary.m, 
             writeMidi.m, 
-            writeScore.m
+            writeScore.m, 
+            _MKAppProxy.m
         ); 
         DOCUMENTATION = (); 
         FRAMEWORKS = (
@@ -172,7 +173,8 @@
             pitches.h, 
             scorefileObject.h, 
             timeunits.h, 
-            tokens.h
+            tokens.h, 
+            _MKAppProxy.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 

@@ -29,7 +29,7 @@ CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
           _SharedSynthInfo.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
-          writeScore.m
+          writeScore.m _MKAppProxy.m
 
 HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          EnvelopePrivate.h InstrumentPrivate.h MKConductor.h\
@@ -57,7 +57,7 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         scorefileObject.h timeunits.h tokens.h
+         scorefileObject.h timeunits.h tokens.h _MKAppProxy.h
 
 CFILES = sin.c fastFFT.c
 
@@ -73,7 +73,7 @@ OTHERSRCS = Makefile Makefile.postamble Makefile.preamble\
 
 MAKEFILEDIR = .
 CURRENTLY_ACTIVE_VERSION = YES
-DEPLOY_WITH_VERSION_NAME = A
+DEPLOY_WITH_VERSION_NAME = 5.1.4
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = framework.make
 NEXTSTEP_INSTALLDIR = $(LOCAL_LIBRARY_DIR)/Frameworks
