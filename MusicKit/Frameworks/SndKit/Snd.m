@@ -62,13 +62,9 @@
 #import "Snd.h"
 #import "SndError.h"
 #import "SndFunctions.h"
-#import "SndPlayer.h"
 #import "SndTable.h"
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorChain.h"
-
-// Turn on for debugging output.
-#define SND_DEBUG_LOOPING 0
 
 @implementation Snd
 
@@ -110,17 +106,6 @@
 + (void) removeAllSounds
 {
     [[SndTable defaultSndTable] removeAllSounds];
-}
-
-+ (BOOL) isMuted
-{
-    return SNDIsMuted();
-}
-
-+ setMute:(BOOL)aFlag
-{
-    SNDSetMute(aFlag);
-    return self;
 }
 
 - init
@@ -217,7 +202,7 @@
   return self;
 }
 
-- initFromSoundfile:(NSString *)filename
+- initFromSoundfile: (NSString *) filename
 {
   self = [self init];
   if (self != nil) {
@@ -357,7 +342,7 @@
     return SND_ERR_NONE;
 }
 
-- writeSoundToData:(NSMutableData *)stream
+- writeSoundToData: (NSMutableData *) stream
 {
     SndSoundStruct *s;
     SndSoundStruct **ssList;
@@ -370,9 +355,9 @@
     if (df == SND_FORMAT_INDIRECT) headerSize = soundStruct->dataSize;
     else headerSize = soundStruct->dataLocation;
     /* make new header with swapped bytes if nec */
-    if (!(s = malloc(headerSize))) [[NSException exceptionWithName:@"Sound Error"
-                                                          reason:@"Can't allocate memory for Snd class"
-                                                          userInfo:nil] raise];
+    if (!(s = malloc(headerSize))) [[NSException exceptionWithName: @"Sound Error"
+                                                          reason: @"Can't allocate memory for Snd class"
+                                                          userInfo: nil] raise];
     memmove(s, soundStruct,headerSize);
     if (df == SND_FORMAT_INDIRECT) {
         int newCount = 0;
@@ -596,108 +581,6 @@
     info = [newInfoString copy];
 }
 
-// Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
-// All other play methods are convenience wrappers around this.
-- (SndPerformance *) playInFuture: (double) inSeconds 
-                      beginSample: (unsigned long) begin
-                      sampleCount: (unsigned long) count 
-{
-    unsigned long playBegin = begin;
-    unsigned long playEnd = begin + count;
-    
-    [self compactSamples]; // in case this is a pasted sound.
-
-    if (playBegin > [self lengthInSampleFrames] || playBegin < 0)
-        playBegin = 0;
-    
-    if (playEnd > [self lengthInSampleFrames] || playEnd < playBegin)
-        playEnd = [self lengthInSampleFrames];
-
-	// TODO Remove status, instead derive from SndPerformance.
-    status = SND_SoundPlayingPending;
-    
-    return [[SndPlayer defaultSndPlayer] playSnd: self 
-                                  withTimeOffset: inSeconds 
-                                    beginAtIndex: playBegin 
-                                      endAtIndex: playEnd];
-}
-
-- (SndPerformance *) playInFuture: (double) inSeconds
-           startPositionInSeconds: (double) startPos
-                durationInSeconds: (double) d
-{
-  double sr = [self samplingRate];
-  return [self playInFuture: inSeconds
-                beginSample: startPos * sr
-                sampleCount: d * sr];
-}
-
-// TODO See if we can make this use self playInFuture so all use of looping
-// is done in playInFuture:beginSample:sampleCount:
-- (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
-{
-//  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
-  return [[SndPlayer defaultSndPlayer] playSnd: self
-                               atTimeInSeconds: t
-                        startPositionInSeconds: 0
-                             durationInSeconds: d];  
-}
-
-- (SndPerformance *) playInFuture: (double) inSeconds 
-{
-    return [self playInFuture: inSeconds 
-                  beginSample: 0
-                  sampleCount: [self lengthInSampleFrames]];
-}
-
-- (SndPerformance *) playAtDate: (NSDate *) date
-{
-    return [self playInFuture: [date timeIntervalSinceNow]];
-}
-
-// Legacy method for SoundKit compatability
-- play: (id) sender beginSample: (int) begin sampleCount: (int) count 
-{
-    // do something with sender?
-    [self playInFuture: 0.0
-           beginSample: begin
-           sampleCount: count];
-    return self;
-}
-
-// Legacy method for SoundKit compatability
-- play: sender
-{
-    // do something with sender?
-    [self playInFuture: 0.0];
-    return self;
-}
-
-// Legacy method for SoundKit compatability
-- (int) play
-{
-    [self play: self];
-    return SND_ERR_NONE;
-}
-
-- record: sender
-{
-    NSLog(@"Not yet implemented!\n");
-    // [self recordInFuture: 0.0];
-    return self;
-}
-
-- (int) record
-{
-    [self record: self];
-    return SND_ERR_NONE;
-}
-
-- (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
-{
-    return [performance playIndex];
-}
-
 - (int) status
 {
     // TODO We should compute the status by interogating any performances the
@@ -706,73 +589,9 @@
 }
 
 - (void) _setStatus: (int) newStatus
-/* for use in the beginFunc and endFunc routines and the SndPlayer */
+    /* for use in the beginFunc and endFunc routines and the SndPlayer */
 {
     status = newStatus;
-}
-
-- (int) waitUntilStopped
-{
-    return SND_ERR_NOT_IMPLEMENTED;
-}
-
-// stop the performance
-+ (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds
-{
-    [[SndPlayer defaultSndPlayer] stopPerformance: performance inFuture: inSeconds];
-}
-
-- (void) stopInFuture: (double) inSeconds
-{
-    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
-        status = SND_SoundStopped;
-        [self tellDelegate: @selector(didRecord:)];	
-    }
-  // SKoT: I commented this out as the player may have PENDING performances to
-  // deal with as well - in which case the SND won't have a playing status.
-  // Basically yet another reason to move playing status stuff out of the snd obj.
-//    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
-        [[SndPlayer defaultSndPlayer] stopSnd: self withTimeOffset: inSeconds];
-//    }
-}
-
-- (void) stop: (id) sender
-{
-    [self stopInFuture: 0.0];
-}
-
-- (int) stop
-{
-    [self stop: self];
-    return SND_ERR_NONE;
-}
-
-- pause: sender
-{
-  [performancesArrayLock lock];
-  [performancesArray makeObjectsPerformSelector: @selector(pause)];
-  [performancesArrayLock unlock];
-  return self;
-}
-
-- (int) pause
-{
-  [self pause: self];
-  return SND_ERR_NONE;
-}
-
-- resume: sender
-{
-  [performancesArrayLock lock];
-  [performancesArray makeObjectsPerformSelector: @selector(resume)];
-  [performancesArrayLock unlock];
-  return self;
-}
-
-- (int) resume;
-{
-  [self resume:self];
-  return SND_ERR_NONE;
 }
 
 - (int) readSoundfile: (NSString *) filename
@@ -880,31 +699,6 @@
     return NO;
 }
 
-- (BOOL) isPlayable
-{
-    int df,cc,sr;
-    if (!soundStruct) return YES; /* empty sound can be played! */
-    if ((df = soundStruct->dataFormat) == SND_FORMAT_INDIRECT)
-        df =  ((SndSoundStruct *)(*((SndSoundStruct **)
-                    (soundStruct->dataLocation))))->dataFormat;
-    cc = soundStruct->channelCount;
-    if (cc < 1 || cc > 2) return NO;
-    sr = soundStruct->samplingRate;
-    if (sr < 4000 || sr > 48000) return NO; /* need to check hardware here */
-    switch (df) {
-    case SND_FORMAT_MULAW_8:
-    case SND_FORMAT_LINEAR_8:
-    case SND_FORMAT_LINEAR_16:
-    case SND_FORMAT_LINEAR_32:
-    case SND_FORMAT_FLOAT:
-    case SND_FORMAT_DOUBLE:
-        return YES;
-    default:
-        break;
-    }
-    return NO;
-}
-	
 - (int) convertToFormat: (SndSampleFormat) toFormat
 	   samplingRate: (double) toRate
 	   channelCount: (int) toChannelCount
@@ -1161,6 +955,128 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     return self;
 }
 
+/* returns the base address of the block the sample resides in,
+ * with appropriate indices for the last sample the block holds.
+ * Indices count from 0 so they can be utilised directly.
+ */
+- (void *) fragmentOfFrame: (int) frame 
+	   indexInFragment: (int *) currentFrame 
+       lastFrameInFragment: (int *) lastFrameInBlock
+		dataFormat: (SndSampleFormat *) dataFormat
+{
+    int cc = [self channelCount];
+    SndSampleFormat df = [self dataFormat];
+    int ds = [self dataSize];
+    int numBytes;
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int i = 0, count = 0, oldCount = 0;
+    
+    if (df == SND_FORMAT_INDIRECT) {
+	df = ((SndSoundStruct *)(*((SndSoundStruct **)([self soundStruct]->dataLocation))))->dataFormat;
+    }
+    
+    numBytes = SndSampleWidth(df);
+    
+    *dataFormat = [self dataFormat];
+    if (df != SND_FORMAT_INDIRECT) {
+	*lastFrameInBlock = ds / cc / numBytes;
+	*currentFrame = frame;
+	*dataFormat = df;
+	return [self data];
+    }
+    ssList = (SndSoundStruct **)([self soundStruct]->dataLocation);
+    while ((theStruct = ssList[i++]) != NULL) {
+	int numberOfFramesInFragment = (theStruct->dataSize) / cc / numBytes;
+	
+	count += numberOfFramesInFragment;
+	if (count > frame) {
+	    *lastFrameInBlock = numberOfFramesInFragment;
+	    *currentFrame = frame - oldCount;
+	    return (char *)theStruct + theStruct->dataLocation;
+	}
+	oldCount = count;
+    }
+    *currentFrame = -1;
+    *lastFrameInBlock = -1;
+    return NULL;
+}
+
+// retrieve a sound value at the given frame, for a specified channel, or average over all channels.
+// channelNumber is 0 - channelCount to retrieve a single channel, channelCount to average all channels
+- (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channelNumber
+{
+#if 0
+    SndAudioBuffer *singleFrameBuffer = [self audioBuffer frameRange: NSMakeRange(frameIndex, 1) ];
+    return [singleFrameBuffer sampleAtFrameIndex: frameIndex channel: channelNumber];
+#else
+    float theValue = 0.0;
+    int channelCount = [self channelCount]; // TODO can eventually replace channelCount with soundFormat.channelCount
+    int averageOverChannels;
+    int startingChannel;
+    unsigned long sampleIndex;
+    unsigned long sampleNumber;
+    void *pcmData;
+    int fragmentIndex;
+    int lastFrameInFragment;
+    SndSampleFormat dataFormat;
+    
+    if (channelNumber == channelCount) {
+	averageOverChannels = channelCount;
+	startingChannel = 0;
+    }
+    else {
+	averageOverChannels = 1;
+	startingChannel = channelNumber;
+    }
+    // 
+    pcmData = [self fragmentOfFrame: frameIndex 
+		    indexInFragment: &fragmentIndex 
+		lastFrameInFragment: &lastFrameInFragment
+			 dataFormat: &dataFormat];
+    sampleNumber = fragmentIndex * channelCount + startingChannel;
+    
+    for(sampleIndex = sampleNumber; sampleIndex < sampleNumber + averageOverChannels; sampleIndex++) {
+	// TODO move this into a SndAudioBuffer method.
+	switch (dataFormat) {
+	    case SND_FORMAT_LINEAR_8:
+		theValue += ((char *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_MULAW_8:
+		theValue += SndMuLawToLinear(((char *) pcmData)[sampleIndex]);
+		break;
+	    case SND_FORMAT_EMPHASIZED:
+	    case SND_FORMAT_COMPRESSED:
+	    case SND_FORMAT_COMPRESSED_EMPHASIZED:
+	    case SND_FORMAT_DSP_DATA_16:
+	    case SND_FORMAT_LINEAR_16:
+		theValue += ((short *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_LINEAR_24:
+	    case SND_FORMAT_DSP_DATA_24:
+		// theValue = ((short *) pcmData)[frameIndex];
+		theValue += *((int *) ((char *) pcmData + sampleIndex * 3)) >> 8;
+		break;
+	    case SND_FORMAT_LINEAR_32:
+	    case SND_FORMAT_DSP_DATA_32:
+		theValue += ((int *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_FLOAT:
+		theValue += ((float *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_DOUBLE:
+		theValue += ((double *) pcmData)[sampleIndex];
+		break;
+	    default: /* just in case */
+		theValue += ((short *) pcmData)[sampleIndex];
+		NSLog(@"SndView sampleAtFrameIndex: unhandled format %d\n", dataFormat);
+		break;
+	}	
+    }
+    return (averageOverChannels > 1) ? theValue / averageOverChannels : theValue;
+#endif
+}
+
 - (int) processingError
 {
     return currentError;
@@ -1209,32 +1125,6 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     return conversionQuality;
 }
 
-- (NSArray*) performances
-{
-  return performancesArray;
-}
-
-- addPerformance: (SndPerformance*) p
-{
-  [performancesArrayLock lock];
-  [performancesArray addObject: p];
-  [performancesArrayLock unlock];
-  return self;
-}
-
-- removePerformance: (SndPerformance*) p
-{
-  [performancesArrayLock lock];
-  [performancesArray removeObject: p];
-  [performancesArrayLock unlock];
-  return self;
-}
-
-- (int) performanceCount
-{
-  return [performancesArray count];
-}
-
 - (void) normalise
 {
     // Retrieve the Snd as an SndAudioBuffer (TODO eventually this will be redundant once a SndAudioBuffer is an ivar).
@@ -1257,62 +1147,6 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	soundStruct = toSound;
 	soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;	
     }
-}
-
-- (void) setLoopWhenPlaying: (BOOL) yesOrNo
-{
-    loopWhenPlaying = yesOrNo;
-}
-
-- (BOOL) loopWhenPlaying
-{
-    return loopWhenPlaying;
-}
-
-- (void) setLoopStartIndex: (long) newLoopStartIndex
-{
-    loopStartIndex = newLoopStartIndex;
-}
-
-- (long) loopStartIndex
-{
-    return loopStartIndex;
-}
-
-- (void) setLoopEndIndex: (long) newLoopEndIndex
-{
-    loopEndIndex = newLoopEndIndex;
-}
-
-- (long) loopEndIndex
-{
-    return loopEndIndex;
-}
-
-- (BOOL) isPlaying
-{
-    // if any performances are currently playing, return YES.
-    int performanceIndex;
-    int performanceCount = [performancesArray count];
-
-    for(performanceIndex = 0; performanceIndex < performanceCount; performanceIndex++) {
-	if([[performancesArray objectAtIndex: performanceIndex] isPlaying])
-	    return YES;
-    }
-    // 
-    // performancesArrayLock
-    return NO;
-}
-
-- (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain
-{
-    [audioProcessorChain release];
-    audioProcessorChain = [newAudioProcessorChain retain];
-}
-
-- (SndAudioProcessorChain *) audioProcessorChain
-{
-    return [[audioProcessorChain retain] autorelease];
 }
 
 @end

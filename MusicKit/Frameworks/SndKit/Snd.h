@@ -279,24 +279,6 @@ typedef enum {
 + (void) removeAllSounds;
 
 /*!
-  @method isMuted
-  @result Returns a BOOL.
-  @discussion Returns YES if the sound output of all playing sounds is currently
-              muted.
-*/
-+ (BOOL) isMuted;
-
-/*!
-  @method setMute:
-  @param  aFlag is a BOOL.
-  @result Returns an id.
-  @discussion Mutes and unmutes the sound output level of all playing sounds if <i>aFlag</i> is YES or
-              NO, respectively. If successful, returns <b>self</b>; otherwise
-              returns <b>nil</b>.
-*/
-+ setMute: (BOOL) aFlag;
-
-/*!
   @method soundFileExtensions
   @result Returns an array of file extensions available for reading and writing.
   @discussion Returns an array of file extensions indicating the file format (and file extension)
@@ -504,134 +486,6 @@ typedef enum {
  */
 - (void) setInfo: (NSString *) newInfoString;
 
-/*!
-    @method play
-    @abstract Play the entire sound now.
-    @result Returns SND_ERR_NONE if the sound played correctly.
-    @discussion Initiates playback of the Snd. The method returns immediately
-              while the playback continues asynchronously in the background. The
-              playback ends when the Snd receives the <b>stop</b> message, or
-              when its data is exhausted.
-
-              When playback starts, <b>willPlay:</b> is sent to
-              the Snd's delegate; when it stops, <b>didPlay:</b> is sent. An
-              error code is returned.
-              
-              <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
-*/
-- (int) play;
-
-/*!
-    @method play:
-    @abstract Play the entire sound now, for use as an action method.
-    @param sender The sending object.
-    @result Returns self if play occured correctly, nil if there was an error.
-*/
-- play: (id) sender;
-
-/*!
-    @method playInFuture:beginSample:sampleCount:
-    @abstract Begin playback at some time in the future, over a region of the sound.
-    @param inSeconds The number of seconds beyond the current time point to begin playback.
-    @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
-    @param count The number of samples to play. Use sampleCount to play the entire sound.
-    @result Returns the performance that represents the sound playing.
-*/
-- (SndPerformance *) playInFuture: (double) inSeconds
-		      beginSample: (unsigned long) begin
-		      sampleCount: (unsigned long) count;
-
-/*!
-  @method playInFuture:startPositionInSeconds:durationInSeconds:
-  @abstract Begin playback at some time in the future, over a region of the sound.
-  @param inSeconds The number of seconds beyond the current time point to begin playback.
-  @param startPosition The time in seconds in the Snd to begin playing from.
-                       Use 0.0 to play from the start of the sound.
-  @param duration The duration of the Snd to play in seconds. Use -[Snd duration] to play the entire sound.
-  @result Returns the performance that represents the sound playing.
- */
-- (SndPerformance *) playInFuture: (double) inSeconds
-           startPositionInSeconds: (double) startPosition
-                durationInSeconds: (double) duration; 
-/*!
-    @method   playAtTimeInSeconds:withDurationInSeconds:
-    @abstract Begin playback at a certain absolute stream time, for a certain duration.
-    @param    t Start time in seconds
-    @param    d Duration in seconds
-    @result   Returns the performance that represents the sound playing.
-*/
-- (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d;
-
-/*!
-   @method play:beginSample:sampleCount:
-   @abstract Begin playback now, over a region of the sound.
-   @discussion This is a deprecated method for SoundKit compatability.
-   You should use playInFuture:beginSample:sampleCount: instead.
-   @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
-   @param count The number of samples to play. Use sampleCount to play the entire sound.
-   @result Returns self
-*/
-- play: (id) sender beginSample: (int) begin sampleCount: (int) count;
-
-/*!
-    @method playInFuture:
-    @abstract Begin the playback of the sound at some future time, specified in seconds.
-    @param inSeconds The number of seconds beyond the current time point to begin playback.
-    @result Returns the performance that represents the sound playing.
-*/
-- (SndPerformance *) playInFuture: (double) inSeconds;
-
-/*!
-    @method playAtDate:
-    @abstract Begin the playback of the sound at a specified date.
-    @param date The date to begin playback.
-    @result Returns the performance that represents the sound playing.
-*/
-- (SndPerformance *) playAtDate: (NSDate *) date;
-
-- record: (id) sender;
-
-/*!
-  @method record
-  @result Returns an int.
-  @discussion Initiate recording into the Snd. To record from the CODEC
-              microphone, the Snd's format, sampling rate, and channel count
-              must be SND_FORMAT_MULAW_8, SND_RATE_CODEC, and 1, respectively. If
-              this information isn't set (if the Snd is a newly created object,
-              for example), it defaults to accommodate a CODEC recording. If the
-              Snd's format is SND_FORMAT_DSP_DATA_16, the recording is from the
-              DSP.
-              
-              The method returns immediately while the recording
-              continues asynchronously in the background. The recording stops when
-              the Snd receives the <b>stop</b> message or when the recording has
-              gone on for the duration of the original sound data. The default
-              CODEC recording lasts precisely ten minutes if not stopped. To
-              record for a longer time, first increase the size of the sound data
-              with <b>setSoundStruct:soundStructSize:</b> or 
-              <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
-              
-              When the recording begins, <b>willRecord:</b> is
-              sent to the Snd's delegate; when the recording stops,
-              <b>didRecord:</b> is sent.
-              
-              An error code is returned.
-              
-              <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
-*/
-- (int) record;
-
-/*!
-  @method samplesPerformedOfPerformance:
-  @param performance The SndPerformance of which to enquire.
-  @result Returns an int.
-  @discussion If the Snd is currently playing or recording, this returns the
-              number of sample frames that have been played or recorded so far.
-              Otherwise, the number of sample frames in the Snd is returned. If
-              the sample frame count can't be determined, -1 is
-              returned.
-*/
-- (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
 
 /*!
   @method status
@@ -651,76 +505,6 @@ typedef enum {
               </UL>
 */
 - (int) status;
-
-/*!
-  @method waitUntilStopped
-  @result Returns an int.
-  @discussion If the Snd is currently playing or recording, waits until the
-              sound has finished playing or recording, at which time it returns
-              the result of the <b>SNDWait() </b>function. If the Snd is not
-              playing or recording when <b>waitUntilStopped</b> is invoked, it
-              returns SND_ERROR_NONE.
-*/
-- (int) waitUntilStopped;
-
-/*!
-    @method stopPerformance:inFuture:
-    @abstract Stop the given playback of the sound at some future time, specified in seconds.
-    @param inSeconds The number of seconds beyond the current time point to begin playback.
-    @param performance The performance that represents the sound playing. 
-*/
-+ (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds;
-
-/*!
-  @method stop:
-  @param  sender is an id.
-  @discussion Action method that stops the Snd's playback or recording. Other
-              than the argument and the return type, this is the same as the
-              <b>stop</b> method.
-*/
-- (void) stop: (id) sender;
-
-/*!
-  @method stop
-  @result Returns an int.
-  @discussion Terminates the Snd's playback or recording. If the Snd was
-              recording, the <b>didRecord:</b> message is sent to the delegate; if
-              playing, <b>didPlay:duringPerformance:</b> is sent. An error code is
-              returned.
-*/
-- (int) stop;
-
-/*!
-  @method pause:
-  @param  sender is an id.
-  @discussion Action method that pauses the Snd. Other than the argument and the
-              return type, this is the same as the <b>pause</b>
-              method.
-*/
-- pause: (id) sender;
-
-/*!
-  @method pause
-  @result Returns an int.
-  @discussion Pauses the Snd during recording or playback. An error code is
-              returned.
-*/
-- (int) pause;
-
-/*!
-  @method resume:
-  @param  sender is an id.
-  @discussion Action method that resumes the paused Snd.
-*/
-- resume: (id) sender;
-
-/*!
-  @method resume
-  @result Returns an int.
-  @discussion Resumes the paused Snd's activity. An error code is
-              returned.
-*/
-- (int) resume;
 
 /*!
   @method readSoundfile:
@@ -772,27 +556,6 @@ typedef enum {
               
 */
 - (BOOL) compatibleWithSound: (Snd *) aSound;
-
-/*!
-  @method isPlayable
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the Snd can be played, otherwise returns
-              <b>NO</b>. Some unplayable Snds just need to be converted to
-              another format, sampling rate, or number of channels; others are
-              inherently unplayable, such as those whose format is
-              SND_FORMAT_DISPLAY. To play a Snd that's just been recorded from
-              the DSP, you must change its format from SND_FORMAT_DSP_DATA_16 to
-              SND_FORMAT_LINEAR_16. 
-*/
-- (BOOL) isPlayable;
-
-/*!
-  @method isPlaying
-  @result Returns a BOOL, YES if a sound has playing performances, NO if not.
-  @discussion Returns <b>YES</b> if the Snd is currently playing one or more performances,
-              otherwise returns <b>NO</b>.
- */
-- (BOOL) isPlaying;
 
 /*!
   @method convertToFormat:samplingRate:channelCount:
@@ -966,6 +729,25 @@ typedef enum {
 - setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize;
 
 /*!
+  @function fragmentBlockOfFrame:indexInBlock:lastFrameInBlock:
+  @abstract Get data address and statistics for fragmented or non-fragmented Snds
+  @discussion For fragmented sounds, you often need to be able to find the
+              block of data that a certain frame resides in. You then often
+              need to know which is the last frame in that fragment (block),
+              indexed from the start of the block.
+  @param frame            The index of the sample you wish to find the block for, indexed from the beginning of the sound
+  @param lastFrameInBlock Returns by reference the index of the last frame in the block, indexed from the start of the block
+  @param currentFrame     Returns by reference the index of the frame supplied, indexed from the start of the block
+  @param dataFormat       Returns by reference the format of the data. This will normally be the same as the Snd's dataFormat,
+                          but can differ if the format is nomally encoded.
+ @result the memory address of the first sample in the block.
+*/
+- (void *) fragmentOfFrame: (int) frame 
+	   indexInFragment: (int *) currentFrame 
+       lastFrameInFragment: (int *) lastFrameInBlock
+		dataFormat: (SndSampleFormat *) dataFormat;
+
+/*!
   @method processingError
   @result Returns an int.
   @discussion Returns a constant that represents the last error that was
@@ -1038,37 +820,6 @@ typedef enum {
 - (void) _setStatus: (int) newStatus; /* Private! not for general use. */
 
 /*!
-  @method     performances
-  @abstract   Performance array accessor.
-  @result     NSArray of performances.
-  @discussion Mainly for use by SndPlayer
-*/
-- (NSArray*) performances;
-/*!
-  @method     addPerformance:
-  @abstract   Adds a performance to the pwerformance array.
-  @param      p A performance
-  @result     self
-  @discussion Mainly for use by SndPlayer
-*/
-- addPerformance: (SndPerformance *) p;
-/*!
-  @method     removePerformance:
-  @abstract   Removes a performance from the performance array.
-  @param      p A performance to be removed.
-  @result     self
-  @discussion Mainly for use by SndPlayer
-*/
-- removePerformance: (SndPerformance *) p;
-/*!
-  @method     performanceCount
-  @abstract   returns the number of active AND pending performances 
-  @result     self
-  @discussion Mainly for use by SndPlayer
-*/
-- (int) performanceCount;
-
-/*!
   @method initWithAudioBuffer:
   @abstract Initialises a Snd instance from the provided SndAudioBuffer.
   @param aBuffer the SndAudioBuffer object from which to copy the data
@@ -1082,6 +833,282 @@ typedef enum {
   @discussion The highest amplitude sample in the sound is scaled to be the maximum resolution.
  */
 - (void) normalise;
+
+
+@end
+
+@interface Snd(Playing)
+
+/*!
+  @method isMuted
+  @result Returns a BOOL.
+  @abstract Returns YES if the sound output of all playing sounds is currently muted.
+*/
++ (BOOL) isMuted;
+
+/*!
+  @method setMute:
+  @param  aFlag is a BOOL.
+  @result If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
+  @discussion Mutes and unmutes the sound output level of all playing sounds if <i>aFlag</i> is YES or
+              NO, respectively. 
+ */
++ setMute: (BOOL) aFlag;
+
+/*!
+  @method waitUntilStopped
+  @result Returns an int.
+  @discussion If the Snd is currently playing or recording, waits until the
+              sound has finished playing or recording, at which time it returns
+              the result of the <b>SNDWait() </b>function. If the Snd is not
+              playing or recording when <b>waitUntilStopped</b> is invoked, it
+              returns SND_ERROR_NONE.
+ */
+- (int) waitUntilStopped;
+
+/*!
+  @method stopPerformance:inFuture:
+  @abstract Stop the given playback of the sound at some future time, specified in seconds.
+  @param inSeconds The number of seconds beyond the current time point to begin playback.
+  @param performance The performance that represents the sound playing. 
+ */
++ (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds;
+
+/*!
+  @method stop:
+  @param  sender is an id.
+  @discussion Action method that stops the Snd's playback or recording. Other
+              than the argument and the return type, this is the same as the
+              <b>stop</b> method.
+ */
+- (void) stop: (id) sender;
+
+/*!
+  @method stop
+  @result Returns an int.
+  @discussion Terminates the Snd's playback or recording. If the Snd was
+              recording, the <b>didRecord:</b> message is sent to the delegate; if
+              playing, <b>didPlay:duringPerformance:</b> is sent. An error code is
+              returned.
+ */
+- (int) stop;
+
+/*!
+  @method pause:
+  @param  sender is an id.
+  @discussion Action method that pauses the Snd. Other than the argument and the
+              return type, this is the same as the <b>pause</b>
+  method.
+ */
+- pause: (id) sender;
+
+/*!
+  @method pause
+  @result Returns an int.
+  @discussion Pauses the Snd during recording or playback. An error code is
+              returned.
+ */
+- (int) pause;
+
+/*!
+  @method resume:
+  @param  sender is an id.
+  @discussion Action method that resumes the paused Snd.
+ */
+- resume: (id) sender;
+
+/*!
+  @method resume
+  @result Returns an int.
+  @discussion Resumes the paused Snd's activity. An error code is
+              returned.
+ */
+- (int) resume;
+
+/*!
+  @method isPlayable
+  @result Returns a BOOL.
+  @discussion Returns <b>YES</b> if the Snd can be played, otherwise returns
+              <b>NO</b>. Some unplayable Snds just need to be converted to
+              another format, sampling rate, or number of channels; others are
+              inherently unplayable, such as those whose format is
+              SND_FORMAT_DISPLAY. To play a Snd that's just been recorded from
+              the DSP, you must change its format from SND_FORMAT_DSP_DATA_16 to
+              SND_FORMAT_LINEAR_16. 
+*/
+- (BOOL) isPlayable;
+
+/*!
+  @method isPlaying
+  @result Returns a BOOL, YES if a sound has playing performances, NO if not.
+  @discussion Returns <b>YES</b> if the Snd is currently playing one or more performances,
+              otherwise returns <b>NO</b>.
+ */
+- (BOOL) isPlaying;
+
+/*!
+  @method play
+  @abstract Play the entire sound now.
+  @result Returns SND_ERR_NONE if the sound played correctly.
+  @discussion Initiates playback of the Snd. The method returns immediately
+              while the playback continues asynchronously in the background. The
+              playback ends when the Snd receives the <b>stop</b> message, or
+              when its data is exhausted.
+
+              When playback starts, <b>willPlay:</b> is sent to
+              the Snd's delegate; when it stops, <b>didPlay:</b> is sent. An
+              error code is returned.
+
+              <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
+*/
+- (int) play;
+
+/*!
+  @method play:
+  @abstract Play the entire sound now, for use as an action method.
+  @param sender The sending object.
+  @result Returns self if play occured correctly, nil if there was an error.
+ */
+- play: (id) sender;
+
+/*!
+  @method playInFuture:beginSample:sampleCount:
+  @abstract Begin playback at some time in the future, over a region of the sound.
+  @param inSeconds The number of seconds beyond the current time point to begin playback.
+  @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
+  @param count The number of samples to play. Use sampleCount to play the entire sound.
+  @result Returns the performance that represents the sound playing.
+ */
+- (SndPerformance *) playInFuture: (double) inSeconds
+		      beginSample: (unsigned long) begin
+		      sampleCount: (unsigned long) count;
+
+/*!
+  @method playInFuture:startPositionInSeconds:durationInSeconds:
+  @abstract Begin playback at some time in the future, over a region of the sound.
+  @param inSeconds The number of seconds beyond the current time point to begin playback.
+  @param startPosition The time in seconds in the Snd to begin playing from.
+    Use 0.0 to play from the start of the sound.
+  @param duration The duration of the Snd to play in seconds. Use -[Snd duration] to play the entire sound.
+  @result Returns the performance that represents the sound playing.
+ */
+- (SndPerformance *) playInFuture: (double) inSeconds
+           startPositionInSeconds: (double) startPosition
+                durationInSeconds: (double) duration;
+/*!
+  @method   playAtTimeInSeconds:withDurationInSeconds:
+  @abstract Begin playback at a certain absolute stream time, for a certain duration.
+  @param    t Start time in seconds
+  @param    d Duration in seconds
+  @result   Returns the performance that represents the sound playing.
+ */
+- (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d;
+
+/*!
+  @method play:beginSample:sampleCount:
+  @abstract Begin playback now, over a region of the sound.
+  @discussion This is a deprecated method for SoundKit compatability.
+              You should use playInFuture:beginSample:sampleCount: instead.
+  @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
+  @param count The number of samples to play. Use sampleCount to play the entire sound.
+  @result Returns self
+ */
+- play: (id) sender beginSample: (int) begin sampleCount: (int) count;
+
+/*!
+  @method playInFuture:
+  @abstract Begin the playback of the sound at some future time, specified in seconds.
+  @param inSeconds The number of seconds beyond the current time point to begin playback.
+  @result Returns the performance that represents the sound playing.
+ */
+- (SndPerformance *) playInFuture: (double) inSeconds;
+
+/*!
+  @method playAtDate:
+  @abstract Begin the playback of the sound at a specified date.
+  @param date The date to begin playback.
+  @result Returns the performance that represents the sound playing.
+ */
+- (SndPerformance *) playAtDate: (NSDate *) date;
+
+/*!
+  @method record:
+  @param sender
+ */
+- record: (id) sender;
+
+/*!
+  @method record
+  @result An error code is returned.
+  @discussion Initiate recording into the Snd. To record from the CODEC
+              microphone, the Snd's format, sampling rate, and channel count
+              must be SND_FORMAT_MULAW_8, SND_RATE_CODEC, and 1, respectively. If
+              this information isn't set (if the Snd is a newly created object,
+	      for example), it defaults to accommodate a CODEC recording. If the
+              Snd's format is SND_FORMAT_DSP_DATA_16, the recording is from the DSP.
+ 
+              The method returns immediately while the recording
+              continues asynchronously in the background. The recording stops when
+              the Snd receives the <b>stop</b> message or when the recording has
+              gone on for the duration of the original sound data. The default
+              CODEC recording lasts precisely ten minutes if not stopped. To
+              record for a longer time, first increase the size of the sound data
+              with <b>setSoundStruct:soundStructSize:</b> or 
+              <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
+ 
+              When the recording begins, <b>willRecord:</b> is
+              sent to the Snd's delegate; when the recording stops,
+              <b>didRecord:</b> is sent.
+
+              <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
+ */
+- (int) record;
+
+/*!
+  @method samplesPerformedOfPerformance:
+  @param performance The SndPerformance of which to enquire.
+  @result Returns an int.
+  @discussion If the Snd is currently playing or recording, this returns the
+              number of sample frames that have been played or recorded so far.
+              Otherwise, the number of sample frames in the Snd is returned. If
+              the sample frame count can't be determined, -1 is
+              returned.
+ */
+- (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
+
+/*!
+  @method     performances
+  @abstract   Performance array accessor.
+  @result     NSArray of performances.
+  @discussion Mainly for use by SndPlayer
+*/
+- (NSArray*) performances;
+
+/*!
+  @method     addPerformance:
+  @abstract   Adds a performance to the pwerformance array.
+  @param      p A performance
+  @result     self
+  @discussion Mainly for use by SndPlayer
+*/
+- addPerformance: (SndPerformance *) p;
+
+/*!
+  @method     removePerformance:
+  @abstract   Removes a performance from the performance array.
+  @param      p A performance to be removed.
+  @result     self
+  @discussion Mainly for use by SndPlayer
+*/
+- removePerformance: (SndPerformance *) p;
+
+/*!
+  @method     performanceCount
+  @abstract   returns the number of active AND pending performances 
+  @result     self
+  @discussion Mainly for use by SndPlayer
+*/
+- (int) performanceCount;
 
 /*!
   @method     setLoopWhenPlaying:
