@@ -61,11 +61,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999,2000 The MusicKit Project
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.25  2000/09/18 23:44:07  leigh
+  Moved the openstep includes to properly function
+
   Revision 1.24  2000/07/22 00:32:20  leigh
   Minor doco and typing cleanups.
 
@@ -192,12 +196,6 @@ Modification history:
 
 #import <MKPerformSndMIDI/midi_driver.h>
 
-#if openstep_i386
-#import <driverkit/IOConfigTable.h>
-#import <driverkit/IODeviceMaster.h>
-#import <driverkit/IODevice.h>
-#endif
-
 /* MusicKit include files */
 #import "_musickit.h"
 #import "tokens.h"
@@ -208,6 +206,12 @@ Modification history:
 #import "ConductorPrivate.h"
 #import "NoteReceiverPrivate.h"
 #import "MidiPrivate.h"
+
+#if openstep_i386
+#import <driverkit/IOConfigTable.h>
+#import <driverkit/IODeviceMaster.h>
+#import <driverkit/IODevice.h>
+#endif
 
 @implementation MKMidi: NSObject
 
