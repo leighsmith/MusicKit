@@ -1,7 +1,10 @@
 #
 # $Id$
 #
-# Build script for the MusicKit. On MacOS X, just calls xcodebuild.
+# @configure_input@
+#
+# Build script for the MusicKit on MacOS X. Just calls xcodebuild.
+# See GNUmakefile.in for the build process on all other systems.
 #
 # Leigh Smith <leigh@leighsmith.com>
 #
@@ -12,17 +15,18 @@
 # messages remain intact and accompany all relevant code.
 #
 
+CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 PROJECT = -project MusicKit.xcode
-CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@"
+XCODEBUILD = xcodebuild $(PROJECT)
 
 all:
-	xcodebuild $(PROJECT) -target "MusicKit (Aggregate)" -buildstyle Development build DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Development build DSTROOT=/ $(CONFIG)
 
 install:
-	xcodebuild $(PROJECT) -target "MusicKit (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
 
 frameworks:
-	xcodebuild $(PROJECT) -target "Frameworks Only (Aggregate)" -buildstyle Embedded install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -buildstyle Embedded install DSTROOT=/ $(CONFIG)
 
 clean:
-	xcodebuild $(PROJECT) -target "MusicKit (Aggregate)" clean DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" clean DSTROOT=/ $(CONFIG)
