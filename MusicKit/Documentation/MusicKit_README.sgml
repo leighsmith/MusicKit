@@ -416,9 +416,9 @@ Documentation
 	<listitem>
 	  <para>
 The file 
-<ulink url="&mkurl;/ChangeLog">
+<ulink url="&mkurl;/MusicKit_ChangeLog">
 <filename>
-Documentation/ChangeLog
+Documentation/MusicKit_ChangeLog
 </filename>
 </ulink>
 lists changes and is generated from the CVS logs.
@@ -559,9 +559,13 @@ synthesiser. There is minimal but usable support for downloading new
 While the future of Apple's OpenStep/YellowBox/Cocoa/WebObjects (!)
 for Windows support is far from clear, the combination of Gnu
 technologies of <ulink url="http://www.gnustep.org">GnuStep</ulink>
-and <ulink url="http://www.cygnus.com/cygwin">cygwin</ulink> would
-suggest in the near future that Apple's corporate interests will not
-dictate whether applications can be deployed on either platform.
+and <ulink url="http://www.cygnus.com/cygwin">cygwin</ulink> have
+ensured that Apple's corporate interests don't prevent
+deploying applications on the platform. Currently
+the <productname>AppKit</productname> support on Windows is
+incomplete, so it is unlikely that GUI applications will run. As
+GnuStep on Windows matures, MusicKit applications will compile and run
+correctly.
 </para>
     </sect2>
 
@@ -709,8 +713,8 @@ reorganised the packages and documentation for MacOS X-Server and in
 2000, to various developer previews of MacOS X.  The frameworks were
 ported to Windows 98/NT using DirectMusic in 1999.</para></listitem>
 
-      <listitem><para>DirectSound interface code for Windows was
-contributed by SKoT McDonald
+      <listitem><para>DirectSound interface code for Windows, MP3
+encoding and FX architecture was contributed by SKoT McDonald
 <email>skot@tomandandy.com</email>.</para></listitem>
 
       <listitem>
@@ -1434,13 +1438,13 @@ installation directory (the default).
       <para>
 This will cause the frameworks to install into <filename
 class=directory>/Local/Library/Frameworks</filename> on
-<productname>MacOS X-Server</productname>, <filename
+<productname>MacOS X-Server V1.2</productname>, <filename
 class=directory>/LocalLibrary/Frameworks</filename> on
 <productname>OpenStep</productname> and <filename
 class=directory>/Library/Frameworks</filename> on <productname>MacOS
 X</productname>.  Applications will install in <filename
 class=directory>/Local/Apps</filename> on 
-<productname>MacOS X-Server</productname>, 
+<productname>MacOS X-Server V1.2</productname>, 
 <filename class=directory>/LocalApps</filename> on
 <productname>OpenStep</productname>, and
  <filename class=directory>/Applications</filename> on 
