@@ -136,7 +136,7 @@
     xr.origin.x    = rect.size.width  * 3 / 7;
     xr.origin.y    = rect.size.height * 2 / 7;
     xr.size.width  = rect.size.width / 7;
-    xr.size.height = rect.size.height / 7;
+    xr.size.height = rect.size.height / 7 - 1;
     [self drawMixerInRect: xr];
     {
       id theSndArchObj = [[SndStreamManager defaultStreamManager] mixer];
@@ -160,7 +160,7 @@
       for (i=0;i<c;i++) {
         NSRect cr;
         cr.size.width  = rect.size.width / 7;
-        cr.size.height = rect.size.height/ 7;
+        cr.size.height = rect.size.height/ 7 - 1;
         cr.origin.x    = rect.size.width * (i+1)/(c+1) - cr.size.width/2;
         cr.origin.y    = rect.size.height * 5 / 7;
         {
@@ -204,9 +204,15 @@
 {
   NSMutableAttributedString *s = [[NSMutableAttributedString alloc] initWithString: [client clientName]];
   NSRange r = {0, [s length]};
-  [self drawRect: rect withColor: [NSColor blackColor]];
+  NSRect  aRect = rect;
+  NSColor *clr = (currentSndArchObject == client ? [NSColor redColor] : [NSColor blackColor]);
+
+  [self drawRect: rect withColor: clr];
   [s setAlignment: NSCenterTextAlignment range: r];
   [s drawInRect: rect];
+  aRect.origin.x += rect.size.width + 10;
+  [self drawAudioProcessorChain: [client audioProcessorChain] inRect: aRect];
+
   return self;
 }
 
@@ -216,18 +222,19 @@
 
 - drawMixerInRect: (NSRect) rect
 {
-  NSMutableAttributedString *s = [[NSMutableAttributedString alloc] initWithString: @"Mixer"];
-  NSRange r = {0, [s length]};
-  [self drawRect: rect withColor: [NSColor blackColor]];
+  NSMutableAttributedString *s     = [[NSMutableAttributedString alloc] initWithString: @"Mixer"];
+  NSRange                    r     = {0, [s length]};
+  SndStreamMixer            *mixer = [[SndStreamManager defaultStreamManager] mixer];
+  SndAudioProcessorChain    *apc   = [mixer audioProcessorChain];
+  NSRect                     aRect = rect;
+  NSColor *clr = (currentSndArchObject == mixer ? [NSColor redColor] : [NSColor blackColor]);
+
+  [self drawRect: rect withColor: clr];
   [s setAlignment: NSCenterTextAlignment range: r];
   [s drawInRect: rect];
-  {
-    SndStreamMixer *mixer = [[SndStreamManager defaultStreamManager] mixer];
-    SndAudioProcessorChain *apc = [mixer audioProcessorChain];
-    NSRect r = rect;
-    r.origin.x += rect.size.width + 10;
-    [self drawAudioProcessorChain: apc inRect: r];
-  }
+  aRect.origin.x += rect.size.width + 10;
+  [self drawAudioProcessorChain: apc inRect: aRect];
+  
   return self;
 }
 
@@ -239,14 +246,17 @@
 {
   NSMutableAttributedString *s = [[NSMutableAttributedString alloc] initWithString: @"Manager"];
   NSRange r = {0, [s length]};
-  [self drawRect: rect withColor: [NSColor blackColor]];
+  NSColor *clr = (currentSndArchObject == [SndStreamManager defaultStreamManager] ?
+                  [NSColor redColor] : [NSColor blackColor]);
+
+  [self drawRect: rect withColor: clr];
   [s setAlignment: NSCenterTextAlignment range: r];
   [s drawInRect: rect];
   return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// 
+// drawAudioProcessorChain:inRect:
 ////////////////////////////////////////////////////////////////////////////////
 
 - drawAudioProcessorChain: (SndAudioProcessorChain*) apc inRect: (NSRect) rect
@@ -256,23 +266,21 @@
     SndAudioProcessor           *ap = [apc processorAtIndex: i];
     NSMutableAttributedString *name = [[NSMutableAttributedString alloc] initWithString: [ap name]];
     NSRange                       r = {0, [name length]};
+    NSColor *clr = (currentSndArchObject == ap ? [NSColor redColor] : [NSColor blackColor]);
+    NSColor *textClr = [ap isActive] ? [NSColor redColor] : [NSColor blueColor];    
     NSRect              theProcRect = rect;
     
     theProcRect.origin.y    += rect.size.height;
     theProcRect.origin.y    -= 14 * (i + 1);
-    theProcRect.size.height  = 14;
+    theProcRect.size.height  = 13;
     {
-      NSColor *clr = [ap isActive] ? [NSColor redColor] : [NSColor blueColor];
-
-      id theDisplayObj = [[SndAudioArchViewObject alloc] initWithRect: theProcRect andSndAudioArchObject: ap];
-      [displayObjectsArray addObject: theDisplayObj];
-      
-      [self drawRect: theProcRect withColor: [NSColor blackColor]];
-      [name addAttribute: NSForegroundColorAttributeName value: clr range: r];
-      [name setAlignment: NSCenterTextAlignment range: r];
-      [name drawInRect: theProcRect];
-
+    id theDisplayObj = [[SndAudioArchViewObject alloc] initWithRect: theProcRect andSndAudioArchObject: ap];
+    [displayObjectsArray addObject: theDisplayObj];
     }
+    [self drawRect: theProcRect withColor: clr];
+    [name addAttribute: NSForegroundColorAttributeName value: textClr range: r];
+    [name setAlignment: NSCenterTextAlignment range: r];
+    [name drawInRect: theProcRect];
   }
   return self;
 }
@@ -301,6 +309,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// mouseUp:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) mouseUp: (NSEvent*) theEvent
@@ -328,7 +337,7 @@
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-//
+// setDelegate:
 ////////////////////////////////////////////////////////////////////////////////
 
 - setDelegate: (id) d
@@ -340,12 +349,29 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// delegate
 ////////////////////////////////////////////////////////////////////////////////
 
 - (id) delegate
 {
   return delegate;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// currentlySelectedAudioArchObject
+////////////////////////////////////////////////////////////////////////////////
+
+- (id) currentlySelectedAudioArchObject
+{
+  return [[currentSndArchObject retain] autorelease];
+}
+
+- clearCurrentlySelectedAudioArchObject
+{
+  if (currentSndArchObject != nil)
+    [currentSndArchObject release];
+  currentSndArchObject = nil;
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
