@@ -138,7 +138,7 @@ situation. Actually, <emphasis
 role="bold">MKSetRealTimeEnvelopes(YES)</emphasis> may be used for
 either case; its only drawback is that it does not allow for
 arbitrarily long envelopes. In timed mode, the fixed latency is set by
-the function <emphasis role="bold">MKSetDeltaT()</emphasis>.  For
+the function <function>MKSetDeltaT()</function>.  For
 example, <emphasis role="bold">MKSetDeltaT(.1)</emphasis> sets a fixed
 latency of a tenth of a second.</para>
 </sect2>
@@ -1436,7 +1436,7 @@ latter, frequency and amplitude aren't set directly through messages
 to the oscillator.  To control these attributes, you affect the
 <classname>MKUnitGenerator</classname>s that are connected to
 Oscgafi's inputs.  The MusicKit provides a C function, called
-<emphasis role="bold">MKUpdateAsymp()</emphasis> that does this for
+<function>MKUpdateAsymp()</function> that does this for
 you.  This function is described later as it's used to apply parameter
 values to Envy's patch.</para>
 
@@ -1766,14 +1766,14 @@ more complicated in the implementation of Envy than in that of
 Simplicity.  Because of its use of <classname>MKEnvelope</classname>
 objects, Envy's amplitude and frequency depend on the values of a
 number of related parameters.  The MusicKit provides a C function
-called <emphasis role="bold">MKUpdateAsymp()</emphasis> that helps to
+called <function>MKUpdateAsymp()</function> that helps to
 untangle this web.  The function takes, as arguments, all the objects
 and parameter values associated with a particular
 <classname>MKEnvelope</classname> and applies them in a predictable
 manner to the attribute that the <classname>MKEnvelope</classname>
 controls.</para>
 
-<para><emphasis role="bold">MKUpdateAsymp()</emphasis> takes eight
+<para><function>MKUpdateAsymp()</function> takes eight
 arguments:</para>
 
 <orderedlist>
@@ -1799,7 +1799,7 @@ Asympenv)</para></listitem>
 <listitem><para>The current phrase status</para></listitem>
 </orderedlist>
 
-<para>The function's behavior is described in <xref linkend=FunctionDescription>.
+<para>The function's behavior is described in <xref linkend=MKFunctionReferences>.
 Briefly, it applies an <classname>MKEnvelope</classname> (argument 2)
 to an Asymp or Asympenv (argument 1) after properly scaling the
 <classname>MKEnvelope</classname>'s value range (arguments 3 and 4)
@@ -1914,7 +1914,7 @@ to be updated.  Finally, the value of <emphasis
 role="bold">shouldApplyAmp</emphasis> is logically or'd with the value
 of <emphasis role="bold">isNoteOn</emphasis>, which is YES if
 <emphasis role="bold">aNote</emphasis> is a noteOn.  Thus, the
-<emphasis role="bold">MKUpdateAsymp()</emphasis> call for amplitude is
+<function>MKUpdateAsymp()</function> call for amplitude is
 made if any of the tested parameters are present, and it's always made
 if <emphasis role="bold">aNote</emphasis> is a noteOn.</para>
 
@@ -1922,7 +1922,7 @@ if <emphasis role="bold">aNote</emphasis> is a noteOn.</para>
 same as those for amplitude.  Notice, however, that the <emphasis
 role="bold">freq0</emphasis> and <emphasis
 role="bold">freq1</emphasis> values aren't passed directly to
-<emphasis role="bold">MKUpdateAsymp()</emphasis>.  Instead, they're
+<function>MKUpdateAsymp()</function>.  Instead, they're
 used to retrieve increment values from <emphasis
 role="bold">osc</emphasis> through its <emphasis
 role="bold">incAtFreq:</emphasis> method.  As mentioned earlier,

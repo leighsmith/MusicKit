@@ -63,8 +63,9 @@ should invoke:</para>
 <para>There are seven subclasses of
 <classname>MKSynthPatch</classname> that implement wave table
 synthesis.  The first four use <classname>MKWaveTable</classname>
-objects that you supply, the others have access to the <productname>MusicKit</productname>
-<classname>MKWaveTable</classname> database:</para>
+objects that you supply, the others have access to the
+<productname>MusicKit</productname> <classname>MKWaveTable</classname>
+database:</para>
 
       <table frame=all><title>Wave Table Subclasses of <classname>MKSynthPatch</classname></title>
 	<tgroup cols=2 colsep=1 rowsep=1>
@@ -136,8 +137,7 @@ vibrato and interpolation</entry>
 	      dB</entry> 
 	      <entry>Basic amplitude (but see <emphasis
 	      role="bold">amp1</emphasis>).  The dB (decibel) scaling
-	      is obtained through the <emphasis role="bold">MKdB()
-	      </emphasis> C function; in a scorefile, with the
+	      is obtained through the <function>MKdB()</function> C function; in a scorefile, with the
 	      <emphasis role="bold">dB</emphasis> postfix  operator.</entry>
 	    </row>
 	    <row>
@@ -387,7 +387,7 @@ that are recognized by only a subset of the
 <entry>Basic amplitude
 (but see <emphasis role="bold">amp1</emphasis>).  The dB
 (decibel) scaling is obtained through the
-<emphasis role="bold">MKdB()</emphasis>
+<function>MKdB()</function>
 C function; in
 a scorefile, with the <emphasis role="bold">dB</emphasis> postfix operator.
 </entry>
@@ -614,8 +614,7 @@ attention.  As such, it recognizes fewer parameters than the other
 	      <entry>[0.0, 1.0] or [-&infin;, 0.0] dB</entry>
 	      <entry>Basic amplitude (but see <emphasis
 role="bold">amp1</emphasis>).  The dB 
-(decibel) scaling is obtained through the <emphasis role="bold">MKdB()
-</emphasis> C function; in a scorefile, with the
+(decibel) scaling is obtained through the <function>MKdB()</function> C function; in a scorefile, with the
 <emphasis role="bold">dB</emphasis> postfix 
 operator.</entry></row>
 
@@ -717,7 +716,7 @@ waveform to anything you want.  The parameters are as follows:</para>
 <entry>Basic amplitude
 (but see <emphasis role="bold">amp1</emphasis>).  The dB 
 (decibel) scaling is obtained through the
-<emphasis role="bold">MKdB()</emphasis> C function; in
+<function>MKdB()</function> C function; in
 a scorefile, with the <emphasis role="bold">dB</emphasis> postfix
 operator.</entry></row>
 

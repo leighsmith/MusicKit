@@ -217,10 +217,11 @@ MAXINT.</para>
 string.</para>
 	  </listitem>
 	</itemizedlist>
-<para>Unfortunately, you can't use MK_NODVAL in a simple comparison
-predicate.  To check for this return value, you must call the in-line
-function <emphasis role="bold">MKIsNoDVal()</emphasis>; the function
-returns 0 if its argument is MK_NODVAL and nonzero if not:</para>
+<para>Unfortunately, you can't use <constant>MK_NODVAL</constant> in a
+simple comparison predicate.  To check for this return value, you must
+call the in-line function <function>MKIsNoDVal()</function>; the
+function returns 0 if its argument is <constant>MK_NODVAL</constant>
+and nonzero if not:</para>
 
 <programlisting>
 /* Retrieve the value of the amplitude parameter. */
@@ -757,9 +758,9 @@ to 231-1.</para>
 
 <para>You set a <classname>MKNote</classname>'s note tag through
 <emphasis role="bold">setNoteTag:</emphasis> and retrieve it with
-<emphasis role="bold">noteTag</emphasis>.  The C function <emphasis
-role="bold">MKNoteTag()</emphasis> is provided to create note tag
-values that are guaranteed to be unique across your entire
+<emphasis role="bold">noteTag</emphasis>.  The C function
+<function>MKNoteTag()</function> is provided to create note tag values
+that are guaranteed to be unique across your entire
 application&horbar;you should never create note tag values except
 through this function.</para>
 
@@ -1573,7 +1574,7 @@ you write the scorefile, the <classname>MKEnvelope</classname> is only
 written in this long form once; subsequent references (in the
 scorefile) are made to the <classname>MKEnvelope</classname> object by
 its name.  To name an <classname>MKEnvelope</classname>, call the
-<emphasis role="bold">MKNameObject()</emphasis> C function:</para>
+<function>MKNameObject()</function> C function:</para>
 
 <programlisting>
 MKNameObject("env1", anEnvelope);
@@ -1974,7 +1975,7 @@ of one <classname>MKPart</classname> to another
 used when writing it to a scorefile (or, more accurately, when the
 <classname>MKScore</classname> to which the
 <classname>MKPart</classname> belongs is written to a scorefile).  The
-<emphasis role="bold">MKNameObject()</emphasis> function is used to
+<function>MKNameObject()</function> function is used to
 name a <classname>MKPart</classname>; like all MusicKit names, a
 <classname>MKPart</classname>'s name is case-sensitive and consists of
 a letter followed by a string of alphanumeric characters:</para>
@@ -1984,7 +1985,7 @@ MKNameObject("Solo", aPart);
 </programlisting>
 
 <para>To retrieve a <classname>MKPart</classname>'s name, call the C
-function <emphasis role="bold">MKGetObjectName()</emphasis>:</para>
+function <function>MKGetObjectName()</function>:</para>
 
 <programlisting>
 char *aName = MKGetObjectName(aPart);
@@ -2336,8 +2337,7 @@ messages.  The MIDI message is represented by a combination of the
 stream and throws away invalid messages, such as duplicate noteOffs or
 noteOffs for inactive Key/Channel pairs.  However, you can turn off
 this feature by enabling "inclusive translation mode" with the
-function <emphasis
-role="bold">MKSetInclusiveMidiTranslation()</emphasis>.</para>
+function <function>MKSetInclusiveMidiTranslation()</function>.</para>
 
 <para>This discussion assumes a familiarity with MIDI.  For further
 details, consult the MIDI Specification.  For further information no
@@ -2462,8 +2462,7 @@ file, the key number is determined by the
 <classname>MKNote</classname>'s noteTag, which is matched against the
 <classname>MKNote</classname> previously sent with the same tag. If
 there is no active noteTag then and inclusive translation mode has
-been selected (using the function <emphasis
-role="bold">MKSettInclusiveMidiTranslation()</emphasis>), the
+been selected (using the function <function>MKSettInclusiveMidiTranslation()</function>), the
 <classname>MKNote</classname> is checked for the presence of an
 <emphasis role="bold">MK_keyNum</emphasis> parameter ([0-127]).
 Otherwise, or if none is found, the noteOff is omitted. Additionally,
@@ -2492,7 +2491,7 @@ number is determined by the <classname>MKNote</classname>'s noteTag,
 which is matched against the <classname>MKNote</classname> previously
 sent with the same tag. If there is no active noteTag then, if
 inclusive translation mode has been selected (using the function
-<emphasis role="bold">MKSettInclusiveMidiTranslation()</emphasis>),
+<function>MKSettInclusiveMidiTranslation()</function>),
 the <classname>MKNote</classname> is checked for the presence of an
 <emphasis role="bold">MK_keyNum</emphasis> parameter.  If none is
 found, the polyphonic aftertouch message is omitted.  The parameter
@@ -2810,8 +2809,8 @@ message for which an unmatched noteOn was previously received , a
 <classname>MKNote</classname> object is created with type MK_noteOff.
 It is given a noteTag that is the same as you gave the corresponding
 noteOn <classname>MKNote</classname>.  If inclusive MIDI translation
-mode is selected (using the function <emphasis
-role="bold">MKSettInclusiveMidiTranslation()</emphasis>), then a
+mode is selected (using the function
+<function>MKSettInclusiveMidiTranslation()</function>), then a
 <emphasis role="bold">MK_keyNum</emphasis> parameter is additionally
 included ([0-127]) and unmatched noteOffs are passed along to the
 application, rather than being filtered out.</para>

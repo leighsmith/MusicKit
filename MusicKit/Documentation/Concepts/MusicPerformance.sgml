@@ -127,7 +127,7 @@ setting it up; in fact, many of the methods that are defined by the
 classes that are involved in a performance can only be invoked before
 the performance starts (or between performances).  As you design your
 own application, you should consult the class descriptions in 
-<xref linkend="ClassReferences"> to check for the conditions under
+<xref linkend="MKClassReferences"> to check for the conditions under
 which a method may be invoked.</para>
 
 <para>The following sections examine the three primary classes
@@ -1313,7 +1313,7 @@ role="bold">MKScheduleMsgRequest(MKMsgStruct
 id </emphasis><emphasis>conductor</emphasis><emphasis
 role="bold">)</emphasis> places the structure pointed to by
 <emphasis>aMsgStructPtr</emphasis>, which was previously created
-through <emphasis role="bold">MKNewMsgRequest()</emphasis>, in
+through <function>MKNewMsgRequest()</function>, in
 <emphasis>conductor</emphasis>'s message request queue.</para>
 </listitem>
 
@@ -1639,8 +1639,7 @@ and a <classname>MKConductor</classname> is as important as it is
 unique: The dispatching of an <classname>MKEnvelope</classname>'s
 breakpoints during <acronym>DSP</acronym> synthesis is always done through message
 requests with the clockConductor.  You don't have to do anything to
-obtain this behavior, it happens automatically through <emphasis
-role="bold">MKUpdateAsymp()</emphasis>, the function that you use in
+obtain this behavior, it happens automatically through <function>MKUpdateAsymp()</function>, the function that you use in
 the design of a <classname>MKSynthPatch</classname> subclass to apply
 an <classname>MKEnvelope</classname> to a synthesis patch.</para>
 
@@ -1711,7 +1710,7 @@ pseudo-<classname>MKPerformer</classname>s that fashion
 (<classname>MKScorePerformer</classname>, which creates a
 <classname>MKPartPerformer</classname> for each
 <classname>MKPart</classname> in the <classname>MKScore</classname>).
-Consult <xref linkend="ClassReferences"> for further
+Consult <xref linkend="MKClassReferences"> for further
 descriptions of these classes.</para>
 
 <para>Using a <classname>MKPerformer</classname> object is quite
@@ -1980,8 +1979,7 @@ device&horbar;the <acronym>DSP</acronym> or the <acronym>MIDI</acronym> device d
 timing of the actual realization.</para>
 
 <para>Setting the delta time further refines the responsiveness of a
-performance.  Delta time is set through the <emphasis
-role="bold">MKSetDeltaT()</emphasis> C function; the argument defines
+performance.  Delta time is set through the <function>MKSetDeltaT()</function> C function; the argument defines
 an imposed time lag, in seconds, between the
 <classname>MKConductor</classname>'s notion of time and that of the
 <acronym>DSP</acronym> and <acronym>MIDI</acronym> device drivers.  It acts as a timing cushion that can
@@ -2029,26 +2027,29 @@ role="bold">close</emphasis>, and <emphasis
 role="bold">abort</emphasis>.</para>
 	</listitem>
 
-	<listitem><para>You can't send messages to instances of classes
-defined by the Application Kit, or to instances of the Sound Kit's
-SoundView and SoundMeter classes.  In addition, you can't read or
-write soundfiles, or play or record sounds through an instance of the
-Sound Kit's Sound class (note, however, that you
-<emphasis>can</emphasis> use the sound library functions).</para>
+	<listitem><para>You can't send messages to instances of
+classes defined by the <productname>Application Kit</productname>, or
+to instances of the <productname>SndKit</productname>'s
+<classname>SoundView</classname> and <classname>SoundMeter</classname>
+classes.  In addition, you can't read or write soundfiles, or play or
+record sounds through an instance of the
+<productname>SndKit</productname>'s <classname>Sound</classname> class
+(note, however, that you <emphasis>can</emphasis> use the sound
+library functions).</para>
 	</listitem>
 
 	<listitem><para>You can't call DPS client functions.</para></listitem>
 
 	<listitem><para>You can't call NXStreams functions.</para></listitem>
 
-	<listitem><para>You can't call C functions that rely on standard
-input and output; these are functions such as <emphasis
-role="bold">printf()</emphasis> and <emphasis
-role="bold">scanf()</emphasis>.  Because of this, <acronym>DSP</acronym> error logging
-and <productname>MusicKit</productname> tracing can't be used.  In addition, if you need to
-handle <productname>MusicKit</productname> errors, you must provide your own error handler
-function through <emphasis
-role="bold">MKSetErrorProc()</emphasis>.</para>
+	<listitem><para>You can't call C functions that rely on
+standard input and output; these are functions such as
+<function>printf()</function> and <function>scanf()</function>.
+Because of this, <acronym>DSP</acronym> error logging and
+<productname>MusicKit</productname> tracing can't be used.  In
+addition, if you need to handle <productname>MusicKit</productname>
+errors, you must provide your own error handler function through
+<function>MKSetErrorProc()</function>.</para>
 	</listitem>
       </itemizedlist>
 
@@ -2068,7 +2069,7 @@ thread.</para>
 <para>The performance thread can cause a restricted method to be
 invoked or a restricted function to be called by sending a Mach
 message to a message port.  To do this, you must first register the
-port through <emphasis role="bold">DPSAddPort()</emphasis> in the main
+port through <function>DPSAddPort()</function> in the main
 thread.  This is demonstrated in the Ensemble programming example
 (<emphasis
 role="bold">/Local/Developer/Examples/MusicKit/Ensemble</emphasis>).</para>
@@ -2168,35 +2169,39 @@ somewhat conservative 0.1.</para>
       <classname>MKConductor</classname> and the Clock on the
       Wall</title>
 
-<para>The <productname>MusicKit</productname> needs to satisfy two conflicting requirements,
-timely execution of scheduled events and steady performance.  The
-<productname>MusicKit</productname> variable <emphasis>deltaT</emphasis> adjusts the trade-off
-between responsiveness and dependability.  <emphasis>deltaT</emphasis>
-provides the <productname>MusicKit</productname> with a "cushion" of time to absorb any bursts of
-computation that would otherwise result in unsteady performance.
-Setting <emphasis>deltaT</emphasis> to 0.0 gives the most responsive
-performance, but one that is likely to be unsteady in musically dense
-textures.  Setting <emphasis>deltaT</emphasis> to a larger values
-gives a more dependable performance at the expense of a greater
-latency.  <emphasis>DeltaT</emphasis> is returned by the function
-<emphasis role="bold">MKGetDeltaT</emphasis>()<emphasis>.  </emphasis>
-You can set the value of <emphasis>deltaT</emphasis> with the function
-<emphasis role="bold">MKSetDeltaT</emphasis>().</para>
+<para>The <productname>MusicKit</productname> needs to satisfy two
+conflicting requirements, timely execution of scheduled events and
+steady performance.  The <productname>MusicKit</productname> variable
+<emphasis>deltaT</emphasis> adjusts the trade-off between
+responsiveness and dependability.  <emphasis>deltaT</emphasis>
+provides the <productname>MusicKit</productname> with a "cushion" of
+time to absorb any bursts of computation that would otherwise result
+in unsteady performance.  Setting <emphasis>deltaT</emphasis> to 0.0
+gives the most responsive performance, but one that is likely to be
+unsteady in musically dense textures.  Setting
+<emphasis>deltaT</emphasis> to a larger values gives a more dependable
+performance at the expense of a greater latency.
+<emphasis>DeltaT</emphasis> is returned by the function
+<function>MKGetDeltaT()</function>.  You can set the value of
+<emphasis>deltaT</emphasis> with the function
+<function>MKSetDeltaT()</function>.</para>
 
 <para>The manner in which <emphasis>deltaT</emphasis> is interpreted
-depends on the <emphasis>deltaT mode</emphasis>.  <productname>MusicKit</productname> supplies
-two modes, <emphasis>device lag mode</emphasis> and
-<emphasis>scheduler advance mode</emphasis>. In <emphasis>device lag
-mode</emphasis>, the <productname>MusicKit</productname> clockConductor stays in synch, as much
-as possible, with "wall time", the actual time since the performance
-began, while devices such as <acronym>MIDI</acronym> and the <acronym>DSP</acronym> lag behind by
+depends on the <emphasis>deltaT mode</emphasis>.
+<productname>MusicKit</productname> supplies two modes,
+<emphasis>device lag mode</emphasis> and <emphasis>scheduler advance
+mode</emphasis>. In <emphasis>device lag mode</emphasis>, the
+<productname>MusicKit</productname> clockConductor stays in synch, as
+much as possible, with &ldquo;wall time&rdquo;, the actual time since
+the performance began, while devices such as <acronym>MIDI</acronym>
+and the <acronym>DSP</acronym> lag behind by
 <emphasis>deltaT</emphasis>.  In contrast, in <emphasis>scheduler
 advance mode</emphasis>, the devices stay in synch with wall time,
 while the clockConductor runs in advance of wall time by
 <emphasis>deltaT</emphasis>.  You set the <emphasis>deltaT</emphasis>
-mode with the C function: <emphasis
-role="bold">MKSetDeltaTMode</emphasis>(), passing it an argument of
-either <constant>MK_DELTAT_SCHEDULER_ADVANCE</constant> or
+mode with the C function: <function>MKSetDeltaTMode()</function>,
+passing it an argument of either
+<constant>MK_DELTAT_SCHEDULER_ADVANCE</constant> or
 <constant>MK_DELTAT_DEVICE_LAG</constant>.  Both of these modes work
 whether or not any <classname>MKConductor</classname>s are
 synchronizing to MTC.</para>
@@ -2211,11 +2216,10 @@ Class Descriptions of these objects for details.</para>
 	<title>Device Lag Mode</title>
 
 <para>The default mode is <emphasis>device lag mode</emphasis> (for
-historical reasons.)  The value returned by <emphasis
-role="bold">MKGetDeltaT</emphasis>() is added to time stamps sent to
+historical reasons.)  The value returned by <function>MKGetDeltaT()</function> is added to time stamps sent to
 the <acronym>MIDI</acronym> driver and <acronym>DSP</acronym>, providing the
 <productname>MusicKit</productname> with its "cushion".  The function
-MKGetDeltaTTime() does this addition.  The
+<function>MKGetDeltaTTime()</function> does this addition.  The
 <classname>MKConductor</classname> runs steadily from the time it is
 started, while the output of the devices, such as <acronym>MIDI</acronym> and the <acronym>DSP</acronym>,
 seems to wait <emphasis>deltaT</emphasis> seconds and then runs
@@ -2244,7 +2248,7 @@ bursts of computation.  This is the functionality provided by
 when started, then maintains time such that the wall time since the
 performance began is the clockConductor's time minus
 <emphasis>deltaT</emphasis>.  The time it reports (returned by
-<emphasis role="bold">MKGetTime()</emphasis> and <emphasis
+<function>MKGetTime()</function> and <emphasis
 role="bold"> [[<classname>MKConductor</classname> clockConductor]
 time]</emphasis>) includes this <emphasis>deltaT</emphasis>.</para>
 
@@ -2260,23 +2264,23 @@ hears the events for time 5.0.</para>
 <para>Implementation details: In this mode, instead of adding
 <emphasis>deltaT</emphasis> to the time stamps sent to the devices, we
 just send the <classname>MKNote</classname>s early by
-<emphasis>deltaT</emphasis>.  Thus, <emphasis
-role="bold">MKGetDeltaTTime</emphasis>() returns the same value as
-MKGetTime() so objects such as <classname>MKMidi</classname> and
-<classname>MKOrchestra</classname> that use <emphasis
-role="bold">MKGetDeltaTTime</emphasis>() to determine their time
-stamps work correctly.  As a final refinement, if
+<emphasis>deltaT</emphasis>.  Thus,
+<function>MKGetDeltaTTime()</function> returns the same value as
+<function>MKGetTime()</function> so objects such as
+<classname>MKMidi</classname> and <classname>MKOrchestra</classname>
+that use <function>MKGetDeltaTTime()</function> to determine their
+time stamps work correctly.  As a final refinement, if
 <classname>MKMidi</classname>'s method <emphasis
-role="bold">useInputTimeStamps:</emphasis><constant>YES</constant> was sent, the time
-stamps returned from the <classname>MKMidi</classname> driver are
-adjusted by <emphasis>adding</emphasis> <emphasis>deltaT</emphasis>
-before the <classname>MKConductor</classname>'s time is set from them.
-The makes sure that these stamps are in the
-<classname>MKConductor</classname>'s time base.
-<classname>MKNote</classname> that it is still possible to add a
-"local deltaT" to <classname>MKMidi</classname> or the
-<classname>MKOrchestra</classname>&horbar;these methods work the same way in
-<emphasis>scheduler advance mode</emphasis> as they do in
+role="bold">useInputTimeStamps:</emphasis><constant>YES</constant> was
+sent, the time stamps returned from the <classname>MKMidi</classname>
+driver are adjusted by <emphasis>adding</emphasis>
+<emphasis>deltaT</emphasis> before the
+<classname>MKConductor</classname>'s time is set from them.  The makes
+sure that these stamps are in the <classname>MKConductor</classname>'s
+time base.  <classname>MKNote</classname> that it is still possible to
+add a "local deltaT" to <classname>MKMidi</classname> or the
+<classname>MKOrchestra</classname>&horbar;these methods work the same
+way in <emphasis>scheduler advance mode</emphasis> as they do in
 <emphasis>device lag mode</emphasis>.</para>
       </sect3>
       <sect3 id="SequencerOverdubbing">
