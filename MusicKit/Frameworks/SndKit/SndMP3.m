@@ -330,6 +330,53 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 // readSoundfile:
 ////////////////////////////////////////////////////////////////////////////////
 
+- (int) readSoundURL: (NSURL*) soundURL
+{
+  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+
+  if (mp3Data) {
+    [mp3Data release];
+    mp3Data = nil;
+  }
+  [pcmDataLock lock];
+  if (pcmData) {
+    [pcmData release];
+    pcmData = nil;
+  }
+  [pcmDataLock unlock];
+  mp3Data = [[NSData alloc] initWithContentsOfURL: soundURL];
+
+  find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
+
+  sampleCount = frameLocationsCount * 1152.0;
+  duration    = sampleCount / 44100.0;
+  
+
+#if SNDMP3_DEBUG_READING
+  printf("Found %li frames\n", frameLocationsCount);
+#endif
+
+  bDecoding = TRUE;
+  [NSThread detachNewThreadSelector: @selector(decodeThread)
+                           toTarget: self
+                         withObject: nil];
+
+  [localPool release];
+  return SND_ERR_NONE;
+}
+
+- initFromSoundURL: (NSURL *) url
+{
+  self = [self init];
+  if (self != nil) {
+    if ([self readSoundURL: url] != SND_ERR_NONE) {
+      [self release];
+      return nil;
+    }
+  }
+  return self;
+}
+
 - (int) readSoundfile: (NSString*) filename
 {
 
@@ -338,39 +385,8 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     return SND_ERR_CANNOT_OPEN;
   }
   else {
-    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-
-    //  NSDate *startDate = [NSDate date];
-
-    if (mp3Data) {
-      [mp3Data release];
-      mp3Data = nil;
-    }
-    [pcmDataLock lock];
-    if (pcmData) {
-      [pcmData release];
-      pcmData = nil;
-    }
-    [pcmDataLock unlock];
-    mp3Data = [[NSData alloc] initWithContentsOfMappedFile: filename]; // ho-ho, memory mapping! :)
-
-    find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
-
-    sampleCount = frameLocationsCount * 1152.0;
-    duration    = sampleCount / 44100.0;
-
-
-#if SNDMP3_DEBUG_READING
-    printf("Found %li frames\n", frameLocationsCount);
-#endif
-
-    bDecoding = TRUE;
-    [NSThread detachNewThreadSelector: @selector(decodeThread)
-                             toTarget: self
-                           withObject: nil];
-
-    [localPool release];
-    return SND_ERR_NONE;
+    NSURL *soundURL = [NSURL fileURLWithPath: filename];
+    return [self readSoundURL: soundURL];
   }
 }
 

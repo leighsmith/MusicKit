@@ -30,6 +30,8 @@
   NSLock        *pcmDataLock;
 }
 
+- (int) readSoundURL: (NSURL *) soundURL;
+- initFromSoundURL: (NSURL *) url;
 - (void) dealloc;
 - (double) duration;
 - (int) sampleCount;
