@@ -316,9 +316,10 @@ static SndPlayer *defaultSndPlayer;
                                        beginAtIndex: beginAtIndex
                                          endAtIndex: endAtIndex];
   // Prime the loop behaviour during performance from the Snd's settings.
-  // [thePerformance setLoopStartIndex: [s loopStartIndex]];
-  // [thePerformance setLoopEndIndex: [s loopEndIndex]];
-  // [thePerformance setLooping: [s loopWhenPlaying]];
+  // It is possible to change the loop behaviour of the performance during play.
+  [thePerformance setLoopStartIndex: [s loopStartIndex]];
+  [thePerformance setLoopEndIndex: [s loopEndIndex]];
+  [thePerformance setLooping: [s loopWhenPlaying]];
   [self addPerformance: thePerformance];
   return thePerformance;
 }
