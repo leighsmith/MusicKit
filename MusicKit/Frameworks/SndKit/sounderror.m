@@ -202,6 +202,13 @@ NSLocalizedStringFromTableInBundle(@"Information string too large", @"SoundLib",
 NSLocalizedStringFromTableInBundle(@"Unknown error", @"SoundLib", soundBundle, \
 @"SNDSoundError message")
 
+#define LSTRING_BAD_STARTTIME \
+NSLocalizedStringFromTableInBundle(@"Bad start time error", @"SoundLib", soundBundle, \
+                                   @"SNDSoundError message")
+#define LSTRING_BAD_DURATION \
+NSLocalizedStringFromTableInBundle(@"Bad duration error", @"SoundLib", soundBundle, \
+                                   @"SNDSoundError message")
+
 
 const char *SndSoundError(int err)
 {
@@ -285,6 +292,10 @@ const char *SndSoundError(int err)
 	    return (char *)LSTRING_CANNOT_ABORT_OPERATION;
 	case SND_ERR_INFO_TOO_BIG:		//	35
 	    return (char *)LSTRING_INFORMATION_STRING_TOO_LARGE;
+  case SND_ERR_BAD_STARTTIME:
+    return (char*) LSTRING_BAD_STARTTIME;
+  case SND_ERR_BAD_DURATION:
+    return (char*) LSTRING_BAD_DURATION; 
 	case SND_ERR_UNKNOWN:
 	default:
 	    return (char *)LSTRING_UNKNOWN_ERROR;

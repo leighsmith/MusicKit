@@ -69,6 +69,8 @@
   @constant SND_ERR_BUSY		          Description forthcoming
   @constant SND_ERR_CANNOT_ABORT	    Description forthcoming
   @constant SND_ERR_INFO_TOO_BIG	    Description forthcoming
+  @constant SND_ERR_BAD_STARTTIME     Description forthcoming
+  @constant SND_ERR_BAD_DURATION      Description forthcoming
   @constant SND_ERR_UNKNOWN           Unknown error.
 */
 typedef enum {
@@ -108,6 +110,8 @@ typedef enum {
     SND_ERR_BUSY		          = 33,
     SND_ERR_CANNOT_ABORT	    = 34,
     SND_ERR_INFO_TOO_BIG	    = 35,
+    SND_ERR_BAD_STARTTIME     = 36,
+    SND_ERR_BAD_DURATION      = 37,
     SND_ERR_UNKNOWN           = 32767
 } SndError;
 #endif
