@@ -108,6 +108,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.7  2001/07/10 17:07:48  leighsmith
   Removed redundant #import
 
@@ -191,10 +194,9 @@ Modification history:
      conductor and delegate using NXWriteObjectReference().
      */
 {
-    /*[super encodeWithCoder:aCoder];*/ /*sb: unnec according to Stone porting guide */
-    [aCoder encodeValuesOfObjCTypes:"@dd",&noteSenders,&timeShift,&duration];
-    [aCoder encodeConditionalObject:conductor];
-    [aCoder encodeConditionalObject:delegate];
+    [aCoder encodeValuesOfObjCTypes: "@dd", &noteSenders, &timeShift, &duration];
+    [aCoder encodeConditionalObject: conductor];
+    [aCoder encodeConditionalObject: delegate];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -202,18 +204,16 @@ Modification history:
      Should be invoked via NXReadObject(). 
      See write:. */
 {
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnec according to Stone porting guide */
-    if ([aDecoder versionForClassName:@"Performer"] == VERSION2) {
-	[aDecoder decodeValuesOfObjCTypes:"@dd",&noteSenders,&timeShift,&duration];
+    if ([aDecoder versionForClassName: @"MKPerformer"] == VERSION2) {
+	[aDecoder decodeValuesOfObjCTypes:"@dd", &noteSenders, &timeShift, &duration];
 	conductor = [[aDecoder decodeObject] retain];
 	delegate = [[aDecoder decodeObject] retain];
     }
-/* from awake(sb) */
+    /* from awake */
     if (!conductor)
-      conductor=[MKConductor defaultConductor];
+        conductor = [MKConductor defaultConductor];
     status = MK_inactive;
-    _performMsgPtr= MKNewMsgRequest(0.0,@selector(_performerBody),self,0);
-/*****/
+    _performMsgPtr = MKNewMsgRequest(0.0,@selector(_performerBody),self,0);
     return self;
 }
 

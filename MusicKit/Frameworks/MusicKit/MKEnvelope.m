@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.5  2000/10/04 07:00:47  skot
   Improved description method for debug purposes, extra safety in init method
 
@@ -169,10 +172,9 @@ static void getArray(int pointCount,NSCoder *aTypedStream, /*sb: originally conv
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"Envelope"] == VERSION2) {
+    if ([aDecoder versionForClassName: @"MKEnvelope"] == VERSION2) {
 	NSString *str;
-	[aDecoder decodeValuesOfObjCTypes:"ddii@",&defaultSmoothing,&samplingPeriod,
+	[aDecoder decodeValuesOfObjCTypes: "ddii@",&defaultSmoothing,&samplingPeriod,
 		    &stickPoint,&pointCount,&str];
 	if (str) {
 	    MKNameObject(str,self);

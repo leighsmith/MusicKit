@@ -25,6 +25,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.6  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.5  2000/04/25 02:11:02  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -75,7 +78,6 @@
      Should be invoked with NXWriteRootObject(). 
      Invokes superclass write: and archives noteSender List. */
 {
-    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:noteSenders];
 }
 
@@ -84,8 +86,7 @@
      Should be invoked via NXReadObject(). 
      See write:. */
 {
-    [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"NoteFilter"] == VERSION2) 
+    if ([aDecoder versionForClassName: @"MKNoteFilter"] == VERSION2) 
       noteSenders = [[aDecoder decodeObject] retain];
     return self;
 }

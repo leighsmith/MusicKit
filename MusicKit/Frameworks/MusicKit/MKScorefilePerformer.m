@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.6  2000/11/28 19:05:00  leigh
   Replaced fileExtensions with whatever MKScore deems valid
 
@@ -76,8 +79,7 @@ Modification history:
      Invokes superclass write:, which archives NoteSenders.
      Then archives info and part infos gleaned from the Scorefile. */
 {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValuesOfObjCTypes:"@@",&info,&_partStubs];
+    [aCoder encodeValuesOfObjCTypes: "@@", &info, &_partStubs];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -86,10 +88,8 @@ Modification history:
      Should be invoked via NXReadObject(). 
      See write:. */
 {
-    [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"ScorefilePerformer"] 
-	== VERSION2) 
-      [aDecoder decodeValuesOfObjCTypes:"@@",&info,&_partStubs];
+    if ([aDecoder versionForClassName: @"MKScorefilePerformer"] == VERSION2) 
+        [aDecoder decodeValuesOfObjCTypes: "@@", &info, &_partStubs];
     return self;
 }
 

@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/08/07 16:11:52  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.5  2000/11/25 22:39:30  leigh
   Removed redundant -freeSelfOnly and release
 
@@ -513,17 +516,14 @@ MKWaveTable *MKWaveTableForTimbreKey(NSString *key,
      See write: and finishUnarchiving.
      */
 {
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"Timbre"] == VERSION3) 
-	[aDecoder decodeValuesOfObjCTypes:"@@%",&waveTables,&freqs,&timbreName];
+    if ([aDecoder versionForClassName: @"MKTimbre"] == VERSION3) 
+	[aDecoder decodeValuesOfObjCTypes: "@@%", &waveTables, &freqs, &timbreName];
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 {
-    /*[super encodeWithCoder:aTypedStream]; */
-    [aCoder encodeValuesOfObjCTypes:"@@%",&waveTables,&freqs,&timbreName];
-    return /*self */;
+    [aCoder encodeValuesOfObjCTypes: "@@%", &waveTables, &freqs, &timbreName];
 }
 
 - awakeAfterUsingCoder:(NSCoder *)aDecoder

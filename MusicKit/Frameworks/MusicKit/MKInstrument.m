@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.8  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.7  2001/01/31 21:43:50  leigh
   Typed note parameters
 
@@ -306,7 +309,6 @@
      Should be invoked with NXWriteRootObject(). 
      Archives noteReceiver List. */
 {
-    /*[super encodeWithCoder:aCoder];*/ /*sb: unnec */
     [aCoder encodeObject:noteReceivers];
 }
 
@@ -315,8 +317,7 @@
      Should be invoked via NXReadObject(). 
      See write:. */
 {
-    /*[super initWithCoder:aDecoder]; */ /* sb: unnec */
-    if ([aDecoder versionForClassName:@"Instrument"] == VERSION2) 
+    if ([aDecoder versionForClassName: @"MKInstrument"] == VERSION2) 
       noteReceivers = [[aDecoder decodeObject] retain];
     return self;
 }

@@ -25,6 +25,9 @@
 /* Modification history:
 
    $Log$
+   Revision 1.8  2001/08/07 16:16:11  leighsmith
+   Corrected class name during decode to match latest MK prefixed name
+
    Revision 1.7  2001/07/09 22:58:59  leighsmith
    Corrected partPerformerForPart: to return a MKPartPerformer, not a MKPart
 
@@ -129,34 +132,20 @@
      Should be invoked with NXReadObject(). 
      */
 {
-    if ([aDecoder versionForClassName:@"ScorePerformer"] == VERSION2) {
+    if ([aDecoder versionForClassName: @"MKScorePerformer"] == VERSION2) {
 	partPerformers = [[aDecoder decodeObject] retain];
 	score = [[aDecoder decodeObject] retain];
-	[aDecoder decodeValuesOfObjCTypes:"dddd#",&firstTimeTag,&lastTimeTag,
+	[aDecoder decodeValuesOfObjCTypes: "dddd#",&firstTimeTag,&lastTimeTag,
 		    &timeShift,&duration,&partPerformerClass];
 	conductor = [[aDecoder decodeObject] retain];
 	delegate = [[aDecoder decodeObject] retain];
     }
-    /* from awake (sb) */
+    /* from awake */
     if (!conductor)
-      conductor=[MKConductor defaultConductor];
+        conductor = [MKConductor defaultConductor];
     status = MK_inactive;
-/****/
     return self;
 }
-
-//- awake
-//{
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-    /*[super awake]; sb: unnec? */
-/*
-    if (!conductor)
-      conductor=[Conductor defaultConductor];
-    status = MK_inactive;
- */
-//    return self;
-//}
-
 
 static void unsetPartPerformers(MKScorePerformer *self)
 {

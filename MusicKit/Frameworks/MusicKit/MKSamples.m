@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.4  2000/04/20 21:33:12  leigh
   Added extra methods to allow processing regions of samples
 
@@ -97,15 +100,13 @@ id MKGetSamplesClass(void)
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValuesOfObjCTypes:"@@",&sound,&soundfile];/* sb was @* */
+    [aCoder encodeValuesOfObjCTypes: "@@", &sound, &soundfile];/* sb was @* */
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"Samples"] >= VERSION2) 
-      [aDecoder decodeValuesOfObjCTypes:"@@",&sound,&soundfile];/* sb was @* */
+    if ([aDecoder versionForClassName: @"MKSamples"] >= VERSION2) 
+      [aDecoder decodeValuesOfObjCTypes: "@@", &sound, &soundfile];/* sb was @* */
     return self;
 }
 

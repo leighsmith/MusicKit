@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.20  2001/07/05 22:52:42  leighsmith
   Comment cleanups, removed redundant getNextMsgTime()
 
@@ -1748,12 +1751,11 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
      See write: and finishUnarchiving.
      */
 {
-//    [super initWithCoder:aDecoder]; //sb: unnec?
     delegateFlags = 0;
-    if ([aDecoder versionForClassName:@"Conductor"] >= VERSION2) {
+    if ([aDecoder versionForClassName:@"MKConductor"] >= VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes: "ddc", &beatSize, &timeOffset, &(archivingFlags)];
     }
-    if ([aDecoder versionForClassName:@"Conductor"] >= VERSION3) {
+    if ([aDecoder versionForClassName:@"MKConductor"] >= VERSION3) {
 	activePerformers = [[aDecoder decodeObject] retain];
     }
     return self;

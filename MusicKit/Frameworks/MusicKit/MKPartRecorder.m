@@ -17,6 +17,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.7  2001/08/07 16:16:11  leighsmith
+   Corrected class name during decode to match latest MK prefixed name
+
    Revision 1.6  2001/01/31 21:32:56  leigh
    Typed note parameters
 
@@ -85,7 +88,7 @@
 {
     int version;
     [super initWithCoder:aDecoder];
-    version = [aDecoder versionForClassName:@"PartRecorder"];
+    version = [aDecoder versionForClassName: @"MKPartRecorder"];
     if (version >= VERSION2) {
 	[aDecoder decodeValueOfObjCType:"i" at:&timeUnit];
 	part = [[aDecoder decodeObject] retain];

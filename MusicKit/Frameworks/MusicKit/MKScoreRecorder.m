@@ -16,6 +16,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.6  2001/08/07 16:16:11  leighsmith
+   Corrected class name during decode to match latest MK prefixed name
+
    Revision 1.5  2000/11/25 22:32:04  leigh
    Cleaned up, removed redundant releasePartRecorders
 
@@ -119,16 +122,16 @@
      Should be invoked with NXReadObject(). 
      */
 {
-    int version; 
-    /* [super initWithCoder:aDecoder];*/ /*sb: unnec */
-    version = [aDecoder versionForClassName:@"MKScoreRecorder"];
+    int version;
+    
+    version = [aDecoder versionForClassName: @"MKScoreRecorder"];
     if (version >= VERSION2) {
 	partRecorders = [[aDecoder decodeObject] retain];
 	score = [[aDecoder decodeObject] retain];
-	[aDecoder decodeValuesOfObjCTypes:"i#",&timeUnit,&partRecorderClass];
+	[aDecoder decodeValuesOfObjCTypes: "i#", &timeUnit, &partRecorderClass];
     }
     if (version >= VERSION3) {
-	[aDecoder decodeValuesOfObjCTypes:"c",&compensatesDeltaT];
+	[aDecoder decodeValuesOfObjCTypes: "c", &compensatesDeltaT];
     }
     return self;
 }

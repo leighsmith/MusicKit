@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/08/07 16:12:30  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.4  2000/11/29 00:38:13  leigh
   Comment cleanup, now using _MKMalloc instead of malloc (better error checking)
 
@@ -83,9 +86,10 @@ Modification history:
      Then archives info, isOptimized, and Part info Notes.  */
 {
     unsigned n = [noteReceivers count], i;
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValuesOfObjCTypes:"@ci",&info,&_isOptimized,&n];
-    for (i = 0; i < n; i++) [aCoder encodeObject:PARTINFO([noteReceivers objectAtIndex:i])];
+
+    [aCoder encodeValuesOfObjCTypes: "@ci", &info, &_isOptimized, &n];
+    for (i = 0; i < n; i++)
+        [aCoder encodeObject: PARTINFO([noteReceivers objectAtIndex:i])];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -95,9 +99,8 @@ Modification history:
 {
     id *el;
     int noteReceiverCount;
-    [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"ScorefileWriter"] 
-	== VERSION2) {
+
+    if ([aDecoder versionForClassName: @"MKScorefileWriter"] == VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes:"@ci",&info,&_isOptimized,&noteReceiverCount];
 	/* Because we can't install the Part infos now in the NoteReceivers,
 	   we have to use them temporarily in an available pointer, _p. 

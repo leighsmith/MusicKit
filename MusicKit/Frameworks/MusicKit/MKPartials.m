@@ -26,6 +26,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/08/07 16:16:11  leighsmith
+  Corrected class name during decode to match latest MK prefixed name
+
   Revision 1.8  2001/07/02 16:38:54  sbrandon
   MKPartials.m
 
@@ -238,23 +241,19 @@ static void getArray(int partialCount,NSCoder *aTypedStream,BOOL *aBool, /*sb: o
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     NORMALFORM(self);
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValuesOfObjCTypes:"iddd",&partialCount,&defaultPhase,&minFreq,
-		 &maxFreq];
-    putArray(partialCount,aCoder,ampRatios);
-    putArray(partialCount,aCoder,freqRatios);
-    putArray(partialCount,aCoder,phases);
+    [aCoder encodeValuesOfObjCTypes: "iddd", &partialCount, &defaultPhase, &minFreq, &maxFreq];
+    putArray(partialCount, aCoder, ampRatios);
+    putArray(partialCount, aCoder, freqRatios);
+    putArray(partialCount, aCoder, phases);
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"Partials"] == VERSION2) {
-	[aDecoder decodeValuesOfObjCTypes:"iddd",&partialCount,&defaultPhase,&minFreq,
-		    &maxFreq];
-	getArray(partialCount,aDecoder,&_ampArrayFreeable,&ampRatios);
-	getArray(partialCount,aDecoder,&_freqArrayFreeable,&freqRatios);
-	getArray(partialCount,aDecoder,&_phaseArrayFreeable,&phases);
+    if ([aDecoder versionForClassName: @"MKPartials"] == VERSION2) {
+	[aDecoder decodeValuesOfObjCTypes: "iddd", &partialCount, &defaultPhase, &minFreq, &maxFreq];
+	getArray(partialCount, aDecoder, &_ampArrayFreeable, &ampRatios);
+	getArray(partialCount, aDecoder, &_freqArrayFreeable, &freqRatios);
+	getArray(partialCount, aDecoder, &_phaseArrayFreeable, &phases);
     }
     return self;
 }
