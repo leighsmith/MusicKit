@@ -49,4 +49,8 @@ SndSwappedFloat  SndSwapHostToSwappedFloat  (float aFloat);
 double 			     SndSwapSwappedDoubleToHost (SndSwappedDouble aSwappedDouble);
 SndSwappedDouble SndSwapHostToSwappedDouble (double aDouble);
 
+char* SndSwap_Convert16BitNative2LittleEndian(unsigned short si);
+char* SndSwap_Convert32BitNative2LittleEndian(unsigned long  li);
+
+
 #endif
