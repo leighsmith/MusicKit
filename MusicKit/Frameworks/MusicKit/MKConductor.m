@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.28  2002/11/03 21:03:53  leighsmith
+  Updated insertMsgQueue prototype, removed redundant function _MKSetPollProc
+
   Revision 1.27  2002/04/08 19:09:04  sbrandon
   removed extraneous semicolons
 
@@ -604,18 +607,6 @@ BOOL _MKAdjustTimeIfNotBehind(void)
     return MKGetDeltaT();
 }
 
-#if 0 // LMS unnecess
-/* The following is a hack that may go away. It was inserted as an 
-   emergency measure to get ScorePlayer working for 1.0. It's now
-   in the shlib interface so it's here for the duration of the war.
- */
-static void (*pollProc)() = NULL;
-
-void _MKSetPollProc(void (*proc)()) {
-    pollProc = proc;
-}
-#endif
-
 static void
 unclockedLoop()
     /* FIXME Might want to check for events here. */
@@ -668,11 +659,8 @@ insertSpecialQueue(sp,queue,queueEnd)
 
 #define COUNT_MSG_QUEUE_LENGTH 0
 
-static id
-insertMsgQueue(sp,self)
-    register MKMsgStruct * sp;
-    MKConductor *self;
-    /* inserts in msgQueue and changes timed entry if necessary. */
+static id insertMsgQueue(register MKMsgStruct *sp, MKConductor *self)
+/* inserts in msgQueue and changes timed entry if necessary. */
 {
     register double t;
     register MKMsgStruct * tmp;
