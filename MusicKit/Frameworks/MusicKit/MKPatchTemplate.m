@@ -62,6 +62,10 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2002/01/29 16:28:35  sbrandon
+  fixed object leak in to:sel:arg
+  changed _MKOrchTrace fn calls to use NSString args
+
   Revision 1.9  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -225,6 +229,7 @@ Modification history:
     else 
       return nil;
     [_connectionStorage addObject: conn];
+    [conn release]; // retain held in _connectionStorage
     return self;
 }
 
@@ -356,8 +361,8 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
 	if (aPatch) {
 	    if (_MK_ORCHTRACE(anOrch,MK_TRACEORCHALLOC))
 	      _MKOrchTrace(anOrch,MK_TRACEORCHALLOC,
-			   "allocSynthPatch returns %s_%p",
-                    [NSStringFromClass([synthPatchClass class]) cString],aPatch);
+			   @"allocSynthPatch returns %@_%p",
+                    NSStringFromClass([synthPatchClass class]),aPatch);
 	    [aPatch _allocate]; /* Tell it it's allocated */
 	    return aPatch;
 	}
@@ -382,8 +387,8 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
       return aPatch;
     if (_MK_ORCHTRACE(anOrch,MK_TRACEORCHALLOC))
       _MKOrchTrace(anOrch,MK_TRACEORCHALLOC,
-		   "allocSynthPatch building %s_%p...",
-                   [NSStringFromClass([synthPatchClass class]) cString],aPatch);
+		   @"allocSynthPatch building %@_%p...",
+                   NSStringFromClass([synthPatchClass class]),aPatch);
     
     {
         int entryIndex;
@@ -433,8 +438,8 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
     }
     if (_MK_ORCHTRACE(anOrch,MK_TRACEORCHALLOC))
       _MKOrchTrace(anOrch,MK_TRACEORCHALLOC,
-		   "allocSynthPatch connectsContents of %s_%p",
-                   [NSStringFromClass([synthPatchClass class]) cString],aPatch);
+		   @"allocSynthPatch connectsContents of %@_%p",
+                   NSStringFromClass([synthPatchClass class]),aPatch);
     [anOrch endAtomicSection];
     return aPatch;
 }
