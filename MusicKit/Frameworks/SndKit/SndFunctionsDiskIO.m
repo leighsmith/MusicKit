@@ -3,6 +3,11 @@
 //  $Id$
 //
 //  Description:
+//    Routines to read and write sound files.
+//    Historically these have been functions rather than methods. Nowdays, we
+//    Keep them as functions only to isolate our sound file reading library
+//    libsndfile or libst (sox) from the rest of the code base, especially regarding
+//    including headers etc.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
@@ -14,8 +19,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#import "_Sndlibst.h"
+#define DEBUG_MESSAGES 0
+
+#define LIBSNDFILE_AVAILABLE
+
 #import "SndFunctions.h"
+#import "SndMuLaw.h"
 
 #ifndef GNUSTEP
 # ifndef WIN32
@@ -31,17 +40,20 @@
 # import <fcntl.h>
 #endif
 
-#import <math.h>
 #import <Foundation/Foundation.h>
-
-#import "SndFunctions.h"
-#import "_Sndlibst.h"
 #import "SndResample.h"
+
+#ifdef LIBSNDFILE_AVAILABLE
+#import <stdio.h>
+#import <sndfile.h>
+#endif
 
 #ifdef USE_MACH_MEMORY_ALLOCATION
 #import <mach/mach_interface.h>
 #import <mach/mach_init.h>
 #endif
+
+#ifndef LIBSNDFILE_AVAILABLE
 
 /* the following ensures Sox doesn't attempt to define its own
 * prototype
@@ -61,13 +73,6 @@
 #endif
 
 #define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
-#ifdef WIN32
-#define LASTCHAR        '\\'
-#else
-#define LASTCHAR        '/'
-#endif
-
-#define DEBUG_MESSAGES 0
 
 /* converted from a similar routine in libst.a */
 static int soxEncodingToSndDataFormat(int size, int encoding)
@@ -107,14 +112,89 @@ static int SndDataFormatToSoxEncoding(int sndFormatCode, int *size)
     return r;
 }
 
+NSArray *SndFileExtensions(void)
+{
+    NSMutableArray *fileTypes = [NSMutableArray array];
+    int formatIndex, aliasIndex;
+
+    for (formatIndex = 0; st_formats[formatIndex].names != NULL; formatIndex++) {
+	// include all the alternative namings.
+	for(aliasIndex = 0; st_formats[formatIndex].names[aliasIndex] != NULL; aliasIndex++) {
+	    [fileTypes addObject: [NSString stringWithCString: st_formats[formatIndex].names[aliasIndex]]];
+	}
+    }
+    return [NSArray arrayWithArray: fileTypes]; // make it immutable
+}
+
+#else
+
+static int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCode)
+{
+    int sndfileFormat;
+    
+    // Determine major format from file extension
+    // TODO for now just fix it to AIFF
+    sndfileFormat = SF_FORMAT_AIFF;
+    switch (sndFormatCode) {
+    case SND_FORMAT_MULAW_8:
+	sndfileFormat |= SF_FORMAT_ULAW;
+	break;
+    case SND_FORMAT_LINEAR_8:
+	sndfileFormat |= SF_FORMAT_PCM_S8;
+	break;
+    case SND_FORMAT_LINEAR_16:
+	sndfileFormat |= SF_FORMAT_PCM_16;
+	break;
+    case SND_FORMAT_LINEAR_24:
+	sndfileFormat |= SF_FORMAT_PCM_24;
+	break;
+    case SND_FORMAT_LINEAR_32:
+	sndfileFormat |= SF_FORMAT_PCM_32;
+	break;
+    case SND_FORMAT_FLOAT:
+	sndfileFormat |= SF_FORMAT_FLOAT;
+	break;
+    case SND_FORMAT_DOUBLE:
+	sndfileFormat |= SF_FORMAT_DOUBLE;
+	break;
+    default:
+	NSLog(@"SndDataFormatToSndFileEncoding unhandled format %d\n", sndFormatCode);
+    }
+    return sndfileFormat;
+}
+
+NSArray *SndFileExtensions(void)
+{
+    // libsndfile doesn't have a concept of aliases for common file extensions so
+    // we have to add them manually. This is bad. libsndfile should provide an alias list.
+    NSMutableArray *fileTypes = [NSMutableArray arrayWithObjects: @"aif", @"nist", @"aifc", nil];
+    int formatIndex, formatCount;
+    SF_FORMAT_INFO sfFormatInfo;
+
+    // libsndfile's "major" formats are different standard sound file formats, the "subtype" formats are various
+    // encodings within each format.
+    sf_command (NULL, SFC_GET_FORMAT_MAJOR_COUNT, &formatCount, sizeof(int));
+
+    for (formatIndex = 0; formatIndex < formatCount; formatIndex++) {
+	// include all the alternative namings.
+	sfFormatInfo.format = formatIndex;
+	sf_command(NULL, SFC_GET_FORMAT_MAJOR, &sfFormatInfo, sizeof(sfFormatInfo));
+	[fileTypes addObject: [NSString stringWithCString: sfFormatInfo.extension]];
+    }
+    return [NSArray arrayWithArray: fileTypes]; // make it immutable
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // SndReadHeader
 ////////////////////////////////////////////////////////////////////////////////
 
-int SndReadHeader(const char* path, SndSoundStruct **sound, const char *fileTypeStr)
+int SndReadHeader(NSString *path, SndSoundStruct **sound, const char *fileTypeStr)
 {
   return SndReadSoundfileRange(path, sound, 0, 0, FALSE);
 }
+
+#ifndef LIBSNDFILE_AVAILABLE
 
 // Retrieve loop points
 // The AIFF loop structure is a lot richer than our simplistic single loop structure. So for now
@@ -145,11 +225,113 @@ BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *lo
 	}
     }
     return NO;
- }
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // SndReadRange()
 ////////////////////////////////////////////////////////////////////////////////
+
+#ifdef LIBSNDFILE_AVAILABLE
+int SndReadRange(SNDFILE *sfp, SndSoundStruct **sound, SF_INFO *sfinfo, int startFrame, int frameCount, BOOL bReadData)
+{
+    SndSoundStruct *s;
+    long numOfSamplesActuallyRead, oldFrameCount;
+    int headerLen;
+    int sampleWidth;
+    char *comment = NULL;
+    long totalNumOfSamplesToRead;
+    SF_FORMAT_INFO soundFileFormatInfo;
+    
+    *sound = NULL;
+    if (sfp == NULL)
+	return SND_ERR_CANNOT_OPEN;
+
+    if(!sfinfo->seekable && startFrame != 0)
+       return SND_ERR_CANNOT_OPEN;
+       
+    /* Read text descriptions etc for comment. */
+    soundFileFormatInfo.format = sfinfo->format;
+    if(sf_command(sfp, SFC_GET_FORMAT_INFO, &soundFileFormatInfo, sizeof(soundFileFormatInfo)) != 0) {
+	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
+	    NSLog(@"%s\n", sf_strerror(sfp));
+	}
+	return SND_ERR_CANNOT_READ;
+    }
+
+    // TODO Retrieve the sound file description into comment.
+       
+    headerLen = sizeof(SndSoundStruct);
+    if (comment) {
+	headerLen += strlen(comment) - 4 + 1; // -4 for the 4 bytes defined with SndSoundStruct, +1 for \0
+    }
+    if (!(s = malloc(headerLen)))
+       return SND_ERR_CANNOT_ALLOC;
+    /* endianess is handled within sf_read_float() */
+    s->magic        = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
+    s->dataLocation = 0;
+    s->dataFormat   = SND_FORMAT_FLOAT;  // We only retrieve floats, we let libsndfile do the format conversions itself.
+    s->samplingRate = sfinfo->samplerate;
+    s->channelCount = sfinfo->channels;
+    sampleWidth     = SndSampleWidth(s->dataFormat);
+    s->dataSize     = sampleWidth * sfinfo->frames * sfinfo->channels; // whole sound for the moment
+    if (comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
+	strcpy(s->info, comment);
+    else
+	s->info[0] = '\0';
+    
+    if (bReadData) {
+	s->dataLocation = headerLen;
+#if DEBUG_MESSAGES
+	NSLog(@"Samples: %d data format: %x\n", sfinfo->frames, sfinfo->format);
+#endif
+	if (startFrame > sfinfo->frames) {
+	    NSLog(@"SndReadRange: startFrame > length (%i vs %i)\n", startFrame, sfinfo->frames);
+	    return SND_ERR_CANNOT_READ;
+	}
+	if (frameCount < 0) {
+	    frameCount = sfinfo->frames - startFrame;
+	}
+	oldFrameCount = frameCount;
+	if (startFrame + frameCount > sfinfo->frames) {
+#if DEBUG_MESSAGES
+	    NSLog(@"SndReadRange: startFrame + frameCount > length (%i + %i vs %i) - truncating\n", startFrame, frameCount, sfinfo->frames);
+#endif
+	    frameCount = sfinfo->frames - startFrame;
+	}
+
+	totalNumOfSamplesToRead = frameCount * sfinfo->channels;
+	if((s = realloc((char *) s, headerLen + totalNumOfSamplesToRead * sampleWidth)) == NULL)
+	    return SND_ERR_CANNOT_ALLOC;
+	
+        // NSLog(@"Allocating: %li\n", totalNumOfSamplesToRead * sampleWidth);
+        if(sf_seek(sfp, startFrame, SEEK_SET) == -1)
+	    if(sf_error(sfp) != SF_ERR_NO_ERROR) {
+	        NSLog(@"%s\n", sf_strerror(sfp));
+	        return SND_ERR_CANNOT_READ;
+	     }
+		    
+	numOfSamplesActuallyRead = sf_read_float(sfp, (float *) ((char *) s + s->dataLocation), totalNumOfSamplesToRead);
+	if (numOfSamplesActuallyRead < 0)
+	    return SND_ERR_CANNOT_READ;
+
+	s->dataSize = numOfSamplesActuallyRead * sampleWidth;
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
+	    NSLog(@"Input file: using sample rate %lu Hz, style %s, %d %s\n",
+		(unsigned long)(sfinfo->samplerate), soundFileFormatInfo.name, sfinfo->channels,
+		(sfinfo->channels > 1) ? "channels" : "channel");
+	    if (comment)
+		NSLog(@"Input file: comment \"%s\"\n", comment);
+	    SndPrintStruct(s);
+	}
+    } // end if bReadData
+
+    *sound = s;
+    return SND_ERR_NONE;
+}
+
+#else
 
 int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int startFrame, int frameCount, BOOL bReadData)
 {
@@ -220,11 +402,11 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
 	if ((readBuffer = (st_sample_t *) malloc(readChunkSizeInBytes)) == NULL)
 	    return SND_ERR_CANNOT_ALLOC;
 	// memset(readBuffer, 0, readChunkSizeInBytes);
-	// printf("Samples: %li samplesize:%i\n",informat.length,informat.info.size);
+	// NSLog(@"Samples: %li samplesize:%i\n",informat.length,informat.info.size);
 
 	samplesRead = 0; // represents the number of samples read so far (excluding header size).
 	if (startFrame > informat.length) {
-	    printf("SndRead: startFrame > length (%i vs %i)\n", startFrame, informat.length);
+	    NSLog(@"SndReadRange: startFrame > length (%i vs %i)\n", startFrame, informat.length);
 	    return SND_ERR_CANNOT_READ;
 	}
 	if (frameCount < 0) {
@@ -233,7 +415,7 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
 	oldFrameCount = frameCount;
 	if (startFrame + frameCount > informat.length) {
 #if DEBUG_MESSAGES
-	    printf("SndRead: startFrame + frameCount > length (%i + %i vs %i) - truncating\n",
+	    NSLog(@"SndReadRange: startFrame + frameCount > length (%i + %i vs %i) - truncating\n",
 	    startFrame, frameCount, informat.length);
 #endif
 	    frameCount = informat.length - startFrame;
@@ -244,7 +426,7 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
 	    return SND_ERR_CANNOT_ALLOC;
 
         // memset(((char*)s) + headerLen, 0, totalNumOfSamplesToRead * informat.info.size);
-        // printf("Allocating: %li\n", totalNumOfSamplesToRead * informat.info.size);
+        // NSLog(@"Allocating: %li\n", totalNumOfSamplesToRead * informat.info.size);
 	(*informat.h->seek)(&informat, startFrame * informat.info.channels);
 
 	// Read a series of buffers, each numOfSamplesToRead long.
@@ -335,48 +517,107 @@ void cleanup()
   //                fclose(informat.fp);
 }
 
-int SndReadSoundfileRange(const char *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData)
+#endif
+
+int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData)
 {
-  int errorReading, errorClosing;
-  FILE *fp;
-  SndSoundStruct *aSound;
-  const char *filetype;
+    int errorReading, errorClosing;
+#ifdef LIBSNDFILE_AVAILABLE
+    SNDFILE *sfp;
+    SF_INFO sfinfo;
+#else
+    FILE *fp;
+    const char *filetype;
+#endif
+    SndSoundStruct *aSound;
 
-  *sound = NULL;
-  if (!path) return SND_ERR_BAD_FILENAME;
-  if (!strlen(path)) return SND_ERR_BAD_FILENAME;
-  fp = fopen(path, "rb");
-  if (fp == NULL) return SND_ERR_CANNOT_OPEN;
+    *sound = NULL;
+    if (path == nil)
+	return SND_ERR_BAD_FILENAME;
+    if ([path length] == 0)
+	return SND_ERR_BAD_FILENAME;
+#ifdef LIBSNDFILE_AVAILABLE
+    if ((sfp = sf_open([path fileSystemRepresentation], SFM_READ, &sfinfo)) == NULL)
+	return SND_ERR_CANNOT_OPEN;
+    errorReading = SndReadRange(sfp, &aSound, &sfinfo, startFrame, frameCount, bReadData);
+    errorClosing = sf_close(sfp);
+    if (errorClosing != 0)
+	return SND_ERR_UNKNOWN;
+#else
+    fp = fopen([path fileSystemRepresentation], "rb");
+    if (fp == NULL) return SND_ERR_CANNOT_OPEN;
 
-  if ((filetype = strrchr(path, LASTCHAR)) != NULL)
-    filetype++;
-  else
-    filetype = path;
-  if ((filetype = strrchr(filetype, '.')) != NULL)
-    filetype++;
-  else /* Default to "auto" */
-    filetype = "auto";
+    filetype = [[path pathExtension] cString];
+    if(filetype == NULL || !*filetype)  /* Default to "auto" */
+	filetype = "auto";
 
-  errorReading = SndReadRange(fp, &aSound, filetype, startFrame, frameCount, bReadData);
-  errorClosing = fclose(fp);
-  if (errorClosing == EOF)
-      return SND_ERR_UNKNOWN;
-  *sound = aSound;
-  return errorReading;
+    errorReading = SndReadRange(fp, &aSound, filetype, startFrame, frameCount, bReadData);
+    errorClosing = fclose(fp);
+    if (errorClosing == EOF)
+	return SND_ERR_UNKNOWN;
+#endif
+    *sound = aSound;
+    return errorReading;
 }
 
-int SndReadSoundfile(const char *path, SndSoundStruct **sound)
+int SndReadSoundfile(NSString *path, SndSoundStruct **sound)
 {
   return SndReadSoundfileRange(path, sound, 0, -1, TRUE);
 }
 
 //
 // Expects the sound to not be fragmented, and to be in host order.
-// SOX will look after endian issues.
+// The underlying sound file writing library (Sox (libst) or libsndfile)
+// will look after endian issues.
 //
-// used to be named SndWriteWithSOX
+#ifdef LIBSNDFILE_AVAILABLE
 
-int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
+int SndWriteSoundfile(NSString *filename, SndSoundStruct *sound)
+{
+    SF_INFO sfinfo;
+    SNDFILE *sfp;
+    char *comment = NULL;
+    long sampleCount = SndSampleCount(sound) * sound->channelCount;
+    
+    sfinfo.samplerate = (int) sound->samplingRate;
+    sfinfo.channels = sound->channelCount;
+    // TODO, at the moment we only set the output format from the format of the soundStruct itself, which
+    // nowdays will typically be float since all buffers will read that way. We need a writing format parameter when calling this function. This should probably happen at the same time we abandon SndSoundStructs.
+    sfinfo.format = SndDataFormatToSndFileEncoding([[filename pathExtension] cString], sound->dataFormat);
+    // comment       = sound->info;
+
+    if (!sf_format_check(&sfinfo)) {
+	NSLog(@"Bad output format: %d\n", sfinfo.format);
+	return SND_ERR_UNKNOWN;
+    }
+
+    if((sfp = sf_open([filename fileSystemRepresentation], SFM_WRITE, &sfinfo)) == NULL)
+	return SND_ERR_UNKNOWN;
+    
+    if (sf_write_float(sfp, (float *)((char *) sound + sound->dataLocation), sampleCount) != sampleCount) {
+	NSLog(@"writing error: %s\n", sf_strerror(sfp));
+	return SND_ERR_UNKNOWN;
+    }
+
+    if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowOutputFileFormat"]) {
+	NSLog(@"Output file %@: using sample rate %d\n\tencoding %x, %d %s",
+	    filename, sfinfo.samplerate,
+	    (unsigned char) sfinfo.format,
+	    sfinfo.channels,
+	    (sfinfo.channels > 1) ? "channels" : "channel");
+
+	if (comment) {
+	    fprintf(stderr,"Output file: comment \"%s\"\n", comment);
+	}
+    }
+    sf_close(sfp);
+
+    return SND_ERR_NONE;
+}
+
+#else
+
+int SndWriteSoundfile(NSString *filename, SndSoundStruct *sound)
 {
   int sz;
   struct st_soundstream ft;
@@ -495,101 +736,4 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
   return SND_ERR_NONE;
 }
 
-// This is the original Sun/NeXT sound saving routine.
-int SndWriteSoundfileClassic(const char *path, SndSoundStruct *sound)
-{
-  int error,error2;
-  int fd;
-  if (!path) return SND_ERR_BAD_FILENAME;
-  if (!strlen(path)) return SND_ERR_BAD_FILENAME;
-#ifdef WIN32
-  fd = open(path, O_BINARY | O_WRONLY | O_CREAT | O_TRUNC, 0644);
-#else
-  fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 #endif
-  if (fd == -1) return SND_ERR_CANNOT_OPEN;
-  error = SndWrite(fd, sound);
-  error2 = close(fd);
-  if (error2 == -1) return SND_ERR_UNKNOWN;
-  return error;
-}
-
-int SndWriteHeader(int fd, SndSoundStruct *sound)
-{
-  SndSoundStruct *s;
-  SndSoundStruct **ssList;
-  SndSoundStruct *theStruct;
-  int headerSize;
-  int df;
-  int i;
-
-  if (fd == 0) return SND_ERR_CANNOT_OPEN;
-  df = sound->dataFormat;
-  if (df == SND_FORMAT_INDIRECT) headerSize = sound->dataSize;
-  else headerSize = sound->dataLocation;
-  /* make new header with swapped bytes if nec */
-  if (!(s = malloc(headerSize))) return SND_ERR_CANNOT_ALLOC;
-  memmove(s,sound,headerSize);
-  if (df == SND_FORMAT_INDIRECT) {
-    int newCount = 0;
-    i = 0;
-    s->dataFormat = ((SndSoundStruct *)(*((SndSoundStruct **)
-                                          (sound->dataLocation))))->dataFormat;
-    ssList = (SndSoundStruct **)sound->dataLocation;
-    while ((theStruct = ssList[i++]) != NULL)
-      newCount += theStruct->dataSize;
-    s->dataLocation = s->dataSize;
-    s->dataSize = newCount;
-  }
-
-#ifdef __LITTLE_ENDIAN__
-  s->magic = NSSwapBigLongToHost(s->magic);
-  s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
-  s->dataSize = NSSwapBigLongToHost(s->dataSize);
-  s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
-  s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
-  s->channelCount = NSSwapBigLongToHost(s->channelCount);
-#endif
-  if (write(fd, s, headerSize) != headerSize) { free(s); return SND_ERR_CANNOT_WRITE; }
-  free(s);
-  return SND_ERR_NONE;
-}
-
-int SndWrite(int fd, SndSoundStruct *sound)
-{
-  SndSoundStruct **ssList;
-  SndSoundStruct *theStruct;
-  int error;
-  int j=0;
-
-  error = SndWriteHeader(fd, sound);
-  if (error) {
-    return error;
-  }
-  if (sound->dataFormat != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
-    error = write(fd, (char *)sound + sound->dataLocation, sound->dataSize);
-    if (error <= 0) {
-      return SND_ERR_CANNOT_WRITE;
-    }
-    if (error != sound->dataSize) {
-      fprintf(stderr, "File write seems to have been truncated! Wrote %d data bytes, tried %d\n",
-               error, sound->dataSize);
-    }
-    return SND_ERR_NONE;
-  }
-/* more difficult -- fragged data */
-
-  ssList = (SndSoundStruct **)sound->dataLocation;
-  while ((theStruct = ssList[j++]) != NULL) {
-    error = write(fd,(char *)theStruct + theStruct->dataLocation, theStruct->dataSize);
-    if (error <= 0) {
-      return SND_ERR_CANNOT_WRITE;
-    }
-    if (error != theStruct->dataSize) {
-      printf("File write seems to have been truncated! Wrote %d data bytes, tried %d\n",
-             error, theStruct->dataSize);
-    }
-  }
-  return SND_ERR_NONE;
-}
-
