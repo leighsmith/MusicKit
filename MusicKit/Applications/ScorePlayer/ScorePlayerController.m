@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/03/12 02:02:01  leigh
+  Updated to findPatchClass method
+
   Revision 1.10  2001/03/02 04:09:18  leigh
   Added MIDI file reading, automatic menu validation, now relying on MKScore to tell us the file extensions
 
@@ -846,7 +849,7 @@ static void playIt(ScorePlayerController *self)
         }
 	else {
 	    synthPatchClass = ([className length]) ? 
-			       [MKSynthPatch findSynthPatchClass:className] : nil;
+			       [MKSynthPatch findPatchClass:className] : nil;
 	    if (!synthPatchClass) {         /* Class not loaded in program? */
                 errMsg = [NSString stringWithFormat: STR_NO_SYNTHPATCH, className];
                 [errorLog addText: errMsg];
