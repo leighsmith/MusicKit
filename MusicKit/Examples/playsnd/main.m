@@ -3,9 +3,8 @@
 // playsnd - a simple SndKit streaming architecture exerciser / sound player
 //
 // Original Author: SKoT McDonald <skot@tomandandy.com>
-// Aug 2001
 //
-// Contributos: Stephen Brandon
+// Contributors: Stephen Brandon
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +47,9 @@ void ShowHelp(void)
   printf(" -h    show this help\n");
   printf(" -t    turn on time information output\n");
   printf(" -S    shoutcast as MP3 stream to an icecast server running on local host\n");
+  printf(" -a A  shoutcast server address (either form: abc.com or 127.0.0.1)\n");
+  printf(" -P N  shoutcast port number\n");
+  printf(" -p A  shoutcast server password\n");
 }
  
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,15 +57,19 @@ void ShowHelp(void)
 ////////////////////////////////////////////////////////////////////////////////
 
 int main (int argc, const char * argv[])
-{    
+{   
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     BOOL   bTimeOutputFlag    = FALSE;
-    BOOL   bMP3Shoutcast      = FALSE;
+    BOOL   bMP3Shoutcast      = FALSE; 
     BOOL   useReverb          = FALSE;
     long   startTimeInSamples = 0;
     double durationInSamples  = -1;
     float  timeOffset         = 0.0f;
     int    i = 1;
-    const char  *soundFileName      = NULL;
+    const  char  *soundFileName       = NULL;
+    NSString *shoutcastServerAddress  = [SndAudioProcessorMP3Encoder defaultServerAddress ];
+    NSString *shoutcastSourcePassword = [SndAudioProcessorMP3Encoder defaultSourcePassword];
+    int       shoutcastPortNumber     = [SndAudioProcessorMP3Encoder defaultSourcePort    ];   
     
     if (argc == 1) {
       printf("Use: playsnd [options] <soundfile>\nType playsnd -h for more help.\n");
@@ -96,6 +102,18 @@ int main (int argc, const char * argv[])
           bMP3Shoutcast = TRUE;
           printf("Shoutcasting as MP3 stream to server on localhost!\n");
           break;
+        case 'a': // mp3 server address
+          [shoutcastServerAddress release]; 
+          shoutcastServerAddress = [NSString stringWithCString: argv[++i]];
+          break;
+        case 'P': // mp3 server source port number
+          shoutcastPortNumber = atoi(argv[++i]);
+          break;
+        case 'p': // mp3 server source password
+          [shoutcastSourcePassword release]; 
+          shoutcastSourcePassword = [NSString stringWithCString: argv[++i]];
+          break;
+        
         default: fprintf(stderr, "Ignoring unrecognized option -%c\n",argv[i][1]);
         }
       }
@@ -117,7 +135,6 @@ int main (int argc, const char * argv[])
     // Finally: do the actual sound playing!  
     else  
     {
-      NSAutoreleasePool *pool     = [NSAutoreleasePool new];
       Snd               *s        = [Snd new]; 
       NSString          *filename = nil, *extension = nil;
       NSFileManager     *fm       = [NSFileManager defaultManager];
@@ -150,15 +167,16 @@ int main (int argc, const char * argv[])
         int maxWait;
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
         SndAudioProcessorMP3Encoder *mp3enc = nil;
-        SndAudioProcessorChain *pchain;
-        SndStreamMixer *mixer;
-        
+        long b1, b2;
+
+        b1 = clock();
         [s readSoundfile: filename];
+        b2 = clock();
+        printf("Readtime: %li\n",b2-b1);
         maxWait = [s duration] + 5 + timeOffset + 1;
 
         [player setRemainConnectedToManager: FALSE];
         [s swapSndToHost];
-
 
         if (useReverb) {
             [[player audioProcessorChain] addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
@@ -166,11 +184,16 @@ int main (int argc, const char * argv[])
 
         if (bMP3Shoutcast) {
           mp3enc = [[SndAudioProcessorMP3Encoder alloc] init];
+          [mp3enc setShoutcastServerAddress: shoutcastServerAddress
+                                       port: shoutcastPortNumber
+                                   password: shoutcastSourcePassword];
           if ([mp3enc connectToShoutcastServer])
             [[player audioProcessorChain] addAudioProcessor: [mp3enc autorelease]];
           else {
             bMP3Shoutcast = FALSE;
-            printf("Couldn't connect to MP3 reflection server on localhost.\n");
+            printf("Couldn't connect to MP3 reflection server on %s:%i with password [%s]\n", [[mp3enc serverAddress] cString],
+                                                                                              [mp3enc serverPort],
+                                                                                              [[mp3enc serverPassword] cString]);
             [mp3enc release];
             mp3enc = nil;
           }
@@ -178,7 +201,6 @@ int main (int argc, const char * argv[])
 
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
-
 
         // Wait for stream manager to go inactive, signalling the sound has finished playing
         while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
@@ -193,8 +215,8 @@ int main (int argc, const char * argv[])
         if (bMP3Shoutcast)
           [mp3enc disconnectFromShoutcastServer];        
       }
-      [pool release];
     }
+    [pool release];
     return iReturnCode;
 }
 
