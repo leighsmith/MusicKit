@@ -3,6 +3,11 @@
   Example Application within the MusicKit
 
   Description:
+    This example program captures MIDI input in a scorefile.
+
+    Each time you push the button a new MIDI recording session begins. The
+    input is written to the file with the name specified in the graphic interface
+    field.
 
     MidiRecord is an example of an interactive Music Kit performance.
     Therefore, the Conductor is clocked. The Conductor is also set to not
