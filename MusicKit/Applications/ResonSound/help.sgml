@@ -80,14 +80,18 @@ audio source channel, and 4 for the right audio source channel.  Each
 resonator has four controls.  We examine these controls in detail:
 </para>
 
-<para><emphasis>RESONANCE PITCH</emphasis> is the base frequency of
+    <itemizedlist>
+      <listitem>
+	<para><emphasis>RESONANCE PITCH</emphasis> is the base frequency of
 the resonator.  The resonator emphasizes this frequency, as well as
 all harmonics of this frequency, while attenuating other frequencies.
 </para>
 
 <para>The frequency is indicated by a pitch symbol, where C4 is middle
 C.</para> 
+      </listitem>
 
+      <listitem>
 <para><emphasis>RESONANCE GAIN</emphasis> is the amplitude of the
 resonator.  Precisely, it is the coefficient of feedback.  The higher
 the gain, the more the filter "rings".  That is, higher settings of
@@ -97,13 +101,17 @@ highest value can cause a feedback effect where the original sound is
 barely audible at all and only the filter's ringing can be heard.  On
 the other hand, setting resonance gain to zero provides a straight
 "feed-through" of the original signal.</para> 
-
+      </listitem>
+      <listitem>
 <para><emphasis>LEFT/RIGHT PANNING</emphasis> is the position between
 the two speakers of the output of the resonator.  This effect is most
 obvious with head-phones.  It is a simple amplitude pan.</para> 
-
+      </listitem>
+      <listitem>
 <para><emphasis>LOUDNESS</emphasis> is the gain of the
 resonator.</para>
+      </listitem>
+    </itemizedlist>
 
 <para>Thus, you can set each of the eight resonators to different
 values and create a variety of tuned filters.</para>
