@@ -308,24 +308,24 @@ aNote = [MKNote alloc];
     <TITLE>Example &horbar; Using Objective-C Classes </TITLE>
     
     <PROGRAMLISTING>
-      #include &lt;musickit/musickit.h&gt;
+      #include &lt;MusicKit/MusicKit.h&gt;
       
 main()
 {	
       MKNote *aNote;	
       MKPart *aPart;	
       MKScore *aScore;	
-      aScore = [MKScore score];    /* In 2.0, use alloc/init */	
+      aScore = [MKScore score];     /* In 2.0, use alloc/init */	
       aPart = [MKPart new];	
       aNote = [MKNote new];	
-      [aNote setPar:MK_freq toDouble:440.0];	
-      [aNote setTimeTag:1.0];      /* Play after 1 beat */	
-      [aNote setDur:1.0];          /* Duration is 1 beat */	
-      [aScore addPart:aPart];	
-      [aPart addNote:aNote];	
+      [aNote setPar: MK_freq toDouble: 440.0];	
+      [aNote setTimeTag: 1.0];      /* Play after 1 beat */	
+      [aNote setDur: 1.0];          /* Duration is 1 beat */	
+      [aScore addPart: aPart];	
+      [aPart addNote: aNote];	
 
       /* "info" code may be added here - see below */	
-      [aScore writeScorefile:"test.score"];
+      [aScore writeScorefile: @"test.score"];
 }
     </PROGRAMLISTING>    
     
@@ -339,9 +339,9 @@ main()
     </PARA>
     
 <PROGRAMLISTING>
-aNote = [MKNote new];  /* Another MKNote for info */	
-[aNote setPar:MK_synthPatch toString: @"Pluck"];	
-[aPart setInfo:aNote];
+aNote = [MKNote new];                             /* Another MKNote for info */	
+[aNote setPar: MK_synthPatch toString: @"Pluck"];	
+[aPart setInfo: aNote];
 </PROGRAMLISTING>
   </SECT1>
   
@@ -364,12 +364,12 @@ aNote = [MKNote new];  /* Another MKNote for info */
 	  
 #include &lt;objc/List.h&gt;  /* Superclass interface */
 	  
-@interface CircularList:List /* List is superclass */
+@interface CircularList: List /* List is superclass */
 {  
     int currentLocation;
 }  
 
--next; /* Returns next object in List or nil if none.  */ 
+- next; /* Returns next object in List or nil if none.  */ 
 
 @end 
 	  
@@ -378,7 +378,8 @@ aNote = [MKNote new];  /* Another MKNote for info */
 	  
 @implementation CircularList
 
--next { 	
+- next
+{ 	
     int numObjects = [self count];	
     if (currentLocation &gt;= numObjects)	
         currentLocation = 0; 	
@@ -462,9 +463,9 @@ for example <CLASSNAME>NSArray</CLASSNAME>,
 	  that sent the message.  Example:
 	</PARA>
 	<PROGRAMLISTING>
--setFreq:sender	
+- setFreq: sender	
 {	
-	freq = [sender doubleValue];	
+    freq = [sender doubleValue];	
 }
 	</PROGRAMLISTING>
       </LISTITEM>
@@ -488,17 +489,18 @@ for example <CLASSNAME>NSArray</CLASSNAME>,
     
     <ORDEREDLIST>
       <LISTITEM>
-	  <PARA>In the "Concepts" section of the
-	    <PRODUCTNAME>NeXT</PRODUCTNAME> Sound/Music/DSP Reference Manual,
-	    read the sections ("system overview" and "representing musical
-	    data").
+	  <PARA>In the <ULINK URL="&MKConcepts;">MusicKit Concepts Manual</ULINK>,
+	    read the sections 
+	    <ULINK URL="&MKConcepts;/systemoverview.html">System Overview</ULINK> and 
+	    <ULINK URL="&MKConcepts;/musicdata.html">Representing Musical Data</ULINK>.
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA><filename>MusicKitClass/example1</filename> is a program
+	<PARA><filename>Examples/example1</filename> is a program
 	  that writes a one-note scorefile.  Copy the directory and
-	  modify it to write a series of notes.  Then say "make" to a
-	  shell.
+	  modify it to write a series of notes.  Then say build it
+	  using <APPLICATION>Project Builder</APPLICATION> or "make"
+	  typed at the shell if using a non-MacOS X system.
 	</PARA>
       </LISTITEM>
     </ORDEREDLIST>
@@ -522,4 +524,3 @@ sgml-local-catalogs:nil
 sgml-local-ecat-files:nil
 End:
 -->
-
