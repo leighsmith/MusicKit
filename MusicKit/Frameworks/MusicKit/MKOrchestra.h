@@ -6,12 +6,11 @@
     See headerdoc description below for details.
  
     The MKOrchestra factory object manages all programs running on all the DSPs.
-    Each instances of the MKOrchestra class corresponds to a single DSP. We call
-    these instances "orchestra instances"
-    or, simply, "orchestras". We call the sum total of all orchestras the
-    "MKOrchestra". Each orchestra instance is referred to by an integer
-    'orchIndex'. These indecies start at 0. For the basic configuration,
-    orchIndex is always 0.
+    Each instance of the MKOrchestra class corresponds to a single DSP. We call
+    these instances "orchestra instances" or, simply, "orchestras". We call the
+    collection of all orchestras the "MKOrchestra". Each orchestra instance is
+    referred to by an integer 'orchIndex'. These indecies start at 0. 
+    For the basic configuration, orchIndex is always 0.
 
     There are two levels of allocation: MKSynthPatch allocation and
     unit generator allocation. MKSynthPatches are higher-level entities,
@@ -34,9 +33,10 @@
   The MKOrchestra class manages signal processing resources used in music synthesis.
   Each instance of MKOrchestra represents a single "signal processor resource" that 
   may refer to a DSP hardware processor, or to processing behaviour performed by the
-  main processor, or perhaps the vector processor resources of a main processor. This
-  is for historical reasons collectively termed a "DSP". The signal processing resource
-  is identified by <b>orchIndex</b>, a zero-based integer index.
+  main processor, a networked processor (i.e Beowulf clustered), or perhaps one of 
+  the vector processor resources of a main processor. This is for historical reasons
+  collectively termed a "DSP". The signal processing resource is identified by 
+  <b>orchIndex</b>, a zero-based integer index.
   
   In the basic NeXT hardware configuration, there's only one MC56001 DSP so there's
   only one MKOrchestra instance (<b>orchIndex</b> 0).  On Intel-based hardware, there may
@@ -44,11 +44,12 @@
   "INSTALLING INTEL-BASED DSP DRIVERS" below). On PowerPC class machines the signal
   processing is performed on the main processor, so there's only one MKOrchestra.
 
-  The methods defined by the MKOrchestra class let you manage a DSP by allocating
+  The methods defined by the MKOrchestra class let you manage a DSP by allocating 
+  (TODO should this be assign?, i.e. alloc as normal, then assign the initialised instance?)
   portions of its memory for specific synthesis modules and by setting its
   processing characteristics. There are two levels of allocation: MKSynthPatch allocation and
-  unit generator allocation. MKSynthPatches are higher-level entities,
-  collections of MKUnitGenerators. 
+  unit generator allocation. MKSynthPatches are higher-level entities, collections of
+  MKUnitGenerators. 
  
   You can allocate entire MKSynthPatches or individual
   MKUnitGenerator and MKSynthData objects through the methods defined here.  Keep in
@@ -62,15 +63,15 @@
   Before you can do anything with an MKOrchestra - particularly, before you can
   allocate synthesis objects - you must create and open the MKOrchestra.  The
   MKOrchestra is a shared resource (that is, various DSP modules all use the same
-  single MKOrchestra instance.)   Therefore, creation is done through the <b>orchestra</b>
+  single MKOrchestra instance.)  Therefore, creation is done through the <b>orchestra</b>
   method - sending <b>orchestra</b> twice returns the same object.   (This strange
-  convention is for historical reasons and matches the Application Kit
+  convention is for historical reasons and matches the ApplicationKit
   convention.)  To open an MKOrchestra, you send it the <b>open</b> message.  This
   provides a channel of communication with the DSP that the MKOrchestra represents. 
   Once you've allocated the objects that you want, either through the methods
   described here or through those defined by MKSynthInstrument and MKSynthPatch, you
   can start the synthesis by sending the <b>run</b> message to the MKOrchestra.  (If
-  your application uses the Music Kit's performance scheduling mechanism, the
+  your application uses the MusicKit's performance scheduling mechanism, the
   <b>run</b> message should be sent immediately before or immediately after the
   <b>startPerformance</b> message is sent to the MKConductor.) The <b>stop</b>
   method halts synthesis and <b>close</b> breaks communication with the DSP. 
@@ -107,13 +108,15 @@
   You can query an MKOrchestra's status through the <b>deviceStatus</b>
   method.
 
+  When the MKOrchestra is running, the allocated MKUnitGenerators produce a stream of
+  samples that, by default, are sent to the "default sound output".  On most modern
+  hardware, that is the stereo digital to analog converter (the
+  DAC), which converts the samples into an audio signal.  This type of sound
+  output is called "Host sound output" because the samples are sent from the DSP to
+  the host computer.  
+ 
  TODO modify this:
-When the MKOrchestra is running, the allocated MKUnitGenerators produce a stream of
-samples that, by default, are sent to the "default sound output".  On NeXT
-hardware, that is the NeXT monitor's stereo digital to analog converter (the
-DAC), which converts the samples into an audio signal.  This type of sound
-output is called "Host sound output" because the samples are sent to the host
-computer.  But there are a number of other alternatives.  You can write the
+ But there are a number of other alternatives.  You can write the
 samples to the DSP serial port, to be played through any of a number of devices
 that have their own DACs or do digital transfer to DAT recorders.   To do this,
 invoke the method <b>setSerialSoundOut:</b> with a <b>YES</b> argument before
@@ -122,15 +125,16 @@ sending <b>open</b> to the MKOrchestra.    This is also called "SSI" sound outpu
 
   Another option is to write the samples to a soundfile. You do this by invoking the
   method <b>setOutputSoundfile:</b> before sending <b>open</b> to the MKOrchestra. 
-  If you're writing a soundfile, the NeXT monitor's DAC is automatically disabled.
+  If you're writing a soundfile, the computer's DAC is automatically disabled.
   It is also possible to save the DSP commands as a "DSP commands format
   soundfile".   Such files are much smaller than the equivalent soundfile.  Use
   the method <b>setOutputCommandsFile:</b> to create such a file.  However,
   support for playing DSP commands file may not continue in future releases. 
   Therefore, we do not encourage their use.
 
-  The MKOrchestra can also process sound that it receives via the DSP serial port. 
-  To do this, send <b>setSerialSountIn:</b> with a <b>YES</b> argument. 
+  The MKOrchestra can also process sound that it receives. 
+  To do this, send <b>setSoundIn:</b> with a <b>YES</b> argument. 
+ TODO update this:
   &lt;&lt;Note that currently serial input may not be combined with writing a
   soundfile.&gt;&gt;
 
@@ -334,14 +338,20 @@ typedef enum _MKOrchSharedType {
     MK_noOrchSharedType = 0, 
     MK_oscTable = 1, 
     MK_waveshapingTable = 2,
-    MK_excitationTable = 3}
-MKOrchSharedType;
+    MK_excitationTable = 3
+} MKOrchSharedType;
 
 typedef enum _MKEMemType {
     MK_orchEmemNonOverlaid = 0, 
     MK_orchEmemOverlaidXYP = 1, 
-    MK_orchEmemOverlaidPX = 2}
-MKEMemType;
+    MK_orchEmemOverlaidPX = 2
+} MKEMemType;
+
+typedef enum {
+    MK_UNTIMED = 0,
+    MK_TIMED = 1,
+    MK_SOFTTIMED = 2
+} MKOrchestraTiming;
 
 extern double MKGetPreemptDuration(void);
 extern void MKSetPreemptDuration(double seconds);
@@ -371,15 +381,18 @@ extern void MKSetPreemptDuration(double seconds);
                       reads, by convention. */
     id sineROM;    /* Special read-only MKSynthData object used to represent
                       the SineROM. */
-    id muLawROM;   /* Special read-only SYnthData object used to represent
+    id muLawROM;   /* Special read-only MKSynthData object used to represent
                       the Mu-law ROM. */
-    MKDeviceStatus deviceStatus; /* Status of MKOrchestra. */
-    unsigned short orchIndex;  /* Index of the DSP managed by this instance. */
+    /*! @var deviceStatus Status of MKOrchestra. */
+    MKDeviceStatus deviceStatus;
+    /*! @var orchIndex Index of the DSP resource managed by this instance. */
+    unsigned short orchIndex;
     char isTimed;    /* Determines whether DSP commands go out timed or not. */
     BOOL useDSP;     /* YES if running on an actual DSP (Default is YES) */
     BOOL hostSoundOut;   /* YES if sound it going to the DACs. */
     BOOL serialSoundOut;
-    BOOL serialSoundIn;
+    /*! @var soundIn Indicates if this orchestra will process incoming sound. */
+    BOOL soundIn;
     BOOL isLoopOffChip; /* YES if loop has overflowed off chip. */
     BOOL fastResponse;  /* YES if response latency should be minimized */
     double localDeltaT; /* positive offset in seconds added to out-going
@@ -540,20 +553,15 @@ extern void MKSetPreemptDuration(double seconds);
 */
 + orchestraOnDSP: (unsigned short) index; 
 
-// TODO problematic - is this returning an array of MKOrchestra instances?
-// (NSArray *) orchestrasOnAllDSPs;
-#if 0
 /*!
-  @method newOnAllDSPs:
-  @result Returns an id.
+  @method orchestrasOnAllDSPs:
+  @result Returns an NSArray of MKOrchestra instances.
   @discussion Creates an MKOrchestra instance for every available DSP, if it has not
-              already been created.  On Intel-based hardware, this is accomplished
+              already been created.  This is accomplished
               by consulting the user's defaults data base (settable with the
-              Preferences application).  Returns the first MKOrchestra it can create
-              or find.
+              Preferences application).  Returns all the MKOrchestra's created.
 */
-+ newOnAllDSPs;
-#endif
++ (NSArray *) orchestrasOnAllDSPs;
 
 /*!
   @method flushTimedMessages
@@ -583,6 +591,21 @@ extern void MKSetPreemptDuration(double seconds);
               specified DSP, <b>nil</b> is returned.
 */
 + nthOrchestra: (unsigned short) index; 
+
+/*!
+  @method init
+  @abstract Initialises the MKOrchestra instance on the first (default) DSP resource.
+ */
+- init;
+
+/*!
+  @method initOnDSP:
+  @abstract Initialises an MKOrchestra instance on the given DSP processing resource.
+  @param dspIndex The index of the DSP processing resource as returned by +driverNames.
+  @discussion A DSP processing resource is nowdays an abstract concept of processing resource which
+              may refer to a hardware DSP processor, vector unit or networked processor.
+ */
+- initOnDSP: (unsigned short) dspIndex;
 
 /*!
   @method open
@@ -636,8 +659,7 @@ extern void MKSetPreemptDuration(double seconds);
               method return <b>nil</b>.  Otherwise returns the
               receiver.
               
-              
-              <b> allocModulusSynthData:length:</b>
+              <b>allocModulusSynthData:length:</b>
               + <b>allocModulusSynthData:</b>(MKOrchMemSegment)<i>segment</i> <b>length:</b>(unsigned)<i>size</i>
               
               Like +<b>allocSynthData:length:</b> but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  For example, if <i>size</i> is 19, then the low 4 bits of the base address of the MKSynthData object returned will be 0.  
@@ -690,12 +712,6 @@ extern void MKSetPreemptDuration(double seconds);
               receiver.
 */
 - setSamplingRate: (double) newSRate; 
-
-typedef enum {
-    MK_UNTIMED = 0,
-    MK_TIMED = 1,
-    MK_SOFTTIMED = 2
-} MKOrchestraTiming;
 
 // TODO candidate to return void
 /*!
@@ -831,82 +847,37 @@ typedef enum {
   @method setHostSoundOut:
   @param  yesOrNo is a BOOL.
   @result Returns an id.
-  @discussion (NeXT hardware only).  Sets whether the receiver, which must be
+  @discussion Sets whether the receiver, which must be
               closed, sends its sound signal to the host DAC, as <i>yesOrNo</i> is
               YES or NO.  Returns the receiver, or <b>nil</b> if it isn't closed. 
               On NeXT hardware, the default is to send sound to the host
               DAC.
               
-              Sending s<b>etHostSoundOut:YES</b> also sends <b>setOutputSoundfile:NULL</b>;
+              Sending <b>setHostSoundOut:YES</b> also sends <b>setOutputSoundfile: nil</b>;
               you can't write samples to a soundfile and to the DAC at the same time.
-              Sending <b>setHostSoundOut:YES</b> also sends s<b>etSerialSoundOut:NO</b>;
+              Sending <b>setHostSoundOut:YES</b> also sends s<b>etSerialSoundOut: NO</b>;
               you can't write samples to the DSP serial port and to the DAC at the same time.
 */
-- setHostSoundOut:(BOOL)yesOrNo;
+- setHostSoundOut: (BOOL) yesOrNo;
 
--(BOOL) hostSoundOut;
+- (BOOL) hostSoundOut;
 
-#if 0 // no longer used
+- setSoundOut: (BOOL) yesOrNo;
+
 /*!
-  @method setSerialSoundOut:
+  @method setSoundIn:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion Sets whether the receiver, which must be closed, sends its sound
-              signal to the DSP serial port, as <i>yesOrNo</i> is YES or NO. 
-              Returns the receiver, or <b>nil</b> if it isn't closed.  The
-              protocol used depends on the object set with <b>setSerialPortDevice:</b>. 
-              
-              Sending <b>setSerialSoundOut:YES</b> also sends s<b>etHostSoundOut:NO</b> 
-              and <b>setOutputSoundfile:NULL</b>.
-*/
--setSerialSoundOut:(BOOL)yesOrNo;
+  @result Returns the receiver, or <b>nil</b> if it isn't closed.
+  @abstract Sets whether the receiver, which must be closed, receives sound, as <i>yesOrNo</i> is YES or NO.
+ */
+- setSoundIn: (BOOL) yesOrNo;
 
 /*!
-  @method serialSoundOut
+  @method soundIn
   @result Returns a BOOL.
-  @discussion Sets whether serialSoundOut is enabled.
-*/
--(BOOL)serialSoundOut;
-
-/*!
-  @method setSerialSoundIn:
-  @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion Sets whether the receiver, which must be closed, receives sound from
-              the DSP serial port, as <i>yesOrNo</i> is YES or NO.  Returns the
-              receiver, or <b>nil</b> if it isn't closed.   The protocol used
-              depends on the object set with <b>setSerialPortDevice:</b>.
-              
-*/
--setSerialSoundIn:(BOOL)yesOrNo;
-
-/*!
-  @method serialSoundIn
-  @result Returns a BOOL.
-  @discussion Sets whether serialSoundIn is enabled.
-*/
--(BOOL)serialSoundIn;
-
-/*!
-  @method setSerialPortDevice:
-  @param  aDSPSerialPortDevice is an id.
-  @result Returns an id.
-  @discussion Sets an object that properly configures the DSP serial port for a
-              given piece of hardware.   <i>aDSPSerialPortDevice</i> should be a
-              subclass of DSPSerialPortDevice.  The receiver must be closed when
-              this message is sent.  Returns the receiver, or <b>nil</b> if it
-              isn't closed.  
-*/
--setSerialPortDevice:(id)obj;
-
-/*!
-  @method serialPortDevice
-  @result Returns an id.
-  @discussion Returns the DSPSerialPortDevice subclass object that was set with
-              <b>setSerialPortDevice:</b>.
-*/
-- serialPortDevice;
-#endif
+  @discussion Sets whether soundIn is enabled.
+ */
+- (BOOL) soundIn;
 
 /*!
   @method setDebug:
@@ -917,7 +888,7 @@ typedef enum {
 
 /*!
   @method setOutputSoundfile:
-  @param  fileName is a char *.
+  @param  fileName is an NSString instance.
   @result Returns an id.
   @discussion Sets the soundfile to which sound samples are written.  The receiver
               must be closed; <b>nil</b> is returned if it's open, otherwise
@@ -938,9 +909,9 @@ typedef enum {
 
 /*!
   @method outputSoundfile
-  @result Returns an NSString.
+  @result Returns an NSString instance.
   @discussion Returns a pointer to the name of the receiver's output soundfile, or
-              NULL if none.
+              nil if none.
 */
 - (NSString *) outputSoundfile;
 
@@ -949,7 +920,7 @@ typedef enum {
 
 /*!
   @method setOutputCommandsFile:
-  @param  fileName is a char *.
+  @param  fileName is an NSString instance.
   @result Returns an id.
   @discussion Sets a file name to which DSP commands are to be written as a DSP
               Commands format soundfile.  A copy of the fileName is stored in the
@@ -1493,7 +1464,7 @@ typedef enum {
   @method isRealTime
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if the receiver runs in real time.  This will be
-              <b>YES</b> if any of soundOut, serialSoundOut or serialSoundIn is
+              <b>YES</b> if any of soundOut, serialSoundOut or soundIn is
               <b>YES</b>.  Subclasses may want to override this
               method.
 */
@@ -1507,7 +1478,7 @@ typedef enum {
   @discussion Returns YES if the DSP or driver supports the specified sampling
               rate (or half that rate).   The implementation forwards the message
               <b>supportsSamplingRate:</b> to the serial port device, if
-              serialSoundOut or serialSoundIn is enabled.  Otherwise, for NeXT
+              serialSoundOut or soundIn is enabled.  Otherwise, for NeXT
               hardware, it returns YES if aRate is 22050 or 44100.  A subclass may
               override this method.
 */
@@ -1520,7 +1491,7 @@ typedef enum {
   @result Returns a double.
   @discussion Returns the default sampling rate for the driver or hardware
               corresponding to this MKOrchestra instance's DSP.  If serialSoundOut
-              or serialSoundIn is enabled, this method simply forwards the
+              or soundIn is enabled, this method simply forwards the
               <b>defaultSamplingRate</b> message to the DSPSerialPortDevice
               object.  Otherwise, returns 22050.0.  Note that you may change the
               sampling rate using <b>setSamplingRate:</b>, but the default will
@@ -1555,7 +1526,7 @@ typedef enum {
 #define MK_nextCompatibleDSPPort 1
 #define MK_hostSoundOut (1<<1)
 #define MK_serialSoundOut (1<<2)
-#define MK_serialSoundIn (1<<3)
+#define MK_soundIn (1<<3)
 #define MK_soundfileOut (1<<4)
 
 
@@ -1569,7 +1540,7 @@ typedef enum {
 #define MK_nextCompatibleDSPPort 1
 #define MK_hostSoundOut (1<<1)
 #define MK_serialSoundOut (1<<2)
-#define MK_serialSoundIn (1<<3)
+#define MK_soundIn (1<<3)
 #define MK_soundfileOut (1<<4)
 </tt> 
 */
@@ -1695,8 +1666,6 @@ typedef enum {
 
 - sharedObjectFor:aKeyObj segment:(MKOrchMemSegment)whichSegment length:(int)length;
 - sharedObjectFor:aKeyObj segment:(MKOrchMemSegment)whichSegment;
-
-- setSoundOut:(BOOL)yesOrNo;
 
 @end
 

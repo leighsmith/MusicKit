@@ -376,18 +376,20 @@ static unsigned short nDSPs = 0;  /* Number of DSP resources */
 // TODO should become an NSArray
 static id *orchestraClasses = NULL;
 
-#define FOREACHORCH(_i) for (_i=0; orchs[i]; _i++) 
-
 // The default loop unit generator class
 static id defaultOrchloopClass = nil;
 
-// TODO should become an NSDictionary
-static MKOrchestra **dspNumToOrch = NULL; 
-/* All orchestra instances, indexed by DSP number. (0 based) */
+// Holds the mapping from DSP index number to MKOrchestra instance.
+// All orchestra instances created are held, indexed by DSP number (0 based).
+// TODO this implies a strict one DSP, one MKOrchestra instance. This may nowdays be a relaxable constraint.
+static NSMutableDictionary *dspNumToOrch = nil; 
 
-// TODO should become either NSArray or NSDictionary
+// TODO should become an NSArray caching the result of [dspNumToOrch valueObjects]
 static id *orchs = NULL;
 /* Packed nil-terminated array of Orchestras that have actually been created */
+// TODO should become [orchs makeObjectsPerformSelector: @sel(blah)];
+#define FOREACHORCH(_i) for (_i=0; orchs[i]; _i++) 
+
 
 _MK_ERRMSG garbageMsg = @"Garbage collecting freed unit generator %@_%p";
 
@@ -451,23 +453,23 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
     NSAssert(((DSP_SINE_SPACE == 2) && (DSP_MULAW_SPACE == 1)), @"Need to change SINTABLESPACE or MULAWTABLESPACE.");
     defaultOrchloopClass = [_OrchloopbeginUG class];
     nDSPs = (unsigned short) DSPGetDSPCount();
-    _MK_CALLOC(dspNumToOrch, id, (int) nDSPs);
+    dspNumToOrch = [[NSMutableDictionary dictionaryWithCapacity: nDSPs] retain];
     _MK_CALLOC(orchs,id,(int) nDSPs+1); /* + 1 for trailing nil */
     _MK_CALLOC(orchestraClasses,id,(int) nDSPs);
     {   
 	/* If there's an ORCHESTRA parameter provided by the DSP driver,
 	* get its value and use it as the MKOrchestra class.
 	*/
-	int i;
-	for (i=0; i<nDSPs; i++) {
+	int dspIndex;
+	for (dspIndex = 0; dspIndex < nDSPs; dspIndex++) {
 	    id classObj = nil;
 	    NSString *className;
             className = [MKOrchestra driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_ORCHESTRA] 
-					forOrchIndex: i];
+					forOrchIndex: dspIndex];
 	    if (className)
                 classObj = NSClassFromString(className);
 	    if (classObj)
-		[MKOrchestra registerOrchestraSubclass: classObj forOrchIndex: i];
+		[MKOrchestra registerOrchestraSubclass: classObj forOrchIndex: dspIndex];
 	}
     }
     _MKCheckInit();
@@ -486,7 +488,8 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
 	orchIndex = dspIndex;
 	deviceStatus = MK_devClosed;
 	_simFP = NULL;
-	dspNumToOrch[orchIndex] = self;
+	[dspNumToOrch setObject: self forKey: [NSNumber numberWithInt: orchIndex]];
+	// TODO orchs = [dspNumToOrch values];
 	/* Now add it to the end of orchs */
 	for (i = 0; orchs[i] != nil; i++) /* Get to end */
 	    ;
@@ -511,20 +514,21 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
     return [[[MKOrchestra alloc] init] autorelease];
 }
 
-+ (MKOrchestra *) newOnAllDSPs
-  /* Create all orchestras (one per DSP) by sending them the orchestraOnDSP: method
-    (see below). Does not claim the DSP device at this time. 
-    You can check to see which MKOrchestra objects are created by using
-	the +nthOrchestra: method. Returns the first MKOrchestra instance. */
+/* Create all orchestras (one per DSP) by sending them the orchestraOnDSP: method
+  (see below). Does not claim the DSP device at this time. 
+  You can check to see which MKOrchestra objects are created by using
+  the +nthOrchestra: method. Returns an array of MKOrchestra instances.
+*/
++ (NSArray *) orchestrasOnAllDSPs
 {
-    unsigned short i;
-    MKOrchestra *rtn = nil;
-    for (i=0; i<nDSPs; i++)  {
-        [self orchestraOnDSP: i];
-        if (!rtn)
-	    rtn = dspNumToOrch[i];
+    unsigned short dspIndex;
+    NSMutableArray *allOrchestras = [NSMutableArray arrayWithCapacity: 2];
+    
+    for (dspIndex = 0; dspIndex < nDSPs; dspIndex++)  {
+        MKOrchestra *orch = [self orchestraOnDSP: dspIndex];
+	[allOrchestras addObject: orch];
     }
-    return rtn;
+    return [NSArray arrayWithArray: allOrchestras];
 }
 
 + orchestraOnDSP: (unsigned short) index
@@ -535,14 +539,18 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
     */
 {
     MKOrchestra *orch;
+    
     if (index >= nDSPs)
 	return nil;
 #if i386 && defined(__NeXT__)
     if (!driverPresent(index))
 	return nil;
 #endif
-    if (dspNumToOrch[index])
-	return dspNumToOrch[index];
+    // TODO this means we can only create one instance of MKOrchestra on a DSP resource.
+    // We may want to relax this constraint in the future.
+    orch = [dspNumToOrch objectForKey: [NSNumber numberWithInt: index]];
+    if (orch != nil)
+	return orch;
     if (self == [MKOrchestra class]) { /* Avoid infinite recursion */
 	if (orchestraClasses[index]) 
 	    return [[orchestraClasses[index] alloc] initOnDSP: index];
@@ -556,7 +564,7 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
 {
     if (index >= nDSPs)
 	return nil;
-    return dspNumToOrch[index];
+    return [dspNumToOrch objectForKey: [NSNumber numberWithInt: index]];
 }
 
 #define DEBUG_DELTA_T 0
@@ -742,19 +750,12 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc);
             serialPortDevice = [[NSClassFromString(s) alloc] init];
     /*sb: do I expect the device class, eg SSAD64x, to have been already loaded in? Hmmm. tests show it probably is */
     s = [[NSUserDefaults standardUserDefaults] objectForKey: @"MKOrchestraSoundOut"];
-    if (!s || ![s length]) {
-	[self setSerialSoundOut: YES];
-    }
-    else {
-        if ([s isEqualToString: @"Host"] && ([self capabilities] & MK_hostSoundOut))
-	    [self setHostSoundOut: YES];
-	else /* "SSI" */
-	    [self setSerialSoundOut: YES];
-    }
+    if ([s isEqualToString: @"Host"] && ([self capabilities] & MK_hostSoundOut))
+	[self setHostSoundOut: YES];
     return self;
 }
 
-static id broadcastAndRtn(MKOrchestra *self,SEL sel)
+static id broadcastAndRtn(MKOrchestra *self, SEL sel)
 /* Does broadcast. Returns nil if any orchestras return nil, else self. */
 {
     register unsigned short i;
@@ -778,38 +779,38 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
     return self;
 }
 
-+ (void) dealloc  /*sb: was +free before OS conversion. FIXME - not good OS allocation strategy I think.*/
+/*sb: was +free before OS conversion. FIXME - not good OS allocation strategy I think.*/
 /* Frees all orchestra objects by sending -free to each orchestra object. 
 Returns self. */
++ (void) dealloc
 {
-    register unsigned short i;
-    for (i=0; i<nDSPs; i++)
-        [dspNumToOrch[i] performSelector: @selector(release)];
-    return;
+    NSArray *orchestrasAllocatedOnDSPs = [dspNumToOrch allValues];
+
+    [orchestrasAllocatedOnDSPs makeObjectsPerformSelector: @selector(release)];
 }
 
-+open
-    /* Sends open to each orchestra object. Returns nil if one of the
-    MKOrchestra returns nil, else self. */
+/* Sends open to each orchestra object. Returns nil if one of the
+MKOrchestra returns nil, else self. */
++ open
 {
-    return broadcastAndRtn(self,@selector(open));
+    return broadcastAndRtn(self, @selector(open));
 }
 
 + run
     /* Sends run to each orchestra object. Returns nil if one of the 
     Orchestras does, else self. */
 {
-    return broadcastAndRtn(self,@selector(run));
+    return broadcastAndRtn(self, @selector(run));
 }
 
-+stop
++ stop
     /* Sends stop to each orchestra object. */
 {
-    return broadcastAndRtn(self,@selector(stop));
+    return broadcastAndRtn(self, @selector(stop));
 }
 
 #if 0
-+step
++ step
     /* Sends step to each orchestra object. */
 {
     unsigned short i;
@@ -823,14 +824,14 @@ Returns self. */
     /* Sends close to each orchestra object. Returns nil if one of the 
     Orchestras does, else self. */
 {
-    return broadcastAndRtn(self,@selector(close));
+    return broadcastAndRtn(self, @selector(close));
 }
 
-+abort
++ abort
     /* Sends abort to each orchestra object. Returns nil if one of the 
     Orchestras does, else self. */
 {
-    return broadcastAndRtn(self,@selector(abort));
+    return broadcastAndRtn(self, @selector(abort));
 }
 
 
@@ -1303,7 +1304,7 @@ associated with it exists.
 
 - (BOOL) isRealTime
 {
-    return serialSoundOut || hostSoundOut || serialSoundIn;
+    return serialSoundOut || hostSoundOut || soundIn;
 }
 
 - setOutputSoundfile: (NSString *) file
@@ -1502,22 +1503,22 @@ associated with it exists.
     return serialSoundOut;
 }
 
-- setSerialSoundIn: (BOOL)yesOrNo
+- setSoundIn: (BOOL)yesOrNo
     /* Controls whether sound is sent to the SSI port. The default is NO. 
     If the receiver is not closed, this message has no effect.
     */
 {
     if (deviceStatus != MK_devClosed) 
 	return nil;
-    serialSoundIn = yesOrNo;
+    soundIn = yesOrNo;
     [self useDSP: YES];
     return self;
 }
 
-- (BOOL) serialSoundIn
+- (BOOL) soundIn
     /* Returns whether or not sound is being sent to the SSI port. */
 {
-    return serialSoundIn;
+    return soundIn;
 }
 
 - (void) setDebug: (BOOL) yesOrNo
@@ -1559,8 +1560,7 @@ static void freeEMem(MKOrchestra *self,int whichSpace) {
     }
 }
 
-static void freeUGs(self)
-MKOrchestra *self;
+static void freeUGs(MKOrchestra *self)
 /* Free all MKSynthData and MKUnitGenerators. */
 {
     char wasTimed = [self isTimed];
@@ -1715,11 +1715,10 @@ useful for DSP debugging. */
     DSPMKMemoryFillSkipTimed(_MKCurSample(self),NOOP,DSP_MS_P,where,1,noops);
 }
 
-static id loadOrchLoop(self)
-MKOrchestra *self;
 /* Loads the orchestra loop (a.k.a. _OrchloopbeginUG, 
 a.k.a. orchloopbegin) 
 Also initializes memory data structures, etc. */
+static id loadOrchLoop(MKOrchestra *self)
 {
 #define INITIAL_STACK_SIZE 128 /* A guess at how many UGs and PPs we'll have */
     int i;
@@ -2024,7 +2023,7 @@ do so generates an error.
     int i;
     
     [self abort];
-    dspNumToOrch[orchIndex] = nil;
+    [dspNumToOrch removeObjectForKey: [NSNumber numberWithInt: orchIndex]];
     /* Now fill in the gap in orchs[] */
     for (i=0; orchs[i] != self; i++)
 	;
@@ -2033,7 +2032,7 @@ do so generates an error.
     [super dealloc];
 }
 
--useDSP: (BOOL) useIt
+- useDSP: (BOOL) useIt
     /* Controls whether or not the output actually goes to the DSP. Has no effect
     if the MKOrchestra is not closed. The default is YES. 
     This method should not be used in release 0.9. */
@@ -2105,7 +2104,7 @@ void _MKOrchTrace(MKOrchestra *orch,int typeOfInfo, NSString *fmt, ...)
     va_end(ap);
 }
 
-// TODO SHould be a method
+// TODO Should be a method
 DSPFix48 *_MKCurSample(MKOrchestra *self)
 /* Returns time turned into sample time for use to DSP routines. 
 DeltaT is included in the result. */
@@ -2132,14 +2131,15 @@ DeltaT is included in the result. */
                                    self->samplingRate + 0.5, /* rounding essential */
                                    &(self->_previousTimeStamp));
         }
-    } else {
+    }
+    else {
         self->_previousTimeStamp.high24 = 0;
         self->_previousTimeStamp.low24 = 0;
     }
     return &(self->_previousTimeStamp);
 }
 
--(NSString *) segmentName: (int) whichSegment
+- (NSString *) segmentName: (int) whichSegment
     /* Returns name of the specified OrchMemSegment. */
 {
     return ((whichSegment < 0 || whichSegment >= (int) MK_numOrchMemSegments)) ?
@@ -2149,9 +2149,7 @@ DeltaT is included in the result. */
 /* Instance methods for UnitGenerator's resource allocation. ------------  */
 
 
-static void putLeaper(self,leapTo)
-register MKOrchestra *self;
-int leapTo;
+static void putLeaper(MKOrchestra *self, int leapTo)
 /* Adds leaper to specified place. A leaper jumps the orchestra loop
 off chip. */
 {
@@ -2207,7 +2205,7 @@ off chip. */
 
 extern BOOL _MKAdjustTimeIfNotBehind(void);
 
--(void) synchTime: (NSTimer *) timer
+- (void) synchTime: (NSTimer *) timer
 {
     DSPFix48 dspSampleTime;
     double dspTime,hostTime;
@@ -2311,9 +2309,8 @@ static BOOL compactResourceStack(MKOrchestra *self); /* Forward ref */
     return orchIndex;
 }
 
--(double) computeTime
-    /* Returns the compute time currently used by the orchestra system in 
-    seconds per sample. */
+/* Returns the compute time currently used by the orchestra system in seconds per sample. */
+- (double) computeTime
 {
     return computeTime;
 }
@@ -2794,7 +2791,8 @@ Returns YES if compaction was accomplished.
         int pendingLoopBLT = -1; // *pendingLoopBLT = NULL;
         MKOrchMemStruct *ugReso,resoToBLT,newReloc,fromBLT,toBLT, *oldReloc;
         int pLoopNeeds;
-        register id aList = _MKLightweightArrayCopy(self->unitGeneratorStack);//was [self->unitGeneratorStack copy]; /* Local copy */
+	// TODO needs release
+        register NSMutableArray *aList = _MKLightweightArrayCopy(self->unitGeneratorStack);//was [self->unitGeneratorStack copy]; /* Local copy */
 	    id spHead = nil;
 	    id spTail = nil;
 	    [self beginAtomicSection];
@@ -3606,7 +3604,7 @@ id factObj,beforeObj,afterObj;
 {
     if (serialPortDevice && serialSoundOut)
 	return [serialPortDevice hardwareSupportedSamplingRates: arr];
-    *arr = (double *) _MKMalloc(sizeof(double) *1);
+    *arr = (double *) _MKMalloc(sizeof(double) * 1);
     (*arr)[0] = 44100;
     return 1;
 }
@@ -3615,7 +3613,7 @@ id factObj,beforeObj,afterObj;
 {
     if (serialPortDevice && serialSoundOut)
 	return [serialPortDevice supportsSamplingRate: rate];
-    else return EQU(rate,44100.0) || EQU(rate,22050.0);
+    else return EQU(rate, 44100.0) || EQU(rate, 22050.0);
 }
 
 - (double) defaultSamplingRate
@@ -3629,13 +3627,13 @@ id factObj,beforeObj,afterObj;
 {
 #if m68k
     return (MK_nextCompatibleDSPPort | MK_hostSoundOut |
-	    MK_serialSoundOut | MK_serialSoundIn | MK_soundfileOut);
+	    MK_serialSoundOut | MK_soundIn | MK_soundfileOut);
 #else
     unsigned rtn;
     if (_nextCompatibleSerialPort)
 	rtn = MK_nextCompatibleDSPPort;
     else rtn = 0;
-    return (rtn | (MK_serialSoundOut | MK_serialSoundIn | MK_soundfileOut));
+    return (rtn | (MK_serialSoundOut | MK_soundIn | MK_soundfileOut));
 #endif    
 }
 
