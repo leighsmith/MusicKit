@@ -70,7 +70,7 @@ typedef enum {
   @result     Returns an autoreleased SndAudioBuffer instance.
 */
 + audioBufferWithDataFormat: (SndSampleFormat) dataFormat
-		   channelCount: (int) channelCount
+	       channelCount: (int) channelCount
                samplingRate: (double) sampleRate
                    duration: (double) timeInSeconds;
 
@@ -84,7 +84,7 @@ typedef enum {
   @result     Returns an autoreleased SndAudioBuffer instance.
  */
 + audioBufferWithDataFormat: (SndSampleFormat) newDataFormat
-		   channelCount: (int) newChannelCount
+	       channelCount: (int) newChannelCount
                samplingRate: (double) newSamplingRate
 		 frameCount: (long) newFrameCount;
 
@@ -462,12 +462,20 @@ typedef enum {
 
 /*!
   @method convertToFormat:
+  @abstract Converts the buffer to the sample format, sample rate and channel count described by SndFormat.
+  @discussion The SndFormat field frameCount is ignored.
+  @param newFormat The SndFormat giving the new format to convert the SndAudioBuffer instance to.
+*/
+- convertToFormat: (SndFormat) newFormat;
+
+/*!
+  @method convertToSampleFormat:
   @abstract Converts the sample data to the given format.
   @discussion Only the format is changed, the number of channels and sampling rate are preserved.
   @param  newDataFormat  A SndSampleFormat representing different sample data formats.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (SndSampleFormat) newDataFormat;
+- convertToSampleFormat: (SndSampleFormat) newDataFormat;
 
 /*!
   @method convertBytes:intoFrameRange:fromFormat:channelCount:samplingRate:
@@ -493,7 +501,7 @@ typedef enum {
          samplingRate: (double) fromSamplingRate;
 
 /*!
-  @method convertToFormat:channelCount:
+  @method convertToSampleFormat:channelCount:
   @abstract Converts the sample data to the given format and channel count.
   @discussion Reallocates sample data if necessary for channel count changes.
   @param toDataFormat   A SndSampleFormat representing different sample data formats.
@@ -501,11 +509,11 @@ typedef enum {
                         if more, channels are duplicated.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (SndSampleFormat) toDataFormat
-     channelCount: (int) toChannelCount;
+- convertToSampleFormat: (SndSampleFormat) toDataFormat
+	   channelCount: (int) toChannelCount;
 
 /*!
-  @method convertToFormat:channelCount:samplingRate:useLargeFilter:interpolateFilter:useLinearInterpolation:
+  @method convertToSampleFormat:channelCount:samplingRate:useLargeFilter:interpolateFilter:useLinearInterpolation:
   @abstract Converts the sample data to the given format, channel count and sampling rate.
   @discussion The parameter fields useLargeFilter: interpolateFilter:  and useLinearInterpolation: control the
               particular resampling methods used.
@@ -518,12 +526,12 @@ typedef enum {
   @param linearInterpolation If TRUE, linear interpolation uses a fast, noninterpolating resample routine but is relatively noisy.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (SndSampleFormat) toDataFormat
-     channelCount: (int) toChannelCount
-     samplingRate: (double) toSampleRate
-   useLargeFilter: (BOOL) largeFilter
-interpolateFilter: (BOOL) interpolateFilter
-useLinearInterpolation: (BOOL) linearInterpolation;
+- convertToSampleFormat: (SndSampleFormat) toDataFormat
+	   channelCount: (int) toChannelCount
+	   samplingRate: (double) toSampleRate
+	 useLargeFilter: (BOOL) largeFilter
+      interpolateFilter: (BOOL) interpolateFilter
+ useLinearInterpolation: (BOOL) linearInterpolation;
 
 /*!
   @function SndChangeSampleType
@@ -541,7 +549,7 @@ useLinearInterpolation: (BOOL) linearInterpolation;
   @param outCount Length in samples of the original buffer, counting number of channels, that is duration in samples * number of channels.
   @result Returns error code.
  */
-SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, SndSampleFormat dfFrom, SndSampleFormat dfTo, long outCount);
+SNDKIT_API int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat dfFrom, SndSampleFormat dfTo, long outCount);
 
 /*!
   @function SndChangeSampleRate
@@ -590,13 +598,13 @@ SNDKIT_API void SndChangeSampleRate(const SndFormat fromSound,
   @param map An array newNumChannels long indicating which oldNumChannel to use in the new channel. 
              A channel index of -1 indicates zeroing (silencing) that channel.
  */
-SNDKIT_API void SndChannelMap (void *inPtr,
-                               void *outPtr,
-                               long frames,
-                               int oldNumChannels,
-                               int newNumChannels,
-                               SndSampleFormat df,
-                               short *map);
+SNDKIT_API void SndChannelMap(void *inPtr,
+                              void *outPtr,
+                              long frames,
+                              int oldNumChannels,
+                              int newNumChannels,
+                              SndSampleFormat df,
+                              short *map);
 
 
 /*!
