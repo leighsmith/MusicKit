@@ -69,32 +69,32 @@
 
 @implementation Snd
 
-+ soundNamed:(NSString *)aName
++ soundNamed: (NSString *) aName
 {
   return [[SndTable defaultSndTable] soundNamed: aName];
 }
 
-+ findSoundFor:(NSString *)aName
++ findSoundFor: (NSString *) aName
 {
   return [[SndTable defaultSndTable] findSoundFor: aName];
 }
 
-+ addName:(NSString *)aname sound:aSnd
++ addName: (NSString *) aname sound: aSnd
 {
   return [[SndTable defaultSndTable] addName: aname sound:aSnd];
 }
 
-+ addName:(NSString *)aname fromSoundfile:(NSString *)filename
++ addName: (NSString *) aname fromSoundfile: (NSString *) filename
 {
   return [[SndTable defaultSndTable] addName: aname fromSoundfile: filename];
 }
 
-+ addName:(NSString *)aname fromSection:(NSString *)sectionName
++ addName: (NSString *) aname fromSection: (NSString *) sectionName
 {
   return [[SndTable defaultSndTable] addName: aname fromSection: sectionName];
 }
 
-+ addName:(NSString *)aName fromBundle:(NSBundle *)aBundle
++ addName: (NSString *) aName fromBundle: (NSBundle *) aBundle
 {
   return [[SndTable defaultSndTable] addName: aName fromBundle: aBundle];
 }
@@ -287,17 +287,17 @@
     // Verify we do have a .au/.snd file.
     if (s->magic == SND_MAGIC) {
 	int infoStringLength = s->dataLocation - sizeof(SndSoundStruct) + 4;
-	char *infoCString;
+	char *infoUTF8String;
 	
-	if ((infoCString = malloc(infoStringLength + 1)) == NULL) // + 1 for terminating \0.
+	if ((infoUTF8String = malloc(infoStringLength + 1)) == NULL) // + 1 for terminating \0.
 	    [[NSException exceptionWithName: @"Sound Error"
 				     reason: @"Can't allocate memory for info string"
 				   userInfo: nil] raise];
-	[soundData getBytes: infoCString range: NSMakeRange(sizeof(SndSoundStruct) - 4, infoStringLength)];
-	infoCString[infoStringLength] = '\0'; // terminate the string
+	[soundData getBytes: infoUTF8String range: NSMakeRange(sizeof(SndSoundStruct) - 4, infoStringLength)];
+	infoUTF8String[infoStringLength] = '\0'; // terminate the string
 	[info release];
-	info = [[NSString stringWithCString: infoCString] retain];
-	free(infoCString);
+	info = [[NSString stringWithUTF8String: infoUTF8String] retain];
+	free(infoUTF8String);
 	
 	finalSize = s->dataSize + sizeof(SndSoundStruct); // Allocate no size for info (deprecated)
 	// NSLog(@"%@\n", SndStructDescription(s), finalSize);
@@ -332,6 +332,8 @@
     unsigned int dataOffsetLocation = 6 * sizeof(int);  // offset past the audio header, not including info.
     unsigned int sampleDataSize = [self dataSize];
     SndSampleFormat df = soundStruct->dataFormat;
+    const char *UTF8Info = [info UTF8String];
+    unsigned int UTF8InfoLength = strlen(UTF8Info);
 
     if (df == SND_FORMAT_INDIRECT) {
         int newCount = 0;
@@ -343,7 +345,7 @@
         sampleDataSize = newCount;
     }
     // TODO not sure this will work with indirect sounds.
-    dataOffsetLocation += [info length];
+    dataOffsetLocation += UTF8InfoLength;
 
     soundData = [NSMutableData dataWithCapacity: sampleDataSize]; 
 
@@ -365,9 +367,9 @@
     }
 
     // append the info string
-    // NSLog(@"writing info %@ length %d\n", info, [info length]);
-    // TODO we should write unicode data out so foreign language info fields are properly transported. 
-    [soundData appendBytes: [info cString] length: [info length]];
+    // NSLog(@"writing info %@ length %d, UTF8 %s, length %d\n", info, [info length], UTF8Info, UTF8InfoLength);
+    // Write UTF8 data out so foreign language info fields are properly transported.
+    [soundData appendBytes: UTF8Info length: UTF8InfoLength];
 
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
         [soundData appendBytes: (char *) soundStruct + soundStruct->dataLocation length: soundStruct->dataSize];
@@ -636,8 +638,8 @@
 }
 
 - (int) convertToSampleFormat: (SndSampleFormat) toFormat
-	   samplingRate: (double) toRate
-	   channelCount: (int) toChannelCount
+		 samplingRate: (double) toRate
+		 channelCount: (int) toChannelCount
 {
     NSRange wholeSound = { 0, [self lengthInSampleFrames] };
     SndAudioBuffer *bufferToConvert;
