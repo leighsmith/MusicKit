@@ -205,7 +205,7 @@
 		};
 		00D2C447FEDB2CB5CFED3B93 = {
 			isa = PBXFileReference;
-			path = _SndConvert.c;
+			path = _SndConvert.m;
 			refType = 4;
 		};
 		00D2C448FEDB2CB5CFED3B93 = {
@@ -220,7 +220,7 @@
 		};
 		00D2C44AFEDB2CB5CFED3B93 = {
 			isa = PBXFileReference;
-			path = _Sndresamplesubs.c;
+			path = _Sndresamplesubs.m;
 			refType = 4;
 		};
 		00D2C44BFEDB2CB5CFED3B93 = {
