@@ -996,14 +996,13 @@ int SndReadHeader(int fd, SndSoundStruct **sound)
 	return SND_ERR_NONE;
 }
 
-int SndRead(FILE *fp, SndSoundStruct **sound, char *fileTypeStr)
+int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 {
         SndSoundStruct *s;
         int lenRead;
         int samplesRead;
 	int headerLen;
         struct soundstream informat;
-        struct stat st;
         LONG *readBuffer;
         char *storePtr;
 	int i;
@@ -1057,6 +1056,11 @@ int SndRead(FILE *fp, SndSoundStruct **sound, char *fileTypeStr)
 	// to enable 24 bit operation.
         // For now, we kludge it to 16 bit integers until we have sound drivers that will manage the extra precision.
 
+	// Unfortunately there is the assumption the SndSoundStruct is always big-endian (within the MKPerformSndMIDI
+	// framework and any soundStructs returned), which means we need to swap again. The correct solution is to relax
+	// the big-endian requirement, introduce another format code allowing for little endian encoding, and revert the
+	// MKPerformSndMIDI framework to expect native endian order.
+
         if((readBuffer = (LONG *) malloc(SNDREADCHUNKSIZE * sizeof(LONG))) == NULL) return SND_ERR_CANNOT_ALLOC;
         samplesRead = 0; // samplesRead represents ? excluding header.
         do {
@@ -1068,11 +1072,12 @@ int SndRead(FILE *fp, SndSoundStruct **sound, char *fileTypeStr)
             if (lenRead <= 0)
                 return SND_ERR_CANNOT_READ;
             for(i = 0; i < lenRead; i++) {
-		*((short *) storePtr) = RIGHT(readBuffer[i], (sizeof(LONG) - informat.info.size) * 8); // kludged
+                int sample = RIGHT(readBuffer[i], (sizeof(LONG) - informat.info.size) * 8);
+                *((short *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
                 storePtr += informat.info.size;
 	    }
             samplesRead += lenRead;
-        } while(lenRead == SNDREADCHUNKSIZE); // sound files exactly modulo BUFSIZE will read 0 bytes next time thru.
+        } while(lenRead == SNDREADCHUNKSIZE); // sound files exactly modulo SNDREADCHUNKSIZE will read 0 bytes next time thru.
         s->dataSize = samplesRead * informat.info.size;
 	s = realloc((char *)s, headerLen + s->dataSize); 
 	free(readBuffer);
@@ -1103,7 +1108,7 @@ int SndReadSoundfile(const char *path, SndSoundStruct **sound)
 	int error,error2;
 	FILE *fp;
 	SndSoundStruct *aSound;
-	char *filetype;
+	const char *filetype;
 
         *sound = NULL;
 	if (!path) return SND_ERR_BAD_FILENAME;
