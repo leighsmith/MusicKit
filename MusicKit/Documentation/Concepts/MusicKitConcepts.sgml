@@ -1,3 +1,16 @@
+<!-- 
+$Id$
+This is the main document which simply provides the attribution and
+then includes all chapters that constitute the
+MusicKit and SndKit Concepts book.
+
+In SGML using DocBook DTD V3.1 and above.
+
+Edit this file, not the HTML, RTF or LaTeX output.
+
+Leigh Smith <leigh@tomandandy.com>
+-->
+
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!ENTITY SystemOverview      SYSTEM "SystemOverview.sgml">
 <!ENTITY IntroSndKit         SYSTEM "IntroSndKit.sgml">
@@ -17,20 +30,6 @@
 <!ENTITY SKFunctionReferences "&MKWeb;">
 <!ENTITY IntroSynthPatches   "&MKWeb;">
 ]>
-
-<!-- 
-$Id$
-This is the main document which simply provides the attribution and
-then includes all chapters that constitute the
-MusicKit and SndKit Concepts book.
-
-In SGML using DocBook DTD V3.1 and above.
-
-Edit this file, not the HTML, RTF or LaTeX output.
-
-Leigh Smith <leigh@tomandandy.com>
-
--->
 
 <book id="MusicKitConcepts">
   <bookinfo>
@@ -82,7 +81,7 @@ Leigh Smith <leigh@tomandandy.com>
       <holder>CCRMA, Stanford University (Updates).  All Rights Reserved.</holder>
     </copyright>
     <copyright>
-      <year>1999-2000</year>
+      <year>1999-2001</year>
       <holder>The MusicKit Project (Updates). All Rights Reserved.</holder>
     </copyright>
   </bookinfo>
