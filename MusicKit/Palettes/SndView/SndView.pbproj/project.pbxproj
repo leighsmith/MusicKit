@@ -26,7 +26,6 @@
 				F52EFCB701AD09F801A80103,
 				F52EFCB901AD09F801A80103,
 				F52EFCBF01AD09F801A80103,
-				F52EFCC401AD09F801A80103,
 				F52EFCC501AD09F801A80103,
 			);
 			isa = PBXGroup;
@@ -166,12 +165,6 @@
 			path = /System/Library/Frameworks/InterfaceBuilder.framework;
 			refType = 0;
 		};
-		F52EFCC401AD09F801A80103 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/Users/sbrandon/MK/SndKit/Palettes/SndView/Import Log.rtf";
-			refType = 0;
-		};
 		F52EFCC501AD09F801A80103 = {
 			children = (
 				F52EFCC601AD09F801A80103,
@@ -182,7 +175,7 @@
 		};
 		F52EFCC601AD09F801A80103 = {
 			isa = PBXBundleReference;
-			path = SndViewP.bundle;
+			path = SndViewP.palette;
 			refType = 3;
 		};
 		F52EFCC701AD09F801A80103 = {
@@ -195,7 +188,7 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
-				INSTALL_PATH = "\"$(LOCAL_LIBRARY_DIR)/Palettes\"";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
 				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-bundle";
@@ -294,7 +287,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
