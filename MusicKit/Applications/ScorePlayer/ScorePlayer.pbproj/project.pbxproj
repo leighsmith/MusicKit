@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		018584A1004EBFCCCFED3B96 = {
 			children = (
@@ -204,11 +204,22 @@
 			settings = {
 			};
 		};
+//010
+//011
+//012
+//013
+//014
+//0A0
+//0A1
+//0A2
+//0A3
+//0A4
 		0AB3E78B004B3A57CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -222,6 +233,16 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//0A0
+//0A1
+//0A2
+//0A3
+//0A4
+//110
+//111
+//112
+//113
+//114
 		11E07EDBFFA3719CCFED3B93 = {
 			buildStyles = (
 				0AB3E78B004B3A57CFED3B96,
@@ -230,7 +251,7 @@
 			isa = PBXProject;
 			mainGroup = 11E07EDCFFA3719CCFED3B93;
 			productRefGroup = 11E07F0BFFA3719CCFED3B93;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				11E07F0DFFA3719CCFED3B93,
 			);
@@ -464,6 +485,7 @@
 				11E07F07FFA3719CCFED3B93,
 				11E07F08FFA3719CCFED3B93,
 				11E07F09FFA3719CCFED3B93,
+				7B2063810190CB90002A0496,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -521,9 +543,8 @@
 				11E07F30FFA3719CCFED3B93,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Volumes/manray/Local/Library/Frameworks";
 				INSTALL_PATH = "$(LOCAL_APPLICATIONS_DIR)";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -531,8 +552,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -799,6 +818,7 @@
 				11E07F2DFFA3719CCFED3B93,
 				11E07F2EFFA3719CCFED3B93,
 				11E07F2FFFA3719CCFED3B93,
+				7B2063820190CB91002A0496,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -839,6 +859,28 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+//110
+//111
+//112
+//113
+//114
+//7B0
+//7B1
+//7B2
+//7B3
+//7B4
+		7B2063810190CB90002A0496 = {
+			isa = PBXFrameworkReference;
+			name = SndKit.framework;
+			path = /Volumes/manray/Local/Library/Frameworks/SndKit.framework;
+			refType = 0;
+		};
+		7B2063820190CB91002A0496 = {
+			fileRef = 7B2063810190CB90002A0496;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 11E07EDBFFA3719CCFED3B93;
