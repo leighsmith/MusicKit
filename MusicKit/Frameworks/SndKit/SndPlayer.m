@@ -123,15 +123,33 @@
 // playSnd:withTimeOffset:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt
+- (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt 
+{
+    return [self playSnd: s withTimeOffset: dt endAtIndex: -1];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// playSnd:withTimeOffset:endAtIndex:
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndPerformance *) playSnd: (Snd *) s
+              withTimeOffset: (double) dt
+                  endAtIndex: (double)endAtIndex
 {
     if(![self isActive]) {
-        // NSLog(@"Added sndPlayer to defaultStreamManager\n");
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
-
     if (dt == 0.0) {  // play now!
-        SndPerformance *nowPerformance = [SndPerformance performanceOfSnd: s playingAtTime: [self nowTime]];
+        SndPerformance *nowPerformance;
+        if (endAtIndex >= 0) {
+            nowPerformance = [SndPerformance performanceOfSnd: s 
+                                                playingAtTime: [self nowTime]
+                                                   endAtIndex: endAtIndex];
+        }
+        else {
+            nowPerformance = [SndPerformance performanceOfSnd: s
+                                                playingAtTime: [self nowTime]];
+        }
         [playingLock lock];
         [self _startPerformance: nowPerformance];    
         [playingLock unlock];
@@ -142,9 +160,16 @@
         int i;
         int numToBePlayed;
         int insertIndex;
-        SndPerformance *laterPerformance = [SndPerformance performanceOfSnd: s playingAtTime: playT];
+        SndPerformance *laterPerformance;
         
-        // printf("playT = %f, nowTime = %f, dt = %f\n", playT, [self nowTime], dt);        
+        if (endAtIndex < 0) {
+            laterPerformance = [SndPerformance performanceOfSnd: s
+                                                  playingAtTime: playT];
+        } else {
+            laterPerformance = [SndPerformance performanceOfSnd: s
+                                                  playingAtTime: playT
+                                                     endAtIndex: endAtIndex];
+        }
         [playingLock lock];
         numToBePlayed = [toBePlayed count];
         insertIndex = numToBePlayed;
@@ -219,7 +244,7 @@
  
 - (void) processBuffers  
 {
-    SndAudioBuffer* ab   = [super synthBuffer];
+    SndAudioBuffer* ab   = [self synthBuffer];
     double       bufferDur     = [ab duration];
 //    double       sampleRate    = [ab samplingRate];
     double       bufferEndTime = [self nowTime] + bufferDur;
@@ -230,7 +255,6 @@
     NSMutableArray *removalArray = [NSMutableArray arrayWithCapacity: 10];
 
     [playingLock lock];
-    
     // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
     numberToBePlayed = [toBePlayed count];
@@ -266,7 +290,7 @@
             playRegion.location = 0;
         }
 
-        // NSLog(@"startIndex = %ld, endAtIndex = %ld, location = %d, length = %d\n", startIndex, endAtIndex, playRegion.location, playRegion.length);
+        //NSLog(@"SYNTH THREAD: startIndex = %ld, endAtIndex = %ld, location = %d, length = %d\n", startIndex, endAtIndex, playRegion.location, playRegion.length);
         // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
         if(buffLength > 0) {      
             int start = 0, end = buffLength;
@@ -277,8 +301,11 @@
             if (end + startIndex > endAtIndex)
                 end = endAtIndex - startIndex;
 
-            // NSLog(@"calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
+            // NSLog(@"SYNTH THREAD: calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
             [ab mixWithBuffer: temp fromStart: start toEnd: end];
+	    //NSLog(@"\nSndPlayer: mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
+	    // start, end, playRegion.location, playRegion.length, (((short *)[snd data])[playRegion.location])/(float)32768);
+
             [performance setPlayIndex: startIndex + buffLength];
         }
         // When at the end of sounds, signal the delegate and remove the performance.
@@ -290,12 +317,12 @@
         }
     }
 
-    // NSLog(@"playing %d sounds", [playing count]);
+    // NSLog(@"SYNTH THREAD: playing %d sounds", [playing count]);
     if ([removalArray count] == 1) {
         [playing removeObjectsInArray: removalArray];
         if([toBePlayed count] == 0 && [playing count] == 0) {
             active = FALSE;
-            // NSLog(@"Setting active false\n");
+            // NSLog(@"SYNTH THREAD: Setting active false\n");
         }
     }
     [playingLock unlock];
