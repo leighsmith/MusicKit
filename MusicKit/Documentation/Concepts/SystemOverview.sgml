@@ -62,7 +62,7 @@ a performance.</para>
 </listitem>
 </itemizedlist>
 
-<sect2 id="TheSndKit">
+<sect2 id="TheSndKitOverview">
 <title>The <productname>SndKit</productname></title>
 
 <!-- This sucks -->
@@ -151,23 +151,26 @@ the basic package of musical information upon which the other objects
 act.  <classname>MKPart</classname> and <classname>MKScore</classname>
 objects, as their names suggest, provide a means for organizing
 <classname>MKNote</classname> objects.  The other data classes,
-Envelope, WaveTable (and its progeny), and TuningSystem, are designed
-to help define <classname>MKNote</classname> object attributes:</para>
+<classname>MKEnvelope</classname>, <classname>MKWaveTable</classname>
+(and its progeny), and <classname>MKTuningSystem</classname>, are
+designed to help define <classname>MKNote</classname> object
+attributes:</para>
 
 <itemizedlist>
-<listitem><para>Envelopes represent time-varying functions that can be
-used to continuously control the values of a
-<classname>MKNote</classname>'s attributes (such as its amplitude and
-frequency).</para>
+<listitem><para><classname>MKEnvelope</classname>s represent
+time-varying functions that can be used to continuously control the
+values of a <classname>MKNote</classname>'s attributes (such as its
+amplitude and frequency).</para>
 </listitem>
 
-<listitem><para> A WaveTable contains timbral information that's used
-during music synthesis on the <acronym>DSP</acronym>.</para>
+<listitem><para> A <classname>MKWaveTable</classname> contains timbral
+information that's used during music synthesis on the
+<acronym>DSP</acronym>.</para>
 </listitem>
 
-<listitem><para> A TuningSystem is a mapping of pitch names to
-specific frequencies, allowing an easy representation of alternate
-tunings.</para>
+<listitem><para> A <classname>MKTuningSystem</classname> is a mapping
+of pitch names to specific frequencies, allowing an easy
+representation of alternate tunings.</para>
 </listitem>
 </itemizedlist>
 
