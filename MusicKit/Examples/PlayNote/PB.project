@@ -27,6 +27,7 @@
     }; 
     GENERATEMAIN = YES; 
     LANGUAGE = English; 
+    MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles; 
     NEXTSTEP_APPICON = ""; 
     NEXTSTEP_DOCUMENTEXTENSIONS = (); 
     NEXTSTEP_INSTALLDIR = "$(HOME)/Apps"; 

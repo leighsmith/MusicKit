@@ -1,25 +1,29 @@
-/* $Id$
-   MidiPlay is an example of an interactive Music Kit performance.
-   Therefore, the Conductor is clocked. The Conductor is also set to not 
-   'finishWhenEmpty' to ensure the performance will continue, whether or 
-   not the Conductor has any objective-c messages to send, 
-   until the user decides to terminate the performance.  
+/* 
+  $Id$
+  Defined In: The MusicKit
 
-   In this case, we are interested in a fast interactive response; 
-   therefore, we set the delta time to a very small number (using 
-   MKSetDeltaT()). 
+  Description:
+    MidiPlay is an example of an interactive Music Kit performance.
+    Therefore, the Conductor is clocked. The Conductor is also set to not 
+    'finishWhenEmpty' to ensure the performance will continue, whether or 
+    not the Conductor has any objective-c messages to send, 
+    until the user decides to terminate the performance.  
 
-   Beware that using very small delta times can cause some unpredictability. 
-   You can cause your performance to be more predictable at the expense of 
-   greater latency by increasing the delta time. You may also want to 
-   experiment with untimed mode (see MKOrchestra.h), which can give better 
-   response, but at the expense of decreased predictability. 
+    In this case, we are interested in a fast interactive response; 
+    therefore, we set the delta time to a very small number (using 
+    MKSetDeltaT()). 
 
-   MIDI pitch bend data is thinned out by sending it through a subclass of
-   NoteFilter.
+    Beware that using very small delta times can cause some unpredictability. 
+    You can cause your performance to be more predictable at the expense of 
+    greater latency by increasing the delta time. You may also want to 
+    experiment with untimed mode (see MKOrchestra.h), which can give better 
+    response, but at the expense of decreased predictability. 
 
-   Please note that the SynthPatches in the Music Kit SynthPatch library
-   are not optimized for real time applications such as this one.
+    MIDI pitch bend data is thinned out by sending it through a subclass of
+    NoteFilter.
+
+    Please note that the SynthPatches in the Music Kit SynthPatch library
+    are not optimized for real time applications such as this one.
 */
 
 //#import <MKSynthPatches/SynthPatches.h>
