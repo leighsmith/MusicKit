@@ -2,60 +2,26 @@
   $Id$
   Description:
     This is basically a bare-bones duplicate of NeXT/Apples' performsound module
-    functionality. Compilable with VC++ 6.0 and typically for interface with 
-    Objective C routines, in particular, the SndKit.
-
-    Only C functions are exported to avoid different C++ name mangling between VC++ and gcc
-
+    functionality.
+ 
   Original Author: Leigh Smith <leigh@tomandandy.com>
 
   Copyright (C) 1999 Permission is granted to use this code for commercial and
   non-commercial purposes so long as this copyright statement (noting the author) is
   preserved.
 */
-/*
-  $Log$
-  Revision 1.11  2003/06/13 03:23:04  leighsmith
-  Removed redundant functions, improved comments
-
-  Revision 1.10  2001/11/07 17:54:18  sbrandon
-  put #ifndefs around file to protect from using "include" instead of import.
-
-  Revision 1.9  2001/09/03 15:04:28  sbrandon
-  added a couple of headerdoc comments
-
-  Revision 1.8  2001/08/06 22:58:05  skotmcdonald
-  Fixed teeny does-input-exist flag bug that was sending streaming arch to send blank recording buffers up to clients. Doh.
-
-  Revision 1.7  2001/04/12 00:33:26  leighsmith
-  First draft of HeaderDoc descriptions, much still to be done
-
-  Revision 1.6  2001/03/08 18:43:29  leigh
-  Cleanup of includes
-
-  Revision 1.5  2001/02/12 17:41:19  leigh
-  Added streaming support
-
-  Revision 1.4  2001/02/11 22:51:00  leigh
-  First draft of simplistic working sound playing using CoreAudio
-
-  Revision 1.3  2000/10/29 06:07:51  leigh
-  Made BOOL typedef compatible with the standard.
-
-  Revision 1.2  2000/05/05 22:43:56  leigh
-  ensure we don't have boolean constants predefined
-
-  Revision 1.1  2000/03/11 01:42:19  leigh
-  Initial Release
-
-*/
 /*!
     @header PerformSound
     
     @abstract This is basically a bare-bones duplicate of NeXT/Apples' performsound module functionality.
     It provides sound playback and recording, in either streaming (preferred) or single sound
-    operation (where the operating system lacks streaming buffers).
+    operation (where the operating system lacks streaming buffers). Streaming is controlled by the value
+    of the MKPERFORMSND_USE_STREAMING macro.
     It draws inspiration (only) from Steinberg's ASIO.
+    Compilable with VC++ 6.0 and typically for interface with
+    Objective C routines, in particular, the SndKit.
+
+    Only C functions are exported to avoid different C++ name mangling between VC++ and gcc.
 */
 
 #ifndef __MKPERF_SND_MIDI_PERFORM_SOUND_H__
@@ -71,18 +37,11 @@
 #include "SndStruct.h"
 #include "SndFormats.h"
 
+#define MKPERFORMSND_USE_STREAMING       1  // Uses the newer streaming API
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
-
-/*!
-    @typedef SNDNotificationFun
-    @param s
-    @param tag
-    @param err
-    @result
-*/
-typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
 
 /*!
     @typedef SNDStreamBuffer
@@ -92,8 +51,13 @@ typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
                         data.
     @field streamData A pointer to the data itself. 
 */
+// TODO SndSoundStruct's days are numbered, we should replace streamFormat with each of the parameters we use as indicated below.
 typedef struct SNDStreamBuffer {
     SndSoundStruct streamFormat;
+    // SndSampleFormat dataFormat;
+    // long frameCount;
+    // int channelCount;
+    // double sampleRate;
     void *streamData;
 } SNDStreamBuffer;
 
@@ -106,12 +70,6 @@ typedef struct SNDStreamBuffer {
     @param userData
 */
 typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream, SNDStreamBuffer *outStream, void *userData);
-
-/*!
-    @defined SND_NULL_FUN
-    @discussion Indicates no function is to be called.
-*/
-#define SND_NULL_FUN ((SNDNotificationFun)0)
 
 /*!
     @function       SNDInit
@@ -167,11 +125,51 @@ PERFORM_API void SNDSetMute(BOOL aFlag);
     @function       SNDSetBufferSizeInBytes
     @abstract       Mute or unmute the currently playing sound..
     @param          liBufferSizeInBytes
-                        number of bytes in buffer. Note that current implementation
+                        Number of bytes in buffer. Note that current implementation
                         uses stereo float output buffers, which therefore take 8 bytes
                         per sample frame.
 */
 PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
+
+/*!
+    @function       SNDStreamNativeFormat
+    @abstract       Return in the struct the format of the sound data preferred by the operating system.
+    @param          streamFormat Pointer to an allocated block of memory into which to put the SndSoundStruct
+ */
+// TODO this should take a SNDStreamBuffer *streamFormat parameter, when SndSoundStruct goes.
+PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
+
+/*!
+    @function       SNDStreamStart
+    @abstract       Starts the streaming.
+    @param          newStreamProcessor Pointer to the function call-back for sending and receiving stream buffers.
+    @param          userData Any parameter to be passed back in the call-back function parameter list.
+    @result         Returns YES if streaming was able to start, NO if there was some problem starting streaming.
+ */
+PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
+
+/*!
+    @function       SNDStreamStop
+    @abstract       Stops the streaming.
+    @result         Returns YES if streaming was able to be stopped, NO if there was some problem stopping streaming.
+ */
+PERFORM_API BOOL SNDStreamStop(void);
+
+#if !MKPERFORMSND_USE_STREAMING
+
+/*!
+    @typedef SNDNotificationFun
+    @param s
+    @param tag
+    @param err
+ */
+typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
+
+/*!
+    @defined SND_NULL_FUN
+    @discussion Indicates no function is to be called.
+*/
+#define SND_NULL_FUN ((SNDNotificationFun)0)
 
 /*!
     @function       SNDStartPlaying
@@ -246,38 +244,7 @@ PERFORM_API void SNDResume(int tag);
     @result         Returns a .
 */
 PERFORM_API int SNDUnreserve(int dunno);
-
-/*!
-    @function       SNDTerminate
-    @abstract       .
-*/
-PERFORM_API void SNDTerminate(void);
-
-/*!
-    @function       SNDStreamNativeFormat
-    @abstract       Return in the struct the format of the sound data preferred by the operating system.
-    @param          streamFormat
-                        pointer to an allocated block of memory into which to put the SndSoundStruct
-*/
-PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
-
-/*!
-    @function       SNDStreamStart
-    @abstract       .
-    @param          newStreamProcessor
-                        .
-    @param          userData
-                        
-    @result         Returns YES if ?, NO if ?.
-*/
-PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
-
-/*!
-    @function       SNDStreamStop 
-    @abstract       .
-    @result         Returns YES if ?, NO if ?.
-*/
-PERFORM_API BOOL SNDStreamStop(void);
+#endif
 
 #ifdef __cplusplus
 }
