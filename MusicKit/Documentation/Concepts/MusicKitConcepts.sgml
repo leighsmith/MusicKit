@@ -1,13 +1,37 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!ENTITY chap2 SYSTEM "MusicData.sgml">
+<!ENTITY chap3 SYSTEM "MusicProcAndSynth.sgml">
+<!ENTITY chap4 SYSTEM "MusicPerformance.sgml">
 <!ENTITY appendixA SYSTEM "MusicTables.sgml">
+<!ENTITY appendixB SYSTEM "MIDITimeCode.sgml">
 ]>
 <book id="MusicKitConcepts">
   <title>MusicKit and SndKit Concepts</title>
   <bookinfo>
+    <authorgroup>
+      <author>
+	<firstname>Doug</firstname>
+	<surname>Fulton</surname>
+      </author>
+      <author>
+	<firstname>David</firstname>
+	<othername role=mi>A.</othername>
+	<surname>Jaffe</surname>
+      </author>
+      <editor>
+	<firstname>Leigh</firstname>
+	<othername role=mi>M.</othername>
+	<surname>Smith</surname>
+      </editor>
+    </authorgroup>
+
     <copyright>
       <year>1990</year>
       <holder>NeXT Computer, Inc.  All Rights Reserved.</holder>
+    </copyright>
+    <copyright>
+      <year>1993</year>
+      <holder>Pinnacle Research (MIDI Time Code Chapter).  All Rights Reserved.</holder>
     </copyright>
     <copyright>
       <year>1993</year> 
@@ -34,5 +58,8 @@
   </bookinfo>
 
 &chap2;
+&chap4;
 &appendixA;
+&appendixB;
 </book>
+
