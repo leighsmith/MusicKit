@@ -211,7 +211,7 @@ typedef enum {
 
 /*!
   @method findSoundFor:
-  @param  aName is a NSString *.
+  @param  aName is a NSString instance.
   @result Returns an id.
   @discussion Finds and returns the named Snd object. First the named Snd
               table is searched; if the sound isn't found, then the method looks
@@ -287,7 +287,7 @@ typedef enum {
 
 /*!
   @method initFromSoundfile:
-  @param  filename is a NSString *.
+  @param  filename is a NSString instance.
   @result Returns an id.
   @discussion Initializes the Snd instance, which must be newly allocated, from
               the sound file <i>filename</i>.   Returns <b>self</b> (an unnamed
@@ -300,7 +300,7 @@ typedef enum {
 
 /*!
   @method initFromSoundURL:
-  @param  url is a NSURL *.
+  @param  url is a NSURL instance.
   @result Returns an id.
   @discussion Initializes the Snd instance, which must be newly allocated, by
               copying the sound data from the possibly remote sound file located using
@@ -321,7 +321,7 @@ typedef enum {
 */
 - initWithFormat: (SndSampleFormat) format
     channelCount: (int) channels
-          frames: (int) frames
+          frames: (unsigned long) frames
     samplingRate: (float) samplingRate;
 
 /*!
@@ -384,14 +384,14 @@ typedef enum {
 
 /*!
   @method name
-  @result Returns a NSString *.
+  @result Returns a NSString instance.
   @discussion Returns the Snd's name.
 */
 - (NSString *) name;
 
 /*!
   @method setName:
-  @param  aName is a NSString *.
+  @param  aName is a NSString instance.
   @result Returns a BOOL.
   @discussion Sets the Snd's name to <i>aName</i>. If <i>aName</i> is already
               being used, then the Snd's name isn't set and NO is returned;
@@ -582,7 +582,7 @@ typedef enum {
 
 /*!
   @method data
-  @result Returns a void *.
+  @result Returns a void pointer.
   @discussion Returns a pointer to the Snd's sampled data. You can use the
               pointer to examine, create, and modify the sound data. To
               intelligently manipulate the data, you need to be aware of its size,
@@ -632,7 +632,7 @@ typedef enum {
   @param buff The SndAudioBuffer instance to compare.
   @result Returns a BOOL.
   @discussion Returns YES if the Snd's dataFormat, channelCount and sampling rate match the given SndAudioBuffer instance.
-              The number of samples are not compared.
+              The number of frames are <B>not</B> compared.
  */
 - (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff;
 
@@ -751,6 +751,9 @@ typedef enum {
 
 @interface Snd(FileIO)
 
++ (int) fileFormatForEncoding: (NSString *) extensionString
+		   dataFormat: (SndSampleFormat) sndFormatCode;
+
 /*!
   @method soundFileExtensions
   @abstract Returns an array of valid file extensions available for reading and writing.
@@ -776,21 +779,38 @@ typedef enum {
 + (NSString *) defaultFileExtension;
 
 /*!
+  @method soundFormatOfFilename:
+  @param  filename is a NSString instance.
+  @result Returns a SndFormat structure.
+  @discussion Returns the format of the data in the named sound file. If the file is unable to be opened
+          a dataFormat of SND_FORMAT_UNSPECIFIED is returned in the SndFormat.
+ */
+- (SndFormat) soundFormatOfFilename: (NSString *) filename;
+
+/*!
+  @method readSoundfile:startFrame:frameCount:
+  @param  filename is a NSString instance.
+  @param  startFrame The frame in the file to read from.
+  @param  frameCount Number of frames to read, -1 = read to EOF marker.
+  @result Returns an int.
+  @discussion Replaces the Snd's contents with a nominated subrange of those of the sound file
+              <i>filename</i>. The Snd loses its current name, if any. An error code is returned.
+              TODO it would be preferable to have readSoundfile: (NSString *) fromRange: (NSRange). 
+              However we need a mechanism to indicate infinity for the length in order to signal to read to EOF.
+ */
+- (int) readSoundfile: (NSString *) filename
+	   startFrame: (unsigned long) startFrame
+	   frameCount: (long) frameCount;
+
+/*!
   @method readSoundfile:
-  @param  filename is a NSString *.
+  @param  filename is a NSString instance.
   @result Returns an int.
   @discussion Replaces the Snd's contents with those of the sound file
               <i>filename</i>. The Snd loses its current name, if any. An error
               code is returned.
  */
 - (int) readSoundfile: (NSString *) filename;
-
-
-    /*!
-    @function SndWriteSoundfile
-     @param path An NSString formatted path.
-     @param sound An SndSoundStruct containing the format of the data and a pointer to the data itself.
-     */
 
 /*!
   @method writeSoundfile:fileFormat:dataFormat:
@@ -1320,7 +1340,7 @@ typedef enum {
   @method appendAudioBuffer:
   @abstract Appends the given SndAudioBuffer to the end of the Snd instance.
   @param buffer The SndAudioBuffer to copy sound from.
-  @result Returns the new size of the buffer.
+  @result Returns the new size of the Snd.
  */
 - (long) appendAudioBuffer: (SndAudioBuffer *) buffer;
 
@@ -1378,7 +1398,7 @@ SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
 /*!
   @method willPlay:duringPerformance:
   @param  sender is an id.
-  @param  performance is a SndPerformance *.
+  @param  performance is a SndPerformance instance.
   @discussion Sent to the delegate when the Snd begins to play.
 */
 - willPlay:   sender duringPerformance: (SndPerformance *) performance;
@@ -1386,7 +1406,7 @@ SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
 /*!
   @method didPlay:duringPerformance:
   @param  sender is an id.
-  @param  performance is a SndPerformance *.
+  @param  performance is a SndPerformance instance.
   @discussion Sent to the delegate when the Snd stops playing.
 */
 - didPlay:    sender duringPerformance: (SndPerformance *) performance;
