@@ -1,9 +1,0 @@
-CALL		_dsp_init		0
-
-SMAP		Ilinki56	dspdriver_server		0
-ADVERTISE	Ilinki56
-
-PORT_DEATH	_dsp_portDeath
-
-WIRE
-

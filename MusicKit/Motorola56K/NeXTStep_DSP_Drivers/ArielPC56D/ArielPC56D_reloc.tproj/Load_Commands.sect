@@ -1,9 +1,0 @@
-CALL		_dsp_init		0
-
-SMAP	ArielPC56D	dspdriver_server		0
-ADVERTISE	ArielPC56D
-
-PORT_DEATH	_dsp_portDeath
-
-WIRE
-

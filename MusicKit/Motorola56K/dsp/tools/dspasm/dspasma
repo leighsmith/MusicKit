@@ -1,3 +1,0 @@
-echo asm56000 $2 $3 $4 $5 -A -B -L -OS,SO -I/usr/lib/dsp/smsrc/ $1
-asm56000 $2 $3 $4 $5 -A -B -L -OS,SO -I/usr/lib/dsp/smsrc/ $1
-

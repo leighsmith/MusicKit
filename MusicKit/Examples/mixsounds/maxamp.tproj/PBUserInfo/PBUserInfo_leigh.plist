@@ -1,5 +1,0 @@
-{
-    NSMACHOperatingSystem = {
-        "Executable-$[PBProject projectName]$[PBProjectType executableExtension]" = {cla_array = (); cla_array_index = -1; }; 
-    }; 
-}

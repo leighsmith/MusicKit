@@ -1,6 +1,0 @@
-FirstResponder = {ACTIONS = {"performResize:" = "performResize:"; }; SUPERCLASS = Object; };
-MKAlert = {
-    ACTIONS = {"buttonPressed:" = "buttonPressed:"; }; 
-    OUTLETS = {msg = msg; panel = panel; }; 
-    SUPERCLASS = Object; 
-};
