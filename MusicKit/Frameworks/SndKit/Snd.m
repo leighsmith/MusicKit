@@ -675,8 +675,8 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if (playEnd > [self sampleCount] || playEnd < playBegin)
         playEnd = [self sampleCount];
 
-    if (!soundStruct)
-        return nil;
+//    if (!soundStruct)
+//        return nil;
     status = SND_SoundPlayingPending;
     
     return [[SndPlayer defaultSndPlayer] playSnd: self 
