@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.16  2000/04/25 01:48:41  leigh
+  Properly retain the thread instance and check it
+
   Revision 1.15  2000/04/16 04:06:55  leigh
   Removed debugging messages
 
@@ -308,12 +311,12 @@ static void killMusicKitThread(void)
 
 static BOOL separateThreadedAndNotInMusicKitThread(void)
 {
-    return (musicKitThread != nil && [NSThread currentThread] != musicKitThread); 
+    return (musicKitThread != nil && ![musicKitThread isEqual: [NSThread currentThread]]); 
 }
 
 BOOL separateThreadedAndInMusicKitThread(void)
 {
-    return ([NSThread currentThread] == musicKitThread); 
+    return ([musicKitThread isEqual: [NSThread currentThread]]);
 }
 
 /* Destroys the timed entry. */
@@ -592,6 +595,7 @@ static void resetPriority(void)
 
     lockIt();                // Must be the first thing in this function
     musicKitThread = [NSThread currentThread];
+    [musicKitThread retain];
     setPriority();           // if ever this does something, we may need to retrieve the currentRunLoop afterwards.
     [theLoop addPort: appToMKPortObj forMode: interThreadThreshold];
     [condQueue retain];      // I'm not sure this is neccessary, but we do have an errant autorelease on condQueue somewhere.
