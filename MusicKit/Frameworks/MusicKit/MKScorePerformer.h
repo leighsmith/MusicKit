@@ -35,8 +35,11 @@
 /*
 Modification history:
   $Log$
+  Revision 1.11  2001/09/08 21:55:34  leighsmith
+  Leigh learns lesson that putting comment characters into CVS entries is not a good idea
+
   Revision 1.10  2001/09/07 18:35:13  leighsmith
-  Moved @class declarations to not clash with headerdoc - really headerdoc should only be looking for @class declarations within /*! */ comments
+  Moved @class declarations to not clash with headerdoc - really headerdoc should only be looking for @class declarations within comments
 
   Revision 1.9  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
