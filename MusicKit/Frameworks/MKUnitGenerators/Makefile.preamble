@@ -31,7 +31,7 @@ SECTORDER_FLAGS =
 
 # Stuff related to exporting headers from this project that isn't already 
 # handled by PB.
-OTHER_PUBLIC_HEADERS = Out1aUGx.h Out1bUGy.h In1qpUGx.h In1qpUGy.h
+OTHER_PUBLIC_HEADERS = 
 OTHER_PROJECT_HEADERS =
 OTHER_PRIVATE_HEADERS =
 
