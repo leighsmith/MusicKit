@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 38;
 	objects = {
 		01422A87FFABBF7CCFED3B93 = {
 			isa = PBXLibraryReference;
@@ -22,7 +22,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				INSTALL_PATH = /usr/local/man/man1;
 				LIBRARY_STYLE = STATIC;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -32,8 +31,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 			};
-			conditionalBuildSettings = {
-			};
 			dependencies = (
 			);
 			isa = PBXLibraryTarget;
@@ -41,41 +38,51 @@
 			productInstallPath = /usr/local/man/man1;
 			productName = playscore.1;
 			productReference = 01422A87FFABBF7CCFED3B93;
-			shouldUseHeadermap = 0;
 		};
 		01422A89FFABBF7CCFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		01422A8AFFABBF7CCFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		01422A8BFFABBF7CCFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		01422A8CFFABBF7CCFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
+//010
+//011
+//012
+//013
+//014
+//030
+//031
+//032
+//033
+//034
 		0376BEC4004F2C11CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -89,15 +96,26 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//030
+//031
+//032
+//033
+//034
+//0E0
+//0E1
+//0E2
+//0E3
+//0E4
 		0E49EA09FF8401D7CFED3B93 = {
 			buildStyles = (
 				0376BEC4004F2C11CFED3B96,
 				0376BEC5004F2C11CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0E49EA0AFF8401D7CFED3B93;
 			productRefGroup = 0E49EA1AFF8401D7CFED3B93;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				0E49EA1CFF8401D7CFED3B93,
 				01422A88FFABBF7CCFED3B93,
@@ -122,6 +140,7 @@
 			refType = 4;
 		};
 		0E49EA0CFF8401D7CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = playscore_main.m;
 			refType = 4;
@@ -190,18 +209,18 @@
 				0E49EA26FF8401D7CFED3B93,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = /usr/local/bin;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "\U0001";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = playscore;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -210,14 +229,13 @@
 			productInstallPath = /usr/local/bin;
 			productName = playscore;
 			productReference = 0E49EA1BFF8401D7CFED3B93;
-			shouldUseHeadermap = 0;
 		};
 		0E49EA1DFF8401D7CFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0E49EA1EFF8401D7CFED3B93 = {
 			buildActionMask = 2147483647;
@@ -225,7 +243,7 @@
 				0E49EA1FFF8401D7CFED3B93,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0E49EA1FFF8401D7CFED3B93 = {
 			fileRef = 0E49EA0CFF8401D7CFED3B93;
@@ -245,7 +263,7 @@
 				0E49EA25FF8401D7CFED3B93,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0E49EA21FF8401D7CFED3B93 = {
 			fileRef = 0E49EA14FF8401D7CFED3B93;
@@ -282,7 +300,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 	};
 	rootObject = 0E49EA09FF8401D7CFED3B93;
