@@ -141,28 +141,26 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) addClient: (SndStreamClient*) client
 {
-    int c;
+    int clientCount;
     BOOL clientPresent;
     
     [streamClientsLock lock];
-    c = [streamClients count];
+    clientCount = [streamClients count];
     clientPresent = [streamClients containsObject: client];
     [streamClientsLock unlock];
 
     if (!clientPresent) {
         SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
 
-
         [streamClientsLock lock];
         [streamClients addObject: client];
         [streamClientsLock unlock];
 
-        if (c == 0) // There were no clients - better start the stream...
+        if (clientCount == 0) // There were no clients - better start the stream...
             [self startStreaming];
             
         [client welcomeClientWithBuffer: buff manager: self];
     }
-    
     
     return (clientPresent && active);
 }
@@ -173,9 +171,9 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) removeClient: (SndStreamClient*) client
 {
-    BOOL b = [streamClients containsObject: client];
+    BOOL clientPresent = [streamClients containsObject: client];
 
-    if (b) {
+    if (clientPresent) {
         [streamClientsLock lock];
         [streamClients removeObject: client];
         
@@ -183,7 +181,7 @@ static SndStreamManager *sm = nil;
 //            [self stopStreaming];
         [streamClientsLock unlock];
     }
-    return b;
+    return clientPresent;
 }
 
 //  Don't call!!! only for setting format properties for testing.
@@ -226,7 +224,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
             SndStreamClient *client = [streamClients objectAtIndex: i];
 
             // Look at each client's currently exposed output buffer, and add to mix
-            // NSLog(@"calling mixWithBuffer from processStreamAtTime\n");
+            // NSLog(@"calling mixWithBuffer from processStreamAtTime, %@\n", client);
             [outB mixWithBuffer: [client outputBuffer]];
 
             // Each client should have a second synthing buffer, and a synth thread
