@@ -1,9 +1,10 @@
-This example illustrates playing a Music Kit scorefile on an external
+This example illustrates playing a MusicKit scorefile on an external
 MIDI synthesizer. It reads the scorefile from stdin and plays it 'on
 the fly', i.e. as it is read.  This is analagous to the programming
 example 'playscorefile2', which plays a scorefile on the DSP as it is
-being read. An alternative is to first read the scorefile into a Score
-object and then play it.
+being read. An alternative is to first read the scorefile into a MKScore
+object and then play it. See Utilities/ScorefileUtils/playscore.tproj for
+such behaviour and a more complete score player tool.
 
 In the example program, the midi channel information for each part is gleaned
 from the part 'info' statement in the scorefile. If none is found, all
