@@ -300,7 +300,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks \"$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks\" /var/root/ApplicationBuilding/UninstalledProducts";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks \"$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks\"";
 				FRAMEWORK_VERSION = 2.3;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -540,7 +540,6 @@
 				0224068C00713935CFED3B8B,
 				0224068D00713935CFED3B8B,
 				02240695007269D2CFED3B8B,
-				011279880168CEFCCFED3B94,
 				0109B29C014D0BC3CFED3B94,
 				06C30564007CD69BCFED3B8B,
 				4E8FE86E0122ECB1CFED3B8B,
@@ -858,7 +857,7 @@
 		011279830168CEA1CFED3B94 = {
 			isa = PBXFileReference;
 			name = libmp3lame.a;
-			path = /Local/Unix/lib/libmp3lame.a;
+			path = /usr/local/lib/libmp3lame.a;
 			refType = 0;
 		};
 		011279840168CEA1CFED3B94 = {
@@ -888,16 +887,10 @@
 				);
 			};
 		};
-		011279880168CEFCCFED3B94 = {
-			fileRef = 011279850168CEFCCFED3B94;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		011279890169158CCFED3B94 = {
 			isa = PBXFileReference;
 			name = libshout.a;
-			path = /Local/Unix/lib/libshout.a;
+			path = /usr/local/lib/libshout.a;
 			refType = 0;
 		};
 		0112798A0169158CCFED3B94 = {
@@ -1945,7 +1938,7 @@
 		D87070F3040CA58D00A80103 = {
 			isa = PBXFrameworkReference;
 			name = MKPerformSndMIDI.framework;
-			path = /var/root/ApplicationBuilding/UninstalledProducts/MKPerformSndMIDI.framework;
+			path = /Library/Frameworks/MKPerformSndMIDI.framework;
 			refType = 0;
 		};
 		D87070F4040CA58D00A80103 = {
@@ -2028,7 +2021,7 @@
 		D8CC46AE048BEDBA00A80164 = {
 			isa = PBXFileReference;
 			name = libsndfile.a;
-			path = /Local/Unix/lib/libsndfile.a;
+			path = /usr/local/lib/libsndfile.a;
 			refType = 0;
 		};
 		D8CC46AF048BEDBA00A80164 = {
