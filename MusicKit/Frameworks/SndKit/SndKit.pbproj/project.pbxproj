@@ -22,9 +22,6 @@
 		};
 		00D2C428FEDB2CB5CFED3B93 = {
 			children = (
-				B5405222026DE7B1002A0494,
-				B5B040B701BEC4B2002A0494,
-				B5799BA201DB8E23002A0494,
 				00D2C42BFEDB2CB5CFED3B93,
 				00D2C432FEDB2CB5CFED3B93,
 				00D2C444FEDB2CB5CFED3B93,
@@ -75,8 +72,9 @@
 				06C30561007CD69BCFED3B8B,
 				B52BE0F801F8BD38002A0494,
 				B52BE0F901F8BD38002A0494,
-				00D2C43CFEDB2CB5CFED3B93,
-				00D2C430FEDB2CB5CFED3B93,
+				B5405222026DE7B1002A0494,
+				B5B040B701BEC4B2002A0494,
+				B5799BA201DB8E23002A0494,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -211,6 +209,8 @@
 				00D2C449FEDB2CB5CFED3B93,
 				095E1FC30030E169CFED3B96,
 				00D2C44AFEDB2CB5CFED3B93,
+				00D2C43CFEDB2CB5CFED3B93,
+				00D2C430FEDB2CB5CFED3B93,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -225,7 +225,7 @@
 		00D2C447FEDB2CB5CFED3B93 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = _SndConvert.m;
+			path = SndConvert.m;
 			refType = 4;
 		};
 		00D2C448FEDB2CB5CFED3B93 = {
@@ -262,7 +262,7 @@
 		00D2C454FEDB2CB5CFED3B93 = {
 			children = (
 				D88C365A04082AB4002A0496,
-				D85E24940403DCE30055A8A6,
+				D87070F3040CA58D00A80103,
 				D88C366004082B7C002A0496,
 			);
 			isa = PBXGroup;
@@ -294,11 +294,13 @@
 				00D2C46DFEDB2CB5CFED3B93,
 				00D2C47AFEDB2CB5CFED3B93,
 				00D2C47FFEDB2CB5CFED3B93,
+				D84D9F64040ECEA600A80103,
+				D88C18010432955600A80103,
 			);
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks \"$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks \"$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks\" /var/root/ApplicationBuilding/UninstalledProducts";
 				FRAMEWORK_VERSION = 2.3;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -643,12 +645,12 @@
 				00D2C47DFEDB2CB5CFED3B93,
 				00D2C47EFEDB2CB5CFED3B93,
 				055C7F3B0049CD79CFED3B96,
-				3AE3B96D007931DBCFED3B8B,
 				04F0C04D00EA6A89CFED3B8B,
+				3AE3B96D007931DBCFED3B8B,
 				011279840168CEA1CFED3B94,
 				0112798A0169158CCFED3B94,
 				B52BE0CD01F775D6002A0494,
-				D85E24950403DCE30055A8A6,
+				D87070F4040CA58D00A80103,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1701,6 +1703,7 @@
 			);
 			isa = PBXGroup;
 			name = Experimental;
+			path = "";
 			refType = 4;
 		};
 		B5405223026DE7B1002A0494 = {
@@ -1965,14 +1968,67 @@
 //D82
 //D83
 //D84
-		D85E24940403DCE30055A8A6 = {
+		D84D9F64040ECEA600A80103 = {
+			buildActionMask = 8;
+			dstPath = "";
+			dstSubfolderSpec = 1;
+			files = (
+				D84D9F65040ECEAF00A80103,
+				D84D9F66040ECEAF00A80103,
+				D84D9F67040ECEAF00A80103,
+				D84D9F68040ECEAF00A80103,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D84D9F65040ECEAF00A80103 = {
+			fileRef = 3AE3B96C007931DBCFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D84D9F66040ECEAF00A80103 = {
+			fileRef = B52BE0CC01F775D6002A0494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D84D9F67040ECEAF00A80103 = {
+			fileRef = 011279890169158CCFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D84D9F68040ECEAF00A80103 = {
+			fileRef = 011279830168CEA1CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D87070F3040CA58D00A80103 = {
 			isa = PBXFrameworkReference;
 			name = MKPerformSndMIDI.framework;
-			path = /Library/EmbeddedFrameworks/MKPerformSndMIDI.framework;
+			path = /var/root/ApplicationBuilding/UninstalledProducts/MKPerformSndMIDI.framework;
 			refType = 0;
 		};
-		D85E24950403DCE30055A8A6 = {
-			fileRef = D85E24940403DCE30055A8A6;
+		D87070F4040CA58D00A80103 = {
+			fileRef = D87070F3040CA58D00A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D88C18010432955600A80103 = {
+			buildActionMask = 8;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D88C18040432980000A80103,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D88C18040432980000A80103 = {
+			fileRef = D87070F3040CA58D00A80103;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1991,10 +2047,10 @@
 		};
 		D88C366004082B7C002A0496 = {
 			children = (
-				011279890169158CCFED3B94,
-				011279830168CEA1CFED3B94,
 				3AE3B96C007931DBCFED3B8B,
 				B52BE0CC01F775D6002A0494,
+				011279890169158CCFED3B94,
+				011279830168CEA1CFED3B94,
 			);
 			isa = PBXGroup;
 			name = Libraries;
@@ -2006,7 +2062,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Embedded;
