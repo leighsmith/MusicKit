@@ -98,6 +98,9 @@
     double beginPlayTime;
     long stopAtSample;
 
+    if(![self isActive]) {
+        [[SndStreamManager defaultStreamManager] addClient: self];
+    }
     [playingLock lock];
     whenToStop = [self streamTime] + inSeconds;
     beginPlayTime = [performance playTime]; // in seconds
@@ -123,6 +126,7 @@
 
 - (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt 
 {
+    fprintf(stderr,"PlaySnd: withTimeOffset: %f\n",dt);
     return [self playSnd: s withTimeOffset: dt endAtIndex: -1];
 }
 
@@ -132,8 +136,42 @@
 
 - (SndPerformance *) playSnd: (Snd *) s
               withTimeOffset: (double) dt
-                  endAtIndex: (double) endAtIndex
+                  endAtIndex: (long) endAtIndex
 {
+    double playT;
+    
+     if (dt < 0.0)
+         playT = 0.0;
+     else
+         playT = [self streamTime] + dt;
+     
+    return [self playSnd: s atTimeInSeconds: playT endAtIndex: endAtIndex];
+} 
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndPerformance *) playSnd: (Snd *) s atTimeInSeconds: (double) t withDurationInSeconds: (double) d
+{
+    long endIndex = -1;
+
+    if (d > 0)
+        endIndex =  d * [s samplingRate];
+ 
+    NSLog(@"SndPlayer::play:atTimeInSeconds: %f", t);
+       
+    return [self playSnd: s
+         atTimeInSeconds: t 
+              endAtIndex: endIndex];  
+}  
+
+
+- (SndPerformance *) playSnd: (Snd *) s
+             atTimeInSeconds: (double) playT
+                  endAtIndex: (long) endAtIndex
+{
+    fprintf(stderr,"PlaySnd:atStreamTime: %f endAtIndex: %li    clientTime is: %f streamTime: %f\n", playT, endAtIndex, clientNowTime, [manager nowTime]);
     if(![self isActive]) {
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
@@ -141,7 +179,7 @@
     if(endAtIndex > [s sampleCount]) {
         endAtIndex = [s sampleCount];	// Ensure the end of play can't exceed the sound data
     }
-    if (dt == 0.0) {  // play now!
+    if (playT <= clientNowTime) {  // play now!
         SndPerformance *nowPerformance;
         if (endAtIndex >= 0) {
             nowPerformance = [SndPerformance performanceOfSnd: s 
@@ -158,7 +196,6 @@
         return nowPerformance;
     }		
     else {            // play later!
-        double playT = [self streamTime] + dt;
         int i;
         int numToBePlayed;
         int insertIndex;
