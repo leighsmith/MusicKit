@@ -38,14 +38,13 @@
     result = [oPanel runModalForDirectory: nil file: nil types: fileTypes];
     if (result == NSOKButton) {
         int i, count;
-        filesToPlay = [oPanel filenames];
-        [filesToPlay retain];
+        [filesToPlay release];
+        filesToPlay = [[oPanel filenames] retain];
         count = [filesToPlay count];
-        for (i=0; i<count; i++) {
-            [soundFileNameTextBox setStringValue: [filesToPlay objectAtIndex:i]];
-            [playButton setEnabled: YES];
-        }
-    }   
+        [playButton setEnabled: YES];
+    }
+    [soundFileNameTextBox setDataSource:self];
+    [soundFileNameTextBox deselectAll:self];
 }
 
 - (void) playSound: (id) sender
@@ -99,6 +98,19 @@
 - (void) hadError: (Snd *) sound
 {
     NSLog(@"had error playing sound named %@\n", [sound name]);
+}
+
+/******************** DELEGATE MESSAGES FOR NSTableView ******************/
+- (id)tableView:(NSTableView *)aTableView
+    objectValueForTableColumn:(NSTableColumn *)aTableColumn
+    row:(int)rowIndex
+{	
+    return [filesToPlay objectAtIndex:rowIndex];
+}
+
+- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+    return [filesToPlay count];
 }
 
 @end
