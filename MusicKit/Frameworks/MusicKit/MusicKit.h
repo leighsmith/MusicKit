@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2000/06/13 17:46:24  leigh
+  Added SMF magic number definition
+
   Revision 1.7  2000/06/09 03:18:06  leigh
   Replaced objc.h with Foundation.h
 
@@ -67,7 +70,8 @@ extern "Objective-C" {
   * scorefile (".playscore" file extension). It is used for type checking and 
   * byte ordering information.
   */
-#define MK_SCOREMAGIC ((int)0x2e706c61)
+#define MK_SCOREMAGIC ((int)0x2e706c61)  // ".pla"
+#define MK_MIDIMAGIC  ((int)1297377380)  // "MThd"
 
 /* Music Kit classes. */
 #import "ArielQP.h"
