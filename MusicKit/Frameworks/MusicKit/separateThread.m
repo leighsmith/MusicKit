@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.9  2000/01/27 19:17:58  leigh
+  Now using NSPort replacing C Mach port API, disabled the ErrorStream disabling (since NSLog is thread-safe)
+
   Revision 1.8  2000/01/24 22:00:49  leigh
   Manipulating MKToAppPort via the NSPort class
 
@@ -395,54 +398,52 @@ static int portInfoCount = 0;
 
 */
 
-void _MKAddPort(port_name_t aPort,
-                /*DPSPortProc aHandler,*/ id handlerObj,
+void _MKAddPort(NSPort *aPort,
+                id handlerObj,
 		unsigned max_msg_size, 
-		void *anArg,NSString *priority)
+		void *anArg,
+		NSString *priority)
 {
     kern_return_t ec;
     mkPortInfo *p = NULL;
-    NSPort * portObj = nil;
     int i;
     if (!allConductors)
         condInit();
     if (portInfoCount > 0) 
 	for (i = 0; i < portInfoCount; i++)
-	    if ([portInfos[i]->thePortObj machPort] == aPort) {
+	    if ([portInfos[i]->thePortObj isEqual: aPort]) {
 		p = portInfos[i];
 		break;
 	    }
     if (!p) {
 	/* OK to add port here, even if we're in performance -- see above */
 	if (portInfoCount == 0)
-	    _MK_MALLOC(portInfos,mkPortInfo *,portInfoCount = 1);
+	    _MK_MALLOC(portInfos, mkPortInfo *, portInfoCount = 1);
 	else 
-            _MK_REALLOC(portInfos,mkPortInfo *,++portInfoCount);
-	_MK_MALLOC(p,mkPortInfo,1);
+            _MK_REALLOC(portInfos, mkPortInfo *, ++portInfoCount);
+	_MK_MALLOC(p, mkPortInfo, 1);
 	portInfos[portInfoCount-1] = p;
-        portObj = [[NSPort alloc] initWithMachPort:aPort];
-        p->thePortObj = portObj; /* sb */
-        p->theHandlerObj = handlerObj; /*sb: not retaining -- expect it to stay around! */
-        [p->thePortObj setDelegate:handlerObj]; /* sb */
+        p->thePortObj = aPort;
+        p->theHandlerObj = handlerObj; /* not retaining -- expect it to stay around! */
+        [p->thePortObj setDelegate:handlerObj];
 	p->msg_size = max_msg_size;
 	p->thePriority = [priority copy];      /* Not supported yet (or ever) */
     }
     else {
-        portObj = p->thePortObj;
+        aPort = p->thePortObj;
     }
     p->separateThread = separateThread;
-//#warning DPSConversion: 'addPort:forMode:' used to be DPSAddPort(aPort, aHandler, max_msg_size, anArg, priority).  aPort should be retained to avoid loss through deallocation, the functionality of aHandler should be implemented by a delegate of the NSPort in response to 'handleMachMessage:' or 'handlePortMessage:',  and priority should be converted to an NSRunLoop mode (NSDefaultRunLoopMode, NSModalPanelRunLoopMode, and NSEventTrackingRunLoopMode are predefined).
 
-    if (!separateThread) 
-        [[NSRunLoop currentRunLoop] addPort:portObj forMode:NSDefaultRunLoopMode];
+    if (!separateThread)
+        [[NSRunLoop currentRunLoop] addPort: aPort forMode: NSDefaultRunLoopMode];
     else {
-	ec = port_set_add(task_self(),conductorPortSet,aPort);
+	ec = port_set_add(task_self(), conductorPortSet, [aPort machPort]);
 	if (ec != KERN_SUCCESS)
 	    _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"_MKAddPort");
     }
 }
 
-void _MKRemovePort(port_name_t aPort)
+void _MKRemovePort(NSPort *aPort)
 {
     kern_return_t ec;
     int i;
@@ -450,15 +451,14 @@ void _MKRemovePort(port_name_t aPort)
       condInit();
     /* OK to remove port, even if in performance -- see above. */
     for (i = 0; i < portInfoCount; i++) {
-      if ([portInfos[i]->thePortObj machPort] == aPort) {
+      if ([portInfos[i]->thePortObj isEqual: aPort]) {
 	  if (!portInfos[i]->separateThread) {
-//#warning DPSConversion: 'removePort:forMode:' used to be DPSRemovePort(aPort).  aPort should be retained to avoid loss through deallocation, and <mode> should be the mode for which the port was added.
-              [[NSRunLoop currentRunLoop] removePort:portInfos[i]->thePortObj forMode:NSDefaultRunLoopMode];
+              [[NSRunLoop currentRunLoop] removePort: portInfos[i]->thePortObj forMode: NSDefaultRunLoopMode];
               [portInfos[i]->thePortObj invalidate];
               [portInfos[i]->thePortObj autorelease];
 	  }
           else {
-	      ec = port_set_remove(task_self(),aPort);
+	      ec = port_set_remove(task_self(), [aPort machPort]);
 	      if (ec != KERN_SUCCESS)
 		  _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"_MKRemovePort");
 	  }
@@ -786,7 +786,7 @@ void _MKSetConductorThreadMaxStress(unsigned int val)
 
     lockIt();                /* Must be the first thing in this function */
     musicKitThread = [NSThread currentThread];
-    _MKDisableErrorStream(); /* See note above */
+    // _MKDisableErrorStream(); /* See note above */
     emptyAppToMKPort(); /* See comment above */
     setPriority();
     threadStress = 0;
@@ -814,7 +814,7 @@ void _MKSetConductorThreadMaxStress(unsigned int val)
 	}
 	msg.header.msg_size = MSG_SIZE_MAX;
 	msg.header.msg_local_port = conductorPortSet;
-	_MKEnableErrorStream(); /* See note below */
+	// _MKEnableErrorStream(); /* See note below */
         if (MKIsTraced(MK_TRACECONDUCTOR))
 	  NSLog(@"timeToWait %lf, timeout %d, yield %d, threadStress %d\n", timeToWait, timeout, yield, threadStress);
 	if (timeout != 0) 
@@ -838,7 +838,7 @@ void _MKSetConductorThreadMaxStress(unsigned int val)
 	   If the desire is to reposition the thread, this will be
 	   accomplished by the setting of timedEntry to the new 
 	   time. */
-	_MKDisableErrorStream(); /* See note below */
+	// _MKDisableErrorStream(); /* See note below */
 	if (ret == RCV_TIMED_OUT) {
 	    /* The following 2 lines added Sep6,90 by daj. They are necessary
 	       because things could change between the time we return from the
@@ -868,6 +868,7 @@ void _MKSetConductorThreadMaxStress(unsigned int val)
 	    }
 	}
     }
+    _MKEnableErrorStream();
     if (MKIsTraced(MK_TRACECONDUCTOR))
       NSLog(@"Exited the inPerformance loop\n");
     emptyAppToMKPort();  // empty again, so the next time round it is fast to empty
