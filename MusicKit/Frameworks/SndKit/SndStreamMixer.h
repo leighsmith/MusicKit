@@ -37,84 +37,88 @@
     double                 lastNowTime;
 }
 /*!
-    @method   sndStreamMixer
-    @abstract   Factory method
-    @discussion
-    @result     A freshly initialized and autoreleased SndStreamMixer object
+  @method     sndStreamMixer
+  @abstract   Factory method
+  @discussion
+  @result     A freshly initialized and autoreleased SndStreamMixer object
 */
 + sndStreamMixer;
 /*!
-    @method   init
-    @abstract   Initializer method
-    @discussion
-    @result     self.
+  @method     init
+  @abstract   Initializer method
+  @discussion
+  @result     self.
 */
 - init;
 /*!
-    @method   dealloc
-    @abstract   Destructor method
-    @discussion
+  @method     dealloc
+  @abstract   Destructor method
+  @discussion
 */
 - (void) dealloc;
 
 - (NSString*) description;
 
 /*!
-    @method   processInBuffer:outBuffer:nowTime:
-    @abstract
-    @discussion
-    @param      inB
-    @param      outB
-    @param      t
-    @result     self.
+  @method     processInBuffer:outBuffer:nowTime:
+  @abstract
+  @discussion
+  @param      inB
+  @param      outB
+  @param      t
+  @result     self.
 */
 - processInBuffer: (SndAudioBuffer*) inB
         outBuffer: (SndAudioBuffer*) outB
           nowTime: (double) t;
 /*!
-    @method   removeClient:
-    @abstract
-    @discussion
-    @param      client
-    @result     TRUE if client was successfully removed
+  @method     removeClient:
+  @abstract
+  @discussion
+  @param      client
+  @result     TRUE if client was successfully removed
 */
 - (BOOL) removeClient: (SndStreamClient*) client;
 /*!
-    @method   addClient:
-    @abstract
-    @discussion
-    @param      client
-    @result 
+  @method   addClient:
+  @abstract
+  @discussion
+  @param      client
+  @result 
 */
 - (int) addClient: (SndStreamClient*) client;
 /*!
-    @method managerIsShuttingDown
-    @abstract
-    @discussion
-    @result self
+  @method managerIsShuttingDown
+  @abstract
+  @discussion
+  @result self
 */
 - managerIsShuttingDown;
 /*!
-    @method clientCount
-    @abstract
-    @discussion
-    @result     Number of stream clients currently connected to the mixer
+  @method     clientCount
+  @abstract
+  @discussion
+  @result     Number of stream clients currently connected to the mixer
 */
 - (int) clientCount;
 /*!
-    @method   audioProcessorChain
-    @abstract   Accessor
-    @discussion
-    @result     Reference to the data member audioprocessorChain
+  @method     audioProcessorChain
+  @abstract   Accessor
+  @discussion
+  @result     Reference to the data member audioprocessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
 /*!
-    @method resetTime:
-    @abstract Resets the mixer's sense of time, and pro
-    @param originTimeInSeconds
+  @method     resetTime:
+  @abstract   Resets the mixer's sense of time, and pro
+  @param      originTimeInSeconds
 */
 - (void) resetTime: (double) originTimeInSeconds;
-
+/*!
+  @method     resetTime:
+  @abstract   Resets the mixer's sense of time, and pro
+  @param      originTimeInSeconds
+*/
 - (SndStreamClient*) clientAtIndex: (int) ndx;
 
 @end
