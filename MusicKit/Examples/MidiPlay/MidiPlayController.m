@@ -1,6 +1,5 @@
-#import "MyApp.h"
-
-/* MidiPlay is an example of an interactive Music Kit performance.
+/* $Id$
+   MidiPlay is an example of an interactive Music Kit performance.
    Therefore, the Conductor is clocked. The Conductor is also set to not 
    'finishWhenEmpty' to ensure the performance will continue, whether or 
    not the Conductor has any objective-c messages to send, 
@@ -13,7 +12,7 @@
    Beware that using very small delta times can cause some unpredictability. 
    You can cause your performance to be more predictable at the expense of 
    greater latency by increasing the delta time. You may also want to 
-   experiment with untimed mode (see Orchestra.h), which can give better 
+   experiment with untimed mode (see MKOrchestra.h), which can give better 
    response, but at the expense of decreased predictability. 
 
    MIDI pitch bend data is thinned out by sending it through a subclass of
@@ -23,45 +22,39 @@
    are not optimized for real time applications such as this one.
 */
 
-@implementation MyApp
-
+//#import <MKSynthPatches/SynthPatches.h>
+#import <objc/NXStringTable.h>
+#import <AppKit/NSPanel.h>
+#import "MidiPlayController.h"
 #import "MidiFilter.h"
 
-#import <appkit/Application.h>
-#import <musickit/musickit.h>
-#import <musickit/synthpatches/synthpatches.h>
-#import <objc/NXStringTable.h>
 #define STRINGVAL(_x) [stringTable valueForStringKey:_x]
 
-static void handleMKErrors(char *msg)
+@implementation MidiPlayController
+
+static void handleMKErrors(NSString *msg)
 {
-    if ([Conductor inPerformance]) /* Don't disturb performance. */
+    if ([MKConductor inPerformance]) /* Don't disturb performance. */
 	return;
-    else if (!NXRunAlertPanel("MidiPlay",msg,"OK","Quit",NULL,NULL))
-	[NXApp terminate:NXApp];
+    else if (!NSRunAlertPanel(@"MidiPlay",msg,@"OK",@"Quit",NULL,NULL))
+	[NSApp terminate:NSApp];
 }
 
 #define VOICES 5
 
-- showInfoPanel:sender
-{
-    [self loadNibSection:"Info.nib" owner:self];
-    [infoPanel orderFront:sender];
-    return self;
-}
+static MKOrchestra *orch = nil;
 
-static id orch = nil;
-
-- go:sender
+- (IBAction) go:sender
 {
-    id synthIns,aNote;
-    id myMidiFilter;
+    MKSynthInstrument *synthIns;
+    MKNote *aNote;
+    MidiFilter *myMidiFilter;
 
     /* We're already running */
-    if ([Conductor inPerformance]) 
-	return nil;
+    if ([MKConductor inPerformance]) 
+	return;
     
-    [Conductor setThreadPriority:1.0];    /* Boost priority of performance. 
+    [MKConductor setThreadPriority:1.0];    /* Boost priority of performance. 
 					     If you run as root, this will
 					     also change your thread policy
 					     to use non-degrading priorities. */
@@ -70,10 +63,10 @@ static id orch = nil;
     MKSetErrorProc(handleMKErrors);      
 
     /* Make a Midi object to get events from serial port A. */ 
-    midiIn = [Midi new];
+    midiIn = [MKMidi midi];
 
     /* Make a SynthInstrument to do voice (SynthPatch) management. */
-    synthIns = [[SynthInstrument alloc] init];
+    synthIns = [[MKSynthInstrument alloc] init];
 
     /* Connect Midi to the SynthInstrument by way of a note filter. */
     myMidiFilter = [[MidiFilter alloc] init];
@@ -83,7 +76,7 @@ static id orch = nil;
 
     /* Create the Orchestra, if it doesn't exist yet,
 	which manages DSP resources. */
-    orch = [Orchestra new];
+    orch = [MKOrchestra new];
 
     /* Set some variables for all Orchestras. */
     MKSetDeltaT(0.01); /* See comment above. */
@@ -94,24 +87,20 @@ static id orch = nil;
 
     /* You must first open the Orchestra before allocating SynthPatches */
     while (![orch open]) {               
-	if (NXRunAlertPanel("MidiPlay",
-			    STRINGVAL("DSPUnavailable"),
-			    STRINGVAL("Quit"),
-			    STRINGVAL("TryAgain"),
-			    NULL) == NX_ALERTDEFAULT)
-	    [self terminate:sender];
+	if (NSRunAlertPanel(@"MidiPlay", @"DSP Unavailable", @"Quit", @"Try Again", nil) == NSAlertDefaultReturn)
+	    [NSApp terminate:NSApp];
     }
 
     /* Specify the SynthPatch to use. Here we use Pluck. */
-    [synthIns setSynthPatchClass:[Pluck class]];
+    // [synthIns setSynthPatchClass:[Pluck class]]; //disabled by LMS for now until MKSynthPatches work
 
     /* Specify manual allocation mode and number of simultaneous notes */ 
     [synthIns setSynthPatchCount:VOICES];
 
-    [Conductor setFinishWhenEmpty:NO];    /* Just wait until terminate */
+    [MKConductor setFinishWhenEmpty:NO];    /* Just wait until terminate */
 
     /* Next we set a few default parameters. */
-    aNote = [[Note alloc] init];      
+    aNote = [[MKNote alloc] init];      
     [aNote setNoteType:MK_noteUpdate];
 
     /* Set pitch bend to be plus or minus 1 semi tone. */
@@ -132,17 +121,16 @@ static id orch = nil;
 
     [orch run];
     [midiIn run];
-    [Conductor startPerformance];
-    return self;
+    [MKConductor startPerformance];
+    return;
 }
 
-- terminate:sender
+- (void) applicationWillTerminate: (NSNotification *) aNotification
 {
-    [Conductor finishPerformance];
+    [MKConductor finishPerformance];
     [midiIn close];
     [orch close];
-    [super terminate:self];
-    return self;
+    return;
 }
 
 @end
