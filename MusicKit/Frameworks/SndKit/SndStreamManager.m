@@ -11,11 +11,11 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
-#import <MKPerformSndMIDI/PerformSound.h>
-#import "SndStreamManager.h"
+
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h" 
 #import "SndStreamMixer.h"
+#import "SndStreamManager.h"
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
@@ -29,7 +29,7 @@ static SndStreamManager *sm = nil;
 
 + (void) initialize
 {
-    sm = [[SndStreamManager alloc] init];  // create our default
+    sm = [SndStreamManager new];  // create our default
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,10 +68,10 @@ static SndStreamManager *sm = nil;
 - (void) dealloc
 {
     if (active)
-        NSLog(@"SndStreamManager::dealloc: ERR: stream is still active!!!");
+        NSLog(@"SndStreamManager::dealloc - Error: stream is still active!!!");
 
     [mixer release];
-    NSLog(@"Manager version: MIXER");
+//    NSLog(@"Manager version: MIXER");
 
     [super dealloc];
 }
@@ -125,10 +125,10 @@ static SndStreamManager *sm = nil;
         nowTime = 0.0;
         SNDStreamStop();
         active = FALSE;
-        fprintf(stderr,"SND Manager: stream stopping\n");
+        NSLog(@"SndManager::stopStreaming -  stream stopping");
     }
     else
-        fprintf(stderr,"SND Manager: ERR: stopStreaming called when not streaming!\n");
+        NSLog(@"SndManager::stopStreaming - Error: stopStreaming called when not streaming!\n");
     return active;
 }
 
@@ -141,13 +141,12 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) addClient: (SndStreamClient*) client
 {
-    int  oldClientCount = [mixer clientCount];
-    int  clientCount = [mixer addClient: client];
+    int  oldClientCount    = [mixer clientCount];
+    int  clientCount       = [mixer addClient: client];
     BOOL alreadyRegistered = (oldClientCount == clientCount);
-    SndAudioBuffer *buff;
 
     if (!alreadyRegistered) {
-        buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
+        SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
         if (oldClientCount == 0) // There were no clients previously - better start the stream...
             [self startStreaming];
         [client welcomeClientWithBuffer: buff manager: self];
@@ -190,11 +189,11 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 }
 
 
-- (void) processStreamAtTime: (double) sampleCount
+- (void) processStreamAtTime: (double) sampleCount 
                        input: (SNDStreamBuffer*) cInB
                       output: (SNDStreamBuffer*) cOutB
 {
-    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
     // Eventually these must be made instance variables which you just wrap
     // around each of the C-side buffers, to avoid allocation costs.
     SndAudioBuffer *inB  = nil;
@@ -215,13 +214,11 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 ////////////////////////////////////////////////////////////////////////////////
 // Return the managers sense of time.
 ////////////////////////////////////////////////////////////////////////////////
+
 - (double) nowTime
 {
     return nowTime;
 }
-
-// mixer
-////////////////////////////////////////////////////////////////////////////////
 
 - (SndStreamMixer*) mixer
 {
@@ -232,5 +229,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 {
   return active;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 @end
