@@ -99,15 +99,15 @@ SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
   @param verbose YES returns the verbose description, NO returns the terse description.
   @result Returns an NSString description of the sample data format.
  */
-SNDKIT_API NSString *SndFormatName(int dataFormat, BOOL verbose);
+SNDKIT_API NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose);
 
 /*!
   @function SndFrameSize
   @abstract Returns the size of a sample frame, that is, the number of bytes comprising a sample times the number of channels.
-  @param sound A SndStructSound containing the Snd
+  @param sound A SndFormat describing the format of a sound.
   @result Returns the size of a sample frame in bytes.
  */
-SNDKIT_API int SndFrameSize(SndSoundStruct* sound);
+SNDKIT_API int SndFrameSize(SndFormat sound);
 
 /*!
   @function SndSampleWidth
@@ -115,7 +115,7 @@ SNDKIT_API int SndFrameSize(SndSoundStruct* sound);
   @param format The sample format enumerated integer. See ?  for a description.
   @result Returns the size of a sample in bytes.
  */
-SNDKIT_API int  SndSampleWidth(int format);
+SNDKIT_API int  SndSampleWidth(SndSampleFormat dataFormat);
 
 /*!
  @function SndBytesToFrames
@@ -127,7 +127,7 @@ SNDKIT_API int  SndSampleWidth(int format);
 */
 SNDKIT_API int  SndBytesToFrames(int byteCount,
                                   int channelCount,
-                                  int dataFormat);
+                                  SndSampleFormat dataFormat);
 
 /*!
 @function SndFramesToBytes
@@ -137,7 +137,7 @@ SNDKIT_API int  SndBytesToFrames(int byteCount,
  @param dataFormat
  @result The size of the sample data in bytes.
  */
-SNDKIT_API long  SndFramesToBytes(long sampleCount, int channelCount, int dataFormat);
+SNDKIT_API long  SndFramesToBytes(long sampleCount, int channelCount, SndSampleFormat dataFormat);
 
 /*!
   @function SndFormatOfSNDStreamBuffer
@@ -203,23 +203,6 @@ SNDKIT_API void   *SndGetDataAddresses(int sample,
 SNDKIT_API int SndFrameCount(const SndSoundStruct *sound);
 
 /*!
-@function SndGetDataPointer
- @abstract    Gets data address and number of samples in SndSoundStruct
- @discussion  <B>This function is deprecated and ripe for removal, use it only in the process of abandoning SndSoundStructs!</B>
-              SndGetDataPointer is only useful for non-fragmented sounds.
- @param sound A SndStructSound containing the Snd
- @param ptr   returns the char* pointer to the audio data
- @param size  returns the number of samples (divide by number of channels
-              to get number of channel-independent frames)
- @param width returns the number of bytes per sample
- @result
- */
-SNDKIT_API int SndGetDataPointer(const SndSoundStruct *sound,
-                                  char **ptr,
-                                   int *size, 
-                                   int *width);
-
-/*!
 @function SndFree
  @abstract Frees the sound contained in the structure sound
  @param sound A SndStructSound containing the Snd
@@ -240,110 +223,10 @@ SNDKIT_API int SndFree(SndSoundStruct *sound);
  */
 SNDKIT_API int SndAlloc(SndSoundStruct **sound,
                                    int dataSize,
-                                   int dataFormat,
+                                   SndSampleFormat dataFormat,
                                    int samplingRate,
                                    int channelCount,
                                    int infoSize);
-
-/*!
-@function SndCompactSamples
- @abstract To come
- @discussion
-  There's a wee bit of a problem when compacting sounds. That is the info
-  string. When a sound isn't fragmented, the size of the info string is held
-  in "dataLocation" by virtue of the fact that the info will always
-  directly precede the dataLocation. When a sound is fragmented though,
-  dataLocation is taken over for use as a pointer to the list of fragments.
-  What NeXTSTEP does is to then set the dataSize of the main SNDSoundStruct
-  to 8192 -- a page of VM. Therefore, there is no longer any explicit
-  record of how long the info string was. When the sound is compacted, bytes
-  seem to be read off the main SNDSoundStruct until a NULL is reached, and
-  that is assumed to be the end of the info string.
-  Therefore I am doing things differently. In a fragmented sound, dataSize
-  will be the length of the SndSoundStruct INCLUDING the info string, and
-  adjusted to the upper 4-byte boundary.
- 
- @param toSound
- @param fromSound
- @result
- */
-SNDKIT_API int SndCompactSamples(SndSoundStruct **toSound,
-                                 SndSoundStruct *fromSound);
-
-/*!
-@function SndCopySound
- @abstract To come 
- @param toSound
- @param fromSound
- @result
- */
-SNDKIT_API int SndCopySound(SndSoundStruct **toSound,
-                      const SndSoundStruct *fromSound);
-
-/*!
-@function SndCopySamples
- @abstract To come 
- @param toSound
- @param fromSound
- @param startSample
- @param sampleCount
- @result
- */
-SNDKIT_API int SndCopySamples(SndSoundStruct **toSound,
-                              SndSoundStruct *fromSound,
-                                         int startSample,
-                                         int sampleCount);
-
-/*!
-@function SndInsertSamples
- @abstract To come 
- @param toSound
- @param fromSound
- @param startSample
- @result
- */
-SNDKIT_API int SndInsertSamples(SndSoundStruct *toSound,
-                          const SndSoundStruct *fromSound, 
-                                           int startSample);
-
-/*!
-@function _SndCopyFrag
- @abstract To come 
- @param fromSoundFrag
- @result
- */
-SNDKIT_API SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
-
-
-/*!
-@function _SndCopyFragBytes
- @abstract To come
- @discussion
-  _SndCopyFragBytes Does the same as _SndCopyFrag, but used for `partial' frags
-  that occur whenyou insert or delete data from a SndStruct.
-  If byteCount == -1, uses all data from startByte to end of frag.
-  Does not make copy of fragged sound. Info string should therefore be only 4 bytes,
-  but this takes account of longer info strings if they exist.
- @param fromSoundFrag
- @param startByte
- @param byteCount
- @result
- */
-SNDKIT_API SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag,
-                                                         int startByte,
-                                                         int byteCount);
-
-/*!
-@function SndDeleteSamples
- @abstract To come 
- @param sound
- @param startSample
- @param sampleCount
- @result
- */
-SNDKIT_API int SndDeleteSamples(SndSoundStruct *sound,
-                                            int startSample,
-                                            int sampleCount);
 
 /*!
   @function SndFileExtensions
@@ -402,7 +285,7 @@ SNDKIT_API int SndSwapBigEndianSoundToHost(void *dest,
                                   void *src,
                                    int sampleCount,
                                    int channelCount,
-                                   int dataFormat);
+                                   SndSampleFormat dataFormat);
 
 /*!
   @function SndSwapHostToBigEndianSound
@@ -422,4 +305,4 @@ SNDKIT_API int SndSwapHostToBigEndianSound(void *dest,
                                   void *src,
                                    int sampleCount,
                                    int channelCount,
-                                   int dataFormat);
+                                   SndSampleFormat dataFormat);
