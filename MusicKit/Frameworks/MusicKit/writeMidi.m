@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/06/09 03:29:46  leigh
+  Typed aList to reduce warnings
+
   Revision 1.5  2000/05/06 00:54:33  leigh
   Parenthetised to remove warnings
 
@@ -174,7 +177,7 @@ id _MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
 {
     id map = ptr->_map[chan-1]; 
     int noteTag;
-    id aList = [[NSMutableArray alloc] init];
+    NSMutableArray *aList = [[NSMutableArray alloc] init];
     id aNote;
     midiOutNode *value;
     NXHashState state;
