@@ -13,7 +13,7 @@ this document refers to. Change accordingly to match the source
 and binary distributions. Likewise if the distribution web site changes.
 -->
 
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity mkvers "5.4">
@@ -416,7 +416,7 @@ Documentation
 	<listitem>
 	  <para>
 The file 
-<ulink url="&mkweb;/ChangeLog">
+<ulink url="&mkurl;/ChangeLog">
 <filename>
 Documentation/ChangeLog
 </filename>
@@ -978,7 +978,7 @@ for regression testing.
 	<title>Supporting Libraries</title>
 	<para>
 The following libraries need to be compiled and installed to compile
-the MK source. These may be installable using <ulink url="http://www.sourceforge.net/projects/fink">fink</fink>:
+the MK source. These may be installable using <ulink url="http://www.sourceforge.net/projects/fink">fink</ulink>:
 </para>
 	<variablelist>
 	  <varlistentry id=sox>
@@ -1014,7 +1014,7 @@ Newer versions than &lamevertuple; will probably just work.
 	  </varlistentry>
 	  <varlistentry id=libshout>
 	    <term>
-            <ulink url="&icesdownload;/ices-&icesvertuple;.tar.gz">ices-&libshoutvertuple;.tar.gz</ulink>. 
+            <ulink url="&icesdownload;/ices-&icesvertuple;.tar.gz">ices-&icesvertuple;.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
@@ -1028,30 +1028,18 @@ capability to stream <acronym>MP3</acronym> encoded audio to a
 <para>
 This version requires a 
 <ulink url="&mkurl;/libshout.patch">patch</ulink> to be applied to compile on
-<productname>MacOS X</productname>. Apply it using the commands
-<example>
-<userinput>
+<productname>MacOS X</productname>. Apply it using the commands:
+
+<screen>
 cd <replaceable>directory above ices-&icesvertuple;</replaceable>
-</userinput>
-<userinput>
 patch -p1 < libshout.patch
-</userinput>
-<userinput>
 cd ices-&icesvertuple;/libshout
-</userinput
-<userinput>
 autoconf
-</userinput>
-<userinput>
 ./configure --without-python --disable-dependency-tracking
-</userinput>
-<userinput>
 make
-</userinput>
-<userinput>
 sudo make install
-</userinput>
-</example>
+</screen>
+
 </para>
 <!-- End of patch for ices-0.2.2 -->
 <para>
