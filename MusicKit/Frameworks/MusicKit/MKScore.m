@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2000/11/21 19:34:27  leigh
+  *** empty log message ***
+
   Revision 1.20  2000/06/09 18:05:59  leigh
   Added braces to reduce finicky compiler warnings
 
@@ -170,10 +173,10 @@ Modification history:
 }
 
 -releaseNotes
-    /* Frees the notes contained in the parts. Does not freeParts
-       nor does it free the receiver. Implemented as 
+    /* Releases the notes contained in the parts. Does not releaseParts
+       nor does it release the receiver. Implemented as 
        [parts makeObjectsPerformSelector:@selector(releaseNotes)];
-       Also frees the receivers info.
+       Also releases the receivers info note.
        */
 {
     [parts makeObjectsPerformSelector:@selector(releaseNotes)];
@@ -183,52 +186,44 @@ Modification history:
 }
 
 -releaseParts
-    /* frees contained parts and their notes. Does not free the
-       receiver. Use -free to free, all at once,
-       parts, receiver and notes. Does not free Score's info. */
+    /* Releases contained parts and their notes. Does not release the
+       receiver. Use -release to release, all at once,
+       parts, receiver and notes. Does not free MKScore's info note. */
 {
     [parts makeObjectsPerformSelector:@selector(_unsetScore)];
-    [parts removeAllObjects];          /* Frees Parts. */
-//    [parts removeAllObjects]; //sb: why was this done twice?
+    // [parts removeAllObjects];          // LMS redundant
+    [parts release];
+    parts = nil;
     return self;
 }
 
 -releasePartsOnly
-    /* Frees contained Parts, but not their notes. It is illegal
+// LMS this is highly suspect since we now are concernedwith retain counts, not actual freeing.
+    /* Releases contained MKParts, but not their notes. It is illegal
        to free a part which is performing or which has a PartSegment which
        is performing. Implemented as 
-       [parts makeObjectsPerformSelector:@selector(freeSelfOnly)];
+       [parts makeObjectsPerformSelector:@selector(releaseSelfOnly)];
        Returns self. */
 {
+    NSLog(@"Highly suspect [MKScore -releasePartsOnly] method called!\n");
     [parts makeObjectsPerformSelector:@selector(_unsetScore)];
-    [parts makeObjectsPerformSelector:@selector(freeSelfOnly)];
+    [parts makeObjectsPerformSelector:@selector(releaseSelfOnly)];
     [parts removeAllObjects];
     return self;
 }
 
--releaseSelfOnly
-    /* Frees receiver. Does not free contained Parts nor their notes.  
-       Does not free info.
-    */
-{
-    [parts makeObjectsPerformSelector:@selector(_unsetScore)];
-    [parts release];
-//    [super release];
-    return nil; //sb: nil to correspond to old -free return value.
-}
-
 - (void)dealloc
-  /* Frees receiver, parts and Notes, including info. */
+  /* Frees receiver, parts and MKNotes, including info note. */
 {
     [self releaseParts];
     [info release];
-    [parts release];
+    info = nil;
     [super dealloc];
 }
 
 - (void)removeAllObjects
-  /* TYPE: Modifying; Removes the receiver's Parts.
-   * Removes the receiver's Parts but doesn't free them.
+  /* TYPE: Modifying; Removes the receiver's MKParts.
+   * Removes the receiver's MKParts.
    * Returns the receiver.
    */
 {
@@ -1212,9 +1207,10 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
        first removing aPart from any other score of which it is a member. */
 {
     if ((!aPart) || ([aPart score] == self) || ![aPart isKindOfClass:[MKPart class]])
-      return nil;
+        return nil;
     [aPart _setScore:self];
-    if (![parts containsObject:aPart]) [parts addObject:aPart];
+    if (![parts containsObject:aPart])
+        [parts addObject:aPart];
     return self;
 }
 
@@ -1554,17 +1550,6 @@ static BOOL isUnarchiving = NO;
     [aPart release];
     return aPart; /* sb: I have checked, and it's ok to return "reference" here rather than retained object */
 }
-
-#if 0
--_elements
-  /* Same as parts. (needed by Scorefile parser)
-     It is a method rather than a C function to hide from the parser
-     the differences between Score and ScorefilePerformer.
-     */
-{
-    return [self parts];
-}
-#endif
 
 @end
 
