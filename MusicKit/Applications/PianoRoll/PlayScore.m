@@ -99,7 +99,7 @@ static void handleMKError(NSString *msg)
 	    continue;
 	}		
 	className = [partInfo parAsStringNoCopy:MK_synthPatch];
-        synthPatchClass = [MKSynthPatch findSynthPatchClass:className];
+        synthPatchClass = [MKSynthPatch findPatchClass:className];
         
 	if (!synthPatchClass) {         /* Class not loaded in program? */ 
 	    if (!NSRunAlertPanel(@"ScorePlayer", 
