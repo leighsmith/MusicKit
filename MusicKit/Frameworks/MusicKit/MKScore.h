@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2000/05/26 21:03:19  leigh
+  Added combineNotes to do the combination over all MKParts
+
   Revision 1.8  2000/04/26 01:20:43  leigh
   Corrected readScorefileStream to take a NSData instead of NSMutableData instance
 
@@ -258,6 +261,9 @@
    receiver's Parts.  The Parts themselves
    aren't copied. It is the sender's repsonsibility to free the List. 
    */
+
+- combineNotes;
+    /* combine notes into noteDurs for all MKParts */
 
 - copyWithZone:(NSZone *)zone; 
  /* 

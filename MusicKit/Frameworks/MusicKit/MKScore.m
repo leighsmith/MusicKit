@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2000/05/26 21:03:19  leigh
+  Added combineNotes to do the combination over all MKParts
+
   Revision 1.17  2000/05/06 02:41:32  leigh
   putSysExcl allocates a mutable char array to operate on, since _MKGetSysExByte writes to the string pointer
 
@@ -789,7 +792,6 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
                     timeShift: timeShift];
     success = _MKOpenFileStreamForWriting(aFileName, [MKScore midifileExtension], stream, YES);
 
-    // [stream release]; // this should be ok to do, but somehow isn't - indicative of a bigger leak elsewhere.
     if (!success) {
         _MKErrorf(MK_cantCloseFileErr, aFileName);
         return nil;
@@ -1434,6 +1436,16 @@ readScorefile(MKScore *self,
 - (MKNote *) infoNote
 {
     return info;
+}
+
+- combineNotes
+  /* combine notes into noteDurs for all MKParts */
+{
+    unsigned n = [parts count], i;
+    for (i = 0; i < n; i++)
+        [(MKPart *) [parts objectAtIndex:i] combineNotes];
+
+    return self;
 }
 
 
