@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.11  2002/01/29 16:16:30  sbrandon
+  plugged leak in copyWithZone (not releasing copies)
+
   Revision 1.10  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -278,17 +281,20 @@
    * those in the receiver.
    */
 {
-    MKNoteReceiver *el;
+    MKNoteReceiver *el,*el_copy;
     int noteReceiverIndex;
+    int count;
 
-    /* sb: the following suggested by Stone porting guide */
     MKInstrument *newObj = [MKInstrument allocWithZone:[self zone]];
     newObj->_noteSeen = NO;
-    newObj->noteReceivers = [[NSMutableArray arrayWithCapacity:[noteReceivers count]] retain];
+    newObj->noteReceivers = [[NSMutableArray alloc] initWithCapacity:[noteReceivers count]];
     
-    for(noteReceiverIndex = 0; noteReceiverIndex < [noteReceivers count]; noteReceiverIndex++) {
-      el = [noteReceivers objectAtIndex: noteReceiverIndex]; 
-      [newObj addNoteReceiver:[el copy]];
+    count = [noteReceivers count];
+    for (noteReceiverIndex = 0; noteReceiverIndex < count; noteReceiverIndex++) {
+      el = [noteReceivers objectAtIndex: noteReceiverIndex];
+      el_copy = [el copy];
+      [newObj addNoteReceiver:el_copy];
+      [el_copy release]; /* since we held retain from the -copy */
     }
     return newObj;
 }
@@ -320,7 +326,6 @@
 
 - (id)initWithCoder:(NSCoder *)aDecoder
   /* You never send this message directly.  
-     Should be invoked via NXReadObject(). 
      See write:. */
 {
     if ([aDecoder versionForClassName: @"MKInstrument"] == VERSION2) 
