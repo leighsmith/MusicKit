@@ -156,8 +156,8 @@
 //                 outputBuffer: (SndAudioBuffer*) outB
 ////////////////////////////////////////////////////////////////////////////////
 
-- processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                 outputBuffer: (SndAudioBuffer*) outB
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
+                        outputBuffer: (SndAudioBuffer*) outB
 {
   [lock lock];
 
@@ -182,13 +182,12 @@
         if ((++writePos) >= length) writePos = 0;
         if ((++readPos)  >= length) readPos  = 0;
       }
-  }
-  else
-    printf("SndAudioProcessorDelay::processreplacing: ERR: Buffers have different formats\n");
-      
+      [lock unlock];
+      return TRUE;
+    }
   [lock unlock];
-
-  return self;
+  NSLog(@"SndAudioProcessorDelay::processreplacing: ERR: Buffers have different formats\n");
+  return FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
