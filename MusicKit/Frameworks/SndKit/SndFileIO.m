@@ -414,11 +414,12 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
 #if DEBUG_MESSAGES
     NSLog(@"Output file: writing info comment \"%s\"\n", [info cString]);
 #endif
-    if(sf_set_string(sfp, SF_STR_COMMENT, [info cString]) != 0) {
-	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
-	    NSLog(@"%s\n", sf_strerror(sfp));
-	}
-	return SND_ERR_CANNOT_WRITE;	
+    error = sf_set_string(sfp, SF_STR_COMMENT, [info cString]);
+    // if saving comments are not supported for this file format, just skip it silently
+    if(error != 0) {
+	NSLog(@"Error writing info comment \"%s\": %s\n", [info cString], sf_error_number(error));
+	// TODO libsndfile does not allow testing whether strings are supported or not, so we have to skip over a potential hard error.
+	// return SND_ERR_CANNOT_WRITE;	
     }
     
     // Writing the whole thing out assumes the sound is compacted.
