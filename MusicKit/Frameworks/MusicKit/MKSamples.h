@@ -116,6 +116,8 @@ See also:  MKWaveTable, MKPartials
     int curLoc;
     /*! @var amplitude Amplitude scaling of soundfile in floating point */
     double amplitude;
+    /*! @var panBearing Panning between stereo sounds, expressed as a bearing in degrees from centre. */
+    double panBearing;
     /*! @var startSampleLoc Starting sample to be processed */
     unsigned int startSampleLoc;
     /*! @var lastSampleLoc Ending sample to be processed, defining the portion of sound to be used. */
@@ -272,21 +274,33 @@ See also:  MKWaveTable, MKPartials
 
 /*!
   @method setCurrentSample:
-  @abstract assigns the current sample to perform processing at.
+  @abstract Assigns the current sample to perform processing at.
  */
 - (void) setCurrentSample: (unsigned int) sampleNum;
 
 /*!
   @method amplitude
-  @abstract returns the amplitude scaling.
+  @abstract Returns the amplitude scaling.
  */
 - (double) amplitude;
 
 /*!
   @method setAmplitude:
-  @abstract assigns an amplitude scaling. 
+  @abstract Assigns an amplitude scaling. 
  */
 - (void) setAmplitude: (double) amp;
+
+/*!
+  @method setPanBearing:
+  @abstract Assigns the panning in a stereo field.
+ */
+- (void) setPanBearing: (double) newBearing;
+
+/*!
+  @method panBearing:
+  @abstract Returns the panning in a stereo field.
+ */
+- (double) panBearing;
 
 /*!
   @method audioProcessorChain

@@ -319,6 +319,16 @@ id MKGetSamplesClass(void)
     amplitude = newAmp;
 }
 
+- (void) setPanBearing: (double) newBearing
+{
+    panBearing = newBearing;    
+}
+
+- (double) panBearing
+{
+    return panBearing;
+}
+
 - (SndAudioProcessorChain *) audioProcessorChain
 {
     return [[audioProcessorChain retain] autorelease];
@@ -478,8 +488,8 @@ of it.
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ sound %@, file %@, processor chain %@\nCurrently at %d of (%u,%u) amp: %lf\n", 
-	[super description], sound, soundfile, audioProcessorChain, curLoc, startSampleLoc, lastSampleLoc, amplitude];
+    return [NSString stringWithFormat: @"%@ sound %@, file %@, processor chain %@\nCurrently at %d of (%u,%u) amp: %lf pan: %lf\n", 
+	[super description], sound, soundfile, audioProcessorChain, curLoc, startSampleLoc, lastSampleLoc, amplitude, panBearing];
 }
 
 @end
