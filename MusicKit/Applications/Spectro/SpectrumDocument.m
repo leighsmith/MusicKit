@@ -11,11 +11,8 @@
 
 #import <AppKit/AppKit.h>
 #import <string.h>
-#import <objc/NXStringTable.h>
 #import <Foundation/NSUserDefaults.h>
 #import <math.h>
-#import <AppKit/psopsOpenStep.h>
-#import <AppKit/psopsNeXT.h>
 #import <stdlib.h>
 #import <Foundation/NSByteOrder.h>
 #import <SndKit/Snd.h>
@@ -117,7 +114,7 @@
 - (void)setDelegate:(id)anObject
 {
         delegate = anObject;
-        [[NSApp delegate] setDocument:delegate];
+        [(SoundController *)[NSApp delegate] setDocument:delegate];
 }
 
 - delegate
@@ -843,7 +840,7 @@
 - (void)windowDidBecomeMain:(NSNotification *)notification
 {
     [spectrumWindow makeFirstResponder:mySpectrumView];
-    [[NSApp delegate] setDocument:delegate];
+    [(SoundController *)[NSApp delegate] setDocument:delegate];
 }
 
 - (void)windowDidMiniaturize:(NSNotification *)notification
