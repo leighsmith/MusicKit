@@ -106,7 +106,9 @@ static SndStreamManager *sm = nil;
 
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING
     if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
-	    printf("looks like we're running in a run loop\n");
+#if SNDSTREAMMANAGER_DEBUG
+	    fprintf(stderr,"Run loop detected - delegate messaging enabled\n");
+#endif
         delegateMessageArray = [[NSMutableArray alloc] init];
         managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
         managerSendPort      = (NSPort *)[NSPort port]; 
@@ -552,7 +554,6 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 - (BOOL)   isActive        { return active;  }
 - (double) samplingRate    { return format.samplingRate; }
 - (SndSoundStruct*) format { return &format; }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // resetTime:
