@@ -54,7 +54,10 @@
 - (int) readSoundfile:(NSString *)filename startFrame: (int) startFrame frameCount: (int) frameCount;
 - (int) readSoundfile: (NSString*) filename;
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) playRegion;
-- (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion;
+- (long) fillAudioBuffer: (SndAudioBuffer *) buff
+	        toLength: (long) fillLength
+     samplesStartingFrom: (long) readFromSndSample;
+
 - (NSString*) filename;
 
 - requestNextBufferWithRange: (NSRange) range;
