@@ -1,7 +1,35 @@
-/* libst.c - portable sound tools library
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//     MuLaw and ALaw functions taken from
+//     libst.c - portable sound tools library more commonly known as Sox.
+//
+//  Original Author:
+//    Craig Reese: IDA/Supercomputing Research Center
+//
+//
+//  Copyright accompanying libst.h - include file for portable sound tools library
+//
+//  Copyright (C) 1989 by Jef Poskanzer.
+//
+//  Permission to use, copy, modify, and distribute this software and its
+//  documentation for any purpose and without fee is hereby granted, provided
+//  that the above copyright notice appear in all copies and that both that
+//  copyright notice and this permission notice appear in supporting
+//  documentation.  This software is provided "as is" without express or
+//  implied warranty.
+//
+//  Portions Copyright (c) 1999, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-#include "_Sndlibst.h"
+#include "SndMuLaw.h"
 
 #ifndef FAST_ULAW_CONVERSION
 
@@ -31,10 +59,8 @@
 #define uCLIP 32635
 #define ACLIP 31744
 
-unsigned char
-st_linear_to_ulaw( sample )
-int sample;
-    {
+unsigned char SndLinearToMuLaw(short sample)
+{
     static int exp_lut[256] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
                                4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
                                5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
@@ -69,7 +95,7 @@ int sample;
 #endif
 
     return ulawbyte;
-    }
+}
 
 /*
 ** This routine converts from ulaw to 16 bit linear.
@@ -87,10 +113,8 @@ int sample;
 ** Output: signed 16 bit linear sample
 */
 
-int
-st_ulaw_to_linear( ulawbyte )
-unsigned char ulawbyte;
-    {
+short SndMuLawToLinear(unsigned char ulawbyte)
+{
     static int exp_lut[8] = { 0, 132, 396, 924, 1980, 4092, 8316, 16764 };
     int sign, exponent, mantissa, sample;
 
@@ -2206,10 +2230,8 @@ int ulaw_exp_table[256] = {
 
 #define ACLIP 31744
 
-unsigned char
-st_linear_to_Alaw( sample )
-int sample;
-    {
+unsigned char SndLinearToALaw(short sample)
+{
     static int exp_lut[128] = {1,1,2,2,3,3,3,3,
                                4,4,4,4,4,4,4,4,
                                5,5,5,5,5,5,5,5,
@@ -2247,12 +2269,10 @@ int sample;
     Alawbyte ^= (sign ^ 0x55);
 
     return Alawbyte;
-    }
+}
 
-int
-st_Alaw_to_linear( Alawbyte )
-unsigned char Alawbyte;
-    {
+short SndALawToLinear(unsigned char Alawbyte)
+{
     static int exp_lut[8] = { 0, 264, 528, 1056, 2112, 4224, 8448, 16896 };
     int sign, exponent, mantissa, sample;
 
@@ -2270,7 +2290,7 @@ unsigned char Alawbyte;
     if ( sign == 0 ) sample = -sample;
 
     return sample;
-    }
+}
 
 #else 
 
