@@ -77,6 +77,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2003/12/31 00:35:18  leighsmith
+  Now imports the entire Foundation Kit
+
   Revision 1.10  2001/09/07 18:35:48  leighsmith
   Formatted table and correctly formatted code example
 
@@ -257,7 +260,7 @@ See also: MKConductor, MKNoteSender
 #ifndef __MK_Performer_H___
 #define __MK_Performer_H___
 
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 #import "MKNoteSender.h"
 #import "MKConductor.h"
 
