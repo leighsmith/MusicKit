@@ -19,6 +19,7 @@
     id driverPopup;
     double currentTempo;
     NSDictionary *keymap;
+    NSMutableDictionary *samplesIndexedByTag;
 }
 
 - init;

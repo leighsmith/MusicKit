@@ -68,20 +68,24 @@
 // Determine the sample filename to be assigned to this note using the keymap
 - assignSampleFromKeymapOf: (MKNote *) aNote
 {
-   NSString *chanAndKeyNum = [NSString stringWithFormat: KEYMAPFORMAT, [aNote parAsInt: MK_midiChan], [aNote parAsInt: MK_keyNum]];
-   NSString *filename = [keymap objectForKey: chanAndKeyNum];
-   NSString *sampleFilePath;
+    NSString *chanAndKeyNum = [NSString stringWithFormat: KEYMAPFORMAT, [aNote parAsInt: MK_midiChan], [aNote parAsInt: MK_keyNum]];
+    NSString *filename = [keymap objectForKey: chanAndKeyNum];
 
-   // NSLog(@"Testing  %@\n", chanAndKeyNum);
-   // NSLog([aNote description]);
-   if(filename != nil) {
-       sampleFilePath = [keymapPathName stringByDeletingLastPathComponent];
-       soundPathName = [[sampleFilePath stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
-       NSLog(@"Assigning %@ to %@\n", soundPathName, chanAndKeyNum);
-       [aNote setPar:MK_filename toString: soundPathName];
-       return self;
-   }
-   return nil;
+    NSLog(@"Testing  %@\n", chanAndKeyNum);
+    NSLog([aNote description]);
+    if(filename == nil) { // if we can't find the filename using the keymap, we may be able to find it using the noteTag
+        filename = [samplesIndexedByTag objectForKey: [NSNumber numberWithInt: [aNote noteTag]]];
+    }
+    if(filename != nil) {
+        NSString *sampleFilePath = [keymapPathName stringByDeletingLastPathComponent];
+        soundPathName = [[sampleFilePath stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
+        NSLog(@"Assigning %@ to %@\n", soundPathName, chanAndKeyNum);
+        [aNote setPar:MK_filename toString: soundPathName];
+        [samplesIndexedByTag setObject: filename forKey: [NSNumber numberWithInt: [aNote noteTag]]];
+        [sampleInstrument prepareSoundWithNote: aNote]; // optimisation to preload the samples.
+        return self;
+    }
+    return nil;
 }
 
 // Enables a part to be played with the MKSampleInstrument.
@@ -147,7 +151,7 @@
    [aNote setDur: duration];  // at least as long as the drums sound and then 3 seconds more
    [aNote setPar:MK_velocity toInt: 127];
    [aNote setPar:MK_keyNum toInt: 40]; // drone keyNum
-   [aNote setPar:MK_filename toString: @"/Local/Users/leigh/Library/Lobe/Samples/Amanda/Amanda16.snd"];
+   [aNote setPar:MK_filename toString: @"Filename"];
    NSLog([aNote description]);
    [dronePart addNote:aNote];
    [aNote release];
@@ -177,17 +181,15 @@
     [aScorePerformer setScore: outputScore];
     [self connectPartsToChannels: aScorePerformer forInstrument: midiInstrument];
 
-
     [aScorePerformer activate];
     // [samplePartPerformer activate]; // don't play the samplePart just now.
 
     [MKConductor setDeltaT: 0.5];            // Run (MKConductor) at least half a second ahead of DSP
     [MKConductor setClocked: YES];           // The conductor needs to be clocked when using MIDI.
-    [(MKConductor *)[MKConductor defaultConductor] setTempo: currentTempo];    // we could also retrieve this from the file.
+    [[MKConductor defaultConductor] setTempo: currentTempo];    // we could also retrieve this from the file.
 
     NSLog(@"playing %@...\n", midiPathName);
 
-    // MKSetTrace(MK_TRACECONDUCTOR);
     endRequest = [MKConductor afterPerformanceSel:@selector(haveFinishedPlaying) to: self argCount: 0];
     [MKConductor useSeparateThread: YES];
     [midiInstrument openOutputOnly];         /* No need for MKMidi input. */
@@ -202,6 +204,7 @@
     to occur in a separate thread).  See the MKConductor documentation for details.
     In this case we will return immediately.
     */
+    [pauseButton setEnabled: YES];
 }
 
 - (void) stopPlaying
@@ -209,8 +212,11 @@
    [MKConductor lockPerformance];
    [midiInstrument allNotesOff];
    [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
+   [sampleInstrument stop];         // this doesn't seem right to have to stop each instrument separately,
+                                    // this should be the job of the Conductor.
    [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
    [MKConductor finishPerformance];
+   [pauseButton setEnabled: NO];    // we disable the pause button here.
    NSLog(@"finished\n");
 }
 
@@ -222,11 +228,9 @@
 
     if([sender state] == NSOnState) {
         [self startPlaying];
-        [pauseButton setEnabled: YES];
     }
     else {
         [self stopPlaying];
-        [pauseButton setEnabled: NO];
     }
 }
 
@@ -301,6 +305,7 @@
             }
             [keymapPathNameTextBox setStringValue: keymapPathName];
             [keymap retain];
+            samplesIndexedByTag = [[NSMutableDictionary dictionary] retain];
         }
     }   
 }
