@@ -34,7 +34,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import "SndFunctions.h"
 #import "_Sndlibst.h"
 #import "SndResample.h"
-#import <objc/zone.h>
 
 #ifdef USE_MACH_MEMORY_ALLOCATION
 #import <mach/mach_interface.h>
