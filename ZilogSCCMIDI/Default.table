@@ -1,0 +1,11 @@
+"Title" = "Music Kit Z8530 Serial MIDI driver";
+"Family" = "MIDI";
+"Class Names" = "Mididriver";
+"Driver Name" = "ZilogSCCMIDI";
+"Server Name" = "ZilogSCCMIDI";
+"Version" = "5.0";
+"Instance" = "0";
+"Pre-Load" = "PreLoad";
+"Post-Load" = "PostLoad";
+"Boot Driver" = "No";
+"Matching" = "ch-a";
