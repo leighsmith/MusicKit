@@ -28,14 +28,10 @@ a computer</para>
 <sect1 id="DesignPhilosopy">
 <title>Design Philosophy</title>
 
-<para>NeXT computers provide a sound recording and playback system
-with powerful tools to aid in analyzing and manipulating acoustical
-data.  Designed to satisfy the needs of the research scientist, this
-system is nevertheless extremely easy to use.</para>
-
-<para>At the heart of the NeXT sound facilities are the Objective-C
-language classes provided by the <productname>SndKit</productname>.
-The <productname>SndKit</productname> manages the details of operating
+<para>At the heart of the MusicKit Project sound facilities are the
+Objective-C language classes provided by the
+<productname>SndKit</productname>.  The
+<productname>SndKit</productname> manages the details of operating
 system communication, data access, and data buffering that are
 necessary for recording and playing sounds.</para>
 
@@ -53,12 +49,6 @@ or chopped into pieces and reassembled in a different order.  You can
 digitally splice and mix together any number of different sounds: A
 dog bark can be spliced into the middle of a doorbell; a clarinet tone
 can turn into a snore.</para>
-
-<para>The digital hardware for sound recording and playback is ideal
-for research fields such as speech recognition, speech synthesis, and
-data compression.  To ensure high-fidelity sound playback, NeXT
-computers use the same digital playback hardware found in commercial
-compact disc (CD) players.</para>
 
 </sect1>
 <sect1 id="SoundHardware">
@@ -145,7 +135,7 @@ the disk to the DAC.</para>
 <title>Basic Sound Concepts</title>
 
 <para>You don't need to know anything about sound or acoustics to use
-the NeXT sound facilities for simple recording and playback.  However,
+the MusicKit sound facilities for simple recording and playback.  However,
 to access and manipulate sound data intelligently, you should be
 familiar with a few basic terms and concepts.  This section presents a
 brief tutorial on the basic concepts of sound and its digital
@@ -344,33 +334,35 @@ storage while sacrificing some fidelity.</para>
 </sect3>
 </sect2>
 <sect2 id="SndSoundStruct">
-<title><structname>SndSoundStruct</structname>: How a NeXT Computer
-Represents Sound</title>
+<title><structname>SndSoundStruct</structname>: How Sound is Represented</title>
 
 <para>The <productname>SndKit</productname> defines the
 <structname>SndSoundStruct</structname> structure to represent sound.
 This structure defines the soundfile formats
 and the sound pasteboard type.  It's also used to describe sounds in
-Interface Builder.  In addition, each instance of the
+<application>Interface Builder</application>.  In addition, each instance of the
 <productname>SndKit</productname>'s <classname>Snd</classname> class
 encapsulates a <structname>SndSoundStruct</structname> and provides
 methods to access and modify its attributes.</para>
 
 <para>Basic sound operations, such as playing, recording, and
-cut-and-paste editing, are most easily performed by a <classname>Snd</classname> object.
-In many cases, the <productname>SndKit</productname> obviates the need
-for in-depth understanding of the <structname>SndSoundStruct</structname> architecture.  For
-example, if you simply want to incorporate sound effects into an
-application, or to provide a simple graphic sound editor (such as the
-one in the Mail application), you needn't be aware of the details of
-the <structname>SndSoundStruct</structname>.  However, if you want to closely examine or
-manipulate sound data you should be familiar with this
-structure.</para>
+cut-and-paste editing, are most easily performed by a
+<classname>Snd</classname> object.  In many cases, the
+<productname>SndKit</productname> obviates the need for in-depth
+understanding of the <structname>SndSoundStruct</structname>
+architecture.  For example, if you simply want to incorporate sound
+effects into an application, or to provide a simple graphic sound
+editor (such as the one in the <application>Mail</application>
+application), you needn't be aware of the details of the
+<structname>SndSoundStruct</structname>.  However, if you want to
+closely examine or manipulate sound data you should be familiar with
+this structure.</para>
 
-<para>The <structname>SndSoundStruct</structname> contains a header, information that describes
-the attributes of a sound, followed by the data (usually samples) that
-represents the sound.  The structure is defined (in <emphasis
-role="bold">sound/soundstruct.h</emphasis>) as:</para>
+<para>The <structname>SndSoundStruct</structname> contains a header,
+information that describes the attributes of a sound, followed by the
+data (usually samples) that represents the sound.  The structure is
+defined (in <emphasis role="bold">SndKit/soundstruct.h</emphasis>)
+as:</para>
 
 <programlisting>
 typedef struct {
@@ -391,28 +383,29 @@ typedef struct {
 <title>magic</title>
 
 <para>magic is a magic number that's used to identify the structure as
-a <structname>SndSoundStruct</structname>.  Keep in mind that the structure also defines the
-soundfile and Mach-O sound segment formats, so the magic number is
+a <structname>SndSoundStruct</structname>.  Keep in mind that the
+structure also defines the soundfile format, so the magic number is
 also used to identify these entities as containing a sound.</para>
 
 </sect4>
 <sect4 id="dataLocation">
 <title>dataLocation</title>
 
-<para>It was mentioned above that the <structname>SndSoundStruct</structname> contains a header
-followed by sound data.  In reality, the structure
-<emphasis>only</emphasis> contains the header; the data itself is
-external to, although usually contiguous with, the structure.
-(Nonetheless, it's often useful to speak of the <structname>SndSoundStruct</structname> as the
-header and the data.)  <emphasis role="bold">dataLocation</emphasis>
-is used to point to the data.  Usually, this value is an offset (in
-bytes) from the beginning of the <structname>SndSoundStruct</structname> to the first byte of
-sound data.  The data, in this case, immediately follows the
-structure, so <emphasis role="bold">dataLocation</emphasis> can also
-be thought of as the size of the structure's header.  The other use of
-<emphasis role="bold">dataLocation</emphasis>, as an address that
-locates data that isn't contiguous with the structure, is described in
-<xref linkend="FormatCodes">, below.</para>
+<para>It was mentioned above that the
+<structname>SndSoundStruct</structname> contains a header followed by
+sound data.  In reality, the structure <emphasis>only</emphasis>
+contains the header; the data itself is external to, although usually
+contiguous with, the structure.  (Nonetheless, it's often useful to
+speak of the <structname>SndSoundStruct</structname> as the header and
+the data.)  <emphasis role="bold">dataLocation</emphasis> is used to
+point to the data.  Usually, this value is an offset (in bytes) from
+the beginning of the <structname>SndSoundStruct</structname> to the
+first byte of sound data.  The data, in this case, immediately follows
+the structure, so <emphasis role="bold">dataLocation</emphasis> can
+also be thought of as the size of the structure's header.  The other
+use of <emphasis role="bold">dataLocation</emphasis>, as an address
+that locates data that isn't contiguous with the structure, is
+described in <xref linkend="FormatCodes">, below.</para>
 
 </sect4>
 <sect4 id="dataSizeEtc">
@@ -1020,8 +1013,8 @@ on the <classname>NSControl</classname>, the action message is sent to
 the target object.  In the following example, the three methods are
 assigned as action messages to three different
 <classname>NSControl</classname> objects&horbar;in this case,
-<classname>NSButton</classname>s.  The same
-<classname>Snd</classname> object is assigned as the Buttons'
+<classname>NSButton</classname>s.  The same <classname>Snd</classname>
+object is assigned as the <classname>NSButton</classname>'s
 target:</para>
 
 <programlisting>
