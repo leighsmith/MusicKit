@@ -1,10 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    Private class.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  1999/11/07 05:10:45  leigh
+  Doco cleanup
+
   Revision 1.2  1999/07/29 01:26:01  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -32,7 +43,7 @@ extern int _MKGetSharedSynthReferenceCount(id sharedSynthKey);
 @interface _SharedSynthInfo : NSObject
 {
     id synthObject;           /* The value we're interested in finding. */
-    id theList;               /* List of values that match the keyObj. */
+    id theList;               /* Back pointer to the NSMutableArray of values that match the keyObj. */
     id theKeyObject;          /* Back pointer to key object. */
     MKOrchMemSegment segment; /* Which segment or MK_noSegment for wildcard. */
     int length;               /* Or 0 for wild card */
@@ -41,7 +52,5 @@ extern int _MKGetSharedSynthReferenceCount(id sharedSynthKey);
 }
 
 @end
-
-
 
 #endif
