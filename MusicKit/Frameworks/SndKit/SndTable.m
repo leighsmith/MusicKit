@@ -60,43 +60,40 @@ static SndTable* defaultSndTable = nil;
 // Does not name sound, or add to name table.
 ////////////////////////////////////////////////////////////////////////////////
 
-- soundNamed:(NSString *)aName
+- soundNamed: (NSString *) aName
 {
-  BOOL found;
-  Snd *newSound;
-  NSBundle *soundLocation;
-  NSString *path;
-  NSArray *libraryDirs;
-  int i;
-  id retSnd = [nameTable objectForKey:aName];
-  if (retSnd)
-    return [[retSnd retain] autorelease];
+    NSArray *libraryDirs = [NSArray arrayWithObject: @"."];
+    NSArray *sndFileExtensions = [Snd soundFileExtensions];
+    int directoryIndex;
+    id retSnd = [nameTable objectForKey: aName];
+    
+    if (retSnd)
+	return [[retSnd retain] autorelease];
 
-  path = [[NSBundle mainBundle] pathForResource:aName ofType: [Snd defaultFileExtension]];
-  found = (path != nil);
-  if (found) {
-    newSound = [[Snd alloc] initFromSoundfile:path];
-    if (newSound) {
-      return [newSound autorelease];
-    }
-  }
+    [libraryDirs arrayByAddingObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES)];
 
-  libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
-  for(i = 0; i < [libraryDirs count]; i++) {
-    path = [[[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: @"Sounds"] stringByAppendingPathComponent:path];
-    soundLocation = [[NSBundle alloc] initWithPath:path];
-    if (soundLocation) {
-      found = ((path = [soundLocation pathForResource:aName ofType: [Snd defaultFileExtension]]) != nil);
-      [soundLocation release];
-      if (found) {
-        newSound = [[Snd alloc] initFromSoundfile:path];
-        if (newSound) {
-          return [newSound autorelease];
-        }
-      }
+    for(directoryIndex = 0; directoryIndex < [libraryDirs count]; directoryIndex++) {
+	NSString *soundLibraryPath = [[libraryDirs objectAtIndex: directoryIndex] stringByAppendingPathComponent: @"Sounds"];
+	NSBundle *soundLibraryBundle = (directoryIndex == 0) ? [NSBundle mainBundle] : [NSBundle bundleWithPath: soundLibraryPath];
+	
+	if (soundLibraryBundle) {
+	    int extensionIndex;
+
+	    for(extensionIndex = 0; extensionIndex < [sndFileExtensions count]; extensionIndex++) {
+		NSString *sndFileExtension = [sndFileExtensions objectAtIndex: extensionIndex];
+		NSString *path = [soundLibraryBundle pathForResource: aName ofType: sndFileExtension];
+
+		if (path != nil) {
+		    Snd *newSound = [[Snd alloc] initFromSoundfile: path];
+		    
+		    if (newSound) {
+			return [newSound autorelease];
+		    }
+		}
+	    }
+	}
     }
-  }
-  return nil;
+    return nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
