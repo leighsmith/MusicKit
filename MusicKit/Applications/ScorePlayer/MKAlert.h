@@ -21,9 +21,9 @@
 + new;
 - init;
 
-- buttonPressed:sender;
+- (void)buttonPressed:sender;
 
-int mkRunAlertPanel(const char *title, const char *s, const char *first, const char *second, const char *third);
+int mkRunAlertPanel(NSString *title, NSString *s, NSString *first, NSString *second, NSString *third);
 
 @end
 
