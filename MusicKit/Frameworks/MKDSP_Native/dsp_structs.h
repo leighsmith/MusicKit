@@ -173,6 +173,6 @@ typedef enum _DSPSCITXReg {DSP_STXA=0,DSP_STXL=1,DSP_STXM=2,DSP_STXH=3
 
 #define DSP_STX DSP_STXL    
 
-#endif	_DSPSTRUCTS_
+#endif	/* _DSPSTRUCTS_ */
 
 #endif

@@ -353,6 +353,6 @@ extern DSPFix48 DSPMKTimeStamp0; /* Always {0,0} (tick-synchronizer) */
 #define DSP_TIMEOUT_FOREVER 0
 #define _DSP_MSG_READER_TIMEOUT 30
 
-#endif DSP_H
+#endif /* DSP_H */
 
 #endif
