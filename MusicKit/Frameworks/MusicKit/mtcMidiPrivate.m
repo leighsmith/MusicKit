@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/11/26 00:23:27  leigh
+  Removed redundant functions midiAlarm and midiException
+
   Revision 1.8  2000/11/13 23:16:25  leigh
   Integrated tvs structure into MKMidi ivars
 
@@ -75,30 +78,6 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 #warning "Incomplete implementation of multiple MTC conductors."
 #endif
 
-// LMS these will no longer be called due to the change to handleMachMessage. We should incorporate their functionality
-// into the handler.
-#if 0
-static void midiAlarm(msg_header_t *msg,void *self)
-   /* Called by driver when midi alarm occurs. */
-{
-    int r;
-    MIDIReplyFunctions recvStruct = {0,my_alarm_reply,0,0};
-    r = MIDIHandleReply(msg,&recvStruct); 
-    if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"midiAlarm");
-} 
-
-static void midiException(msg_header_t *msg,void *self)
-   /* Called by driver when midi exception occurs. */
-{
-    int r;
-    MIDIReplyFunctions recvStruct = {0,0,my_exception_reply,0};
-    r = MIDIHandleReply(msg,&recvStruct); 
-    if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"midiException");
-} 
-#endif
-
 @implementation MKMidi(Private)
 
 +(BOOL)_disableThreadChange
@@ -147,7 +126,7 @@ static void midiException(msg_header_t *msg,void *self)
     if (deviceStatus == MK_devRunning) {
 	if (!self->alarmPending || 
 	    self->intAlarmTime != newIntTime) {
-	    MKMDRequestAlarm(devicePort, ownerPort, [self->alarmPort machPort], newIntTime);
+	    MKMDRequestAlarm(devicePort, ownerPort, alarmPort, newIntTime);
 	    self->alarmPending = YES;
 	}
     }
