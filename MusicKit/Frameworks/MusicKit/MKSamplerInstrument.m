@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/04/17 22:51:54  leigh
+  Cleaned out some redundant stuff, added debugging tests
+
   Revision 1.6  2000/04/12 00:36:28  leigh
   Hacked to use either SndKit or NSSound, depending on which is more complete on each platform, added uglySamplerTimingHack, hopefully this is only a momentary lapse of reason
 
@@ -43,8 +46,6 @@
 #import "MKSamplerInstrument.h"
 
 #define UNASSIGNED_SAMPLE_KEYNUM (-1)
-
-static int activeSoundCount = 0;
 
 // This should be zero or I should rot in purgatory for my sins.
 // This can typically be expected to be so dependent on operating system and platform that it will be
@@ -86,12 +87,6 @@ static float uglySamplerTimingHack = 0.0;
 - init
 {
     [super init];
-    if (!soundTable) {
-        soundTable = [NSMutableDictionary dictionaryWithCapacity: 32];
-        [soundTable retain];
-    }
-    else
-        [soundTable removeAllObjects];
     uglySamplerTimingHack = [[NSUserDefaults standardUserDefaults] floatForKey: @"MKUglySamplerTimingHack"];
     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 
@@ -102,32 +97,14 @@ static float uglySamplerTimingHack = 0.0;
     return self;
 }
 
-- releaseSounds
-  /* Free all the sound structs */
-{
-    [MKConductor lockPerformance];
-    [soundTable removeAllObjects];
-    [MKConductor unlockPerformance];
-    return self;
-}
-
 - (void) dealloc
   /*
   * Free the sound structs, the filename strings, the hash tables, and the
   * window.
   */
 {
-    [self releaseSounds];
-    [soundTable release];
     [playingNotes release];
     [conductor release];
-}
-
-- clearAll:sender
-{
-//  [soundOutDevice abortStreams:nil];
-    [self releaseSounds];
-    return self;
 }
 
 // Prepare by preparing the PlayingSound instance
@@ -198,7 +175,7 @@ static float uglySamplerTimingHack = 0.0;
     WorkingSoundClass *existingSound;
     NSString *filePath;
 
-    //NSLog(@"stopping sample note %@\n", aNote);
+    NSLog(@"stopping sample note %@\n", aNote);
 
     // only stop playing those notes which are samples.
     if(![aNote isParPresent: MK_filename]) {
@@ -214,7 +191,8 @@ static float uglySamplerTimingHack = 0.0;
     // locking playback
     // NSLog(@"sound is playing %d\n", [existingSound isPlaying]);
     [playingNotes removeObject: aNote];
-    [existingSound stop]; // just do it.
+    // For some reason, times are skewed and this ends playback prematurely. I dunno.
+    [existingSound stop];
     return self;
 }
 
@@ -240,16 +218,12 @@ static float uglySamplerTimingHack = 0.0;
 - performerDidActivate:sender
 {
     NSLog(@"Got playingSample delegate activation notice\n");
-    activeVoices++;
-    activeSoundCount++;
     return self;
 }
 
 - performerDidDeactivate:sender
 {
     NSLog(@"Got playingSample delegate deactivation notice\n");
-    if (activeVoices > 0) activeVoices--;
-    if (activeSoundCount > 0) activeSoundCount--;
     return self;
 }
 
@@ -331,7 +305,6 @@ static float uglySamplerTimingHack = 0.0;
 
     [recorder stopRecording];
     newSound = [recorder soundStruct];
-    oldSound = [soundTable insertKey:(const void *)recordKey value:(void *)newSound];
     [self clearAtKey:recordKey];
     if (!playingSamples[recordKey]) {
     playingSamples[recordKey] = [[WorkingSoundClass alloc] initWithSound:newSound];
@@ -384,7 +357,8 @@ static float uglySamplerTimingHack = 0.0;
 #endif
 
 #define TIMEDSENDTO(receiver,selector,dt,arg) \
-  { if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,arg]; \
+  { /* NSLog(@"dt=%lf\n",dt); */ \
+    if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,arg]; \
     else objc_msgSend(receiver,selector,arg); \
   }
 
@@ -485,7 +459,7 @@ static float uglySamplerTimingHack = 0.0;
   /* Archive the instrument to a typed stream. */
 {
   [super encodeWithCoder:coder];
-  [coder encodeValuesOfObjCTypes:"ii@iccci", &keyNum, &testKey, &soundTable,
+  [coder encodeValuesOfObjCTypes:"iiiccci", &keyNum, &testKey, 
 	 &voiceCount, &diatonic, &tieRepeats, &preloadingEnabled,
 	 &recordModeController];
 }
@@ -495,7 +469,7 @@ static float uglySamplerTimingHack = 0.0;
 {
   [super initWithCoder: decoder];
   if ([decoder versionForClassName:@"SamplerInstrument"] == 1) {
-    [decoder decodeValuesOfObjCTypes:"ii@iccci", &keyNum, &testKey, &soundTable,
+    [decoder decodeValuesOfObjCTypes:"iiiccci", &keyNum, &testKey,
 	     &voiceCount, &diatonic, &tieRepeats, &preloadingEnabled, &recordModeController];
   }
   /* Initialize certain non-archived data */
