@@ -1,4 +1,4 @@
-/*	SoundController.m
+/*	$Id$
  *	Originally from SoundEditor3.0.
  *	Modified for Spectro3 by Gary Scavone.
  *	Last modified: 4/94
@@ -19,7 +19,7 @@ static NSString *getSavePath(NSString *defaultPath, NSView *accessory)
     BOOL		ok=NO;
 
     savePanel = [NSSavePanel savePanel];
-    [savePanel setRequiredFileType:@"snd"];
+    [savePanel setAllowedFileTypes: [Snd soundFileExtensions]];
     /* sbrandon, 23/11/2001 added extra retain to accessory view as it was
        being released unexpectedly. I would have thought that because it's in
        the nib file it would never be released fully, but looks like it was.
@@ -42,7 +42,7 @@ NSString *colorToString(NSColor *color)
 {
     float r, g, b;
     NSString *ret;
-    [[color colorUsingColorSpaceName:NSCalibratedRGBColorSpace] getRed:&r green:&g blue:&b alpha:NULL];
+    [[color colorUsingColorSpaceName: NSCalibratedRGBColorSpace] getRed: &r green: &g blue: &b alpha: NULL];
     ret = [[NSString stringWithFormat:@"%f:%f:%f:",r,g,b] retain];
     return ret;
 }
@@ -258,10 +258,10 @@ NSColor *StringToColor(NSString *buffer)
 
 - (int)application:sender openFile:(NSString *)filename
 {
-	if (![[filename pathExtension] isEqualToString:@"snd"]) {
-	   fprintf(stderr,"SoundEditor: Attempt to open file type %s\n",[[filename pathExtension] cString]);
-	   return NO;
-	}
+    if (![[filename pathExtension] isEqualToString: [Snd defaultFileExtension]]) {
+        NSLog(@"Attempt to open file type %@\n", [filename pathExtension]);
+        return NO;
+    }
     [pathname release];
     pathname = [filename copy];
     return ([self openFile:pathname] != nil);
