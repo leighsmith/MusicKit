@@ -143,27 +143,27 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// fillAudioBuffer:toLength:samplesStartingFrom:
+// fillAudioBuffer:toLength:samplesInRange:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (long) fillAudioBuffer: (SndAudioBuffer *) anAudioBuffer
-	        toLength: (long) fillLength
-     samplesStartingFrom: (long) readFromSndSample
+		toLength: (long) fillLength
+          samplesInRange: (NSRange) sndReadingRange;
 {
     // TODO this is a kludge which assumes the region read from and copied to is the same number
     // of samples which isn't strictly true if there is resampling occuring.
-    // Anyway, this all should be replaced with insertIntoAudioBuffer:inRange:samplesStartingFrom:
-    NSRange playRegion = { readFromSndSample, fillLength };
+    // Anyway, this all should be replaced with insertIntoAudioBuffer:inFrameRange:samplesStartingFrom:
+    NSRange playRegion = { sndReadingRange.location, fillLength };
     
     [cacheLock lock];
 
     if (bImageInMemory) {
 	[super fillAudioBuffer: anAudioBuffer
 		      toLength: fillLength
-	   samplesStartingFrom: readFromSndSample];
+	        samplesInRange: sndReadingRange];
     }
     else {
-	long sampleCount = [self sampleCount];
+	long lengthInSampleFrames = [self lengthInSampleFrames];
 	int readLength = (4096*16);
 	int bufferMultiplier = ((playRegion.length + 4095)/4096);
 	int bufferSize;
@@ -202,14 +202,14 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 
 	    newLocation = cachedBufferRange.location + bufferSize - playRegion.length * 4;
 
-	    if (newLocation < sampleCount) {
+	    if (newLocation < lengthInSampleFrames) {
 		readAheadRange.location = newLocation;
 		readAheadRange.length   = bufferSize;
-		if (readAheadRange.location + readAheadRange.length > sampleCount)
-		    readAheadRange.length = sampleCount - readAheadRange.location;
+		if (readAheadRange.location + readAheadRange.length > lengthInSampleFrames)
+		    readAheadRange.length = lengthInSampleFrames - readAheadRange.location;
 		[self requestNextBufferWithRange: readAheadRange];
 #if SERVER_DEBUG
-		NSLog(@"Requesting (1) Buffer with range: [%i, %i] sndlength: %i",readAheadRange.location, readAheadRange.length,sampleCount);
+		NSLog(@"Requesting (1) Buffer with range: [%i, %i] sndlength: %i",readAheadRange.location, readAheadRange.length,lengthInSampleFrames);
 #endif
 	    }
 	    [readAheadLock unlock];
@@ -217,7 +217,7 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 
 	if (readAheadBuffer != nil &&
      subRangeIsInsideSuperRange (playRegion, readAheadRange) &&
-     playRegion.location + playRegion.length < sampleCount) {
+     playRegion.location + playRegion.length < lengthInSampleFrames) {
       // we have moved into the readAheadCache - swap the buffers and request the next...
 	    long newLocation = 0;
 
@@ -229,15 +229,15 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 	    readAheadBuffer = nil;
 
 	    newLocation = cachedBufferRange.location + bufferSize - playRegion.length * 4;
-	    if (newLocation < sampleCount) {
+	    if (newLocation < lengthInSampleFrames) {
 		readAheadRange.location = newLocation;
 		readAheadRange.length   = bufferSize;
-		if (readAheadRange.location + readAheadRange.length > sampleCount)
-		    readAheadRange.length = sampleCount - readAheadRange.location;
+		if (readAheadRange.location + readAheadRange.length > lengthInSampleFrames)
+		    readAheadRange.length = lengthInSampleFrames - readAheadRange.location;
 
 		[self requestNextBufferWithRange: readAheadRange];
 #if SERVER_DEBUG
-		NSLog(@"Requesting (2) Buffer with range: [%i, %i] sndLength: %i",readAheadRange.location, readAheadRange.length,sampleCount);
+		NSLog(@"Requesting (2) Buffer with range: [%i, %i] sndLength: %i",readAheadRange.location, readAheadRange.length,lengthInSampleFrames);
 		NSLog(@"Swapped in Buffer with range: [%i, %i]",cachedBufferRange.location, cachedBufferRange.length);
 #endif
 	    }
@@ -281,7 +281,7 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) playRegion
 {
   SndAudioBuffer *ab = [SndAudioBuffer new];
-  [self fillAudioBuffer: ab toLength: playRegion.length samplesStartingFrom: playRegion.location];
+  [self fillAudioBuffer: ab toLength: playRegion.length samplesInRange: playRegion];
   return [ab autorelease];
 }
 
@@ -395,11 +395,11 @@ static SndExptAudioBufferServer *defaultServer = nil;
   SndExpt *snd = [aJob snd];
   NSRange r = [aJob range];
   long requestedLength = r.length;
-  long sampleCount = [snd sampleCount];
+  long lengthInSampleFrames = [snd lengthInSampleFrames];
   SndAudioBuffer *aBuffer = nil;
 
-  if (r.location + r.length > [snd sampleCount])
-    r.length = sampleCount - r.location;
+  if (r.location + r.length > [snd lengthInSampleFrames])
+    r.length = lengthInSampleFrames - r.location;
     
   aBuffer = [SndExptAudioBufferServer readRange: [aJob range]
                               ofSoundFile: [snd filename]];

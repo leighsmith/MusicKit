@@ -56,7 +56,7 @@
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) playRegion;
 - (long) fillAudioBuffer: (SndAudioBuffer *) buff
 	        toLength: (long) fillLength
-     samplesStartingFrom: (long) readFromSndSample;
+          samplesInRange: (NSRange) sndSampleReadRange;
 
 - (NSString*) filename;
 
