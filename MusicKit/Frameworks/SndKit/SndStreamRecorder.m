@@ -156,6 +156,55 @@
 // setUpRecordFile:
 ////////////////////////////////////////////////////////////////////////////////
 
+unsigned char* convert2byteNative2LE(unsigned short* si)
+{
+    static unsigned char pch[2];
+    pch[0] = (*si & 0x00FF);
+    pch[1] = (*si & 0xFF00) >> 8;
+    return pch;
+}
+
+unsigned char* convert4byteNative2LE(unsigned long* li)
+{
+    static unsigned char pch[4];
+    pch[0] = (*li & 0x000000FF);
+    pch[1] = (*li & 0x0000FF00) >> 8;
+    pch[2] = (*li & 0x00FF0000) >> 16;
+    pch[3] = (*li & 0xFF000000) >> 24;
+    return pch;
+}
+
+void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLengthInBytes)
+{
+  unsigned long dw;
+  unsigned short w;
+  
+  fwrite("RIFF", 4, 1, f);  
+  dw = dataLengthInBytes + 38;
+  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // file length
+  fwrite("WAVE", 4, 1, f);  
+  fwrite("fmt ", 4, 1, f);  
+  dw = 18;
+  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // chunk length
+  w = 1;
+  fwrite(convert2byteNative2LE(&w),  2, 1, f); // file format 1 = linear wav
+  w = format->channelCount;
+  fwrite(convert2byteNative2LE(&w),  2, 1, f); // channels
+  dw = format->samplingRate;
+  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // chunk length
+  dw = format->samplingRate * format->channelCount * sizeof(short);
+  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // bytes per second
+  w = format->channelCount * sizeof(short);
+  fwrite(convert2byteNative2LE(&w),  2, 1, f); // frame size
+  w = 16;
+  fwrite(convert2byteNative2LE(&w),  2, 1, f); // bit resolution
+  w = 0;
+  fwrite(convert2byteNative2LE(&w),  2, 1, f); // extra bytes
+  fwrite("data", 4, 1, f);  
+  dw = dataLengthInBytes;                                       
+  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // data chunk length
+}
+
 - (BOOL) setUpRecordFile: (NSString*) filename
 {
   if ((recordFile = fopen([filename cString],"wb")) == NULL) 
@@ -171,11 +220,12 @@
       fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error: synthBuffer format is NULL.\n");
     
     else {
-      fwrite(format, sizeof(SndSoundStruct), 1, recordFile);
+      writeWavFormatHeader(format, recordFile, 0);
       if (recordFileName != nil)
         [recordFileName release];
         
       recordFileName = [[filename copy] retain];
+      
       return TRUE;
     }
   }
@@ -192,14 +242,8 @@
   // We have to seek back to the beginning of the recorded file to rewrite the
   // file header so that it contains the size of the recorded data, and the
   // file-stream format  
-  SndSoundStruct format;
   fseek(recordFile, 0, SEEK_SET);
-  memcpy (&format, [[self synthBuffer] format], sizeof(SndSoundStruct));
-  format.magic = SND_MAGIC;
-  format.dataLocation = sizeof(SndSoundStruct);
-  format.dataSize     = bytesRecorded;
-  format.dataFormat   = SND_FORMAT_LINEAR_16;
-  fwrite (&format, sizeof(SndSoundStruct), 1, recordFile);
+  writeWavFormatHeader([recordBuffer format], recordFile, bytesRecorded);
   fclose(recordFile);
   recordFile = NULL;
   
@@ -300,23 +344,24 @@
       if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
         float *f = (float*) recData; 
         int    i, samsToConvert = recBuffLengthInBytes / sizeof(float);
-        float  highest = 0;
 
         for (i = 0; i < samsToConvert; i++) {
-          conversionBuffer[i] = (short)(f[i] * 32767.0f);            
-          if (highest  < f[i])
-            highest = f[i];
+          char *p = (char*)(conversionBuffer+i); 
+          short s = (short)(f[i] * 32767.0f);
+          p[0] = (char) (s & 0x00FF);
+          p[1] = (char) ((s & 0xFF00) >> 8);
         }
               
-        fwrite(conversionBuffer, samsToConvert * sizeof(short), 1, recordFile);
-//        fprintf(stderr,"Writing to disk (sams: %i highest: %f)\n",samsToConvert, highest);
+        fwrite(conversionBuffer, samsToConvert*sizeof(short), 1, recordFile);
+        bytesRecorded += samsToConvert * sizeof(short);
       }
-      else
-       isRecording = FALSE;
-
+      else {
+        bytesRecorded += length;
+        isRecording = FALSE;
+      }
       position = 0;
-      bytesRecorded += remainder * sizeof(short);
     }        
+    
     if (remainder) {
       memcpy(recData, inputData + length, remainder);
       position += remainder;
