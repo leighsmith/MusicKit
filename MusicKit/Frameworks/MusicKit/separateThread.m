@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.6  1999/12/20 17:07:53  leigh
+  Removed faulty diagnostic message
+
   Revision 1.5  1999/11/14 21:30:16  leigh
   Corrected _MKErrorf arguments to be NSStrings
 
@@ -329,7 +332,7 @@ static BOOL separateThreadedAndInMusicKitThread(void)
 static void removeTimedEntry(int arg)
   /* Destroys the timed entry. Made to be compatable with dpsclient version */
 {
-    NSLog("removing timed entry\n");
+    // NSLog(@"removing timed entry\n");
     switch (arg) {
         case pauseThread:
             adjustTimedEntry(MK_ENDOFTIME);
