@@ -320,7 +320,10 @@ startPosition: (double) startPosition
 - (long) retrievePerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
 {
     long fillBufferToLength = buffLength;
-    long framesUntilEndOfLoop = loopEndIndex - playIndex + 1;
+    // long framesUntilEndOfLoop = loopEndIndex - playIndex + 1;
+    // Determine number of frames in the loop, checking for resampling shortening that number.
+    double stretchFactor = [bufferToFill samplingRate] / [snd samplingRate];
+    long framesUntilEndOfLoop = (loopEndIndex - playIndex + 1) * (stretchFactor < 1.0 ? stretchFactor : 1.0);
     BOOL atEndOfLoop = looping && (buffLength >= framesUntilEndOfLoop);
     // numOfSamplesFilled and numOfSamplesRead can differ if we resample in fillAudioBuffer.
     long numOfSamplesFilled = 0;
@@ -336,8 +339,8 @@ startPosition: (double) startPosition
     samplesToReadRange.length = looping ? framesUntilEndOfLoop : endAtIndex - playIndex;
 
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-    NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, buffer length = %d, fill buffer to length = %d\n",
-	    playIndex, endAtIndex, buffLength, fillBufferToLength);
+    NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
+	    playIndex, endAtIndex, buffLength, fillBufferToLength, framesUntilEndOfLoop);
 #endif
     
     // Negative or zero buffer length means the endAtIndex was moved before or to the current playIndex,
@@ -351,9 +354,16 @@ startPosition: (double) startPosition
 				       toLength: fillBufferToLength
 			         samplesInRange: samplesToReadRange];
 	numOfSamplesFilled = fillBufferToLength;
-	// NSLog(@"bufferToFill dataFormat before processing 2 %d, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
-	// [bufferToFill dataFormat], numOfSamplesFilled, numOfSamplesRead);
-
+	//NSLog(@"bufferToFill %@, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
+	//    bufferToFill, numOfSamplesFilled, numOfSamplesRead);
+#if 0
+	{
+	    long i;
+	    for (i = 0; i < numOfSamplesFilled; i++)
+		printf("%f\n", [bufferToFill sampleAtFrameIndex: i channel: 0]);
+	}
+#endif
+	
 	if(atEndOfLoop) {
 	    // If we are at the end of the loop, copy in zero or more (when the loop is small) loop regions 
 	    // then any remaining beginning of the loop.
