@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/02/03 19:12:23  leigh
+  Renamed for MKDSP framework
+
   Revision 1.2  1999/07/29 01:25:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -22,8 +25,7 @@ Modification history:
 #import "_musickit.h"
 #import "DSPSerialPortDevice.h"
 #import "MKOrchestra.h"
-#import <AppKit/NSPanel.h>
-#import <dsp/dsp_memory_map.h>
+#import <MKDSP/dsp_memory_map.h>
 
 #define EQU(_x,_y) ((((_x)-(_y))>0)?(((_x)-(_y))<.0001):(((_y)-(_x))<.0001))
 

@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/02/03 19:12:22  leigh
+  Renamed for MKDSP framework
+
   Revision 1.4  2000/01/27 19:01:47  leigh
   updated Mach port to NSPorts (even though the code is currently commented out
 
@@ -99,7 +102,7 @@ Modification history:
 
 #import <mach/message.h>
 #import <mach/mach_error.h>
-#import <dsp/dsp_memory_map.h>
+#import <MKDSP/dsp_memory_map.h>
 #import <Foundation/NSDate.h>
 #import "MKOrchestra.h" /*these 2 added by sb */
 

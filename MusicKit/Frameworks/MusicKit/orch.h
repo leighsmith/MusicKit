@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/02/03 19:12:23  leigh
+  Renamed for MKDSP framework
+
   Revision 1.2  1999/07/29 01:26:12  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -23,7 +26,7 @@ Modification history:
 #ifndef MK_ORCH_H
 #define MK_ORCH_H
 
-#import <dsp/dsp.h>             /* Contains DSPAddress, etc. */
+#import <MKDSP/dsp.h>             /* Contains DSPAddress, etc. */
 
 typedef enum _MKOrchMemSegment { /* Memory segments for Orchestra */
     /* Memory segments may be on or off chip unless otherwise indicated */

@@ -11,7 +11,6 @@ NAME = MusicKit
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
-LANGUAGE = English
 
 GLOBAL_RESOURCES = Localized.strings
 
@@ -95,7 +94,7 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
                   -F/Local/Library/Frameworks\
                   -F$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks
-FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
              -framework MKPerformSndMIDI -framework SndKit\
              -framework System
 PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\

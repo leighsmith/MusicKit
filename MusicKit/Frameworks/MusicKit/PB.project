@@ -62,8 +62,8 @@
         DOCUMENTATION = (); 
         FRAMEWORKS = (
             AppKit.framework, 
-            dsp.framework, 
             Foundation.framework, 
+            MKDSP.framework, 
             MKPerformSndMIDI.framework, 
             SndKit.framework, 
             System.framework
