@@ -17,6 +17,9 @@
 #Modification history:
 #
 #  $Log$
+#  Revision 1.3  2001/09/03 17:12:45  sbrandon
+#  put in extra compiler warnings
+#
 #  Revision 1.2  2001/07/18 12:49:38  sbrandon
 #  - renamed PerformSound.c to PerformSound.m and included as ObjC source file.
 #
@@ -49,6 +52,8 @@ MKPerformSndMIDI_RESOURCE_DIRS =
 # The framework libraries to link against
 #sb: not sure about this...
 #MKPerformSndMIDIBUNDLE_LIBS = 
+
+ADDITIONAL_CFLAGS += -g -Wall
 
 # The Bundle Objective-C source files to be compiled
 MKPerformSndMIDI_OBJC_FILES = PerformSound.m
