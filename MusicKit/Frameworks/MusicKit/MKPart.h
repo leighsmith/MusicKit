@@ -586,6 +586,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @method earliestNoteTime
   @abstract Returns the time of the earliest note in the part.
+  @discussion Returns 0.0 if there are no notes in the part.
   @result Returns a double being the time tag of the first note.
  */
 - (double) earliestNoteTime;
