@@ -46,6 +46,13 @@
 #ifndef __SNDAUDIOPROCESSORMP3ENCODER_H_
 #define __SNDAUDIOPROCESSORMP3ENCODER_H_
 
+enum {
+  mp3enc_kServerAddress  = 0,
+  mp3enc_kServerPort     = 1,
+  mp3enc_kServerPassword = 2,
+  mp3enc_kNumParams      = 3
+};
+
 @interface SndAudioProcessorMP3Encoder : SndAudioProcessor {
 /*! @var buffer_l Left audio channel data (pre-encoding)                      */
   float             *buffer_l;
@@ -153,6 +160,9 @@
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
                         outputBuffer: (SndAudioBuffer*) outB;
+
+- (NSString*) paramName: (int) i;
+- (id) paramObjectForIndex: (int) i;
                  
 @end
 

@@ -50,7 +50,7 @@
 
 - init
 {
-  [super initWithParamCount: 0 name: @"MP3Encoder"];
+  [super initWithParamCount: mp3enc_kNumParams name: @"MP3Encoder"];
   
   buffer_l             = NULL;
   buffer_r             = NULL;
@@ -249,6 +249,30 @@
   }
   return FALSE; // False because we haven't touched inB - signal that it is still 
                 // valid for next processor.
+}
+
+- (id) paramObjectForIndex: (int) i
+{
+  id obj;
+  switch (i) {
+    case mp3enc_kServerAddress:  obj = [NSString stringWithCString: conn.ip];                  break;
+    case mp3enc_kServerPort:     obj = [NSValue value: &conn.port withObjCType: @encode(int)]; break;
+    case mp3enc_kServerPassword: obj = [NSString stringWithCString: conn.password];            break;
+    default:
+      obj = [super paramObjectForIndex: i];
+  }
+  return obj;
+}
+
+- (NSString*) paramName: (int) i
+{
+  NSString * s;
+  switch (i) {
+    case mp3enc_kServerAddress:  s = @"ServerAddress";  break;
+    case mp3enc_kServerPort:     s = @"ServerPort";     break;
+    case mp3enc_kServerPassword: s = @"ServerPassword"; break;
+  }
+  return s;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
