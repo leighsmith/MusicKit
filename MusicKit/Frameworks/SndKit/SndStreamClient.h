@@ -89,6 +89,8 @@
 /*! @var       nowTime */
     double     clientNowTime;
     
+    NSString  *clientName;
+    
 @private
     BOOL       bDelegateRespondsToOutputBufferSkipSelector;
     BOOL       bDelegateRespondsToInputBufferSkipSelector;
@@ -387,6 +389,9 @@
 - (int) outputBufferCount;
 - (BOOL) setInputBufferCount: (int) n;
 - (BOOL) setOutputBufferCount: (int) n;
+
+- (NSString*) clientName;
+- setClientName: (NSString*) name;
 
 @end
 

@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.25  2001/08/27 23:49:07  skotmcdonald
+ * Slight change to the clientNowTime system - it is always computed per buffer as synth-head-buffers*buffer-duration+streamTime
+ *
  * Revision 1.24  2001/08/27 21:07:18  skotmcdonald
  * Added new playAtTimeInSeconds:withDurationInSeconds method to support sample-accurate stream placement with SndPlayer
  *
@@ -712,7 +715,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
 {
-  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
+//  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
     return [sndPlayer playSnd: self atTimeInSeconds: t withDurationInSeconds: d];  
 }
 

@@ -46,6 +46,7 @@
         playing     = [[NSMutableArray arrayWithCapacity: 10] retain];
     if (playingLock == nil)
         playingLock = [[NSLock new] retain];  // controls adding and removing sounds from the playing list.
+    [self setClientName: @"SndPlayer"];
     return self;
 }
 
@@ -126,7 +127,7 @@
 
 - (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt 
 {
-    fprintf(stderr,"PlaySnd: withTimeOffset: %f\n",dt);
+//    fprintf(stderr,"PlaySnd: withTimeOffset: %f\n",dt);
     return [self playSnd: s withTimeOffset: dt endAtIndex: -1];
 }
 
@@ -159,7 +160,7 @@
     if (d > 0)
         endIndex =  d * [s samplingRate];
  
-    NSLog(@"SndPlayer::play:atTimeInSeconds: %f", t);
+//    NSLog(@"SndPlayer::play:atTimeInSeconds: %f", t);
        
     return [self playSnd: s
          atTimeInSeconds: t 
@@ -171,7 +172,7 @@
              atTimeInSeconds: (double) playT
                   endAtIndex: (long) endAtIndex
 {
-    fprintf(stderr,"PlaySnd:atStreamTime: %f endAtIndex: %li    clientTime is: %f streamTime: %f\n", playT, endAtIndex, clientNowTime, [manager nowTime]);
+//    fprintf(stderr,"PlaySnd:atStreamTime: %f endAtIndex: %li    clientTime is: %f streamTime: %f\n", playT, endAtIndex, clientNowTime, [manager nowTime]);
     if(![self isActive]) {
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
@@ -350,12 +351,15 @@
 
             [performance setPlayIndex: startIndex + buffLength];
         }
+        
         // When at the end of sounds, signal the delegate and remove the performance.
+        
         if ([performance playIndex] >= endAtIndex) {
             [removalArray addObject: performance];
-            [[performance snd] _setStatus: SND_SoundStopped];
-            [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
-                          duringPerformance: performance];
+  // SKoT: Dangerous - what if we have multiple performances of a single sound? Comment out for now.       
+ //           [[performance snd] _setStatus: SND_SoundStopped];
+ //           [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
+ //                        duringPerformance: performance];
         }
     }
 
@@ -367,7 +371,7 @@
             // NSLog(@"SYNTH THREAD: Setting active false\n");
         }
     }
-    [playingLock unlock];
+    [playingLock unlock];    
 }
 
 @end

@@ -72,6 +72,9 @@
     clientCount = [streamClients count];
 
 //    [outB mixWithBuffer: inB];
+
+//    fprintf(stderr,"[Mixer] time: %f *********************\n",t);
+
     [outB zeroForeignBuffer];
     if (clientCount > 0) {
         for (i = 0; i < clientCount; i++) {
@@ -192,7 +195,6 @@
         }
     }
     [streamClientsLock unlock];
-  
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -43,8 +43,8 @@ enum {
 {
     [super init];
 
-    numOutputBuffers = 3;
-    numInputBuffers  = 3;
+    numOutputBuffers = 4;
+    numInputBuffers  = 4;
     
     if (pendingOutputBuffersLock == nil) {
       pendingOutputBuffersLock   = [[[NSConditionLock alloc] initWithCondition: SC_noData] retain];
@@ -72,11 +72,34 @@ enum {
     generatesOutput         = TRUE;
     processFinishedCallback = NULL;
     manager                 = nil;
+    clientName              = @"streamClient";
     
     bDelegateRespondsToOutputBufferSkipSelector = FALSE;
     bDelegateRespondsToInputBufferSkipSelector  = FALSE;
     
+    [processedOutputBuffersLock lock];
+    [processedOutputBuffersLock unlockWithCondition: SC_noData];
+    
     return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) clientName
+{
+  return clientName;
+}
+
+- setClientName: (NSString*) name
+{
+  if (clientName != nil)
+    [clientName release];
+  clientName = name;
+  if (clientName != nil)
+    [clientName retain];
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -259,8 +282,6 @@ enum {
               [pendingOutputBuffers addObject: [buff copy]];
             [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
             
-            [processedOutputBuffersLock lock];
-            [processedOutputBuffersLock unlockWithCondition: SC_noData];
         }
         
         [self prepareToStreamWithBuffer: buff];
@@ -301,7 +322,7 @@ enum {
       [processedOutputBuffersLock unlock];
           
 #if SNDSTREAMCLIENT_DEBUG            
-      fprintf(stderr,"Processed: %i Pending: %i \n",oc,[pendingOutputBuffers count]);
+      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [pendingOutputBuffers count]);
 #endif          
       if (oc > 0) {
         [pendingOutputBuffersLock lock];
@@ -318,7 +339,7 @@ enum {
       else if (bDelegateRespondsToOutputBufferSkipSelector)
         [delegate outputBufferSkipped: self];
       else {
-//            NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
+            NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?", clientName);
       }    
 //          NSLog(@"startprocessing: stage2");
     }
@@ -349,7 +370,7 @@ enum {
         else if (bDelegateRespondsToInputBufferSkipSelector)
           [delegate inputBufferSkipped: self];
         else {
-//              NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?");
+//              NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
         }
       }
     }
@@ -397,29 +418,35 @@ enum {
           [pendingInputBuffersLock unlockWithCondition: ([pendingInputBuffers count] > 0 ? SC_hasData : SC_noData)];
         }
 //      NSLog(@"SYNTH THREAD: going to processBuffers\n");
-
+                        
         [self processBuffers];
 
 //        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
         if (synthOutputBuffer != nil) {
           [processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
-        }
-        clientNowTime += [synthOutputBuffer duration];
-        
+        }        
         if (processFinishedCallback != NULL)
             processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
             
         if (generatesOutput) {
           [processedOutputBuffersLock lock];
           [processedOutputBuffers addObject: synthOutputBuffer];
+          clientNowTime = [self streamTime]  + [synthOutputBuffer duration] * [processedOutputBuffers count];
           [synthOutputBuffer release];    
           [processedOutputBuffersLock unlockWithCondition: SC_hasData];
         }
+        else
+          clientNowTime += [synthOutputBuffer duration];
+          
         if (needsInput) {
           [processedInputBuffersLock lock];
           [processedInputBuffers addObject: synthInputBuffer];
           [synthInputBuffer release];    
           [processedInputBuffersLock unlockWithCondition: SC_hasData];
+
+//        fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], clientNowTime, 
+//                        [processedOutputBuffers count], [pendingOutputBuffers count]);
+
         }
         [synthThreadLock unlock];
     }
@@ -652,7 +679,7 @@ enum {
 - (void) resetTime: (double) originTimeInSeconds
 {
 //  [synthThreadLock lock];
-  clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [processedOutputBuffers count];
+//  clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [processedOutputBuffers count];
 //  [synthThreadLock unlock];
 }
 
