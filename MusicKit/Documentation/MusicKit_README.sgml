@@ -95,7 +95,8 @@ tomandandy music inc.
     <abstract>
       <para>
 These are overall comments (incorporating original notes by David
-A. Jaffe) and serve as the highest level overview of the MusicKit &horbar; the &ldquo;README&rdquo;.
+A. Jaffe) and serve as the highest level overview of the
+MusicKit &horbar; the &ldquo;README&rdquo;.
       </para>
     </abstract>
   </artheader>
@@ -108,30 +109,35 @@ A. Jaffe) and serve as the highest level overview of the MusicKit &horbar; the &
   </indexterm>
 
   <para>
-The MusicKit is an object-oriented software system for building
-music, sound, signal processing, and <acronym>MIDI</acronym> applications.  It has been used
-in such diverse commercial applications as music sequencers, computer
-games, and document processors.  Professors and students in academia
-have used the MusicKit in a host of areas, including music
-performance, scientific experiments, computer-aided instruction, and
-physical modeling.  The MusicKit was the first to unify the <acronym>MIDI</acronym> and
-Music V paradigms, thus combining interaction with generality.  (Music
-V, written by Max Mathews and others at Bell Labs four decades ago,
-was the first widely available "computer music compiler".)
+The <productname>MusicKit</productname> is an object-oriented software
+system for building music, sound, signal processing, and
+<acronym>MIDI</acronym> applications.  It has been used in such
+diverse commercial applications as music sequencers, computer games,
+and document processors.  Professors and students in academia have
+used the <productname>MusicKit</productname> in a host of areas,
+including music performance, scientific experiments, computer-aided
+instruction, and physical modeling.  The
+<productname>MusicKit</productname> was the first to unify the
+<acronym>MIDI</acronym> and Music V paradigms, thus combining
+interaction with generality.  (Music V, written by Max Mathews and
+others at Bell Labs four decades ago, was the first widely available
+"computer music compiler".)
    </para>
 
    <para>
-The <productname>NeXT</productname> MusicKit was first demonstrated at
-the 1988 NeXT product introduction and was bundled in
+The <productname>NeXT</productname>
+<productname>MusicKit</productname> was first demonstrated at the 1988
+NeXT product introduction and was bundled in
 <productname>NeXT</productname> software releases 1.0 and 2.0.
 Beginning with <productname>NeXT</productname>'s 3.0 release, the
-MusicKit was no longer part of the standard
+<productname>MusicKit</productname> was no longer part of the standard
 <productname>NeXT</productname> software release.  Instead, it was
 being distributed and supported by the Center for Computer Research in
-Music and Acoustics (<acronym>CCRMA</acronym>) of Stanford University. Since 1999 and
-version 5.0, the most recent releases run on several more <link
-linkend="platforms">popular operating systems</link>.  These releases
-have been generously supported by my employer,
+Music and Acoustics (<acronym>CCRMA</acronym>) of Stanford
+University. Since 1999 and version 5.0, the most recent releases run
+on several more <link linkend="platforms">popular operating
+systems</link>.  These releases have been generously supported by my
+employer,
 <ulink url="http://www.tomandandy.com">
 	<inlinemediaobject>
 	<imageobject>
@@ -152,25 +158,26 @@ as open source to the community.
    </para>
 
    <para>
-The <link linkend="availability">MusicKit Distribution</link> is a
-comprehensive package that includes
-<link linkend=onlinedoco>on-line documentation</link>,
-<link linkend=examples>programming examples</link>,
-<link linkend=applications>utilities, applications</link>
-and sample score documents. The MusicKit is dependent on the SndKit distribution,
-originally written by Stephen Brandon, and both Framework collections
-are available at the same distribution site.
+The <link linkend="availability"><productname>MusicKit</productname> Distribution</link> is a
+comprehensive package that includes <link linkend=onlinedoco>on-line
+documentation</link>, <link linkend=examples>programming
+examples</link>, <link linkend=applications>utilities,
+applications</link> and sample score documents. The <productname>MusicKit</productname> is
+dependent on the <productname>SndKit</productname> distribution, originally written by Stephen
+Brandon, and both Framework collections are available at the same
+distribution site.
 </para>
 
 <para>
 Source code is available for everything, with the exception of the
-<productname>NeXT</productname> hardware implementation of the low-level sound and DSP drivers.
-This means researchers and developers may study the source or even
-customize the Music Kit and DSP Tools to suit their needs.
-Enhancements can be committed to the <link linkend=fixes>CVS
-repository</link> to have them incorporated for future
-releases. Commercial software developers may freely incorporate and
-adapt the software to accelerate development of software products.
+<productname>NeXT</productname> hardware implementation of the
+low-level sound and DSP drivers.  This means researchers and
+developers may study the source or even customize the Music Kit and
+DSP Tools to suit their needs.  Enhancements can be committed to the
+<link linkend=fixes>CVS repository</link> to have them incorporated
+for future releases. Commercial software developers may freely
+incorporate and adapt the software to accelerate development of
+software products.
 </para>
 
     <sect2 id=features>
@@ -301,22 +308,31 @@ ScoreFile, a textual scripting language for music.
 	<listitem>
 	  <para>
              <ulink url="http://ccrma-www.stanford.edu/CCRMA/Overview/hardsoftware.html">
-                <acronym>CCRMA</acronym>'s MusicKit site.
+                <acronym>CCRMA</acronym>'s <productname>MusicKit</productname> site.
              </ulink>
 	   </para>
 	</listitem>
 	<listitem>
 	  <para>
 	    <ulink url="http://www.jaffe.com/mk97.html">
-                David Jaffe's (the original author) MusicKit site.
+                David Jaffe's (the original author) <productname>MusicKit</productname> site.
             </ulink>
 	  </para>
 	</listitem>
+        <listitem>
+          <para>
+            <ulink url="http://www.eecs.umich.edu/~mrozek/nextmusic/NxtSndMusProgs.html">
+               Sound and Music Programs for NextStep
+            </ulink> 
+            &horbar; a database outlining where other <productname>MusicKit</productname> and DSP
+            software can be found on the Net.
+          </para>
+        </listitem>
       </itemizedlist>
     </sect2>
     
     <sect2 id=maillist>
-      <title>MusicKit Mail-lists</title>
+      <title><productname>MusicKit</productname> Mail-lists</title>
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -330,7 +346,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-announce</ulink>.
 
 	<listitem>
 	  <para>
-Discussions on development of the MusicKit and notices of updates
+Discussions on development of the <productname>MusicKit</productname> and notices of updates
 committed to the CVS source repository are sent to
 <email>musickit-developer@lists.sourceforge.net</email>. 
 Subscribe to the list by visiting 
@@ -341,7 +357,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-developer</ulink>.
 
 	<listitem>
 	  <para>
-Discussions on writing applications using the MusicKit (not developing
+Discussions on writing applications using the <productname>MusicKit</productname> (not developing
 it) are sent to
 <email>musickit-users@lists.sourceforge.net</email>. 
 Subscribe to the list by visiting 
@@ -368,16 +384,8 @@ they are committed by developers.
 	  <para>
 Thorough documentation of classes, applications, usage and concepts are found under the directory
 <filename class=directory>
-./Documentation
-</filename>.
-</para>
-	</listitem>
-	<listitem>
-	  <para>
-Release notes can be found in
-<filename class=directory>
-./Documentation/Frameworks/MusicKit/ReleaseNotes
-</filename>.
+Documentation
+</filename> in the source distribution.
 </para>
 	</listitem>
 
@@ -385,7 +393,7 @@ Release notes can be found in
 	  <para>
 The file 
 <filename>
-./Documentation/ChangeLog
+Documentation/ChangeLog
 </filename>
 lists changes and is generated from the CVS logs.
 </para>
@@ -398,15 +406,15 @@ lists changes and is generated from the CVS logs.
 	<listitem>
 	  <para>
 <ulink url="&mkurl;/MusicKitConcepts">
-MusicKit and SndKit Concepts
+<productname>MusicKit</productname> and <productname>SndKit</productname> Concepts
 </ulink>
-&horbar; Thorough documentation of the MusicKit and SndKit in operation.
+&horbar; Thorough documentation of the <productname>MusicKit</productname> and <productname>SndKit</productname> in operation.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
 <ulink url="&mkurl;/TutorialClasses">
-MusicKit Tutorials
+<productname>MusicKit</productname> Tutorials
 </ulink>
 &horbar; Tutorial exercises by David A. Jaffe, used in his lecture series.
 </para>
@@ -432,59 +440,14 @@ function and <productname>Objective-C</productname> class.
 </para>
 	</listitem>
       </itemizedlist>
+
       <sect3 id="PublishedPapers">
 	<title>Published Papers</title>
 	<para>
 	Conference papers and lecture slides in
-	<acronym>PDF</acronym> or <acronym>HTML</acronym>:
+	<acronym>PDF</acronym> or <acronym>HTML</acronym> are listed
+	in the <link linkend=bibliography>bibliography</link>.
 </para>
-
-
-	<itemizedlist>
-	  <listitem>
-	    <para>
-<ulink url="&mkurl;/Publications/ICMC2000.pdf">
-&ldquo;Next Steps from NeXTSTEP: MusicKit and SoundKit in a New
-World&rdquo;
-</ulink>
-&horbar; Most recent publication describing the OpenStep conversion
-and cross-platform approach.
-</para>
-	  </listitem>
-	  <listitem>
-	    <para>
-<ulink url="&mkurl;/Publications/MusicApplications.pdf">
-&ldquo;Musical and Extra-Musical Applications of the <productname>NeXT</productname> Music Kit&rdquo;
-</ulink>
-&horbar; Original Design Philosophies.
-</para>
-	  </listitem>
-	  <listitem>
-	    <para>
-<ulink url="&mkurl;/Publications/SoundMusicDSP.pdf">
-&ldquo;Sound and Music on the <productname>NeXT</productname> Computer&rdquo;
-</ulink>
-&horbar; A general (if dated) overview.
-</para>
-	  </listitem>
-	  <listitem>
-	    <para>
-<ulink url="&mkurl;/Publications/DSPSoftwareDesign.pdf">
-&ldquo;Computer Music on the <productname>NeXT</productname> Computer&rdquo;
-</ulink>
-&horbar; Documentation of the DSP architecture.
-</para>
-	  </listitem>
-	  <listitem>
-	    <para>
-<ulink url="&mkurl;/Publications/MusicKit-NWExpo93.pdf">
-&ldquo;Real Time Sound Processing & Synthesis on Multiple DSPs Using
-the Music Kit and the Ariel QuintProcessor&rdquo;
-</ulink>
-&horbar; Documents multiple DSP operation.
-</para>
-	  </listitem>
-	</itemizedlist>
       </sect3>
     </sect2>
 
@@ -494,9 +457,9 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
   <sect1 id="platforms">
     <title>Supported Platforms</title>
     <para>
-        The MusicKit currently runs on:
+        The <productname>MusicKit</productname> currently runs on:
 </para>
-    <table frame=all><title>MusicKit Supported Platforms</title>
+    <table frame=all><title><productname>MusicKit</productname> Supported Platforms</title>
       <tgroup cols=4 colsep=1 rowsep=1>
 	<colspec colnum=1 align=left>
 	<colspec colnum=2 align=center>
@@ -556,7 +519,7 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
       <title>Windows support</title>
       <para>
 After much fun with the pinnacle of Microsoft development tools, we
-have the MusicKit working on Windows9X. The solution was to emulate
+have the <productname>MusicKit</productname> working on Windows9X. The solution was to emulate
 the Mach <acronym>MIDI</acronym> device driver with the core layer of
 DirectMusic. There is a fairly similar match in functionality between
 these API.
@@ -586,7 +549,7 @@ url="http://www.gnustep.org">GnuStep</ulink> library is partially
 completed and looking for more volunteers. A performance framework
 (<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
 <ulink url="http://www.cs.cmu.edu/~music/portmusic/">PortAudio</ulink>
-library has been partially completed, porting the MusicKit to Intel
+library has been partially completed, porting the <productname>MusicKit</productname> to Intel
 Linux. Streaming sound works, but MIDI needs
 further work, please help!
 </para>
@@ -636,11 +599,11 @@ installed.
     <itemizedlist>
       <listitem>
 	<para>
-The MusicKit was designed and implemented by David
+The <productname>MusicKit</productname> was designed and implemented by David
 A. Jaffe <email>david@jaffe.com</email>, and the DSP computer-music
 and array-processing software was designed and implemented by Julius
 O. Smith III while at <productname>NeXT</productname>.
-The SoundKit (forerunner of the SndKit) was designed and implemented by
+The SoundKit (forerunner of the <productname>SndKit</productname>) was designed and implemented by
 Lee Boynton.
 Their original design appeared in
 <citation>JaffeBoynton89</citation>.
@@ -674,7 +637,7 @@ Mike Minnick helped finish the DSP array processing tools and
 wrote most of the programming examples.</para></listitem>
 
       <listitem><para>Roger Dannenberg influenced
-both the MusicKit noteTag design and the design of the performance
+both the <productname>MusicKit</productname> noteTag design and the design of the performance
 mechanism (using a data flow discrete simulation
 model).</para></listitem>
 
@@ -703,7 +666,7 @@ contributors (acknowledged in code comments).</para></listitem>
 	<para>
 Stephen Brandon <email>sbrandon@music.gla.ac.uk</email> did the
 initial OpenStep port in early 1998 and the majority of the conversion
-work. The MusicKit now uses the SndKit, written by Stephen Brandon,
+work. The <productname>MusicKit</productname> now uses the <productname>SndKit</productname>, written by Stephen Brandon,
 rather than the SoundKit for its sound processing.
 </para>
       </listitem>
@@ -711,7 +674,7 @@ rather than the SoundKit for its sound processing.
       <listitem>
 	<para>
 Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
-<email>leigh@tomandandy.com</email> fixed bugs and ported the MusicKit
+<email>leigh@tomandandy.com</email> fixed bugs and ported the <productname>MusicKit</productname>
 and <acronym>MIDI</acronym> drivers to Intel and PowerPC Rhapsody in late 1998 and
 reorganised the packages and documentation for MacOS X-Server and in
 2000, to various developer previews of MacOS X.  The frameworks were
@@ -731,10 +694,10 @@ version.
   </sect1>
 
   <sect1 id="VersionNumbering">
-    <title>Version numbering of the MusicKit</title>
+    <title>Version numbering of the <productname>MusicKit</productname></title>
 
     <para>
-Version numbering of the MusicKit is as follows.
+Version numbering of the <productname>MusicKit</productname> is as follows.
 </para>
 
     <para>
@@ -771,7 +734,7 @@ knowledge it will continue to work.
     <title>License</title>
 
     <sect2 id="OriginalMKLicense">
-      <title>Original MusicKit License</title>
+      <title>Original <productname>MusicKit</productname> License</title>
       <para>
 The source code as distributed by Stanford (V4.2) included the
 following usage message:
@@ -796,14 +759,14 @@ Kit.
 
     </sect2>
     <sect2 id="CurrentMKLicense">
-      <title>MusicKit Usage</title>
+      <title><productname>MusicKit</productname> Usage</title>
     <para>
 In regard of version V&mkvertuple;
 (consitituting all changes and modifications, porting efforts and
 documentation beyond V4.2), the current license follows.
 </para>
 
-<para>The MusicKit software is distributed free of charge.  Copyright
+<para>The <productname>MusicKit</productname> software is distributed free of charge.  Copyright
 remains with the owner indicated in each file and copyright of the
 modifications to each file remains with the contributor of the
 changes. The software in this distribution may be freely incorporated
@@ -818,17 +781,17 @@ be enforced to be returned to the public domain, but it is hoped that
 common sense will prevail and that everyone will realise that reward
 does not mean avoiding openness.</para>
 
-<para>We (the contributors to the MusicKit) would appreciate you
-acknowledging the use of the MusicKit in any academic paper, music
+<para>We (the contributors to the <productname>MusicKit</productname>) would appreciate you
+acknowledging the use of the <productname>MusicKit</productname> in any academic paper, music
 program notes and application documentation that use the
-MusicKit or SndKit. </para>
+<productname>MusicKit</productname> or <productname>SndKit</productname>. </para>
     </sect2>
   </sect1>
 
   <sect1 id=availability>
     <title>Availability</title>
     <para>
-The MusicKit is listed on the following open source portals:
+The <productname>MusicKit</productname> is listed on the following open source portals:
 </para>
 
     <itemizedlist>
@@ -896,6 +859,22 @@ advogato.org
       </ulink>
       </para>
       </listitem>
+      <listitem>
+	<para>
+	<ulink url="http://www.opensourcedirectory.org/projects/musickit/">
+	<inlinemediaobject>
+	      <imageobject>
+		<imagedata fileref="osd.eps" width=25 depth=15
+			   scalefit=1>
+	      </imageobject>
+	      <imageobject>
+		<imagedata fileref="osd.gif">
+	      </imageobject>
+	    </inlinemediaobject>
+opensourcedirectory.org
+      </ulink>
+      </para>
+      </listitem>
     </itemizedlist>
     
     <sect2 id=downloads>
@@ -915,8 +894,10 @@ The Source files consist of:
             </term>
 	      <listitem>
 		<para>
-The source to MusicKit, MKDSP, MKPerformSndMIDI,
-MKUnitGenerators and MKSynthPatches frameworks and all utilites,
+The source to <filename>MusicKit</filename>,
+<filename>MKDSP</filename>, <filename>MKPerformSndMIDI</filename>,
+<filename>MKUnitGenerators</filename> and
+<filename>MKSynthPatches</filename> frameworks and all utilites,
 applications, documentation and example code.
               </para>
 		<para>
@@ -932,7 +913,7 @@ for regression testing.
             </term>
 	      <listitem>
 		<para>
-                The version of the SndKit which matches the MusicKit.
+                The version of the <productname>SndKit</productname> which matches the <productname>MusicKit</productname>.
               </para>
 	    </listitem>
 	    </varlistentry>
@@ -1002,7 +983,7 @@ Newer versions of will probably just work.
             </term>
 	      <listitem>
 		<para>
-              The MacOS X frameworks (including the SndKit).
+              The MacOS X frameworks (including the <productname>SndKit</productname>).
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -1039,7 +1020,7 @@ the <productname class="Registered">Midiman</productname>
             </term>
 	    <listitem>
 	      <para>
-              The Windows9X/2000 frameworks (including the SndKit).
+              The Windows9X/2000 frameworks (including the <productname>SndKit</productname>).
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -1049,7 +1030,7 @@ the <productname class="Registered">Midiman</productname>
             </term>
 	    <listitem>
 	      <para>
-              The Linux frameworks (including the SndKit).
+              The Linux frameworks (including the <productname>SndKit</productname>).
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -1071,6 +1052,10 @@ the <productname class="Registered">Midiman</productname>
 	</listitem>
 	<listitem>
 	  <para><application>WaveEdit</application> (David Jaffe)</para>
+<para>
+WaveEdit is an application that makes it possible to display,
+edit and listen to wave tables.
+</para>
 	</listitem>
 	<listitem>
 	  <para><application>Ensemble</application> (Michael McNabb)</para>
@@ -1364,6 +1349,52 @@ on all supported platforms. The application
     <sect2 id="installation">
       <title>Installation</title>
 
+<para>
+The <application>Installer</application> program will let you choose a
+directory in which to place the installation tree.  If you are on a
+stand-alone machine, you should be logged in (or running
+<application>Installer</application>) as root and choose
+&ldquo;<filename class=directory>/</filename>&rdquo; for the
+installation directory (the default).
+</para>
+
+      <para>
+This will cause the frameworks to install into <filename
+class=directory>/Local/Library/Frameworks</filename> on
+<productname>MacOS X-Server</productname>, <filename
+class=directory>/LocalLibrary/Frameworks</filename> on
+<productname>OpenStep</productname> and <filename
+class=directory>/Library/Frameworks</filename> on <productname>MacOS
+X</productname>.  Applications will install in <filename
+class=directory>/Local/Apps</filename> on 
+<productname>MacOS X-Server</productname>, 
+<filename class=directory>/LocalApps</filename> on
+<productname>OpenStep</productname>, and
+ <filename class=directory>/Applications</filename> on 
+<productname>MacOS X</productname>.
+Locations for installing GnuStep applications on Linux and Windows
+have yet to be determined.
+Command line tools and manual pages will install into the 
+<filename class=directory>/usr/local</filename> hierarchy on
+<productname>Unix</productname> type machines, specifically
+<filename class=directory>/usr/local/bin</filename>. Locations for
+command line Windows tools have yet to be determined.
+</para>
+
+<para>
+If you are the system administrator for a NFS shared network, you
+probably want to choose a local directory which can be exported and
+create symbolic links into that directory on the networked machines.
+Alternatively, if you have a single server that exports <filename
+class=directory>/Local*</filename> and <filename
+class=directory>/usr/local</filename>, simply install the package
+there and you're done.
+</para>
+
+    </sect2>
+    <sect2 id="compilation">
+      <title>Compilation</title>
+
       <para>
 At the moment, there is no single <command>make</command> operation to
 build the entire source tree. Use
@@ -1414,13 +1445,6 @@ tools are missing. I've asked Apple and Motorola for a MacOS X
 port, why don't you also? :-) In theory the 56K assembler runs on
 Windows, so it may be possible to run these on Windows, but that is
 yet to be tested.
-</para>
-      <para>
-The frameworks will install into <filename
-class=directory>/Local/Library/Frameworks</filename> on MacOS
-X-Server, <filename
-class=directory>/LocalLibrary/Frameworks</filename> on OpenStep and
-<filename class=directory>/Library/Frameworks</filename> on MacOS X.
 </para>
 	</listitem>
 	<listitem>
@@ -1525,6 +1549,15 @@ If you send me <email>leigh@tomandandy.com</email> changes I will incorporate
 them and check them in. If you are planning to do major work, I can
 register you as a developer to provide write access to the CVS server.
 </para>
+
+<para>
+If you make a <productname>MusicKit</productname> program that you'd like us to consider for
+distribution as part of the <productname>MusicKit</productname>, DSP and <productname>SndKit</productname> Distribution, 
+please send it to the following address: <email>leigh@tomandandy.com</email>.
+We are interested in applications, unit generators, synth patches, etc.
+If you do not have e-mail access, you can send media to the address of
+the author at the start of this document.
+</para>
 <para>
 If you have discovered a bug, please report it via the
 <productname>sourceforge</productname> bug tracker.
@@ -1556,7 +1589,7 @@ If you have discovered a bug, please report it via the
 	  <phrase>SourceForge Logo</phrase>
         </textobject>
       </inlinemediaobject>
-SourceForge kindly hosts the MusicKit.
+SourceForge kindly hosts the <productname>MusicKit</productname>.
    </ulink>
 </ackno>
 </article>
