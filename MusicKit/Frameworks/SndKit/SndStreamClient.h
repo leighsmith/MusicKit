@@ -19,6 +19,7 @@
 
 @class SndAudioBuffer;
 @class SndStreamManager;
+@class SndAudioProcessorChain;
 
 /*!
     @class      SndStreamClient
@@ -46,16 +47,14 @@
     NSLock             *outputBufferLock;
     NSLock             *inputBufferLock;
     NSConditionLock    *synthThreadLock;
+    SndAudioProcessorChain *processorChain;
     BOOL                active;
     BOOL                needsInput;
     BOOL                generatesOutput;
-
     SndStreamManager   *manager;
-    
     void              (*processFinishedCallback)(void);
-    
+    double              nowTime;
     id                  delegate;
-    
 }
 
 /*!
