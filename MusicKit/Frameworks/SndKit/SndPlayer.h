@@ -33,6 +33,8 @@
     NSMutableArray *playing;
 /*! @var            playinglock Provides thread safety on the SndPerformance arrays. */
     NSLock         *playingLock; // controls access to the toBePlayed and playing arrays.
+/*! @var            bRemainConnectedToManager */
+    BOOL            bRemainConnectedToManager;
 }
 
 /*!
@@ -167,5 +169,7 @@
     @result   An array containing all performance instances of a particular Snd. 
 */
 - (NSArray *) performancesOfSnd: (Snd *) snd;
+
+- setRemainConnectedToManager: (BOOL) b;
 
 @end

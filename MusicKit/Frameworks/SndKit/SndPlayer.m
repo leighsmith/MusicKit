@@ -40,6 +40,7 @@
 - init
 {
     [super init];
+    bRemainConnectedToManager = TRUE;
     if (toBePlayed  == nil)
         toBePlayed  = [[NSMutableArray arrayWithCapacity: 10] retain];
     if (playing     == nil)
@@ -383,12 +384,21 @@
     // NSLog(@"SYNTH THREAD: playing %d sounds", [playing count]);
     if ([removalArray count] > 0) {
         [playing removeObjectsInArray: removalArray];
-        if([toBePlayed count] == 0 && [playing count] == 0) {
+        if (!bRemainConnectedToManager &&
+            [toBePlayed count] == 0 && 
+            [playing count] == 0) 
+        {
             active = FALSE;
             // NSLog(@"SYNTH THREAD: Setting active false\n");
         }
     }
     [playingLock unlock];    
+}
+
+- setRemainConnectedToManager: (BOOL) b
+{
+  bRemainConnectedToManager = b;
+  return self;
 }
 
 @end
