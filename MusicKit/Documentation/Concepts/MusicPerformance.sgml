@@ -637,13 +637,13 @@ explained by example:</para>
 
 <programlisting>
 /* Create a MKSynthInstrument. */
-id aSynthIns = [[MKSynthInstrument init] alloc];
+id aSynthIns = [[MKSynthInstrument alloc] init];
 
 /* Create a variable to store the MKPatchTemplate. */
 id noVibTemplate;
 
 /* Create a dummy MKNote. */
-id aNote = [[<classname>MKNote</classname> init] alloc];
+id aNote = [[MKNote alloc] init];
 
 /* Set its vibrato amplitudes to 0.0. */
 [aNote setPar: MK_svibAmp toDouble: 0.0];
