@@ -94,14 +94,19 @@ static SndPlayer *defaultSndPlayer;
 // outside this class.
 - _startPerformance: (SndPerformance *) performance
 {
+    Snd *snd = [performance snd];
     [playing addObject: performance];
     // The delay between receiving this delegate and when the audio is actually played 
     // is an extra buffer, therefore: delay == buffLength/sampleRate after the delegate 
     // message has been received.
     
-    [[performance snd] _setStatus:SND_SoundPlaying]; 
-    [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
-                  duringPerformance: performance];
+    [snd _setStatus:SND_SoundPlaying]; 
+//    [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
+//                  duringPerformance: performance];
+    [manager sendMessageInMainThreadToTarget: snd
+                                         sel: @selector(tellDelegateString:duringPerformance:)
+                                        arg1: @"willPlay:duringPerformance:"
+                                        arg2: performance];
     return self;
 }
 
@@ -164,7 +169,10 @@ static SndPlayer *defaultSndPlayer;
      
 //    fprintf(stderr,"SndPlayer: timeOffset:%f playT:%f clientNowTime:%f begin:%li end:%li\n", dt, playT,clientNowTime,beginAtIndex,endAtIndex);
     {
-      SndPerformance *perf = [self playSnd: s atTimeInSeconds: playT beginAtIndex: beginAtIndex endAtIndex: endAtIndex]; 
+      SndPerformance *perf = [self playSnd: s
+                           atTimeInSeconds: playT
+                              beginAtIndex: beginAtIndex
+                                endAtIndex: endAtIndex]; 
 //      NSLog([perf description]);
       return perf;
     }
@@ -287,16 +295,19 @@ static SndPlayer *defaultSndPlayer;
     int performanceIndex;
     NSMutableArray *performances = [NSMutableArray arrayWithCapacity: 10];
     SndPerformance *aPerformance;
+    int count;
 
     // extract out from our playing/toBePlayed lists those with Snds matching snd
     [playingLock lock];
-    for(performanceIndex = 0; performanceIndex < [playing count]; performanceIndex++) {
+    count = [playing count];
+    for (performanceIndex = 0; performanceIndex < count; performanceIndex++) {
         aPerformance = [playing objectAtIndex: performanceIndex];
         if([snd isEqual: [aPerformance snd]]) {
             [performances addObject: aPerformance];
         }
     }
-    for(performanceIndex = 0; performanceIndex < [toBePlayed count]; performanceIndex++) {
+    count = [toBePlayed count];
+    for (performanceIndex = 0; performanceIndex < count; performanceIndex++) {
         aPerformance = [toBePlayed objectAtIndex: performanceIndex];
         if([snd isEqual: [aPerformance snd]]) {
             [performances addObject: aPerformance];
@@ -383,11 +394,43 @@ static SndPlayer *defaultSndPlayer;
         // When at the end of sounds, signal the delegate and remove the performance.
         
         if ([performance playIndex] >= endAtIndex) {
+            int count;
+            int performanceIndex;
+            SndPerformance *aPerformance;
+            
             [removalArray addObject: performance];
   // SKoT: Dangerous - what if we have multiple performances of a single sound? Comment out for now.       
  //           [[performance snd] _setStatus: SND_SoundStopped];
  //           [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
  //                        duringPerformance: performance];
+
+/* sbrandon Nov 2001: now check thru all performances, and if this one was the last
+ * one using this snd, we set the snd to SND_SoundStopped
+ */
+            count = [playing count];
+            for (performanceIndex = 0; performanceIndex < count; performanceIndex++) {
+                aPerformance = [playing objectAtIndex: performanceIndex];
+                if([snd isEqual: [aPerformance snd]] && performance != aPerformance) {
+                    performanceIndex = -1;
+                    break;
+                }
+            }
+            if (performanceIndex != -1) {
+                [snd _setStatus: SND_SoundStopped];
+            }
+
+/* sbrandon Nov 2001: re-instated delegate messaging, but fixed it up for multithreaded
+ * use. Note that the arguments HAVE to be objects - hence arg1 here is not a SEL as one
+ * would expect but an NSString, and we convert to a SEL in the Snd object.
+ * Note also that the messages received in the main thread are asynchronous, being
+ * received in the NSRunLoop in the same way that keyboard, mouse or GUI actions are
+ * received.
+ */
+            [manager sendMessageInMainThreadToTarget: snd
+                                                 sel: @selector(tellDelegateString:duringPerformance:)
+                                                arg1: @"didPlay:duringPerformance:"
+                                                arg2: performance];
+
         }
     }
 
