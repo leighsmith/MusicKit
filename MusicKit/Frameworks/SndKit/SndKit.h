@@ -34,9 +34,14 @@
     DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS
     OF THIS AGREEMENT.
 
+  Legal Statement covering additions made by the MusicKit project:
+
+    Permission is granted to use and modify this code for commercial and
+    non-commercial purposes so long as the author attribution and copyright
+    messages remain intact and accompany all relevant code.
+
 ******************************************************************************/
 
-#import <MKPerformSndMIDI/PerformSound.h>
 #import "SndFormat.h"
 #import "SndEndianFunctions.h"
 #import "SndTable.h"
@@ -46,16 +51,14 @@
 #import "SndExpt.h"
 
 #import "SndView.h"
-#ifndef USE_NEXTSTEP_SOUND_IO
-# import "sounderror.h"
-#endif
+#import "SndError.h"
 #import "SndStreamManager.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamMixer.h"
 
-#ifndef SK_NO_MP3_ENCODER
+#ifdef SK_MP3_ENCODER
 # import "SndAudioProcessorMP3Encoder.h"
 # import "SndMP3.h"
 #endif
