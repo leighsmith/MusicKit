@@ -1,22 +1,41 @@
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
   Defined In: The MusicKit
 
   Description:
-  Original Author: David Jaffe
+    A score writer writes notes to a scorefile. Like any other MKInstrument,
+    it maintains a list of MKNoteReceivers. Each MKNoteReceiver corresponds to
+    a part to appear in the scorefile. Methods are provided for
+    manipulating the set of MKNoteReceivers.
+
+    It is illegal to remove parts during performance. 
+
+    If a performance session is repeated, the file must be specified again
+    using setFileStream: (see MKFileWriter class).
+
+    PartNames in the score correspond to the names of the MKNoteReceivers. 
+    You add the MKNoteReceivers with addNoteReceiver:. You name the
+    MKNoteReceivers with the MKNameObject() C function.
+
+    It's illegal to change the name of a data object (such as an MKEnvelope,
+    MKWaveTable or MKNoteReceiver) during a performance
+    involving a MKScorefileWriter. (Because an object'll get written to the
+    file with the wrong name.)
+
+  Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.4  2000/11/29 00:38:13  leigh
+  Comment cleanup, now using _MKMalloc instead of malloc (better error checking)
+
   Revision 1.3  1999/09/04 22:44:23  leigh
   setInfo now setInfoNote
 
@@ -43,45 +62,19 @@ Modification history:
 #import "_scorefile.h"
 #import "MKScorefileWriter.h"
 
-@implementation MKScorefileWriter: MKFileWriter
-/*  A score writer writes notes to a scorefile. Like any other Instrument,
-    it maintains a list of NoteReceivers. Each NoteReceiver corresponds to
-    a part to appear in the scorefile. Methods are provided for
-    manipulating the set of NoteReceivers.
+@implementation MKScorefileWriter
 
-    It is illegal to remove parts during performance. 
-
-    If a performance session is repeated, the file must be specified again
-    using setFileStream: (see FileWriter class).
-
-    PartNames in the score correspond to the names of the NoteReceivers. 
-    You add the NoteReceivers with addNoteReceiver:. You name the
-    NoteReceivers with the MKNameObject() C function.
-
-    It's illegal to change the name of a data object (such as an Envelope,
-    WaveTable or NoteReceiver) during a performance
-    involving a ScorefileWriter. (Because an object'll get written to the
-    file with the wrong name.)
-    */
-{
-    id info;
-    int _highTag,_lowTag;
-    BOOL _isOptimized;
-    void *_p;
-}
 #define SCOREPTR ((_MKScoreOutStruct *)_p)
+#define PARTINFO(_aNR) ((id)[_aNR _getData])
 
 #define VERSION2 2
 
 + (void)initialize
 {
     if (self != [MKScorefileWriter class])
-      return;
-    [MKScorefileWriter setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
-    return;
+        return;
+    [MKScorefileWriter setVersion: VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
 }
-
-#define PARTINFO(_aNR) ((id)[_aNR _getData])
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
@@ -132,26 +125,7 @@ Modification history:
     return self;
 }
 
-//- awake
-  /* Installs Part infos */
-//{
-/*    unsigned n; */
-/*    id *el1,*el2; */
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-//    [super awake];
-//error ListToMutableArray: NX_ADDRESS is obsolete
-/*
-    for (el1 = NX_ADDRESS(noteReceivers), 
-	 el2 = (id *)_p, n = [noteReceivers count]; 
-	 n--;)                 
-      [*el1++ _setData:*el2++]; 
-    free(_p);
-    _p = NULL;
- */
-//    return self;
-//}
-
-+(NSString *)fileExtension
++ (NSString *) fileExtension
   /* Returns "score", the default file extension for score files.
      This method is used by the FileWriter class. The string is not
      copied. */
@@ -159,14 +133,14 @@ Modification history:
     return [[_MK_SCOREFILEEXT retain] autorelease];
 }
 
--(NSString *)fileExtension
+- (NSString *) fileExtension
   /* Returns "score", the default file extension for score files if the
-     file was set with setFile: or setStream:. Returns "scoreB", the
+     file was set with setFile: or setStream:. Returns "playscore", the
      default file extension for optimized format score files if the file
      was set with setOptimizedFile: or setOptimizedStream:. 
      The string is not copied. */
 {
-    return (_isOptimized) ? [[_MK_BINARYSCOREFILEEXT retain] autorelease] : [[_MK_SCOREFILEEXT retain] autorelease];
+    return [[(_isOptimized ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT) retain] autorelease];
 }
 
 -initializeFile
@@ -187,7 +161,7 @@ Modification history:
 //#error StreamConversion: NXTell should be converted to an NSData method
 //    SCOREPTR->_tagRangePos = NXTell(SCOREPTR->_stream);
     SCOREPTR->_tagRangePos = [SCOREPTR->_stream length];
-    [SCOREPTR->_stream appendData:[@"                                        \n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [SCOREPTR->_stream appendData: [@"                                        \n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     /* We'll fill this in later. */
     return self;
 }
@@ -204,12 +178,12 @@ Modification history:
         NSData *dataToAppend = [[NSString stringWithFormat:@"noteTagRange = %d to %d;\n", _lowTag,_highTag] 	dataUsingEncoding:NSNEXTSTEPStringEncoding];
         int len = [dataToAppend length];
         NSRange range = {SCOREPTR->_tagRangePos, len};/*sb: there are 40 spaces, but this replaces exact amount. */
-        char *aBuffer = malloc(len);
+        char *aBuffer = _MKMalloc(len);
         [dataToAppend getBytes:aBuffer]; //stick our string into a char buffer
 
         [SCOREPTR->_stream replaceBytesInRange:range withBytes:aBuffer];
         free(aBuffer);
-        }
+    }
 /*
       [SCOREPTR->_stream appendData:[[NSString stringWithFormat:@"noteTagRange = %d to %d;\n", _lowTag,_highTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 #error StreamConversion: NXSeek should be converted to an NSData method
