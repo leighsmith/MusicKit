@@ -18,11 +18,10 @@
   $Id$
 
   MusicKit customizations for documentation to appear on www.musickit.org.
-  Basically all this does is add in BODY statements and header images 
+  Basically all this does is add in CSS statements and header images 
   to make the output more typically SourceForge style HTML pages.
 
-  Leigh Smith <leigh@leighsmith.com>, drawing heavily on Cygnus
-  customizations by Mark Galassi and LDP customizations by Philippe Martin.
+  Leigh Smith <leigh@leighsmith.com>
 -->
 
 <style-sheet>
@@ -33,17 +32,36 @@
 ;; customize the print stylesheet
 ;; ====================
 
+;; preferred-mediaobject-extensions and acceptable-mediaobject-extensions
+; (define preferred-mediaobject-notations 
+;   (list "TEX" "JPG" "JPEG" "PNG" "PDF" "linespecific")) 
+
+; (define preferred-mediaobject-extensions 
+;   (list "tex" "jpg" "jpeg" "png" "pdf")) 
+
+; (define acceptable-mediaobject-extensions 
+;   (list "gif" "bmp")) 
+
+; (define acceptable-mediaobject-notations 
+;   (list "GIF" "GIF87a" "GIF89a" "BMP")) 
+
+
+;; (define %graphic-extensions% '("eps" "epsf" "gif" "tif" "tiff" "jpg" "jpeg" "png" "pdf"))
+;; PDF is the preferred image format but it seems PNG is chosen in preference.
+(define %graphic-default-extension% "eps")
+
 ;; make funcsynopsis look pretty
 (define %funcsynopsis-decoration%
   ;; Decorate elements of a FuncSynopsis?
   #t)
 
-;; use graphics in admonitions, and have their path be "."
-;; NO: we are not yet ready to use gifs in TeX and so forth
+;; use graphics in admonitions, and have their path be "Images"
+;; NO: we are not yet ready to use pdfs in TeX.
 (define %admon-graphics-path%
-  "./")
+  "Images/")
 (define %admon-graphics%
   #f)
+;; (define admon-graphic-default-extension ".pdf")
 
 ;; this is necessary because right now jadetex does not understand
 ;; symbolic entities, whereas things work well with numeric entities.
@@ -55,9 +73,11 @@
 (define %section-autolabel% 
   ;; Are sections enumerated?
   #t)
+
 ;; (define %title-font-family% 
 ;;   ;; The font family used in titles
 ;;   "Ariel")
+
 (define %visual-acuity%
   ;; General measure of document text size
   ;; "presbyopic"
@@ -67,9 +87,6 @@
 ;; (define %generate-part-toc% #t)
 
 ;; (define %block-start-indent% 10pt)
-
-(define %graphic-default-extension% "eps")
-
 
 </style-specification-body>
 </style-specification>
@@ -92,8 +109,11 @@
 (define %generate-legalnotice-link%
   #t)
 
-;; use graphics in admonitions, and have their path be "stylesheet-images"
-;; NO: they do not yet look very good
+;; Adds CSS style-sheet support
+(define %stylesheet%
+  "MusicKit_README.css")
+
+;; use graphics in admonitions, and have their path be "Images"
 (define %admon-graphics-path%
   "Images/")
 (define %admon-graphics%
@@ -105,14 +125,6 @@
   #t)
 
 (define %html-ext% ".html")
-(define %body-attr%
-  ;; Incorporate BODY attributes coloring the text
-  (list
-   (list "BGCOLOR" "#442643")
-   (list "TEXT" "#FFFFFF")
-   (list "LINK" "#C7DE1E")
-   (list "ALINK" "#969FF4")
-   (list "VLINK" "#80C2E2")))
 
 (define ($shade-verbatim-attr$)
   ;; Make the background color darker than the standard so it is
