@@ -135,6 +135,7 @@ int main (int argc, const char * argv[])
       }
       else {
         [s readSoundfile: filename];
+        [[Snd sndPlayer] setRemainConnectedToManager:FALSE];
         SndSwapSoundToHost([s data],[s data],[s sampleCount],[s channelCount],[s dataFormat]);
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
