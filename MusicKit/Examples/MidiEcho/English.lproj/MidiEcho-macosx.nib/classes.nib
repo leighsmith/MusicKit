@@ -10,7 +10,7 @@
             ACTIONS = {go = id; setDelayFrom = id; setMidiDev = id; showInfoPanel = id; }; 
             CLASS = MidiEcho; 
             LANGUAGE = ObjC; 
-            OUTLETS = {infoPanel = id; myFilter = id; stringTable = id; }; 
+            OUTLETS = {infoPanel = NSPanel; }; 
             SUPERCLASS = NSObject; 
         }, 
         {
