@@ -2,23 +2,50 @@
   $Id$
   Defined In: The MusicKit
 
-  Description: MIDI driver typedefs, defines, and functions
+  Description:
+    MIDI driver typedefs, defines, and functions exported to other MusicKit frameworks.
+    See the HeaderDoc header below.
 
-  Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
+  Original Author: Leigh M. Smith, <leigh@leighsmith.com>
 
-  30 July 1999, Copyright (c) 1999 tomandandy music inc.
+  Copyright (c) 2000-2004 The MusicKit Project.
 
   Permission is granted to use and modify this code for commercial and non-commercial
   purposes so long as the author attribution and this copyright message remains intact
   and accompanies all derived code.
+*/
+/*!
+    @header PerformMIDI
+  
+    This file provides compatability between the various platform dependent 
+    MIDI drivers used by the MusicKit.
+    We only use the mididriver versions for NeXT hardware, all other
+    architectures use MusicKit MIDI drivers using the DriverKit for OpenStep,
+    DirectMusic for Windows, CoreMIDI/QTMA for MacOS X etc.
+    The other sobering thought about this framework is that it does not rely on
+    any OpenStep/Cocoa API types, unless they are declared here. 
+    Therefore C Strings and ints are de rigeur...
 
+    There are two different schemes of management of interface to the MKMD functions.
+    To achieve maximum portablity, we assume a Mach port is nothing more than an integer
+    and functions as a handle with which to refer to a MIDI driver. It is only when receiving
+    data do we need to actually behave as a Mach port. This is conditionally compiled using
+    MKMD_RECEPTION_USING_PORTS defined in MKPerformSndMIDI/midi_driver.h. The alternative
+    is to use a call back function. Therefore, while we do need a NSPort or NSMachPort,
+    their support can be minimal and we are not enforced to run on a Mach type operating system.
 */
 #ifndef _MKMD_
 #define _MKMD_
 
 /* for defines: */
-#include "MKPerformSndMIDIDefines.h"
-#include "mididriverUser.h"
+#if HAVE_CONFIG_H
+#include "MKPerformSndMIDIConfig.h"
+#endif
+
+/* kludge around type definitions. This should be replaced. */
+typedef int kern_return_t;
+typedef int msg_header_t;
+typedef int boolean_t;
 
 /*!
     @defined MKMDPort
@@ -111,6 +138,7 @@ typedef MKMDRawEvent *MKMDRawEventPtr;
 */
 #define MKMD_CLOCK_MODE_MTC_SYNC 1
 
+/* error codes */
 /*!
     @defined MKMD_SUCCESS
     @discussion Indicates the PerformMIDI function returning a MKMDReturn value was successful.
@@ -140,20 +168,82 @@ typedef MKMDRawEvent *MKMDRawEventPtr;
 #define MKMD_IGNORE_RESET	 0x8000
 #define MKMD_IGNORE_REAL_TIME    0xdd00  /* All of the above */
 
+/*!
+    @defined MKMD_PORT_A_UNIT
+    @discussion Legacy MIDI port definition referring to NeXT serial port A
+*/
 #define MKMD_PORT_A_UNIT 0
+
+/*!
+    @defined MKMD_PORT_B_UNIT
+    @discussion Legacy MIDI port definition referring to NeXT serial port B
+*/
 #define MKMD_PORT_B_UNIT 1
 
 /* Reply function types. */
+/*!
+    @typedef MKMDDataReplyFunction
+    @abstract Reply function communicating received MIDI data.
+    @param	replyPort
+                    The communications port for the reply.
+    @param	unit
+                    The MIDI port (cable) the data is to be sent to.
+    @param	events
+                    A count terminated array of MIDI events.
+    @param	count
+                    Number of MIDI events received.
+*/
 typedef void (*MKMDDataReplyFunction)
     (MKMDReplyPort replyPort, short unit, MKMDRawEvent *events, unsigned int count);
+
+/*!
+    @typedef MKMDAlarmReplyFunction
+    @abstract Reply function indicating a problem occured reading MIDI data.
+    @param	replyPort
+                    The communications port for the reply.
+    @param	requestedTime
+                    The time the alarm was requested to be sent.
+    @param	actualTime
+                    The time the alarm was actually sent.
+*/
 typedef void (*MKMDAlarmReplyFunction)
     (MKMDReplyPort replyPort, int requestedTime, int actualTime);
+
+/*!
+    @typedef MKMDExceptionReplyFunction
+    @abstract Reply function indicating an exception occured reading MIDI data.
+    @param	replyPort
+                    The communications port for the reply.
+    @param	exception
+                    The exception code.
+*/
 typedef void (*MKMDExceptionReplyFunction)
     (MKMDReplyPort replyPort, int exception);
+
+/*!
+    @typedef MKMDQueueReplyFunction
+    @abstract Reply function called when queue has the number of MKMDRawEvents available as requested
+              by <b>MKMDRequestQueueNotification</b>.
+    @param	replyPort
+                    The communications port that received the reply. 
+    @param	unit
+                    The MIDI port (cable) the reply is from.
+*/
 typedef void (*MKMDQueueReplyFunction)
     (MKMDReplyPort replyPort, short unit);
 
-/* Struct for passing reply functions to midi_driver library. */
+/*!
+    @typedef MKMDReplyFunctions
+    @discussion Struct for passing reply functions to MusicKit MIDI driver library.
+    @field	dataReply
+                    Called when we have received MIDI data.
+    @field	alarmReply
+                    Called to alert the caller of problems.
+    @field	exceptionReply
+                    Called to alert the caller of problems (what distinction?).
+    @field	queueReply
+                    Called to alert the caller the queue is empty.
+*/
 typedef struct _MKMDReplyFunctions {
     MKMDDataReplyFunction dataReply;
     MKMDAlarmReplyFunction alarmReply;
@@ -460,7 +550,6 @@ PERFORM_API MKMDReturn
 PERFORM_API MKMDReturn 
     MKMDRequestQueueNotification(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDReplyPort notificationPort, int size);
 
-
 /****************** Receiving asynchronous messages *******************/
 
 /*!
@@ -482,19 +571,15 @@ PERFORM_API MKMDReturn
     @discussion Indicates that no timeout is to occur, the called function waits indefinitely.
 */
 #define MKMD_NO_TIMEOUT (-1)
+
 /*!
     @function       MKMDHandleReply
-
-    @abstract       Handle Reply
-    
+    @abstract       Manage the received message and  call the appropriate reply function from those supplied.
     @param          msg
-                        
-
+                        The message reply to be handled.
     @param          funcs
-
-
+                        The functions handling received data, exceptions, alarms, and queue reports.
     @result         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
-
 */
 PERFORM_API MKMDReturn 
     MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs);
@@ -673,7 +758,15 @@ PERFORM_API MKMDReturn
 PERFORM_API MKMDReturn 
     MKMDParseInput(MKMDPort driver, MKMDOwnerPort owner, short unit, boolean_t parseIt);
 
-/* This will be obsolete soon: */
+/*!
+    @function       MKMDErrorString
+    @abstract       Interpret the errorCode and return the appropriate error string.
+    @param          errorCode
+                        The error code returned by a MKMD function.
+    @result         Returns a readable string.
+*/
+PERFORM_API char *MKMDErrorString(MKMDReturn errorCode);
+
 /*!
     @function       MKMDSetSystemIgnores
     @abstract       This will be obsolete soon.    
