@@ -217,7 +217,6 @@ static int ioTags = 1000;
   return self;
 }
 
-
 - initFromSoundfile:(NSString *)filename
 {
   self = [self init];
@@ -228,12 +227,6 @@ static int ioTags = 1000;
     }
   }
   return self;
-}
-
-- initFromSection:(NSString *)sectionName
-{
-    printf("Snd: -initFromSection:(NSString *)sectionName obsolete, not implemented\n");
-    return nil;
 }
 
 - initFromSoundURL: (NSURL *) url
@@ -806,16 +799,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return SND_ERR_NONE;
 }
 
-// TODO this should probably become:
-// samplesProcessedOfPerformance: (SndPerformance *) performance
-- (int) samplesProcessed
+- (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
 {
 #if !MKPERFORMSND_USE_STREAMING
     return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 #else
-    // what to do, when samplesProcessed only makes sense if you know only one performance of this
-    // snd is occuring? For now, we erroneously return the first performance.
-    return [[performancesArray objectAtIndex: 0] playIndex];
+    return [performance playIndex];
 #endif
 }
 
@@ -1080,36 +1069,17 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 	return SND_ERR_NONE;
 
     bufferToConvert = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
-    switch (conversionQuality) {
-    case SndConvertLowQuality:
-    default:
-	/* fastest conversion, non-interpolated */
-	error = [bufferToConvert convertToFormat: toFormat
-			            channelCount: toChannelCount
-			            samplingRate: toRate
-		                  useLargeFilter: NO
-		               interpolateFilter: NO
-		          useLinearInterpolation: YES];
-	    
-	break;
-    case SndConvertMediumQuality:
-	/* medium conversion, small filter, uses interpolation */
-	error = [bufferToConvert convertToFormat: toFormat
-				    channelCount: toChannelCount
-				    samplingRate: toRate
-				  useLargeFilter: NO
-			       interpolateFilter: YES
-			  useLinearInterpolation: NO];
-        break;
-    case SndConvertHighQuality:
-	/* slow, accurate conversion, large filter, uses interpolation */
-	error = [bufferToConvert convertToFormat: toFormat
-				    channelCount: toChannelCount
-				    samplingRate: toRate
-				  useLargeFilter: YES
-			       interpolateFilter: YES
-			  useLinearInterpolation: NO];
-    }
+
+    /* SndConvertLowQuality: fastest conversion, non-interpolated */
+    /* SndConvertMediumQuality: medium conversion, small filter, uses interpolation */
+    /* SndConvertHighQuality: slow, accurate conversion, large filter, uses interpolation */
+    error = [bufferToConvert convertToFormat: toFormat
+                                channelCount: toChannelCount
+                                samplingRate: toRate
+                              useLargeFilter: conversionQuality == SndConvertHighQuality
+                           interpolateFilter: conversionQuality != SndConvertLowQuality
+                      useLinearInterpolation: conversionQuality == SndConvertLowQuality];
+
     if (error != nil) {
 	double stretchFactor = toRate / [self samplingRate];
 	SndSoundStruct *toSound;
@@ -1362,12 +1332,6 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return self;
 }
 
-/* when we implement i/o, need to return different */
-- (SndSoundStruct *) soundStructBeingProcessed
-{
-    return soundStruct;
-}
-
 - (int) processingError
 {
     return currentError;
@@ -1498,9 +1462,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 	// Matching sound buffer formats, so we can just do a copy.
 	int buffFrameSize = [buff frameSizeInBytes];
 	NSRange bufferByteRange = { bufferFrameRange.location * buffFrameSize, bufferFrameRange.length * buffFrameSize };
+        SndFormat sndFormat;
 	
+        sndFormat.channelCount = soundStruct->channelCount;
+        sndFormat.dataFormat = soundStruct->dataFormat;
+        sndFormat.sampleRate = soundStruct->samplingRate;
 	// NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
-	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: soundStruct];
+	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: sndFormat];
 	return bufferFrameRange.length;
     }
 }
