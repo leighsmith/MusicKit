@@ -108,7 +108,7 @@ static SndStreamManager *sm = nil;
   mixer           = [[SndStreamMixer sndStreamMixer] retain];
   bg_threadLock   = [[NSConditionLock alloc] initWithCondition: BG_ready];
   bgdm_threadLock = [[NSConditionLock alloc] initWithCondition: BGDM_ready];
-  delegateMessageArrayLock = [[NSLock alloc] init];
+  delegateMessageArrayLock = [NSLock new];
   active        = FALSE;
   bg_active     = FALSE;
   nowTime       = 0;
@@ -120,7 +120,7 @@ static SndStreamManager *sm = nil;
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
     fprintf(stderr,"[SndStreamManager::init] Run loop detected - delegate messaging enabled\n");
 #endif
-    delegateMessageArray = [[NSMutableArray alloc] init];
+    delegateMessageArray = [NSMutableArray new];
     managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
     managerSendPort      = (NSPort *)[NSPort port];
 
@@ -217,7 +217,7 @@ static SndStreamManager *sm = nil;
 
 - (void) delegateMessageThread:(NSArray*) ports
 {
-  NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
   id controllerProxy = nil;
 
   [self retain];
@@ -299,7 +299,7 @@ static SndStreamManager *sm = nil;
 
 - (void)streamStartStopThread
 {
-  NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
 
   bg_active = TRUE;
   isStopping = FALSE;
