@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/12/14 04:54:55  leigh
+  Fixed lack of null termination, partial solution for OpenStep
+
   Revision 1.2  2000/12/07 00:05:15  leigh
   Corrected for MKMDPort being a mach_port_t
 
@@ -126,12 +129,14 @@ kern_return_t MKMDDownloadDLSInstruments(unsigned int *patches, int patchCount)
     return KERN_SUCCESS;
 }
 
-// need to be moved into a separate Objective C file.
+// Return the available port names and the index of the current selected port.
+// A NULL char * terminates the list a la argv behaviour.
 const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
 #if openstep_i386
-    char *s;
+    char *driverInstance;
     const char *familyStr;
+    char **driverList;
     List *installedDrivers;
     NSMutableArray *midiDriverList;
     id aConfigTable;
@@ -149,7 +154,7 @@ const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
        the IOConfigTables for those drivers, you can use
        tablesForBootDrivers.
        */
-    midiDriverList = [[NSMutableArray alloc] init];
+    midiDriverList = [NSMutableArray array];
     /* Get MIDI drivers */
     for (i = 0; i < [installedDrivers count]; i++) {
         aConfigTable = [installedDrivers objectAt:i]; 	/* Each driver */
@@ -161,26 +166,22 @@ const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
         }
     }
     midiDriverCount = [midiDriverList count];
-    if (midiDriverCount == 0) {
-        /* This is almost certainly an error */
-        [midiDriverList release];
-        return NO;
-    }
-    midiDriverNames = [NSMutableArray arrayWithCapacity: midiDriverCount];
-    midiDriverUnits = [NSMutableArray arrayWithCapacity: midiDriverCount];
+    // always create at least one entry for the terminating NULL pointer.
+    driverList = (char **) calloc(midiDriverCount+1, sizeof(char *));
+
     for (i=0; i < midiDriverCount; i++) {
         /* Or "Server Name"? */
         aConfigTable = [midiDriverList objectAtIndex:i];
-        [midiDriverNames insertObject: [NSString stringWithCString:(char *)[aConfigTable valueForStringKey:"Class Names"]]
-                         atIndex: i];
-        s = (char *)[aConfigTable valueForStringKey:"Instance"];
-        [midiDriverUnits insertObject: s ? [NSNumber numberWithInt: atoi(s)] : [NSNumber numberWithInt: 0] atIndex: i];
+        driverInstance = (char *) [aConfigTable valueForStringKey:"Instance"];
+        driverList[i] = (char *) [aConfigTable valueForStringKey:"Class Names"];
     }
+    driverList[i] = NULL; // terminate the array of strings.
+    return driverList;
 #elif macosx_server
     // hardwire this for MOXS1.0 until tablesForInstalledDrivers gives us what we expect
-    static char *midiDriver = MKMD_NAME;
+    static char *midiDriver[2] = {MKMD_NAME, NULL};
     *selectedDriver = 0;
-    return &midiDriver;
+    return midiDriver;
 #endif
 }
 
