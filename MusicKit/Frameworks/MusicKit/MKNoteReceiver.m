@@ -16,7 +16,7 @@
 /* 
 Modification history before commit to CVS:
  
- 09/19/89/daj - Changed _myData to type void *.
+ 09/19/89/daj - Changed dataObject to type void *.
  03/13/90/daj - Moved private methods to category.
  03/21/90/daj - Added archiving.
  04/21/90/daj - Small mods to get rid of -W compiler warnings.
@@ -26,41 +26,36 @@ Modification history before commit to CVS:
 
 #import "_musickit.h"
 #import "InstrumentPrivate.h"
-#import "NoteReceiverPrivate.h"
 
 @implementation MKNoteReceiver
 
-/* METHOD TYPES
-* Receiving MKNotes
-*/
-
+/* Gets the owner (an MKInstrument or MKNoteFilter). */
 - owner
-    /* Gets the owner (an MKInstrument or MKNoteFilter). */
 {
     return owner;
 }
 
+/* TYPE: Querying; YES if aNoteSender is a connection.
+* Returns YES if aNoteSender is connected to the receiver.
+*/
 - (BOOL) isConnected: (MKNoteSender *) aNoteSender 
-	     /* TYPE: Querying; YES if aNoteSender is a connection.
-    * Returns YES if aNoteSender is connected to the receiver.
-    */
 {
-    return [noteSenders indexOfObject:aNoteSender] != NSNotFound; 
+    return [noteSenders indexOfObject: aNoteSender] != NSNotFound; 
 }
 
+/* TYPE: Squelch; Turns off message-sending capability.
+* Squelches the receiver.  While a receiver is squelched it can't send
+* messages to its noteSenders.
+*
+* Note:  You can schedule a sendNote: message through
+* sendNote:atTime: or sendNote:withDelay even if the
+* receiver is squelched.
+* However, if the receiver is still squelched when the
+* sendNote: message is received, the MKNote isn't sent.
+*
+* Returns the receiver.
+*/
 - squelch
-  /* TYPE: Squelch; Turns off message-sending capability.
-    * Squelches the receiver.  While a receiver is squelched it can't send
-    * messages to its noteSenders.
-    *
-   * Note:  You can schedule a sendNote: message through
-   * sendNote:atTime: or sendNote:withDelay even if the
-    * receiver is squelched.
-    * However, if the receiver is still squelched when the
-   * sendNote: message is received, the MKNote isn't sent.
-    *
-    * Returns the receiver.
-    */
 {
     isSquelched = YES;
     // This shuts down any sounding notes, otherwise it can be very annoying when
@@ -69,40 +64,41 @@ Modification history before commit to CVS:
     return self;
 }
 
+/* TYPE: Squelch; Turns on message-sending capability.
+* Unsquelches and returns the receiver.
+*/
 - unsquelch
-  /* TYPE: Squelch; Turns on message-sending capability.
-    * Unsquelches and returns the receiver.
-    */
 {
     isSquelched = NO;
     return self;
 }
 
+/* TYPE: Querying; YES if the receiver is squelched.
+* Returns YES if the receiver is squelched.
+*/
 - (BOOL) isSquelched
-  /* TYPE: Querying; YES if the receiver is squelched.
-    * Returns YES if the receiver is squelched.
-    */
 {
     return isSquelched;
 }
 
+/* TYPE: Querying; Returns the number of noteSenders.
+* Returns the number of noteSenders in the
+* receiver's connection set.
+*/
 - (unsigned) connectionCount
-  /* TYPE: Querying; Returns the number of noteSenders.
-    * Returns the number of noteSenders in the
-    * receiver's connection set.
-    */
 {
     return [noteSenders count];
 }
 
+/* TYPE: Manipulating; Returns a copy of the List of the connections.
+* Returns a copy of the NSArray of the receiver's noteSenders. 
+* The noteSenders themselves are not
+* copied. TODO at the moment it is the sender's responsibility to free the NSArray.
+*/
 - (NSArray *) connections
-  /* TYPE: Manipulating; Returns a copy of the List of the connections.
-    * Returns a copy of the List of the receiver's noteSenders. 
-    * The noteSenders themselves are not
-    * copied. It is the sender's responsibility to free the List.
-    */
 {
     return _MKLightweightArrayCopy(noteSenders);
+    // TODO should become return [_MKLightweightArrayCopy(noteSenders) autorelease];
 }
 
 #define VERSION2 2
@@ -111,7 +107,7 @@ Modification history before commit to CVS:
 {
     if (self != [MKNoteReceiver class])
 	return;
-    [MKNoteReceiver setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
+    [MKNoteReceiver setVersion: VERSION2];//sb: suggested by Stone conversion guide (replaced self)
 }
 
 - init 
@@ -119,48 +115,52 @@ Modification history before commit to CVS:
     self = [super init];
     if(self != nil) {
 	noteSenders = [[NSMutableArray alloc] init];
-	owner = nil;	
+	owner = nil;
+	dataObject = nil;
     }
     return self;
 }
 
+/* TYPE: Creating; Frees the receiver.
+ * Frees the receiver. Illegal while the receiver is sending.
+ * Also removes the name, if any, from the name table.
+ */
 - (void) dealloc
-  /* TYPE: Creating; Frees the receiver.
-    * Frees the receiver. Illegal while the receiver is sending.
-    * Also removes the name, if any, from the name table.
-    */
 {
-    [self disconnect];
-    [noteSenders release];
-    noteSenders = nil;
+    if(noteSenders != nil) {
+	[self disconnect];
+	[noteSenders release];
+	noteSenders = nil;	
+    }
+    [dataObject release];
+    dataObject = nil;
     MKRemoveObjectName(self);
     [super dealloc];
 }
 
+/* TYPE: Creating; Creates a new NoteReceiver as a copy of the receiver.
+* Creates, initializes, and returns a new NoteReceiver with the same noteSenders as the receiver.
+*/
 - copyWithZone: (NSZone *) zone
-       /* TYPE: Creating; Creates a new NoteReceiver as a copy of the receiver.
-    * Creates, initializes, and returns a new NoteReceiver with the same noteSenders as the receiver.
-    */
 {
     unsigned n = [noteSenders count], i;
     MKNoteReceiver *newObj = NSCopyObject(self, 0, zone);
     newObj->noteSenders = [[NSMutableArray arrayWithCapacity: [noteSenders count]] retain];
     for (i = 0; i < n; i++)
         [newObj connect: [noteSenders objectAtIndex:i]];
-    newObj->_myData = nil;
+    newObj->dataObject = nil;
     newObj->owner = nil;
     return newObj;
 }
 
+// Disconnects aNoteSender from the receiver. We do this by requesting the MKNoteSender to disconnect from us.
+// This concentrates responsibility (and more concretely object allocation management) with the MKNoteSender.
 - disconnect: (MKNoteSender *) aNoteSender
-   /* TYPE: Manipulating; Disconnects aNoteSender from the receiver.
-    * Disconnects aNoteSender from the receiver.
-    * Returns self.
-    */
 {
     if (!aNoteSender)
 	return self;
     
+    // Inform the note sender to disconnect from us.
     if ([aNoteSender _disconnect: self]) {
         [self _disconnect: aNoteSender];
     }
@@ -168,25 +168,20 @@ Modification history before commit to CVS:
 }	
 
 - disconnect
-   /* TYPE: Manipulating; Disconnects all the receiver's noteSenders.
-    * Disconnects all the objects connected to the receiver.
-    * Returns the receiver, unless the receiver is currently sending to its
-    * noteSenders, in which case does nothing and returns nil.
-    */
 {
-    //id aList = [noteSenders copy];  // LMS originally this was _MKCopyList
-    id aList = _MKLightweightArrayCopy(noteSenders);
-    /* Need to copy since disconnect: modifies contents. */
-    [aList makeObjectsPerformSelector: @selector(disconnect:) withObject: self];
-//    [aList release];
+    /* Need to copy since MKNoteSender -disconnect: modifies contents. */
+    NSMutableArray *allOfOurNoteSenders = _MKLightweightArrayCopy(noteSenders);
+    // NSLog(@"MKNoteReceiver %p disconnecting all note senders %@\n", self, allOfOurNoteSenders);
+    [allOfOurNoteSenders makeObjectsPerformSelector: @selector(disconnect:) withObject: self];
+    [allOfOurNoteSenders release];
     return self;
 }
 
+/* TYPE: Manipulating; Connects aNoteSender to the receiver.
+* Connects aNoteSender to the receiver 
+* and returns self.  
+*/
 - connect: (MKNoteSender *) aNoteSender 
-  /* TYPE: Manipulating; Connects aNoteSender to the receiver.
-    * Connects aNoteSender to the receiver 
-    * and returns self.  
-    */
 {
     if (![aNoteSender isKindOfClass: [MKNoteSender class]])
 	return self;
@@ -195,9 +190,8 @@ Modification history before commit to CVS:
     return self;
 }
 
+// Receiving; Forwards note to its owner, unless squelched.
 - receiveNote: (MKNote *) aNote
-      /* TYPE: Receiving; Forwards note to its owner, unless squelched.
-    */
 {
     if (isSquelched)
 	return nil;
@@ -205,19 +199,19 @@ Modification history before commit to CVS:
     return self;
 }
 
+ /* TYPE: Receiving; Receive MKNote at time specified in beats.
+Receives the specifed note at the specified time using
+the note's Conductor for time coordination. */
 - receiveNote: (MKNote *) aNote atTime: (double) time 
-     /* TYPE: Receiving; Receive MKNote at time specified in beats.
-    Receives the specifed note at the specified time using
-    the note's Conductor for time coordination. */
 {
     [[aNote conductor] sel: @selector(receiveNote:) to: self atTime: time  argCount: 1, aNote];
     return self;
 }
 
+/* Receives the specifed note, delayed by delayTime from the
+current time, as far as the note's conductor is concerned. 
+Uses the note's Conductor for time coordination. */
 - receiveNote: (MKNote *) aNote withDelay: (double) delayTime
-    /* Receives the specifed note, delayed by delayTime from the
-    current time, as far as the note's conductor is concerned. 
-    Uses the note's Conductor for time coordination. */
 {
     [[aNote conductor] sel: @selector(receiveNote:) to: self withDelay: delayTime argCount: 1, aNote];
     return self;
@@ -280,25 +274,25 @@ Modification history before commit to CVS:
 
 @implementation MKNoteReceiver(Private)
 
+/* Sets the owner (an MKInstrument or MKNoteFilter). In most cases,
+only the owner itself sends this message. 
+*/
 - _setOwner: obj
-    /* Sets the owner (an MKInstrument or MKNoteFilter). In most cases,
-    only the owner itself sends this message. 
-    */
 {
-    owner = obj;
+    owner = obj; // Don't retain as this is a weak reference.
     return self;
 }
 
-- (void) _setData: (void *) anObj 
-    /* Facility for associating an arbitrary datum in a NoteReceiver */
+/* Facility for associating an arbitrary datum in a MKNoteReceiver */
+- (void) _setData: (id) anObj 
 {
-    _myData = anObj;
+    [dataObject release];
+    dataObject = [anObj retain];
 }
 
-- (void *) _getData
-    /* */
+- (id) _getData
 {
-    return _myData;
+    return [[dataObject retain] autorelease];
 }
 
 - _connect: (MKNoteSender *) aNoteSender
