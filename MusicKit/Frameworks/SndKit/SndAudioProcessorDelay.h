@@ -21,11 +21,11 @@
 #import "SndAudioProcessor.h"
 
 /*!
-@enum SndDelayParam
-@abstract Parameter keys
- @constant dlyLength Length
- @constant dlyFeedback Feedback amount 
- @constant dlyNumParams Number of parameters
+  @enum SndDelayParam
+  @abstract Parameter keys
+  @constant dlyLength Length
+  @constant dlyFeedback Feedback amount 
+  @constant dlyNumParams Number of parameters
 */
 enum {
   dlyLength    = 0, 
@@ -36,25 +36,25 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class SndAudioProcessorDelay
-@abstract A delay processor
-@discussion To come - see base class.
+  @class SndAudioProcessorDelay
+  @abstract A delay processor
+  @discussion To come - see base class.
 */
 @interface SndAudioProcessorDelay : SndAudioProcessor {
-/*! @var  chanL*/
+/*! @var  chanL temporary delay buffer (left channel) */
   float  *chanL;
-/*! @var  chanR*/
+/*! @var  chanR temporary delay buffer (right channel) */
   float  *chanR;
-/*! @var  feedback*/
+/*! @var  feedback The normalised amount of signal summed from earlier time. */
   float   feedback;
-/*! @var  length*/
+/*! @var  length Delay length in samples. */
   long    length;
-/*! @var  readPos*/
+/*! @var  readPos The delayed sample to next read from. */
   long    readPos;
-/*! @var  writePos*/
+/*! @var  writePos The delay sample to save. */
   long    writePos;
-/*! @var  lock*/
-  NSLock *lock; // so we can't resize the delay lines whilst using them!
+/*! @var  processingLock So we can't resize the delay lines whilst using them!*/
+  NSLock *processingLock;
 }
 
 /*!
@@ -66,6 +66,7 @@ enum {
     @discussion
 */
 + delayWithLength: (const long) nSams feedback: (const float) fFB;
+
 /*!
     @method setLength:feedback:
     @abstract 
@@ -75,6 +76,7 @@ enum {
     @discussion
 */
 - setLength: (const long) nSams andFeedback: (const float) fFB;
+
 /*!
     @method     freemem
     @abstract 
@@ -84,6 +86,7 @@ enum {
     @discussion
 */
 - freemem;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
