@@ -7,3 +7,4 @@
 db2html MusicKit_README.sgml
 mv MusicKit_README MusicKit
 tar czf MusicKitREADME.tar.gz MusicKit
+rm -r MusicKit
