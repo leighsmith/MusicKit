@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/06/09 03:28:35  leigh
+  Removed objc.h
+
   Revision 1.2  1999/07/29 01:26:17  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -21,8 +24,8 @@ Modification history:
    8/27/90/daj - Added override of allocFromZone: and copyFromZone:
                  Changed -free to be like [self dealloc]. 
 */
-#import <objc/objc.h>
-#import <Foundation/NSZone.h>
+#import <Foundation/Foundation.h>
+//Foundation/NSZone
 
 +new 
   /* We override this method since instances are never created directly.

@@ -13,14 +13,17 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/06/09 03:29:10  leigh
+  Removed objc.h
+
   Revision 1.2  1999/07/29 01:26:17  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Minor change to do lazy garbage collection of synth data. 
   04/21/90/daj - Changes to make compiler happy with -W switches on.
 */
+#import <Foundation/Foundation.h>
 #import "MKUnitGenerator.h" /* these 2 added by sb */
-#import <objc/objc.h>
 
 #define SynthElement MKUnitGenerator 
 /* It's actually either MKUnitGenerator or MKSynthData, but this makes compiler 
