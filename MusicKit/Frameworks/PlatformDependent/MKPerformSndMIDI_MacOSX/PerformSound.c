@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.8  2001/03/21 02:59:43  leigh
+// Removed old debugging info
+//
 // Revision 1.7  2001/03/12 19:15:58  leigh
 // Cleaned up debugging info
 //
@@ -682,7 +685,6 @@ PERFORM_API BOOL SNDStreamStop(void)
 {
     OSStatus CAstatus;
 
-    fprintf(stderr, "stopping streaming");
     CAstatus = AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
     
     if (CAstatus) {
