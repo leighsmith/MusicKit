@@ -706,7 +706,6 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
         float lEndAmp, rEndAmp, lStartAmp, rStartAmp;
         float lScaler, rScaler;
         float ampMult, bearingMult;
-        float ll,rr;
         double srxchan = [outB samplingRate] * 2;
 
         for (i = 0 ; i < xPtr - 1 ; i++) {
@@ -728,8 +727,6 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
             rDiff = rEndAmp - rStartAmp;
 //printf("i %d, last sample %d\n",i,lastSample);
             for (j = currSample ; j < lastSample ; j+=2) {
-                ll = inD[j];
-                rr = inD[j+1];
                 lScaler = lStartAmp + lDiff * j/timeDiff;
                 rScaler = rStartAmp + rDiff * j/timeDiff;
                 inD[j] *= lScaler;
