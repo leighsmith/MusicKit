@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2004/12/06 18:27:36  leighsmith
+  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
   Revision 1.4  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -155,7 +158,7 @@ NSLocalizedStringFromTableInBundle(@"Waveshaping harmonics must be integers.", _
 	j = (int)freqRatios[i];
 	diff = freqRatios[i]-j;
 	if (ABS(diff) > .0001) /* Floating point compare */ 
-	  _MKErrorf(MK_musicKitErr,CHEBYCHEV_ERROR);
+	  MKErrorCode(MK_musicKitErr,CHEBYCHEV_ERROR);
 	k = j % 4;   /* Perform signification algorithm described in LeBrun 
 		      * The idea is that you set Hk[2], [3], [6], [7], ... to
 		      * negative amplitude as a way of making the index have

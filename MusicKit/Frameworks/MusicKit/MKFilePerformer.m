@@ -92,6 +92,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2004/12/06 18:27:35  leighsmith
+  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
   Revision 1.12  2003/08/04 21:19:37  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -324,7 +327,7 @@ Modification history:
             }
 	} 
 	if (!stream)
-	  _MKErrorf(MK_cantOpenFileErr,filename);
+	  MKErrorCode(MK_cantOpenFileErr,filename);
     }
     fileTime = 0;
     if ((!stream) || (![self initializeFile])) 

@@ -27,58 +27,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2004, The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.16  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.15  2002/09/19 18:16:27  leighsmith
-  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
-
-  Revision 1.14  2002/04/16 15:20:01  sbrandon
-  - several clumsy string-appending calls were simplified for speed
-
-  Revision 1.13  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.12  2002/01/29 16:44:26  sbrandon
-  changed +argName and argName() to return NSStrings; also changed all
-  uses of _MKOrchTrace to use NSString args.
-
-  Revision 1.11  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.10  2001/07/02 16:51:38  sbrandon
-  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
-    compliant)
-
-  Revision 1.9  2000/11/25 22:40:48  leigh
-  Doco cleanup
-
-  Revision 1.8  2000/07/22 00:32:21  leigh
-  Minor doco and typing cleanups.
-
-  Revision 1.7  2000/05/06 01:11:10  leigh
-  Parenthetised to remove warnings
-
-  Revision 1.6  2000/04/16 04:25:11  leigh
-  Removed assignment in condition warning
-
-  Revision 1.5  2000/01/13 06:38:27  leigh
-  Corrected _MKErrorf to take NSString error message, kludging the second parameter to be assumed as a char *, this needs further work
-
-  Revision 1.4  1999/11/12 01:25:43  leigh
-  Fixed error message to NSString
-
-  Revision 1.3  1999/08/26 19:58:53  leigh
-  DSPMemoryNames changed to be a function for Win32
-
-  Revision 1.2  1999/07/29 01:16:44  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to commit to CVS:
 
   11/20/89/daj - Minor change for new lazy shared data garbage collection. 
   11/26/89/daj - Added _MKBeginUGBlock() and _MKEndUGBlock() to avoid calling
@@ -99,7 +51,7 @@ Modification history:
   11/6/94/daj - Changed error returns to notify orch on abort.
 */
 
-// LMS: FIXME _MKErrorf use here is wrong, for now I'm continuing to make the earlier assumption that the second argument
+// LMS: FIXME MKErrorCode use here is wrong, for now I'm continuing to make the earlier assumption that the second argument
 // is somehow a cString.
 
 #import "UnitGeneratorPrivate.h"
@@ -202,8 +154,10 @@ id _MKFixupUG(MKUnitGenerator *self,DSPFix48 *ts)
                 if (ec) {
                     if (ec == DSP_EABORT)
                             [self->orchestra _notifyAbort];
-                        else
-                            return _MKErrorf(MK_ugLoadErr, NSStringFromClass([self class]));
+		    else {
+			MKErrorCode(MK_ugLoadErr, NSStringFromClass([self class]));
+			return nil;
+		    }
                 }
             }
         }
@@ -537,7 +491,8 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 static id argOutOfBoundsErr(unsigned argNum,MKUnitGenerator *self)
   /* Generates error message saying argument is out of bounds. */
 {
-    return _MKErrorf(MK_ugBadArgErr, [NSString stringWithCString: (char *) argNum], NSStringFromClass([self class]));
+    MKErrorCode(MK_ugBadArgErr, [NSString stringWithCString: (char *) argNum], NSStringFromClass([self class]));
+    return nil;
 }
 
 static id addrSetErr(MKUnitGenerator *self,unsigned argNum)
@@ -545,9 +500,10 @@ static id addrSetErr(MKUnitGenerator *self,unsigned argNum)
      address. */
 {
     if (OUTOFBOUNDS(self,argNum))
-      argOutOfBoundsErr(argNum,self);
-    return _MKErrorf((self->args[argNum].addressMemSpace != DSP_MS_N) ?  MK_ugNonAddrErr : MK_ugNonDatumErr,
+	argOutOfBoundsErr(argNum,self);
+    MKErrorCode((self->args[argNum].addressMemSpace != DSP_MS_N) ?  MK_ugNonAddrErr : MK_ugNonDatumErr,
                      argName(self,argNum), NSStringFromClass([self class]));
+    return nil;
 }
 
 static void reportOpt(MKUnitGenerator *self,unsigned argNum)
@@ -690,9 +646,11 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
         if (ec) {
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
-            else
-                return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-				argName(self,argNum), NSStringFromClass([self class]));
+            else {
+                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+				   argName(self,argNum), NSStringFromClass([self class]));
+		return nil;
+	    }
         }
         return self;
     }
@@ -706,9 +664,11 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
     if (ec) {
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
-        else
-            return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-			    argName(self,argNum),NSStringFromClass([self class]));
+        else {
+            MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+			       argName(self,argNum),NSStringFromClass([self class]));
+	    return nil;
+	}
     }
     return self;
 }
@@ -748,9 +708,11 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
         if (ec) {
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
-            else
-                return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-				argName(self,argNum), NSStringFromClass([self class]));
+            else {
+                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+				   argName(self,argNum), NSStringFromClass([self class]));
+		return nil;
+	    }
         }
     }
     else {
@@ -765,9 +727,11 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
         if (ec) {
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
-            else
-                return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-				argName(self,argNum), NSStringFromClass([self class]));
+            else {
+                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+				   argName(self,argNum), NSStringFromClass([self class]));
+		return nil;
+	    }
         }
     }
     return self;
@@ -787,7 +751,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
     register MKUGArgStruct *argP = &self->args[argNum];
     if (!memoryObj) {
 	if (errorChecks) 
-	    _MKErrorf(MK_musicKitErr, @"nil argument passed to MKSetUGAddressArg().");
+	    MKErrorCode(MK_musicKitErr, @"nil argument passed to MKSetUGAddressArg().");
 	return nil;
     }
     memP =  [memoryObj orchAddrPtr];
@@ -796,18 +760,23 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 	  return nil;
 	if (OUTOFBOUNDS(self,argNum))                 /* Arg ok? */
 	  return argOutOfBoundsErr(argNum,self);
-	if (self->_orchIndex != memP->orchIndex)            /* Right orch? */
-          return _MKErrorf(MK_ugOrchMismatchErr, [NSString stringWithCString: (char *) memP->orchIndex],
-			   argName(self,argNum), NSStringFromClass([self class]),self->_orchIndex);
+	if (self->_orchIndex != memP->orchIndex) {    /* Right orch? */
+	    MKErrorCode(MK_ugOrchMismatchErr, [NSString stringWithCString: (char *) memP->orchIndex],
+			       argName(self,argNum), NSStringFromClass([self class]), self->_orchIndex);
+	    return nil;
+	}
 	if (argP->addressMemSpace == DSP_MS_N)        /* Address valued arg? */
 	  return addrSetErr(self,argNum);
-	if (argP->addressMemSpace != memP->memSpace)  /* space match? */ 
-	  return _MKErrorf(MK_ugArgSpaceMismatchErr,
-                           [NSString stringWithCString: 
-				(((int)memP->memSpace < (int)DSP_MS_Num && (int)memP->memSpace > (int)DSP_MS_N) ? 
-			    ((char *)memP->memSpace) : "invalid")],
-			   DSPMemoryNames((int)argP->addressMemSpace),
-			   argName(self,argNum), NSStringFromClass([self class]));
+	if (argP->addressMemSpace != memP->memSpace) {  /* space match? */ 
+	    MKErrorCode(MK_ugArgSpaceMismatchErr,
+			       [NSString stringWithCString: 
+				   (((int)memP->memSpace < (int)DSP_MS_Num && (int)memP->memSpace > (int)DSP_MS_N) ? 
+				    ((char *)memP->memSpace) : "invalid")],
+			       DSPMemoryNames((int)argP->addressMemSpace),
+			       argName(self,argNum), NSStringFromClass([self class]));
+	    
+	    return nil;
+	}
     }
     if (optimize(self,argNum,argP,memP->address,0))
         return self;
@@ -826,9 +795,11 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
     if (ec) {
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
-        else
-            return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
-			    argName(self,argNum), NSStringFromClass([self class]));
+        else {
+            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+			       argName(self,argNum), NSStringFromClass([self class]));
+	    return nil;
+	}
     }
     return self;
 }
@@ -864,9 +835,11 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
     if (ec) {
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
-        else
-            return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
-			    argName(self,argNum),NSStringFromClass([self class]));
+        else {
+            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
+			       argName(self,argNum),NSStringFromClass([self class]));
+	    return nil;
+	}
     }
     return self;
 }
@@ -909,9 +882,11 @@ static id specialAddressVal(MKUnitGenerator *self, unsigned int argNum, SEL orch
     if (ec) {
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
-        else
-            return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
-			    argName(self,argNum), NSStringFromClass([self class]));
+        else {
+            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+			       argName(self,argNum), NSStringFromClass([self class]));
+	    return nil;
+	}
     }
     return self;
 }
@@ -1245,8 +1220,10 @@ extern int _MKOrchestraGetNoops(void);
     if (ec) {
         if (ec == DSP_EABORT)
             [aUG->orchestra _notifyAbort];
-        else
-            return _MKErrorf(MK_ugLoadErr, NSStringFromClass([aUG class]));
+        else {
+            MKErrorCode(MK_ugLoadErr, NSStringFromClass([aUG class]));
+	    return nil;
+	}
     }
     /* Relocate arguments. */
     if (aUG->_classInfo->master->argCount > 0) { 

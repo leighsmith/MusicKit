@@ -267,7 +267,7 @@ static void initNoteClass()
 static id noteCache[NOTECACHESIZE];
 static unsigned noteCachePtr = 0;
 
--initWithTimeTag:(double)aTimeTag
+- initWithTimeTag: (double) aTimeTag
 {
   self = [super init];
   if (self != nil) {
@@ -282,10 +282,10 @@ static unsigned noteCachePtr = 0;
 
 -init
 {
-  return [self initWithTimeTag:MK_ENDOFTIME];
+  return [self initWithTimeTag: MK_ENDOFTIME];
 }
 
-+noteWithTimeTag:(double)aTimeTag
++ noteWithTimeTag: (double) aTimeTag
   /* TYPE: Creating; Creates a new MKNote and sets its timeTag.
    * Creates and initializes a new (mute) MKNote object 
    * with a timeTag value of aTimeTag.
@@ -305,7 +305,7 @@ static unsigned noteCachePtr = 0;
   }
   else
     newObj = [super allocWithZone:NSDefaultMallocZone()];
-  [newObj initWithTimeTag:aTimeTag];
+  [newObj initWithTimeTag: aTimeTag];
   return [newObj autorelease];
 }
 
@@ -315,7 +315,7 @@ static unsigned noteCachePtr = 0;
    * Implemented as noteWithTimeTag:MK_ENDOFTIME.
    */
 {
-    return [self noteWithTimeTag:MK_ENDOFTIME];
+    return [self noteWithTimeTag: MK_ENDOFTIME];
 }
 
 #if 0
@@ -632,14 +632,14 @@ int _MKNoteCompare(const void *el1,const void *el2)
    * two MKNotes would be stored if they were members of the same MKPart.
    */
 { 
-    if (![aNote isKindOfClass:noteClass])
+    if (![aNote isKindOfClass: noteClass])
       return NSOrderedAscending;
-    return _MKNoteCompare(&self,&aNote);
+    return _MKNoteCompare(&self, &aNote);
 }
 
 /* NoteType, duration, noteTag ---------------------------------------------- */
 
--(MKNoteType) noteType
+- (MKNoteType) noteType
   /* TYPE: Type; Returns the receiver's noteType.
    * Returns the receiver's noteType.
    */
@@ -649,7 +649,7 @@ int _MKNoteCompare(const void *el1,const void *el2)
 
 #define ISNOTETYPE(_x) ((int)_x >= (int)MK_noteDur && (int)_x <= (int)MK_mute)
 
-- (id)setNoteType :(MKNoteType) newNoteType
+- (id) setNoteType: (MKNoteType) newNoteType
  /* TYPE: Type; Sets the receiver's noteType to newNoteType.
   * Sets the receiver's noteType to newNoteType,
   * which must be one of:
@@ -667,7 +667,8 @@ int _MKNoteCompare(const void *el1,const void *el2)
         noteType = newNoteType;
         return self;
     }
-    else return nil;
+    else
+	return nil;
 }
 
 -(double) setDur:(double) value
@@ -1765,7 +1766,7 @@ unsigned MKNoteTag(void)
        MAXINT if no more noteTags. */
     if (highestTag < MAXINT)
       return ++highestTag;
-    else _MKErrorf(MK_noMoreTagsErr);
+    else MKErrorCode(MK_noMoreTagsErr);
     return MAXINT;
 }
 
@@ -1778,7 +1779,7 @@ unsigned MKNoteTags(unsigned n)
         highestTag += n;
         return base;
     }
-    _MKErrorf(MK_noMoreTagsErr);
+    MKErrorCode(MK_noMoreTagsErr);
     return MAXINT;
 }
 
@@ -1927,7 +1928,7 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     MKNote *aNoteOff;
 
     if (noteType != MK_noteDur) {
-        _MKErrorf(MK_musicKitErr, @"receiver isn\'t a noteDur");
+        MKErrorCode(MK_musicKitErr, @"receiver isn\'t a noteDur");
         return nil;
     }
     aNoteOff = [noteClass noteWithTimeTag: timeTag + getNoteDur(self)];

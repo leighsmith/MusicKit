@@ -4238,13 +4238,13 @@ NSMutableData *_MKFindScorefile(int *fd,NSString *name)
     *fd = MKFindScorefile(name);
 #warning StreamConversion: NXOpenFile should be converted to an NSData method
     if ((OPENFAIL(*fd)) || ((rtnVal = NXOpenFile(*fd,readOrWrite)) == NULL)) 
-      _MKErrorf(MK_cantOpenFileErr,fileName);
+      MKErrorCode(MK_cantOpenFileErr,fileName);
  */
 //sb: need to drastically simplify MKFindScorefile, or do away with it (see docs...)
     // Should not be difficult to open file directly with NSMutableData methods.
 //    return rtnVal;
     rtnVal = (NSMutableData *)MKFindScorefile(name);
-    if (rtnVal == nil) _MKErrorf(MK_cantOpenFileErr,fileName);
+    if (rtnVal == nil) MKErrorCode(MK_cantOpenFileErr,fileName);
     return rtnVal;
 }
 

@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2004/12/06 18:27:37  leighsmith
+  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
   Revision 1.16  2004/10/25 16:25:12  leighsmith
   Removed dodgy override of release and retain and replaced with dealloc and an assertion message if dealloc occurs while in performance. If so, we need to tell the wold loudly about it.
 
@@ -630,7 +633,7 @@ static void alternatePatchMsg(void)
 				  MKIsTraced(MK_TRACEPREEMPT)) 
 				  NSLog(@"MKSynthInstrument omits note at time %f for tag %@.\n",
 					  MKGetTime(), tagStr(noteTag));
-			      _MKErrorf(MK_synthInsOmitNoteErr,MKGetTime());
+			      MKErrorCode(MK_synthInsOmitNoteErr,MKGetTime());
 			      [aNote release];
 			      return nil;
 			  }

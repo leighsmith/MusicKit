@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2004/12/06 18:27:37  leighsmith
+  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
   Revision 1.8  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -510,12 +513,12 @@ MKWaveTable *MKWaveTableForTimbreKey(NSString *key,
       return nil;
     i = getPureName(key,&pureName,&prefixVal,&suffixVal);
     if (i == BAD) {
-	_MKErrorf(MK_spsInvalidPartialsDatabaseKeywordErr,key);
+	MKErrorCode(MK_spsInvalidPartialsDatabaseKeywordErr,key);
 	return nil;
     }
     timbre = (MKTimbre *) [timbreDictionary objectForKey: ((i == NONE) ? key : pureName)];
     if (!timbre) {
-	_MKErrorf(MK_spsInvalidPartialsDatabaseKeywordErr,key);
+	MKErrorCode(MK_spsInvalidPartialsDatabaseKeywordErr,key);
 	return nil;
     }
     if (suffixVal)     /* Direct access */

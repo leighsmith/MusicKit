@@ -264,7 +264,7 @@ _MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * p)
 	p->timeTag = timeTag;
     }
     else if (timeTag < p->timeTag) 
-      _MKErrorf(MK_outOfOrderErr,timeTag,p->timeTag);
+      MKErrorCode(MK_outOfOrderErr,timeTag,p->timeTag);
     if (aNote) 
       _MKWriteNote2(aNote,aPart,p);
     return p;

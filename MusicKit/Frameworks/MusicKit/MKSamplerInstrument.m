@@ -109,7 +109,7 @@
     // Not loaded, load it now. Read soundfile, for now loading it into a Snd object, eventually 
     // priming the buffers for play direct from disk.
     if ((newSound = [Snd addName: filePath fromSoundfile: filePath]) == nil) {
-        _MKErrorf(MK_cantOpenFileErr, filePath);
+        MKErrorCode(MK_cantOpenFileErr, filePath);
         return nil;
     }
     return self;
@@ -128,7 +128,7 @@
     // NSLog(@"playing file %@\n", filePath);
 
     if ((existingSound = [Snd soundNamed: filePath]) == nil) { // Ouch! better check the disk-load times here
-        _MKErrorf(MK_cantOpenFileErr, filePath);
+        MKErrorCode(MK_cantOpenFileErr, filePath);
         return nil;
     }
     // needed to remove notes when sounds complete playing.
@@ -158,7 +158,7 @@
     // NSLog(@"playing file %@\n", filePath);
 
     if ((existingSound = [Snd soundNamed: filePath]) == nil) { 
-        _MKErrorf(MK_cantOpenFileErr, filePath);
+        MKErrorCode(MK_cantOpenFileErr, filePath);
         return nil;
     }
     // needed to remove notes when sounds complete playing.

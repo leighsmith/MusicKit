@@ -26,6 +26,9 @@
  Modification history:
 
  $Log$
+ Revision 1.17  2004/12/06 18:27:36  leighsmith
+ Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
  Revision 1.16  2003/12/31 00:39:53  leighsmith
  Cleaned up naming of methods, removing underscores
 
@@ -625,7 +628,7 @@ NSLocalizedStringFromTableInBundle(@"MKPartials object currently supports table 
   int howMany = [samplesObject length]; /* Must be after dataDouble message */
   int halfHowMany = howMany / 2;
   if (!isPowerOfTwo(howMany)) {
-    _MKErrorf(MK_musicKitErr,
+    MKErrorCode(MK_musicKitErr,
               POWERS_OF_2_ERROR);
     /*** FIXME ***/
     return nil;
@@ -741,7 +744,7 @@ automatically if necessary by the various getData: methods
       aLength = length;
   }
   if (!isPowerOfTwo(aLength)) {
-    _MKErrorf(MK_musicKitErr,
+    MKErrorCode(MK_musicKitErr,
               POWERS_OF_2_ERROR);
     /*** FIXME ***/
     return nil;

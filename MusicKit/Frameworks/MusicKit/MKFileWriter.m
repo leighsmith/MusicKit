@@ -49,6 +49,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2004/12/06 18:27:35  leighsmith
+  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
   Revision 1.7  2004/10/25 16:22:50  leighsmith
   Updated for new ivar name
 
@@ -320,10 +323,10 @@ Modification history:
     [self finishFile];
     if (filename) {
         if (![stream writeToFile:[filename stringByAppendingPathExtension:[self fileExtension]] atomically:YES])
-            _MKErrorf(MK_cantCloseFileErr,filename);
+            MKErrorCode(MK_cantCloseFileErr,filename);
 /*
 	if (close(_fd) == -1)
-	  _MKErrorf(MK_cantCloseFileErr,filename);
+	  MKErrorCode(MK_cantCloseFileErr,filename);
  */
     }
     [stream release];

@@ -5,53 +5,13 @@
   Description:
     This file factored out of MKConductor.m for purposes of separate copyright and
     to isolate MIDI time code functions.
-    This file contains the MTCPrivate category of Conductor.
+    This file contains the MTCPrivate category of MKConductor.
 
   Original Author: David Jaffe
 
   Copyright (c) Pinnacle Research, 1993
   Portions Copyright (c) 1994 Stanford University
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.13  2002/09/25 17:38:10  leighsmith
-  Made setupMTC and tearDownMTC methods rather than functions to avoid warnings of private ivar use
-
-  Revision 1.12  2002/01/29 16:46:12  sbrandon
-  changed all uses of _MKErrorf to use NSString args.
-
-  Revision 1.11  2001/05/12 09:33:51  sbrandon
-  - changed KERN_SUCCESS to MKMD_SUCCESS. Need to check this is ok on MacOSX.
-
-  Revision 1.10  2000/12/07 00:23:46  leigh
-  Standardised on machPorts as the mechanism for MKMD routines, now checking ports are the reception mechanism before adding them.
-
-  Revision 1.9  2000/11/26 00:23:27  leigh
-  Removed redundant functions midiAlarm and midiException
-
-  Revision 1.8  2000/11/13 23:16:25  leigh
-  Integrated tvs structure into MKMidi ivars
-
-  Revision 1.7  2000/06/09 14:51:53  leigh
-  Removed objc.h
-
-  Revision 1.6  2000/04/01 01:15:12  leigh
-  Removed redundant MSG_SIZE_MAX definitions (which have gone under MacOsX)
-
-  Revision 1.5  2000/01/27 19:03:36  leigh
-  Now using NSPort replacing C Mach port API
-
-  Revision 1.4  1999/11/14 21:30:49  leigh
-  Corrected _MKErrorf arguments to be NSStrings
-
-  Revision 1.3  1999/08/08 01:59:22  leigh
-  Removed extraVars cruft
-
-  Revision 1.2  1999/07/29 01:26:10  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 #import <Foundation/Foundation.h>
 
@@ -116,7 +76,7 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
         return 0;
     r = MKMDGetClockTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], &theTime);
     if (r != MKMD_SUCCESS)
-        _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "_time");
+        MKErrorCode(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "_time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
     if (self->synchConductor)
         t -= mtcTimeOffset;
@@ -168,7 +128,8 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 	mtcMidiObj = self;
 	synchConductor = aCond;
 	mtcMidi = self;
-    } else {
+    }
+    else {
 	if (mtcMidi == self) { 
 	    mtcMidiObj = nil;
 	    synchConductor = aCond;
@@ -191,12 +152,12 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 {
     exceptionPort = [[NSPort port] retain];
     if (exceptionPort == nil) {
-	_MKErrorf(MK_machErr,OPEN_ERROR, @"Unable to open exceptionPort", @"setUpMTC");
+	MKErrorCode(MK_machErr,OPEN_ERROR, @"Unable to open exceptionPort", @"setUpMTC");
 	return NO;
     }
     alarmPort = [[NSPort port] retain];
     if (alarmPort == nil) {
-        _MKErrorf(MK_machErr,OPEN_ERROR, @"Unable to open alarmPort", @"setUpMTC");
+        MKErrorCode(MK_machErr,OPEN_ERROR, @"Unable to open alarmPort", @"setUpMTC");
         return NO;
     }
     alarmTimeValid = NO;

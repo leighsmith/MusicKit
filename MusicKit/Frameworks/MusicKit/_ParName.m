@@ -46,72 +46,11 @@
  Copyright (c) 1988-1992, NeXT Computer, Inc.
  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
  Portions Copyright (c) 1994 Stanford University
- Portions Copyright (c) 1999-2000 The MusicKit Project.
+ Portions Copyright (c) 1999-2004 The MusicKit Project.
  */
 /*
-Modification history:
-
- $Log$
- Revision 1.18  2003/12/31 00:38:52  leighsmith
- Cleaned up naming of methods, removing underscores
-
- Revision 1.17  2003/08/04 21:14:33  leighsmith
- Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
- Revision 1.16  2002/04/16 15:15:26  sbrandon
- - brand new _MKParameters are calloced instead of malloced so any object
-   pointers are sure to be nil
- - setting any parameter to any value first checks to see if it used to
-   hold an object, and releases before setting to the new value
- - setting a parameter to an object just adds a retain to the object
- - copying a parameter copies object params instead of extra retain.
- - _MKParAsString now returns descriptions of envelopes, wavetables and
-   other strings.
- - several clumsy string-appending calls were simplified for speed
-
- Revision 1.15  2002/04/15 14:32:30  sbrandon
- changed type of "s" ivar from char* to NSString and had to change all refs
- to it.
-
- Revision 1.14  2002/04/03 03:59:41  skotmcdonald
- Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
- Revision 1.13  2002/03/12 22:53:51  sbrandon
- Changed _binaryIndecies from NSMutableDictionary to NSMapTable
-
- Revision 1.12  2001/09/06 21:27:48  leighsmith
- Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
- Revision 1.11  2001/08/31 21:01:59  skotmcdonald
- Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
-
- Revision 1.10  2001/05/12 09:30:32  sbrandon
- - GNUSTEP: minor change to casting in WRITECHAR call to keep compiler happy
-
- Revision 1.9  2000/10/01 06:34:15  leigh
- Chagned to modern function prototyping, removed NXUniqueString use.
-
- Revision 1.8  2000/05/06 00:27:49  leigh
- Converted _binaryIndecies to NSMutableDictionary
-
- Revision 1.7  2000/04/07 18:32:20  leigh
- Upgraded logging to NSLog
-
- Revision 1.6  2000/02/07 00:29:53  leigh
- removed _MKHighestPar()
-
- Revision 1.5  2000/01/13 06:37:23  leigh
- Corrected _MKErrorf to take NSString error message
-
- Revision 1.4  1999/11/07 05:12:44  leigh
- Removal of redundant HashTable include
-
- Revision 1.3  1999/09/26 19:58:33  leigh
- Cleanup of documentation
-
- Revision 1.2  1999/07/29 01:26:00  leigh
- Added Win32 compatibility, CVS logs, SBs changes
-
+ Modification history prior to commit to CVS:
+ 
  09/18/89/daj - Changes to accomodate new way of doing parameters (structs
                                                                    rather than objects).
  09/22/89/daj - Changes to accomodate changes in _MKNameTable.
@@ -664,7 +603,7 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
     [aStream appendBytes:"[" length:1];
   if (declToken == MK_object) {
     if (![dataObj respondsToSelector:@selector(writeASCIIStream:)]) {
-      _MKErrorf(MK_notScorefileObjectTypeErr, NSStringFromClass([dataObj class]));
+      MKErrorCode(MK_notScorefileObjectTypeErr, NSStringFromClass([dataObj class]));
       if (binary)
         _MKWriteChar(aStream,'\0');
       else [aStream appendBytes:"]" length:1];

@@ -26,7 +26,7 @@ Modification history pre-CVS:
   01/6/90/daj - Added comments.	Flushed _MKLinkUnreferencedClasses().
   03/13/90/daj - Added "_MK_GLOBAL" to globals for 'ease of grep'.
   03/20/90/daj - Moved _MKInheritsFrom() to here.
-  07/16/90/daj - Removed extra sprintfv in _MKErrorf
+  07/16/90/daj - Removed extra sprintfv in MKErrorCode
   07/24/90/daj - Added cthread_set_errno_self in addition to errno setting.
   07/24/90/daj - Added disabling of the error stream for multi-threaded
                  performance. 
@@ -516,47 +516,46 @@ void _MKEnableErrorStream(void)
     errorStreamEnabled = YES;
 }
 
-id MKError(NSString * msg)
-    /* Calls the user's error proc (set with MKSetErrorProc), if any, with 
-       one argument, the msg. Otherwise, writes the message on the MusicKit error stream.
-       Returns nil.
-       */
+// Calls the user's error proc (set with MKSetErrorProc), if any, with one argument, the msg.
+// Otherwise, writes the message on the MusicKit error stream.
+void MKError(NSString *msg)
 {
     NSMutableData *errorStream = MKErrorStream();
+    
     if (!msg)
-        return nil;
+        return;
     if (errorProc) {
 	errorProc(msg);
-	return nil;
+	return;
     }
     else if (!errorStreamEnabled)
-        return nil;
+        return;
     if(errorStream == nil) {
         NSLog(msg);      // default is to write to the standard logging.
         NSLog(@"\n");
     }
     else {
         [errorStream appendData: [msg dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-        [errorStream appendBytes: "\n" length:1];
+        [errorStream appendBytes: "\n" length: 1];
     }
-    return nil;
 }
 
 /* Calling sequence like NSLog, but first arg is error code. It used to set errno. */
-id _MKErrorf(int errorCode,...)
+void MKErrorCode(int errorCode,...)
 {
     NSString *fmt;
     va_list ap;
-    va_start(ap,errorCode);
+    
+    va_start(ap, errorCode);
     errno = errorCode;
     // cthread_set_errno_self(errorCode);
     fmt = _MKGetErrStr(errorCode);
     if (errorProc) {
        // Immutable NSStrings are that thread-safe
-        MKError([[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease]);
+        MKError([[[NSString alloc] initWithFormat: fmt arguments: ap] autorelease]);
     }
     else if (!errorStreamEnabled)
-        return nil;
+        return;
     else {
         NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease];
         NSMutableData *errorStream = MKErrorStream();
@@ -570,7 +569,6 @@ id _MKErrorf(int errorCode,...)
         }
     }
     va_end(ap);
-    return nil;
 }
 
 /* Decibels */
@@ -600,7 +598,7 @@ BOOL _MKOpenFileStreamForWriting(NSString * fileName,NSString *defaultExtension,
     }
     if (![theData writeToFile:fileName atomically:YES]) {
         if (errorMsg)
-            _MKErrorf(MK_cantOpenFileErr,fileName);
+            MKErrorCode(MK_cantOpenFileErr,fileName);
         return NO;
     }
 
@@ -632,7 +630,7 @@ NSData *_MKOpenFileStreamForReading(NSString * fileName, NSString *defaultExtens
             rtnVal = [NSData dataWithContentsOfFile: [fileName stringByAppendingPathExtension: defaultExtension]];
     }
     else if (errorMsg)
-        _MKErrorf(MK_cantOpenFileErr, fileName);
+        MKErrorCode(MK_cantOpenFileErr, fileName);
 
     return rtnVal;
 }

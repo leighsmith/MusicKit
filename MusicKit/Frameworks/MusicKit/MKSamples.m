@@ -376,75 +376,79 @@ of it.
 - _fillTableLength:(int)aLength scale:(double)aScaling 
   /* Private method that supports both osc and excitation tables */
 {
-    /*** FIXME Eventually allow double and other format Sounds and avoid
-      losing precision in this case. ***/
+    /*** FIXME Eventually allow double and other format Sounds and avoid losing precision in this case. ***/
     int originalLength, inc;
     short *data,*end;
     DSPDatum  *newData;
     
     if (!sound)
-      return nil;
+	return nil;
     originalLength = [sound lengthInSampleFrames];
     if (aLength == 0)
-      aLength = originalLength;
+	aLength = originalLength;
     if (tableType == MK_oscTable) {
 	inc = originalLength/aLength;
-	if (inc * aLength != originalLength) 
-	  return _MKErrorf(MK_samplesNoResampleErr);
-    } else inc = 1;
-
+	if (inc * aLength != originalLength) {
+	    MKErrorCode(MK_samplesNoResampleErr);
+	    return nil;
+	}	
+    }
+    else 
+	inc = 1;
+    
     /* The above allows us to down-sample a waveform. If the Sound's size is an
-       multiple of the desired length, we can do cheap sampling rate 
-       conversion. */
-
+	multiple of the desired length, we can do cheap sampling rate 
+	conversion. */
+    
     if (dataDSP) {
-      free(dataDSP);
-      dataDSP = NULL;
+	free(dataDSP);
+	dataDSP = NULL;
     }
     _MK_MALLOC(dataDSP, DSPDatum, aLength);
     if (dataDouble) {
-      free(dataDouble);
-      dataDouble = NULL;
+	free(dataDouble);
+	dataDouble = NULL;
     }
     length = aLength;
     scaling = aScaling;
     data = (short *)[sound data]; 
     if (tableType == MK_oscTable)
-      end = data + originalLength;
+	end = data + originalLength;
     else 
-      end = data + MIN(aLength,originalLength);
+	end = data + MIN(aLength,originalLength);
     /* We only compute dataDouble here if scaling is not 1.0. The point is
-       that if we have to do scaling, we might as well compute dataDouble
-       while we're at it, since we have to do mutliplies anyway.  On the
-       other hand, if scaling is 1.0, we don't bother with dataDouble here
-       and only create it in superclass on demand. */
+	that if we have to do scaling, we might as well compute dataDouble
+	while we're at it, since we have to do mutliplies anyway.  On the
+	other hand, if scaling is 1.0, we don't bother with dataDouble here
+	and only create it in superclass on demand. */
     if (scaling == 1.0) {
 	short wd;
 	newData = dataDSP;
 	while (data < end) {
-	  wd = NSSwapBigShortToHost(*data);
-	  *newData++ = (((int) wd) << 8); /* Coercion to int does sign
-						extension. */
-	  data += inc;
+	    wd = NSSwapBigShortToHost(*data);
+	    *newData++ = (((int) wd) << 8); /* Coercion to int does sign
+		extension. */
+	    data += inc;
 	}
 	while (newData < dataDSP+aLength)  /* This can happen when lengthening */
-	  *newData++ = 0;
+	    *newData++ = 0;
     }
     else {
 	double scaler;
 	short val;
 	register double *dbl;
+	
 	newData = dataDSP;
     	if (aScaling == 0.0) {
 	    /* if normalizing, find the maximum amplitude. */
-	    short maxval;
-    	    maxval = 0;   
+	    short maxval = 0;
+	    
     	    while (data < end) {
 		val = NSSwapBigShortToHost(*data);
 	        val = (val < 0) ? -val : val;        /* Abs value */
 		data += inc;
     	        if (val > maxval) 
-		  maxval = val; 
+		    maxval = val; 
 	    }	
 	    if (maxval > 24573) {  /* Don't bother if we're close */
 		/* 24573 is (0x7fff * .75) */
@@ -455,23 +459,23 @@ of it.
 		    data += inc;
 		}
 		while (newData < dataDSP+aLength)  /* Happens when lengthening */
-		  *newData++ = 0;
+		    *newData++ = 0;
 		return self;
 	    }
     	    scaler = (1.0 / (double)maxval);  
 	}
-        else scaler = scaling / (double)(0x7fff); 
+	else
+	    scaler = scaling / (double)(0x7fff); 
 
-	/* This should be rewritten to use fixed point arithmetic and to not
-	   fill dataDouble. FIXME */
-    	data = (short *)[sound data];
+	/* TODO This should be rewritten to accept sound data of any format. */
+	data = (short *)[sound data];
 	_MK_MALLOC(dataDouble, double, aLength);
 	dbl = dataDouble;
-        while (data < end) {
+	while (data < end) {
 	    val = NSSwapBigShortToHost(*data);
 	    *dbl = val * scaler; 
 	    data += inc;
-    	    *newData++ = _MKDoubleToFix24(*dbl++);
+	    *newData++ = _MKDoubleToFix24(*dbl++);
 	}
 	while (newData < dataDSP+aLength) { /* This can happen when lengthening */
 	    *newData++ = 0;

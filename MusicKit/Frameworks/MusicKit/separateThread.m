@@ -431,12 +431,12 @@ static void initializeBackgroundThread()
     // MKConductor doesn't need messages from the application to the MK (just wakeups via abortPlayLock)
     // appToMKPort = [NSPort port];
     // if (appToMKPort == nil)
-    //     _MKErrorf(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
+    //     MKErrorCode(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
 
     // appProxy handles object messages from the MK thread to the application
     // MKToAppPort = [NSPort port];
     // if (MKToAppPort == nil)
-    //    _MKErrorf(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
+    //    MKErrorCode(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
     
     // appConnection = [[NSConnection alloc] initWithReceivePort: MKToAppPort sendPort: appToMKPort];
     // [appConnection setRootObject: appProxy];  // for receiving messages from MK thread to the application thread.
@@ -459,7 +459,7 @@ static BOOL getThreadInfo(int *info)
     unsigned int count = THREAD_INFO_MAX;
     ec = thread_info(thread_self(), THREAD_SCHED_INFO, (thread_info_t)info, &count);
     if (ec != KERN_SUCCESS) {
-        _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"getThreadInfo");
+        MKErrorCode(MK_machErr, COND_ERROR, mach_error_string(ec), @"getThreadInfo");
         return NO;
     }
     return YES;
@@ -469,7 +469,7 @@ static BOOL setThreadPriority(int priority)
 {
     kern_return_t ec = thread_priority(thread_self(), priority, 0);
     if (ec != KERN_SUCCESS) {
-        _MKErrorf(MK_machErr, COND_ERROR,
+        MKErrorCode(MK_machErr, COND_ERROR,
         mach_error_string(ec), @"setThreadPriority");
         return NO;
     }

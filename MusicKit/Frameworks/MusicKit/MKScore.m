@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.39  2004/12/06 18:27:36  leighsmith
+ Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
  Revision 1.38  2004/11/20 04:11:22  leighsmith
  Corrected the parameter and return types of several methods
 
@@ -479,7 +482,7 @@ static void writeNotes();
                                         stream, YES);
   [stream release];
   if (!success) {
-    _MKErrorf(MK_cantCloseFileErr, aFileName);
+    MKErrorCode(MK_cantCloseFileErr, aFileName);
     return nil;
   }
   else
@@ -954,7 +957,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
   [stream release];
 
   if (!success) {
-    _MKErrorf(MK_cantCloseFileErr, aFileName);
+    MKErrorCode(MK_cantCloseFileErr, aFileName);
     return nil;
   }
   else {

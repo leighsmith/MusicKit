@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2004/12/06 18:27:37  leighsmith
+  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
+
   Revision 1.8  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -74,29 +77,33 @@ Modification history:
 // Added by DAJ 10/8/93
 #define ORCHABORT  ([self->orchestra deviceStatus] == MK_devClosed) 
 
--clear
-    /* clears memory */
+/* clears memory */
+- clear
 {
     int ec;
+    
     if (ORCHABORT)
       return self;
-    if (readOnly)
-      return _MKErrorf(MK_synthDataReadonlyErr);
+    if (readOnly) {
+	MKErrorCode(MK_synthDataReadonlyErr);
+	return nil;
+    }
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
 	_MKOrchTrace(orchestra,MK_TRACEDSP,
 		     @"Clearing %@%d (addr 0x%x size:0x%x).",
 		     [orchestra segmentName:orchAddr.memSegment],
 		     self->_instanceNumber,
 		     self->orchAddr.address,self->length);
-    DSPSetCurrentDSP(_orchIndex);
     ec = DSPMKMemoryFillSkipTimed(_MKCurSample(orchestra),0,
 				  orchAddr.memSpace,orchAddr.address,1,
 				  length);
     if (ec) {
       if (ec == DSP_EABORT)
 	[self->orchestra _notifyAbort];
-      else
-        return _MKErrorf(MK_synthDataCantClearErr);
+	else {
+	    MKErrorCode(MK_synthDataCantClearErr);
+	    return nil;
+	}
     }
     return self;
 }
@@ -165,10 +172,14 @@ static id sendPreamble(self,dataArray,len,off,value)
     int off;
     DSPDatum value; /* Optional. Only supplied if CONSTANT */
 {
-    if ((!dataArray) || (len + off > self->length))
-      return _MKErrorf(MK_synthDataLoadErr);
-    if (self->readOnly)
-      return _MKErrorf(MK_synthDataReadonlyErr);
+    if ((!dataArray) || (len + off > self->length)) {
+	MKErrorCode(MK_synthDataLoadErr);
+	return nil;
+    }
+    if (self->readOnly) {
+	MKErrorCode(MK_synthDataReadonlyErr);
+	return nil;
+    }
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP)) {
 	if (len == self->length && off == 0) 
 	  if (dataArray == CONSTANT)
@@ -205,7 +216,6 @@ static id sendPreamble(self,dataArray,len,off,value)
 			 self->orchAddr.address-1+off+len,
 			 len,off);
     }
-    DSPSetCurrentDSP(self->_orchIndex);
     return self;
 }
 
@@ -231,8 +241,10 @@ static id sendPreamble(self,dataArray,len,off,value)
     if (ec) {
       if (ec == DSP_EABORT)
 	[orchestra _notifyAbort];
-      else 
-        return _MKErrorf(MK_synthDataLoadErr);
+	else {
+	    MKErrorCode(MK_synthDataLoadErr);
+	    return nil;
+	}
     }
     return self;
 }
@@ -265,8 +277,10 @@ static id sendPreamble(self,dataArray,len,off,value)
     if (ec) {
       if (ec == DSP_EABORT)
 	[orchestra _notifyAbort];
-      else
-        return _MKErrorf(MK_synthDataLoadErr);
+	else {
+	    MKErrorCode(MK_synthDataLoadErr);
+	    return nil;
+	}
     }
     return self;
 }
@@ -290,8 +304,10 @@ static id sendPreamble(self,dataArray,len,off,value)
     if (ec) {
       if (ec == DSP_EABORT)
 	[orchestra _notifyAbort];
-      else
-        return _MKErrorf(MK_synthDataLoadErr);
+	else {
+	    MKErrorCode(MK_synthDataLoadErr);
+	    return nil;
+	}
     }
     return self;
 }
@@ -349,18 +365,21 @@ extern int DSPReadValue(DSPMemorySpace space,
 {
     int ec;
     int i,cnt = len-off;
+    
     DSPDatum value;
     if (ORCHABORT)
-      return self;
+	return self;
     for (i=0; i<cnt; i++) {
 	ec = DSPReadValue(orchAddr.memSpace,orchAddr.address+off+i,&value);
 	if (ec) {
-	  if (ec == DSP_EABORT) {
-	      [orchestra _notifyAbort];
-	      return nil;
-	  }
-	  else
-              return _MKErrorf(MK_synthDataCantReadDSPErr);
+	    if (ec == DSP_EABORT) {
+		[orchestra _notifyAbort];
+		return nil;
+	    }
+	    else {
+		MKErrorCode(MK_synthDataCantReadDSPErr);
+		return nil;
+	    }
         }
 	dataArray[i] = value;
     }
@@ -379,16 +398,18 @@ extern int DSPReadValue(DSPMemorySpace space,
     int ec;
     int i,cnt = len-off;
     if (ORCHABORT)
-      return self;
+	return self;
     for (i=0; i<cnt; i++) {
 	ec = DSPReadValue(orchAddr.memSpace,orchAddr.address+off+i,dataArray++);
 	if (ec) {
-	  if (ec == DSP_EABORT) {
-	      [orchestra _notifyAbort];
-	      return nil;
-	  }
-	  else
-              return _MKErrorf(MK_synthDataCantReadDSPErr);
+	    if (ec == DSP_EABORT) {
+		[orchestra _notifyAbort];
+		return nil;
+	    }
+	    else {
+		MKErrorCode(MK_synthDataCantReadDSPErr);
+		return nil;
+	    }
         }
     }
     return self;
@@ -422,9 +443,13 @@ extern int DSPReadValue(DSPMemorySpace space,
     return nil;
 }
 
-+(id)_newInOrch:(id)anOrch index:(unsigned short)whichDSP 
- length:(unsigned int)size segment:(MKOrchMemSegment)whichSegment 
- baseAddr:(DSPAddress)addr isModulus:(BOOL)yesOrNo;
+// Should become -initInOrch:
++ (id) _newInOrch: (MKOrchestra *) anOrch
+	    index: (unsigned short) whichDSP 
+	   length: (unsigned int) size
+	  segment: (MKOrchMemSegment) whichSegment 
+	 baseAddr: (DSPAddress) addr
+	isModulus: (BOOL) yesOrNo;
 {
     static int instanceCount[MK_numOrchMemSegments-MK_xData] = {0}; 
     /* Just counts up forever (for debugging) */
@@ -432,7 +457,6 @@ extern int DSPReadValue(DSPMemorySpace space,
 //    MKSynthData *newObj = [[[self superclass] allocWithZone:NSDefaultMallocZone()] init];
     newObj->_instanceNumber = instanceCount[whichSegment-MK_xData]++;
     newObj->orchestra = anOrch;
-    newObj->_orchIndex = whichDSP;
     newObj->_reso.pLoop = newObj->_reso.pSubr = 
       newObj->_reso.xArg = newObj->_reso.lArg = 
 	newObj->_reso.yArg = 0;
