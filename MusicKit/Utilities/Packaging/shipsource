@@ -31,6 +31,8 @@ unwrap_symlink $APPNAME
 # build a ChangeLog
 cd $MKCHECKEDOUT_SRCLOC/$APPNAME
 cvs2cl -t -f Documentation/ChangeLog
+# copy it so it can be used for generating an announcement.
+cp Documentation/ChangeLog $TARLOG
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $MKCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
@@ -42,6 +44,7 @@ mv $APPNAME ${APPNAME}-$RELEASE
 tar czf $TARLOC/MK_V$RELEASE.s.tar.gz ${APPNAME}-$RELEASE
 
 echo Archive generated at $TARLOC/MK_V$RELEASE.s.tar.gz
+echo ChangeLog generated at $TARLOC/ChangeLog
 
 # blow away the checked out source.
 rm -r $MKCHECKEDOUT_SRCLOC
