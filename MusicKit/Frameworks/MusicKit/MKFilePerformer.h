@@ -6,6 +6,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/07/29 04:48:03  leigh
+  removed extraneous _extraVar ivar
+
   Revision 1.2  1999/07/29 01:25:45  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -24,7 +27,6 @@
     id stream; /*sb: either NSMutableData or NSData */
     double firstTimeTag;
     double lastTimeTag;
-    void *_reservedFilePerformer1;
 }
  
 - init;
