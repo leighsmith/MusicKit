@@ -1,16 +1,15 @@
-#import <musickit/synthpatches/DBWave1vi.h>
-#import <objc/NXStringTable.h>
+// #import <MusicKit/synthpatches/DBWave1vi.h>
 
 #import "PerformerController.h"
 #import "RandomPerformer.h"
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 
 #define PERFORMERS 9
 
 static RandomPerformer *performers[PERFORMERS];
-static Orchestra *theOrch;
+static MKOrchestra *theOrch;
 
-@implementation PerformerController:Application
+@implementation PerformerController
 
 - showInfoPanel:sender
 {
@@ -24,9 +23,9 @@ static Orchestra *theOrch;
 static void handleMKError(char *msg)
     /* Error handling routine */
 {
-    if ([Conductor performanceThread] == NO_CTHREAD) { /* Not performing */
-	if (!NXRunAlertPanel("ScorePlayer",msg,"OK","Cancel",NULL,NULL))
-	    [NXApp terminate:NXApp];
+    if ([MKConductor performanceThread] == NO_CTHREAD) { /* Not performing */
+	if (!NSRunAlertPanel("ScorePlayer",msg,"OK","Cancel",NULL,NULL))
+	    [NSApp terminate:NSApp];
     }
     else {  
 	/* When we're performing in a separate thread, we can't bring
@@ -47,10 +46,10 @@ static void handleMKError(char *msg)
     }
 }
 
-- appDidInit:sender
+- applicationDidFinishLaunching: sender
 {
     int i;
-    SynthInstrument *anIns;
+    MKSynthInstrument *anIns;
     if (theOrch) /* We're already playing? */
       return self;
 
@@ -84,7 +83,7 @@ static void handleMKError(char *msg)
 	performers[i] = [[RandomPerformer alloc] init];
 
         /* Create a SynthInstrument to manage SynthPatches. */
-	anIns = [[SynthInstrument alloc] init];
+	anIns = [[MKSynthInstrument alloc] init];
 
 	/* Assign the class of SynthPatch. */
 	[anIns setSynthPatchClass:[DBWave1vi class]];   
@@ -111,18 +110,18 @@ static void handleMKError(char *msg)
 
     /* Since all Performers may be paused, we need to tell the Conductor
        not to finish the performance if that occurs. */
-    [Conductor setFinishWhenEmpty:NO];
+    [MKConductor setFinishWhenEmpty:NO];
 
     /* Performance will run in a separate Mach thread to allow maximum
        independence between user interface and music. */
-    [Conductor useSeparateThread:YES];
-    [Conductor setThreadPriority:1.0];  /* Boost priority of performance. */ 
+    [MKConductor useSeparateThread:YES];
+    [MKConductor setThreadPriority:1.0];  /* Boost priority of performance. */ 
     
     /* Start the DSP running */
     [theOrch run];				
 
     /* Start the performance. */
-    [Conductor startPerformance];        
+    [MKConductor startPerformance];        
     return self;
 }
 
@@ -132,11 +131,11 @@ static void handleMKError(char *msg)
     RandomPerformer *perf;
     int curPerformerIndex = [sender selectedTag];
     perf = performers[curPerformerIndex];
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     if ([perf status] == MK_paused)
 	[perf resume];
     else [perf pause];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     return self;
 }
 
@@ -145,9 +144,9 @@ static void handleMKError(char *msg)
 {    
     id selectedCell = [sender selectedCell];
     int curPerformerIndex = [selectedCell tag];
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     [performers[curPerformerIndex] setOctaveTo:[selectedCell intValue]];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     return self;
 }
 
@@ -160,20 +159,19 @@ static void handleMKError(char *msg)
 
     /* Take inverse because slider is actually 1/rhythmicValue. */
 
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     [performers[curPerformerIndex] setRhythmicValueTo:val];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     return self;
 }
 
-- terminate:sender
+- applicationWillTerminate:sender
 {
     /* Clean up gracefully (not really needed) */
-    [Conductor lockPerformance];
-    [Conductor finishPerformance];
-    [Conductor unlockPerformance];
+    [MKConductor lockPerformance];
+    [MKConductor finishPerformance];
+    [MKConductor unlockPerformance];
     [theOrch close];
-    [super terminate:self];
     return self;
 }
 
