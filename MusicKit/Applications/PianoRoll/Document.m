@@ -75,9 +75,10 @@
 { 
 	NSSize aSize, cSize;
 	NSRect aRect, bRect;
+        PartView *pv = [[sender contentView] viewWithTag:1];
 
 	cSize.width = 500.0;
-	cSize.height = log(MAXFREQ)*[[[sender contentView] documentView] freqScale];
+	cSize.height = log(MAXFREQ) * 1.6 * [pv freqScale];
 	aSize = [NSScrollView frameSizeForContentSize:cSize hasHorizontalScroller:YES hasVerticalScroller:YES borderType:NSNoBorder];
 	bRect = NSMakeRect(0.0, 0.0, aSize.width, aSize.height);
 	aRect = [NSWindow frameRectForContentRect:bRect styleMask:NSResizableWindowMask];
