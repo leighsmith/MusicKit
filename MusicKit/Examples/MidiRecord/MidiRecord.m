@@ -89,11 +89,29 @@ static void handleMKError(NSString *msg) {
     return self;
 }
 
+- init
+{
+    midiIn = [[MKMidi midi] retain];           /* Get the Midi object for the default MIDI port */
+    
+    return self;
+}
+
+- (void) setDriverName: (id) sender
+{
+    [midiIn close];
+    [midiIn release];
+    midiIn = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
+    [midiIn retain];
+    NSLog([midiIn driverName]);
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *) aNotification 
 {
+    [driverPopup removeAllItems];
+    [driverPopup addItemsWithTitles: [MKMidi getDriverNames]];
+    [driverPopup selectItemWithTitle: [midiIn driverName]];
     savePanel = [[NSSavePanel savePanel] retain];
     MKSetErrorProc(handleMKError);
-    midiIn = [[MKMidi midi] retain];           /* Get the Midi object for the default MIDI port */
 }
 
 - finish
@@ -109,10 +127,10 @@ static void handleMKError(NSString *msg) {
   /* This method is invoked when the button is pushed. */ 
 {
     if ([MKConductor inPerformance]) { /* We're already performing */
-	[theButton setTitle:@"Start recording"];   /* Change the button name */
+	[recordButton setTitle:@"Start recording"];   /* Change the button name */
 	[self finish];              /* Write file and end performance. */
     } else  {                        /* New performance */
-	[theButton setTitle:@"Stop recording"];    /* Change the button name */
+	[recordButton setTitle:@"Stop recording"];    /* Change the button name */
 	[self start];               /* Start things up */
     } 
 }

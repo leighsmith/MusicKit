@@ -7,15 +7,16 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {go = id; save = id; saveAs = id; showInfoPanel = id; }; 
+            ACTIONS = {go = id; save = id; saveAs = id; setDriverName = id; showInfoPanel = id; }; 
             CLASS = MidiRecord; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                driverPopup = id; 
                 infoPanel = id; 
                 myWindow = id; 
+                recordButton = id; 
                 saveAsMenuItem = id; 
                 saveMenuItem = id; 
-                theButton = id; 
             }; 
             SUPERCLASS = NSObject; 
         }

@@ -19,12 +19,14 @@
     id saveMenuItem;
     id myWindow;
     id infoPanel;
-    id theButton;
+    IBOutlet NSButton *recordButton;
+    IBOutlet NSPopUpButton *driverPopup;
 }
 
 - (void) go: sender;
 - (void) saveAs: sender;
 - (void) save: sender;
 - (void) showInfoPanel: sender;
-
+- (void) setDriverName: (id) sender;
+- init;
 @end
