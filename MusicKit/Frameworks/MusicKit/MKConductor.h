@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2002/05/09 16:41:17  leighsmith
+  Cleaned up headerdoc listitems
+
   Revision 1.19  2002/04/08 19:09:38  sbrandon
   added doco and prototypes for new methods introduced in last commit
 
@@ -103,20 +106,22 @@ if you need more control over message requests - for example, if you
 need to be able to reschedule or remove a request - you should use the
 following C functions:
 
-&#183; <b>MKNewMsgRequest()</b> creates and returns a new message
+<ul>
+<li> <b>MKNewMsgRequest()</b> creates and returns a new message
 request structure.
 
-&#183; <b>MKScheduleMsgRequest()</b> places a previously created
+<li> <b>MKScheduleMsgRequest()</b> places a previously created
 message request (structure) in a specific MKConductor's message
 request queue.
 
-&#183; <b>MKRepositionMsgRequest()</b> repositions a message request
+<li> <b>MKRepositionMsgRequest()</b> repositions a message request
 within a MKConductor's queue.
 
-&#183; <b>MKCancelMsgRequest()</b> removes a message request.
+<li> <b>MKCancelMsgRequest()</b> removes a message request.
 
-&#183; <b>MKRescheduleMsgRequest()</b> is a convenience function that
+<li> <b>MKRescheduleMsgRequest()</b> is a convenience function that
 cancels a request and then creates a new one.
+</ul>
 
 For more information on these functions, see Chapter 3, "C Functions."
 
@@ -151,15 +156,17 @@ applications, such as those that create and perform MKNotes in
 response to a user's actions, universally empty queues isn't
 necessarily an indication that the performance is over.  To allow a
 performance to continue even if all the queues are empty, send
-<b>setFinishWhenEmpty:NO </b>to the MKConductor class.
+<b>setFinishWhenEmpty:NO</b> to the MKConductor class.
 
 You can pause and resume an entire performance through methods sent to
 the MKConductor class:
 
-&#183; <b>pausePerformance</b> causes all MKConductor instances to
+<ul>
+<li> <b>pausePerformance</b> causes all MKConductor instances to
 stop processing their message request queues.
 
-&#183;	<b>resumePerformance</b> resumes a paused performance.  
+<li> <b>resumePerformance</b> resumes a paused performance.  
+</ul>
 
 These messages are ignored if a performance isn't in progress.
 
@@ -186,12 +193,14 @@ responds to it.
 
 The rate at which a MKConductor object processes its message request
 queue can be set through either the <i>Tempo Protocol</i> or the
-<i>Time Map Protocol.</i> The <i>Tempo Protocol</i> consists of the
+<i>Time Map Protocol</i>. The <i>Tempo Protocol</i> consists of the
 following two methods (you may use either):
 
-&#183;	<b>setTempo:</b> sets the rate as beats per minute.
-&#183;	<b>setBeatSize:</b> sets the size of an individual beat, in seconds. 
-
+<ul>
+<li> <b>setTempo:</b> sets the rate as beats per minute.
+<li> <b>setBeatSize:</b> sets the size of an individual beat, in seconds. 
+</ul>
+ 
 You can change a MKConductor's tempo anytime, even during a
 performance.  If your application requires multiple simultaneous
 tempi, you need to create more than one MKConductor, one for each
@@ -269,7 +278,7 @@ of the request queues is sent.  If your application sends a message
 (or calls a C function) in response to an asynchronous event, it must
 first update the MKConductors' notions of time by bracketing the code
 you invoke with <b>[MKConductor lockPerformance]</b> and
-<b>[MKConductor unlockPerformance]</b> .  You should send these
+<b>[MKConductor unlockPerformance]</b>.  You should send these
 messages before performing tasks such as pausing or resuming a
 MKConductor - you should even send them immediately before sending
 <b>finishPerformance</b>.  If, for yet another example, your
@@ -317,7 +326,8 @@ MKConductors can synchronize to incoming MIDI time code. This functionality is d
 <a href=http://www.musickit.org/MusicKitConcepts/miditimecode.html>
 Appendix B. entitled MIDI Time Code in the MusicKit</a>.
 
-See also: MKPerformer, MKOrchestra, MKMidi */
+See also: MKPerformer, MKOrchestra, MKMidi
+*/
 #ifndef __MK_Conductor_H___
 #define __MK_Conductor_H___
 
