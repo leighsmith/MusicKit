@@ -30,6 +30,9 @@
  Modification history:
 
   $Log$
+  Revision 1.7  2001/09/07 18:36:34  leighsmith
+  adopted symbolic entity naming and corrected parameter types in doco
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -165,7 +168,7 @@ See also:  MKWaveTable, MKPartials
 
 /*!
   @method setSound:
-  @param  aSound is an id.
+  @param  aSound is an Snd.
   @result Returns an id.
   @discussion Sets the receiver's Snd to a copy of <i>aSound</i> (the receiver's
               current Snd is freed).  <i>aSound</i> must be one-channel, 16-bit
@@ -178,7 +181,7 @@ See also:  MKWaveTable, MKPartials
 
 /*!
   @method readSoundfile:
-  @param  aSoundfile is a char *.
+  @param  aSoundfile is an NSString.
   @result Returns a BOOL.
   @discussion Creates a new Snd object, reads the data from <i>aSoundfile</i>
               into the object, and then sends <b>setSound:</b> to the receiver
@@ -192,14 +195,14 @@ See also:  MKWaveTable, MKPartials
 
 /*!
   @method sound
-  @result Returns an id.
+  @result Returns an Snd.
   @discussion Returns the receiver's Snd object.
 */
 - (Snd *) sound;
 
 /*!
   @method soundfile
-  @result Returns a NSString.
+  @result Returns an NSString.
   @discussion Returns the name of the receiver's soundfile, or <b>nil</b> if the
               receiver's Sound wasn't set through <b>readSoundfile:</b>.  The name
               isn't copied; you shouldn't alter the returned string.
@@ -213,7 +216,7 @@ See also:  MKWaveTable, MKPartials
   @discussion Writes the receiver in scorefile format.  Writes the receiver in
               scorefile format to the stream <i>aStream</i>.  If the Sound wasn't
               set from a soundfile, a soundfile with the unique name
-              &#170;samples<i>Number</i>.snd&#186; (where <i>Number</i> is added
+              &ldquo;samples<i>Number</i>.snd&rdquo; (where <i>Number</i> is added
               only if needed), is created and the Sound is written to it.  The
               object remembers if its Sound has been written to a soundfile.  If
               the receiver couldn't be written to the stream, returns <b>nil</b>,
