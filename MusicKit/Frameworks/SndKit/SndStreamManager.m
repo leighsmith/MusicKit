@@ -60,6 +60,7 @@ static SndStreamManager *sm = nil;
 
     active = FALSE;
     SNDStreamNativeFormat(&format);
+    nowTime = 0;
 
     return self;
 }

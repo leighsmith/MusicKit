@@ -237,7 +237,12 @@ enum {
 
 - (double) streamTime
 {
-    return [manager nowTime];
+    if (manager == nil) {
+      NSLog(@"SndStreamClient::streamTime - ERROR: Trying to access manager when not connected (nil)\n");
+      return 0.0;
+    }
+    else
+      return [manager nowTime];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -246,7 +251,12 @@ enum {
 
 - (SndStreamManager*) manager
 {
-    return [[manager retain] autorelease];
+    if (manager == nil) {
+      NSLog(@"SndStreamClient::manager - WARNING: Trying to access manager when not connected (nil)\n");
+      return nil;
+    }
+    else
+      return [[manager retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
