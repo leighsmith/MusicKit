@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		029604BD006FB31FCFED3B96 = {
 			children = (
@@ -34,6 +34,16 @@
 			settings = {
 			};
 		};
+//020
+//021
+//022
+//023
+//024
+//060
+//061
+//062
+//063
+//064
 		06C97E250056EE8CCFED3B96 = {
 			isa = PBXFrameworkReference;
 			name = SndKit.framework;
@@ -51,6 +61,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -75,6 +86,16 @@
 			settings = {
 			};
 		};
+//060
+//061
+//062
+//063
+//064
+//070
+//071
+//072
+//073
+//074
 		071719DE0156540D7F000001 = {
 			isa = PBXFileReference;
 			path = WaterfallView.m;
@@ -86,6 +107,16 @@
 			settings = {
 			};
 		};
+//070
+//071
+//072
+//073
+//074
+//0F0
+//0F1
+//0F2
+//0F3
+//0F4
 		0F183AF20035F7AECFED3B96 = {
 			buildStyles = (
 				06C97E270056EE8CCFED3B96,
@@ -94,7 +125,7 @@
 			isa = PBXProject;
 			mainGroup = 0F183AF30035F7AECFED3B96;
 			productRefGroup = 0F183B2E0035F7AECFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				0F183B300035F7AECFED3B96,
 			);
@@ -463,7 +494,6 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Volumes/manray/Local/Library/Frameworks";
 				INSTALL_PATH = "$(HOME)/Apps";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -471,8 +501,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
