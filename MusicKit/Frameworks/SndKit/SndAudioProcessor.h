@@ -21,6 +21,14 @@
 
 @class SndAudioBuffer;
 
+/*!
+    @class
+    @abstract 
+    @discussion To come
+    @var
+    @var
+    @var
+*/
 @interface SndAudioProcessor : NSObject {
     int   numParams;
 }

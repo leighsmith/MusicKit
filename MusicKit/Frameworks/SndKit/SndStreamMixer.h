@@ -21,6 +21,14 @@
 #import "SndStreamClient.h"
 #import "SndAudioProcessorChain.h"
 
+/*!
+    @class SndStreamMixer
+    @abstract Stream mixer and effects processor
+    @discussion To come
+    @var streamClients
+    @var streamClientsLock
+    @var processorChain
+*/
 @interface SndStreamMixer : NSObject {
     NSMutableArray         *streamClients;
     NSLock                 *streamClientsLock;

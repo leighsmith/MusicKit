@@ -19,6 +19,14 @@
 #import <SndKit/SndKit.h>
 
 
+/*!
+    @class SndAudioBuffer 
+    @abstract Audio Buffer
+    @discussion To come
+    @var formatSnd
+    @var data
+    @var bOwnsData
+*/
 @interface SndAudioBuffer : NSObject
 {
     SndSoundStruct  formatSnd;

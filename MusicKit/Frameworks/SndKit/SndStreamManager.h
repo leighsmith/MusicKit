@@ -15,14 +15,23 @@
 #define __SNDSTREAMMANAGER_H__
 
 #import <Foundation/Foundation.h>
-//#import <SndKit/SndKit.h>
-#import "SndAudioBuffer.h"
+#import <SndKit/SndKit.h>
 
+@class SndAudioBuffer;
 @class SndStreamClient;
 @class SndStreamMixer;
 
 #define SSM_VERSION 1 
 
+/*!
+    @class      SndStreamManager
+    @abstract   
+    @discussion To come
+    @var        mixer
+    @var        active
+    @var        format
+    @var        nowTime
+*/
 @interface SndStreamManager : NSObject
 {
 /*

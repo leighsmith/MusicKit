@@ -20,6 +20,14 @@
 @class SndAudioBuffer;
 @class SndAudioProcessor;
 
+/*!
+    @class
+    @abstract 
+    @discussion To come
+    @var
+    @var
+    @var
+*/
 @interface SndAudioProcessorChain : NSObject {
     NSMutableArray    *audioProcessorArray;
     BOOL               bBypass;

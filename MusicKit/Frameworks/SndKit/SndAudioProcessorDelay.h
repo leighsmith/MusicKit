@@ -22,6 +22,14 @@ enum {
   dlyNumParams = 2
 };
 
+/*!
+    @class
+    @abstract 
+    @discussion To come
+    @var
+    @var
+    @var
+*/
 @interface SndAudioProcessorDelay : SndAudioProcessor {
   float  *chanL;
   float  *chanR;
