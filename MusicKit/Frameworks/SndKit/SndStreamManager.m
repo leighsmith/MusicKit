@@ -26,6 +26,7 @@
 #define SNDSTREAMMANAGER_DELEGATEMESSAGING      0
 
 #ifdef __MINGW32__
+#import "SndConditionLock.h"
 #define NSConditionLock SndConditionLock
 #endif
 
