@@ -52,6 +52,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2001/10/18 03:49:44  leighsmith
+  Converted Headerdoc reference to URL
+
   Revision 1.7  2001/09/07 18:28:57  leighsmith
   Made Music Tables a URL reference
 
@@ -87,8 +90,8 @@ numbers ascend the scale.  The <b>freqForKeyNum:</b> method retrieves the
 frequency value of the argument key number.  Such values are typically used to
 set the frequency of a MKNote object:
 
-<tt>[aNote setPar:MK_freq</tt>
-<tt>     toDouble:[aTuningSystem freqForKeyNum:c4k]];</tt>
+<tt>[aNote setPar: MK_freq<br>
+         toDouble: [aTuningSystem freqForKeyNum:c4k]];</tt>
 
 The MKTuningSystem class maintains a master system called the <i>installed tuning
 system</i>.  By default, the installed tuning system is set to 12-tone
@@ -96,12 +99,14 @@ equal-temperament with A above middle C set to 440 Hz.  A key number that
 doesn't reference a MKTuningSystem object takes its frequency value from the
 installed tuning system.  The frequency value of a pitch variable is also taken
 from the installed system. The difference between key numbers and pitch
-variables is explained in Volume 1, Chapter 3.  The entire map of key numbers,
+variables is explained in 
+<a href=http://www.musickit.org/MusicKitConcepts/musicdata.html>
+the section entitled Representing Music Data</a>.
+The entire map of key numbers,
 pitch variables, and frequency values in the default 12-tone equal-tempered
 system is given in
 <a href=http://www.musickit.org/MusicKitConcepts/musictables.html>
-the section entitled Music Tables
-</a>.
+the section entitled Music Tables</a>.
 
 You can install a tuning system by sending the <b>install</b> message to a
 MKTuningSystem object.  Keep in mind that this doesn't install the object itself,
