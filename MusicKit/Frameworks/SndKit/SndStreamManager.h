@@ -78,6 +78,7 @@
     NSConnection    *threadConnection;
 
     BOOL             bDelegateMessagingEnabled;
+    BOOL             isStopping;
 }
 
 /*!

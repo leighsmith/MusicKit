@@ -21,7 +21,7 @@
 // Debug defines
 ////////////////////////////////////////////////////////////////////////////////
 
-#define SNDSTREAMMANAGER_DEBUG                  0
+#define SNDSTREAMMANAGER_DEBUG                  1
 #define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 #define SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED   0
@@ -302,6 +302,7 @@ static SndStreamManager *sm = nil;
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
 
   bg_active = TRUE;
+  isStopping = FALSE;
   [self retain];
 
 #if SNDSTREAMMANAGER_DEBUG
@@ -314,6 +315,7 @@ static SndStreamManager *sm = nil;
       active = SNDStreamStart(processAudio, (void*) self);
       nowTime = 0.0;
       bg_sem = 0;
+      isStopping = FALSE;
 #if SNDSTREAMMANAGER_DEBUG
       NSLog(@"SndManager::startStreaming - Stream starting!\n");
 #endif
@@ -416,7 +418,11 @@ static SndStreamManager *sm = nil;
 
 - (void) stopStreaming
 {
+  if (isStopping) {
+    return;
+  }
   if (active) {
+    isStopping = TRUE;
 #if SNDSTREAMMANAGER_DEBUG
     fprintf(stderr,"[manager] sending shutdown to mixer...\n");
 #endif
