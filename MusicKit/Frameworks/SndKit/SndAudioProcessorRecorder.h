@@ -61,6 +61,8 @@ enum {
   BOOL            bStartTrigger;
 /*! @var fStartTriggerThreshold */
   float           fStartTriggerThreshold;
+/*! @var stopSignal */
+  BOOL            stopSignal;
 }
 
 /*!

@@ -83,7 +83,10 @@
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB;
 {
-  if (!isRecording) {
+#if SNDAUDIOPROCRECORDER_DEBUG
+  fprintf(stderr,"SndAudioProcessor::processReplacing: Entering...\n");
+#endif
+  if (stopSignal) {
 #if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessor::processReplacing: Finished recording BBB\n");        
 #endif    
@@ -124,7 +127,7 @@
         length = inBuffLengthInBytes;
       }
       // transfer the incoming data...
-      memcpy(recData + position, inputData, length);
+      memcpy(((void*)recData) + position, inputData, length);
       position += length;    
       
       // have we filled a record buffer?
@@ -147,7 +150,7 @@
         position += remainder;
       }    
     
-      if (!isRecording) { // has record state changed? If so, shut down stuff.
+      if (stopSignal) { // If so, shut down stuff.
         if (recordFile != NULL) {
           if (position > 0)  // flush out partial record buffer to disk
             [self streamToDiskData: recData length: position];
@@ -160,6 +163,9 @@
       }
     }
   } // end of isRecording
+#if SNDAUDIOPROCRECORDER_DEBUG
+  fprintf(stderr,"SndAudioProcessor::processReplacing: Leaving...\n");
+#endif
   return FALSE;
 }
 
@@ -167,7 +173,8 @@
 // prepareToRecordForDuration:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) prepareToRecordForDuration: (double) time withFormat: (SndSoundStruct*) format
+- (BOOL) prepareToRecordForDuration: (double) time
+                         withFormat: (SndSoundStruct*) format
 {
   BOOL r = FALSE;
   
@@ -300,6 +307,11 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   fclose(recordFile);
   recordFile    = NULL;
   bytesRecorded = 0;
+  stopSignal = FALSE;
+
+#if SNDAUDIOPROCRECORDER_DEBUG
+  fprintf(stderr,"SndAudioProcessor::closeRecordFile - closed\n");
+#endif
   
   return TRUE;
 }
@@ -341,7 +353,8 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
       position      = 0;
       bytesRecorded = 0;
       isRecording   = TRUE;
-      b             = TRUE;	
+      b             = TRUE;
+      stopSignal    = FALSE;
     }
   }
   return b;
@@ -353,7 +366,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 
 - stopRecording
 {
-  isRecording = FALSE; // signal to recording thread that we wanna stop.
+  stopSignal = TRUE; // signal to recording thread that we wanna stop.
   return self;
 }
 
@@ -363,13 +376,19 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
 {
-  isRecording = FALSE; // signal to recording thread that we want to stop.
+  float timeWaiting = 0.0;
+  stopSignal = TRUE; // signal to recording thread that we want to stop.
   
   if (bWait) {
-    while (recordFile != NULL) {
+    while (recordFile != NULL && timeWaiting < 3.0) {
       [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+      timeWaiting += 0.1;
     }
   }
+#if SNDAUDIOPROCRECORDER_DEBUG
+  fprintf(stderr,"SndAudioProcessor::stopRecordingWait:disconnectFromStream: \n");
+#endif
+  
   return self;
 }
 
