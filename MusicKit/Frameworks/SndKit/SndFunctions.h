@@ -36,28 +36,30 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 	 *		Stephen Brandon, 1999
 	 *		S.Brandon@music.gla.ac.uk
 	 */
- 
-int		SndPrintFrags(SndSoundStruct *sound);
-int		SndSampleWidth(int format);
-int		SndBytesToSamples(int byteCount, int channelCount, int dataFormat);
-int		SndSamplesToBytes(int sampleCount, int channelCount, int dataFormat);
+
+const char *SndStructDescription(SndSoundStruct *sound);
+void	SndPrintStruct(SndSoundStruct *sound);
+int	SndPrintFrags(SndSoundStruct *sound);
+int	SndSampleWidth(int format);
+int	SndBytesToSamples(int byteCount, int channelCount, int dataFormat);
+int	SndSamplesToBytes(int sampleCount, int channelCount, int dataFormat);
 float	SndConvertDecibelsToLinear(float db);
 float	SndConvertLinearToDecibels(float lin);
-int		SndConvertSound(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
-int		SndConvertSoundGoodQuality(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
-int		SndConvertSoundHighQuality(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
+int	SndConvertSound(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
+int	SndConvertSoundGoodQuality(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
+int	SndConvertSoundHighQuality(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
 void	*SndGetDataAddresses(int sample,
 			const SndSoundStruct *theSound,
 			int *lastSampleInBlock,
 			int *currentSample);
-int		SndSampleCount(const SndSoundStruct *sound);
-int		SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, 
+int	SndSampleCount(const SndSoundStruct *sound);
+int	SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, 
 			int *width);
 /* only useful for non-fragmented sounds */
-int		SndFree(SndSoundStruct *sound);
-extern int		SndAlloc(SndSoundStruct **sound, int dataSize, int dataFormat,
+int	SndFree(SndSoundStruct *sound);
+extern int	SndAlloc(SndSoundStruct **sound, int dataSize, int dataFormat,
 			int samplingRate, int channelCount, int infoSize);
-int		SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound);
+int	SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound);
 /* There's a wee bit of a problem when compacting sounds. That is the info
  * string. When a sound isn't fragmented, the size of the info string is held
  * in "dataLocation" by virtue of the fact that the info will always
@@ -72,10 +74,10 @@ int		SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound);
  * will be the length of the SndSoundStruct INCLUDING the info string, and
  * adjusted to the upper 4-byte boundary.
  */
-int		SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound);
-int		SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
+int	SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound);
+int	SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
 		int startSample, int sampleCount);
-int		SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, 
+int	SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, 
 		int startSample);
 SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
 SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte, int byteCount);
@@ -85,14 +87,14 @@ SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte,
  * Does not make copy of fragged sound. Info string should therefore be only 4 bytes,
  * but this takes account of longer info strings if they exist.
  */
-int		SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount);
+int	SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount);
 unsigned char SndMulaw(short linearValue);
 short	SndiMulaw(unsigned char mulawValue);
-int		SndRead(FILE *fp, SndSoundStruct **sound, const char *filetype);
-int		SndReadHeader(int fd, SndSoundStruct **sound);
-int		SndReadSoundfile(const char *path, SndSoundStruct **sound);
-int		SndWriteHeader(int fd, SndSoundStruct *sound);
-int		SndWrite(int fd, SndSoundStruct *sound);
-int		SndWriteSoundfile(const char *path, SndSoundStruct *sound);
-int		SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount, int dataFormat);
-int		SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount, int dataFormat);
+int	SndRead(FILE *fp, SndSoundStruct **sound, const char *filetype);
+int	SndReadHeader(int fd, SndSoundStruct **sound);
+int	SndReadSoundfile(const char *path, SndSoundStruct **sound);
+int	SndWriteHeader(int fd, SndSoundStruct *sound);
+int	SndWrite(int fd, SndSoundStruct *sound);
+int	SndWriteSoundfile(const char *path, SndSoundStruct *sound);
+int	SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount, int dataFormat);
+int	SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount, int dataFormat);

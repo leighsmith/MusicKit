@@ -168,6 +168,23 @@ int SndSampleCount(const SndSoundStruct *sound)
 		count += theStruct->dataSize;
 	return SndBytesToSamples(count, sound->channelCount, df);
 }
+
+const char *SndStructDescription(SndSoundStruct *s)
+{
+    static char message[256];
+    
+    sprintf(message, "%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
+        (s->magic != SND_MAGIC) ? "struct lacking magic number: " : "",
+        s->dataLocation, s->dataSize, s->dataFormat,
+        s->samplingRate, s->channelCount, s->info);
+    return message;
+}
+
+void SndPrintStruct(SndSoundStruct *s)
+{
+    puts(SndStructDescription(s));
+}
+
 int SndPrintFrags(SndSoundStruct *sound)
 {
 	SndSoundStruct **ssList;
@@ -1012,8 +1029,8 @@ int SndReadHeader(int fd, SndSoundStruct **sound)
 		s->channelCount = ntohl(s->channelCount);
 		/* info string should be ok, if it's just chars... */
 	}
-	printf("Location:%d size:%d format:%d sr:%d cc:%d\n", s->dataLocation, s->dataSize, s->dataFormat, s->samplingRate, s->channelCount);
-	if (s->dataLocation > sizeof(SndSoundStruct)) {
+        SndPrintStruct(s);
+    	if (s->dataLocation > sizeof(SndSoundStruct)) {
 		/* read off the rest of the info string */
 		s = realloc(s,s->dataLocation);
 		error = read(fd,(char *)s + sizeof(SndSoundStruct),s->dataLocation - sizeof(SndSoundStruct));
