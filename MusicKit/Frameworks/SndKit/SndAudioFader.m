@@ -495,7 +495,7 @@ inline int _processBalance( int xPtr,
     float proportion;
     /* insert new point here */
     lastXVal = oldUee->xVal;
-    proportion = -lastBalanceY/(tempBalanceY - lastBalanceY);
+    proportion = (float)-lastBalanceY/(float)(tempBalanceY - lastBalanceY);
     xOverPoint = lastXVal + proportion * (tempXVal - lastXVal);
     uee->xVal = xOverPoint;
     uee->balanceY = oldUee->balanceY + proportion * (tempBalanceY - oldUee->balanceY);
@@ -816,7 +816,12 @@ inline int _processBalance( int xPtr,
 
             currSample = (startUee->xVal - nowTime) * sr; //frames
             lastSample = (endUee->xVal - nowTime) * sr;
-            currSample *= 2;//
+            //easy way of ensuring we don't scale the same sample twice...
+            if (i < xPtr - 2) {
+              lastSample--;
+            }
+
+            currSample *= 2;
               if (lastSample >= len) {
                 lastSample = len - 1;
               }
@@ -857,7 +862,7 @@ inline int _processBalance( int xPtr,
               }
               else if ((lDiff != 0.0F) && (rDiff != 0.0F)) {
                 for (j = currSample ; j <= lastSample ; j+=2) {
-                  proportion = j/timeDiff;
+                  proportion = (float)j/(float)timeDiff;
                   lScaler = lStartAmp + lDiff * proportion;
                   rScaler = rStartAmp + rDiff * proportion;
                   inD[j] *= lScaler;
@@ -866,7 +871,7 @@ inline int _processBalance( int xPtr,
               }
               else if (lDiff == 0.0F) {
                 for (j = currSample ; j <= lastSample ; j+=2) {
-                  proportion = j/timeDiff;
+                  proportion = (float)j/(float)timeDiff;
                   rScaler = rStartAmp + rDiff * proportion;
                   inD[j] *= lStartAmp;
                   inD[j+1] *= rScaler;
@@ -874,7 +879,7 @@ inline int _processBalance( int xPtr,
               }
               else if (rDiff == 0.0F) {
                 for (j = currSample ; j <= lastSample ; j+=2) {
-                  proportion = j/timeDiff;
+                  proportion = (float)j/(float)timeDiff;
                   lScaler = lStartAmp + lDiff * proportion;
                   inD[j] *= lScaler;
                   inD[j+1] *= rStartAmp;
