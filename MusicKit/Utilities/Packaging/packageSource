@@ -19,21 +19,17 @@ TARLOC=/tmp
 
 if [ x_$1 = x_ ]; then
     echo "source shipping script for the ${DISTNAME} projects"
-    echo "Usage: $0 distribution version_number [previous_version]\n"
-    echo "Where distribution is either MusicKit or SndKit,"
-    echo "      version_number is of the form V.R.P and matches the CVS tag ${DISTNAME}_V-R-P"
+    echo "Usage: $0 version_number [previous_version]\n"
+    echo "Where version_number is of the form V.R.P and matches the CVS tag ${DISTNAME}_V-R-P"
     echo "      previous_version is previous version released for generating differential change logs. This is only needed if it can't be determined automatically."
     exit 1;
 else
-    DISTNAME=$1
-    RELEASE=$2
-    PREVRELEASE=$3
+    RELEASE=$1
+    PREVRELEASE=$2
 fi
 
 if [ $DISTNAME = MusicKit ]; then
     PACKAGENAME=MK
-elif [ $DISTNAME = SndKit ]; then
-    PACKAGENAME=SndKit
 fi
 
 CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
@@ -42,8 +38,7 @@ CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
 # packageSources from since packageDocumentation expects the SndKit to
 # be sitting next to the MusicKit directory. Once SndKit is integrated
 # within the MusicKit, we should remove this and just operate from
-#  DISTCHECKOUTSRCLOC/DISTNAME
-STARTDIR=`pwd`
+STARTDIR=$DISTCHECKOUTSRCLOC/$DISTNAME
 
 # Checkout the source tree
 echo Checking out $CVSTAG to $DISTCHECKEDOUTSRCLOC
@@ -69,9 +64,6 @@ fi
 # build a ChangeLog with spaces between filenames and comments, 
 # collected to half-day window, incorporating tags.
 cd $DISTCHECKEDOUTSRCLOC/$DISTNAME
-# The SndKit doesn't have a Documentation directory, so we create one
-# for now. Eventually we will unify the code trees.
-mkdir Documentation
 $CHGLOGGEN --no-wrap --separate-header --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
@@ -79,6 +71,7 @@ cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
 # This is a representative file, it should change more or less at the
 # end of a project.
 LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
+# LASTFILETOCHANGE=Documentation/MusicKit_README.sgml
 
 # If a previous release was not supplied on the command line determine
 # it from the repository.
@@ -99,14 +92,12 @@ echo Logging changes after $PREVCVSTAG to $CVSTAG, from $PREVRELEASEDATE to now.
 # This is the means to generate what we've done since last release.
 $CHGLOGGEN --no-wrap --separate-header --window 86400 --file $TARLOC/${DISTNAME}_ChangeLog_${RELEASE} --log-opts "-d\>$PREVRELEASEDATE"
 
-# create a readily readable PDF version of the MusicKit_README.sgml file
-if [ $DISTNAME = MusicKit ]; then
-    # Return to where we started, expecting SndKit source to be
-    # sitting next to the MusicKit, for headerdoc.
-    pushd $STARTDIR
-    Utilities/Packaging/packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
-    popd
-fi
+# Create a readily readable PDF version of the MusicKit_README.sgml file.
+# Return to where we started, expecting SndKit source to be
+# sitting next to the MusicKit, for headerdoc.
+pushd $STARTDIR
+Utilities/Packaging/packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
+popd
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $DISTCHECKEDOUTSRCLOC -name CVS -type d -exec rm -r {} \; -prune
@@ -127,3 +118,4 @@ rm -r $DISTCHECKEDOUTSRCLOC
 
 # The user needs to use shipSource to upload to upload.sourceforge.net/incoming
 # using ftp.
+echo Ready for shipSource to upload files.
