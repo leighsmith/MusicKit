@@ -255,7 +255,6 @@
 				04F0C04C00EA6A89CFED3B8B,
 				2F3AE79E012B0CF7CFED3B8B,
 				011279890169158CCFED3B94,
-				F50880F201B542BB01A80103,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -618,7 +617,6 @@
 				2F3AE79F012B0CF7CFED3B8B,
 				011279840168CEA1CFED3B94,
 				0112798A0169158CCFED3B94,
-				F50880F301B542BB01A80103,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -1506,28 +1504,6 @@
 				ATTRIBUTES = (
 					Public,
 				);
-			};
-		};
-//7B0
-//7B1
-//7B2
-//7B3
-//7B4
-//F50
-//F51
-//F52
-//F53
-//F54
-		F50880F201B542BB01A80103 = {
-			isa = PBXFileReference;
-			name = libgsm.a;
-			path = /usr/local/lib/libgsm.a;
-			refType = 0;
-		};
-		F50880F301B542BB01A80103 = {
-			fileRef = F50880F201B542BB01A80103;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 	};
