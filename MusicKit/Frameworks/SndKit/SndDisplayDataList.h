@@ -14,12 +14,14 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 
 #import <AppKit/AppKit.h>
-#import <objc/List.h>
 
-@interface SndDisplayDataList:List
+@interface SndDisplayDataList: NSMutableArray
 {
-
+    NSMutableArray *embeddedArray;
 }
+
+- (unsigned) count;
+- objectAtIndex: (unsigned) index;
 - sort;
 - (int)findObjectContaining:(int)pixel 
 	next:(int *)next 

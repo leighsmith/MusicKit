@@ -1,4 +1,6 @@
 /******************************************************************************
+$Id$
+
 LEGAL:
 This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
 
@@ -17,68 +19,100 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 @implementation SndDisplayDataList
 
-static int docompare(const void *x, const void *y)
+static int pixelCompare(id x, id y, void *context)
 {
-	int first = [(id)(*(SndDisplayData **)x) startPixel];
-	int second = [(id)(*(SndDisplayData **)y) startPixel];
-	if (first < second) return -1;
-	if (first == second) return 0;
-	return 1;
+    int first  = [(SndDisplayData *) x startPixel];
+    int second = [(SndDisplayData *) y startPixel];
+    if (first < second)
+        return NSOrderedAscending;
+    if (first == second)
+        return NSOrderedSame;
+    return NSOrderedDescending;
 }
 
 - sort
 {
-	qsort((SndDisplayData **)dataPtr, numElements, sizeof(id), docompare);
-	return self;
+    [embeddedArray sortedArrayUsingFunction: pixelCompare context: NULL];
+    return self;
+}
+
+- (unsigned) count
+{
+    return [embeddedArray count];
+}
+
+- objectAtIndex:(unsigned)index
+{
+    return [embeddedArray objectAtIndex:index];
+}
+
+- (void) addObject: (id) anObject
+{
+    [embeddedArray addObject: anObject];
 }
 
 - (int)findObjectContaining:(int)pixel next:(int *)next leadsOnFrom:(int *)leadsOnFrom
 {
-	int i;
-	int theStart;
-	[self sort];
-	for (i = 0;i < numElements; i++) {
-		theStart = [[self objectAt:i] startPixel];
-		if (theStart > pixel) {
-			*next = i;
-			if (i > 0) {
-				if ([[self objectAt:i-1] endPixel] == pixel - 1)
-					*leadsOnFrom = i-1;
-					else *leadsOnFrom = -1;
-			}
-			else *leadsOnFrom = -1;
-			return -1; /* passed it without finding it */
-			}
-		if (theStart == pixel) {
-			if (i == numElements - 1) *next = -1;
-				else *next = i+1;
-			if (i > 0) {
-				if ([[self objectAt:i-1] endPixel] == pixel - 1)
-					*leadsOnFrom = i-1;
-					else *leadsOnFrom = -1;
-			}
-			else *leadsOnFrom = -1;
-			return i; /* found it, bang on target */
-			}
-		if ([[self objectAt:i] endPixel] >= pixel) { /* cache spans this pixel */
-			if (i == numElements - 1) *next = -1;
-				else *next = i+1;
-			if (i > 0) {
-				if ([[self objectAt:i-1] endPixel] == [[self objectAt:i] startPixel] - 1)
-					*leadsOnFrom = i-1;
-					else *leadsOnFrom = -1;
-			}
-			else *leadsOnFrom = -1;
-			 return i; /* found it */
-			}
-	}
-	if (numElements > 0) {
-		if ([[self objectAt:numElements - 1] endPixel] == pixel - 1)
-			*leadsOnFrom = numElements - 1;
-		else *leadsOnFrom = -1;
-	}
-	else *leadsOnFrom = -1;
-	*next = -1;
-	return -1; /* went through all caches and it's not there */
+    int i;
+    int theStart;
+    int numElements = [self count];
+
+    [self sort];
+    for (i = 0;i < numElements; i++) {
+        theStart = [[self objectAtIndex:i] startPixel];
+        if (theStart > pixel) {
+            *next = i;
+            if (i > 0) {
+                if ([[self objectAtIndex:i-1] endPixel] == pixel - 1)
+                    *leadsOnFrom = i-1;
+                else
+                    *leadsOnFrom = -1;
+            }
+            else
+                *leadsOnFrom = -1;
+            return -1; /* passed it without finding it */
+        }
+        if (theStart == pixel) {
+            if (i == numElements - 1)
+                *next = -1;
+            else
+                *next = i+1;
+            if (i > 0) {
+                if ([[self objectAtIndex:i-1] endPixel] == pixel - 1)
+                    *leadsOnFrom = i-1;
+                else
+                    *leadsOnFrom = -1;
+            }
+            else
+                *leadsOnFrom = -1;
+            return i; /* found it, bang on target */
+        }
+        if ([[self objectAtIndex:i] endPixel] >= pixel) { /* cache spans this pixel */
+            if (i == numElements - 1)
+                *next = -1;
+            else
+                *next = i+1;
+            if (i > 0) {
+                if ([[self objectAtIndex:i-1] endPixel] == [[self objectAtIndex:i] startPixel] - 1)
+                    *leadsOnFrom = i-1;
+                else
+                    *leadsOnFrom = -1;
+            }
+            else
+                *leadsOnFrom = -1;
+            return i; /* found it */
+        }
+    }
+    if (numElements > 0) {
+        if ([[self objectAtIndex:numElements - 1] endPixel] == pixel - 1)
+            *leadsOnFrom = numElements - 1;
+        else
+            *leadsOnFrom = -1;
+    }
+    else
+        *leadsOnFrom = -1;
+    *next = -1;
+    return -1; /* went through all caches and it's not there */
 }
+
 @end
