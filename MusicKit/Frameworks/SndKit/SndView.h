@@ -14,12 +14,12 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ********************************************************************************/
 /*!
-  @header SoundView
+  @header SndView
 
-A SoundView object provides a graphical representation of sound
-data. This data is taken from an associated Sound object. In addition
-to displaying a Sound object's data, a SoundView provides methods that
-let you play and record into the Sound object, and perform simple cut,
+A SndView object provides a graphical representation of sound
+data. This data is taken from an associated Snd object. In addition
+to displaying a Snd object's data, a SndView provides methods that
+let you play and record into the Snd object, and perform simple cut,
 copy, and paste editing of its data. A cursor into the display is
 provided, allowing the user to set the insertion point and to create a
 selection over the sound data.
@@ -28,13 +28,13 @@ selection over the sound data.
 
 Sounds are displayed on a two-dimensional graph. The amplitudes of
 individual samples are measured vertically and plotted against time,
-which proceeds left to right along the horizontal axis. A SoundView's
+which proceeds left to right along the horizontal axis. A SndView's
 coordinate system is scaled and translated (vertically) so full
 amplitude fits within the bounds rectangle with 0.0 amplitude running
 through the center of the view.
 
 For many sounds, the length of the sound data in samples is greater
-than the horizontal measure of the bounds rectangle. A SoundView
+than the horizontal measure of the bounds rectangle. A SndView
 employs a reduction factor to determine the ratio of samples to
 display units and plots the minimum and maximum amplitude values of
 the samples within that ratio. For example, a reduction factor of 10.0
@@ -57,14 +57,14 @@ modes become indistinguishable.
 
 <b>Autoscaling the Display</b>
 
-When a SoundView's sound data changes (due to editing or recording),
-the manner in which the SoundView is redisplayed depends on its
-<b>autoscale</b> flag. With autoscaling disabled, the SoundView's
+When a SndView's sound data changes (due to editing or recording),
+the manner in which the SndView is redisplayed depends on its
+<b>autoscale</b> flag. With autoscaling disabled, the SndView's
 frame grows or shrinks (horizontally) to fit the new sound data and
 the reduction factor is unchanged. If autoscaling is enabled, the
 reduction factor is automatically recomputed to maintain a constant
 frame size. By default, autoscaling is disabled; this is to
-accommodate the use of a SoundView object as the document of an
+accommodate the use of a SndView object as the document of an
 NSScrollView.  */
 
 #ifndef __SNDVIEW_H__
@@ -158,14 +158,14 @@ NSScrollView.  */
 
 /*!
   @method hideCursor
-  @discussion Hides the SoundView's cursor. This is usually handled
+  @discussion Hides the SndView's cursor. This is usually handled
               automatically.
 */
 - hideCursor;
 
 /*!
   @method showCursor
-  @discussion Displays the SoundView's cursor. This is usually handled
+  @discussion Displays the SndView's cursor. This is usually handled
               automatically.
 */
 - showCursor;
@@ -184,7 +184,7 @@ NSScrollView.  */
 /*!
   @method becomeFirstResponder
   @result Returns a BOOL.
-  @discussion Promotes the SoundView to first responder, and returns YES. You
+  @discussion Promotes the SndView to first responder, and returns YES. You
               never invoke this method directly.
 */
 - (BOOL)becomeFirstResponder;
@@ -199,7 +199,7 @@ NSScrollView.  */
 /*!
   @method cut:
   @param  sender is an id.
-  @discussion Deletes the current selection from the SoundView, copies it to the
+  @discussion Deletes the current selection from the SndView, copies it to the
               pasteboard, and sends a <b>soundDidChange:</b> message to the
               delegate. The insertion point is positioned to where the selection
               used to start.
@@ -209,7 +209,7 @@ NSScrollView.  */
 /*!
   @method delete:
   @param  sender is an id.
-  @discussion Deletes the current selection from the SoundView's Sound and sends
+  @discussion Deletes the current selection from the SndView's Snd and sends
               the <b>soundDidChange:</b> message to the delegate. The deletion
               isn't placed on the pasteboard.
 */
@@ -221,7 +221,7 @@ NSScrollView.  */
   @discussion Replaces the current selection with a copy of the sound data
               currently on the pasteboard. If there is no selection the pasteboard
               data is inserted at the cursor position. The pasteboard data must be
-              compatible with the SoundView's data, as determined by the Sound
+              compatible with the SndView's data, as determined by the Snd
               method <b>compatibleWith:</b>. If the paste is successful, the
               <b>soundDidChange:</b> message is sent to the delegate.
 */
@@ -230,21 +230,21 @@ NSScrollView.  */
 /*!
   @method selectAll:
   @param  sender is an id.
-  @discussion Creates a selection over the SoundView's entire Sound.
+  @discussion Creates a selection over the SndView's entire Snd.
 */
 - (void)selectAll:(id)sender;
 
 /*!
   @method delegate
   @result Returns an id.
-  @discussion Returns the SoundView's delegate object.
+  @discussion Returns the SndView's delegate object.
 */
 - delegate;
 
 /*!
   @method didPlay:
   @param  sender is an id.
-  @discussion Used to redirect delegate messages from the SoundView's Sound
+  @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
 - didPlay:sender duringPerformance: performance;
@@ -252,7 +252,7 @@ NSScrollView.  */
 /*!
   @method didRecord:
   @param  sender is an id.
-  @discussion Used to redirect delegate messages from the SoundView's Sound
+  @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
 - didRecord:sender;
@@ -260,7 +260,7 @@ NSScrollView.  */
 /*!
   @method displayMode
   @result Returns an int.
-  @discussion Returns the SoundView's display mode, one of NX_SOUNDVIEW_WAVE
+  @discussion Returns the SndView's display mode, one of NX_SOUNDVIEW_WAVE
               (oscilloscopic display) or NX_SOUNDVIEW_MINMAX (minimum/maximum
               display; this is the default).
 */
@@ -279,11 +279,11 @@ NSScrollView.  */
 /*!
   @method drawRect:
   @param  rects is a NSRect.
-  @discussion Displays the SoundView's sound data. The selection is highlighted
+  @discussion Displays the SndView's sound data. The selection is highlighted
               and the cursor is drawn (if it isn't currently hidden).
                             
               You never send the <b>drawRect:</b> message directly
-              to a SoundView object. To cause a SoundView to draw itself, send it
+              to a SndView object. To cause a SndView to draw itself, send it
               one of the display messages defined by the NSView
               class.
 */
@@ -314,7 +314,7 @@ NSScrollView.  */
 /*!
   @method hadError:
   @param  sender is an id.
-  @discussion Used to redirect delegate messages from the SoundView's Sound
+  @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
 - hadError:sender;
@@ -323,8 +323,8 @@ NSScrollView.  */
   @method initWithFrame:
   @param  frameRect is a NSRect.
   @result Returns an id.
-  @discussion Initializes the SoundView, fitting the object within the rectangle
-              pointing to by <i>frameRect</i>. The initialized SoundView doesn't
+  @discussion Initializes the SndView, fitting the object within the rectangle
+              pointing to by <i>frameRect</i>. The initialized SndView doesn't
               contain any sound data.   Returns <b>self</b>.
 */
 - initWithFrame:(NSRect)frameRect;
@@ -332,7 +332,7 @@ NSScrollView.  */
 /*!
   @method isAutoScale
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView is in autoscaling mode, otherwise
+  @discussion Returns YES if the SndView is in autoscaling mode, otherwise
               returns NO.
 */
 - (BOOL)isAutoScale;
@@ -340,7 +340,7 @@ NSScrollView.  */
 /*!
   @method isBezeled
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView has a bezeled border, otherwise returns
+  @discussion Returns YES if the SndView has a bezeled border, otherwise returns
               NO (the default).
 */
 - (BOOL)isBezeled;
@@ -348,7 +348,7 @@ NSScrollView.  */
 /*!
   @method isContinuous
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView responds to mouse-dragged events (as
+  @discussion Returns YES if the SndView responds to mouse-dragged events (as
               set through <b>setContinuous:</b>). The default is NO.
 */
 - (BOOL)isContinuous;
@@ -356,7 +356,7 @@ NSScrollView.  */
 /*!
   @method isEditable
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView's sound data can be
+  @discussion Returns YES if the SndView's sound data can be
               edited.
 */
 - (BOOL)isEditable;
@@ -364,8 +364,8 @@ NSScrollView.  */
 /*!
   @method isEnabled
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView is enabled, otherwise returns NO. The
-              mouse has no effect in a disabled SoundView. By default, a SoundView
+  @discussion Returns YES if the SndView is enabled, otherwise returns NO. The
+              mouse has no effect in a disabled SndView. By default, a SndView
               is enabled.
 */
 - (BOOL)isEnabled;
@@ -373,15 +373,15 @@ NSScrollView.  */
 /*!
   @method isOptimizedForSpeed
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView is optimized for speedy display.
-              SoundViews are optimized by default.
+  @discussion Returns YES if the SndView is optimized for speedy display.
+              SndViews are optimized by default.
 */
 - (BOOL)isOptimizedForSpeed;
 
 /*!
   @method isPlayable
   @result Returns a BOOL.
-  @discussion Returns YES if the SoundView's sound data can be played without
+  @discussion Returns YES if the SndView's sound data can be played without
               first being converted.
 */
 - (BOOL)isPlayable;
@@ -404,7 +404,7 @@ NSScrollView.  */
   @method pasteboard:provideData:
   @param  thePasteboard is a NSPasteboard *.
   @param  type is a NSString *.
-  @discussion Places the SoundView's entire sound on the given pasteboard.
+  @discussion Places the SndView's entire sound on the given pasteboard.
               Currently, the <i>type</i> argument must be &#170;NXSoundPboardType&#186;,
               the pasteboard type that represents sound data.
 */
@@ -413,7 +413,7 @@ NSScrollView.  */
 /*!
   @method pause:
   @param  sender is an id.
-  @discussion Pauses the current playback or recording session by invoking Sound's
+  @discussion Pauses the current playback or recording session by invoking Snd's
               <b>pause:</b> method.
 */
 - (void)pause:sender;
@@ -421,8 +421,8 @@ NSScrollView.  */
 /*!
   @method play:
   @param  sender is an id.
-  @discussion Play the current selection by invoking Sound's <b>play:</b> method.
-              If there is no selection, the SoundView's entire Sound is played.
+  @discussion Play the current selection by invoking Snd's <b>play:</b> method.
+              If there is no selection, the SndView's entire Snd is played.
               The <b>willPlay:</b> message is sent to the delegate before the
               selection is played; <b>didPlay:</b> is sent when the selection is
               done playing.
@@ -433,14 +433,14 @@ NSScrollView.  */
   @method resume:
   @param  sender is an id.
   @discussion Resumes the current playback or recording session by invoking
-              Sound's <b>resume:</b> method.
+              Snd's <b>resume:</b> method.
 */
 - (void)resume:sender;
 
 /*!
   @method record:
   @param  sender is an id.
-  @discussion Replaces the SoundView's current selection with newly recorded
+  @discussion Replaces the SndView's current selection with newly recorded
               material. If there is no selection, the recording is inserted at the
               cursor. The <b>willRecord:</b> message is sent to the delegate
               before the recording is started; <b>didRecord:</b> is sent after the
@@ -452,7 +452,7 @@ NSScrollView.  */
 /*!
   @method stop:
   @param  sender is an id.
-  @discussion Stops the SoundView's current recording or playback.
+  @discussion Stops the SndView's current recording or playback.
 */
 - (void)stop:(id)sender;
 
@@ -460,12 +460,12 @@ NSScrollView.  */
   @method readSelectionFromPasteboard:
   @param  thePasteboard is a NSPasteboard *.
   @result Returns a BOOL.
-  @discussion Replaces the SoundView's current selection with the sound data on
+  @discussion Replaces the SndView's current selection with the sound data on
               the given pasteboard. The pasteboard data is converted to the format
-              of the data in the SoundView (if possible). If the SoundView has no
+              of the data in the SndView (if possible). If the SndView has no
               selection, the pasteboard data is inserted at the cursor position.
-              Sets the current error code for the SoundView's Sound object (which
-              you can retrieve by sending <b>processingError</b> to the Sound) and
+              Sets the current error code for the SndView's Snd object (which
+              you can retrieve by sending <b>processingError</b> to the Snd) and
               returns YES.
 */
 - (BOOL)readSelectionFromPasteboard:(NSPasteboard *)thePasteboard;
@@ -473,7 +473,7 @@ NSScrollView.  */
 /*!
   @method reductionFactor
   @result Returns a float.
-  @discussion Returns the SoundView's reduction factor, computed as follows:
+  @discussion Returns the SndView's reduction factor, computed as follows:
                             
               <tt>reductionFactor = sampleCount / displayUnits</tt>
 */
@@ -483,7 +483,7 @@ NSScrollView.  */
   @method setReductionFactor:
   @param  reductionFactor is a float.
   @result Returns a BOOL.
-  @discussion Recomputes the size of the SoundView's frame, if autoscaling is
+  @discussion Recomputes the size of the SndView's frame, if autoscaling is
               disabled. The frame's size (in display units) is set according to
               the following formula:
               
@@ -491,9 +491,9 @@ NSScrollView.  */
               
               Increasing the reduction factor zooms out,
               decreasing zooms in on the data. If autodisplaying is enabled, the
-              Sound is automatically redisplayed.
+              Snd is automatically redisplayed.
               
-              If the SoundView is in autoscaling mode, or
+              If the SndView is in autoscaling mode, or
               <i>reductionFactor</i> is less than 1.0, the method avoids computing
               the frame size and returns NO. (In autoscaling mode, the reduction
               factor is automatically recomputed when the sound data changes - see
@@ -506,10 +506,10 @@ NSScrollView.  */
 
 /*!
   @method scaleToFit
-  @discussion Recomputes the SoundView's reduction factor to fit the sound data
+  @discussion Recomputes the SndView's reduction factor to fit the sound data
               (horizontally) within the current frame. Invoked automatically when
-              the SoundView's data changes and the SoundView is in autoscale mode.
-              If the SoundView isn't in autoscale mode, <b>sizeToFit</b> is
+              the SndView's data changes and the SndView is in autoscale mode.
+              If the SndView isn't in autoscale mode, <b>sizeToFit</b> is
               invoked when the data changes. You never invoke this method
               directly; a subclass can reimplement this method to provide
               specialized behavior.
@@ -518,10 +518,10 @@ NSScrollView.  */
 
 /*!
   @method sizeToFit
-  @discussion Resizes the SoundView's frame (horizontally) to maintain a constant
+  @discussion Resizes the SndView's frame (horizontally) to maintain a constant
               reduction factor. This method is invoked automatically when the
-              SoundView's data changes and the SoundView isn't in autoscale mode.
-              If the SoundView is in autoscale mode, <b>scaleToFit</b> is invoked
+              SndView's data changes and the SndView isn't in autoscale mode.
+              If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
               when the data changes. You never invoke this method directly; a
               subclass can reimplement this method to provide specialized
               behavior.
@@ -531,10 +531,10 @@ NSScrollView.  */
 /*!
   @method sizeToFit:
   @param  withAutoscaling is a BOOL.
-  @discussion Resizes the SoundView's frame (horizontally) to maintain a constant
+  @discussion Resizes the SndView's frame (horizontally) to maintain a constant
               reduction factor. This method is invoked automatically when the
-              SoundView's data changes and the SoundView isn't in autoscale mode.
-              If the SoundView is in autoscale mode, <b>scaleToFit</b> is invoked
+              SndView's data changes and the SndView isn't in autoscale mode.
+              If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
               when the data changes. You never invoke this method directly; a
               subclass can reimplement this method to provide specialized
               behavior.
@@ -544,12 +544,12 @@ NSScrollView.  */
 /*!
   @method setAutoscale:
   @param  aFlag is a BOOL.
-  @discussion Sets the SoundView's automatic scaling mode, used to determine how
-              the SoundView is redisplayed when its data changes. With autoscaling
-              enabled (<i>aFlag</i> is YES), the SoundView's reduction factor is
+  @discussion Sets the SndView's automatic scaling mode, used to determine how
+              the SndView is redisplayed when its data changes. With autoscaling
+              enabled (<i>aFlag</i> is YES), the SndView's reduction factor is
               recomputed so the sound data fits within the view frame. If it's
               disabled (<i>aFlag</i> is NO), the frame is resized and the
-              reduction factor is unchanged. If the SoundView is in an
+              reduction factor is unchanged. If the SndView is in an
               NSScrollView, autoscaling should be disabled (autoscaling is
               disabled by default).
 */
@@ -559,8 +559,8 @@ NSScrollView.  */
   @method setBezeled:
   @param  aFlag is a BOOL.
   @discussion If <i>aFlag</i> is YES, the display is given a bezeled border. By
-              default, the border of a SoundView display isn't bezeled. If
-              autodisplay is enabled, the Sound is automatically
+              default, the border of a SndView display isn't bezeled. If
+              autodisplay is enabled, the Snd is automatically
               redisplayed.
 */
 - (void)setBezeled:(BOOL)aFlag;
@@ -578,7 +578,7 @@ NSScrollView.  */
 /*!
   @method setDelegate:
   @param  anObject is an id.
-  @discussion Sets the SoundView's delegate to <i>anObject</i>. The delegate is
+  @discussion Sets the SndView's delegate to <i>anObject</i>. The delegate is
               sent messages when the user changes or acts on the
               selection.
 */
@@ -588,25 +588,25 @@ NSScrollView.  */
 /*!
   @method setDisplayMode:
   @param  aMode is an int.
-  @discussion Sets the SoundView's display mode, either NX_SOUNDVIEW_WAVE or
+  @discussion Sets the SndView's display mode, either NX_SOUNDVIEW_WAVE or
               NX_SOUNDVIEW_MINMAX (the default). If autodisplaying is enabled, the
-              Sound is automatically redisplayed.
+              Snd is automatically redisplayed.
 */
 - (void)setDisplayMode:(int)aMode; /*NX_SOUNDVIEW_WAVE or NX_SOUNDVIEW_MINMAX*/
 
 /*!
   @method setEditable:
   @param  aFlag is a BOOL.
-  @discussion Enables or disables editing in the SoundView as <i>aFlag</i> is YES
-              or NO. By default, a SoundView is editable.
+  @discussion Enables or disables editing in the SndView as <i>aFlag</i> is YES
+              or NO. By default, a SndView is editable.
 */
 - (void)setEditable:(BOOL)aFlag;
 
 /*!
   @method setEnabled:
   @param  aFlag is a BOOL.
-  @discussion Enables or disables the SoundView as <i>aFlag</i> is YES or NO. The
-              mouse has no effect in a disabled SoundView. By default, a SoundView
+  @discussion Enables or disables the SndView as <i>aFlag</i> is YES or NO. The
+              mouse has no effect in a disabled SndView. By default, a SndView
               is enabled.
 */
 - (void)setEnabled:(BOOL)aFlag;
@@ -614,39 +614,39 @@ NSScrollView.  */
 /*!
   @method setOptimizedForSpeed:
   @param  flag is a BOOL.
-  @discussion Sets the SoundView to optimize its display mechanism. Optimization
+  @discussion Sets the SndView to optimize its display mechanism. Optimization
               greatly increases the speed with which data can be drawn,
               particularly for large sounds. It does so at the loss of some
               precision in representing the sound data; however, these
               inaccuracies are corrected as you zoom in on the data. All
-              SoundView's are optimized by default.
+              SndView's are optimized by default.
 */
 - (void)setOptimizedForSpeed:(BOOL)flag;
 
 /*!
   @method setSound:
-  @param  aSound is a Sound *.
-  @discussion Sets the SoundView's Sound object to <i>aSound</i>. If autoscaling
+  @param  aSound is a Snd *.
+  @discussion Sets the SndView's Snd object to <i>aSound</i>. If autoscaling
               is enabled, the drawing coordinate system is adjusted so
               <i>aSound</i>'s data fits within the current frame. Otherwise, the
               frame is resized to accommodate the length of the data. If
-              autodisplaying is enabled, the SoundView is automatically
+              autodisplaying is enabled, the SndView is automatically
               redisplayed.
 */
 - (void)setSound:(Snd *)aSound;
 
 /*!
   @method sound
-  @result Returns a Sound *.
-  @discussion Returns a pointer to the SoundView's Sound object.
+  @result Returns a Snd *.
+  @discussion Returns a pointer to the SndView's Snd object.
 */
 - sound;
 
 /*!
   @method setFrameSize:
   @param  newSize is a NSSize.
-  @discussion Sets the width and height of the SoundView's frame. If
-              autodisplaying is enabled, the SoundView is automatically
+  @discussion Sets the width and height of the SndView's frame. If
+              autodisplaying is enabled, the SndView is automatically
               redisplayed.
 */
 - (void)setFrameSize:(NSSize)_newSize;
@@ -654,12 +654,12 @@ NSScrollView.  */
 /*!
   @method soundBeingProcessed
   @result Returns an id.
-  @discussion Returns the Sound object that's currently being played or recorded
-              into. Note that the actual Sound object that's being performed isn't
-              necessarily the object returned by SoundView's <b>sound </b>method;
-              for efficiency, SoundView creates a private performance Sound
+  @discussion Returns the Snd object that's currently being played or recorded
+              into. Note that the actual Snd object that's being performed isn't
+              necessarily the object returned by SndView's <b>sound </b>method;
+              for efficiency, SndView creates a private performance Snd
               object. While this is generally an implementation detail, this
-              method is supplied in case the SoundView's delegate needs to know
+              method is supplied in case the SndView's delegate needs to know
               exactly which object will be (or was) performed.
 */
 - soundBeingProcessed;
@@ -667,24 +667,24 @@ NSScrollView.  */
 /*!
   @method tellDelegate:
   @param  theMessage is a SEL.
-  @discussion Sends <i>theMessage</i> to the SoundView's delegate with the
-              SoundView as the argument. If the delegate doesn't respond to the
+  @discussion Sends <i>theMessage</i> to the SndView's delegate with the
+              SndView as the argument. If the delegate doesn't respond to the
               message, then it isn't sent. You normally never invoke this method;
               it's invoked automatically when an action, such as playing or
               editing, is performed. However, you can invoke it in the design of a
-              SoundView subclass.
+              SndView subclass.
 */
 - (void)tellDelegate:(SEL)theMessage;
 
 /*!
   @method tellDelegate:duringPerformance:
   @param  theMessage is a SEL.
-  @discussion Sends <i>theMessage</i> to the SoundView's delegate with the
-              SoundView as the argument. If the delegate doesn't respond to the
+  @discussion Sends <i>theMessage</i> to the SndView's delegate with the
+              SndView as the argument. If the delegate doesn't respond to the
               message, then it isn't sent. You normally never invoke this method;
               it's invoked automatically when an action, such as playing or
               editing, is performed. However, you can invoke it in the design of a
-              SoundView subclass.
+              SndView subclass.
 */
 - (void)tellDelegate:(SEL)theMessage duringPerformance: performance;
 
@@ -701,7 +701,7 @@ NSScrollView.  */
 /*!
   @method willPlay:
   @param  sender is an id.
-  @discussion Used to redirect delegate messages from the SoundView's Sound
+  @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
 - (void)willPlay:sender duringPerformance: performance;
@@ -709,7 +709,7 @@ NSScrollView.  */
 /*!
   @method willRecord:
   @param  sender is an id.
-  @discussion Used to redirect delegate messages from the SoundView's Sound
+  @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
 - (void)willRecord:sender;
@@ -754,29 +754,29 @@ NSScrollView.  */
     Methods Implemented by the Delegate
 
     - didPlay:sender duringPerformance: (SndPerformance *) performance
-    Sent to the delegate just after the SoundView's sound is played.
+    Sent to the delegate just after the SndView's sound is played.
 
     - didRecord:sender
-    Sent to the delegate just after the SoundView's sound is recorded into.
+    Sent to the delegate just after the SndView's sound is recorded into.
 
     - hadError:sender
     Sent to the delegate if an error is encountered during recording or 
-            playback of the SoundView's sound.
+            playback of the SndView's sound.
 
     - selectionChanged:sender
-    Sent to the delegate when the SoundView's selection changes.
+    Sent to the delegate when the SndView's selection changes.
 
     - soundDidChange:sender
-    Sent to the delegate when the SoundView's sound data is edited.
+    Sent to the delegate when the SndView's sound data is edited.
 
     - willFree:sender
-    Sent to the delegate when the SoundView is freed.
+    Sent to the delegate when the SndView is freed.
 
     - willPlay:sender duringPerformance: (SndPerformance *) performance
-    Sent to the delegate just before the SoundView's sound is played.
+    Sent to the delegate just before the SndView's sound is played.
 
     - willRecord:sender
-    Sent to the delegate just before the SoundView's sound is recorded into.
+    Sent to the delegate just before the SndView's sound is recorded into.
 ********************************************/
 @end
 
