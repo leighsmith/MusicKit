@@ -47,15 +47,15 @@
    * Returns the receiver.
    */
 {
-    NSMutableArray * aList; //sb: static type
+    NSMutableArray *noteSendersCopy;
+    
     if ([self inPerformance])
 	return nil;
-    aList = _MKLightweightArrayCopy(noteSenders);
+    noteSendersCopy = _MKLightweightArrayCopy(noteSenders);
     [self removeNoteSenders];
-    [aList removeAllObjects];  /* Split this up because elements may try
-			     and remove themselves from noteSenders
-			     when they are freed. */
-    // don't release aList because it is autoreleased by _MKLightweightArrayCopy
+    /* Split this up because elements may try and remove themselves from noteSenders when they are freed. */
+    [noteSendersCopy removeAllObjects];  
+    // TODO [noteSendersCopy release];  // _MKLightweightArrayCopy is a copy method, it doesn't autorelease
     return self;
 }
 
@@ -86,6 +86,6 @@
 - disconnectNoteSenders
     /* Broadcasts "disconnect" to MKNoteSenders. */ 
 {
-    [noteSenders makeObjectsPerformSelector: @selector(disconnect)];
+    [noteSenders makeObjectsPerformSelector: @selector(disconnectAllReceivers)];
     return self;
 }
