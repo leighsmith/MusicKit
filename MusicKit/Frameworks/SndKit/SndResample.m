@@ -72,6 +72,9 @@
  Modification History:
 
   $Log$
+  Revision 1.1  2003/05/30 04:20:23  leighsmith
+  Renamed _Sndresamplesubs.m to SndResample.m, improved error reporting
+
   Revision 1.3  2003/05/12 17:23:27  leighsmith
   Updated copyright message and CVS Id
 
@@ -154,26 +157,26 @@ static int readData(
     int inEnd = inCount + *beginFrom;
     SND_HWORD *myOutPtrs[16];
 
-    int lastSampleInBlock, currentSample;
+    int lastSampleInBlock, currentSampleInBlock;
     int origNsamps;
-    int df;
+    int inDataFormat;
 
     void *mainIndex;
     
     if (inData) {
         lastSampleInBlock = inSnd->dataSize / inSnd->channelCount / SndSampleWidth(inSnd->dataFormat);
-        currentSample = *beginFrom;
+        currentSampleInBlock = 0;
         mainIndex = inData;
     }
     else {
         mainIndex = SndGetDataAddresses(*beginFrom,
               inSnd,
-              (int *)&lastSampleInBlock, /* channel independent */
-              (int *)&currentSample);     /* channel independent */
+              &lastSampleInBlock, /* channel independent */
+              &currentSampleInBlock);     /* channel independent */
     }
-    df = inSnd->dataFormat;
-    if (df == SND_FORMAT_INDIRECT)
-        df = ((SndSoundStruct *)(*((SndSoundStruct **)
+    inDataFormat = inSnd->dataFormat;
+    if (inDataFormat == SND_FORMAT_INDIRECT)
+        inDataFormat = ((SndSoundStruct *)(*((SndSoundStruct **)
                 (inSnd->dataLocation))))->dataFormat;
     dataStart = outPtrs[0];
     origNsamps = Nsamps = dataArraySize - Xoff; /* Calculate number of samples to get */
@@ -183,42 +186,37 @@ static int readData(
     }
 
     if (lastSampleInBlock != -1) {
-        for (; Nsamps>0; Nsamps--) {
-            if (*beginFrom == inEnd) break;
+        for (; Nsamps > 0 && *beginFrom != inEnd; Nsamps--) {
             if (nChansIn == nChansOut) {
                 for (channels = 0; channels < nChansOut; channels++) {
-                    switch(df) {
+		    int sampleIndex = currentSampleInBlock * nChansIn + channels;
+		    
+                    switch(inDataFormat) {
                     case SND_FORMAT_LINEAR_8:
-                        *(myOutPtrs[channels]++) =
-                            ((signed char *)mainIndex)[currentSample * nChansIn + channels] << 8;
+                        *(myOutPtrs[channels]++) = ((signed char *)mainIndex)[sampleIndex] << 8;
                         break;
                     case SND_FORMAT_MULAW_8:
-                        *(myOutPtrs[channels]++) =
-                            SndiMulaw(((unsigned char *)mainIndex)[currentSample * nChansIn + channels]);
+                        *(myOutPtrs[channels]++) = SndiMulaw(((unsigned char *)mainIndex)[sampleIndex]);
                         break;
                     case SND_FORMAT_LINEAR_32:
-                        *(myOutPtrs[channels]++) =
-                            (SND_HWORD)(((signed int *)mainIndex)[currentSample * nChansIn + channels] >> 16);
+                        *(myOutPtrs[channels]++) = (SND_HWORD)(((signed int *)mainIndex)[sampleIndex] >> 16);
                         break;
                     case SND_FORMAT_FLOAT:
-                        *(myOutPtrs[channels]++) =
-                            (SND_HWORD)(((float *)mainIndex)[currentSample * nChansIn + channels]);
+                        *(myOutPtrs[channels]++) = (SND_HWORD)(((float *)mainIndex)[sampleIndex]);
                         break;
                     case SND_FORMAT_DOUBLE:
-                        *(myOutPtrs[channels]++) =
-                            (SND_HWORD)(((double *)mainIndex)[currentSample * nChansIn + channels]);
+                        *(myOutPtrs[channels]++) = (SND_HWORD)(((double *)mainIndex)[sampleIndex]);
                         break;
                     default:
                     case SND_FORMAT_LINEAR_16:
-                        *(myOutPtrs[channels]++) =
-                            ((SND_HWORD *)mainIndex)[currentSample * nChansIn + channels];
+                        *(myOutPtrs[channels]++) = ((SND_HWORD *)mainIndex)[sampleIndex];
                         break;
                     }
                 }
             }
             else { /* reduce num of channels by averaging alternate pairs/quads of channels */
                 int chansToSum = nChansIn / nChansOut;
-                int passes = nChansOut;/*convenience name*/
+                int passes = nChansOut; /* convenience name */
                 int m,n;
 
                 for (m = 0;m < passes; m++) { /*m and n take us through 1 chnl indep sample*/
@@ -226,56 +224,59 @@ static int readData(
                     float sumFloat = 0.0;
                     double sumDouble = 0.0;
                     for (n = 0; n < chansToSum; n++) {
-                        switch(df) {
+			int sampleIndex = currentSampleInBlock * nChansIn + n;
+			
+                        switch(inDataFormat) {
                         case SND_FORMAT_LINEAR_8:
-                                sum += ((signed char *)mainIndex)[currentSample * nChansIn + n] << 8;
-                                break;
+			    sum += ((signed char *)mainIndex)[sampleIndex] << 8;
+			    break;
                         case SND_FORMAT_MULAW_8:
-                                sum += SndiMulaw(((unsigned char *)mainIndex)[currentSample * nChansIn + n]);
-                                break;
+			    sum += SndiMulaw(((unsigned char *)mainIndex)[sampleIndex]);
+			    break;
                         case SND_FORMAT_LINEAR_32:
-                        sum += (SND_HWORD)(((signed int *)mainIndex)[currentSample * nChansIn + n] >> 16);
-                                break;
+			    sum += (SND_HWORD)(((signed int *)mainIndex)[sampleIndex] >> 16);
+			    break;
                         case SND_FORMAT_FLOAT:
-                        sumFloat += (SND_HWORD)(((float *)mainIndex)[currentSample * nChansIn + n]);
-                                break;
+			    sumFloat += (SND_HWORD)(((float *)mainIndex)[sampleIndex]);
+			    break;
                         case SND_FORMAT_DOUBLE:
-                        sumDouble += (SND_HWORD)(((double *)mainIndex)[currentSample * nChansIn + n]);
-                                break;
+			    sumDouble += (SND_HWORD)(((double *)mainIndex)[sampleIndex]);
+			    break;
                         default:
                         case SND_FORMAT_LINEAR_16:
-                        sum += ((SND_HWORD *)mainIndex)[currentSample * nChansIn + n];
-                                break;
+			    sum += ((SND_HWORD *)mainIndex)[sampleIndex];
+			    break;
                         }
                     } /* summing several channels into 1 channel */
-                    switch(df) {
+
+                    switch(inDataFormat) {
                     case SND_FORMAT_FLOAT:
-                    *(myOutPtrs[m]++) = (SND_HWORD)(sumFloat / chansToSum);
-                            break;
+			*(myOutPtrs[m]++) = (SND_HWORD)(sumFloat / chansToSum);
+			break;
                     case SND_FORMAT_DOUBLE:
-                    *(myOutPtrs[m]++) = (SND_HWORD)(sumDouble / chansToSum);
-                            break;
+			*(myOutPtrs[m]++) = (SND_HWORD)(sumDouble / chansToSum);
+			break;
                     default:
                     case SND_FORMAT_LINEAR_16:
                     case SND_FORMAT_LINEAR_8:
                     case SND_FORMAT_MULAW_8:
                     case SND_FORMAT_LINEAR_32:
-                    *(myOutPtrs[m]++) = (SND_HWORD)(sum / chansToSum);
+			*(myOutPtrs[m]++) = (SND_HWORD)(sum / chansToSum);
                     }
-                } /* passes through chnl indep sample */
-            } /*averaging of channels */
-            currentSample++;
+                } /* passes through channel independent sample */
+            } /* averaging of channels */
+            currentSampleInBlock++;
             (*beginFrom)++;
-            if (currentSample >= lastSampleInBlock && inData) {
-                fprintf(stderr,"Error in resample - overreading data - should not happen\n");
+            if (currentSampleInBlock >= lastSampleInBlock && inData != NULL) {
+                fprintf(stderr,"Error in resample - overreading data - should not happen, currentSampleInBlock = %d, lastSampleInBlock = %d, origNsamps = %d\n", currentSampleInBlock, lastSampleInBlock, origNsamps);
                 break;
             }
-            else if (currentSample >= lastSampleInBlock) {
+            else if (currentSampleInBlock >= lastSampleInBlock) {
                 mainIndex = SndGetDataAddresses(*beginFrom,
                         inSnd,
                         (int *)&lastSampleInBlock, /* channel independent */
-                        (int *)&currentSample);
-                if (currentSample == -1 || lastSampleInBlock == -1) {
+                        (int *)&currentSampleInBlock);
+                if (currentSampleInBlock == -1 || lastSampleInBlock == -1) {
 //                  printf("met boundary: %d\n",*inPtr);
                     break;
                 }
@@ -442,9 +443,16 @@ static int SrcUD(SND_HWORD X[], SND_HWORD Y[], double factor, SND_UWORD *Time,
 }
 
 
-static int err_ret(char *s)
+static int err_ret(const char *formatString, ...)
 {
-    fprintf(stderr,"resample: %s \n\n",s); /* Display error message  */
+    char fullString[120]; // should be long enough...
+    va_list ap;
+
+    va_start(ap, formatString);
+    sprintf(fullString, "resample: %s \n\n", formatString);
+    vfprintf(stderr, fullString, ap); /* Display error message  */
+    va_end(ap);
+
     return -1;
 }
 
@@ -597,7 +605,7 @@ static int resampleWithFilter(  /* number of output samples returned */
     /* Calc reach of LP filter wing & give some creeping room */
     Xoff = ((Nmult+1)/2.0) * MAX(1.0,1.0/factor) + 10;
     if (IBUFFSIZE < 2*Xoff)      /* Check input buffer size */
-      return err_ret("IBUFFSIZE (or factor) is too small");
+      return err_ret("IBUFFSIZE %d (or factor %lf) is too small compared to Xoff %u", IBUFFSIZE, factor, Xoff);
     Nx = IBUFFSIZE - 2*Xoff;     /* # of samples to process each iteration */
 
     for (channels = 0; channels < nChans; channels++){
@@ -697,7 +705,7 @@ static int resampleWithFilter(  /* number of output samples returned */
 
 
 int resample(			/* number of output samples returned */
-    double factor,		/* factor = Sndout/Sndin */
+    double factor,		/* factor = sample rate of Sndout/Sndin */
     SND_HWORD *outPtr,		/* output data pointer */
     int inCount,		/* number of input samples to convert */
     int outCount,		/* number of output samples to compute */
