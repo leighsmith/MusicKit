@@ -105,13 +105,21 @@ See also:  MKWaveTable, MKPartials
 
 @interface MKSamples : MKWaveTable
 {
-    Snd *sound;                       /* The object's Snd object. */
-    NSString *soundfile;              /* The name of the soundfile, if the Snd was set through readSoundfile:. */
+    /*! @var sound The object's Snd object. */
+    Snd *sound;
+    /*! @var soundfile The name of the soundfile, if the Snd was set through readSoundfile:. */
+    NSString *soundfile;
+    /*! @var audioProcessorChain Used for signal processing including amplitude modifying the sound. */
+    SndAudioProcessorChain *audioProcessorChain;
     int tableType;
-    int curLoc;                       /* Index into current sample in soundfile */
-    double amplitude;                 /* Amplitude scaling of soundfile in fixed point */
-    unsigned int startSampleLoc;      /* Starting sample to be processed */
-    unsigned int lastSampleLoc;       /* Ending sample to be processed, defining the portion of sound to be used. */
+    /*! @var curLoc Index into current sample in soundfile */
+    int curLoc;
+    /*! @var amplitude Amplitude scaling of soundfile in floating point */
+    double amplitude;
+    /*! @var startSampleLoc Starting sample to be processed */
+    unsigned int startSampleLoc;
+    /*! @var lastSampleLoc Ending sample to be processed, defining the portion of sound to be used. */
+    unsigned int lastSampleLoc;
 }
 
 
@@ -279,6 +287,22 @@ See also:  MKWaveTable, MKPartials
   @abstract assigns an amplitude scaling. 
  */
 - (void) setAmplitude: (double) amp;
+
+/*!
+  @method audioProcessorChain
+  @abstract Returns the SndAudioProcessorChain associated with this sample.
+  @result The audioProcessorChain associated with this sample 
+ */
+- (SndAudioProcessorChain *) audioProcessorChain;
+
+/*!
+  @method setAudioProcessorChain:
+  @abstract Sets an SndAudioProcessorChain to be associated with the Snd instance.
+  @discussion This can be used for any signal processing or amplitude enveloping.
+  @param anAudioProcessorChain An initialized SndAudioProcessorChain.
+  @result Returns self. 
+ */
+- setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain;
 
 /* Private method that supports both OscTable and ExcitationTable */
 - _fillTableLength: (int) aLength scale: (double) aScaling ;

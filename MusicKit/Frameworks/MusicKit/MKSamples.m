@@ -50,7 +50,7 @@ static id theSubclass = nil;
 BOOL MKSetSamplesClass(id aClass)
 {
     if (!_MKInheritsFrom(aClass,[MKSamples class]))
-      return NO;
+	return NO;
     theSubclass = aClass;
     return YES;
 }
@@ -58,7 +58,7 @@ BOOL MKSetSamplesClass(id aClass)
 id MKGetSamplesClass(void)
 {
     if (!theSubclass)
-      theSubclass = [MKSamples class];
+	theSubclass = [MKSamples class];
     return theSubclass;
 }
 
@@ -125,8 +125,12 @@ id MKGetSamplesClass(void)
 - (void)dealloc
   /* Frees object and Sound. */
 {
-    if (sound) [sound release];
-    if (soundfile) [soundfile release];
+    [sound release];
+    sound = nil;
+    [soundfile release];
+    soundfile = nil;
+    [audioProcessorChain release];
+    audioProcessorChain = nil;
     [super dealloc];
 }
 
@@ -147,7 +151,12 @@ id MKGetSamplesClass(void)
    
    Returns YES or NO if there's an error. */
 {
-    Snd *aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
+    Snd *aTmpSound = nil;
+    
+    if([Snd isPathForSoundFile: aSoundfile])
+	aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
+    else if([SndMP3 isPathForSoundFile: aSoundfile])
+	aTmpSound = [[SndMP3 alloc] initFromSoundfile: aSoundfile];
 
     if (!aTmpSound)
 	return NO;
@@ -197,15 +206,13 @@ id MKGetSamplesClass(void)
 	int i = 0;
         BOOL error = NO;
 
-        tempSoundFile = @"samples.snd";
-	for (; ;) {                         /* Keep trying until success */
-            if([manager fileExistsAtPath: tempSoundFile] != YES)
-                break;                       /* File doesn't exist. */
-            tempSoundFile = [NSString stringWithFormat: @"samples%d.snd", (++i)];
+        tempSoundFile = [@"samples" stringByAppendingPathExtension: [Snd defaultFileExtension]];
+	while ([manager fileExistsAtPath: tempSoundFile] == YES) { /* Keep trying until we find an unused filename */
+            tempSoundFile = [[NSString stringWithFormat: @"samples%d", (++i)] stringByAppendingPathExtension: [Snd defaultFileExtension]];
         }
         [soundfile autorelease];
         soundfile = [tempSoundFile copy];
-        error = [sound writeSoundfile:soundfile];
+        error = [sound writeSoundfile: soundfile];
         if (error) { 
             [soundfile release];
 	    soundfile = nil;
@@ -258,7 +265,7 @@ id MKGetSamplesClass(void)
     return [[sound retain] autorelease];
 }
 
--(NSString *) soundfile
+- (NSString *) soundfile
 /* Returns the name of the soundfile from which the data was 
    obtained, if any. The receiver should not alter this string. 
    If the data was obtained using setSound:,
@@ -310,6 +317,18 @@ id MKGetSamplesClass(void)
     /* assigns an amplitude scaling */
 {
     amplitude = newAmp;
+}
+
+- (SndAudioProcessorChain *) audioProcessorChain
+{
+    return [[audioProcessorChain retain] autorelease];
+}
+
+- setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain
+{
+    [audioProcessorChain release];
+    audioProcessorChain = [anAudioProcessorChain retain];
+    return self;
 }
 
 /* 
@@ -452,9 +471,15 @@ of it.
     return self;
 }
 
--(int)tableType
+-(int) tableType
 {
     return tableType;
+}
+
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ sound %@, file %@, processor chain %@\nCurrently at %d of (%u,%u) amp: %lf\n", 
+	[super description], sound, soundfile, audioProcessorChain, curLoc, startSampleLoc, lastSampleLoc, amplitude];
 }
 
 @end
