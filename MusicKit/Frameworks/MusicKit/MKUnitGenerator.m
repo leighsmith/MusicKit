@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2002/04/16 15:20:01  sbrandon
+  - several clumsy string-appending calls were simplified for speed
+
   Revision 1.13  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -973,7 +976,7 @@ extern int _MKOrchestraGetNoops(void);
         [s appendData:[[NSString stringWithFormat:@" in %s_0x%x\n",
             [NSStringFromClass([synthPatch class]) cString],
             synthPatch] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    else [s appendData:[@"\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    else [s appendBytes:"\n" length:1];
     [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%@ I %06X\n",
         _instanceNumber,
         NSStringFromClass([self class]),
