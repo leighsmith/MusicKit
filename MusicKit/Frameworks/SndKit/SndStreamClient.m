@@ -214,4 +214,14 @@ enum {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+- setDetectPeaks: (BOOL) detectPeaks
+{
+    return self;
+}
+
+- getPeakLeft: (float *) leftPeak right: (float *) rightPeak
+{
+    return self;
+}
+
 @end

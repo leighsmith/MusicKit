@@ -51,4 +51,8 @@
 - (void) processBuffers; // The big one for the sub classes - override!.
 - (double) nowTime;
 
+// Peak detection
+- setDetectPeaks: (BOOL) detectPeaks;
+- getPeakLeft: (float *) leftPeak right: (float *) rightPeak;
+
 @end
