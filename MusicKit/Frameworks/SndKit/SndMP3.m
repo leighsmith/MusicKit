@@ -160,17 +160,17 @@ static int bitrateLookupTable[16][6] = {
     const char *trackNumber = id3base + 126;
     const char *genre   = id3base + 127;
 
-    printf("ID3 tag\n");
-    printf("Title:       %30s\n", title);
-    printf("Artist:      %30s\n", artist);
-    printf("Album:       %30s\n", album);
-    printf("year:        %4s\n", year);
-    printf("Comment:     %30s\n", comment);
-    printf("TrackNumber: %d\n", trackNumber[0]);
-    printf("Genre:       %d\n", genre[0]);
+    NSLog(@"ID3 tag\n");
+    NSLog(@"Title:       %30s\n", title);
+    NSLog(@"Artist:      %30s\n", artist);
+    NSLog(@"Album:       %30s\n", album);
+    NSLog(@"year:        %4s\n", year);
+    NSLog(@"Comment:     %30s\n", comment);
+    NSLog(@"TrackNumber: %d\n", trackNumber[0]);
+    NSLog(@"Genre:       %d\n", genre[0]);
   }
   else {
-//    printf("No ID3 tag found\n");
+//    NSLog(@"No ID3 tag found\n");
   }
 }
 
@@ -181,45 +181,45 @@ static int bitrateLookupTable[16][6] = {
     int layer, bitrateIndex, version = 0, bitrate, samplesPerFrame = 1152;
 
     if ((frameHeader >> 21) & 0x07FF)
-	printf("frame sync is ok\n");
+	NSLog(@"frame sync is ok\n");
     else
-	printf("bad frame sync\n");
+	NSLog(@"bad frame sync\n");
 
-    printf("version: ");
+    NSLog(@"version: ");
     switch ((frameHeader >> 19) & 0x03) {
-	case 0: printf("MPEG 2.5\n"); break;
-	case 1: printf("reserved\n"); break;
-	case 2: printf("MPEG v2\n"); version = 2; samplesPerFrame = 576; break;
-	case 3: printf("MPEG v1\n"); version = 1; break;
+	case 0: NSLog(@"MPEG 2.5\n"); break;
+	case 1: NSLog(@"reserved\n"); break;
+	case 2: NSLog(@"MPEG v2\n"); version = 2; samplesPerFrame = 576; break;
+	case 3: NSLog(@"MPEG v1\n"); version = 1; break;
     }
     layer =  4 - ((frameHeader >> 17) & 0x03);
     switch (layer) {
-	case 3: printf("Layer 3\n"); break;
-	case 2: printf("Layer 2\n"); break;
-	case 1: printf("Layer 1\n"); break;
+	case 3: NSLog(@"Layer 3\n"); break;
+	case 2: NSLog(@"Layer 2\n"); break;
+	case 1: NSLog(@"Layer 1\n"); break;
 	case 0:
 	default:
-	    printf("reserved\n");
+	    NSLog(@"reserved\n");
     }
-    printf("Protected by CRC: %s\n", (frameHeader >> 16) & 0x1 ? "no" : "yes");
+    NSLog(@"Protected by CRC: %s\n", (frameHeader >> 16) & 0x1 ? "no" : "yes");
 
     bitrateIndex = (frameHeader >> 12) & 0xF;
     bitrate = bitrateLookupTable[bitrateIndex][(version-1)*3 + layer-1];
-    printf("Bitrate: %i (index: %i)\n", bitrate, bitrateIndex);
+    NSLog(@"Bitrate: %i (index: %i)\n", bitrate, bitrateIndex);
 
-    printf("Sampling frequency index: %li\n", (frameHeader >> 10) & 0x3);
-    printf("Padding: %s\n", (frameHeader >> 9) & 0x1 ? "yes" : "no");
-    printf("Channel Mode: %li\n", (frameHeader >> 6) & 0x3);
-    printf("Mode extension: %li\n", (frameHeader >> 4) & 0x3);
-    printf("Copyright: %s\n", (frameHeader >> 3) & 0x1 ? "yes" : "no");
-    printf("Original: %s\n", (frameHeader >> 2) & 0x1 ? "yes" : "no");
-    printf("Emphasis: %li\n", frameHeader & 0x3);
+    NSLog(@"Sampling frequency index: %li\n", (frameHeader >> 10) & 0x3);
+    NSLog(@"Padding: %s\n", (frameHeader >> 9) & 0x1 ? "yes" : "no");
+    NSLog(@"Channel Mode: %li\n", (frameHeader >> 6) & 0x3);
+    NSLog(@"Mode extension: %li\n", (frameHeader >> 4) & 0x3);
+    NSLog(@"Copyright: %s\n", (frameHeader >> 3) & 0x1 ? "yes" : "no");
+    NSLog(@"Original: %s\n", (frameHeader >> 2) & 0x1 ? "yes" : "no");
+    NSLog(@"Emphasis: %li\n", frameHeader & 0x3);
 
-    printf("Samples per frame: %i\n",samplesPerFrame);
+    NSLog(@"Samples per frame: %i\n",samplesPerFrame);
     framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
-    printf("FramesPerSecond: %f\n", framesPerSecond);
+    NSLog(@"FramesPerSecond: %f\n", framesPerSecond);
     frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
-    printf("FrameSize: %i\n", frameSize);
+    NSLog(@"FrameSize: %i\n", frameSize);
 }    
 
 - (int) findMP3FrameHeadersInData: (NSData *) mp3DataToSearch
@@ -264,15 +264,15 @@ static int bitrateLookupTable[16][6] = {
 		// if (frameCount == 0) { //
 
 		switch ((frameHeader >> 19) & 0x03) {
-		    case 0: //printf("MPEG 2.5\n");
+		    case 0: //NSLog(@"MPEG 2.5\n");
 			break;
-		    case 1: //printf("reserved\n");
+		    case 1: //NSLog(@"reserved\n");
 			break;
-		    case 2: //printf("MPEG v2\n");
+		    case 2: //NSLog(@"MPEG v2\n");
 			version = 2;
 			samplesPerFrame = 576;
 			break;
-		    case 3: // printf("MPEG v1\n");
+		    case 3: // NSLog(@"MPEG v1\n");
 			version = 1;
 			samplesPerFrame = 1152;
 			break;
@@ -294,7 +294,7 @@ static int bitrateLookupTable[16][6] = {
 		    framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
 		    frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
 		    // time = (float) (*numOfFrameLocations) * samplesPerFrame / (float) samplingRate;
-	            // printf("[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
+	            // NSLog(@"[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
                     //        (*numOfFrameLocations), position - 4, time, ((*numOfFrameLocations) - 1) * samplesPerFrame);
 
 		    if ((*numOfFrameLocations) == maxFrameLocationsCount) {
@@ -326,7 +326,7 @@ static int bitrateLookupTable[16][6] = {
      {
 	 long i;
 	 for (i = 0; i < *numOfFrameLocations; i++) {
-	     printf("frame: %04li location: %07li\n", i, (*ppFrameLocations)[i]);
+	     NSLog(@"frame: %04li location: %07li\n", i, (*ppFrameLocations)[i]);
 	 }
      }
      */
@@ -488,7 +488,7 @@ static int bitrateLookupTable[16][6] = {
     decodedSampledCount += sams_created;
     iterations++;
 #if SNDMP3_DEBUG_READING
-    printf("[%04li] Decoded: %li/%li\n",iterations,decodedSampledCount,lengthInSampleFrames);
+    NSLog(@"[%04li] Decoded: %li/%li\n",iterations,decodedSampledCount,lengthInSampleFrames);
 #endif
     if (samplesRecovered >= requestedSampleCount)
       break;
@@ -503,7 +503,7 @@ static int bitrateLookupTable[16][6] = {
   [decoderLock unlock];
   bDecoding = FALSE;
   [localPool release];
-//  printf("Finished decoding...\n");
+//  NSLog(@"Finished decoding...\n");
   [NSThread exit];
 }
 
@@ -511,29 +511,32 @@ static int bitrateLookupTable[16][6] = {
 // readSoundfile:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) loadMP3DataWithURL: (NSURL*) soundURL
+- (BOOL) loadMP3DataWithURL: (NSURL*) soundURL
 {
-  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-  if (mp3Data) {
-    [mp3Data release];
-    mp3Data = nil;
-  }
-  [pcmDataLock lock];
-  if (pcmData) {
-    [pcmData release];
-    pcmData = nil;
-  }
-  [pcmDataLock unlock];
-  mp3Data = [[NSData alloc] initWithContentsOfURL: soundURL];
-  [self checkID3Tag: mp3Data];
-  [self findMP3FrameHeadersInData: mp3Data
-            storeFrameLocationsAt: &frameLocations
-			    count: &frameLocationsCount];
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    
+    if (mp3Data) {
+        [mp3Data release];
+        mp3Data = nil;
+    }
+    [pcmDataLock lock];
+    if (pcmData) {
+        [pcmData release];
+        pcmData = nil;
+    }
+    [pcmDataLock unlock];
+    mp3Data = [[NSData alloc] initWithContentsOfURL: soundURL];
+    if(mp3Data != nil) {
+        [self checkID3Tag: mp3Data];
+        [self findMP3FrameHeadersInData: mp3Data
+                  storeFrameLocationsAt: &frameLocations
+                                  count: &frameLocationsCount];
       
-  lengthInSampleFrames = frameLocationsCount * 1152.0;
-  duration    = lengthInSampleFrames / 44100.0;
-  
-  [localPool release];
+        lengthInSampleFrames = frameLocationsCount * 1152.0;
+        duration    = lengthInSampleFrames / 44100.0;
+    }
+    [localPool release];
+    return mp3Data != nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -542,26 +545,27 @@ static int bitrateLookupTable[16][6] = {
 
 - (int) readSoundURL: (NSURL*) soundURL
 {
-  SndMP3DecodeJob *job = nil;
+    SndMP3DecodeJob *job = nil;
   
-  [self loadMP3DataWithURL: soundURL];
+    if(![self loadMP3DataWithURL: soundURL])
+        return SND_ERR_CANNOT_OPEN;
 #if SNDMP3_DEBUG_READING
-  printf("Found %li frames\n", frameLocationsCount);
+    NSLog(@"Found %li frames\n", frameLocationsCount);
 #endif
 
-  job = [[SndMP3DecodeJob alloc] initWithStartTime: 0.0
-                                          duration: duration];
+    job = [[SndMP3DecodeJob alloc] initWithStartTime: 0.0
+                                            duration: duration];
 
-  [pcmDataLock lock];
-  [NSThread detachNewThreadSelector: @selector(decodeThread:)
-                           toTarget: self
-                         withObject: job];
-  [pcmDataLock lock];
-  [pcmDataLock unlock];
-  [job autorelease];
-  // This is probably a bit kludgy but it will do for now.
-  loopEndIndex = [self lengthInSampleFrames] - 1;
-  return SND_ERR_NONE;
+    [pcmDataLock lock];
+    [NSThread detachNewThreadSelector: @selector(decodeThread:)
+                             toTarget: self
+                           withObject: job];
+    [pcmDataLock lock];
+    [pcmDataLock unlock];
+    [job autorelease];
+    // This is probably a bit kludgy but it will do for now.
+    loopEndIndex = [self lengthInSampleFrames] - 1;
+    return SND_ERR_NONE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -572,33 +576,33 @@ static int bitrateLookupTable[16][6] = {
    startTimePosition: (double) segmentStartTime
             duration: (double) segmentDuration
 {
-  SndMP3DecodeJob *job = nil;
+    SndMP3DecodeJob *job = nil;
   
-  [self loadMP3DataWithURL: soundURL];
-
-  if (segmentDuration == -1.0)
-    segmentDuration = duration;
+    if(![self loadMP3DataWithURL: soundURL])
+        return SND_ERR_CANNOT_OPEN;
+    if (segmentDuration == -1.0)
+        segmentDuration = duration;
     
 
-  if (segmentStartTime > duration) 
-    return SND_ERR_BAD_STARTTIME;
-  else if (segmentStartTime + segmentDuration > duration)
-    return SND_ERR_BAD_DURATION;
+    if (segmentStartTime > duration) 
+        return SND_ERR_BAD_STARTTIME;
+    else if (segmentStartTime + segmentDuration > duration)
+        return SND_ERR_BAD_DURATION;
 
-  duration = segmentDuration;
+    duration = segmentDuration;
 
-  job = [[SndMP3DecodeJob alloc] initWithStartTime: segmentStartTime
-                                          duration: segmentDuration];
+    job = [[SndMP3DecodeJob alloc] initWithStartTime: segmentStartTime
+                                            duration: segmentDuration];
 
-  [pcmDataLock lock];
-  [NSThread detachNewThreadSelector: @selector(decodeThread:)
-                           toTarget: self
-                         withObject: job];
-  [pcmDataLock lock];
-  [pcmDataLock unlock];
-  duration = segmentDuration;
-  [job autorelease];
-  return SND_ERR_NONE;
+    [pcmDataLock lock];
+    [NSThread detachNewThreadSelector: @selector(decodeThread:)
+                             toTarget: self
+                           withObject: job];
+    [pcmDataLock lock];
+    [pcmDataLock unlock];
+    duration = segmentDuration;
+    [job autorelease];
+    return SND_ERR_NONE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -777,7 +781,7 @@ static int bitrateLookupTable[16][6] = {
     [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.25]];
 
 #if SNDMP3_DEBUG_READING
-  printf("requested: [%li, %li] decoded: %li  %s\n",
+  NSLog(@"requested: [%li, %li] decoded: %li  %s\n",
          r.location, endIndex, decodedSampledCount, decodedSampledCount > endIndex?"":"***");
 #endif
   [ab initWithDataFormat: SND_FORMAT_FLOAT
