@@ -4,24 +4,7 @@
   HEADER FILES: MusicKit.h
 
   Description:
-    MKMixerInstrument mixes soundfiles based on a score description of the mix. 
-    It allows setting the amplitude scaling of each soundfile and to
-    change that scaling over time by applying an amplitude envelope. It
-    allows resampling (change the pitch of) a file.  It also allows
-    you to specify that only a portion of a file be used in the mix.
-    There is no limit to the number of soundfiles that may be mixed
-    together. Also, the same soundfile may be mixed several times and may
-    overlap with itself.  The soundfiles may have different sampling rates
-    and different formats.  However, the output must be 16 bit linear.
-    The mix is done on the main CPU, rather than the DSP.  The more files
-    you mix, the longer it will take the program to run.  Note also that
-    if you mix many large files, you will need a fair degree of swap
-    space--keep some room free on the disk off of which you booted.
-
-    MKMixerInstrument is also an illustration of how to make your own MusicKit
-    MKInstrument subclass to "realize MKNotes" in some novel fashion. In this
-    case, MKNotes are soundfile mix specifications. They are "realized" by
-    being mixed into the output file.
+    See the headerdoc description below.
 
   Original Author: David A. Jaffe, with Michael McNabb adding the
     enveloping and pitch transposition, the latter based on code
@@ -31,30 +14,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001 The MusicKit Project.
-*/
-/*
-Modification history:
-
- $Log$
- Revision 1.6  2003/08/04 21:21:24  leighsmith
- Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values. Removed call of resample(), replaced with Snd convertFormat:sampleRate:channelCount method.
-
- Revision 1.5  2001/09/20 01:41:55  leighsmith
- Typed parameters and added headerdoc comments
-
- Revision 1.4  2001/09/06 21:27:47  leighsmith
- Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
- Revision 1.3  2000/04/26 01:23:19  leigh
- Renamed to more meaningful samplesToMix ivar
-
- Revision 1.2  2000/04/20 21:34:53  leigh
- Replaced SFInfoStruct with expanded MKSamples, plugged memory leaks
-
- Revision 1.1  2000/04/16 21:18:36  leigh
- First version using SndKit incorporated into the MusicKit framework
-
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 /*!
   @class MKMixerInstrument
@@ -85,35 +45,58 @@ Modification history:
 
 @interface MKMixerInstrument: MKInstrument
 {
-    NSMutableArray *samplesToMix;     /* Array of MKSamples to mix */
-    unsigned int curOutSamp;          /* Index of current output sample */
-    double samplingRate;              /* Output sampling rate */
-    int channelCount;                 /* Number of channels */
-    SndSoundStruct *outSoundStruct;   /* Output file SndSoundStruct */
-    Snd *sound;                       /* Output sound */
-    NSMutableData *stream;            /* Output data stream (formatted as a .snd) */
-    double defaultAmp;                /* Default amplitude (set with no-tag noteUpdate) */
-    double defaultFreq0;	      /* default resampling factor numerator */
-    double defaultFreq1;	      /* default resampling factor denominator */
-    NSString *defaultFile;	      /* default sound file name */
-    id defaultEnvelope;               /* default amplitude envelope */
-    int defaultTimeScale;             /* See README */
+    /*! @var samplesToMix Array of MKSamples to mix */
+    NSMutableArray *samplesToMix;
+    /*! @var curOutSamp Index of current output sample. */
+    unsigned int curOutSamp;
+    /*! @var soundFormat The format for the final sound, (sample rate, channels, sample format). */
+    SndFormat soundFormat;
+    /*! @var sound Output sound */
+    Snd *sound;                       
+    /*! @var mixedProcessorChain A chain of SndAudioProcessing instances, including fader, applied after mixing all sounds. */
+    SndAudioProcessorChain *mixedProcessorChain;
+    /*! @var defaultAmp Default amplitude (set with no-tag noteUpdate) */
+    double defaultAmp;
+    /*! @var defaultFreq0 default resampling factor numerator */
+    double defaultFreq0;
+    /*! @var defaultFreq1 default resampling factor denominator */
+    double defaultFreq1;
+    /*! @var defaultFile default sound file name */
+    NSString *defaultFile;
+    /*! @var defaultEnvelope default amplitude envelope */
+    id defaultEnvelope;
+    /*! @var defaultTimeScale See README */
+    int defaultTimeScale;
 }
 
 /*!
-  @method setSamplingRate:channelCount:writingToStream:
+  @method setSamplingRate:
+  @abstract Sets the sampling rate to be used when mixing sounds.
+  @discussion This method should be invoked once before performance is started. 
   @param  aSrate is a double.
-  @param  chans is an int.
-  @param  aStream is an NSMutableData.
-  @result Returns <b>self</b>.
-  @discussion This method sets the sampling rate, number of audio channels and destination NSMutableData object
-              to be used when mixing sounds. It should be invoked once before performance is started. 
-*/
--setSamplingRate: (double) aSrate
-    channelCount: (int) chans
- writingToStream: (NSMutableData *) aStream;
+ */
+- (void) setSamplingRate: (double) aSrate;
 
--init;
+/*!
+  @method setChannelCount:
+  @abstract Sets the number of audio channels to be used when mixing sounds.
+  @discussion This method should be invoked once before performance is started. 
+  @param  chans is an int.
+ */
+- (void) setChannelCount: (int) chans;
+
+/*!
+  @method mixedSound
+  @abstract Returns the sound that has been mixed.
+  @result Returns a Snd instance.
+ */
+- (Snd *) mixedSound;
+
+/*!
+  @method init
+  @abstract Initializes the instance to 44.1KHz, 16 bit stereo file output.
+ */
+- init;
 
 - (void) dealloc;
 
@@ -124,16 +107,16 @@ Modification history:
   @discussion You do not normally call this method explictly. 
               It is invoked when first note is received during performance.
 */
--firstNote: (MKNote *) aNote;
+- firstNote: (MKNote *) aNote;
 
 /*!
   @method realizeNote:fromNoteReceiver:
   @param  aNote is an MKNote.
   @param  aNoteReceiver is an MKNoteReceiver.
   @discussion This is invoked when a new MKNote is received during performance to perform the mixing.
-              You do not normally call this method explictly.
+              You do not normally call this method explictly. Each note is converted to a common format.
 */
--realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
   @method afterPerformance
@@ -141,9 +124,7 @@ Modification history:
   @discussion You do not normally call this method explictly. 
               It is invoked when performance is over. 
 */
--afterPerformance;
-
-/* All other methods are private */
+- afterPerformance;
 
 @end
 
