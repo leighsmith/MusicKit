@@ -77,6 +77,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/09/07 18:35:48  leighsmith
+  Formatted table and correctly formatted code example
+
   Revision 1.9  2001/09/07 00:13:42  leighsmith
   Reformatted discussion
 
@@ -165,10 +168,28 @@ beats.
 A MKPerformer has a status, represented as one of the following
 <b>MKPerformerStatus</b> values:
 
-<b>Status	Meaning </b>
-MK_inactive	A deactivated or not-yet-activated MKPerformer.
-MK_active	An activated, unpaused MKPerformer. 
-MK_paused	The MKPerformer is activated but currently paused.
+<table border=1 cellspacing=2 cellpadding=0 align=center>
+<thead>
+<tr>
+<th align=left>Status</th>
+<th align=left>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align=left>MK_inactive</td>
+<td align=left>A deactivated or not-yet-activated MKPerformer.</td>
+</tr>
+<tr>
+<td align=left>MK_active</td>
+<td align=left>An activated, unpaused MKPerformer.</td>
+</tr>
+<tr>
+<td align=left>MK_paused</td>
+<td align=left>The MKPerformer is activated but currently paused.</td>
+</tr>
+</tbody>
+</table>
 
 Some messages can only be sent to an inactive (MK_inactive) MKPerformer.  A
 MKPerformer's status can be queried with the <b>status</b> message.
@@ -178,7 +199,6 @@ it synchronizes correctly to MIDI time code.  To make your own
 MKPerformer subclass synchronize, you need to support a simple
 informal protocol called <b>MKPerformer Time Code Protocol</b>, which
 is described in the next section.
-
 
 <h2>MKPerformer Time Code Protocol</h2>
               
@@ -222,14 +242,14 @@ Code-conforming MKPerfomer.  This example is a simplified version of
 the MusicKit MKPartPerformer:
 
 <tt>
-#import &lt;MusicKit/MusicKit.h&gt;
-#import "MyPartPerformer.h"
-@implementation MyPartPerformer:MKPerformer
-{
-    id part;             // MKPart over which we're sequencing.
-    double firstTimeTag; // Required by Time Code Protocol.
-    int currentIndex;    // Index of nextNote
-}
+#import &lt;MusicKit/MusicKit.h&gt;<br>
+#import "MyPartPerformer.h"<br>
+&#64;implementation MyPartPerformer:MKPerformer<br>
+{<br>
+    id part;             // MKPart over which we're sequencing.<br>
+    double firstTimeTag; // Required by Time Code Protocol.<br>
+    int currentIndex;    // Index of nextNote<br>
+}<br>
 </tt>
 
 See also: MKConductor, MKNoteSender 
