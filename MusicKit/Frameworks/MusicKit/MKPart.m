@@ -90,6 +90,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2001/12/07 20:13:57  skotmcdonald
+  Added hasSoundingNotes method, which returns TRUE if a part contains mk_noteDur or mk_noteOn notes
+
   Revision 1.16  2001/11/16 19:56:45  skotmcdonald
   Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
 
@@ -903,6 +906,23 @@ static void removeNote(MKPart *self, MKNote *aNote)
 {
     return [aNote part] == self;
 }
+
+- (BOOL) hasSoundingNotes
+{
+  int  j, c;
+  BOOL bFound = FALSE;
+  c = [notes count];
+  for (j = 0; j < c; j++) {
+    MKNote *aNote = [notes objectAtIndex: j];
+    if ([aNote noteType] == MK_noteDur || [aNote noteType] == MK_noteOn) {
+       bFound = TRUE;
+       break;
+    } 
+  }
+  return bFound;
+}
+
+
 
 -(BOOL)isEmpty
   /* TYPE: Querying

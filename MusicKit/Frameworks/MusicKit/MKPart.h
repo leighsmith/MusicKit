@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.14  2001/12/07 20:13:57  skotmcdonald
+  Added hasSoundingNotes method, which returns TRUE if a part contains mk_noteDur or mk_noteOn notes
+
   Revision 1.13  2001/11/16 19:56:45  skotmcdonald
   Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
 
@@ -500,6 +503,13 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               See also: -<b>  isEmpty</b>,<b></b>-<b> noteCount</b>
 */
 -(BOOL) containsNote:aNote; 
+
+/*!
+  @method hasSoundingNotes:
+  @result Returns a BOOL.
+  @discussion Returns <b>YES</b> if the MKPart contains any MK_noteDur or MK_noteOn notes            
+*/
+- (BOOL) hasSoundingNotes;
 
 /*!
   @method isEmpty
