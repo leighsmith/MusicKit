@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/06/09 03:20:33  leigh
+  removed redundant HashTable import
+
   Revision 1.4  2000/05/06 00:26:29  leigh
   Converted _binaryIndecies to NSMutableDictionary
 
@@ -44,7 +47,7 @@ Modification history:
 /* See binaryScorefile.doc on the musickit source directory for explanation
    of binary scorefile format. */
 
-#import <objc/HashTable.h>
+//#import <objc/HashTable.h>
 
 #import "_musickit.h"
 #import "_MKNameTable.h"   
