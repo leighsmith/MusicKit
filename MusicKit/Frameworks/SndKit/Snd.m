@@ -173,6 +173,11 @@ static int ioTags = 1000;
     }
     else
       [performancesArray removeAllObjects];
+
+    // initialize loop points to legal values
+    loopWhenPlaying = NO;
+    loopStartIndex = 0;
+    loopEndIndex = 0;
     
     return [super init];
 }
@@ -981,9 +986,11 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     err = SndReadSoundfile([filename fileSystemRepresentation], &soundStruct);
 
     // SndPrintStruct(soundStruct);
-    if (!err)
+    if (!err) {
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-
+        // This is probably a bit kludgy but it will do for now.
+        loopEndIndex = [self sampleCount];
+    }
     return err;
 }
 
@@ -1422,9 +1429,50 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (void) fillAudioBuffer:(SndAudioBuffer*)buff withSamplesInRange: (NSRange) r
 {
-  int   samSize       = SndFrameSize(soundStruct);
-  void* dataPtr       = [self data] + samSize * r.location;
-  [buff copyBytes:dataPtr count:r.length * samSize format:soundStruct];
+  int   sampleSize    = SndFrameSize(soundStruct);
+  void* dataPtr       = [self data] + sampleSize * r.location;
+  [buff copyBytes:dataPtr count:r.length * sampleSize format: soundStruct];
+}
+
+- (void) insertSamplesInRange: (NSRange) sndSampleRange
+	      intoAudioBuffer: (SndAudioBuffer*) buff
+		   startingAt: (long) bufferStartIndex;
+{
+    int   sampleSize    = SndFrameSize(soundStruct);
+    void* dataPtr       = [self data] + sampleSize * sndSampleRange.location;
+    NSRange bufferByteRange = { bufferStartIndex * sampleSize, sndSampleRange.length * sampleSize };
+
+    [buff copyBytes: dataPtr intoRange: bufferByteRange format: soundStruct];
+}
+
+- (void) setLoopWhenPlaying: (BOOL) yesOrNo
+{
+    loopWhenPlaying = yesOrNo;
+}
+
+- (BOOL) loopWhenPlaying
+{
+    return loopWhenPlaying;
+}
+
+- (void) setLoopStartIndex: (long) newLoopStartIndex
+{
+    loopStartIndex = newLoopStartIndex;
+}
+
+- (long) loopStartIndex
+{
+    return loopStartIndex;
+}
+
+- (void) setLoopEndIndex: (long) newLoopEndIndex
+{
+    loopEndIndex = newLoopEndIndex;
+}
+
+- (long) loopEndIndex
+{
+    return loopEndIndex;
 }
 
 @end

@@ -122,7 +122,16 @@ architecture, as described in the <b>SndStruct</b> header.
     NSMutableArray *performancesArray;
 /*! @var performancesArrayLock An NSLock to protect the performancesArray */
     NSLock *performancesArrayLock;
-    
+
+/*! @var loopWhenPlaying Indicates whether the default behaviour is to loop when playing.
+	 This is set from reading the sound file.
+ */
+    BOOL loopWhenPlaying;
+/*! @var loopStartIndex The sample the loop begins at. */
+    long loopStartIndex;
+/*! @var loopEndIndex The sample the loop ends at. */
+    long loopEndIndex;
+
 @public
 /*! @var tag A unique identifier tag for the Snd */
     int tag;
@@ -1114,7 +1123,72 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - (void) fillAudioBuffer:(SndAudioBuffer*)buff withSamplesInRange: (NSRange) r;
 
+/*!
+  @method insertSamplesInRange:intoAudioBuffer:withinRange:
+  @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
+  @discussion The ranges sndSampleRange and bufferSampleRange must both have the same size.
+  @param sndSampleRange An NSRange of sample frames in the sound to copy.
+  @param buff The SndAudioBuffer object into which to copy the data.
+  @param bufferStartIndex The position within the buffer to start writing data at.
+ */
+- (void) insertSamplesInRange: (NSRange) sndSampleRange
+	      intoAudioBuffer: (SndAudioBuffer*) buff
+		   startingAt: (long) bufferStartIndex;
+
+/*!
+  @method initWithAudioBuffer:
+  @abstract  Initialises a Snd instance from the provided SndAudioBuffer.
+  @param aBuffer the SndAudioBuffer object from which to copy the data
+  @result self
+ */
 - initWithAudioBuffer: (SndAudioBuffer*) aBuffer;
+
+/*!
+  @method     setLoopWhenPlaying:
+  @abstract   Sets the default behaviour whether to loop during play.
+  @param      yesOrNo Sets the default behaviour whether to loop during play.
+ */
+- (void) setLoopWhenPlaying: (BOOL) yesOrNo;
+
+/*!
+  @method     loopWhenPlaying
+  @abstract   Returns whether the default behaviour is to loop during play.
+  @result     Returns whether the default behaviour is to loop during play.
+ */
+- (BOOL) loopWhenPlaying;
+
+/*!
+  @method     setLoopStartIndex:
+  @abstract   Sets the sample to stop playing at.
+  @param      newEndAtIndex The sample index that playing should stop after.
+  @discussion The loop start index may be changed while the sound is being performed and regardless of
+              whether the performance is looping.
+ */
+- (void) setLoopStartIndex: (long) loopStartIndex;
+
+/*!
+  @method     loopStartIndex
+  @abstract   Returns the sample to start playing at.
+  @result     Returns the sample index to start playing at.
+ */
+- (long) loopStartIndex;
+
+/*!
+  @method     setLoopEndIndex:
+  @abstract   Sets the sample at which the performance loops back to the start index (set using setLoopStartIndex:).
+  @param      newLoopEndIndex The sample index at the end of the loop.
+  @discussion The loop end index may be changed while the sound is being performed and regardless of
+              whether the performance is looping.
+ */
+- (void) setLoopEndIndex: (long) newLoopEndIndex;
+
+/*!
+  @method     loopEndIndex
+  @abstract   Returns the sample index at the end of the loop.
+  @result     Returns the sample index ending the loop.
+ */
+- (long) loopEndIndex;
+
 
 @end
 
