@@ -202,7 +202,12 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
     NSMutableArray *_activePerformanceObjs;
     int _highestOrderTag;       /* For disambiguating binary search on identical time tagged MKNotes. */
 }
- 
+
+/*!
+ @method part
+ @result Returns a newly alloced, inited and autoreleased MKPart
+*/
++ part;
 
 /*!
   @method sort
