@@ -33,6 +33,11 @@
 */
 /*
   $Log$
+  Revision 1.19  2001/05/12 09:10:06  sbrandon
+  - get around the fact that GNUstep does not have NSMachPorts, but
+    NSPort does respond to -machPort and +portWithMachPort so we magically
+    transform from one to the other with a define.
+
   Revision 1.18  2001/04/06 19:30:39  leighsmith
   Renamed to more meaningful MIDI API include file naming
 
@@ -92,6 +97,14 @@
 #import <MKPerformSndMIDI/PerformMIDI.h>
 #import "MKDeviceStatus.h"
 #import "params.h"
+
+/* sbrandon: 10/05/2001
+ * get around the fact that GNUstep does not have NSMach ports, but does respond to -machPort
+ * and +portWithMachPort
+ */
+#ifdef GNUSTEP
+#define NSMachPort NSPort
+#endif
 
 @class MKConductor;
 
