@@ -1,7 +1,15 @@
+# -*- make -*-
 #  $Id$
+#
 #  Defined In: The MusicKit
+#
 #  Description:
 #    Makefile postamble for GNUstep
+#    Uncomment the targets you want.
+#    The double colons (::) are important, do not make them single colons
+#    otherwise the normal makefile rules will not be performed.
+#
+#  Modification history in the CVS log.
 #
 #  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
 #
@@ -10,47 +18,16 @@
 #  Permission is granted to use and modify this code for commercial and non-commercial
 #  purposes so long as the author attribution and this copyright message remains intact
 #  and accompanies all derived code.
-
-#Modification history:
 #
-#  $Log$
-#  Revision 1.3  2002/01/09 12:14:40  sbrandon
-#  updated portaudio from v15b to v17. This primarily fixes bugs in the linux
-#  (now called the unix) implementation, but there are other changes which
-#  may help the win_ds version too.
-#
-#  Revision 1.2  2001/10/31 17:26:19  sbrandon
-#  - now autodetects whether compiling on mingw32 or unix, and includes either
-#    pa_linux_oss or ps_win_ds portaudio code.
-#  - new target: libMKPerformSndMIDI.def.new  used to auto generate windows dll
-#    export def file (rename to libMKPerformSndMIDI.def after creating)
-#
-#  Revision 1.1  2001/07/02 22:03:48  sbrandon
-#  - initial revision. Still a work in progress, but does allow the MusicKit
-#    and SndKit to compile on GNUstep.
-
-#   GNUmakefile.postamble
-#
-#   Project specific makefile rules
-#
-#   Uncomment the targets you want.
-#   The double colons (::) are important, do not make them single colons
-#   otherwise the normal makefile rules will not be performed.
 #
 
 # Things to do before compiling
 
-ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_win_ds
-else
-  MK_PA_OBJ_DIR = $(GNUSTEP_OBJ_DIR)/portaudio/pa_unix_oss
-endif
-
-before-all::
-	test -d $(GNUSTEP_OBJ_DIR)/portaudio/pa_common || \
-	mkdir -p $(GNUSTEP_OBJ_DIR)/portaudio/pa_common ; \
-	test -d $(MK_PA_OBJ_DIR) || \
-	mkdir -p $(MK_PA_OBJ_DIR) ;
+#before-all::
+#	test -d $(GNUSTEP_OBJ_DIR)/portaudio/pa_common || \
+#	mkdir -p $(GNUSTEP_OBJ_DIR)/portaudio/pa_common ; \
+#	test -d $(MK_PA_OBJ_DIR) || \
+#	mkdir -p $(MK_PA_OBJ_DIR) ;
 
 # Things to do after compiling
 # after-all::
@@ -85,8 +62,7 @@ before-all::
 # Things to do after checking
 # after-check::
 
-libMKPerformSndMIDI.def.new: $(GNUSTEP_OBJ_DIR)/*.o \
-                             $(GNUSTEP_OBJ_DIR)/portaudio/*/*.o
+libMKPerformSndMIDI.def.new: $(GNUSTEP_OBJ_DIR)/*.o 
 	rm -f $@
 	rm -f _tmp.def
 	cat win32-def.top > $@
