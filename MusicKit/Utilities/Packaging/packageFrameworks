@@ -1,7 +1,8 @@
 #!/bin/zsh
 # $Id$
 #
-# zsh Script to automate the packaging of MusicKit frameworks ready for user deployment.
+# zsh Script to automate the packaging of MusicKit frameworks and Sox
+# libraries ready for user deployment.
 # Taken from an article on Stepwise:
 # http://www.stepwise.com/Articles/Technical/Packages/BuildingAPackage.html
 #
@@ -11,12 +12,14 @@ frameworkname=MK
 packagetitle="MusicKit and SndKit Frameworks"
 case `uname` in
     "Darwin")
-        packagefrom=/Library/Frameworks
+        packageFrameworksFrom=/Library/Frameworks
+	packageLibrariesFrom=/usr/local/lib
         installinto=/Library/Frameworks
 	osacronym=MOX
 	;;
     "Rhapsody")
-        packagefrom=/Local/Library/Frameworks
+        packageFrameworksFrom=/Local/Library/Frameworks
+	packageLibrariesFrom=/usr/local/lib
         installinto=/Local/Library/Frameworks
 	osacronym=MOXS
 	;;
@@ -39,14 +42,21 @@ else
 fi
 # TODO unitgenerators synthpatches
 packages=(MusicKit MKPerformSndMIDI MKDSP SndKit)
+libraries=(libst.a)
 workingdir=/tmp
 install_file_directory=${frameworkname}Install
 
 mkdir -p $workingdir/$install_file_directory
 cd $workingdir
 
+# Gather up the packages
 foreach f ($packages)
-  cp -r $packagefrom/$f.framework $install_file_directory/
+  cp -r $packageFrameworksFrom/$f.framework $install_file_directory/
+end
+
+# And the libraries
+foreach f ($libraries)
+  cp -r $packageLibrariesFrom/$f $install_file_directory/
 end
 
 # This is the point where you'll want to make sure that the
