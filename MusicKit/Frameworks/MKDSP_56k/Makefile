@@ -16,10 +16,9 @@ CLASSES = DSPObjectObjc.m
 
 HFILES = dsp.h DSPControl.h DSPConversion.h dspdriver.h\
          dspdriverAccess.h dspdriver_types.h DSPError.h DSPMessage.h\
-         DSPMessage.ReaderThreadForAll.h DSPObject.h\
-         DSPObject.ReaderThreadForAll.h dspreg.h DSPStructMisc.h\
-         DSPSymbols.h DSPTransfer.h dsp_errno.h dsp_memory_map.h\
-         dsp_memory_map_ap.h dsp_memory_map_ap_1.0.h dsp_memory_map_mk.h\
+         DSPObject.h dspreg.h DSPStructMisc.h DSPSymbols.h\
+         DSPTransfer.h dsp_errno.h dsp_memory_map.h dsp_memory_map_ap.h\
+         dsp_memory_map_ap_1.0.h dsp_memory_map_mk.h\
          dsp_memory_map_mk_1.0.h dsp_messages.h dsp_messages_1.0.h\
          dsp_structs.h dsp_types.h libdsp.h monitor_independent.h\
          smsrc_dependencies.h snddriver.h _dsp.h _DSPMach.h\
