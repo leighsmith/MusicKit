@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/01 01:15:12  leigh
+  Removed redundant MSG_SIZE_MAX definitions (which have gone under MacOsX)
+
   Revision 1.5  2000/01/27 19:03:36  leigh
   Now using NSPort replacing C Mach port API
 
@@ -202,9 +205,9 @@ static BOOL setUpMTC(MKMidi *self)
     self->tvs->alarmTimeValid = NO;
     self->tvs->alarmPending = NO;
     // 2nd arg was midiAlarm, changed to self as it handleMachMessage - LMS
-    _MKAddPort(self->tvs->alarmPort, self, MSG_SIZE_MAX, self, _MK_DPSPRIORITY);
+    _MKAddPort(self->tvs->alarmPort, self, 0, self, _MK_DPSPRIORITY);
     // 2nd arg was midiException, changed to self as it handleMachMessage - LMS
-    _MKAddPort(self->tvs->exceptionPort, self, MSG_SIZE_MAX, self, _MK_DPSPRIORITY);
+    _MKAddPort(self->tvs->exceptionPort, self, 0, self, _MK_DPSPRIORITY);
     addedPortsCount += 2;
     return YES;
 }
