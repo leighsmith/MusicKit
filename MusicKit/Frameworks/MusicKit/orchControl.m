@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/01/27 19:01:47  leigh
+  updated Mach port to NSPorts (even though the code is currently commented out
+
   Revision 1.3  2000/01/19 19:55:07  leigh
   Replaced mach port based millisecond timing with NSThread approach
 
@@ -384,7 +387,9 @@ static int myDSPMKInit(MKOrchestra *self)
 #define MSGTYPE_VM 2
 
 typedef struct _vmMsg {
+#if 0
     msg_header_t header;
+#endif
     int dspNum;
     void *data;
     int dataCount;
@@ -392,7 +397,7 @@ typedef struct _vmMsg {
 } vmMsg;
 
 #if 0 /* In case we want to pass it to a different thread. */
-static port_t vmMsgPort = PORT_NULL; /* For messages with vm data from libdsp */
+static NSPort *vmMsgPort = nil; /* For messages with vm data from libdsp */
 
 static void 
   myWriteDataFunc(short *data,int dataCount,unsigned int vmCount,unsigned int dspNum)
@@ -473,8 +478,10 @@ static void
 #if 0
 	    if (!vmMsgPort) { /* One vmMsgPort for all orchestras */
 		/* We just do this once and never remove it */
-		if (port_allocate(task_self(), &vmMsgPort) != KERN_SUCCESS) 
+                vmMsgPort = [NSPort port];
+                if (vmMsgPort == nil) 
 		  return nil;
+                [vmMsgPort retain];
 		_MKAddPort(vmMsgPort,vmProc,MSG_SIZE_MAX,self,_MK_DPSPRIORITY);
 	    }
 #endif
