@@ -100,13 +100,13 @@
     return SND_ERR_CANNOT_OPEN;
 
   if (bImageInMemory) {
-    err = SndReadSoundfileRange([filename fileSystemRepresentation], &soundStruct, startFrame, frameCount, TRUE);
+    err = SndReadSoundfileRange(filename, &soundStruct, startFrame, frameCount, TRUE);
   }
   else {
     if (theFileName)
       [theFileName release];
     theFileName = [filename  copy];
-    err = SndReadHeader([filename fileSystemRepresentation], &soundStruct, NULL);
+    err = SndReadHeader(filename, &soundStruct, NULL);
     //    NSLog([self description]);
   }
   // SndPrintStruct(soundStruct);
@@ -131,7 +131,7 @@
   }
   theFileName = [filename copy];
   bImageInMemory = FALSE;
-  r = SndReadHeader([theFileName fileSystemRepresentation], &soundStruct, NULL);
+  r = SndReadHeader(theFileName, &soundStruct, NULL);
   //  NSLog([self description]);
   return r;
 }
@@ -334,9 +334,7 @@ static SndExptAudioBufferServer *defaultServer = nil;
   SndAudioBuffer *aBuffer = nil;
   SndSoundStruct *soundStruct = NULL;
 
-  SndReadSoundfileRange([theFileName fileSystemRepresentation], &soundStruct,
-                        range.location,
-                        range.length, TRUE);
+  SndReadSoundfileRange(theFileName, &soundStruct, range.location, range.length, TRUE);
   if (soundStruct) {
     aBuffer = [SndAudioBuffer alloc];
     [aBuffer initWithFormat: soundStruct data: ((char*)soundStruct) + soundStruct->dataLocation];
