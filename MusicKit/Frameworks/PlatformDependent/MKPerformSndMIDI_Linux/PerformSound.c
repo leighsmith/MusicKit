@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.3  2001/05/12 08:48:39  sbrandon
+// - changed SNDSoundStruct to SndSoundStruct. Don't know why it was the former.
+//
 // Revision 1.2  2000/03/11 01:57:30  leigh
 // Fixed Description
 //
@@ -45,9 +48,9 @@ typedef struct _audioStream {
   int            playTag;    // the means to refer to this sound.
   BOOL           isPlaying;
 
-  // We have to be careful copying a SNDSoundStruct as it has allocated unsigned char data that
+  // We have to be careful copying a SndSoundStruct as it has allocated unsigned char data that
   // is appended after the structure itself. The stucture doesn't actually include it.
-  SNDSoundStruct *snd;
+  SndSoundStruct *snd;
 
   // Number of samples per frame (frame = 1 or more channels per time instant) so we
   // can keep track of time inbetween GenAudio calls.
@@ -129,7 +132,7 @@ PERFORM_API void SNDSetMute(BOOL aFlag)
 }
 
 // Routine to begin playback
-PERFORM_API int SNDStartPlaying(SNDSoundStruct *soundStruct, 
+PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, 
 								   int tag, int priority,  int preempt, 
 								   SNDNotificationFun beginFun, SNDNotificationFun endFun)
 {
@@ -143,7 +146,7 @@ PERFORM_API int SNDStartPlaying(SNDSoundStruct *soundStruct,
 }
 
 
-PERFORM_API int SNDStartRecording(SNDSoundStruct *soundStruct, 
+PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, 
 									 int tag, int priority, int preempt, 
 									 SNDNotificationFun beginRecFun, SNDNotificationFun endRecFun)
 {
