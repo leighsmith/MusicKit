@@ -113,7 +113,13 @@ typedef enum {
 + addName:(NSString *)name fromSection:(NSString *)sectionName;
 + addName:(NSString *)aName fromBundle:(NSBundle *)aBundle;
 
-+ (void)removeSoundForName:(NSString *)name;
++ (void) removeSoundForName:(NSString *)name;
+
+/*!
+    @method removeAllSounds
+    @abstract Remove all named sounds in the name table.
+*/
++ (void) removeAllSounds;
 
 + getVolume:(float *)left :(float *)right;
 + setVolume:(float)left :(float)right;
@@ -201,6 +207,14 @@ typedef enum {
 - (int)samplesProcessed;
 - (int)status;
 - (int)waitUntilStopped;
+
+/*!
+    @method stopPerformance:inFuture:
+    @abstract Stop the given playback of the sound at some future time, specified in seconds.
+    @param inSeconds The number of seconds beyond the current time point to begin playback.
+    @param performance The performance that represents the sound playing. 
+*/
++ (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds;
 - (void)stop:(id)sender;
 - (int)stop;
 - pause:sender;

@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.21  2001/04/18 17:33:45  leighsmith
+ * Introduced stopInFuture:, removeAllSounds, and stopPerformance: methods
+ *
  * Revision 1.20  2001/04/13 01:02:17  leighsmith
  * Now checking that SNDInit is working correctly
  *
@@ -84,16 +87,18 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 #define HAVE_RAND 1 // this ensures Sox doesn't attempt to define its own prototype
 #import <st.h>  // prototypes and structures from the Sox sound tools library
 
-#define DEFAULT_SOUNDFILE_EXTENSION @"snd" // this should probably be determined at run time.
+#define DEFAULT_SOUNDFILE_EXTENSION @"snd" // TODO this should probably be determined at run time.
 #define USE_STREAMING 1  // 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
 
 @implementation Snd
 
 static NSAutoreleasePool *pool;
 static NSMutableDictionary *nameTable = nil;
+static SndPlayer *sndPlayer;
+#if !USE_STREAMING
 static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
-static SndPlayer *sndPlayer;
+#endif
 
 + (void) initialize
 {
@@ -178,7 +183,7 @@ static SndPlayer *sndPlayer;
 
 + addName:(NSString *)aname fromSection:(NSString *)sectionName
 {
-    printf("Snd: +addName:fromSection: not implemented\n");
+    printf("Snd: +addName:fromSection: obsolete, not implemented\n");
     return self;
 }
 
@@ -202,9 +207,14 @@ static SndPlayer *sndPlayer;
     return nil;
 }
 
-+ (void)removeSoundForName:(NSString *)aname
++ (void)removeSoundForName: (NSString *) aname
 {
-    [nameTable removeObjectForKey:aname];
+    [nameTable removeObjectForKey: aname];
+}
+
++ (void) removeAllSounds
+{
+    [nameTable removeAllObjects];
 }
 
 + getVolume:(float *)left :(float *)right
@@ -266,7 +276,7 @@ static SndPlayer *sndPlayer;
 
 - initFromSection:(NSString *)sectionName
 {
-    printf("Snd: -initFromSection:(NSString *)sectionName  obsolete\n");
+    printf("Snd: -initFromSection:(NSString *)sectionName obsolete, not implemented\n");
     return nil;
 }
 
@@ -635,7 +645,6 @@ int endFun(SndSoundStruct *sound, int tag, int err)
     [pool release];
     return 0;
 }
-#endif
 
 int beginRecFun(SndSoundStruct *sound, int tag, int err)
 {
@@ -667,6 +676,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     ((Snd *)theSnd)->tag = 0;
     return 0;
 }
+#endif
 
 // Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
 // All other play methods are convience wrappers around this.
@@ -754,6 +764,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - record:sender
 {
+#if !USE_STREAMING
     int err;
     if (!playRecTable) {
         playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
@@ -777,6 +788,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             (SNDNotificationFun) beginRecFun,
             (SNDNotificationFun) endRecFun);
     return self;
+#else
+    return self;
+#endif
 }
 
 - (int)record
@@ -813,6 +827,23 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return SND_ERR_NOT_IMPLEMENTED;
 }
 
+// stop the performance
++ (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds
+{
+    [sndPlayer stopPerformance: performance inFuture: inSeconds];
+}
+
+- (void) stopInFuture: (double) inSeconds
+{
+    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
+        status = SND_SoundStopped;
+        [self tellDelegate: @selector(didRecord:)];	
+    }
+    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
+        [sndPlayer stopSnd: self withTimeOffset: inSeconds];
+    }
+}
+
 - (void)stop:(id)sender
 {
 #if !USE_STREAMING
@@ -835,17 +866,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         tag = 0;
     }
 #else
-    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
-        status = SND_SoundStopped;
-        [self tellDelegate: @selector(didRecord:)];	
-    }
-    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
-        SndPerformance *firstPerformance = [[sndPlayer performancesOfSnd: self] objectAtIndex: 0];
-        [sndPlayer stopSnd: self withTimeOffset: 0.0];
-        status = SND_SoundStopped;
-        [self tellDelegate: @selector(didPlay:duringPerformance:) 
-         duringPerformance: firstPerformance];	
-    }
+    [self stopInFuture: 0.0];
 #endif
 }
 
