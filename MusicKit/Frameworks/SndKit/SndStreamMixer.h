@@ -33,6 +33,8 @@
     NSMutableArray         *streamClients;
     NSLock                 *streamClientsLock;
     SndAudioProcessorChain *processorChain;
+    double                 nowTime;
+    double                 lastNowTime;
 }
 
 /*!
@@ -67,8 +69,8 @@
     @param (double) t
     @result self.
 */
-- processInBuffer: (SndAudioBuffer*) inB 
-        outBuffer: (SndAudioBuffer*) outB 
+- processInBuffer: (SndAudioBuffer*) inB
+        outBuffer: (SndAudioBuffer*) outB
           nowTime: (double) t;
 
 /*!
