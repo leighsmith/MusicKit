@@ -15,8 +15,8 @@ and binary distributions. Likewise if the distribution web site changes.
 
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!entity mkvers "5.3">
-<!entity mkvertuple "5.3.1">
-<!entity sndvertuple "2.0.0">
+<!entity mkvertuple "5.3.2">
+<!entity sndvertuple "2.0.1">
 <!entity midisportvertuple "2.0.0">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://ftp.musickit.org/musickit">
@@ -119,15 +119,17 @@ was the first widely available "computer music compiler".)
    </para>
 
    <para>
-The NeXT MusicKit was first demonstrated at the 1988
-NeXT product introduction and was bundled in NeXT software releases
-1.0 and 2.0.  Beginning with NeXT's 3.0 release, the MusicKit was no
-longer part of the standard NeXT software release.  Instead, it was
-being distributed and supported by the Center for Computer  Research
-in Music and Acoustics (CCRMA) of Stanford University. Since 1999 and
-version 5.0, the most recent releases run on several more 
-<link linkend="platforms">popular operating systems</link>.
-These releases have been generously supported by my employer, 
+The <productname>NeXT</productname> MusicKit was first demonstrated at
+the 1988 NeXT product introduction and was bundled in
+<productname>NeXT</productname> software releases 1.0 and 2.0.
+Beginning with <productname>NeXT</productname>'s 3.0 release, the
+MusicKit was no longer part of the standard
+<productname>NeXT</productname> software release.  Instead, it was
+being distributed and supported by the Center for Computer Research in
+Music and Acoustics (<acronym>CCRMA</acronym>) of Stanford University. Since 1999 and
+version 5.0, the most recent releases run on several more <link
+linkend="platforms">popular operating systems</link>.  These releases
+have been generously supported by my employer,
 <ulink url="http://www.tomandandy.com">
 	<inlinemediaobject>
 	<imageobject>
@@ -160,7 +162,7 @@ are available at the same distribution site.
 
 <para>
 Source code is available for everything, with the exception of the
-NeXT hardware implementation of the low-level sound and DSP drivers.
+<productname>NeXT</productname> hardware implementation of the low-level sound and DSP drivers.
 This means researchers and developers may study the source or even
 customize the Music Kit and DSP Tools to suit their needs.
 Enhancements can be committed to the <link linkend=fixes>CVS
@@ -195,8 +197,9 @@ of Music V and <acronym>MIDI</acronym> paradigms.
 	</listitem>
 	<listitem>
 	  <para>
-Written in Objective C and C, using Apple's OpenStep/Cocoa API, the
-FoundationKit.
+Written in Objective C and C, using Apple's
+<productname>OpenStep/Cocoa</productname> <acronym>API</acronym>, the
+<productname>FoundationKit</productname>.
 </para>
 	</listitem>
         <listitem>
@@ -210,7 +213,7 @@ object-oriented language.
         </listitem>
 	<listitem>
 	  <para>
-Functionally comparable (although architecturally dissimilar) to JMSL
+Functionally comparable (although architecturally dissimilar) to <acronym>JMSL</acronym>
 (Java Music Specification Language).
 </para>
 	</listitem>
@@ -234,13 +237,13 @@ for quadraphonic sound.
 	</listitem>
 	<listitem>
 	  <para>
-Fully-dynamic DSP resource allocation system with dynamic linking and
-loading, on multiple DSPs.
+Complete support for multiple <acronym>MIDI</acronym> inputs and outputs.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
-Complete support for multiple <acronym>MIDI</acronym> inputs and outputs.
+Fully-dynamic DSP resource allocation system with dynamic linking and
+loading, on multiple DSPs.
 </para>
 	</listitem>
 	<listitem>
@@ -266,8 +269,8 @@ MIDI file player.
 	</listitem>
 	<listitem>
 	  <para>
-Library of instruments, including FM, wavetable, physical modeling and
-waveshaping synthesis.
+Library of instruments, including <acronym>FM</acronym>, wavetable,
+physical modeling and waveshaping synthesis.
 </para>
 	</listitem>
 	<listitem>
@@ -296,7 +299,7 @@ ScoreFile, a textual scripting language for music.
 	<listitem>
 	  <para>
              <ulink url="http://ccrma-www.stanford.edu/CCRMA/Overview/hardsoftware.html">
-                CCRMA's MusicKit site.
+                <acronym>CCRMA</acronym>'s MusicKit site.
              </ulink>
 	   </para>
 	</listitem>
@@ -449,7 +452,7 @@ and cross-platform approach.
 	  <listitem>
 	    <para>
 <ulink url="&mkurl;/Publications/MusicApplications.pdf">
-&ldquo;Musical and Extra-Musical Applications of the NeXT Music Kit&rdquo;
+&ldquo;Musical and Extra-Musical Applications of the <productname>NeXT</productname> Music Kit&rdquo;
 </ulink>
 &horbar; Original Design Philosophies.
 </para>
@@ -457,7 +460,7 @@ and cross-platform approach.
 	  <listitem>
 	    <para>
 <ulink url="&mkurl;/Publications/SoundMusicDSP.pdf">
-&ldquo;Sound and Music on the NeXT Computer&rdquo;
+&ldquo;Sound and Music on the <productname>NeXT</productname> Computer&rdquo;
 </ulink>
 &horbar; A general (if dated) overview.
 </para>
@@ -465,7 +468,7 @@ and cross-platform approach.
 	  <listitem>
 	    <para>
 <ulink url="&mkurl;/Publications/DSPSoftwareDesign.pdf">
-&ldquo;Computer Music on the NeXT Computer&rdquo;
+&ldquo;Computer Music on the <productname>NeXT</productname> Computer&rdquo;
 </ulink>
 &horbar; Documentation of the DSP architecture.
 </para>
@@ -507,13 +510,13 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
 	</thead>
 	<tbody>
 	  <row>
-	    <entry>OpenStep 4.2/Intel (with ISA 56k card)</entry>
+	    <entry>OpenStep 4.2/m68k (<productname>NeXT</productname>)</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
 	  </row>
 	  <row>
-	    <entry>OpenStep 4.2/m68k (NeXT)</entry>
+	    <entry>OpenStep 4.2/Intel (with ISA 56k card)</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
@@ -538,9 +541,9 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
 	    <entry>N</entry>
 	  </row>
 	  <row>
-	    <entry>Linux/Unix (Using GnuStep PortAudio/PortMusic)</entry>
+	    <entry>Linux/Unix (Using GnuStep, PortAudio/PortMusic)</entry>
 	    <entry>N</entry>
-	    <entry>non-streaming</entry>
+	    <entry>Y</entry>
 	    <entry>N</entry>
 	  </row>
 	</tbody>
@@ -582,7 +585,7 @@ completed and looking for more volunteers. A performance framework
 (<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
 <ulink url="http://www.cs.cmu.edu/~music/portmusic/">PortAudio</ulink>
 library has been partially completed, porting the MusicKit to Intel
-Linux. Non-streaming sound works, but MIDI and streaming audio needs
+Linux. Streaming sound works, but MIDI needs
 further work, please help!
 </para>
     </sect2>
@@ -634,7 +637,7 @@ installed.
 The MusicKit was designed and implemented by David
 A. Jaffe <email>david@jaffe.com</email>, and the DSP computer-music
 and array-processing software was designed and implemented by Julius
-O. Smith III while at NeXT.
+O. Smith III while at <productname>NeXT</productname>.
 The SoundKit (forerunner of the SndKit) was designed and implemented by
 Lee Boynton.
 Their original design appeared in
@@ -652,7 +655,7 @@ general protocol and the identity and mechanisms of the
 classes.</para></listitem>
 
       <listitem><para>Gregg Kellogg wrote the DSP, Sound, and
-<acronym>MIDI</acronym> device drivers for the NeXT which were then maintained by Doug
+<acronym>MIDI</acronym> device drivers for the <productname>NeXT</productname> which were then maintained by Doug
 Mitchell.</para></listitem>
 
       <listitem><para>John Strawn wrote most of the matrix and array processing
@@ -677,19 +680,22 @@ model).</para></listitem>
 helped shape the Envelope strategy, suggested the unit-generator
 memory-argument scheme, and provided consultation.</para></listitem>
 
-      <listitem><para>The
-software of William Schottstaedt and others at CCRMA (Stanford
-University) served as a model for some of the mechanisms in the Music
-Kit.</para></listitem>
+      <listitem><para>The software of William Schottstaedt and others
+at <acronym>CCRMA</acronym> (Stanford University) served as a model
+for some of the mechanisms in the Music Kit.
+</para>
+</listitem>
 
       <listitem><para>James A. Moorer, Perry Cook, 
 Rob Poor made code and design contributions
 also.</para></listitem>
 
-      <listitem><para>Following NeXT's release of the source to
-Stanford in 1994, David did the port to Intel NeXTStep and the MPU-401
-<acronym>MIDI</acronym> and DSP drivers. There were some other bug fix contributors
-(acknowledged in code comments).</para></listitem>
+      <listitem><para>Following <productname>NeXT</productname>'s
+release of the source to Stanford in 1994, David did the port to Intel
+<productname>NeXTStep</productname> and the
+<productname>MPU-401</productname> <acronym>MIDI</acronym> and
+<acronym>DSP</acronym> drivers. There were some other bug fix
+contributors (acknowledged in code comments).</para></listitem>
 
       <listitem>
 	<para>
@@ -720,6 +726,41 @@ version.
 </para>
       </listitem>
     </itemizedlist>
+  </sect1>
+
+  <sect1 id="VersionNumbering">
+    <title>Version numbering of the MusicKit</title>
+
+    <para>
+Version numbering of the MusicKit is as follows.
+</para>
+
+    <para>
+All versions are numbered in the popular standard GNU nomenclature
+<replaceable>V.R.P</replaceable>, referred here as a <emphasis>version
+tuple</emphasis>, referring to <replaceable>Version</replaceable>,
+<replaceable>Revision</replaceable> and
+<replaceable>Patch</replaceable>
+respectively. <replaceable>Version</replaceable> refers to major
+milestones in a project, such as a complete rewrite or major internal
+conversion, major functional improvement etc.
+<replaceable>Revision</replaceable>, refers to a minor milestone that
+can include new functionality that may break external interfacing
+software, forcing them to be updated (minimally a recompile).
+<replaceable>Patch</replaceable>, refers to a singular bug fix to
+correct operation which does not cause an incompatible change or
+introduce new behaviour.
+</para>
+
+    <para>
+Each framework has it's own version tuple. This is encoded in the
+framework and is used by the dynamic loader to verify the correct
+versions of applications link against the correct versions of
+frameworks. However, to allow new framework with patches to be
+installed into operational sites without forcing recompiles of the
+application, the version tuple encoded in the framework is of the form
+<replaceable>V.R</replaceable>.
+</para>
   </sect1>
 
   <sect1 id="license">
@@ -773,46 +814,11 @@ be enforced to be returned to the public domain, but it is hoped that
 common sense will prevail and that everyone will realise that reward
 does not mean avoiding openness.</para>
 
-<para>We (the contributors to the MusicKit) would appreciate your
+<para>We (the contributors to the MusicKit) would appreciate you
 acknowledging the use of the MusicKit in any academic paper, music
 program notes and application documentation that use the
-MusicKit. </para>
+MusicKit or SndKit. </para>
     </sect2>
-  </sect1>
-
-  <sect1 id="VersionNumbering">
-    <title>Version numbering of the MusicKit</title>
-
-    <para>
-Version numbering of the MusicKit is as follows.
-</para>
-
-    <para>
-All versions are numbered in the popular standard GNU nomenclature
-<replaceable>V.R.P</replaceable>, referred here as a <emphasis>version
-tuple</emphasis>, referring to <replaceable>Version</replaceable>,
-<replaceable>Revision</replaceable> and
-<replaceable>Patch</replaceable>
-respectively. <replaceable>Version</replaceable> refers to major
-milestones in a project, such as a complete rewrite or major internal
-conversion, major functional improvement etc.
-<replaceable>Revision</replaceable>, refers to a minor milestone that
-can include new functionality that may break external interfacing
-software, forcing them to be updated (minimally a recompile).
-<replaceable>Patch</replaceable>, refers to a singular bug fix to
-correct operation which does not cause an incompatible change or
-introduce new behaviour.
-</para>
-
-    <para>
-Each framework has it's own version tuple. This is encoded in the
-framework and is used by the dynamic loader to verify the correct
-versions of applications link against the correct versions of
-frameworks. However, to allow new framework with patches to be
-installed into operational sites without forcing recompiles of the
-application, the version tuple encoded in the framework is of the form
-<replaceable>V.R</replaceable>.
-</para>
   </sect1>
 
   <sect1 id=availability>
@@ -1526,7 +1532,7 @@ If you have discovered a bug, please report it via the
 	    <firstname>Lee</firstname> <othername>R.</othername> <surname>Boynton</surname>
 	  </author>
 	</authorgroup>
-      <title role=article>An Overview of the Sound and Music Kits for the NeXT Computer</title>
+      <title role=article>An Overview of the Sound and Music Kits for the <productname>NeXT</productname> Computer</title>
 Computer Music Journal
       <volumenum>13</volumenum>(<issuenum>2</issuenum>)
       <pubdate>1989</pubdate>
