@@ -133,7 +133,7 @@ architecture, as described in the <b>SndStruct</b> header.
   @result Returns an id.
   @discussion Finds and returns the named Snd object. First the named Snd
               table is searched; if the sound isn't found, then the method looks
-              for <i>&#170;aName</i>.snd&#186; in the sound segment of the
+              for <i>&#ldquo;aName</i>.snd&#rdquo; in the sound segment of the
               application's executable file. Finally, <i>the file</i> is searched
               for in the following directories (in order):
               
@@ -881,8 +881,8 @@ architecture, as described in the <b>SndStruct</b> header.
   @method processingError
   @result Returns an int.
   @discussion Returns a constant that represents the last error that was
-              generated. The sound error codes are listed in &#170;Types and
-              Constants.&#186;
+              generated. The sound error codes are listed in &#ldquo;Types and
+              Constants.&#rdquo;
 */
 - (int)processingError;
 

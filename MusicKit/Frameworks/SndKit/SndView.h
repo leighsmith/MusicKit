@@ -405,7 +405,7 @@ NSScrollView.  */
   @param  thePasteboard is a NSPasteboard *.
   @param  type is a NSString *.
   @discussion Places the SndView's entire sound on the given pasteboard.
-              Currently, the <i>type</i> argument must be &#170;NXSoundPboardType&#186;,
+              Currently, the <i>type</i> argument must be &#ldquo;NXSoundPboardType&#rdquo;,
               the pasteboard type that represents sound data.
 */
 - (void)pasteboard:(NSPasteboard *)thePasteboard provideDataForType:(NSString *)pboardType;

@@ -32,9 +32,9 @@
 
 A SndMeter is a view that displays the amplitude level of a sound as
 it's being recorded or played back. There are two working parts to the
-meter: A continuously-updated &#170;running bar&#186; that lengthens
-ands shrinks to depict the current amplitude level, and a &#170;peak
-bubble&#186; that displays and holds the greatest amplitude that was
+meter: A continuously-updated &#ldquo;running bar&#rdquo; that lengthens
+ands shrinks to depict the current amplitude level, and a &#ldquo;peak
+bubble&#rdquo; that displays and holds the greatest amplitude that was
 detected within the last few samples. An optional bezeled border is
 drawn around the object's frame.
 
