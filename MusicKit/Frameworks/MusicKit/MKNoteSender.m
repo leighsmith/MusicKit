@@ -133,6 +133,11 @@ Modification history prior to commit to CVS:
     [super dealloc];
 }			
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ connected to %@\n", [super description], noteReceivers];
+}
+
 #define EXPANDAMT 1
 
 - init
