@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  1999/10/10 01:10:22  leigh
+  MIDI mode messages read from SMF0 files now receive MK_midiChan parameters so MKScores read from SMF1 or SMF0 behave the same.
+
   Revision 1.4  1999/09/04 22:02:18  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -1037,14 +1040,16 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	    if (aNote) { /* _MKMidiToMusicKit can omit Notes sometimes. */
 		[aNote setTimeTag:t+timeShift];
 		/* Need to copy Note because it's "owned" by midiInPtr. */
-		if (LEVEL0) 
+		if (LEVEL0) {
+		  // LMS even if aNote has come from a Level0 file it should retain midiChannels from mode messages.
+                  if (midiInPtr->chan != _MK_MIDISYS)   
+                    MKSetNoteParToInt(aNote, MK_midiChan, midiInPtr->chan);
 		  [midiParts[midiInPtr->chan] addNoteCopy:aNote];
+		}
 		else {
-		    if (!trackInfoMidiChanWritten && 
-			midiInPtr->chan != _MK_MIDISYS) {
+		    if (!trackInfoMidiChanWritten && midiInPtr->chan != _MK_MIDISYS) {
 			trackInfoMidiChanWritten = YES;
-			MKSetNoteParToInt([CURPART infoNote],MK_midiChan,
-					  midiInPtr->chan);
+			MKSetNoteParToInt([CURPART infoNote], MK_midiChan, midiInPtr->chan);
 			/* Set Part's chan to chan of first note in track. */
 		    }
 		    aNote = [CURPART addNoteCopy:aNote];
