@@ -3,7 +3,7 @@
 #import <AppKit/AppKit.h>
 #import <MusicKit/MusicKit.h>
 
-@interface MidiEcho : NSApplication
+@interface MidiEcho : NSObject
 {
     id myFilter;
     MKMidi *midi;

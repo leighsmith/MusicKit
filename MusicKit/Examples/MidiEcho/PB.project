@@ -1,5 +1,5 @@
 {
-    APPCLASS = MidiEcho; 
+    APPCLASS = NSApplication; 
     FILESTABLE = {
         CLASSES = (EchoFilter.m, MidiEcho.m); 
         C_FILES = (); 
