@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndMP3.m
+//  $Id$
 //  SndKit
 //
-//  Created by SKoT McDonald on Tue Apr 16 2002.
-//  Copyright (c) 2002 SndKit. All rights reserved.
+//  Description:
+//     Snd subclass reading MP3 files. 
 //
 //  Super experimental - to be folded back into Snd eventually, but we want
 //  mp3 power NOW!
@@ -14,6 +14,14 @@
 //          (support on-the-fly fillAudioBuffer type action), currently we
 //          decode on loading
 //        - Seek support - the frame header table is constructed and ready to go.
+//
+//  Original Author: SKoT McDonald <skot@tomandandy.com>
+//
+//  Copyright (c) 2002, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -162,148 +170,163 @@ static int bitrateLookupTable[16][6] = {
   }
 }
 
-
-
-int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frameLocationsCount)
+- (void) dumpFrameHeader: (unsigned long) frameHeader
 {
-  int layer, bitrateIndex, version, bitrate, samplesPerFrame = 1152;
-  int frameSize, samplingRate = 44100;
-  float framesPerSecond;
-  const unsigned char *pData = [mp3Data bytes];
-  long mp3Length = [mp3Data length];
+    int frameSize, samplingRate = 44100;
+    float framesPerSecond;
+    int layer, bitrateIndex, version = 0, bitrate, samplesPerFrame = 1152;
 
-  long maxFrameLocationsCount = 512;
+    if ((frameHeader >> 21) & 0x07FF)
+	printf("frame sync is ok\n");
+    else
+	printf("bad frame sync\n");
 
-  *frameLocationsCount = 0;
+    printf("version: ");
+    switch ((frameHeader >> 19) & 0x03) {
+	case 0: printf("MPEG 2.5\n"); break;
+	case 1: printf("reserved\n"); break;
+	case 2: printf("MPEG v2\n"); version = 2; samplesPerFrame = 576; break;
+	case 3: printf("MPEG v1\n"); version = 1; break;
+    }
+    layer =  4 - ((frameHeader >> 17) & 0x03);
+    switch (layer) {
+	case 3: printf("Layer 3\n"); break;
+	case 2: printf("Layer 2\n"); break;
+	case 1: printf("Layer 1\n"); break;
+	case 0:
+	default:
+	    printf("reserved\n");
+    }
+    printf("Protected by CRC: %s\n", (frameHeader >> 16) & 0x1 ? "no" : "yes");
 
-  if (*ppFrameLocations)
-    free(*ppFrameLocations);
+    bitrateIndex = (frameHeader >> 12) & 0xF;
+    bitrate = bitrateLookupTable[bitrateIndex][(version-1)*3 + layer-1];
+    printf("Bitrate: %i (index: %i)\n", bitrate, bitrateIndex);
 
-  *ppFrameLocations = (long*) malloc(sizeof(long) * maxFrameLocationsCount);
+    printf("Sampling frequency index: %li\n", (frameHeader >> 10) & 0x3);
+    printf("Padding: %s\n", (frameHeader >> 9) & 0x1 ? "yes" : "no");
+    printf("Channel Mode: %li\n", (frameHeader >> 6) & 0x3);
+    printf("Mode extension: %li\n", (frameHeader >> 4) & 0x3);
+    printf("Copyright: %s\n", (frameHeader >> 3) & 0x1 ? "yes" : "no");
+    printf("Original: %s\n", (frameHeader >> 2) & 0x1 ? "yes" : "no");
+    printf("Emphasis: %li\n", frameHeader & 0x3);
 
-  /*
-   if (frameHeader >> 21 & 0x07FF)
-   printf("frame sync is ok\n");
-   else
-   printf("bad frame sync\n");
+    printf("Samples per frame: %i\n",samplesPerFrame);
+    framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
+    printf("FramesPerSecond: %f\n", framesPerSecond);
+    frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
+    printf("FrameSize: %i\n", frameSize);
+}    
 
-   printf("version: ");
-   switch (frameHeader >> 19 & 0x03) {
-     case 0: printf("MPEG 2.5\n"); break;
-     case 1: printf("reserved\n"); break;
-     case 2: printf("MPEG v2\n"); version = 2; samplesPerFrame = 576; break;
-     case 3: printf("MPEG v1\n"); version = 1; break;
-   }
-   layer =  4 - (frameHeader >> 17) & 0x03;
-   switch (layer) {
-     case 3: printf("Layer 3\n"); break;
-     case 2: printf("Layer 2\n"); break;
-     case 1: printf("Layer 1\n"); break;
-     case 0:
-     default:
-       printf("reserved\n");
-   }
-   printf("Protected by CRC: %s\n", frameHeader >> 16 & 0x1 ? "no" : "yes");
-
-   bitrateIndex = (frameHeader >> 12) & 0xF;
-   bitrate = bitrateLookupTable[bitrateIndex][(version-1)*3 + layer-1];
-   printf("Bitrate: %i (index: %i)\n", bitrate, bitrateIndex);
-
-   printf("Sampling frequency index: %i\n", (frameHeader >> 10) & 0x3);
-   printf("Padding: %s\n", (frameHeader >> 9) & 0x1 ? "yes" : "no");
-   printf("Channel Mode: %i\n", (frameHeader >> 6) & 0x3);
-   printf("Mode extension: %i\n", (frameHeader >> 4) & 0x3);
-   printf("Copyright: %s\n", (frameHeader >> 3) & 0x1 ? "yes" : "no");
-   printf("Original: %s\n", (frameHeader >> 2) & 0x1 ? "yes" : "no");
-   printf("Emphasis: %i\n", frameHeader & 0x3);
-
-   printf("Samples per frame: %i\n",samplesPerFrame);
-   framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
-   printf("FramesPerSecond: %f\n", framesPerSecond);
-   frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
-   printf("FrameSize: %i\n", frameSize);
-   */
-  // ok, we are going looking for frame headers:
-  //if (0)
-  {
+- (int) findMP3FrameHeadersInData: (NSData *) mp3DataToSearch
+	    storeFrameLocationsAt: (long **) ppFrameLocations
+			    count: (long *) numOfFrameLocations
+{
+    int layer, bitrateIndex, version = 0, bitrate = 0, samplesPerFrame = 1152;
+    int frameSize, samplingRate = 44100;
+    float framesPerSecond;
+    const unsigned char *pData = [mp3DataToSearch bytes];
+    long mp3Length = [mp3DataToSearch length];
+    long maxFrameLocationsCount = 512;
     long  position = 0;
-    //    float time;
-    unsigned long  frameHeader;
-    //    unsigned char *pCh = (unsigned char*) &frameHeader;
+
+    *numOfFrameLocations = 0;
+
+    if (*ppFrameLocations)
+	free(*ppFrameLocations);
+
+    if((*ppFrameLocations = (long*) malloc(sizeof(long) * maxFrameLocationsCount)) == NULL) {
+	NSLog(@"Unable to allocate memory for frame locations\n");
+	return -1;
+    }
+	
+    // ok, we are going looking for frame headers:
+    // float time;
+    // unsigned char *pCh = (unsigned char*) &frameHeader;
 
     while (position < mp3Length) {
-      while (pData[position] != (unsigned char) 0xFF && (position < mp3Length)) {
-        position++;
-      }
-      if (position < mp3Length-1 && (pData[position+1] & 0xE0) == 0xE0) {
-        frameHeader = (pData[position] << 24) + (pData[position+1] << 16) + (pData[position+2] << 8) + pData[position+3];
-        position += 4;
+	while (pData[position] != (unsigned char) 0xFF && (position < mp3Length)) {
+	    position++;
+	}
+	if (position < mp3Length-1 && (pData[position+1] & 0xE0) == 0xE0) {
+	    unsigned long frameHeader = (pData[position] << 24) + (pData[position+1] << 16) + (pData[position+2] << 8) + pData[position+3];
+	    if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
+		[self dumpFrameHeader: frameHeader];
+	    }
 
+	    position += 4;
 
-        if (((frameHeader >> 24) & 0xE0) == 0xE0) {
-          //          if (frameCount == 0) { //
+	    if (((frameHeader >> 24) & 0xE0) == 0xE0) {
+		// if (frameCount == 0) { //
 
-          switch (frameHeader >> 19 & 0x03) {
-            case 0: //printf("MPEG 2.5\n");
-              break;
-            case 1: //printf("reserved\n");
-              break;
-            case 2: //printf("MPEG v2\n");
-              version = 2;
-              samplesPerFrame = 576;
-              break;
-            case 3: // printf("MPEG v1\n");
-              version = 1;
-              samplesPerFrame = 1152;
-              break;
-          }
-          layer =  4 - ((frameHeader >> 17) & 0x03);
-          if (layer == 4) { // something is wrong!
-            position++;
-          }
-          else {
-            bitrateIndex = (frameHeader >> 12) & 0x0F;
-            if (bitrateIndex == MP3_BITRATEINDEX_BAD) {
-              position++;
-              continue;
-            }
-            if (bitrateIndex != MP3_BITRATEINDEX_FREE) {// free
-              int formatIndex = (version-1)*3 + layer-1;
-              bitrate = bitrateLookupTable[bitrateIndex][formatIndex];
-            }
-            framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
-            frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
-                                                         //          }
-                                                         //          time = (float) (*frameLocationsCount) * samplesPerFrame / (float) samplingRate;
-                                                         //          printf("[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
-                                                         //                 (*frameLocationsCount), position - 4, time, ((*frameLocationsCount) - 1) * samplesPerFrame);
+		switch ((frameHeader >> 19) & 0x03) {
+		    case 0: //printf("MPEG 2.5\n");
+			break;
+		    case 1: //printf("reserved\n");
+			break;
+		    case 2: //printf("MPEG v2\n");
+			version = 2;
+			samplesPerFrame = 576;
+			break;
+		    case 3: // printf("MPEG v1\n");
+			version = 1;
+			samplesPerFrame = 1152;
+			break;
+		}
+		layer =  4 - ((frameHeader >> 17) & 0x03);
+		if (layer == 4) { // something is wrong!
+		    position++;
+		}
+		else {
+		    bitrateIndex = (frameHeader >> 12) & 0x0F;
+		    if (bitrateIndex == MP3_BITRATEINDEX_BAD) {
+			position++;
+			continue;
+		    }
+		    if (bitrateIndex != MP3_BITRATEINDEX_FREE) { // free
+			int formatIndex = (version-1)*3 + layer-1;
+			bitrate = bitrateLookupTable[bitrateIndex][formatIndex];
+		    }
+		    framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
+		    frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
+		    // time = (float) (*numOfFrameLocations) * samplesPerFrame / (float) samplingRate;
+	            // printf("[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
+                    //        (*numOfFrameLocations), position - 4, time, ((*numOfFrameLocations) - 1) * samplesPerFrame);
 
-            if ((*frameLocationsCount) == maxFrameLocationsCount) {
-              maxFrameLocationsCount <<= 1;
-              (*ppFrameLocations) = (long*) realloc((*ppFrameLocations), sizeof(long) * maxFrameLocationsCount);
-            }
-            (*ppFrameLocations)[(*frameLocationsCount)] = position;
-            (*frameLocationsCount)++;
-            position += frameSize - 4;
-          }
-        }
-      }
-      else
-        position++;
+		    if ((*numOfFrameLocations) == maxFrameLocationsCount) {
+			maxFrameLocationsCount <<= 1;
+			(*ppFrameLocations) = (long*) realloc((*ppFrameLocations), sizeof(long) * maxFrameLocationsCount);
+			if(*ppFrameLocations == NULL) {
+			    NSLog(@"Unable to reallocate frame location memory to %ld longs\n", maxFrameLocationsCount);
+			    return -1;
+			}
+		    }
+		    (*ppFrameLocations)[(*numOfFrameLocations)] = position;
+		    (*numOfFrameLocations)++;
+		    position += frameSize - 4;
+		}
+	    }
+	}
+	else {
+	    position++;
+	}
     }
-  }
-  // condense allocated memory to just the frame locations found...
-  *ppFrameLocations = (long*) realloc((*ppFrameLocations), sizeof(long) * (*frameLocationsCount));
-
-  /*
-  {
-    long i;
-    for (i = 0; i < *frameLocationsCount; i++) {
-      printf("frame: %04li location: %07li\n", i, (*ppFrameLocations)[i]);
+    // condense allocated memory to just the frame locations found...
+    *ppFrameLocations = (long*) realloc((*ppFrameLocations), sizeof(long) * (*numOfFrameLocations));
+    if(*ppFrameLocations == NULL) {
+	NSLog(@"Unable to reallocate frame location memory to %ld longs\n", *numOfFrameLocations);
+	return -1;
     }
-  }
-   */
-  return 0;
+    
+    /*
+     {
+	 long i;
+	 for (i = 0; i < *numOfFrameLocations; i++) {
+	     printf("frame: %04li location: %07li\n", i, (*ppFrameLocations)[i]);
+	 }
+     }
+     */
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -338,8 +361,8 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"SndMP3 with duration: %.2f samples: %i sampleRate: %.2f channels: %i",
-    [self duration], [self sampleCount], [self samplingRate], [self channelCount]];
+  return [NSString stringWithFormat: @"%@ with duration: %.2f samples: %i sampleRate: %.2f channels: %i",
+    [super description], [self duration], [self sampleCount], [self samplingRate], [self channelCount]];
 }
 
 - (double) samplingRate
@@ -482,8 +505,10 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   [pcmDataLock unlock];
   mp3Data = [[NSData alloc] initWithContentsOfURL: soundURL];
   [self checkID3Tag: mp3Data];
-  find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
-  
+  [self findMP3FrameHeadersInData: mp3Data
+            storeFrameLocationsAt: &frameLocations
+			    count: &frameLocationsCount];
+      
   sampleCount = frameLocationsCount * 1152.0;
   duration    = sampleCount / 44100.0;
   
@@ -583,15 +608,15 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// fillAudioBuffer:withSamplesInRange:
+// insertIntoAudioBuffer:intoRange:samplesStartingAt:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
-		    startingAt: (long) bufferStartIndex
-		samplesInRange: (NSRange) playRegion
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+		     intoRange: (NSRange) bufferRange
+	     samplesStartingAt: (long) sndStartIndex;
 {
-  // This version of fillAudioBuffer assumes that the entire MP3 has been decoded
-  // into memory.
+  // This version of insertIntoAudioBuffer: assumes that the entire MP3 has been decoded
+  // into memory. We also assume the buffer sample rate matches the MP3sample rate
 #if DECODE_ENTIRE_INTO_MEMORY
     int buffChans = [anAudioBuffer channelCount];
     const short *pData = nil;
@@ -602,27 +627,31 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     switch ([anAudioBuffer dataFormat]) {
     case SND_FORMAT_FLOAT: {
 	float *pBuff = [anAudioBuffer bytes];
+	
 	if (buffChans == 2) {
-	    int i = bufferStartIndex * buffChans;
-	    long dataLength = [pcmData length] / 4;  // 4 bytes per sample
-	    long bufferLength = [anAudioBuffer lengthInSampleFrames];
-	    if (playRegion.location < dataLength) {
-		int c = MIN(playRegion.location + playRegion.length, dataLength) - playRegion.location;
-		pData += playRegion.location * buffChans;
-		for (; i < c * buffChans; i += buffChans) {
-		    pBuff[i]   = (float)pData[i]   / 32768.0;
-		    pBuff[i+1] = (float)pData[i+1] / 32768.0;
+	    int currentBufferSample = bufferRange.location * buffChans;
+	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
+	    
+	    if (sndStartIndex < sndDataLength) {
+		// Since we do no resampling, we can use bufferRange.length here
+		int numOfFramesToCopy = MIN(bufferRange.length, sndDataLength - sndStartIndex);
+
+		pData += sndStartIndex * buffChans;  // shift the base pointer up so we can use the same index for pData as pBuff.
+		for (; currentBufferSample < numOfFramesToCopy * buffChans; currentBufferSample += buffChans) {
+		    pBuff[currentBufferSample]   = (float) pData[currentBufferSample]   / 32768.0;
+		    pBuff[currentBufferSample+1] = (float) pData[currentBufferSample+1] / 32768.0;
 		}
 	    }
-	    for (; i < bufferLength * buffChans; i+= buffChans) {
-		pBuff[i]   = 0.0;
-		pBuff[i+1] = 0.0;
+	    for (; currentBufferSample < bufferRange.length * buffChans; currentBufferSample += buffChans) {
+		pBuff[currentBufferSample]   = 0.0;
+		pBuff[currentBufferSample+1] = 0.0;
 	    }
 #if SNDMP3_DEBUG
 	    {
 		float min, max;
+		
 		[anAudioBuffer findMin: &min max: &max];
-		printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
+		NSLog(@"f SndMP3: min: %5.3f max: %5.3f [dataLen:%i buffLen:%i loc:%li len:%i]\n", MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndStartIndex, bufferRange.length);
 	    }
 #endif
 	}
@@ -630,30 +659,32 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 	    NSLog(@"SndMP3 -insertIntoAudioBuffer: - Unhandled number of channels %d", buffChans);
     }
     break;
-    case SND_FORMAT_LINEAR_16:
-    {
+    case SND_FORMAT_LINEAR_16: {
 	short *pBuff = [anAudioBuffer bytes];
+	
 	if (buffChans == 2) {
-	    int i = bufferStartIndex * buffChans;
-	    long dataLength = [pcmData length] / 4;  // 4 bytes per sample
-	    long bufferLength = [anAudioBuffer lengthInSampleFrames];
-	    if (playRegion.location < dataLength) {
-		int c = MIN(playRegion.location + playRegion.length, dataLength) - playRegion.location;
-		pData += playRegion.location * buffChans;
-		for (; i < c * buffChans; i += buffChans) {
-		    pBuff[i]   = pData[i]   / 32768;
-		    pBuff[i+1] = pData[i+1] / 32768;
+	    int currentBufferSample = bufferRange.location * buffChans;
+	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
+
+	    if (sndStartIndex < sndDataLength) {
+		// Since we do no resampling, we can use bufferRange.length here
+		int numOfFramesToCopy = MIN(bufferRange.length, sndDataLength - sndStartIndex);
+		
+		pData += sndStartIndex * buffChans;
+		for (; currentBufferSample < numOfFramesToCopy * buffChans; currentBufferSample += buffChans) {
+		    pBuff[currentBufferSample]   = pData[currentBufferSample]   / 32768;
+		    pBuff[currentBufferSample+1] = pData[currentBufferSample+1] / 32768;
 		}
 	    }
-	    for (; i < bufferLength * buffChans; i+= buffChans) {
-		pBuff[i]   = 0.0;
-		pBuff[i+1] = 0.0;
+	    for (; currentBufferSample < bufferRange.length * buffChans; currentBufferSample+= buffChans) {
+		pBuff[currentBufferSample]   = 0.0;
+		pBuff[currentBufferSample+1] = 0.0;
 	    }
 #if SNDMP3_DEBUG
 	    {
 		float min, max;
 		[anAudioBuffer findMin: &min max: &max];
-		printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
+		NSLog(@"s SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%i loc:%li len:%i]\n",MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndStartIndex, bufferRange.length);
 	    }
 #endif
 	}
@@ -671,9 +702,9 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     
     /* TODO Decode on the fly */
 
-    int startFrameID = floor(playRegion.location / 1152.0);
+    int startFrameID = floor(sndStartIndex / 1152.0);
     int startSamplePosition = startFrameID * 1152;
-    int endFrameID   = floor(playRegion.location + playRegion.length / 1152.0);
+    int endFrameID   = floor(sndStartIndex + bufferRange.length / 1152.0);
     int endSamplePosition = (endFrameID + 1) * 1152;
     int currentFrameID = startFrameID;
 
@@ -700,6 +731,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
      */
 
 #endif
+    return bufferRange.length;
 }
 
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r
@@ -722,7 +754,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
         samplingRate: 44100
             duration: r.length / 44100.0];
 
-  [self fillAudioBuffer: ab withSamplesInRange: r];
+  [self fillAudioBuffer: ab toLength: r.length samplesStartingFrom: r.location];
 
   return [ab autorelease];
 }
