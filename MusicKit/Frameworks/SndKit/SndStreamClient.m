@@ -49,6 +49,8 @@ enum {
     needsInput       = FALSE;
     generatesOutput  = TRUE;
     processFinishedCallback = NULL;
+    processorChain   = [[SndAudioProcessorChain audioProcessorChain] retain];
+    manager          = nil;
     return self;
 }
 
@@ -129,7 +131,7 @@ enum {
 - (void) dealloc
 {
     [self freeBufferMem];
-    
+
     if (outputBufferLock)
         [outputBufferLock release];
     if (inputBufferLock)
@@ -138,7 +140,9 @@ enum {
         [synthThreadLock release];    
     if (manager)
         [manager release];
-    
+    if (processorChain)
+        [processorChain release];
+
     [super dealloc];
 }
 
@@ -160,16 +164,16 @@ enum {
 
 - (double) nowTime
 {
-    return [manager nowTime];
+    return nowTime;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// manager
+// @manager
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndStreamManager*) manager
 {
-    return manager;
+    return [[manager retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,7 +186,7 @@ enum {
     if(!active) {
         outputBuffer = buff;
         [outputBuffer retain];
-        
+
         if (needsInput) {
             inputBuffer = [buff copy];
             [inputBuffer retain];
@@ -193,7 +197,7 @@ enum {
         }
         [self prepareToStreamWithBuffer: buff];
         [self setManager: m];
-                
+
         [NSThread detachNewThreadSelector: @selector(processingThread)
                                  toTarget: self
                                withObject: nil];
@@ -211,10 +215,11 @@ enum {
 // If input isn't needed, ignore!!! (eg, if this isn't an FX unit)
 ////////////////////////////////////////////////////////////////////////////////
 
-- startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t 
+- startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t
 {
     BOOL gotLock = NO;
-    
+    nowTime = t;
+
     NS_DURING
     gotLock = [synthThreadLock tryLockWhenCondition: SC_bufferReady];
     NS_HANDLER
@@ -223,7 +228,7 @@ enum {
         gotLock = FALSE;
     }
     NS_ENDHANDLER
-    
+
     if( gotLock ) {
         // swap the synth and output buffers, fire off next round of synthing
         [outputBufferLock lock];
@@ -235,7 +240,6 @@ enum {
         [outputBufferLock unlock];
 
         // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
-
         if (needsInput) {
             if (inB) {
                 if ([inputBufferLock tryLock]) {
@@ -250,6 +254,7 @@ enum {
             else
                 NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
         }
+
         [synthThreadLock unlockWithCondition: SC_processBuffer];
     }
     else if ( delegate != nil && [delegate respondsToSelector: @selector(outputBufferSkipped)] )
@@ -276,8 +281,10 @@ enum {
         //NSLog(@"SYNTH THREAD: going to processBuffers\n");
         [self processBuffers];
         //NSLog(@"SYNTH THREAD: ... done processBuffers\n");
+        [processorChain processBuffer: synthBuffer forTime:nowTime];
 
         if (processFinishedCallback != NULL)
+
             processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
 
         [synthThreadLock unlockWithCondition: SC_bufferReady];
@@ -384,7 +391,7 @@ enum {
 - managerIsShuttingDown
 {
     // Need lock to make sure the synthesis thread is paused before shutting down!
-    [synthThreadLock lockWhenCondition:   SC_bufferReady ]; 
+    [synthThreadLock lockWhenCondition:   SC_bufferReady ];
     active = FALSE;
     [synthThreadLock unlockWithCondition: SC_processBuffer];
     
@@ -392,7 +399,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// isActive
+// @isActive
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) isActive;
@@ -448,6 +455,15 @@ enum {
 {
   [inputBufferLock unlock];
   return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @audioProcessorChain
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndAudioProcessorChain*) audioProcessorChain
+{
+  return [[processorChain retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
