@@ -131,13 +131,30 @@ int SndSampleWidth(int format)
   /* never reaches here */
   return 2;
 }
-int mcheck()
+
+NSString *SndFormatName(int dataFormat, BOOL verbose)
 {
-#if defined(NeXT) || macosx_server
-  return NXMallocCheck();
-#else
-  return YES;
-#endif
+    switch(dataFormat) {
+    case SND_FORMAT_MULAW_8:
+    case SND_FORMAT_MULAW_SQUELCH:
+	return @"8-bit muLaw";
+    case SND_FORMAT_LINEAR_8:
+	return @"8-bit Linear";
+    case SND_FORMAT_LINEAR_16:
+	return verbose ? @"16-bit Integer (2's complement, big endian)" : @"16-bit Linear";
+    case SND_FORMAT_LINEAR_24:
+	return verbose ? @"24-bit Integer (2's complement, big endian)" : @"24-bit Linear";
+    case SND_FORMAT_LINEAR_32:
+	return verbose ? @"32-bit Integer (2's complement, big endian)" : @"32-bit Linear";
+    case SND_FORMAT_FLOAT:
+	return verbose ? @"Signed 32-bit floating point" : @"32-bit Floating Point";
+    case SND_FORMAT_DOUBLE:
+	return verbose ? @"Signed 64-bit floating point" : @"64-bit Floating Point";
+    case SND_FORMAT_INDIRECT:
+	return verbose ? @"Indirect" : @"Fragmented";
+    default:
+	return verbose ? [NSString stringWithFormat: @"Unknown format %d", dataFormat] : @"DSP?";
+    }
 }
 
 // Given the data size in bytes, the number of channels and the data format, return the number of samples.
