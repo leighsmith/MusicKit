@@ -39,6 +39,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2004/08/21 23:28:50  leighsmith
+  Cleaned up copying and support for subclasses
+
   Revision 1.10  2001/09/07 00:14:46  leighsmith
   Corrected @discussion
 
@@ -304,27 +307,14 @@ realize MKNotes on an external MIDI synthesizer.
 - afterPerformance; 
 
 /*!
-  @method copy
-  @result Returns an id.
-  @discussion Creates and returns a new MKInstrument as a copy of the receiving
-              MKInstrument.  The new object has its own MKNoteReceiver collection
-              that contains copies of the MKInstrument's MKNoteReceivers.  The new
-              MKNoteReceivers' connections (see the MKNoteReceiver class) are
-              copied from the MKNoteReceivers in the receiving
-              MKInstrument.
-              
-              See also: - <b>copyWithZone:</b>
-*/
-- copy; 
-
-/*!
   @method copyWithZone:
   @param  zone is a NSZone.
   @result Returns an id.
-  @discussion This is the same as <b>copy</b>, but the new object is allocated
-              from <i>zone</i>.
-              
-              See also: - <b>copy</b>
+  @discussion Creates and returns a new MKInstrument as a copy of the receiving
+              MKInstrument allocated from <i>zone</i>.  The new object has its own MKNoteReceiver collection
+              that contains copies of the MKInstrument's MKNoteReceivers.  The new
+              MKNoteReceivers' connections (see the MKNoteReceiver class) are
+              copied from the MKNoteReceivers in the receiving MKInstrument.
 */
 - copyWithZone: (NSZone *) zone; 
 
@@ -366,9 +356,6 @@ realize MKNotes on an external MIDI synthesizer.
                 Subclasses may implement specific behaviour appropriate to the synthesis method.
 */
 - allNotesOff;
-
- /* Obsolete methods: */
-+ new; 
 
 @end
 

@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.13  2004/08/21 23:28:50  leighsmith
+  Cleaned up copying and support for subclasses
+
   Revision 1.12  2003/08/04 21:19:37  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -76,12 +79,6 @@
     _MKCheckInit();
     [MKInstrument setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
     return;
-}
-
-+ new
-  /* Create a new instance and sends [self init]. */
-{
-    return [[self allocWithZone:NSDefaultMallocZone()] init];
 }
 
 - init
@@ -275,7 +272,7 @@
     return self;
 }
 
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* TYPE: Creating; Creates and returns a copy of the receiver.
    * Creates and returns a new MKInstrument as a copy of the receiver.  
    * The new object has its own NoteReceiver collection that contains
@@ -284,27 +281,24 @@
    * those in the receiver.
    */
 {
-    MKNoteReceiver *el,*el_copy;
+    MKNoteReceiver *el, *el_copy;
     int noteReceiverIndex;
     int count;
 
-    MKInstrument *newObj = [MKInstrument allocWithZone:[self zone]];
+    // TODO need to check whether init should actually be called or not.
+    // MKInstrument *newObj = [[[self class] allocWithZone: zone] init];
+    MKInstrument *newObj = [[self class] allocWithZone: zone];
     newObj->_noteSeen = NO;
-    newObj->noteReceivers = [[NSMutableArray alloc] initWithCapacity:[noteReceivers count]];
+    newObj->noteReceivers = [[NSMutableArray alloc] initWithCapacity: [noteReceivers count]];
     
     count = [noteReceivers count];
     for (noteReceiverIndex = 0; noteReceiverIndex < count; noteReceiverIndex++) {
       el = [noteReceivers objectAtIndex: noteReceiverIndex];
       el_copy = [el copy];
-      [newObj addNoteReceiver:el_copy];
+      [newObj addNoteReceiver: el_copy];
       [el_copy release]; /* since we held retain from the -copy */
     }
     return newObj;
-}
-
--copy
-{
-    return [self copyWithZone:[self zone]];
 }
 
 - (MKNoteReceiver *) noteReceiver
