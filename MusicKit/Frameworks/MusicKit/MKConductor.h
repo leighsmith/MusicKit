@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/07/05 22:57:58  leighsmith
+  Added useful status methods and removed _wakeUpMKThread
+
   Revision 1.10  2001/04/24 23:37:26  leighsmith
   Added _MKWakeThread prototype for separate threading
 
@@ -200,14 +203,26 @@ extern void MKFinishPerformance(void);
 @interface MKConductor(SeparateThread)
 
 + useSeparateThread:(BOOL) yesOrNo;
+
+/*!
+    @method separateThreaded
+    @description Returns YES if the MKConductor is separate threaded, NO if it runs in the application thread.
+*/
++ (BOOL) separateThreaded;
+
+/*!
+    @method separateThreadedAndInMusicKitThread
+    @description Returns YES if the MKConductor is separate threaded and the calling code is running
+        in the separate thread, NO if the code is running in the application thread.
+*/
++ (BOOL) separateThreadedAndInMusicKitThread;
 + lockPerformance;
 + unlockPerformance;
-+(BOOL) lockPerformanceNoBlock;
++ (BOOL) lockPerformanceNoBlock;
 + setThreadPriority:(float) priorityFactor;
-+(NSThread *) performanceThread;
++ (NSThread *) performanceThread;
 + sendMsgToApplicationThreadSel:(SEL) aSelector to:(id) toObject argCount:(int)argCount, ...;
 + setInterThreadThreshold:(NSString *) newThreshold;
-+ (void) _wakeUpMKThread;
 
 @end
 
