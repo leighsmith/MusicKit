@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  1999/09/04 22:57:11  leigh
+  _MKLightweightArrayCopy now addsObjectsFromArray so that the array is mutable
+
   Revision 1.4  1999/08/26 20:02:44  leigh
   new MKError Prototype and localised strings now searched within the Framework
 
@@ -59,12 +62,11 @@ Modification history:
 
 #import "_error.h"
 
-#import <mach/cthreads.h>
+#import <mach/cthreads.h>  // LMS only needed for cthread_set_errno_self and that seems nearly redundant
 #import <stddef.h>  /* errno */
 #import <Foundation/NSBundle.h>
 
-/* This file should contain only utilities that we always want. I.e. this
-   module is always loaded. */
+/* This file should contain only utilities that we always want. I.e. this module is always loaded. */
 
 /* globals */
 
@@ -78,8 +80,7 @@ _MK_GLOBAL _MKClassLoaded _MKPartialsClass = {0};
 _MK_GLOBAL _MKClassLoaded _MKMidiClass = {0};
 _MK_GLOBAL unsigned _MKTraceFlag = 0;
 
-/* A dumb function that causes a reference to its arguments (to fool the
-   linker.) */
+/* A dumb function that causes a reference to its arguments (to fool the linker.) */
 void _MKLinkUnreferencedClasses()
 {
 
@@ -179,21 +180,14 @@ char *_MKRealloc(ptr,size)
 
 // Lightweight NSArray copying
 // Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
-// [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.
+// [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation, creating
+// a new NSMutableArray, but populating it with the old array's elements, rather than duplicates.
 NSMutableArray *_MKLightweightArrayCopy(NSMutableArray *oldArray)
 {
-#if 0
     NSMutableArray *newArray = [[NSMutableArray alloc] init];
-    int i;
 
-    // we should use enumerator, but they can be slow so an iteration is used instead.
-    // In theory iteration could also be slow if the NSArray is not stored in object index order.
-    for(i = 0; i < [oldArray count]; i++) {
-       [newArray addObject:[oldArray objectAtIndex:i]];
-    }
+    [newArray addObjectsFromArray: oldArray];
     return newArray;
-#endif
-    return [NSMutableArray arrayWithArray:oldArray];
 }
 
 /* Tracing */
@@ -220,9 +214,9 @@ BOOL MKIsTraced(int debugFlag)
 /* Error handling */
 /* See musickit.h for details */
 
-static void (*errorProc)(char * msg) = NULL;
+static void (*errorProc)(NSString *msg) = NULL;
 
-void MKSetErrorProc(void (*errProc)(char *msg))
+void MKSetErrorProc(void (*errProc)(NSString *msg))
     /* Sets proc to be used when MKError() is called. If errProc is NULL,
        uses the default error handler, which writes to stderr. When the
        *errProc is called, errno is set to the MKErrno corresponding to err.
@@ -271,22 +265,13 @@ NSString * _MKGetErrStr(int errCode)
        some of the strings have printf-style 'arguments' embedded. */
 {
     NSString * msg = nil;
-    if (errCode < MK_ERRORBASE || errCode > (int)MK_highestErr)
+    if (errCode < MK_ERRORBASE || errCode > (int) MK_highestErr)
       return UNKNOWN_ERROR;
     errno = errCode;
-    /* The problem is that the prototype for cthread_set_errno_self() has an 
-       argument declared as errno. But errno gets substitued by the shlib
-       mechanism to be a pointer.  So we have to cast it to avoid a spurious
-       warning. Sigh. 
-       */
-// LMS: since chread_errno() is not called anywhere these are probably redundant and could be removed.
-// alternatively we could use the [NSThread threadDictionary] to store it if we wanted to retrieve it.
 #ifndef WIN32
-#   ifdef SHLIB    
-    cthread_set_errno_self((void *)errCode);
-#   else
+    // LMS: since cthread_errno() is not called anywhere this is probably redundant and could be removed.
+    // alternatively we could use the [NSThread threadDictionary] to store it if we wanted to retrieve it.
     cthread_set_errno_self(errCode);
-#   endif
 #endif
     switch (errCode) {
       case MK_musicKitErr:   /* Generic Music Kit error. */
@@ -565,11 +550,7 @@ id _MKErrorf(int errorCode,...)
     va_start(ap,errorCode);
     errno = errorCode;
 #ifndef WIN32
-#   ifdef SHLIB
-    cthread_set_errno_self((void *)errorCode);
-#   else
     cthread_set_errno_self(errorCode);
-#   endif
 #endif
     fmt = _MKGetErrStr(errorCode);
     if (errorProc) {
@@ -838,7 +819,7 @@ int MKIsNoDVal(double val)
 
 NSBundle *_MKErrorBundle(void)
 {
-    static const NSBundle *musicKitStringsBundle = nil;
+    static NSBundle *musicKitStringsBundle = nil;
     if (!musicKitStringsBundle) {
 	// Find the framework bundle, this is a global resource, so the path should be: framework_dir/Resources/Localized.strings
         musicKitStringsBundle = [NSBundle bundleForClass: [MKNote class]];
@@ -869,7 +850,7 @@ int _MKFindAppWrapperFile(NSString *fileName,NSString **returnName)
         NSString *retName;
 	if (!bundle)
    	   return 0;
-#warning DONE StringConversion: This call to -[NXBundle getPath:forResource:ofType:] has been converted to the similar NSBundle method.  The conversion has been made assuming that the variable called returnName will be changed into an (NSString *).  You must change the type of the variable called returnName by hand.
+//#warning DONE StringConversion: This call to -[NXBundle getPath:forResource:ofType:] has been converted to the similar NSBundle method.  The conversion has been made assuming that the variable called returnName will be changed into an (NSString *).  You must change the type of the variable called returnName by hand.
         retName = [bundle pathForResource:fileName ofType:@""];
         returnName = &retName;
 //	err = ((*returnName = [bundle pathForResource:fileName ofType:@""]) != nil);
