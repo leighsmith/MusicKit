@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/01/20 17:15:36  leigh
+  Fixed accidental commenting out of header files, reorganised #imports
+
   Revision 1.5  2000/01/13 06:44:07  leigh
   Added a missing (pre-OpenStep conversion!) _error: method, improved forward declaration of newMsgRequest
 
@@ -89,22 +92,17 @@ Modification history:
 		 We don't archive MTCSynch because Midi (still!) doesn't support 
 		 archiving. (Sigh.)
 */
-
-
-//#import <mach/time_stamp.h> //sb: NSDate class will be used for time stamping
-#define MK_INLINE 1
+#import <AppKit/NSApplication.h>
+#import <AppKit/dpsOpenStep.h>
+#import <setjmp.h>
 #import "_musickit.h"
 #import "_time.h"
 #import "MidiPrivate.h"
-#import "_MTCHelper.h"   /*sb: moved this to here from _MTCHelper.m, since it interefered there.
+#import "_MTCHelper.h"   // sb: moved this to here from _MTCHelper.m, since it interferred there.
 
-#import <signal.h>
-#import <setjmp.h>
-//static jmp_buf conductorJmp;       /* For long jump. */
-#import <AppKit/NSApplication.h>
-#import <AppKit/dpsOpenStep.h>
-//#import <AppKit/NSDPSContext.h> /* Contains NX_FOREVER */
-/*sb: OS does not define this. There's no reason not to include it manually though. */
+#define MK_INLINE 1
+
+// sb: OS does not define NX_FOREVER. There's no reason not to include it manually though.
 #define NX_FOREVER	(6307200000.0)	/* 200 years of seconds */
 
 #define ENDOFLIST (NX_FOREVER)
@@ -923,7 +921,7 @@ static void _runSetup()
     _runSetup(); // Was before setTime()
     setupMTC();
     if (MKIsTraced(MK_TRACECONDUCTOR))
-      NSLog(@"Evaluating beforePerformance queue.\n");
+      NSLog(@"Evaluating beforePerformance queue, separateThread = %d.\n", separateThread);
     beforePerformanceQueue = evalSpecialQueue(beforePerformanceQueue, &beforePerformanceQueueEnd);
     if (checkForEndOfTime()) {
 	[self finishPerformance];
@@ -952,6 +950,7 @@ static void _runSetup()
         startTime = [[startTime addTimeInterval:(0 - MKGetDeltaT())] retain];
     }
     if (separateThread) {
+NSLog(@"launching\n");
 	launchThread();
     }
     return self;
