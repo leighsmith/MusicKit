@@ -9,27 +9,26 @@
 #import "SoundDocument.h"
 
 #import <AppKit/AppKit.h>
-#import <objc/NXStringTable.h>
-#import <objc/List.h>
 #import <string.h>
-#import <Foundation/NSUserDefaults.h>
+#import <Foundation/Foundation.h>
 
 static NSString *pathname;
 
-static NSString * getOpenPath(NSString *buf, NSString *theType)
+static NSString * getOpenPath(NSString *buf)
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    NSArray *fileTypes = nil;
+    NSArray *fileTypes = [Snd soundFileExtensions];
     int opr;
-    if (!buf) buf = @"";
     
-    if (theType) if ([theType length])
-        fileTypes = [NSArray arrayWithObject:theType];
+    if (!buf)
+        buf = @"";
+    
+    opr = [openPanel runModalForDirectory: buf file: @"" types: fileTypes];
 
-    opr = [openPanel runModalForDirectory:buf file:@"" types:fileTypes];
-
-    if (opr == NSOKButton) return [buf stringByAppendingPathComponent:[openPanel filename]];
-    else return nil;
+    if (opr == NSOKButton)
+        return [buf stringByAppendingPathComponent: [openPanel filename]];
+    else
+        return nil;
 }
 
 
@@ -93,7 +92,8 @@ NSColor *StringToColor(NSString *buffer)
     @"0",	@"DisplayType",
     @"0:0:0",	@"SpectrumColor",
     @"1:0:0",	@"CursorColor",
-    @"0.6666:0.6666:0.6666",@"GridColor",
+    @"0.3333:0.3333:0.3333", @"WaterfallColor",
+    @"0.6666:0.6666:0.6666", @"GridColor",
     NULL,NULL] retain];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:SpectroDefaults];
@@ -106,8 +106,7 @@ NSColor *StringToColor(NSString *buffer)
     SoundDocument * newDocument;
     NSString *filenamebuf;
     if (!currentDir) currentDir = @"";
-    filenamebuf = [currentDir stringByAppendingPathComponent:
-        [NSString stringWithCString:[stringTable valueForStringKey:"/UNTITLED"]]];
+    filenamebuf = [currentDir stringByAppendingPathComponent: @"/UNTITLED"];
     newDocument = [self openDoc];
     [newDocument setFileName:filenamebuf];
     return self;
@@ -117,7 +116,7 @@ NSColor *StringToColor(NSString *buffer)
 {
     [pathname release];
     pathname = nil;
-    if (pathname = getOpenPath(pathname,@"snd"))
+    if (pathname = getOpenPath(pathname))
         [self openFile:[pathname retain]];
     return self;
 }
@@ -305,10 +304,11 @@ NSColor *StringToColor(NSString *buffer)
 	}
 	if (touched) {
 		i = NSRunAlertPanel(@"Quit",
-                      [NSString stringWithCString:[stringTable valueForStringKey:"Sound Document(s) not saved"]],
-                      [NSString stringWithCString:[stringTable valueForStringKey:"Yes"]],
-                      [NSString stringWithCString:[stringTable valueForStringKey:"No"]], nil); 
-		if (i == NSAlertAlternateReturn) return NO;
+                      NSLocalizedStringFromTableInBundle(@"Sound Document(s) not saved", @"Spectro", [NSBundle mainBundle], "not saved button name"),
+                      NSLocalizedStringFromTableInBundle(@"Yes", @"Spectro", [NSBundle mainBundle], "Yes button name"),
+                      NSLocalizedStringFromTableInBundle(@"No", @"Spectro", [NSBundle mainBundle], "No button name"), nil); 
+		if (i == NSAlertAlternateReturn)
+                    return NO;
 	}
 	[documentList release];
 	return YES;
