@@ -5,6 +5,216 @@
 	};
 	objectVersion = 39;
 	objects = {
+		D8001DE30762D2F700508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FE00762D3B100508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FE10762D3B100508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FE20762D3B100508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FE60762D4A900508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FEB0762D54100508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FEC0762D54100508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FED0762D54100508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FEE0762D58400508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FEF0762D58400508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FF00762D58400508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FF10762D58400508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FF20762D5E900508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FF30762D5E900508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FF40762D5E900508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8001FF50762D5E900508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020230763768800508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8002024076376B300508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8002025076376B300508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8002026076376B300508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8002027076376C100508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8002028076376C100508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8002029076376C100508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020330763776C00508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020340763776C00508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020350763776C00508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020360763776C00508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020370763778700508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020380763778700508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80020390763778700508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D800203A0763778700508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D800203B0763779300508A26 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D800203C0763779300508A26 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D800203D0763779300508A26 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D800203E0763779300508A26 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D804E063063DB32C0098E73C = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -20,37 +230,101 @@
 			settings = {
 			};
 		};
-		D8160DC805BB57CC00A1BB23 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D8160DC905BB57CC00A1BB23 = {
-			fileRef = D8160DC805BB57CC00A1BB23;
+		D80DA57D0764C8A20052DFAF = {
+			fileRef = D84395E9059FAA450054BEEE;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		D8160DCA05BB57CC00A1BB23 = {
-			fileRef = D8160DC805BB57CC00A1BB23;
+		D80DA57E0764C8A20052DFAF = {
+			fileRef = D82AC3B905A0F6DA00780F57;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		D8160DCB05BB57CC00A1BB23 = {
-			fileRef = D8160DC805BB57CC00A1BB23;
+		D80DA57F0764C8A20052DFAF = {
+			fileRef = D88FED7105A10EAF0024FD88;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		D8160DCC05BB57CC00A1BB23 = {
-			fileRef = D8160DC805BB57CC00A1BB23;
+		D80DA5800764C8A20052DFAF = {
+			fileRef = D825564A05A211B400B0192B;
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		D80DA5850764C8DE0052DFAF = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5860764C8DE0052DFAF = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5870764C90D0052DFAF = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5880764C90D0052DFAF = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5890764C9160052DFAF = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA58A0764C9160052DFAF = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5C60764E1E70052DFAF = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5C70764E1E70052DFAF = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5C80764E3D00052DFAF = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5C90764E3D00052DFAF = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D80DA5CA0764E4250052DFAF = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D84E221205B70AED002B493F;
+			remoteInfo = "sndinfo (Tool)";
+		};
+		D80DA5CB0764E4250052DFAF = {
+			isa = PBXTargetDependency;
+			target = D84E221205B70AED002B493F;
+			targetProxy = D80DA5CA0764E4250052DFAF;
 		};
 		D8160E9905BB5A0400A1BB23 = {
 			children = (
@@ -69,18 +343,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		D8160EBA05BB5A1E00A1BB23 = {
-			fileRef = D8160EB905BB5A1E00A1BB23;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D8160EBB05BB5A1E00A1BB23 = {
-			fileRef = D8160EB905BB5A1E00A1BB23;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D8160EF105BB5AF000A1BB23 = {
 			children = (
 				D8160F0F05BB5B1200A1BB23,
@@ -98,12 +360,6 @@
 			path = /Library/Frameworks/SndKit.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
-		};
-		D8160F1005BB5B1200A1BB23 = {
-			fileRef = D8160F0F05BB5B1200A1BB23;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D81B12FF0628D9FF009058DB = {
 			fileEncoding = 30;
@@ -306,7 +562,6 @@
 				D825573205A2163400B0192B,
 				D825573305A2163400B0192B,
 				D825573405A2163400B0192B,
-				D825573505A2163400B0192B,
 				D825573605A2163400B0192B,
 				D825573705A2163400B0192B,
 				D825573805A2163400B0192B,
@@ -443,9 +698,9 @@
 		D825564805A211B400B0192B = {
 			buildActionMask = 2147483647;
 			files = (
-				D879C15C05A22C4F005DB251,
-				D879C15D05A22C4F005DB251,
-				D879C2F805A24B87005DB251,
+				D880FC0E077FDDBA00FD03CC,
+				D880FBE4077FDD7E00FD03CC,
+				D880FBCE077FDD4A00FD03CC,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -471,7 +726,7 @@
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -framework AppKit -seg1addr 389000";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit -seg1addr 3A0000";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
@@ -620,7 +875,6 @@
 				D825576905A216CA00B0192B,
 				D825576D05A216CA00B0192B,
 				D825571705A2163400B0192B,
-				D825571805A2163400B0192B,
 				D825571E05A2163400B0192B,
 				D825571F05A2163400B0192B,
 				D825572005A2163400B0192B,
@@ -666,27 +920,19 @@
 		};
 		D825566105A2133C00B0192B = {
 			children = (
+				D8C536C7074A941D0051F1BF,
 				D82557F505A21C8400B0192B,
 				D82557C705A2199F00B0192B,
 				D825579205A2186F00B0192B,
 				D825578F05A2185700B0192B,
 				D82557F805A21D4000B0192B,
+				D8C53695074A7C1C0051F1BF,
 				D82557B105A2198200B0192B,
-				D82557B205A2198200B0192B,
-				D82557B305A2198200B0192B,
-				D82557B505A2198200B0192B,
-				D82557BA05A2198200B0192B,
 				D82557B705A2198200B0192B,
-				D82557E405A21AFB00B0192B,
 				D82557E605A21B5900B0192B,
-				D82557EC05A21B7F00B0192B,
-				D82557B605A2198200B0192B,
-				D82557B805A2198200B0192B,
-				D82557D405A21AC000B0192B,
-				D82557D505A21AC000B0192B,
-				D82557D705A21AC000B0192B,
-				D82557D805A21AC000B0192B,
 				D82557D905A21AC000B0192B,
+				D82557EC05A21B7F00B0192B,
+				D82557B805A2198200B0192B,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -2016,15 +2262,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		D825571805A2163400B0192B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = NoteReceiverPrivate.h;
-			path = Frameworks/MusicKit/NoteReceiverPrivate.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		D825571905A2163400B0192B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2270,12 +2507,6 @@
 		};
 		D825573405A2163400B0192B = {
 			fileRef = D825571705A2163400B0192B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D825573505A2163400B0192B = {
-			fileRef = D825571805A2163400B0192B;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3456,11 +3687,613 @@
 				D82557D605A21AC000B0192B,
 				D82557D005A21AC000B0192B,
 				D82557D105A21AC000B0192B,
+				D82557E405A21AFB00B0192B,
 			);
 			isa = PBXGroup;
 			name = Performance;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		D828F99A0780C24B00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = MKAlert.h;
+			path = Applications/ScorePlayer/MKAlert.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F99B0780C24B00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = MKAlert.m;
+			path = Applications/ScorePlayer/MKAlert.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F99C0780C24B00215EB9 = {
+			fileRef = D828F99A0780C24B00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F99D0780C24B00215EB9 = {
+			fileRef = D828F99B0780C24B00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9A50780C3EA00215EB9 = {
+			children = (
+				D828F9AC0780C46700215EB9,
+				D828F9AD0780C46700215EB9,
+				D880FE3F0780AF2200FD03CC,
+				D880FE400780AF2200FD03CC,
+				D880FE410780AF2200FD03CC,
+				D880FE420780AF2200FD03CC,
+				D880FE430780AF2200FD03CC,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9AC0780C46700215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = play.tiff;
+			path = Applications/ScorePlayer/Images/play.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9AD0780C46700215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = playH.tiff;
+			path = Applications/ScorePlayer/Images/playH.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9AE0780C46700215EB9 = {
+			fileRef = D828F9AC0780C46700215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9AF0780C46700215EB9 = {
+			fileRef = D828F9AD0780C46700215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9B40780C4FC00215EB9 = {
+			children = (
+				D828F9B70780C52400215EB9,
+			);
+			isa = PBXGroup;
+			name = Help;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9B70780C52400215EB9 = {
+			children = (
+				D828F9B80780C52400215EB9,
+			);
+			isa = PBXVariantGroup;
+			name = ScorePlayer.sgml;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9B80780C52400215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = English;
+			path = Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9B90780C52400215EB9 = {
+			fileRef = D828F9B70780C52400215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9C50780CC1E00215EB9 = {
+			buildActionMask = 2147483647;
+			files = (
+				D828F9F70780CD4A00215EB9,
+				D828F9F80780CD4A00215EB9,
+				D828F9F90780CD4A00215EB9,
+				D828F9FA0780CD4A00215EB9,
+				D828FA050780CDEF00215EB9,
+				D828FA060780CDEF00215EB9,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D828F9C60780CC1E00215EB9 = {
+			buildActionMask = 2147483647;
+			files = (
+				D828F9DA0780CCDF00215EB9,
+				D828F9DC0780CCDF00215EB9,
+				D828F9DE0780CCDF00215EB9,
+				D828F9E00780CCDF00215EB9,
+				D828F9E20780CCDF00215EB9,
+				D828F9E60780CD0600215EB9,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D828F9C70780CC1E00215EB9 = {
+			buildActionMask = 2147483647;
+			files = (
+				D828FA410780CFD200215EB9,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D828F9C80780CC1E00215EB9 = {
+			buildPhases = (
+				D828F9C50780CC1E00215EB9,
+				D828F9C60780CC1E00215EB9,
+				D828F9C70780CC1E00215EB9,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = PianoRoll;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "PianoRoll (Application)";
+			productName = PianoRoll;
+			productReference = D828F9C90780CC1E00215EB9;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>PianoRoll</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.PianoRoll</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		D828F9C90780CC1E00215EB9 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = PianoRoll.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D828F9CB0780CC1F00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "PianoRoll-Info.plist";
+			path = "Applications/PianoRoll/PianoRoll-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		D828F9CF0780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Distributor.h;
+			path = Applications/PianoRoll/Distributor.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D00780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Distributor.m;
+			path = Applications/PianoRoll/Distributor.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D10780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Document.h;
+			path = Applications/PianoRoll/Document.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D20780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Document.m;
+			path = Applications/PianoRoll/Document.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D30780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = PartView.h;
+			path = Applications/PianoRoll/PartView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D40780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = PartView.m;
+			path = Applications/PianoRoll/PartView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D50780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = PlayScore.h;
+			path = Applications/PianoRoll/PlayScore.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D60780CCDE00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = PlayScore.m;
+			path = Applications/PianoRoll/PlayScore.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D70780CCDF00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TadPole.h;
+			path = Applications/PianoRoll/TadPole.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9D80780CCDF00215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = TadPole.m;
+			path = Applications/PianoRoll/TadPole.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9DA0780CCDF00215EB9 = {
+			fileRef = D828F9D00780CCDE00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9DC0780CCDF00215EB9 = {
+			fileRef = D828F9D20780CCDE00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9DE0780CCDF00215EB9 = {
+			fileRef = D828F9D40780CCDE00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9E00780CCDF00215EB9 = {
+			fileRef = D828F9D60780CCDE00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9E20780CCDF00215EB9 = {
+			fileRef = D828F9D80780CCDF00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9E50780CD0600215EB9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = PianoRoll_main.m;
+			path = Applications/PianoRoll/PianoRoll_main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9E60780CD0600215EB9 = {
+			fileRef = D828F9E50780CD0600215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9E90780CD0E00215EB9 = {
+			children = (
+				D828F9EF0780CD4A00215EB9,
+				D828F9F10780CD4A00215EB9,
+				D828F9F30780CD4A00215EB9,
+				D828F9F50780CD4A00215EB9,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9EC0780CD2400215EB9 = {
+			children = (
+				D828FA030780CDEF00215EB9,
+				D828FA040780CDEF00215EB9,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9EF0780CD4A00215EB9 = {
+			children = (
+				D828F9F00780CD4A00215EB9,
+			);
+			isa = PBXVariantGroup;
+			name = Help.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F00780CD4A00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = "Applications/PianoRoll/English.lproj/Help-macosx.nib";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F10780CD4A00215EB9 = {
+			children = (
+				D828F9F20780CD4A00215EB9,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F20780CD4A00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = "Applications/PianoRoll/English.lproj/Info-macosx.nib";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F30780CD4A00215EB9 = {
+			children = (
+				D828F9F40780CD4A00215EB9,
+			);
+			isa = PBXVariantGroup;
+			name = PianoRoll.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F40780CD4A00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = "Applications/PianoRoll/English.lproj/PianoRoll-macosx.nib";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F50780CD4A00215EB9 = {
+			children = (
+				D828F9F60780CD4A00215EB9,
+			);
+			isa = PBXVariantGroup;
+			name = Score.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F60780CD4A00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/PianoRoll/English.lproj/Score.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828F9F70780CD4A00215EB9 = {
+			fileRef = D828F9EF0780CD4A00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9F80780CD4A00215EB9 = {
+			fileRef = D828F9F10780CD4A00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9F90780CD4A00215EB9 = {
+			fileRef = D828F9F30780CD4A00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828F9FA0780CD4A00215EB9 = {
+			fileRef = D828F9F50780CD4A00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828FA030780CDEF00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = PianoRoll.icns;
+			path = Applications/PianoRoll/PianoRoll.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828FA040780CDEF00215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = PianoRoll.tiff;
+			path = Applications/PianoRoll/PianoRoll.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D828FA050780CDEF00215EB9 = {
+			fileRef = D828FA030780CDEF00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828FA060780CDEF00215EB9 = {
+			fileRef = D828FA040780CDEF00215EB9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828FA410780CFD200215EB9 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D828FA560780D1F400215EB9 = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E8D5E40784645800AAE755,
+				D8E8D5E50784645800AAE755,
+				D8E8D5E60784645800AAE755,
+				D8E8D5E70784645800AAE755,
+				D8E8D5E80784645800AAE755,
+				D8E8D5E90784645800AAE755,
+				D8E8D5EA0784645800AAE755,
+				D8E8D5F10784649E00AAE755,
+				D8E8D5F20784649E00AAE755,
+				D8E8D5F70784653B00AAE755,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D828FA570780D1F400215EB9 = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E8D5C6078463D400AAE755,
+				D8E8D5CA078463D400AAE755,
+				D8E8D5CE078463FB00AAE755,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D828FA580780D1F400215EB9 = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E8D5F8078465A500AAE755,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D828FA590780D1F400215EB9 = {
+			buildPhases = (
+				D828FA560780D1F400215EB9,
+				D828FA570780D1F400215EB9,
+				D828FA580780D1F400215EB9,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = EnvelopeEd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "EnvelopeEd (Application)";
+			productName = EnvelopeEd;
+			productReference = D828FA5A0780D1F400215EB9;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>EnvelopeEd</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.EnvelopeEd</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		D828FA5A0780D1F400215EB9 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = EnvelopeEd.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D828FA5C0780D1F500215EB9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "EnvelopeEd-Info.plist";
+			path = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		D82AC38D05A0F36700780F57 = {
 			children = (
@@ -3717,7 +4550,7 @@
 				D88FEA5205A101F10024FD88,
 				D88FEA5305A101F10024FD88,
 				D88FEA5705A102300024FD88,
-				D88FEA5B05A102640024FD88,
+				D880FBC7077FD9B700FD03CC,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4202,71 +5035,6 @@
 			settings = {
 			};
 		};
-		D837AC1706C818B200A6CFEB = {
-			children = (
-				D837AC1C06C818B200A6CFEB,
-				D837AC1D06C818B200A6CFEB,
-				D837AC1E06C818B200A6CFEB,
-				D837AC1F06C818B200A6CFEB,
-			);
-			isa = PBXGroup;
-			name = Frameworks;
-			path = /Library/Frameworks;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D837AC1C06C818B200A6CFEB = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			path = MKDSP.framework;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D837AC1D06C818B200A6CFEB = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			path = MKPerformSndMIDI.framework;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D837AC1E06C818B200A6CFEB = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			path = MusicKit.framework;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D837AC1F06C818B200A6CFEB = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			path = SndKit.framework;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D837AC2506C818B200A6CFEB = {
-			fileRef = D837AC1C06C818B200A6CFEB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D837AC2606C818B200A6CFEB = {
-			fileRef = D837AC1D06C818B200A6CFEB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D837AC2706C818B200A6CFEB = {
-			fileRef = D837AC1E06C818B200A6CFEB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D837AC2806C818B300A6CFEB = {
-			fileRef = D837AC1F06C818B200A6CFEB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D837AC3406C8193C00A6CFEB = {
 			children = (
 				D837AC3A06C8195C00A6CFEB,
@@ -4596,16 +5364,16 @@
 				D82AC3B905A0F6DA00780F57,
 				D88FED7105A10EAF0024FD88,
 				D825564A05A211B400B0192B,
-				D879C3C005A2B47F005DB251,
 				D8C274E105A739E6008ABA16,
+				D879C3C005A2B47F005DB251,
 				D8708B6A05B313730074C18D,
 				D8708B4905B312A70074C18D,
 				D8708B9A05B314800074C18D,
 				D8708F5105B49A430074C18D,
 				D870920605B5D9EF0074C18D,
 				D870938D05B5DCDE0074C18D,
-				D870944305B5DFDF0074C18D,
 				D84E1E5F05B5E487002B493F,
+				D870944305B5DFDF0074C18D,
 				D84E1F9105B5E5B5002B493F,
 				D84E211605B70643002B493F,
 				D84E218005B707F2002B493F,
@@ -4616,6 +5384,8 @@
 				D86D23B506F229E6003565CB,
 				D85E27D206FA098200385C32,
 				D85E27F406FA0C0100385C32,
+				D828F9C90780CC1E00215EB9,
+				D828FA5A0780D1F400215EB9,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -4645,6 +5415,9 @@
 				D84AE06E0623249D00A477FA,
 				D88C503006C7E3BF00D33D99,
 				D86D23BC06F22B5B003565CB,
+				D880FD0C0780880E00FD03CC,
+				D8E8D5B80784628600AAE755,
+				D8E8D6CF0784844300AAE755,
 			);
 			isa = PBXAggregateTarget;
 			name = "Applications Only (Aggregate)";
@@ -4673,20 +5446,6 @@
 			isa = PBXTargetDependency;
 			target = D84AE06A0623249200A477FA;
 			targetProxy = D84AE070062324B300A477FA;
-		};
-		D84CDE26061F52CB007B002D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = SndKit.framework;
-			path = /Library/Frameworks/SndKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D84CDE27061F52CB007B002D = {
-			fileRef = D84CDE26061F52CB007B002D;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D84CDEDE061F57D5007B002D = {
 			fileEncoding = 4;
@@ -4755,7 +5514,6 @@
 		};
 		D84E1E5405B5E457002B493F = {
 			children = (
-				D84E1E8705B5E4E6002B493F,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
@@ -4803,7 +5561,10 @@
 		D84E1E5D05B5E487002B493F = {
 			buildActionMask = 2147483647;
 			files = (
-				D84E1E8805B5E4E6002B493F,
+				D80020370763778700508A26,
+				D80020380763778700508A26,
+				D80020390763778700508A26,
+				D800203A0763778700508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4976,20 +5737,6 @@
 			settings = {
 			};
 		};
-		D84E1E8705B5E4E6002B493F = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D84E1E8805B5E4E6002B493F = {
-			fileRef = D84E1E8705B5E4E6002B493F;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D84E1F5805B5E4FC002B493F = {
 			children = (
 				D84E1F5905B5E4FC002B493F,
@@ -5058,7 +5805,6 @@
 		};
 		D84E1F6B05B5E55F002B493F = {
 			children = (
-				D84E1FF805B5E63D002B493F,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
@@ -5126,7 +5872,10 @@
 		D84E1F8F05B5E5B5002B493F = {
 			buildActionMask = 2147483647;
 			files = (
-				D84E1FF905B5E63D002B493F,
+				D800203B0763779300508A26,
+				D800203C0763779300508A26,
+				D800203D0763779300508A26,
+				D800203E0763779300508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5332,20 +6081,6 @@
 			settings = {
 			};
 		};
-		D84E1FF805B5E63D002B493F = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D84E1FF905B5E63D002B493F = {
-			fileRef = D84E1FF805B5E63D002B493F;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D84E206105B5E9B6002B493F = {
 			containerPortal = D8DB4E4C059FA05500624233;
 			isa = PBXContainerItemProxy;
@@ -5445,7 +6180,10 @@
 		D84E211405B70643002B493F = {
 			buildActionMask = 2147483647;
 			files = (
-				D8160DC905BB57CC00A1BB23,
+				D80DA57D0764C8A20052DFAF,
+				D80DA57E0764C8A20052DFAF,
+				D80DA57F0764C8A20052DFAF,
+				D80DA5800764C8A20052DFAF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5602,8 +6340,8 @@
 		D84E217E05B707F2002B493F = {
 			buildActionMask = 2147483647;
 			files = (
-				D8160DCA05BB57CC00A1BB23,
-				D8160EBA05BB5A1E00A1BB23,
+				D80DA5850764C8DE0052DFAF,
+				D80DA5860764C8DE0052DFAF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5697,8 +6435,8 @@
 		D84E21BD05B7087A002B493F = {
 			buildActionMask = 2147483647;
 			files = (
-				D8160DCB05BB57CC00A1BB23,
-				D8160F1005BB5B1200A1BB23,
+				D80DA5890764C9160052DFAF,
+				D80DA58A0764C9160052DFAF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5850,8 +6588,8 @@
 		D84E221105B70AED002B493F = {
 			buildActionMask = 2147483647;
 			files = (
-				D8160DCC05BB57CC00A1BB23,
-				D8160EBB05BB5A1E00A1BB23,
+				D80DA5870764C90D0052DFAF,
+				D80DA5880764C90D0052DFAF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5988,15 +6726,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		D85A2F3D061F33E50065380E = {
-			children = (
-				D84CDE26061F52CB007B002D,
-			);
-			isa = PBXGroup;
-			name = "External Frameworks and Libraries";
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		D85A2F45061F347D0065380E = {
 			buildActionMask = 2147483647;
 			files = (
@@ -6055,7 +6784,8 @@
 		D85A2F48061F347D0065380E = {
 			buildActionMask = 2147483647;
 			files = (
-				D84CDE27061F52CB007B002D,
+				D80DA5C60764E1E70052DFAF,
+				D80DA5C70764E1E70052DFAF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6790,7 +7520,6 @@
 		D85E27D006FA098200385C32 = {
 			buildActionMask = 2147483647;
 			files = (
-				D85E282E06FA105B00385C32,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6870,18 +7599,9 @@
 				D85E27E806FA0BB800385C32,
 				D85E27E506FA0BAF00385C32,
 				D85E27E206FA0BA300385C32,
-				D85E27DF06FA0B9500385C32,
 			);
 			isa = PBXGroup;
 			name = ScorePlayer;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D85E27DF06FA0B9500385C32 = {
-			children = (
-			);
-			isa = PBXGroup;
-			name = "External Frameworks and Libraries";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6897,6 +7617,8 @@
 		D85E27E506FA0BAF00385C32 = {
 			children = (
 				D85E281D06FA0E1200385C32,
+				D828F9B40780C4FC00215EB9,
+				D828F9A50780C3EA00215EB9,
 				D85E280606FA0DBD00385C32,
 			);
 			isa = PBXGroup;
@@ -6916,7 +7638,11 @@
 		D85E27EB06FA0BC000385C32 = {
 			children = (
 				D85E280006FA0D2E00385C32,
+				D828F99A0780C24B00215EB9,
+				D828F99B0780C24B00215EB9,
 				D85E280106FA0D2E00385C32,
+				D880FD1F0780AC2A00FD03CC,
+				D880FD200780AC2A00FD03CC,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -6926,7 +7652,6 @@
 		D85E27F006FA0C0100385C32 = {
 			buildActionMask = 2147483647;
 			files = (
-				D85E280206FA0D2E00385C32,
 				D85E281506FA0DF000385C32,
 				D85E281606FA0DF000385C32,
 				D85E281706FA0DF000385C32,
@@ -6934,6 +7659,16 @@
 				D85E281906FA0DF000385C32,
 				D85E281A06FA0DF000385C32,
 				D85E281F06FA0E1200385C32,
+				D880FD210780AC2A00FD03CC,
+				D880FE440780AF2200FD03CC,
+				D880FE450780AF2200FD03CC,
+				D880FE460780AF2200FD03CC,
+				D880FE470780AF2200FD03CC,
+				D880FE480780AF2200FD03CC,
+				D828F99C0780C24B00215EB9,
+				D828F9AE0780C46700215EB9,
+				D828F9AF0780C46700215EB9,
+				D828F9B90780C52400215EB9,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6943,6 +7678,8 @@
 			files = (
 				D85E27FC06FA0D0800385C32,
 				D85E280306FA0D2E00385C32,
+				D880FD220780AC2A00FD03CC,
+				D828F99D0780C24B00215EB9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6950,6 +7687,8 @@
 		D85E27F206FA0C0100385C32 = {
 			buildActionMask = 2147483647;
 			files = (
+				D880FD0D0780882F00FD03CC,
+				D880FCC7077FEAD000FD03CC,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6965,7 +7704,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "ScorePlayer-Info.plist";
+				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
@@ -7019,9 +7758,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = text.xml;
 			name = "ScorePlayer-Info.plist";
-			path = "/Local/Users/leigh/Sources/Music/MusicKit/ScorePlayer-Info.plist";
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = "Applications/ScorePlayer/ScorePlayer-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		D85E27FB06FA0D0800385C32 = {
 			fileEncoding = 30;
@@ -7055,12 +7794,6 @@
 			path = Applications/ScorePlayer/ScorePlayerController.m;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		D85E280206FA0D2E00385C32 = {
-			fileRef = D85E280006FA0D2E00385C32;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D85E280306FA0D2E00385C32 = {
 			fileRef = D85E280106FA0D2E00385C32;
@@ -7287,12 +8020,6 @@
 			settings = {
 			};
 		};
-		D85E282E06FA105B00385C32 = {
-			fileRef = D8160DC805BB57CC00A1BB23;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D863A037059FAB1D00339D3B = {
 			containerPortal = D8DB4E4C059FA05500624233;
 			isa = PBXContainerItemProxy;
@@ -7304,6 +8031,12 @@
 			isa = PBXTargetDependency;
 			target = D84395E8059FAA450054BEEE;
 			targetProxy = D863A037059FAB1D00339D3B;
+		};
+		D866B62F07447C97007AD17E = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		D8673D8605A210D0009FFCAA = {
 			containerPortal = D8DB4E4C059FA05500624233;
@@ -7323,18 +8056,9 @@
 				D86D23A606F22964003565CB,
 				D86D23A906F22979003565CB,
 				D86D23AC06F22982003565CB,
-				D86D23A006F2294C003565CB,
 			);
 			isa = PBXGroup;
 			name = TwoWaves;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D86D23A006F2294C003565CB = {
-			children = (
-			);
-			isa = PBXGroup;
-			name = "External Frameworks and Libraries";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -7398,7 +8122,8 @@
 		D86D23B306F229E6003565CB = {
 			buildActionMask = 2147483647;
 			files = (
-				D86D23DA06F238D7003565CB,
+				D80DA5C80764E3D00052DFAF,
+				D80DA5C90764E3D00052DFAF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7561,12 +8286,6 @@
 			name = Interfaces;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		D86D23DA06F238D7003565CB = {
-			fileRef = D837AC1F06C818B200A6CFEB;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D86D248906F2AA4C003565CB = {
 			children = (
@@ -7788,7 +8507,10 @@
 		D8708B4705B312A70074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D8708C0B05B317B90074C18D,
+				D8001FE00762D3B100508A26,
+				D8001FE10762D3B100508A26,
+				D8001FE20762D3B100508A26,
+				D8001DE30762D2F700508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7803,7 +8525,7 @@
 			);
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -7888,7 +8610,10 @@
 		D8708B6805B313730074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D8708C0A05B317B90074C18D,
+				D8001FEB0762D54100508A26,
+				D8001FEC0762D54100508A26,
+				D8001FED0762D54100508A26,
+				D8001FE60762D4A900508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7904,7 +8629,7 @@
 			);
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = /usr/local/bin;
@@ -8027,8 +8752,10 @@
 		D8708B9805B314800074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D8708C0C05B317B90074C18D,
-				D8708C5A05B3182B0074C18D,
+				D8001FEE0762D58400508A26,
+				D8001FEF0762D58400508A26,
+				D8001FF00762D58400508A26,
+				D8001FF10762D58400508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8144,61 +8871,19 @@
 		};
 		D8708C0205B317740074C18D = {
 			children = (
-				D8708C0905B317B90074C18D,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		D8708C0905B317B90074C18D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D8708C0A05B317B90074C18D = {
-			fileRef = D8708C0905B317B90074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D8708C0B05B317B90074C18D = {
-			fileRef = D8708C0905B317B90074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D8708C0C05B317B90074C18D = {
-			fileRef = D8708C0905B317B90074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D8708C5305B3180E0074C18D = {
 			children = (
-				D8708C5905B3182B0074C18D,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		D8708C5905B3182B0074C18D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MKDSP.framework;
-			path = /Library/Frameworks/MKDSP.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D8708C5A05B3182B0074C18D = {
-			fileRef = D8708C5905B3182B0074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D8708DFE05B31C970074C18D = {
 			containerPortal = D8DB4E4C059FA05500624233;
@@ -8483,7 +9168,10 @@
 		D8708F4F05B49A430074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D8708F9605B49B970074C18D,
+				D8002024076376B300508A26,
+				D8002025076376B300508A26,
+				D8002026076376B300508A26,
+				D866B62F07447C97007AD17E,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8695,6 +9383,7 @@
 				D84E21D805B70940002B493F,
 				D84E21DA05B70940002B493F,
 				D84E21DC05B70940002B493F,
+				D80DA5CB0764E4250052DFAF,
 			);
 			isa = PBXAggregateTarget;
 			name = "Examples Only (Aggregate)";
@@ -8726,26 +9415,11 @@
 		};
 		D8708F9105B49B740074C18D = {
 			children = (
-				D8708F9505B49B970074C18D,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		D8708F9505B49B970074C18D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D8708F9605B49B970074C18D = {
-			fileRef = D8708F9505B49B970074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D870915A05B5D67A0074C18D = {
 			buildSettings = {
@@ -8835,7 +9509,10 @@
 		D870920405B5D9EF0074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D870924F05B5DBE60074C18D,
+				D8001FF20762D5E900508A26,
+				D8001FF30762D5E900508A26,
+				D8001FF40762D5E900508A26,
+				D8001FF50762D5E900508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9057,12 +9734,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		D870924F05B5DBE60074C18D = {
-			fileRef = D870924E05B5DBE60074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D870929105B5DC150074C18D = {
 			containerPortal = D8DB4E4C059FA05500624233;
 			isa = PBXContainerItemProxy;
@@ -9117,7 +9788,6 @@
 		};
 		D870938105B5DCA70074C18D = {
 			children = (
-				D87093BD05B5DE170074C18D,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
@@ -9156,7 +9826,10 @@
 		D870938B05B5DCDE0074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D87093BE05B5DE170074C18D,
+				D8002027076376C100508A26,
+				D8002028076376C100508A26,
+				D8002029076376C100508A26,
+				D80020230763768800508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9377,20 +10050,6 @@
 			settings = {
 			};
 		};
-		D87093BD05B5DE170074C18D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D87093BE05B5DE170074C18D = {
-			fileRef = D87093BD05B5DE170074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D870941B05B5DF6E0074C18D = {
 			children = (
 				D870944A05B5E0460074C18D,
@@ -9412,7 +10071,6 @@
 		};
 		D870942905B5DF7D0074C18D = {
 			children = (
-				D870946505B5E07C0074C18D,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks";
@@ -9466,7 +10124,10 @@
 		D870944105B5DFDF0074C18D = {
 			buildActionMask = 2147483647;
 			files = (
-				D870946605B5E07C0074C18D,
+				D80020330763776C00508A26,
+				D80020340763776C00508A26,
+				D80020350763776C00508A26,
+				D80020360763776C00508A26,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9608,20 +10269,6 @@
 			settings = {
 			};
 		};
-		D870946505B5E07C0074C18D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MusicKit.framework;
-			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D870946605B5E07C0074C18D = {
-			fileRef = D870946505B5E07C0074C18D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D870946A05B5E1100074C18D = {
 			children = (
 				D870946B05B5E1100074C18D,
@@ -9722,18 +10369,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		D879C15C05A22C4F005DB251 = {
-			fileRef = D879C15A05A22C4F005DB251;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D879C15D05A22C4F005DB251 = {
-			fileRef = D879C15B05A22C4F005DB251;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D879C2F705A24B87005DB251 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -9741,12 +10376,6 @@
 			path = /Library/Frameworks/MKPerformSndMIDI.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
-		};
-		D879C2F805A24B87005DB251 = {
-			fileRef = D879C2F705A24B87005DB251;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D879C35F05A2B0BC005DB251 = {
 			buildPhases = (
@@ -9866,7 +10495,8 @@
 		D879C3BE05A2B47F005DB251 = {
 			buildActionMask = 2147483647;
 			files = (
-				D879C3EC05A2B529005DB251,
+				D880FCBB077FE29F00FD03CC,
+				D880FC23077FE25900FD03CC,
 				D879C42105A2B577005DB251,
 				D879C42205A2B577005DB251,
 				D879C42305A2B577005DB251,
@@ -10026,12 +10656,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		D879C3EC05A2B529005DB251 = {
-			fileRef = D879C3EB05A2B529005DB251;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D879C41E05A2B577005DB251 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -10143,6 +10767,279 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		D880FBC7077FD9B700FD03CC = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FBCE077FDD4A00FD03CC = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FBE4077FDD7E00FD03CC = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FC0E077FDDBA00FD03CC = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FC23077FE25900FD03CC = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FCBB077FE29F00FD03CC = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FCC7077FEAD000FD03CC = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FD0B0780880E00FD03CC = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D85E27F306FA0C0100385C32;
+			remoteInfo = "ScorePlayer (Application)";
+		};
+		D880FD0C0780880E00FD03CC = {
+			isa = PBXTargetDependency;
+			target = D85E27F306FA0C0100385C32;
+			targetProxy = D880FD0B0780880E00FD03CC;
+		};
+		D880FD0D0780882F00FD03CC = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FD1F0780AC2A00FD03CC = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ErrorLog.h;
+			path = Applications/ScorePlayer/ErrorLog.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD200780AC2A00FD03CC = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ErrorLog.m;
+			path = Applications/ScorePlayer/ErrorLog.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD210780AC2A00FD03CC = {
+			fileRef = D880FD1F0780AC2A00FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FD220780AC2A00FD03CC = {
+			fileRef = D880FD200780AC2A00FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FD290780ACE000FD03CC = {
+			children = (
+				D880FE3C0780AE3E00FD03CC,
+				D880FE390780AE3800FD03CC,
+				D880FE360780AE3300FD03CC,
+				D880FE330780AE2900FD03CC,
+			);
+			isa = PBXGroup;
+			name = PianoRoll;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD2D0780ACF000FD03CC = {
+			children = (
+				D880FD310780AD6400FD03CC,
+				D880FD340780AD6D00FD03CC,
+				D880FD370780AD8000FD03CC,
+				D880FD3A0780AD8C00FD03CC,
+			);
+			isa = PBXGroup;
+			name = EnvelopeEd;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD310780AD6400FD03CC = {
+			children = (
+				D8E8D5BF078463D400AAE755,
+				D8E8D5C0078463D400AAE755,
+				D8E8D5C3078463D400AAE755,
+				D8E8D5C4078463D400AAE755,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD340780AD6D00FD03CC = {
+			children = (
+				D8E8D5CD078463FB00AAE755,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD370780AD8000FD03CC = {
+			children = (
+				D8E8D5DA0784642D00AAE755,
+				D8E8D5D70784642600AAE755,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FD3A0780AD8C00FD03CC = {
+			children = (
+				D8E8D5D10784641D00AAE755,
+				D8E8D5D20784641D00AAE755,
+				D828FA5C0780D1F500215EB9,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE330780AE2900FD03CC = {
+			children = (
+				D828F9CB0780CC1F00215EB9,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE360780AE3300FD03CC = {
+			children = (
+				D828F9EC0780CD2400215EB9,
+				D828F9E90780CD0E00215EB9,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE390780AE3800FD03CC = {
+			children = (
+				D828F9E50780CD0600215EB9,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE3C0780AE3E00FD03CC = {
+			children = (
+				D828F9CF0780CCDE00215EB9,
+				D828F9D00780CCDE00215EB9,
+				D828F9D10780CCDE00215EB9,
+				D828F9D20780CCDE00215EB9,
+				D828F9D30780CCDE00215EB9,
+				D828F9D40780CCDE00215EB9,
+				D828F9D50780CCDE00215EB9,
+				D828F9D60780CCDE00215EB9,
+				D828F9D70780CCDF00215EB9,
+				D828F9D80780CCDF00215EB9,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE3F0780AF2200FD03CC = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = Midi.icns;
+			path = Applications/ScorePlayer/Images/Midi.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE400780AF2200FD03CC = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = PlayScore.icns;
+			path = Applications/ScorePlayer/Images/PlayScore.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE410780AF2200FD03CC = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = Score.icns;
+			path = Applications/ScorePlayer/Images/Score.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE420780AF2200FD03CC = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = ScorePlayerApp.icns;
+			path = Applications/ScorePlayer/Images/ScorePlayerApp.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE430780AF2200FD03CC = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = Sound.icns;
+			path = Applications/ScorePlayer/Images/Sound.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D880FE440780AF2200FD03CC = {
+			fileRef = D880FE3F0780AF2200FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FE450780AF2200FD03CC = {
+			fileRef = D880FE400780AF2200FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FE460780AF2200FD03CC = {
+			fileRef = D880FE410780AF2200FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FE470780AF2200FD03CC = {
+			fileRef = D880FE420780AF2200FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D880FE480780AF2200FD03CC = {
+			fileRef = D880FE430780AF2200FD03CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D882794407008F510060CAFE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -10165,7 +11062,6 @@
 				D88C500306C7E2A600D33D99,
 				D88C500A06C7E2C100D33D99,
 				D88C501106C7E2CB00D33D99,
-				D88C501A06C7E2DC00D33D99,
 			);
 			isa = PBXGroup;
 			name = PatchCord;
@@ -10226,15 +11122,6 @@
 			);
 			isa = PBXGroup;
 			name = "Supporting Files";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D88C501A06C7E2DC00D33D99 = {
-			children = (
-				D837AC1706C818B200A6CFEB,
-			);
-			isa = PBXGroup;
-			name = "External Frameworks and Libraries";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -10315,10 +11202,6 @@
 		D88C502706C7E37100D33D99 = {
 			buildActionMask = 2147483647;
 			files = (
-				D837AC2506C818B200A6CFEB,
-				D837AC2606C818B200A6CFEB,
-				D837AC2706C818B200A6CFEB,
-				D837AC2806C818B300A6CFEB,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12694,12 +13577,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		D88FEA5B05A102640024FD88 = {
-			fileRef = D88FEA5A05A102640024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D88FEA6105A102D70024FD88 = {
 			containerPortal = D8DB4E4C059FA05500624233;
 			isa = PBXContainerItemProxy;
@@ -12800,7 +13677,7 @@
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -seg1addr 370000";
+				OTHER_LDFLAGS = "-framework Foundation -seg1addr 380000";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
@@ -13563,7 +14440,6 @@
 				D85A2F28061F33CB0065380E,
 				D85A2FC6061F35C20065380E,
 				D85A2F36061F33DC0065380E,
-				D85A2F3D061F33E50065380E,
 			);
 			isa = PBXGroup;
 			name = Spectro;
@@ -14556,6 +15432,32 @@
 			settings = {
 			};
 		};
+		D8C53695074A7C1C0051F1BF = {
+			children = (
+				D82557B205A2198200B0192B,
+				D82557B305A2198200B0192B,
+				D82557D405A21AC000B0192B,
+			);
+			isa = PBXGroup;
+			name = "Note Parameters";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8C536C7074A941D0051F1BF = {
+			children = (
+				D82557D505A21AC000B0192B,
+				D82557B505A2198200B0192B,
+				D82557BA05A2198200B0192B,
+				D82557B605A2198200B0192B,
+				D82557D705A21AC000B0192B,
+				D82557D805A21AC000B0192B,
+			);
+			isa = PBXGroup;
+			name = Synthesis;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		D8D3D95905A0E5B200CAD810 = {
 			fileRef = D81D7E40059FA8ED00BCE725;
 			isa = PBXBuildFile;
@@ -14702,6 +15604,8 @@
 				D85E27D106FA098200385C32,
 				D86D23B406F229E6003565CB,
 				D85E27F306FA0C0100385C32,
+				D828F9C80780CC1E00215EB9,
+				D828FA590780D1F400215EB9,
 			);
 		};
 		D8DB4E5B059FA0AA00624233 = {
@@ -14720,10 +15624,12 @@
 		};
 		D8DB4E5E059FA0C900624233 = {
 			children = (
-				D85E27DC06FA0B8800385C32,
 				D8AE7A6A061A1636009D0112,
 				D88C4FF206C7E0DE00D33D99,
 				D86D239D06F2293A003565CB,
+				D880FD290780ACE000FD03CC,
+				D85E27DC06FA0B8800385C32,
+				D880FD2D0780ACF000FD03CC,
 			);
 			isa = PBXGroup;
 			name = Applications;
@@ -14745,7 +15651,6 @@
 				D8708E7305B493E50074C18D,
 				D8708E6C05B493D90074C18D,
 				D8708E6305B493CA0074C18D,
-				D8160DC805BB57CC00A1BB23,
 			);
 			isa = PBXGroup;
 			name = Examples;
@@ -14870,6 +15775,302 @@
 			isa = PBXAggregateTarget;
 			name = "Frameworks Only (Aggregate)";
 			productName = MusicKit;
+		};
+		D8E8D5B70784628600AAE755 = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D828F9C80780CC1E00215EB9;
+			remoteInfo = "PianoRoll (Application)";
+		};
+		D8E8D5B80784628600AAE755 = {
+			isa = PBXTargetDependency;
+			target = D828F9C80780CC1E00215EB9;
+			targetProxy = D8E8D5B70784628600AAE755;
+		};
+		D8E8D5BF078463D400AAE755 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Controller.h;
+			path = Applications/EnvelopeEd/Controller.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5C0078463D400AAE755 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Controller.m;
+			path = Applications/EnvelopeEd/Controller.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5C3078463D400AAE755 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = EnvelopeView.h;
+			path = Applications/EnvelopeEd/EnvelopeView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5C4078463D400AAE755 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = EnvelopeView.m;
+			path = Applications/EnvelopeEd/EnvelopeView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5C6078463D400AAE755 = {
+			fileRef = D8E8D5C0078463D400AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5CA078463D400AAE755 = {
+			fileRef = D8E8D5C4078463D400AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5CD078463FB00AAE755 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = EnvelopeEd_main.m;
+			path = Applications/EnvelopeEd/EnvelopeEd_main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5CE078463FB00AAE755 = {
+			fileRef = D8E8D5CD078463FB00AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5D10784641D00AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			name = README.rtf;
+			path = Applications/EnvelopeEd/README.rtf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5D20784641D00AAE755 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = TODO;
+			path = Applications/EnvelopeEd/TODO;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5D70784642600AAE755 = {
+			children = (
+				D8E8D5ED0784649E00AAE755,
+				D8E8D5EF0784649E00AAE755,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5DA0784642D00AAE755 = {
+			children = (
+				D8E8D5F60784653B00AAE755,
+				D8E8D5DD0784645800AAE755,
+				D8E8D5DE0784645800AAE755,
+				D8E8D5DF0784645800AAE755,
+				D8E8D5E00784645800AAE755,
+				D8E8D5E10784645800AAE755,
+				D8E8D5E20784645800AAE755,
+				D8E8D5E30784645800AAE755,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5DD0784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = above_alt.tiff;
+			path = Applications/EnvelopeEd/above_alt.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5DE0784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = above.tiff;
+			path = Applications/EnvelopeEd/above.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5DF0784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = below_alt.tiff;
+			path = Applications/EnvelopeEd/below_alt.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5E00784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = below.tiff;
+			path = Applications/EnvelopeEd/below.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5E10784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = cross.tiff;
+			path = Applications/EnvelopeEd/cross.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5E20784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = crossfill.tiff;
+			path = Applications/EnvelopeEd/crossfill.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5E30784645800AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = EnvelopeEd.tiff;
+			path = Applications/EnvelopeEd/EnvelopeEd.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5E40784645800AAE755 = {
+			fileRef = D8E8D5DD0784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5E50784645800AAE755 = {
+			fileRef = D8E8D5DE0784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5E60784645800AAE755 = {
+			fileRef = D8E8D5DF0784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5E70784645800AAE755 = {
+			fileRef = D8E8D5E00784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5E80784645800AAE755 = {
+			fileRef = D8E8D5E10784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5E90784645800AAE755 = {
+			fileRef = D8E8D5E20784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5EA0784645800AAE755 = {
+			fileRef = D8E8D5E30784645800AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5ED0784649E00AAE755 = {
+			children = (
+				D8E8D5EE0784649E00AAE755,
+			);
+			isa = PBXVariantGroup;
+			name = EnvelopeEd.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5EE0784649E00AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/EnvelopeEd/English.lproj/EnvelopeEd.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5EF0784649E00AAE755 = {
+			children = (
+				D8E8D5F00784649E00AAE755,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5F00784649E00AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/EnvelopeEd/English.lproj/Info.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5F10784649E00AAE755 = {
+			fileRef = D8E8D5ED0784649E00AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5F20784649E00AAE755 = {
+			fileRef = D8E8D5EF0784649E00AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5F60784653B00AAE755 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = EnvelopeEd.icns;
+			path = Applications/EnvelopeEd/EnvelopeEd.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E8D5F70784653B00AAE755 = {
+			fileRef = D8E8D5F60784653B00AAE755;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D5F8078465A500AAE755 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E8D6CE0784844300AAE755 = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D828FA590780D1F400215EB9;
+			remoteInfo = "EnvelopeEd (Application)";
+		};
+		D8E8D6CF0784844300AAE755 = {
+			isa = PBXTargetDependency;
+			target = D828FA590780D1F400215EB9;
+			targetProxy = D8E8D6CE0784844300AAE755;
 		};
 	};
 	rootObject = D8DB4E4C059FA05500624233;
