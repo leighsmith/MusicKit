@@ -23,6 +23,8 @@
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
     [ab initWithFormat: f data: d];    
+    //NSLog(@"SndAudioBuffer audiobufferwithformat: format: %d, dataSize: %d, samplingRate: %d, channelCount: %d\n",
+    //    ab->formatSnd.dataFormat, ab->formatSnd.dataSize, ab->formatSnd.samplingRate, ab->formatSnd.channelCount);
     return [ab autorelease];
 }
 
@@ -53,7 +55,11 @@
         int samSize       = [ab multiChannelSampleSizeInBytes];
         int lengthInBytes = r.length * samSize;
         ab->formatSnd.dataSize = lengthInBytes;
-        ab->data  = [snd data] + samSize * r.location; 
+        ab->data  = [snd data] + samSize * r.location;
+	//NSLog(@"SndAudioBuffer: creating wrapper with samSize %d, lengthInBytes %d, offset %d\n",
+        //    samSize,lengthInBytes,samSize * r.location);
+	//NSLog(@"SndAudioBuffer: format: %d, dataSize: %d, samplingRate: %d, channelCount: %d\n",
+	//    ab->formatSnd.dataFormat, ab->formatSnd.dataSize, ab->formatSnd.samplingRate, ab->formatSnd.channelCount);
     }
     ab->bOwnsData = FALSE;
 
@@ -70,7 +76,6 @@
                   (long)((f->samplingRate) * timeInSec);
                           
     [ab initWithFormat: f data: NULL];
-        
     f->dataSize = oldLength;
     
     return [ab autorelease];
@@ -118,6 +123,11 @@
     return self;
 }
 
+- (void) zeroForeignBuffer
+{
+    memset(data, 0, formatSnd.dataSize);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +163,7 @@
     long frameCount;
     
     // SndPrintStruct(&formatSnd); // for checking the formatSnd is valid
-    
+
     if (end > formatSnd.dataSize / sizeof(float))
         end = formatSnd.dataSize / sizeof(float);
 
@@ -173,8 +183,6 @@
                 
                 float *in  = (float*) [buff data];
                 float *out = (float*) data;
-
-//                NSLog(@"Mixing client output buffer with main output buff, (%f)",in[100]);
 
                 if (selfNumChannels == buffNumChannels) {
                     for (i = 0; i < frameCount * buffNumChannels; i++) {
@@ -214,8 +222,6 @@
                 short *in  = (short*) [buff data];
                 float *out = (float*) data, f;
 
-                // NSLog(@"16bit Linear Format, selfNumChannels = %d, buffNumChannels = %d, frameCount = %ld\n",
-                //    selfNumChannels, buffNumChannels, frameCount);
                 if (selfNumChannels == buffNumChannels) {
                     for (i = 0; i < frameCount * buffNumChannels; i++) {
                         f = (float) in[i] / 32768.0f;
