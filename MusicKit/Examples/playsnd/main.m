@@ -134,7 +134,8 @@ int main (int argc, const char * argv[])
         PrintError("Can't find sound file",-2);
       }
       else {
-        [s readSoundfile: filename];      
+        [s readSoundfile: filename];
+        SndSwapSoundToHost([s data],[s data],[s sampleCount],[s channelCount],[s dataFormat]);
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
       
