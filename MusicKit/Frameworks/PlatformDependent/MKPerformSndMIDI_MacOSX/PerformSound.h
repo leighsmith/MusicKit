@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2000/10/29 06:07:51  leigh
+  Made BOOL typedef compatible with the standard.
+
   Revision 1.2  2000/05/05 22:43:56  leigh
   ensure we don't have boolean constants predefined
 
@@ -35,7 +38,7 @@
 
 // these don't seem to be defined anywhere standard - probably they
 // are in GnuStep
-typedef int BOOL;
+typedef char BOOL;
 #ifndef FALSE
 #define FALSE 0
 #define TRUE !(FALSE)
