@@ -53,8 +53,8 @@ typedef unsigned int   SND_UWORD;
 
 #ifdef DEBUG
 #define INLINE
-#else DEBUG
+#else
 #define INLINE inline
-#endif DEBUG
+#endif
 
 #endif
