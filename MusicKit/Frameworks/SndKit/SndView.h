@@ -14,6 +14,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ********************************************************************************/
 
+#ifndef __SNDVIEW_H__
+#define __SNDVIEW_H__
+
 #import <AppKit/AppKit.h>
 #import "SndKit.h"
 
@@ -222,3 +225,5 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
     Sent to the delegate just before the SoundView's sound is recorded into.
 ********************************************/
 @end
+
+#endif
