@@ -2,7 +2,7 @@
   $Id$
 
   Description:
-    Defines the C entry points for the DLL application.
+    Defines the C entry points to the Sound Library.
 
     These routines emulate an internal SoundKit module.
     This is intended to hide all the operating system evil behind a banal C function interface.
@@ -20,7 +20,10 @@
 */
 /*
 // $Log$
-// Revision 1.1  2000/01/14 00:14:33  leigh
+// Revision 1.2  2000/03/11 01:57:30  leigh
+// Fixed Description
+//
+// Revision 1.1.1.1  2000/01/14 00:14:33  leigh
 // Initial revision
 //
 */

@@ -7,7 +7,7 @@
 # and Makefile.postamble (both optional), and Makefile will include them.
 #
 
-NAME = MKPerformMIDI
+NAME = MKPerformSndMIDI
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
