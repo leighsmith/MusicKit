@@ -508,7 +508,7 @@ reduce the compatibility issue.
           </varlistentry>
 	  <varlistentry>
 	    <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/MK_V5.1.8.s.tar.gz">MK_V5.1.8.s.tar.gz</ulink>
+              <ulink url="http://www.tomandandy.com/MusicKit/MK_V5.1.9.s.tar.gz">MK_V5.1.9.s.tar.gz</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -565,7 +565,7 @@ reduce the compatibility issue.
 	<variablelist>
 	  <varlistentry>
 	    <term>
-            <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX-Server/MK-5.1.8.pkg.tar">MK-5.1.8.pkg.tar</ulink>
+            <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX-Server/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
             </term>
 	    <listitem>
 	      <para>
