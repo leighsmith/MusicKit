@@ -1,75 +1,80 @@
 #!/bin/zsh
 # $Id$
 #
-# zsh script to automate the packaging of MusicKit source tree from
+# zsh script to automate the packaging of MusicKit and SndKit source trees from
 # the CVS repository ready for download.
 #
 # Leigh Smith <leigh@tomandandy.com> 2000/1/3
 #
-APPNAME=MusicKit
-APPCHECKEDOUT_SRCLOC=/tmp/MKSRC
+
+# Default distribution is the MusicKit.
+DISTNAME=MusicKit
+DISTCHECKEDOUTSRCLOC=/tmp/MKSRC
 # This allows us to have a different default CVSROOT
-MKCVSROOT=leigh@anoncvs.tomandandy.com:/Local/Library/CVSRoot
+MKCVSROOT=:ext:leighsmith@cvs.musickit.sourceforge.net:/cvsroot/musickit
 PACKAGENAME=MK
 if [ x_$1 = x_ ]; then
-    echo "${APPNAME} source shipping script"
-    echo "Usage: $0 version_number"
-    echo "Where version_number is of the form V.R.P and matches the CVS tag ${APPNAME}_V-R-P"
+    echo "${DISTNAME} source shipping script"
+    echo "Usage: $0 distribution version_number previous_version"
+    echo "Where version_number is of the form V.R.P and matches the CVS tag ${DISTNAME}_V-R-P"
     exit 1;
 else
-    RELEASE=$1
+    DISTNAME=$1
+    RELEASE=$2
+    PREVRELEASE=$3
 fi
 # Salt to taste:
 TAR=gnutar
 CHGLOGGEN=cvs2cl.pl
 TARLOC=/tmp
-CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
+CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
 
 # determine the date of the last tagged release.
-PREVCVSTAG=MusicKit_5-2-2 
-# PREVCVSTAG=${APPNAME}_`echo $PREVRELEASE | tr '.' '-'`
-PREVCVSTAGDATE=`cvs log -r$TAG | sed -n -e 's/date: \([^ ]*\) .*/\1/p' | sort -r | uniq | head -n 1`
+# PREVCVSTAG=${DISTNAME}_5-3-1 
+PREVCVSTAG=${DISTNAME}_`echo $PREVRELEASE | tr '.' '-'`
 
 # Checkout the source tree
-echo Checking out $CVSTAG to $APPCHECKEDOUT_SRCLOC
-mkdir -p $APPCHECKEDOUT_SRCLOC
-cd $APPCHECKEDOUT_SRCLOC
-cvs -d $MKCVSROOT -Q checkout -r $CVSTAG $APPNAME
+echo Checking out $CVSTAG to $DISTCHECKEDOUTSRCLOC
+mkdir -p $DISTCHECKEDOUTSRCLOC
+cd $DISTCHECKEDOUTSRCLOC
+cvs -d $MKCVSROOT -Q checkout -r $CVSTAG $DISTNAME
 
 # unwrap the symbolic links, this will remove the symbolic links wrap file.
-unwrap_symlink $APPNAME
+unwrap_symlink $DISTNAME
 
 # build a ChangeLog with spaces between filenames and comments, 
 # collected to half-day window, incorporating tags.
-cd $APPCHECKEDOUT_SRCLOC/$APPNAME
+cd $DISTCHECKEDOUTSRCLOC/$DISTNAME
 $CHGLOGGEN --no-wrap --separate-header --window 43200 --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
-cp Documentation/ChangeLog $TARLOC
+cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
 
+echo Logging changes after $PREVCVSTAG to $CVSTAG
 # This is the means to generate what we've done since last release.
 # '-d\>2000-10-09'
-# $CHGLOGGEN --no-wrap --separate-header --window 43200 --file $TARLOC/ChangeLog_$RELEASE --log-opts '-d\>$PREVCVSTAGDATE' 
+$CHGLOGGEN --no-wrap --separate-header --window 43200 --file $TARLOC/${DISTNAME}_ChangeLog_${RELEASE} --log-opts "-r${PREVCVSTAG}:${CVSTAG}"
 
 # create a readily readable PDF version of the README.sgml file
 # packageREADME
 # Unfortunately, the SGML tools don't work on MacOS X, so we suffice by copying them...
-cp ~/$APPNAME_README.pdf $APPCHECKEDOUT_SRCLOC/$APPNAME
+cp /tmp/${DISTNAME}_README.pdf $DISTCHECKEDOUTSRCLOC/$DISTNAME
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
-find $APPCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
+find $DISTCHECKEDOUTSRCLOC -name CVS -type d -exec rm -r {} \; -prune
 
 # tar up the remaining source
-cd $APPCHECKEDOUT_SRCLOC
+cd $DISTCHECKEDOUTSRCLOC
 # rename the directory to the current version.
-mv $APPNAME ${APPNAME}-$RELEASE
+mv $DISTNAME ${DISTNAME}-$RELEASE
 PACKAGEFILE=$TARLOC/${PACKAGENAME}-${RELEASE}.s.tar.gz
-$TAR czf $PACKAGEFILE ${APPNAME}-${RELEASE}
+$TAR czf $PACKAGEFILE ${DISTNAME}-${RELEASE}
 
 echo Archive generated at $PACKAGEFILE
-echo ChangeLog generated at $TARLOC/ChangeLog
-# echo ChangeLog diff between $PREVCVSTAGDATE and now generated at $TARLOC/ChangeLog_$RELEASE
+echo ChangeLog generated at $TARLOC/${DISTNAME}_ChangeLog
+echo ChangeLog since $PREVCVSTAG generated at $TARLOC/${DISTNAME}_ChangeLog_${RELEASE}
 
 # blow away the checked out source.
-rm -r $APPCHECKEDOUT_SRCLOC
+rm -r $DISTCHECKEDOUTSRCLOC
 
-# upload to upload.sourceforge.net/incoming
+# The user needs to use shipSource to upload to upload.sourceforge.net/incoming
+# using ftp.
