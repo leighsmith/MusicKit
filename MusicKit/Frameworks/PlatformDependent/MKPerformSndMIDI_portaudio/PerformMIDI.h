@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2001/10/31 17:18:20  sbrandon
+  Now define PERFORM_API in MKPerformSndMIDIDefines.h
+
   Revision 1.1  2001/07/02 22:03:48  sbrandon
   - initial revision. Still a work in progress, but does allow the MusicKit
     and SndKit to compile on GNUstep.
@@ -194,7 +197,7 @@ typedef struct _MKMDReplyFunctions {
     @defined PERFORM_API
     @discussion This allows us to introduce anything necessary for library declarations, namely for Windows. Unused in MacOS X.
 */
-#define PERFORM_API
+//#define PERFORM_API
 
 /*!
     @function       MKMDErrorString

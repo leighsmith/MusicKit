@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/10/31 17:17:17  sbrandon
+  Now define PERFORM_API in MKPerformSndMIDIDefines.h
+
   Revision 1.2  2001/09/03 15:02:53  sbrandon
   - added headerdoc comments from MKPerformSndMIDI_MACOSX project
   - added SNDSetBufferSizeInBytes method
@@ -41,7 +44,8 @@
 #ifndef __PERFORMSOUND__
 #define __PERFORMSOUND__
 
-#define PERFORM_API 
+//#define PERFORM_API 
+#include "MKPerformSndMIDIDefines.h"
 
 // these don't seem to be defined anywhere standard - probably they
 // are in GnuStep
