@@ -21,7 +21,6 @@
 
 @class SndAudioBuffer;
 @class SndAudioProcessorChain;
-@class SndAudioProcessorInspector;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -169,14 +168,7 @@
 */
 - (NSString*) description;
 /*!
-  @method     inspect
-  @abstract
-  @result
-  @discussion
-*/
-- (SndAudioProcessorInspector*) inspect;
-/*!
-  @method     paramDictionary    
+  @method     paramDictionary
   @abstract
   @result
   @discussion
