@@ -50,6 +50,7 @@
 #import "SndEndianFunctions.h"
 #import "SndTable.h"
 #import "Snd.h"
+#import "SndPasteboard.h"
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
 #import "SndExpt.h"
