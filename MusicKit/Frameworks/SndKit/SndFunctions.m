@@ -138,12 +138,23 @@ int SndBytesToFrames(int byteCount, int channelCount, int dataFormat)
 
 long SndFramesToBytes(long frameCount, int channelCount, int dataFormat)
 {
-    return (int)(frameCount * channelCount * SndSampleWidth(dataFormat));
+    return (long)(frameCount * channelCount * SndSampleWidth(dataFormat));
 }
 
 long SndDataSize(SndFormat format)
 {
     return SndFramesToBytes(format.frameCount, format.channelCount, format.dataFormat);
+}
+
+SndFormat SndFormatOfSNDStreamBuffer(SNDStreamBuffer *streamBuffer)
+{
+    SndFormat format = {
+        streamBuffer->dataFormat,
+        streamBuffer->frameCount,
+        streamBuffer->channelCount,
+        streamBuffer->sampleRate
+    };
+    return format;
 }
 
 float SndConvertDecibelsToLinear(float db)
@@ -835,12 +846,12 @@ int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
     newssList[ssPointer++] = ssList[i];
   }
   /* copy first part of 1st affected frag (the non-deleted part) */
-  /* FIXME an excellent optimisation here would be to work out which part of the sound is
-    * larger (the 1st remaining part of the frag, or the last remaining part), and instead of
-    * copying it, just shuffle the data down the frag, and realloc it. This would save having to
-    * malloc a totally new block of memory. In fact, where firstFrag != lastFrag, this should
-    * be done for both halves.
-    */
+  /* TODO an excellent optimisation here would be to work out which part of the sound is
+   * larger (the 1st remaining part of the frag, or the last remaining part), and instead of
+   * copying it, just shuffle the data down the frag, and realloc it. This would save having to
+   * malloc a totally new block of memory. In fact, where firstFrag != lastFrag, this should
+   * be done for both halves.
+   */
   if (startOffset > 0) {
     if (!(newStruct = _SndCopyFragBytes(ssList[firstFrag], 0, startOffset))) {
       /* we don't free members of the list here, since they are still part of the
