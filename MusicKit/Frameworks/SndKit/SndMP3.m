@@ -538,6 +538,8 @@ static int bitrateLookupTable[16][6] = {
   [pcmDataLock lock];
   [pcmDataLock unlock];
   [job autorelease];
+  // This is probably a bit kludgy but it will do for now.
+  loopEndIndex = [self lengthInSampleFrames] - 1;
   return SND_ERR_NONE;
 }
 
@@ -629,22 +631,26 @@ static int bitrateLookupTable[16][6] = {
 	float *pBuff = [anAudioBuffer bytes];
 	
 	if (buffChans == 2) {
-	    int currentBufferSample = bufferRange.location * buffChans;
+	    long frameIndex = 0;
 	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
 	    
 	    if (sndReadingRange.location < sndDataLength) {
 		// Since we do no resampling, we can use bufferRange.length here
 		int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
 
-		pData += sndReadingRange.location * buffChans;  // shift the base pointer up so we can use the same index for pData as pBuff.
-		for (; currentBufferSample < numOfFramesToCopy * buffChans; currentBufferSample += buffChans) {
-		    pBuff[currentBufferSample]   = (float) pData[currentBufferSample]   / 32768.0;
-		    pBuff[currentBufferSample+1] = (float) pData[currentBufferSample+1] / 32768.0;
+		for (; frameIndex < numOfFramesToCopy; frameIndex++) {
+		    long currentBufferSample = (bufferRange.location + frameIndex) * buffChans;
+		    long currentDecodedSample = (sndReadingRange.location + frameIndex) * buffChans;
+		    
+		    pBuff[currentBufferSample]     = (float) pData[currentDecodedSample]     / 32768.0;
+		    pBuff[currentBufferSample + 1] = (float) pData[currentDecodedSample + 1] / 32768.0;
 		}
 	    }
-	    for (; currentBufferSample < bufferRange.length * buffChans; currentBufferSample += buffChans) {
-		pBuff[currentBufferSample]   = 0.0;
-		pBuff[currentBufferSample+1] = 0.0;
+	    for (; frameIndex < bufferRange.length; frameIndex++) {
+		long currentBufferSample = (bufferRange.location + frameIndex) * buffChans;
+
+		pBuff[currentBufferSample]     = 0.0;
+		pBuff[currentBufferSample + 1] = 0.0;
 	    }
 #if SNDMP3_DEBUG
 	    {
@@ -663,22 +669,26 @@ static int bitrateLookupTable[16][6] = {
 	short *pBuff = [anAudioBuffer bytes];
 	
 	if (buffChans == 2) {
-	    int currentBufferSample = bufferRange.location * buffChans;
+	    long frameIndex = 0;
 	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
 
 	    if (sndReadingRange.location < sndDataLength) {
 		// Since we do no resampling, we can use bufferRange.length here
 		int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
 		
-		pData += sndReadingRange.location * buffChans;
-		for (; currentBufferSample < numOfFramesToCopy * buffChans; currentBufferSample += buffChans) {
-		    pBuff[currentBufferSample]   = pData[currentBufferSample]   / 32768;
-		    pBuff[currentBufferSample+1] = pData[currentBufferSample+1] / 32768;
+		for (; frameIndex < numOfFramesToCopy; frameIndex++) {
+		    long currentBufferSample = (bufferRange.location + frameIndex) * buffChans;
+		    long currentDecodedSample = (sndReadingRange.location + frameIndex) * buffChans;
+
+		    pBuff[currentBufferSample]     = pData[currentDecodedSample]     / 32768;
+		    pBuff[currentBufferSample + 1] = pData[currentDecodedSample + 1] / 32768;
 		}
 	    }
-	    for (; currentBufferSample < bufferRange.length * buffChans; currentBufferSample+= buffChans) {
-		pBuff[currentBufferSample]   = 0.0;
-		pBuff[currentBufferSample+1] = 0.0;
+	    for (; frameIndex < bufferRange.length * buffChans; frameIndex++) {
+		long currentBufferSample = (bufferRange.location + frameIndex) * buffChans;
+
+		pBuff[currentBufferSample]     = 0;
+		pBuff[currentBufferSample + 1] = 0;
 	    }
 #if SNDMP3_DEBUG
 	    {
