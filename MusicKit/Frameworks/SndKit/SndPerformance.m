@@ -296,9 +296,13 @@ startPosition: (double) startPosition
 {
     // deltaTime may be a misnomer, it is a multiple of buffers
     double  stretchedBufferLength = deltaTime * buffLength;
-    NSRange playRegion   = {playIndex, stretchedBufferLength + MAX(2, deltaTime)};
+    NSRange playRegion = {playIndex, stretchedBufferLength + MAX(2, deltaTime)};
+    BOOL atEndOfLoop = looping && playRegion.length > loopEndIndex - playIndex;
 
-    if (playRegion.length > endAtIndex - playIndex) {
+    if (atEndOfLoop) {
+	playRegion.length = loopEndIndex - playIndex + MAX(2, deltaTime);
+    }
+    else if (playRegion.length > endAtIndex - playIndex) {
 	buffLength = (endAtIndex - playIndex) / deltaTime;
 	playRegion.length = (buffLength) * deltaTime + MAX(2, deltaTime);
     }
@@ -313,9 +317,10 @@ startPosition: (double) startPosition
 #endif
 	// Negative buffer length means the endAtIndex was moved before the current playIndex,
 	// so we should skip any mixing and stop.
+	// Nowdays, with better checking on the updates of endAtIndex and playIndex this should never occur, so this check is probably redundant.
 	if (buffLength > 0) {
-	    int start = 0;
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+	    int start = 0;
 	    int end = buffLength;
 #endif
 
@@ -334,13 +339,26 @@ startPosition: (double) startPosition
 		[aBuffer release];
 	    }
 
+
+	    if(atEndOfLoop) {
+		// If we are at the end of the loop, copy in the beginning of the loop
+		NSRange startOfLoop = {loopStartIndex, buffLength - playRegion.length};
+		
+		[snd insertSamplesInRange: startOfLoop intoAudioBuffer: bufferToFill startingAt: playRegion.length];
+		playIndex = startOfLoop.location + startOfLoop.length;
+	    }
+	    else
+		playIndex += stretchedBufferLength;
+
+	    /*
 	    if (playIndex < 0) {
 		start = -playIndex;
 		start %= buffLength;
 	    }
+	    */
 	    
-            // if (end / deltaTime >  playIndex - endAtIndex)  end = (endAtIndex - playIndex) / deltaTime;
-
+	    // if (end / deltaTime >  playIndex - endAtIndex)  end = (endAtIndex - playIndex) / deltaTime;
+		
 	    actualTime +=  [bufferToFill duration];
 	    if (audioProcessorChain != nil) {
                  // printf("time: %f\n",relativePlayTime);
@@ -352,12 +370,45 @@ startPosition: (double) startPosition
 #endif
 	}
     }
-    playIndex += stretchedBufferLength;
+    else
+	playIndex += stretchedBufferLength;
 }
 
 - (BOOL) atEndOfPerformance
 {
     return playIndex >= endAtIndex - 1.0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) setLooping: (BOOL) yesOrNo
+{
+    looping = yesOrNo;
+}
+
+- (BOOL) looping
+{
+    return looping;
+}
+
+- (void) setLoopStartIndex: (long) newLoopStartIndex
+{
+    loopStartIndex = newLoopStartIndex;
+}
+
+- (long) loopStartIndex
+{
+    return loopStartIndex;
+}
+
+- (void) setLoopEndIndex: (long) newLoopEndIndex
+{
+    loopEndIndex = newLoopEndIndex;
+}
+
+- (long) loopEndIndex
+{
+    return loopEndIndex;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
