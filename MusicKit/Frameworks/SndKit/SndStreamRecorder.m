@@ -6,43 +6,13 @@
 //  Created by skot on Thu Apr 05 2001.
 //  Copyright (c) 2001 tomandandy. All rights reserved.
 //
-//  ATTENTION!!!
-//  Presumptions made to get this class off the ground quickly: The incoming
-//  stream is made of 32-bit floats, and the saved file is made of 16-bit ints!
-//
-//  BIG TODO: general purposae format stuff 
-//
-// Using the client currently requires an explicit connect-to-stream manager
-// call:
-// 
-// SndStreamRecorder *rec = [SndStreamrRecorder streamRecorder];
-// [[SndStreamManager defaultStreamManager] addClient: rec];
-// 
-// then either...
-// 
-// [rec startRecordingToFile: @"/tmp/incomingsound.snd"];
-// (time passes)
-// [rec stopRecording];
-// 
-// or:
-//
-// [rec prepareForRecording: 10.5]; //record for 10.5 seonds
-// [rec startrRecording];
-//
-// TODO:
-// - Obviously the big todo here is to get general purpose stream and file
-//   orformat conversion happening!
-// - Also, output is currently buffered + written (in stream-to-file mode) in
-//   44100-frame chunks; this should be more general.
-// - delegate call-backs to say recording has started / ended, what incoming
-//   levels are like, etc
-//
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamClient.h"
+#import "SndEndianFunctions.h"
 
 @implementation SndStreamRecorder
 
@@ -156,53 +126,27 @@
 // setUpRecordFile:
 ////////////////////////////////////////////////////////////////////////////////
 
-static unsigned char* convert2byteNative2LE(unsigned short* si)
-{
-    static unsigned char pch[2];
-    pch[0] = (*si & 0x00FF);
-    pch[1] = (*si & 0xFF00) >> 8;
-    return pch;
-}
-
-static unsigned char* convert4byteNative2LE(unsigned long* li)
-{
-    static unsigned char pch[4];
-    pch[0] = (*li & 0x000000FF);
-    pch[1] = (*li & 0x0000FF00) >> 8;
-    pch[2] = (*li & 0x00FF0000) >> 16;
-    pch[3] = (*li & 0xFF000000) >> 24;
-    return pch;
-}
-
 void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLengthInBytes)
 {
   unsigned long dw;
   unsigned short w;
   
   fwrite("RIFF", 4, 1, f);  
-  dw = dataLengthInBytes + 38;
-  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // file length
+  fwrite(SndSwap_Convert32BitNative2LittleEndian(dataLengthInBytes + 38), 4, 1, f); // file length
   fwrite("WAVE", 4, 1, f);  
   fwrite("fmt ", 4, 1, f);  
-  dw = 18;
-  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // chunk length
-  w = 1;
-  fwrite(convert2byteNative2LE(&w),  2, 1, f); // file format 1 = linear wav
-  w = format->channelCount;
-  fwrite(convert2byteNative2LE(&w),  2, 1, f); // channels
-  dw = format->samplingRate;
-  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // chunk length
+  fwrite(SndSwap_Convert32BitNative2LittleEndian(18), 4, 1, f);                    // chunk length
+  fwrite(SndSwap_Convert16BitNative2LittleEndian(1),  2, 1, f);                    // file format 1 = linear wav
+  fwrite(SndSwap_Convert16BitNative2LittleEndian(format->channelCount),  2, 1, f); // channels
+  fwrite(SndSwap_Convert32BitNative2LittleEndian(format->samplingRate), 4, 1, f);  // chunk length
   dw = format->samplingRate * format->channelCount * sizeof(short);
-  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // bytes per second
+  fwrite(SndSwap_Convert32BitNative2LittleEndian(dw), 4, 1, f);                    // bytes per second
   w = format->channelCount * sizeof(short);
-  fwrite(convert2byteNative2LE(&w),  2, 1, f); // frame size
-  w = 16;
-  fwrite(convert2byteNative2LE(&w),  2, 1, f); // bit resolution
-  w = 0;
-  fwrite(convert2byteNative2LE(&w),  2, 1, f); // extra bytes
+  fwrite(SndSwap_Convert16BitNative2LittleEndian(w),  2, 1, f);                    // frame size
+  fwrite(SndSwap_Convert16BitNative2LittleEndian(16),  2, 1, f);                   // bit resolution
+  fwrite(SndSwap_Convert16BitNative2LittleEndian(0),  2, 1, f);                    // extra bytes
   fwrite("data", 4, 1, f);  
-  dw = dataLengthInBytes;                                       
-  fwrite(convert4byteNative2LE(&dw), 4, 1, f); // data chunk length
+  fwrite(SndSwap_Convert32BitNative2LittleEndian(dataLengthInBytes), 4, 1, f);     // data chunk length
 }
 
 - (BOOL) setUpRecordFile: (NSString*) filename
@@ -245,7 +189,8 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   fseek(recordFile, 0, SEEK_SET);
   writeWavFormatHeader([recordBuffer format], recordFile, bytesRecorded);
   fclose(recordFile);
-  recordFile = NULL;
+  recordFile    = NULL;
+  bytesRecorded = 0;
   
   return TRUE;
 }
@@ -299,17 +244,34 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 // processBuffers
 ////////////////////////////////////////////////////////////////////////////////
 
+
+void streamToDisk(FILE *recordFile, void* recData, short* convBuffer, long bytesToRecord)
+{
+    float *f = (float*) recData; 
+    int    i, samsToConvert = bytesToRecord / sizeof(float);
+
+    for (i = 0; i < samsToConvert; i++) {
+        char *p = (char*)(convBuffer + i); 
+        short s = (short)(f[i] * 32767.0f);
+        p[0] = (char) (s & 0x00FF);
+        p[1] = (char) ((s & 0xFF00) >> 8);
+    }              
+    fwrite(convBuffer, samsToConvert, sizeof(short), recordFile);
+}
+
 //static long buffCount = 0; 
 
 - (void) processBuffers
 {  
-  if (!isRecording && recordFile == NULL) {
-//    fprintf(stderr,"Processing... (skip) buff: %li\n",buffCount++);
-    return;
+  if (!isRecording) {
+    if (bytesRecorded == 0 && position == 0)
+      return;
   }
-  else {
-    SndAudioBuffer *inB       = [self inputBuffer];
+  
+  [inputBufferLock lock];
+  {
     void *recData             = [recordBuffer data];
+    SndAudioBuffer *inB       = [self inputBuffer];
     void *inputData           = [inB data]; 
     long inBuffLengthInBytes  = [inB lengthInBytes];
     long recBuffLengthInBytes = [recordBuffer lengthInBytes];
@@ -342,18 +304,8 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
     if (position == recBuffLengthInBytes) {      
     
       if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
-        float *f = (float*) recData; 
-        int    i, samsToConvert = recBuffLengthInBytes / sizeof(float);
-
-        for (i = 0; i < samsToConvert; i++) {
-          char *p = (char*)(conversionBuffer+i); 
-          short s = (short)(f[i] * 32767.0f);
-          p[0] = (char) (s & 0x00FF);
-          p[1] = (char) ((s & 0xFF00) >> 8);
-        }
-              
-        fwrite(conversionBuffer, samsToConvert*sizeof(short), 1, recordFile);
-        bytesRecorded += samsToConvert * sizeof(short);
+        streamToDisk(recordFile, recData, conversionBuffer, recBuffLengthInBytes);
+        bytesRecorded += recBuffLengthInBytes * sizeof(short) / sizeof(float);
       }
       else {
         bytesRecorded += length;
@@ -361,16 +313,21 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
       }
       position = 0;
     }        
-    
     if (remainder) {
       memcpy(recData, inputData + length, remainder);
       position += remainder;
     }    
   } // end of isRecording
-  
+  [inputBufferLock unlock];
+    
   if (!isRecording) { // has record state changed? If so, shut down stuff.
-    if (recordFile != NULL)
-      [self closeRecordFile];      
+    if (recordFile != NULL) {
+      if (position > 0) { // flush out partial record buffer to disk
+        streamToDisk(recordFile, [recordBuffer data], conversionBuffer, position);
+        bytesRecorded += position; // final size calc - will be written into file.
+      }  
+      [self closeRecordFile];
+    }      
     if (delegate != nil && [delegate respondsToSelector: @selector(didFinishRecording)]) 
       [delegate didFinishRecording: self];
   }
