@@ -16,6 +16,13 @@
 Modification history:
 
   $Log$
+  Revision 1.26  2002/04/16 15:19:10  sbrandon
+  - several clumsy string-appending calls were simplified for speed
+  - a couple of _MKFreeParameter calls removed, since removal from the
+    hashtable automatically does this (and releases any objects in the
+    parameter)
+  - added a few comments about data retention
+
   Revision 1.25  2002/04/15 14:16:59  sbrandon
   tidied up some long lines (cosmetic)
 
@@ -275,6 +282,10 @@ static unsigned hashFun(NSHashTable *info, const void *data)
     return (unsigned) PARNUM(data);
 }
 
+static void retainFun(NSHashTable *info, const void *data)
+{
+}
+
 static BOOL isEqualFun(NSHashTable *info, const void *data1, const void *data2)
 {
     // NSLog(@"isEqual function %x, %u == %u?\n", info, (unsigned) PARNUM(data1), (unsigned) PARNUM(data2));
@@ -292,11 +303,10 @@ static void freeFun(NSHashTable *info, void *data)
  * in hash table callbacks before calling them. I'll submit a bugfix
  * for GNUSTEP, but for now I'll make a workaround here.
  */
-static void voidHashFun(NSHashTable *info, const void *data) {}
 static NSString *voidDescFun(NSHashTable *info, const void *data) {return nil;}
-static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,voidHashFun,freeFun,voidDescFun};
+static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,retainFun,freeFun,voidDescFun};
 #else
-static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,NULL,freeFun,NULL};
+static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,retainFun,freeFun,NULL};
 #endif
 
 static NSHashTable *allocHashTable(void)
@@ -310,6 +320,9 @@ static NSHashTable *allocHashTable(void)
 
 static NSHashTable *freeHashTable(NSHashTable *tab)
 {
+    /* we rely on the hashtable's freeFun function to release all
+     * the elements, so we don't bother iterating over them here.
+     */
     if (!tab)
         return NULL;
     if (tab) {
@@ -353,7 +366,7 @@ static void initNoteClass()
       initNoteClass();
     if (self != [MKNote class])
       return;
-    [MKNote setVersion:VERSION4]; //sb: suggested by Stone conversion guide
+    [MKNote setVersion:VERSION4];
     /* Changed to version 3, 10/23/92-DAJ */
     /* Changed to version 4, 11/9/94-DAJ */
     return;
@@ -438,7 +451,7 @@ static unsigned noteCachePtr = 0;
    * MKEnvelope and MKWaveTable objects are not freed.
    */
 {
-    [part removeNote:self];
+  [part removeNote:self];
 
   if (_parameters)
     freeHashTable(_parameters);
@@ -448,11 +461,12 @@ static unsigned noteCachePtr = 0;
     free(_appPars);
   _appPars = NULL;
   
-  if (((NSObject *)(self->isa)) == noteClass)
+  if (((NSObject *)(self->isa)) == noteClass) {
     if (noteCachePtr < NOTECACHESIZE) {
       noteCache[noteCachePtr++] = self;
     }
     else [super dealloc];
+  }
   else [super dealloc];
 }
 
@@ -476,7 +490,7 @@ static int nAppBitVects(); /* forward ref */
     NSHashEnumerator state;
     int i, vectorCount;
 
-    newObj = [MKNote allocWithZone: zone]; //sb: suggested in Stone porting guide
+    newObj = [MKNote allocWithZone: zone];
     newObj->noteTag = noteTag;
     newObj->noteType = noteType;
     newObj->timeTag = timeTag;
@@ -494,6 +508,7 @@ static int nAppBitVects(); /* forward ref */
     newObj->_parameters = NSCreateHashTableWithZone(htPrototype, NSCountHashTable(_parameters), zone);
     while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state)) != NULL) {
         // NSLog(@"Inserting %u into %x\n",  aPar->parNum, newObj->_parameters);
+        /* NB this means that any object-based parameters are copied, not shared */
         NSHashInsert(newObj->_parameters, (void *)_MKCopyParameter(aPar));
     }
 
@@ -1054,6 +1069,7 @@ id MKSetNoteParToString(MKNote *aNote,int par,NSString *value)
 }
 
 id MKSetNoteParToEnvelope(MKNote *aNote,int par,id envObj)
+  /* aNote will hold a reference to the envelope, not a copy */
 {
     if (!_MKIsPar(par))
       return nil;
@@ -1099,7 +1115,8 @@ id MKSetNoteParToObject(MKNote *aNote,int par,id anObj)
 -setPar:(int)par toObject:(id)anObj
   /* TYPE: Parameters; Sets parameter par to the specified object.
    * Points the parameter par to 
-   * anObj (anObj isn't copied).
+   * anObj (anObj isn't copied, but the parameter object will hold a
+   * retain on it).
    * The object may be of any class, but must be able to write itself
    * out in ASCII when sent the message -writeASCIIStream:.
    * It may write itself any way it wants, as long as it can also read
@@ -1167,7 +1184,7 @@ NSString *MKGetNoteParAsString(MKNote *aNote,int par)
 - (NSString *) parAsString: (int) par
   /* Returns a NSString converted from a copy of the value
    * of the parameter par. 
-   * If the parameter isn't present, returns a copy of "". 
+   * If the parameter isn't present, returns a copy of @"". 
    */
 {
     return MKGetNoteParAsString(self, par);
@@ -1283,6 +1300,9 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
     if (!_MKIsPar(par) || !clearParBit(self,par))
       return nil;
     SETDUMMYPAR(par);
+    /* this will also free te parameter structure, and release any objects
+     * it references
+     */
     NSHashRemove((NSHashTable *) _parameters, (const void *) dummyPar);
     return self;
 }
@@ -1434,14 +1454,14 @@ void _MKWriteParameters(MKNote *self,NSMutableData *aStream,_MKScoreOutStruct *p
               if (_MKIsParPublic(aPar)) {  /* Private parameters don't print */
 #                 if _MK_LINEBREAKS
 #                 define PARSPERLINE 5
-                  [aStream appendData:[@", " dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+                  [aStream appendBytes:", " length:2]; 
                   if (++parCnt > PARSPERLINE) {
                       parCnt = 0; 
-                      [aStream appendData:[@"\n\t" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+                      [aStream appendBytes:"\n\t" length:2];
                   }
 #                 else
                   if (parCnt++) 
-                    [aStream appendData:[@", " dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+                    [aStream appendBytes:", " length:2]; 
 #                 endif
                   _MKParWriteOn(aPar,aStream,p);
               }
@@ -1449,7 +1469,7 @@ void _MKWriteParameters(MKNote *self,NSMutableData *aStream,_MKScoreOutStruct *p
     }
     if (BINARY(p))
       _MKWriteInt(aStream,MAXINT);
-    else [aStream appendData:[@";\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    else [aStream appendBytes:";\n" length:2];
 }
 
 static id writeBinaryNoteAux(MKNote *self,id aPart,_MKScoreOutStruct *p)
@@ -1492,7 +1512,7 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
     [aStream appendData:
        [[NSString stringWithFormat:@"%@ ", partName]
          dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-    [aStream appendData:[@"(" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    [aStream appendBytes:"(" length:1];
     switch (self->noteType) {
       case MK_noteDur: {
           double dur = ((p && p->_ownerIsNoteRecorder) ?
@@ -1507,22 +1527,24 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
       case MK_noteOn:
       case MK_noteOff:
       case MK_noteUpdate:
-        [aStream appendData:
-	  [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)]
-	    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+       {
+        char *tnnc = _MKTokNameNoCheck(self->noteType);
+        [aStream appendBytes:tnnc length:strlen(tnnc)];
         if (self->noteTag != MAXINT)
           [aStream appendData:
 	    [[NSString stringWithFormat: @" %d", self->noteTag]
 	        dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         break;
+       }
       case MK_mute:
       default:
-        [aStream appendData:
-	  [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)]
-	    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+       {
+       char *tnnc = _MKTokNameNoCheck(self->noteType);
+        [aStream appendBytes:tnnc length:strlen(tnnc)];
         break;
+       }
     }
-    [aStream appendData:[@") " dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    [aStream appendBytes:") " length:2];
     _MKWriteParameters(self, aStream, p);
     return self;
 }
@@ -1616,7 +1638,8 @@ int MKAmpAttenuationToMidi(double amp)
 static id _removePar(MKNote *self, _MKParameter *aPar)
 {
     NSHashRemove((NSHashTable *) self->_parameters, (const void *) aPar);
-    _MKFreeParameter(aPar);
+//    _MKFreeParameter(aPar); // sbrandon: do we really need to do this, since
+                              // the hashtable should do that for us?
     return self;
 }
 
@@ -1876,7 +1899,8 @@ static void addParameter(MKNote *self,_MKParameter *aPar)
     aPar = _MKCopyParameter(aPar);
     setParBit(self, PARNUM(aPar));
     NSHashInsert((NSHashTable *) self->_parameters, (const void *) aPar);
-    _MKFreeParameter(aPar);
+//    _MKFreeParameter(aPar); //sb NO!!! The hashtable does not make a copy,
+                              // so we definitely don't want to free it!
 }
 
 void _MKNoteShiftTimeTag(MKNote *aNote, double timeShift)
