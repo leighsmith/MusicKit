@@ -66,7 +66,9 @@
 #include "SndResample.h"
 #include "_Sndfilterkit.h"
 #include <math.h>
+#if !defined(__FreeBSD__) || (defined(__FreeBSD_version) && (__FreeBSD_version < 500000))
 #include <malloc.h>
+#endif
 #else
 
 #import "SndResample.h"

@@ -87,7 +87,12 @@ typedef struct PaDriverInfo /* PROPOSED */
 
 #include <stdio.h>
 #include <stdlib.h>
+#if defined(__FreeBSD__)
+#include <sys/param.h>
+#endif
+#if !defined(__FreeBSD__) || (defined(__FreeBSD_version) && (__FreeBSD_version < 500000))
 #include <malloc.h>
+#endif
 #include <memory.h>
 #include <math.h>
 #include "portaudio.h"
@@ -105,7 +110,11 @@ typedef struct PaDriverInfo /* PROPOSED */
 #ifdef __linux__
 #include <linux/soundcard.h>
 #else
+#if defined(__FreeBSD__) && defined(__FreeBSD_version) && (__FreeBSD_version >= 500000)
+#include <sys/soundcard.h>
+#else
 #include <machine/soundcard.h> /* JH20010905 */
+#endif
 #endif
 
 #include <sched.h> 
