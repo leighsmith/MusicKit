@@ -236,12 +236,6 @@ int main (int argc, const char * argv[])
 
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
 
-        // wait for manager to go active... man, this is dodgey and should be fixed!!!!
-        while (![[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
-            sleep(1);
-            waitCount++;
-            if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
-        }
         // Wait for stream manager to go inactive, signalling the sound has finished playing
         while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
           sleep(1);
