@@ -4,14 +4,14 @@ This is the main document which simply provides the attribution and
 then includes all chapters that constitute the
 MusicKit and SndKit Concepts book.
 
-In SGML using DocBook DTD V3.1 and above.
+In SGML using DocBook DTD V4.1 and above.
 
 Edit this file, not the HTML, RTF or LaTeX output.
 
 Leigh Smith <leigh@tomandandy.com>
 -->
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!ENTITY SystemOverview      SYSTEM "SystemOverview.sgml">
 <!ENTITY IntroSndKit         SYSTEM "IntroSndKit.sgml">
 <!ENTITY IntroMusicKit       SYSTEM "IntroMusicKit.sgml">
@@ -29,6 +29,7 @@ Leigh Smith <leigh@tomandandy.com>
 <!ENTITY SKClassReferences   "&MKWeb;/Frameworks/SndKit">
 <!ENTITY SKFunctionReferences "&MKWeb;">
 <!ENTITY IntroSynthPatches   "&MKWeb;">
+<!entity maintaineremail "leigh@leighsmith.com">
 ]>
 
 <book id="MusicKitConcepts">
@@ -95,7 +96,7 @@ linkend="SoundHardware"> and can sometimes err on the side of being
 &ldquo;promotional&rdquo; in tone. The majority of the document is
 however platform independent. Over subsequent releases, we intend to
 rewrite the redundant material, and clarify the confusing. Please
-direct suggestions to <email>leigh@tomandandy.com</email>.
+direct suggestions to <email>&maintaineremail;</email>.
 </para>
 
 <para>
