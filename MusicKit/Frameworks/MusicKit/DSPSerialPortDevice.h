@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/03/12 01:56:54  leigh
+  Typed orch to avoid warnings
+
   Revision 1.2  1999/07/29 01:25:42  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -98,7 +101,7 @@
     unsigned long initWord1,initWord2;
     unsigned long runTimeWord1,runTimeWord2;
     int lineOutAtten,lineInGain;
-    id orch;
+    MKOrchestra *orch;
 }
 
 /* The following methods are invoked by the Orchestra. */
