@@ -62,7 +62,7 @@ static SndTable* defaultSndTable = nil;
 
 - soundNamed: (NSString *) aName
 {
-    NSArray *libraryDirs = [NSArray arrayWithObject: @"."];
+    NSMutableArray *libraryDirs = [NSMutableArray arrayWithObject: @"."];
     NSArray *sndFileExtensions = [Snd soundFileExtensions];
     int directoryIndex;
     id retSnd = [nameTable objectForKey: aName];
@@ -70,7 +70,7 @@ static SndTable* defaultSndTable = nil;
     if (retSnd)
 	return [[retSnd retain] autorelease];
 
-    [libraryDirs arrayByAddingObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES)];
+    [libraryDirs addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES)];
 
     for(directoryIndex = 0; directoryIndex < [libraryDirs count]; directoryIndex++) {
 	NSString *soundLibraryPath = [[libraryDirs objectAtIndex: directoryIndex] stringByAppendingPathComponent: @"Sounds"];
