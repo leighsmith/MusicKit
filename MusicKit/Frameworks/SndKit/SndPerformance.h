@@ -3,9 +3,8 @@
 //  $Id$
 //    
 //  Original Author: Leigh Smith, <leigh@tomandandy.com>
-//  Further work: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Copyright (c) 2001-2002, The MusicKit Project.  All rights reserved.
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -25,17 +24,20 @@
 @discussion This differs from a Snd instance itself, since we can have multiple overlapping
             simultaneous performances of the same (potentially huge) Snd, some looping, others not.
             We need some way of indicating to the delegate exactly which performance has completed,
-            hence this class.
+            hence this class. A SndPerformance also has an SndAudioProcessorChain enabling each performance
+            of a sound to be signal processed, including volume fading, panning etc using the audio
+            processor chain "postFader" SndAudioFader.
 */
 @interface SndPerformance : NSObject
 {
-/*! @var snd The sound being performed*/
+/*! @var snd The sound being performed. */
     Snd    *snd;
-/*! @var playTime */
+/*! @var playTime The time when to initiate playing. */
     double  playTime;
-/*! @var startIndex */
+/*! @var startIndex The index where the sound will begin playing from at the start of a sound performance. */
     long    startAtIndex;
-/*! @var playIndex */
+/*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>).
+                   TODO why is the playIndex a double rather than a long? */
     double  playIndex;
 /*! @var endAtIndex */
     long    endAtIndex;
@@ -145,18 +147,29 @@ startPosition: (double) startPosition
 
 
 /*!
-    @method   playIndex
+    @method     playIndex
     @abstract   Returns the sample to start playing from.
     @result     Returns the sample index to start playing from.
 */
 - (double) playIndex;
 
 /*!
-    @method   setPlayIndex:
+    @method     setPlayIndex:
     @abstract   Sets the sample to start playing from.
     @param      newPlayIndex The sample index that playing should begin from.
 */
 - (void) setPlayIndex: (double) newPlayIndex;
+
+/*!
+  @method     rewindPlayIndexBySamples:
+  @abstract   Rewinds the sample to start playing from by the supplied number of samples.
+  @discussion The loop points are respected, such that rewinding a sound that is set to loop before
+              it's loop start index will wrap to the end of the loop. If this isn't wanted, either temporarily
+              disable looping or use <i>setPlayIndex:</i>.
+  @param      numberOfSamplesToRewind The number of samples to rewind to where playing should begin from.
+  @result     Returns the new play index as a convience to save calling <i>playIndex</i>.
+ */
+- (double) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind;
 
 /*!
     @method   endAtIndex
@@ -295,15 +308,17 @@ startPosition: (double) startPosition
 - setAudioProcessorChain: (SndAudioProcessorChain*) anAudioProcessorChain;
 
 /*!
-  @method retrieveAPerformBuffer:ofLength:
+  @method retrievePerformBuffer:ofLength:
   @param bufferToFill A SndAudioBuffer that will be filled with samples.
-  @param buffLength
-  @result Returns the final buffer length, which may be less than the requested amount in the case of a premature stop, or simply reaching the end of the data. 
+  @param buffLength The intended number of samples TODO or bytes? to retrieve.
+  @result Returns the final buffer length, which may be less than the requested amount in the case of
+	  a premature stop, or simply reaching the end of the data. 
   @discussion Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
   	      (which allows us to play a sub-section of a sound). playIndex is updated, and looping is
-              respected. In the case of the end of the sound being encountered, a smaller buffer will be filled, and the smaller size is returned.
+              respected. In the case of the end of the sound being encountered, a smaller buffer will
+              be filled, and the smaller size is returned.
  */
-- (long) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength;
+- (long) retrievePerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength;
 
 /*!
   @method atEndOfPerformance
