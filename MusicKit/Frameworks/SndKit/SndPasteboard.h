@@ -15,6 +15,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#import "Snd.h"
+
 #ifndef USE_NEXTSTEP_SOUND_IO
 /* Define this for compatibility */
 #define NXSoundPboard SndPasteboardType
@@ -22,8 +24,6 @@
 extern NSString *SndPasteboardType;
 #import <AppKit/NSPasteboard.h>
 #endif
-
-#import "Snd.h"
 
 @interface Snd(Pasteboard)
 
