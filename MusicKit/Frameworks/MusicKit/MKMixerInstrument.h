@@ -114,6 +114,22 @@
 - firstNote: (MKNote *) aNote;
 
 /*!
+  @method mixNewNote:
+  @abstract Internal method to manage the reception of a new note.
+  @discussion This method is not normally called, but may be overloaded by a subclass.
+  @param thisNote An MKNote instance.
+ */
+- (BOOL) mixNewNote: (MKNote *) thisNote;
+
+/*!
+  @method mixNoteUpdate:
+  @abstract Internal method to manage the reception of an update MKNote.
+  @discussion This method is not normally called, but may be overloaded by a subclass.
+  @param thisNote An MKNote instance.
+ */
+- (BOOL) mixNoteUpdate: (MKNote *) thisNote;
+
+/*!
   @method realizeNote:fromNoteReceiver:
   @param  aNote is an MKNote.
   @param  aNoteReceiver is an MKNoteReceiver.
