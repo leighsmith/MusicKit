@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.15  2000/11/25 22:53:48  leigh
+  Enforced ivar privacy and typed conductors and access methods
+
   Revision 1.14  2000/11/13 23:15:20  leigh
   Moved timeVars structure into MKMidi ivars, abstracted from NSMachPort for ports to MKMDPorts
 
@@ -81,6 +84,8 @@
 #import "MKDeviceStatus.h"
 #import "params.h"
 
+@class MKConductor;
+
 @interface MKMidi:NSObject
 {
     NSMutableArray *noteSenders;         /* The object's collection of NoteSenders. */
@@ -91,28 +96,28 @@
     BOOL outputIsTimed;                  /* YES if the driver's clock is used for output */
     double localDeltaT;                  /* Offset added to MIDI-out time stamps.(see below)*/
 
-    /* The following are for internal use only.  */
+@private
     unsigned _ignoreBits;
-    void *_pIn;  // should be _MKMidiInStruct *
-    void *_pOut; // should be _MKMidiOutStruct *
+    void *_pIn;                  // should be _MKMidiInStruct *
+    void *_pOut;                 // should be _MKMidiOutStruct *
     double _timeOffset;
     enum {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
     BOOL isOwner;
     // These are handles used to identify the MIDI communication channel. 
-    MKMDPort  devicePort;       // Device port
-    MKMDOwnerPort ownerPort;    // Owner port, as for the device port.
-    MKMDReplyPort recvPort;     // Port on which we receive midiIn messages
-    MKMDReplyPort queuePort;    // Port on which we notify when there is space on the playback queue.
+    MKMDPort  devicePort;        // Device port
+    MKMDOwnerPort ownerPort;     // Owner port, as for the device port.
+    MKMDReplyPort recvPort;      // Port on which we receive midiIn messages
+    MKMDReplyPort queuePort;     // Port on which we notify when there is space on the playback queue.
     BOOL mergeInput;
-    NSString *hostname;
+    NSString *hostname;          // for MIDI communicated across hosts.
     int unit;
     int queueSize;
-    id conductor;               // Used by conductor and setConductor: methods
+    MKConductor *conductor;      // Used by conductor and setConductor: methods
     // MIDI Time Code (MTC):
-    id synchConductor;          // If non-nil, time mode is MTC Synch
+    MKConductor *synchConductor; // If non-nil, time mode is MTC Synch
     MKMDReplyPort exceptionPort; // Exception port.  Only one unit per device may have one.
-    MKMDReplyPort alarmPort;    // Alarm port.  Only one unit per device may have one.
-    MKMidi *mtcMidiObj;         // Which unit is receiving MTC.
+    MKMDReplyPort alarmPort;     // Alarm port.  Only one unit per device may have one.
+    MKMidi *mtcMidiObj;          // Which unit is receiving MTC.
     double alarmTime;
     int intAlarmTime;
     BOOL alarmTimeValid;
@@ -121,13 +126,13 @@
 
 #define MK_MAXMIDIS 16  /* Maximum number of Intel-based Midi objects */
 
--conductor;
+- (MKConductor *) conductor;
  /* Returns the conductor that the Notes originating with Midi will return
   * when sent the -conductor message.  
   * By default, returns the defaultConductor, if the Conductor class is 
   * loaded, else nil. */
 
--setConductor:aConductor;
+-setConductor: (MKConductor *) aConductor;
  /* Sets the Conductor that the Notes originating with Midi will return
   * when sent the -conductor message. 
   */
