@@ -10,12 +10,15 @@
 
 #ifndef __SNDKIT_SNDAUDIOPROCESSORINSPECTOR_H
 #define __SNDKIT_SNDAUDIOPROCESSORINSPECTOR_H
-
-#import <AppKit/AppKit.h>
+ 
 #import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+
+// since GNUstep appkit.h seems to leave this out...
+#import <AppKit/NSDocumentController.h>
 
 #import "SndAudioProcessor.h"
-#import <AppKit/NSDocumentController.h>
+#import "SndStreamArchitectureView.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +37,7 @@
 /*! @var processorName */   
   id processorName;
 /*! @var sndArchView */   
-  id sndArchView;
+  SndStreamArchitectureView *sndArchView;
 /*! @var theAudProc */   
   SndAudioProcessor *theAudProc;
 
@@ -134,6 +137,18 @@
 
 - onAddFxButton: (id) sender;
 - onDelFxButton: (id) sender;
+
+@end
+
+@interface SndAudioProcessor(Inspection)
+
+/*!
+@method     inspect
+ @abstract
+ @result
+ @discussion
+ */
+- (SndAudioProcessorInspector*) inspect;
 
 @end
 

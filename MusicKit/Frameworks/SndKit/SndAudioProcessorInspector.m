@@ -49,19 +49,19 @@ static NSMutableArray *fxClassesArray;
 
   if (fxClassesArray == nil) {
     fxClassesArray = [[NSMutableArray alloc] init];
-    [fxClassesArray addObject: [SndAudioProcessorFlanger class]];
-    [fxClassesArray addObject: [SndAudioProcessorDelay class]];
-    [fxClassesArray addObject: [SndAudioProcessorDistortion class]];
-    [fxClassesArray addObject: [SndAudioProcessorReverb class]];
-    [fxClassesArray addObject: [SndAudioProcessorRecorder class]];
+    [fxClassesArray addObject: [SndAudioProcessorFlanger       class]];
+    [fxClassesArray addObject: [SndAudioProcessorDelay         class]];
+    [fxClassesArray addObject: [SndAudioProcessorDistortion    class]];
+    [fxClassesArray addObject: [SndAudioProcessorReverb        class]];
+    [fxClassesArray addObject: [SndAudioProcessorRecorder      class]];
     [fxClassesArray addObject: [SndAudioProcessorToneGenerator class]];
-    [fxClassesArray addObject: [SndAudioProcessorMP3Encoder class]];
+    [fxClassesArray addObject: [SndAudioProcessorMP3Encoder    class]];
   }
 
   {
-    int i,c = [fxClassesArray count];
+    int i, c = [fxClassesArray count];
     [fxChooser removeAllItems];
-    for (i=0;i<c;i++) {
+    for (i = 0; i < c; i++) {
       [fxChooser addItemWithObjectValue: [[fxClassesArray objectAtIndex: i] className]];
     }
     [fxChooser selectItemAtIndex: 0];
@@ -257,4 +257,27 @@ static NSMutableArray *fxClassesArray;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+@end // Of SndAudioProcessorInspector implementation
+
+////////////////////////////////////////////////////////////////////////////////
+// SndAudioProcessor(Inspection)
+////////////////////////////////////////////////////////////////////////////////
+
+@implementation SndAudioProcessor(Inspection)
+
+//////////////////////////////////////////////////////////////////////////////
+// inspect
+//
+// Hmmm, is this worth having?? - SKoT rethinks.
+//////////////////////////////////////////////////////////////////////////////
+
+- (SndAudioProcessorInspector*) inspect
+{
+  return [[SndAudioProcessorInspector alloc] initWithAudioProcessor: self];
+}
+
+
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+
