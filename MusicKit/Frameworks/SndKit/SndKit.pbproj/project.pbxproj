@@ -3,9 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		00D2C427FEDB2CB5CFED3B93 = {
+			buildSettings = {
+			};
 			buildStyles = (
 				055C7F3C0049CD79CFED3B96,
 				055C7F3D0049CD79CFED3B96,
@@ -33,6 +35,7 @@
 			isa = PBXGroup;
 			name = SndKit;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C429FEDB2CB5CFED3B93 = {
 			children = (
@@ -41,6 +44,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C42BFEDB2CB5CFED3B93 = {
 			children = (
@@ -82,36 +86,47 @@
 			isa = PBXGroup;
 			name = Classes;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C42CFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Snd.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C42DFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayData.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C42EFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayDataList.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C42FFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndView.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C430FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndError.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C432FEDB2CB5CFED3B93 = {
 			children = (
@@ -125,78 +140,103 @@
 			isa = PBXGroup;
 			name = Headers;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C433FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Snd.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C434FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayData.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C435FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayDataList.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C436FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEndianFunctions.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C438FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFunctions.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C439FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndKit.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C43BFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndView.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C43CFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndError.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C43EFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndfilterkit.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C43FFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndlargefilter.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C440FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMuLaw.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C442FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndsmallfilter.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C444FEDB2CB5CFED3B93 = {
 			children = (
@@ -217,36 +257,47 @@
 			isa = PBXGroup;
 			name = "Other Sources";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C445FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEndianFunctions.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C447FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndConvert.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C448FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndfilterkit.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C449FEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMuLaw.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C44AFEDB2CB5CFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndResample.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C44BFEDB2CB5CFED3B93 = {
 			children = (
@@ -255,11 +306,14 @@
 			isa = PBXGroup;
 			name = "Supporting Files";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C453FEDB2CB5CFED3B93 = {
+			expectedFileType = text.rtf;
 			isa = PBXFileReference;
 			path = README.rtf;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C454FEDB2CB5CFED3B93 = {
 			children = (
@@ -270,24 +324,34 @@
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		00D2C455FEDB2CB5CFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = System.framework;
 			path = /System/Library/Frameworks/System.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		00D2C457FEDB2CB5CFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		00D2C458FEDB2CB5CFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		00D2C459FEDB2CB5CFED3B93 = {
 			buildPhases = (
@@ -299,12 +363,10 @@
 				D88C18010432955600A80103,
 			);
 			buildSettings = {
-				CC = "/usr/bin/gcc-3.3";
-				CPLUSPLUS = "/usr/bin/g++-3.3";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks \"$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks\"";
-				FRAMEWORK_VERSION = 2.3;
+				FRAMEWORK_VERSION = 5.5;
 				GCC_VERSION = 3.x;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -348,11 +410,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>SndKit V2.3.0</string>
+	<string>SndKit V5.5.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.3.0</string>
+	<string>5.5.0</string>
 </dict>
 </plist>
 ";
@@ -715,78 +777,103 @@
 			name = FreeVerb;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0109B285014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = allpass.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B286014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = comb.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B287014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reverbBridge.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B288014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = revmodel.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B289014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = allpass.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B28A014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = comb.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B28B014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = denormals.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B28C014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reverbBridge.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B28D014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = revmodel.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B28E014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = tuning.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B28F014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorReverb.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B290014D0BC3CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorReverb.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		0109B291014D0BC3CFED3B94 = {
 			fileRef = 0109B289014D0BC3CFED3B94;
@@ -864,10 +951,12 @@
 			};
 		};
 		011279830168CEA1CFED3B94 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libmp3lame.a;
 			path = /usr/local/lib/libmp3lame.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		011279840168CEA1CFED3B94 = {
 			fileRef = 011279830168CEA1CFED3B94;
@@ -876,16 +965,20 @@
 			};
 		};
 		011279850168CEFCCFED3B94 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorMP3Encoder.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		011279860168CEFCCFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorMP3Encoder.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		011279870168CEFCCFED3B94 = {
 			fileRef = 011279860168CEFCCFED3B94;
@@ -897,10 +990,12 @@
 			};
 		};
 		011279890169158CCFED3B94 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libshout.a;
 			path = /usr/local/lib/libshout.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		0112798A0169158CCFED3B94 = {
 			fileRef = 011279890169158CCFED3B94;
@@ -909,16 +1004,20 @@
 			};
 		};
 		017A8C4C004DDCB1CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPerformance.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		017A8C4D004DDCB1CFED3B96 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPerformance.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		017A8C4E004DDCB1CFED3B96 = {
 			fileRef = 017A8C4C004DDCB1CFED3B96;
@@ -946,16 +1045,20 @@
 //023
 //024
 		02240682007138A9CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamMixer.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		02240683007138A9CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamMixer.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		02240684007138A9CFED3B8B = {
 			fileRef = 02240683007138A9CFED3B8B;
@@ -973,28 +1076,36 @@
 			};
 		};
 		0224068600713935CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorChain.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0224068700713935CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessor.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0224068800713935CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorChain.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0224068900713935CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessor.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0224068A00713935CFED3B8B = {
 			fileRef = 0224068800713935CFED3B8B;
@@ -1027,16 +1138,20 @@
 			};
 		};
 		02240692007269D2CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDelay.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		02240693007269D2CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDelay.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		02240694007269D2CFED3B8B = {
 			fileRef = 02240693007269D2CFED3B8B;
@@ -1064,15 +1179,20 @@
 //043
 //044
 		0422778F0030C8C0CFED3B96 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = SndKit.framework;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		042277900030C91CCFED3B96 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFunctions.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		042277910030C91CCFED3B96 = {
 			fileRef = 042277900030C91CCFED3B96;
@@ -1083,10 +1203,13 @@
 			};
 		};
 		04F0C04C00EA6A89CFED3B8B = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = vecLib.framework;
 			path = /System/Library/Frameworks/vecLib.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		04F0C04D00EA6A89CFED3B8B = {
 			fileRef = 04F0C04C00EA6A89CFED3B8B;
@@ -1105,10 +1228,13 @@
 //053
 //054
 		055C7F3A0049CD79CFED3B96 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = ApplicationServices.framework;
 			path = /System/Library/Frameworks/ApplicationServices.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		055C7F3B0049CD79CFED3B96 = {
 			fileRef = 055C7F3A0049CD79CFED3B96;
@@ -1121,7 +1247,12 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O0";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -1131,6 +1262,8 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -1146,16 +1279,20 @@
 //063
 //064
 		06C30561007CD69BCFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamRecorder.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		06C30562007CD69BCFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamRecorder.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		06C30563007CD69BCFED3B8B = {
 			fileRef = 06C30562007CD69BCFED3B8B;
@@ -1183,16 +1320,20 @@
 //073
 //074
 		07986ABF013D43C8CFED3B94 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBufferQueue.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		07986AC0013D43C8CFED3B94 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBufferQueue.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		07986AC1013D43C8CFED3B94 = {
 			fileRef = 07986ABF013D43C8CFED3B94;
@@ -1220,10 +1361,12 @@
 //093
 //094
 		095E1FC30030E169CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndResample.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		095E1FC40030E169CFED3B96 = {
 			fileRef = 095E1FC30030E169CFED3B96;
@@ -1234,10 +1377,12 @@
 			};
 		};
 		095E1FC50030E3C7CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStdefs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		095E1FC60030E3C7CFED3B96 = {
 			fileRef = 095E1FC50030E3C7CFED3B96;
@@ -1275,28 +1420,39 @@
 //363
 //364
 		36C5C1C10039F18CCFED3B96 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
+			indentWidth = 4;
 			isa = PBXFileReference;
 			path = SndAudioBuffer.m;
 			refType = 4;
+			sourceTree = "<group>";
+			tabWidth = 8;
+			usesTabs = 0;
 		};
 		36C5C1C20039F18CCFED3B96 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamClient.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		36C5C1C30039F18CCFED3B96 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamManager.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		36C5C1C40039F18CCFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBuffer.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		36C5C1C50039F18CCFED3B96 = {
 			fileRef = 36C5C1C40039F18CCFED3B96;
@@ -1332,16 +1488,20 @@
 			};
 		};
 		36C5C1C90039F2E2CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamClient.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		36C5C1CA0039F2E2CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamManager.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		36C5C1CB0039F2E2CFED3B96 = {
 			fileRef = 36C5C1C90039F2E2CFED3B96;
@@ -1372,40 +1532,52 @@
 //4E3
 //4E4
 		4E8FE8650122ECB1CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioFader.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		4E8FE8660122ECB1CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndBreakpoint.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		4E8FE8670122ECB1CFED3B8B = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEnvelope.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		4E8FE8680122ECB1CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioFader.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		4E8FE8690122ECB1CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndBreakpoint.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		4E8FE86A0122ECB1CFED3B8B = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEnvelope.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		4E8FE86B0122ECB1CFED3B8B = {
 			fileRef = 4E8FE8680122ECB1CFED3B8B;
@@ -1463,10 +1635,12 @@
 //503
 //504
 		508F93C3003C7A83CFED3B96 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPlayer.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		508F93C4003C7A83CFED3B96 = {
 			fileRef = 508F93C3003C7A83CFED3B96;
@@ -1477,10 +1651,12 @@
 			};
 		};
 		508F93C5003C7F23CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPlayer.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		508F93C6003C7F23CFED3B96 = {
 			fileRef = 508F93C5003C7F23CFED3B96;
@@ -1502,10 +1678,12 @@
 //7B3
 //7B4
 		7B0B0D33019A30F6002A0496 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndKitDefines.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		7B0B0D34019A30F6002A0496 = {
 			fileRef = 7B0B0D33019A30F6002A0496;
@@ -1527,16 +1705,20 @@
 //B53
 //B54
 		B508535C01F8D71B002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndExpt.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B508535D01F8D71B002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndExpt.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B508535E01F8D71B002A0494 = {
 			fileRef = B508535C01F8D71B002A0494;
@@ -1554,16 +1736,20 @@
 			};
 		};
 		B512F13901D3D819002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorInspector.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B512F13A01D3D819002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorInspector.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B512F13B01D3D819002A0494 = {
 			fileRef = B512F13901D3D819002A0494;
@@ -1581,16 +1767,20 @@
 			};
 		};
 		B526060201CFC639002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDistortion.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B526060301CFC639002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDistortion.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B526060401CFC639002A0494 = {
 			fileRef = B526060201CFC639002A0494;
@@ -1608,16 +1798,20 @@
 			};
 		};
 		B52BE0F801F8BD38002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndTable.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B52BE0F901F8BD38002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndTable.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B52BE0FA01F8BD38002A0494 = {
 			fileRef = B52BE0F801F8BD38002A0494;
@@ -1635,10 +1829,12 @@
 			};
 		};
 		B52BE0FC01F8D0AC002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFunctionsDiskIO.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B52BE0FD01F8D0AD002A0494 = {
 			fileRef = B52BE0FC01F8D0AC002A0494;
@@ -1657,18 +1853,23 @@
 			name = Experimental;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5405223026DE7B1002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMP3.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B5405224026DE7B1002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMP3.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B5405225026DE7B1002A0494 = {
 			fileRef = B5405223026DE7B1002A0494;
@@ -1686,16 +1887,20 @@
 			};
 		};
 		B552CD7201F4908E002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorNoiseGate.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B552CD7301F4908E002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorNoiseGate.m;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B552CD7401F4908E002A0494 = {
 			fileRef = B552CD7201F4908E002A0494;
@@ -1713,16 +1918,20 @@
 			};
 		};
 		B5799B9101D76E11002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamArchitectureView.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5799B9201D76E11002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamArchitectureView.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5799B9301D76E11002A0494 = {
 			fileRef = B5799B9101D76E11002A0494;
@@ -1756,6 +1965,7 @@
 			name = GUI;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5799BA701DBCF75002A0494 = {
 			children = (
@@ -1764,6 +1974,7 @@
 			isa = PBXGroup;
 			name = Interfaces;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5799BA801DBCF75002A0494 = {
 			children = (
@@ -1773,12 +1984,15 @@
 			name = SndAudioProcessorInspector.nib;
 			path = "";
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		B5799BA901DBCF75002A0494 = {
+			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/SndAudioProcessorInspector.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5799BAA01DBCF75002A0494 = {
 			fileRef = B5799BA801DBCF75002A0494;
@@ -1796,6 +2010,7 @@
 			name = AudioProcessors;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B040B801BEC4B2002A0494 = {
 			children = (
@@ -1812,12 +2027,15 @@
 			isa = PBXGroup;
 			name = Headers;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B040B901BEC4B2002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorRecorder.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B040BA01BEC4B2002A0494 = {
 			children = (
@@ -1834,12 +2052,15 @@
 			isa = PBXGroup;
 			name = Classes;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B040BB01BEC4B2002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorRecorder.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B040BC01BEC4B2002A0494 = {
 			fileRef = B5B040B901BEC4B2002A0494;
@@ -1857,16 +2078,20 @@
 			};
 		};
 		B5B66AFE01E0EF45002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorToneGenerator.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B66AFF01E0EF45002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorToneGenerator.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5B66B0001E0EF45002A0494 = {
 			fileRef = B5B66AFE01E0EF45002A0494;
@@ -1884,16 +2109,20 @@
 			};
 		};
 		B5E433BE01CE8A53002A0494 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorFlanger.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5E433BF01CE8A53002A0494 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorFlanger.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		B5E433C001CE8A53002A0494 = {
 			fileRef = B5E433BE01CE8A53002A0494;
@@ -1921,10 +2150,12 @@
 //D83
 //D84
 		D836450604F53D1900A80103 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libogg.a;
 			path = /usr/local/lib/libogg.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		D836450704F53D1A00A80103 = {
 			fileRef = D836450604F53D1900A80103;
@@ -1933,10 +2164,12 @@
 			};
 		};
 		D836450B04F53E0F00A80103 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libvorbis.a;
 			path = /usr/local/lib/libvorbis.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		D836450C04F53E0F00A80103 = {
 			fileRef = D836450B04F53E0F00A80103;
@@ -1945,16 +2178,20 @@
 			};
 		};
 		D836455304F5ED7400A80103 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMeter.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D836455404F5ED7400A80103 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMeter.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D836455504F5ED7400A80103 = {
 			fileRef = D836455304F5ED7400A80103;
@@ -1969,10 +2206,13 @@
 			};
 		};
 		D87070F3040CA58D00A80103 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = MKPerformSndMIDI.framework;
 			path = /Library/Frameworks/MKPerformSndMIDI.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		D87070F4040CA58D00A80103 = {
 			fileRef = D87070F3040CA58D00A80103;
@@ -2007,6 +2247,7 @@
 			isa = PBXGroup;
 			name = "System Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D88C366004082B7C002A0496 = {
 			children = (
@@ -2019,6 +2260,7 @@
 			isa = PBXGroup;
 			name = Libraries;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D89773830402E43700A80103 = {
 			buildRules = (
@@ -2033,10 +2275,12 @@
 			name = Embedded;
 		};
 		D8A2C5D304A0C26E00A80165 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = SndFormat.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D8A2C5D404A0C26E00A80165 = {
 			fileRef = D8A2C5D304A0C26E00A80165;
@@ -2054,10 +2298,12 @@
 			};
 		};
 		D8CC46AE048BEDBA00A80164 = {
+			expectedFileType = archive.ar;
 			isa = PBXFileReference;
 			name = libsndfile.a;
 			path = /usr/local/lib/libsndfile.a;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		D8CC46AF048BEDBA00A80164 = {
 			fileRef = D8CC46AE048BEDBA00A80164;
