@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.25  2002/03/20 17:02:58  sbrandon
+  call detachDelegateMessageThread in +initialize to set up background delegate message passing thread.
+
   Revision 1.24  2002/01/29 16:50:42  sbrandon
   checked over MKCancelMsgRequest and other MsgStruct-related functions and methods, and fixed some leaks by retaining and releasing objects where appropriate.
 
@@ -231,6 +234,8 @@ static void condInit();    /* Forward decl */
     [MKConductor setVersion:VERSION3];//sb: suggested by Stone conversion guide (replaced self)
     if (!allConductors)
         condInit();
+    // we assume we are being called first from the main thread - if not, we are in trouble.
+    [self detachDelegateMessageThread];
     return;
 }
 
