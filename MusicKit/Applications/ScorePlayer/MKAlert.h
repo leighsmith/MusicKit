@@ -1,9 +1,15 @@
+/*
+ $Id$  
+
+ Description:
+   This is just like Alert.m (in the AppKit) but it sets the font to Courier
+   to make MusicKit errors format correctly.  SIGH!!!
+ 
+ Copyright (c) 1988-1992, NeXT Computer, Inc.
+ Portions Copyright (c) 1999-2004 The MusicKit Project 
+*/
 #ifndef __MK_MKAlert_H___
 #define __MK_MKAlert_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/*
-	Alert.h
-*/
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
@@ -18,7 +24,6 @@
     NSSize defaultPanelSize;
 }
 
-+ new;
 - init;
 
 - (void)buttonPressed:sender;
