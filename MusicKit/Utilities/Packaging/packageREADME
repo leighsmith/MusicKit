@@ -1,10 +1,21 @@
 #!/bin/sh
 # $Id$
-# create a set of HTML pictures suitable for distribution on the web-site.
+# Create a set of HTML pages suitable for distribution on the
+# web-site. We do this with a customised stylesheet (in DSSSL)
+# to produce the correct text coloring, background images etc.
+#
 # Leigh Smith <leigh@tomandandy.com>
 #
 
-db2html MusicKit_README.sgml
-mv MusicKit_README MusicKit
+TMPDIR=/tmp/MusicKit
+MKSRC=`pwd`
+MK_STYLESHEET=$MKSRC/Documentation/SGML/MusicKit_README.dsssl
+
+mkdir $TMPDIR
+cd $TMPDIR
+jade -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKSRC/MusicKit_README.sgml
+ln -s t1.html index.html
+cd ..
 tar czf MusicKitREADME.tar.gz MusicKit
-rm -r MusicKit
+echo MusicKit README HTML pages packaged into /tmp/MusicKitREADME.tar.gz
+rm -r $TMPDIR
