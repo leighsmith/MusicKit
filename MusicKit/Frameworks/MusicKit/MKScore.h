@@ -1,0 +1,331 @@
+#ifndef __MK_Score_H___
+#define __MK_Score_H___
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  MKScore.h
+  DEFINED IN: The Music Kit
+*/
+
+#import <Foundation/NSObject.h>
+
+@interface MKScore : NSObject
+/* 
+ * A Score is a collection of Part objects.  Scores can be read from and
+ * written to a scorefile or midifile, performed with a ScorePerformer,
+ * and an be used to record Notes from a ScoreRecorder.
+ * 
+ * Each Score has an info Note (a mute) that defines, in its parameters,
+ * nformation that can be useful in performing or otherwise interpreting
+ * the Score.  Typical information includes tempo, DSP headroom (see the
+ * Orchestra lass), and sampling rate (the parameters MK_tempo,
+ * MK_headroom, and MK_samplingRate are provided to accommodate this
+ * utility).
+ * 
+ * When you read a scorefile into a Score, a Part object is created and
+ * added to the Score for each Part name in the file's part statement.
+ * If the Score already contains a Part with the same name as a Part in
+ * the file, the Notes from the two sources are merged together in the
+ * existing Part in the Score.
+ * 
+ * ScoreFile print statements are printed as the scorefile is read into a
+ * Score.  You can set the stream on which the messages are printed by
+ * invoking setScorefilePrintStream:.  
+ */ 
+{
+    NSMutableArray *parts;                  /* The object's collection of Parts. */
+    NSMutableData *scorefilePrintStream;    /* The stream used by scorefile print statements. */
+    id info;                                /* The object's info Note. */
+//    void *_reservedScore1; // LMS obsolete
+}
+ 
+- init;
+ /* 
+  Inits the receiver.  You never invoke this method directly.  A subclass
+ implementation should send [super init] before performing its own
+ initialization.  The return value is ignored.  
+ */
+
+- (void)dealloc;
+ /* 
+ Frees the receiver and its contents.
+ */
+
+- freeNotes; 
+ /* 
+ Removes and frees the Notes contained in the receiver's Parts.
+ Also frees the receiver's info Note.  Returns the receiver.
+ */
+
+- freeParts; 
+ /* 
+ Removes and frees the receiver's Parts and the Notes contained therein.
+ Doesn't free the receiver's info Note.  Parts that are currently
+ being performed by a PartPerformer aren't freed.
+ Returns the receiver.
+ */
+
+- freePartsOnly; 
+ /* 
+ Removes and frees the receiver's Parts but doesn't free the Notes contained
+ therein.  Parts that are currently being performed by a PartPerformer aren't
+ freed.  Returns the receiver.  
+ */
+
+- freeSelfOnly; 
+ /* 
+ Frees the receiver but not its Parts nor their Notes.  The info Note isn't
+ freed.  Returns the receiver.  
+ */
+
+- (void)removeAllObjects; 
+ /* 
+ Removes the receiver's Parts but doesn't free them.
+ Returns the receiver.
+  */
+
+- readScorefile:(NSString * )fileName; 
+ /* 
+ Opens the scorefile named fileName and merges its contents
+ with the receiver.  The file is automatically closed.
+ Returns the receiver or nil if the file couldn't be read.
+ */
+
+- readScorefileStream:(NSMutableData *)stream; 
+ /* 
+ Reads the scorefile pointed to by stream into the receiver.
+ The file must be open for reading; the sender is responsible
+ for closing the file.
+ Returns the receiver or nil if the file couldn't be read.
+ */
+
+- readScorefile:(NSString * )fileName firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+ /*
+ The same as readScorefile:, but only those Notes with timeTags
+ in the specified range are added to the receiver.  The
+ added Notes' timeTags are shifted by timeShift beats.
+ Returns the receiver or nil if the file couldn't be read.
+ */
+
+- readScorefileStream:(NSMutableData *)stream firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+ /* 
+ The same as readScorefileStream:, but only those Notes with timeTags
+ in the specified range are added to the receiver.  The
+ added Notes' timeTags are shifted by timeShift beats.
+ Returns the receiver or nil if the file couldn't be read.
+ */
+
+- writeScorefile:(NSString * )aFileName; 
+ /* 
+ Opens the scorefile named fileName and writes the receiver
+ to it (the file is overwritten).  The file is automatically closed.
+ Returns the receiver or nil if the file couldn't be written.
+ */
+
+- writeScorefileStream:(NSMutableData *)aStream; 
+ /* 
+ Writes the receiver into the scorefile pointed to by stream.
+ The file must be open for reading; the sender is responsible for
+ closing the file.  Returns the receiver or nil if the file couldn't be
+ written.  
+ */
+
+- writeScorefile:(NSString * )aFileName firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+ /* 
+ The same as writeScorefile:, but only those Notes with timeTags
+ in the specified range are written to the file.  The
+ written Notes' timeTags are shifted by timeShift beats.
+ Returns the receiver or nil if the file couldn't be written.
+ */
+
+- writeScorefileStream:(NSMutableData *)aStream firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+ /* 
+ The same as writeScorefileStream:, but only those Notes with timeTags
+ in the specified range are written to the file.  The
+ written Notes' timeTags are shifted by timeShift beats.
+ Returns the receiver or nil if the file couldn't be written.
+ */
+
+-writeOptimizedScorefile:(NSString *)aFileName;
+-writeOptimizedScorefileStream:(NSMutableData *)aStream;
+-writeOptimizedScorefile:(NSString *)aFileName firstTimeTag:(double)firstTimeTag 
+ lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift;
+- writeOptimizedScorefileStream:(NSMutableData *)aStream 
+ firstTimeTag:(double )firstTimeTag 
+ lastTimeTag:(double )lastTimeTag 
+ timeShift:(double)timeShift; 
+ /* 
+ These are the same as the analagous writeScorefile methods, except that they
+ write the Scorefile in optimized format.
+ */
+
+- readMidifile:(NSString *)aFileName firstTimeTag:(double) firstTimeTag
+    lastTimeTag:(double) lastTimeTag timeShift:(double) timeShift;
+- readMidifileStream:(NSMutableData *) aStream firstTimeTag:(double) firstTimeTag
+    lastTimeTag:(double) lastTimeTag timeShift:(double) timeShift;
+-readMidifile:(NSString *)fileName;
+-readMidifileStream:(NSMutableData *)aStream;
+ /* Reads a Standard Midifile as described in the NeXT Reference Manual. */
+
+-writeMidifile:(NSString *)aFileName firstTimeTag:(double)firstTimeTag
+ lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift;
+-writeMidifileStream:(NSMutableData *)aStream firstTimeTag:(double)firstTimeTag
+ lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift;
+-writeMidifileStream:(NSMutableData *)aStream ;
+-writeMidifile:(NSString *)aFileName;
+ /* Writes a Standard Midifile as described in the NeXT Reference Manual. */
+
+-(unsigned ) noteCount; 
+ /* 
+   Returns the number of Notes in all the receiver's Parts.
+   */
+
+-replacePart:(id)oldPart with:(id)newPart;
+  /* Removes oldPart from self and replaces it with newPart.
+   * Returns newPart.
+   * If oldPart is not a member of this score, returns nil
+   * and doesn't add newPart.  If newPart is nil, or if
+   * newPart is already a member of this score, or 
+   * if newPart is not a kind of Part, returns nil.
+   */
+
+- addPart:aPart; 
+ /* 
+   Adds aPart to the receiver.  The Part is first removed from the Score
+   that it's presently a member of, if any.  Returns aPart, or nil
+   if it's already a member of the receiver.  
+   */
+
+- removePart:aPart; 
+ /* 
+   Removes aPart from the receiver.  Returns aPart 
+   or nil if it wasn't a member of the receiver.
+   */
+
+- shiftTime:(double )shift; 
+ /* 
+   Shifts the timeTags of all receiver's Notes by shift beats.
+   Returns the receiver.
+   */
+
+-(BOOL ) isPartPresent:aPart; 
+ /* 
+   Returns YES if aPart has been added to the receiver,
+   otherwise returns NO.
+   */
+
+- midiPart:(int )aChan; 
+  /* 
+     Returns the first Part with a MK_midiChan info parameter equal to
+     aChan, if any. aChan equal to 0 corresponds to the Part representing
+     MIDI system and channel mode messages. */
+
+-(unsigned )partCount;
+ /* 
+   Returns the number of Part contained in the receiver.
+   */
+
+- parts;
+ /* 
+   Creates and returns a List containing the 
+   receiver's Parts.  The Parts themselves
+   aren't copied. It is the sender's repsonsibility to free the List. 
+   */
+
+- copyWithZone:(NSZone *)zone; 
+ /* 
+   Creates and returns a new Score as a copy of the receiver.
+   The receiver's Part, Notes, and info Note are all copied.
+   */
+
+- copy;
+ /* Returns [self copyFromZone:[self zone]] */
+
+-setInfo:aNote;
+ /* 
+   Sets the receiver's info Note to a copy of aNote.  The receiver's
+   previous info Note is removed and freed.
+   */
+
+-infoNote;
+ /* 
+   Returns the receiver's info Note.
+   */
+
+-setScorefilePrintStream:(NSMutableData *)aStream;
+ /* 
+   Sets the stream used by ScoreFile print statements to
+   aStream.  Returns the receiver.
+   */  
+
+-(NSMutableData *)scorefilePrintStream;
+ /* 
+   Returns the receiver's ScoreFile print statement stream.
+   */
+
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+ /* 
+   You never send this message directly.  
+   Should be invoked with NXWriteRootObject(). 
+   Archives Notes and info. Also archives Score using 
+   NXWriteObjectReference(). */
+- (id)initWithCoder:(NSCoder *)aDecoder;
+ /* 
+   You never send this message directly.  
+   Should be invoked via NXReadObject(). 
+   Note that -init is not sent to newly unarchived objects.
+   See write:. */
+//- awake;
+ /* 
+   Maps noteTags as represented in the archive file onto a set that is
+   unused in the current application. This insures that the integrity
+   of the noteTag is maintained. The noteTags of all Parts in the Score are 
+   considered part of a single noteTag space. */ 
+
++setMidifilesEvaluateTempo:(BOOL)yesOrNo;
+ /* By default, when writing to a MIDIfile, tempo is factored into the timestamps. 
+  * Disable this factoring, send [Score setMidifilesEvaluateTempo:NO] 
+  */
+
++(BOOL)midifilesEvaluateTempo;
+  /* Returns value set with setMidifilesEvaluateTempo: */
+
+
+ /* Obsolete */
++ score; 
+//- (void)initialize;
+- writeScorefile:(NSString * )aFileName 
+ firstTimeTag:(double )firstTimeTag 
+ lastTimeTag:(double )lastTimeTag;
+- writeScorefileStream:(NSMutableData *)aStream 
+ firstTimeTag:(double )firstTimeTag 
+ lastTimeTag:(double )lastTimeTag;
+- readScorefile:(NSString * )fileName 
+ firstTimeTag:(double )firstTimeTag 
+ lastTimeTag:(double )lastTimeTag;
+- readScorefileStream:(NSMutableData *)stream 
+ firstTimeTag:(double )firstTimeTag 
+ lastTimeTag:(double )lastTimeTag;
+-writeOptimizedScorefile:(NSString *)aFileName 
+ firstTimeTag:(double)firstTimeTag 
+ lastTimeTag:(double)lastTimeTag;
+- readMidifile:(NSString *)aFileName 
+ firstTimeTag:(double) firstTimeTag
+ lastTimeTag:(double) lastTimeTag;
+- readMidifileStream:(NSMutableData *) aStream 
+ firstTimeTag:(double) firstTimeTag
+ lastTimeTag:(double) lastTimeTag;
+-writeMidifile:(NSString *)aFileName 
+ firstTimeTag:(double)firstTimeTag
+ lastTimeTag:(double)lastTimeTag;
+-writeMidifileStream:(NSMutableData *)aStream 
+ firstTimeTag:(double)firstTimeTag
+ lastTimeTag:(double)lastTimeTag;
+- writeOptimizedScorefileStream:(NSMutableData *)aStream 
+ firstTimeTag:(double )firstTimeTag 
+ lastTimeTag:(double )lastTimeTag ;
+
+@end
+
+
+
+#endif
