@@ -90,7 +90,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 {
   self = [super init];
   if (self) {
-    lock           = [NSLock new];
+    envelopesLock           = [NSLock new];
     balanceEnvLock = [NSLock new];
     ampEnvLock     = [NSLock new];
     ampEnv         = nil;
@@ -515,263 +515,280 @@ inline int _processBalance( int xPtr,
   uee->ampY = tempAmpY;
   uee->balanceR = tempBalanceR;
   uee->balanceL = tempBalanceL;
-  uee->balanceY = tempBalanceY; /*don't need for final scaling, but for this calc*/
+  uee->balanceY = tempBalanceY; /* don't need for final scaling, but for this calc */
   return xPtr;
 }
 
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
-                        outputBuffer: (SndAudioBuffer*) outB
+- (void) staticMixIntoBuffer: (SndAudioBuffer *) inB
 {
-  double nowTime;
+    float *samples = (float *) [inB bytes];
+    int channelCount = [inB channelCount];
+    long lengthInSamples = [inB lengthInSampleFrames] * channelCount;
+    long sampleIndex;
 
-  /* bypass if possible */
-  if (!ampEnv && staticAmp == 1 && !balanceEnv && staticBalance == 0) {
-    return FALSE;
-  }
-
-  nowTime = [[self audioProcessorChain] nowTime];
-
-  [lock lock];
-
-  if ([inB dataFormat]   == SND_FORMAT_FLOAT &&
-      [inB channelCount] == 2) {
-
-    float *inD  = (float*) [inB bytes];
-    long i;
-    long len  = [inB lengthInSampleFrames];
-
-    if (!ampEnv && !balanceEnv) {
-      if (staticBalance == 0) {
-        for (i=0;i<len*2;i+=2) {
-          inD[i] *= staticAmp;
-          inD[i+1] *= staticAmp;
+    if (staticBalance == 0) {
+        for (sampleIndex = 0; sampleIndex < lengthInSamples; sampleIndex += channelCount) {
+            int channelIndex;
+            
+            for(channelIndex = 0; channelIndex < channelCount; channelIndex++)
+                samples[sampleIndex + channelIndex] *= staticAmp;
         }
-      }
-      else {
-        double leftAmpD = (staticBalance <= 0) ? staticAmp : staticAmp * (1 - staticBalance);
-        double rightAmpD = (staticBalance >= 0) ? staticAmp : staticAmp * (1 + staticBalance);
-        for (i=0;i<len*2;i+=2) {
-          inD[i] *= leftAmpD;
-          inD[i+1] *= rightAmpD;
-        }
-      }
     }
     else {
-      double x = nowTime;
-      double maxX = x + [inB duration];
-      int xPtr = 0;
-      double ampX = x;
-      double nextAmpX, nextBalanceX;
-      int nextAmpIndx, nextBalanceIndx;
-      int countAmp;
-      int countBalance;
-      int i,j;
-      int nextAmpFlags = 0, nextBalanceFlags = 0;
-      int currentAmpFlags = 0, currentBalanceFlags = 0;
+        double leftAmpD  = (staticBalance <= 0) ? staticAmp : staticAmp * (1 - staticBalance);
+        double rightAmpD = (staticBalance >= 0) ? staticAmp : staticAmp * (1 + staticBalance);
+        // Left channel in 0th element, Right channel in 1st element.
+        // [anAudioBuffer stereoChannels]
+        short stereoChannels[2] = { 0, 1 };
 
-      double tempXVal;
-      int tempBalanceFlags;
-      int tempAmpFlags;
-      float tempAmpY;
-      float tempBalanceY;
-
-      if (!balanceEnv && !ampEnv) {
-        [lock unlock];
-        return NO;
-      }
-      [ampEnvLock lock];
-      [balanceEnvLock lock];
-
-      countAmp = ampEnv ? [ampEnv breakpointCount] : 0;
-      countBalance = balanceEnv ? [balanceEnv breakpointCount] : 0;
-
-      if (!uee) uee = calloc(256,sizeof(SndUnifiedEnvelopeEntry));
-      if (!uee) [[NSException exceptionWithName:NSMallocException
-                                         reason:@"SndAudioFader envelope"
-                                       userInfo:nil] raise];
-
-      /* prime the loop */
-      nextAmpIndx = ampEnv ? [ampEnv breakpointIndexAfterX:nowTime] : BP_NOT_FOUND;
-      nextBalanceIndx = balanceEnv ? [balanceEnv breakpointIndexAfterX:nowTime] : BP_NOT_FOUND;
-      if (nextAmpIndx != BP_NOT_FOUND) {
-        //            nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
-        //            nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
-        nextAmpX = xForBp(ampEnv,xForBpSel,nextAmpIndx);
-        nextAmpFlags = flagsForBp(ampEnv,flagsForBpSel,nextAmpIndx);
-      }
-      else {
-        nextAmpX = maxX + 1;
-      }
-      if (nextBalanceIndx != BP_NOT_FOUND) {
-        //            nextBalanceX = [balanceEnv lookupXForBreakpoint:nextBalanceIndx];
-        //            nextBalanceFlags = [balanceEnv lookupFlagsForBreakpoint:nextBalanceIndx];
-        nextBalanceX = xForBp(balanceEnv,xForBpSel,nextBalanceIndx);
-        nextBalanceFlags = flagsForBp(balanceEnv,flagsForBpSel,nextBalanceIndx);
-      }
-      else {
-        nextBalanceX = maxX + 1;
-      }
-
-      /* last chance to bypass: if the first amp and balance envelope points
-        * are beyond the end of the buffer, we eject.
-        */
-      if ((nextBalanceIndx == 0 && (nextBalanceX > maxX)) &&
-          (nextAmpIndx == 0 && (nextAmpX > maxX))) {
-        [balanceEnvLock unlock];
-        [ampEnvLock unlock];
-        [lock unlock];
-        return NO;
-      }
-      /* always include start of buffer as 1st bp*/
-      /* grab some values pertaining to start of envelope */
-      {
-        //            int b4AmpIndx = [ampEnv breakpointIndexBeforeOrEqualToX:nowTime];
-        //            int b4BalanceIndx = [balanceEnv breakpointIndexBeforeOrEqualToX:nowTime];
-        int b4AmpIndx = ampEnv ? bpBeforeOrEqual(ampEnv,bpBeforeOrEqualSel,nowTime) :
-        BP_NOT_FOUND;
-        int b4BalanceIndx = balanceEnv ?
-          bpBeforeOrEqual(balanceEnv,bpBeforeOrEqualSel,nowTime) : BP_NOT_FOUND;
-        if (b4AmpIndx != BP_NOT_FOUND) {
-          //                uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
-          uee[xPtr].ampFlags = flagsForBp(ampEnv,flagsForBpSel,b4AmpIndx);
-          uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, ampX);
-        } else {
-          uee[xPtr].ampFlags = 0;
-          uee[xPtr].ampY = staticAmp;
+        // TODO Currently this balance routine generates the balance between two nominated stereo channels.
+        // We should extend this so that multiple channels such as L/R surround channels are also balanced.
+        // This can get tricky with centre channels, rear and LFE channels, so we need to determine speaker placement.
+        for (sampleIndex = 0; sampleIndex < lengthInSamples; sampleIndex += channelCount) {
+            samples[sampleIndex + stereoChannels[0]] *= leftAmpD;
+            samples[sampleIndex + stereoChannels[1]] *= rightAmpD;
         }
-        if (b4BalanceIndx != BP_NOT_FOUND) {
-          //                uee[xPtr].balanceFlags = [balanceEnv lookupFlagsForBreakpoint:b4BalanceIndx];
-          uee[xPtr].balanceFlags = flagsForBp(balanceEnv,flagsForBpSel,b4BalanceIndx);
-          uee[xPtr].balanceY = _lookupEnvForX(self, balanceEnv, ampX);
-        } else {
-          uee[xPtr].balanceFlags = 0;
-          uee[xPtr].balanceY = staticBalance;
-        }
-        if (uee[xPtr].balanceY >= 0) {
-          uee[xPtr].balanceR = 1;
-          uee[xPtr].balanceL = 1 - uee[xPtr].balanceY;
-        }
-        else {
-          uee[xPtr].balanceR = 1 + uee[xPtr].balanceY;
-          uee[xPtr].balanceL = 1;
-        }
+    }
+}
 
-      }
-      uee[xPtr].xVal = ampX;
-      xPtr++;
+//- (void) envelopeMix
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
+                        outputBuffer: (SndAudioBuffer *) outB
+{
+    double nowTime;
 
-      /* do the loop to get all relevant x values within our relevant
-        * time period
-        */
-      while ((nextAmpX < maxX) || (nextBalanceX < maxX)) {
-        if (nextAmpX <= nextBalanceX) {
-          tempXVal = nextAmpX;
-          tempBalanceFlags = 0;
-          tempAmpFlags = nextAmpFlags;
-          //[ampEnv lookupYForBreakpoint:nextAmpIndx];
-          tempAmpY = ampEnv ?
-            yForBp(ampEnv,yForBpSel,nextAmpIndx) : staticAmp;
-          tempBalanceY = balanceEnv ?
-            _lookupEnvForX(self, balanceEnv, nextAmpX) : staticBalance;
+    /* bypass if possible */
+    if (ampEnv == nil && staticAmp == 1 && balanceEnv == nil && staticBalance == 0) {
+        return FALSE;
+    }
 
-          /* since we're slotting in an unexpected bp as far as the balance env
-            * is concerned, make sure we tell the new bp to ramp on both sides,
-            * if it needs to
-            */
-          if ((currentBalanceFlags & SND_FADER_ATTACH_RAMP_RIGHT) ||
-              (nextBalanceFlags & SND_FADER_ATTACH_RAMP_LEFT)) {
-            tempBalanceFlags = SND_FADER_ATTACH_RAMP_RIGHT | SND_FADER_ATTACH_RAMP_LEFT;
-          }
-          else {
-            tempBalanceFlags = 0;
-          }
-          xPtr = _processBalance( xPtr, uee+xPtr,
-                                  tempXVal, tempAmpY,
-                                  tempBalanceY,
-                                  tempAmpFlags,
-                                  tempBalanceFlags);
-          xPtr++;
-          nextAmpIndx++;
-          if (nextAmpIndx < countAmp) {
-            //                    nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
-            nextAmpX = xForBp(ampEnv,xForBpSel,nextAmpIndx);
-            currentAmpFlags = nextAmpFlags;
-            //                    nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
-            nextAmpFlags = flagsForBp(ampEnv,flagsForBpSel,nextAmpIndx);
-          }
-          else {
-            nextAmpX = maxX + 1;
-            currentAmpFlags = nextAmpFlags;
-            nextAmpFlags = 0;
-          }
-        }
-        else {
-          tempXVal = nextBalanceX;
-          tempBalanceFlags = nextBalanceFlags;
-          tempAmpFlags = 0;
-          //[balanceEnv lookupYForBreakpoint:nextBalanceIndx]
-          tempAmpY = ampEnv ?
-            _lookupEnvForX(self, ampEnv,nextBalanceX) : staticAmp;
-          tempBalanceY = balanceEnv ?
-            yForBp(balanceEnv,yForBpSel,nextBalanceIndx) : staticBalance;
+    nowTime = [[self audioProcessorChain] nowTime];
 
-          /* since we're slotting in an unexpected bp as far as the amp env
-            * is concerned, make sure we tell the new bp to ramp on both sides,
-            * if it needs to
-            */
-          if ((currentAmpFlags & SND_FADER_ATTACH_RAMP_RIGHT) ||
-              (nextAmpFlags & SND_FADER_ATTACH_RAMP_LEFT)) {
-            tempAmpFlags = SND_FADER_ATTACH_RAMP_RIGHT | SND_FADER_ATTACH_RAMP_LEFT;
-          }
-          else {
-            tempAmpFlags = 0;
-          }
-          xPtr = _processBalance( xPtr, uee+xPtr,
-                                  tempXVal, tempAmpY,
-                                  tempBalanceY,
-                                  tempAmpFlags,
-                                  tempBalanceFlags);
-          xPtr++;
-          nextBalanceIndx++;
-          if ((nextBalanceIndx != BP_NOT_FOUND) &&
-              (nextBalanceIndx < countBalance)) {
-            //                    nextBalanceX = [balanceEnv lookupXForBreakpoint:nextBalanceIndx];
-            nextBalanceX = xForBp(balanceEnv,xForBpSel,nextBalanceIndx);
-            currentBalanceFlags = nextBalanceFlags;
-            //                    nextBalanceFlags = [balanceEnv lookupFlagsForBreakpoint:nextBalanceIndx];
-            nextBalanceFlags = flagsForBp(balanceEnv,flagsForBpSel,nextBalanceIndx);
-          }
-          else {
-            nextBalanceX = maxX + 1;
-            currentBalanceFlags = nextBalanceFlags;
-            nextBalanceFlags = 0;
-          }
-        }
+    [envelopesLock lock];
 
-      } /* end while */
-      /* always include end of buffer as last bp*/
-      tempXVal = maxX;
-      tempAmpFlags = nextAmpFlags;
-      tempBalanceFlags = nextBalanceFlags;
-      tempAmpY = ampEnv ? _lookupEnvForX(self, ampEnv, maxX) : staticAmp;
-      tempBalanceY = balanceEnv ? _lookupEnvForX(self, balanceEnv, maxX) : staticBalance;
-      xPtr = _processBalance( xPtr, uee+xPtr,
-  			    tempXVal, tempAmpY,
-			    tempBalanceY,
-			    tempAmpFlags,
-			    tempBalanceFlags);
-      xPtr++;
+    if (ampEnv == nil && balanceEnv == nil) {
+        [self staticMixIntoBuffer: inB];
+    }
+    else {  // Mix using envelopes.
+        if ([inB dataFormat] == SND_FORMAT_FLOAT && [inB channelCount] == 2) {
+            long lengthInFrames  = [inB lengthInSampleFrames];
+            double x = nowTime;
+            double maxX = x + [inB duration];
+            int xPtr = 0;
+            double ampX = x;
+            double nextAmpX, nextBalanceX;
+            int nextAmpIndx, nextBalanceIndx;
+            int countAmp;
+            int countBalance;
+            long i;
+            int j;
+            int nextAmpFlags = 0, nextBalanceFlags = 0;
+            int currentAmpFlags = 0, currentBalanceFlags = 0;
+        
+            double tempXVal;
+            int tempBalanceFlags;
+            int tempAmpFlags;
+            float tempAmpY;
+            float tempBalanceY;
 
-      /* finished with ampEnv and balanceEnv now */
-      [balanceEnvLock unlock];
-      [ampEnvLock unlock];
+            if (balanceEnv == nil && ampEnv == nil) {
+                [envelopesLock unlock];
+                return NO;
+            }
+            [ampEnvLock lock];
+            [balanceEnvLock lock];
+        
+            countAmp = ampEnv ? [ampEnv breakpointCount] : 0;
+            countBalance = balanceEnv ? [balanceEnv breakpointCount] : 0;
+        
+            if (!uee) 
+                uee = calloc(256, sizeof(SndUnifiedEnvelopeEntry));
+            if (!uee)
+                [[NSException exceptionWithName: NSMallocException
+                                         reason: @"SndAudioFader envelope"
+                                       userInfo: nil] raise];
+        
+            /* prime the loop */
+            nextAmpIndx = ampEnv ? [ampEnv breakpointIndexAfterX: nowTime] : BP_NOT_FOUND;
+            nextBalanceIndx = balanceEnv ? [balanceEnv breakpointIndexAfterX: nowTime] : BP_NOT_FOUND;
+            if (nextAmpIndx != BP_NOT_FOUND) {
+                // nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+                // nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+                nextAmpX = xForBp(ampEnv, xForBpSel, nextAmpIndx);
+                nextAmpFlags = flagsForBp(ampEnv, flagsForBpSel, nextAmpIndx);
+            }
+            else {
+                nextAmpX = maxX + 1;
+            }
+            if (nextBalanceIndx != BP_NOT_FOUND) {
+                // nextBalanceX = [balanceEnv lookupXForBreakpoint:nextBalanceIndx];
+                // nextBalanceFlags = [balanceEnv lookupFlagsForBreakpoint:nextBalanceIndx];
+                nextBalanceX = xForBp(balanceEnv, xForBpSel, nextBalanceIndx);
+                nextBalanceFlags = flagsForBp(balanceEnv, flagsForBpSel, nextBalanceIndx);
+            }
+            else {
+                nextBalanceX = maxX + 1;
+            }
 
-      /* log 'em */
+            /* last chance to bypass: if the first amp and balance envelope points
+             * are beyond the end of the buffer, we eject.
+             */
+            if ((nextBalanceIndx == 0 && (nextBalanceX > maxX)) && (nextAmpIndx == 0 && (nextAmpX > maxX))) {
+                [balanceEnvLock unlock];
+                [ampEnvLock unlock];
+                [envelopesLock unlock];
+                return NO;
+            }
+            /* always include start of buffer as 1st bp*/
+            /* grab some values pertaining to start of envelope */
+            // primeStartOfEnvelope(uee)
+            {
+                // int b4AmpIndx = [ampEnv breakpointIndexBeforeOrEqualToX:nowTime];
+                // int b4BalanceIndx = [balanceEnv breakpointIndexBeforeOrEqualToX:nowTime];
+                int b4AmpIndx = ampEnv ? bpBeforeOrEqual(ampEnv, bpBeforeOrEqualSel, nowTime) : BP_NOT_FOUND;
+                int b4BalanceIndx = balanceEnv ? bpBeforeOrEqual(balanceEnv, bpBeforeOrEqualSel, nowTime) : BP_NOT_FOUND;
+
+                if (b4AmpIndx != BP_NOT_FOUND) {
+                    // uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
+                    uee[xPtr].ampFlags = flagsForBp(ampEnv, flagsForBpSel, b4AmpIndx);
+                    uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, ampX);
+                }
+                else {
+                    uee[xPtr].ampFlags = 0;
+                    uee[xPtr].ampY = staticAmp;
+                }
+                if (b4BalanceIndx != BP_NOT_FOUND) {
+                    // uee[xPtr].balanceFlags = [balanceEnv lookupFlagsForBreakpoint: b4BalanceIndx];
+                    uee[xPtr].balanceFlags = flagsForBp(balanceEnv, flagsForBpSel, b4BalanceIndx);
+                    uee[xPtr].balanceY = _lookupEnvForX(self, balanceEnv, ampX);
+                }
+                else {
+                    uee[xPtr].balanceFlags = 0;
+                    uee[xPtr].balanceY = staticBalance;
+                }
+                if (uee[xPtr].balanceY >= 0) {
+                    uee[xPtr].balanceR = 1;
+                    uee[xPtr].balanceL = 1 - uee[xPtr].balanceY;
+                }
+                else {
+                    uee[xPtr].balanceR = 1 + uee[xPtr].balanceY;
+                    uee[xPtr].balanceL = 1;
+                }
+            }
+            uee[xPtr].xVal = ampX;
+            xPtr++;
+        
+            /* do the loop to get all relevant x values within our relevant
+             * time period
+             */
+            while ((nextAmpX < maxX) || (nextBalanceX < maxX)) {
+                if (nextAmpX <= nextBalanceX) {
+                    tempXVal = nextAmpX;
+                    tempBalanceFlags = 0;
+                    tempAmpFlags = nextAmpFlags;
+                    //[ampEnv lookupYForBreakpoint:nextAmpIndx];
+                    tempAmpY = ampEnv ?
+                        yForBp(ampEnv,yForBpSel,nextAmpIndx) : staticAmp;
+                    tempBalanceY = balanceEnv ?
+                        _lookupEnvForX(self, balanceEnv, nextAmpX) : staticBalance;
+            
+                    /* since we're slotting in an unexpected bp as far as the balance env
+                        * is concerned, make sure we tell the new bp to ramp on both sides,
+                        * if it needs to
+                        */
+                    if ((currentBalanceFlags & SND_FADER_ATTACH_RAMP_RIGHT) ||
+                        (nextBalanceFlags & SND_FADER_ATTACH_RAMP_LEFT)) {
+                        tempBalanceFlags = SND_FADER_ATTACH_RAMP_RIGHT | SND_FADER_ATTACH_RAMP_LEFT;
+                    }
+                    else {
+                        tempBalanceFlags = 0;
+                    }
+                    xPtr = _processBalance( xPtr, uee+xPtr,
+                                            tempXVal, tempAmpY,
+                                            tempBalanceY,
+                                            tempAmpFlags,
+                                            tempBalanceFlags);
+                    xPtr++;
+                    nextAmpIndx++;
+                    if (nextAmpIndx < countAmp) {
+                        //                    nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+                        nextAmpX = xForBp(ampEnv,xForBpSel,nextAmpIndx);
+                        currentAmpFlags = nextAmpFlags;
+                        //                    nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+                        nextAmpFlags = flagsForBp(ampEnv,flagsForBpSel,nextAmpIndx);
+                    }
+                    else {
+                        nextAmpX = maxX + 1;
+                        currentAmpFlags = nextAmpFlags;
+                        nextAmpFlags = 0;
+                    }
+                }
+                else {
+                    tempXVal = nextBalanceX;
+                    tempBalanceFlags = nextBalanceFlags;
+                    tempAmpFlags = 0;
+                    //[balanceEnv lookupYForBreakpoint:nextBalanceIndx]
+                    tempAmpY = ampEnv ?
+                        _lookupEnvForX(self, ampEnv,nextBalanceX) : staticAmp;
+                    tempBalanceY = balanceEnv ?
+                        yForBp(balanceEnv,yForBpSel,nextBalanceIndx) : staticBalance;
+            
+                    /* since we're slotting in an unexpected bp as far as the amp env
+                        * is concerned, make sure we tell the new bp to ramp on both sides,
+                        * if it needs to
+                        */
+                    if ((currentAmpFlags & SND_FADER_ATTACH_RAMP_RIGHT) ||
+                        (nextAmpFlags & SND_FADER_ATTACH_RAMP_LEFT)) {
+                        tempAmpFlags = SND_FADER_ATTACH_RAMP_RIGHT | SND_FADER_ATTACH_RAMP_LEFT;
+                    }
+                    else {
+                        tempAmpFlags = 0;
+                    }
+                    xPtr = _processBalance( xPtr, uee+xPtr,
+                                            tempXVal, tempAmpY,
+                                            tempBalanceY,
+                                            tempAmpFlags,
+                                            tempBalanceFlags);
+                    xPtr++;
+                    nextBalanceIndx++;
+                    if ((nextBalanceIndx != BP_NOT_FOUND) &&
+                        (nextBalanceIndx < countBalance)) {
+                        //                    nextBalanceX = [balanceEnv lookupXForBreakpoint:nextBalanceIndx];
+                        nextBalanceX = xForBp(balanceEnv,xForBpSel,nextBalanceIndx);
+                        currentBalanceFlags = nextBalanceFlags;
+                        //                    nextBalanceFlags = [balanceEnv lookupFlagsForBreakpoint:nextBalanceIndx];
+                        nextBalanceFlags = flagsForBp(balanceEnv,flagsForBpSel,nextBalanceIndx);
+                    }
+                    else {
+                        nextBalanceX = maxX + 1;
+                        currentBalanceFlags = nextBalanceFlags;
+                        nextBalanceFlags = 0;
+                    }
+                }
+            } /* end while */
+            /* always include end of buffer as last bp */
+            tempXVal = maxX;
+            tempAmpFlags = nextAmpFlags;
+            tempBalanceFlags = nextBalanceFlags;
+            tempAmpY = ampEnv ? _lookupEnvForX(self, ampEnv, maxX) : staticAmp;
+            tempBalanceY = balanceEnv ? _lookupEnvForX(self, balanceEnv, maxX) : staticBalance;
+            xPtr = _processBalance( xPtr, uee+xPtr,
+                                    tempXVal, tempAmpY,
+                                    tempBalanceY,
+                                    tempAmpFlags,
+                                    tempBalanceFlags);
+            xPtr++;
+        
+            /* finished with ampEnv and balanceEnv now */
+            [balanceEnvLock unlock];
+            [ampEnvLock unlock];
+        
 #if 0
-//NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
-        NSLog(@"number of points: %d\n",xPtr);
-        for (i = 0 ; i < xPtr ; i++) {
-          NSLog(@"xVal %f ampFlag %d, ampY %f, balanceFlag %d, balanceY %f, balL %f, balR %f\n",
+            /* log 'em */
+            //NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
+            NSLog(@"number of points: %d\n",xPtr);
+            for (i = 0 ; i < xPtr ; i++) {
+                NSLog(@"xVal %f ampFlag %d, ampY %f, balanceFlag %d, balanceY %f, balL %f, balR %f\n",
                 uee[i].xVal,
                 uee[i].ampFlags,
                 uee[i].ampY,
@@ -779,127 +796,130 @@ inline int _processBalance( int xPtr,
                 uee[i].balanceY,
                 uee[i].balanceL,
                 uee[i].balanceR );
-        }
+            }
 #endif
 
-        /* use 'em */
-//  For R channel, scaler will go from rStartAmp to rEndAmp (at x1 the scaling
-//  is rStartAmp; at x2, rEndAmp). Given iterator i (0 to x2-x1) the scaling
-//  at each sample is (rStartAmp + i/(x2-x1) * (rEndAmp-rStartAmp))
-
-        { /* new block so I can define variables */
-          SndUnifiedEnvelopeEntry *startUee;
-          SndUnifiedEnvelopeEntry *endUee;
-          float *inD  = (float*) [inB bytes];
-          int currSample,lastSample;
-          int timeDiff;
-          float lDiff,rDiff;
-          float lEndAmp, rEndAmp, lStartAmp, rStartAmp;
-          float lScaler, rScaler;
-          float ampMult, balanceMultL, balanceMultR;
-          double sr = [inB samplingRate];
-          float proportion;
-
-          //printf("before  : %f (nowTime %f) %f %f %f %f\n",GSTimeNow() - t, nowTime,inD[0],inD[1],inD[1022],inD[1023]);
-          for (i = 0 ; i < xPtr - 1 ; i++) {
-            startUee = &(uee[i]);
-            endUee = &(uee[i+1]);
-
-            /* there are some 0-length sections created when envelopes
-              * collide
-              */
-            if (startUee->xVal == endUee->xVal) {
-              continue;
-            }
-
-            currSample = (startUee->xVal - nowTime) * sr; //frames
-            lastSample = (endUee->xVal - nowTime) * sr;
-            //easy way of ensuring we don't scale the same sample twice...
-            if (i < xPtr - 2) {
-              lastSample--;
-            }
-
-            currSample *= 2;
-              if (lastSample >= len) {
-                lastSample = len - 1;
-              }
-              lastSample *= 2;
-              timeDiff = lastSample - currSample;
-
-
-              ampMult = ((startUee->ampFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
-                         endUee->ampY : startUee->ampY);
-              //            balanceMult = ((startUee->balanceFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
-              //                    endUee->balanceY : startUee->balanceY);
-              if (startUee->balanceFlags & SND_FADER_ATTACH_RAMP_RIGHT) {
-                balanceMultL = endUee->balanceL;
-                balanceMultR = endUee->balanceR;
-              }
-              else {
-                balanceMultL = startUee->balanceL;
-                balanceMultR = startUee->balanceR;
-              }
-
-              //            lStartAmp = startUee->ampY * (startUee->balanceY - 45.0) / -90.0;
-              //            rStartAmp = startUee->ampY * (startUee->balanceY + 45.0) / 90.0;
-              //            lEndAmp = ampMult * (balanceMult - 45.0) / -90.0;
-              //            rEndAmp = ampMult * (balanceMult + 45.0) / 90.0;
-              lStartAmp = startUee->ampY * startUee->balanceL;
-              rStartAmp = startUee->ampY * startUee->balanceR;
-              lEndAmp = ampMult * balanceMultL;
-              rEndAmp = ampMult * balanceMultR;
-
-              lDiff = lEndAmp - lStartAmp; /* how much we have to scale l from start to end */
-              rDiff = rEndAmp - rStartAmp;
-              //printf("curr sample %d last sample %d nowTime %f lstart %f lend %f rstart %f rend %f\n",
-              //    currSample,lastSample,nowTime,lStartAmp,lEndAmp,rStartAmp,rEndAmp);
-
-              if (timeDiff == 0.0F) {
-                inD[currSample] *= lStartAmp;
-                inD[currSample + 1] *= rStartAmp;
-              }
-              else if ((lDiff != 0.0F) && (rDiff != 0.0F)) {
-                for (j = currSample ; j <= lastSample ; j+=2) {
-                  proportion = (float)j/(float)timeDiff;
-                  lScaler = lStartAmp + lDiff * proportion;
-                  rScaler = rStartAmp + rDiff * proportion;
-                  inD[j] *= lScaler;
-                  inD[j+1] *= rScaler;
+            /* use 'em */
+            //  For R channel, scaler will go from rStartAmp to rEndAmp (at x1 the scaling
+            //  is rStartAmp; at x2, rEndAmp). Given iterator i (0 to x2-x1) the scaling
+            //  at each sample is (rStartAmp + i/(x2-x1) * (rEndAmp-rStartAmp))
+            // define as method -amplitudeScalingOfBuffer: inB unifiedEnvelopeEntry: uee
+            { 
+                /* new block so I can define variables */
+                SndUnifiedEnvelopeEntry *startUee;
+                SndUnifiedEnvelopeEntry *endUee;
+                float *inD  = (float*) [inB bytes];
+                int currSample,lastSample;
+                int timeDiff;
+                float lDiff,rDiff;
+                float lEndAmp, rEndAmp, lStartAmp, rStartAmp;
+                float lScaler, rScaler;
+                float ampMult, balanceMultL, balanceMultR;
+                double sr = [inB samplingRate];
+                float proportion;
+        
+                //NSLog(@"("before  : %f (nowTime %f) %f %f %f %f\n",GSTimeNow() - t, nowTime,inD[0],inD[1],inD[1022],inD[1023]);
+                for (i = 0 ; i < xPtr - 1 ; i++) {
+                    startUee = &(uee[i]);
+                    endUee = &(uee[i+1]);
+        
+                    /* there are some 0-length sections created when envelopes
+                    * collide
+                    */
+                    if (startUee->xVal == endUee->xVal) {
+                        continue;
+                    }
+        
+                    currSample = (startUee->xVal - nowTime) * sr; //frames
+                    lastSample = (endUee->xVal - nowTime) * sr;
+                    //easy way of ensuring we don't scale the same sample twice...
+                    if (i < xPtr - 2) {
+                        lastSample--;
+                    }
+        
+                    currSample *= 2;
+                    if (lastSample >= lengthInFrames) {
+                        lastSample = lengthInFrames - 1;
+                    }
+                    lastSample *= 2;
+                    timeDiff = lastSample - currSample;
+        
+        
+                    ampMult = ((startUee->ampFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
+                                endUee->ampY : startUee->ampY);
+                    //            balanceMult = ((startUee->balanceFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
+                    //                    endUee->balanceY : startUee->balanceY);
+                    if (startUee->balanceFlags & SND_FADER_ATTACH_RAMP_RIGHT) {
+                        balanceMultL = endUee->balanceL;
+                        balanceMultR = endUee->balanceR;
+                    }
+                    else {
+                        balanceMultL = startUee->balanceL;
+                        balanceMultR = startUee->balanceR;
+                    }
+        
+                    //            lStartAmp = startUee->ampY * (startUee->balanceY - 45.0) / -90.0;
+                    //            rStartAmp = startUee->ampY * (startUee->balanceY + 45.0) / 90.0;
+                    //            lEndAmp = ampMult * (balanceMult - 45.0) / -90.0;
+                    //            rEndAmp = ampMult * (balanceMult + 45.0) / 90.0;
+                    lStartAmp = startUee->ampY * startUee->balanceL;
+                    rStartAmp = startUee->ampY * startUee->balanceR;
+                    lEndAmp = ampMult * balanceMultL;
+                    rEndAmp = ampMult * balanceMultR;
+        
+                    lDiff = lEndAmp - lStartAmp; /* how much we have to scale l from start to end */
+                    rDiff = rEndAmp - rStartAmp;
+                    //NSLog(@"curr sample %d last sample %d nowTime %f lstart %f lend %f rstart %f rend %f\n",
+                    //    currSample,lastSample,nowTime,lStartAmp,lEndAmp,rStartAmp,rEndAmp);
+        
+                    if (timeDiff == 0.0F) {
+                        inD[currSample] *= lStartAmp;
+                        inD[currSample + 1] *= rStartAmp;
+                    }
+                    else if ((lDiff != 0.0F) && (rDiff != 0.0F)) {
+                        for (j = currSample; j <= lastSample; j += 2) {
+                            proportion = (float) j / (float) timeDiff;
+                            lScaler = lStartAmp + lDiff * proportion;
+                            rScaler = rStartAmp + rDiff * proportion;
+                            inD[j] *= lScaler;
+                            inD[j+1] *= rScaler;
+                        }
+                    }
+                    else if (lDiff == 0.0F) {
+                        for (j = currSample ; j <= lastSample ; j+=2) {
+                            proportion = (float) j / (float) timeDiff;
+                            rScaler = rStartAmp + rDiff * proportion;
+                            inD[j] *= lStartAmp;
+                            inD[j+1] *= rScaler;
+                        }
+                    }
+                    else if (rDiff == 0.0F) {
+                        for (j = currSample; j <= lastSample; j += 2) {
+                            proportion = (float) j / (float) timeDiff;
+                            lScaler = lStartAmp + lDiff * proportion;
+                            inD[j] *= lScaler;
+                            inD[j + 1] *= rStartAmp;
+                        }
+                    }
+                    else {
+                        for (j = currSample; j <= lastSample; j += 2) {
+                            inD[j] *= lStartAmp;
+                            inD[j + 1] *= rStartAmp;
+                        }
+                    }
                 }
-              }
-              else if (lDiff == 0.0F) {
-                for (j = currSample ; j <= lastSample ; j+=2) {
-                  proportion = (float)j/(float)timeDiff;
-                  rScaler = rStartAmp + rDiff * proportion;
-                  inD[j] *= lStartAmp;
-                  inD[j+1] *= rScaler;
-                }
-              }
-              else if (rDiff == 0.0F) {
-                for (j = currSample ; j <= lastSample ; j+=2) {
-                  proportion = (float)j/(float)timeDiff;
-                  lScaler = lStartAmp + lDiff * proportion;
-                  inD[j] *= lScaler;
-                  inD[j+1] *= rStartAmp;
-                }
-              }
-              else {
-                for (j = currSample ; j <= lastSample ; j+=2) {
-                  inD[j] *= lStartAmp;
-                  inD[j+1] *= rStartAmp;
-                }
-              }
-          }
-          //printf("tot time: %f (nowTime %f) %f %f %f %f\n",GSTimeNow() - t, nowTime,inD[0],inD[1],inD[1022],inD[1023]);
-        } /*end block */
+                // NSLog(@"tot time: %f (nowTime %f) %f %f %f %f\n",GSTimeNow() - t, nowTime,inD[0],inD[1],inD[1022],inD[1023]);
+            } /*end block */
+        }
+        else {
+            NSLog(@"SndAudioFader::processReplacingInputBuffer:outputBuffer: Bad buffer format (not stereo, float): %d channels, %@\n",
+                [inB channelCount], SndFormatName([inB dataFormat], NO));
+        }
     }
-  }
-  else
-    NSLog(@"SndAudioFader::processreplacing: ERR: Bad buffer format (not stereo, float)\n");
 
-  [lock unlock];
+    [envelopesLock unlock];
 
-  return NO; /* we've written the results in place */
+    return NO; /* we've written the results in place */
 }
 
 @end
