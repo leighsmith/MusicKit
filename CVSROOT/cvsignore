@@ -3,4 +3,4 @@
 .places*.wmd
 .*TheInvisiblePropertyStore
 .DS_Store
-.pbxuser
+*.pbxuser
