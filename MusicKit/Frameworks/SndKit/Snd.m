@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.10  2001/02/08 00:17:56  leigh
+ * Added Christopher Penroses additions for MacOS X Public Beta CoreAudio
+ *
  * Revision 1.9  2000/08/11 01:18:06  leigh
  * Commented out debugging info
  *
@@ -51,6 +54,7 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
 
 
+
 @implementation Snd
 
 static NSAutoreleasePool *pool;
@@ -63,6 +67,56 @@ void merror(int er)
     NSLog(@"mem error %i\n",er);
     return;
 }
+
+#ifdef macosx
+
+static id	clientDataHack;
+static BOOL	isPlaying = NO;
+
+OSStatus SndKitSndIOProc(AudioDeviceID inDevice,
+                         const AudioTimeStamp *inNow,
+                         const void *inInputData,
+			 const AudioTimeStamp *inInputTime,
+                         void  *outOutputData,
+                         const AudioTimeStamp *inOutputTime,
+			 void *inClientData)
+{
+    
+    register int  i;
+    
+    float         *inputBuffer,
+                    *outputBuffer = outOutputData;
+    
+    id            me = (id) *( (id *) inClientData);
+    
+    /* select input buffer */
+    
+    if ([me bufferCount] % 2)
+        inputBuffer = (float *) [me bufferOdd];
+    
+    else
+        inputBuffer = (float *) [me bufferEven];
+    
+    /* fill outputBuffer with floating-point data */
+    
+    for ( i=0; i < [me bufferFrameSize]; i++ )
+        *(outputBuffer+i) = *(inputBuffer+i);
+    
+    /* unblock main thread waiting on this condition variable */
+    
+    pthread_cond_signal( [me soundCondition] );
+    
+    return 0;
+}
+
+static void *playSoundFunc(void *obj)
+{
+  [((id)obj) playSoundThread];
+  return 0;
+}
+
+#endif
+
 
 + (void)initialize
 {
@@ -227,8 +281,7 @@ void merror(int er)
     conversionQuality = SND_CONVERT_LOWQ;
     delegate = nil;
     status = NX_SoundInitialized;
-    soundStruct = NULL;
-    soundStructSize = 0;
+
     currentError = 0;
     _scratchSnd = NULL;
     _scratchSize = 0;
@@ -236,13 +289,30 @@ void merror(int er)
     plSound = nil;
 #endif
     tag = 0;
+
+    /*
+    soundStruct = (SndSoundStruct *) calloc( 1, sizeof(SndSoundStruct) );
+
+    soundStruct->magic = SND_MAGIC;
+    soundStruct->dataLocation = sizeof(SndSoundStruct);
+    soundStruct->dataSize = 0;
+    soundStruct->dataFormat = SND_FORMAT_UNSPECIFIED;
+    */
+
+#ifdef macosx
+
+    soundPlaying = NO;
+    stopRequest = NO;
+
+#endif
+
     return [super init];
 }
 
 - initFromSoundfile:(NSString *)filename
 {
     [self init];
-    if ([self readSoundfile:filename]) {
+    if ([self readSoundfile: filename]) {
         [self release];
         return nil;
     }
@@ -251,7 +321,7 @@ void merror(int er)
 
 - initFromSection:(NSString *)sectionName
 {
-    printf("Snd: -initFromSection:(NSString *)sectionName  obselete\n");
+    printf("Snd: -initFromSection:(NSString *)sectionName  obsolete\n");
     return nil;
 }
 
@@ -268,6 +338,14 @@ void merror(int er)
     [plSound release];
 #endif
     [super dealloc];
+}
+
+// Debugging function
+void soundStructDescription(SndSoundStruct *s)
+{
+    NSLog(@"read sound Location:%d size:%d format:%d sr:%d cc:%d info:%s\n",
+		s->dataLocation, s->dataSize, s->dataFormat,
+		s->samplingRate, s->channelCount, s->info);
 }
 
 - readSoundFromStream:(NSData *)stream
@@ -300,9 +378,7 @@ void merror(int er)
     s->channelCount = ntohl(s->channelCount);
 #endif
 
-//  printf("read sound Location:%d size:%d format:%d sr:%d cc:%d info:%s\n",
-//		s->dataLocation, s->dataSize, s->dataFormat,
-//		s->samplingRate, s->channelCount, s->info);
+//  dumpSoundStruct(s);
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
@@ -460,9 +536,8 @@ void merror(int er)
     s = realloc((char *)s, s->dataLocation + 1); /* allocate enough room for info string */
     [aDecoder decodeArrayOfObjCType:"c" count:s->dataLocation - sizeof(SndSoundStruct) + 4 at:s->info];
 
-//	printf("read sound Location:%d size:%d format:%d sr:%d cc:%d info:%s\n",
-//		s->dataLocation, s->dataSize, s->dataFormat,
-//		s->samplingRate, s->channelCount, s->info);
+//	soundStructDescription(s);
+
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
@@ -503,7 +578,7 @@ void merror(int er)
     if (name) {
         [name release];
         name = nil;
-        }
+    }
     if (!theName) return self;
     if (![theName length]) return self;
     name = [theName copy];
@@ -633,19 +708,48 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 #endif
 
+#ifdef macosx
+- play:(id) sender beginSample:(int) begin sampleCount: (int) count 
+{
+    playSender = sender;
+    
+    playBegin = begin;
+    playEnd = begin + count;
+    
+    if (playBegin > [self sampleCount] || playBegin < 0)
+        playBegin = 0;
+    
+    if (playEnd > [self sampleCount] || playEnd < playBegin)
+        playEnd = [self sampleCount];
+    
+    /* tell our self that we are playing */
+    
+    soundPlaying = YES;
+    
+    /* detach thread */
+    
+    pthread_create( &soundThread, NULL, playSoundFunc, (void *) self );
+    
+    return self;
+}
+
+#endif
+
 - play:sender
 {
 #if macosx
-    id tempFile;
-    NSSound *tempSound;
-
-    tempFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"sndtemp.snd"];
-    [self writeSoundfile:tempFile];
-    tempSound = [[NSSound alloc] initWithContentsOfFile:tempFile byReference:NO];
-    [[NSFileManager defaultManager] removeFileAtPath:tempFile handler:nil];
-    //[tempSound setDelegate:self]; // raf: this causes problems if the Snd is released before the end of playing
-    [tempSound play];
-    [tempSound release];
+    playSender = sender;
+    
+    playBegin = 0;
+    playEnd = [self sampleCount];
+    
+    /* tell our self that we are playing */
+    
+    soundPlaying = YES;
+    
+    /* detach thread */
+    
+    pthread_create( &soundThread, NULL, playSoundFunc, (void *) self );
     
     return self;
 #else
@@ -693,6 +797,479 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 #endif  // macosx
 }
 
+#ifdef macosx
+
+- (void) playSoundThread
+{
+
+  int			bufferByteSize,
+			currentSample = playBegin * [self channelCount];
+
+  UInt32                intFetch,
+			propertySize;
+
+  float			*soundBuffer;
+
+  double		deviceSampleRate;
+
+  BOOL			first = YES,
+			finished = NO;
+
+  OSStatus              CAstatus;
+
+
+  /* our playback buffer size in bytes */
+
+  bufferByteSize = 32768;
+  bufferFrameSize = bufferByteSize / sizeof(float);
+
+  bufferCount = 0;
+
+  /* allocate our buffers */
+
+  bufferEven = (float *)
+	NSZoneCalloc(NSDefaultMallocZone(),
+		     bufferFrameSize, sizeof(float));
+
+  bufferOdd = (float *)
+	NSZoneCalloc(NSDefaultMallocZone(),
+		     bufferFrameSize, sizeof(float));
+
+  soundBuffer = bufferEven;
+
+  /* initialize CoreAudio device */
+
+  /* Get the default sound output device */
+
+  propertySize = sizeof(outputDeviceID);
+  CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+		&propertySize, &outputDeviceID);
+
+  //  fprintf(stderr, "%p\n", (void *) &outputDeviceID);
+  //  fprintf(stderr, "output device CAstatus:%s\n", (char *) &CAstatus);
+
+  if (CAstatus) {
+    fprintf(stderr, "300AudioHardwareGetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+
+  /* check the returned device */
+
+  if (outputDeviceID == kAudioDeviceUnknown) {
+    fprintf(stderr, "outputDeviceID is kAudioDeviceUnknown\n");
+    exit(1);
+  }
+
+
+  /* get name of device */
+
+  {
+
+    char        deviceName[256];
+
+    propertySize = 256;
+    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+				    kAudioDevicePropertyDeviceName,
+				    &propertySize, deviceName);
+
+        NSLog(@"%s\n", deviceName);
+
+    //    NSLog(@"get device name CAstatus:%s\n", (char *) &CAstatus);
+
+    if (CAstatus) {
+      fprintf(stderr, "AudioDeviceGetProperty returned %s\n", (char *) &CAstatus);
+      exit(1);
+    }
+  }
+
+
+  /* check device CAstatus */
+
+  {
+
+    UInt32      running;
+
+    propertySize = sizeof(UInt32);
+    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+				    kAudioDevicePropertyDeviceIsRunning,
+				    &propertySize, &running);
+
+    //    fprintf(stderr,"%d\n", (int) running);
+
+    //    fprintf(stderr, "get isrunning CAstatus:%s\n", (char *) &CAstatus);
+
+
+    if (CAstatus) {
+      fprintf(stderr, "///AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+      exit(1);
+    }
+
+  }
+
+
+
+  /* set the sampleRate of the device */
+
+  propertySize = sizeof(double);
+  deviceSampleRate = [self samplingRate];
+  CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
+                                  kAudioDevicePropertyRateScalar,
+				  propertySize, &deviceSampleRate);
+
+  NSLog(@"set sampling rate CAstatus:%s deviceSampleRate = %lf\n", (char *) &CAstatus, deviceSampleRate);
+
+  /*
+  if (CAstatus) {
+    fprintf(stderr, "320AudioDeviceSetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+  */
+  
+  /* get the sampleRate of the device */
+
+  propertySize = sizeof(double);
+  CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+                                  kAudioDevicePropertyRateScalar,
+                                  &propertySize, &deviceSampleRate);
+
+  //  fprintf(stderr, "get sampling rate CAstatus:%s\n", (char *) &CAstatus);
+
+  /*
+  if (CAstatus) {
+    fprintf(stderr, "332AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+  */
+
+  /* compare the sample rate of our input sound with that of the device */
+
+  if ((double) [self samplingRate] != deviceSampleRate) {
+    NSLog(@"input sound sample rate doesn't match device sample rate\n");
+    exit(1);
+  }
+
+
+  /* set the buffer size of the device */
+
+  propertySize = sizeof(bufferByteSize);
+
+  CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
+                                  kAudioDevicePropertyBufferSize,
+                                  propertySize, &bufferByteSize);
+
+  //  fprintf(stderr, "set buffer size CAstatus:%s\n", (char *) &CAstatus);
+
+  /*
+  if (CAstatus) {
+    fprintf(stderr, "354AudioDeviceSetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+  */
+
+  /* fetch the buffer size to checking */
+
+  propertySize = sizeof(intFetch);
+  CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+                                  kAudioDevicePropertyBufferSize,
+                                  &propertySize, &intFetch);
+
+  //  fprintf(stderr, "get buffer size CAstatus:%s\n", (char *) &CAstatus);
+
+  /*
+  if (CAstatus) {
+    fprintf(stderr, "365AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+  */
+
+  if (bufferByteSize != intFetch ) {
+    fprintf(stderr, "device did not set desired buffer size\n");
+    fprintf(stderr, "desired: %d\nactual: %d\n", (int) bufferByteSize,
+	    (int) intFetch);
+    exit(1);
+  }
+
+
+  /* Get the basic device description */
+
+  propertySize = sizeof(outputStreamBasicDescription);
+  CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+                                  kAudioDevicePropertyStreamFormat,
+                                  &propertySize,&outputStreamBasicDescription);
+
+  //  fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
+
+  /*
+  if (CAstatus) {
+    fprintf(stderr, "384AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+  */
+
+  /* channel management */
+
+  NSLog(@"device channels:      %d\n", 
+                        (int) outputStreamBasicDescription.mChannelsPerFrame);
+
+
+  outputStreamBasicDescription.mChannelsPerFrame = 1;
+  propertySize = sizeof(outputStreamBasicDescription);
+  CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
+                                  kAudioDevicePropertyStreamFormat,
+                                  propertySize, &outputStreamBasicDescription);
+
+    fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
+
+  if (CAstatus) {
+    fprintf(stderr, "384AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+
+  /* put our sound data into successive overlapped buffers and play them */
+
+  while (!finished) {
+
+    int		index,
+		dataFormat = [self dataFormat];
+
+    void	*data = [self data];
+
+    /* send zeros for the first buffer */
+
+    if (!first) {
+
+      if ( dataFormat == SND_FORMAT_INDIRECT ) {
+
+	int			fragmentSamples = 0,
+				sizeAdj,
+				sampleLocation = currentSample;
+
+	SndSoundStruct		**sound_structs = (SndSoundStruct **)
+							[self data];
+
+	void   *sampleLand = (short *) ( (char *) (*sound_structs) +
+					    (*sound_structs)->dataLocation);
+
+	/* add format switch here */
+
+	switch ( (*sound_structs)->dataFormat ) {
+
+	  case SND_FORMAT_FLOAT:
+	    sizeAdj = (sizeof(float)>>1);
+	    break;
+
+	  case SND_FORMAT_LINEAR_16:
+	    sizeAdj = (sizeof(short)>>1);
+	    break;
+
+	  case SND_FORMAT_DOUBLE:
+	    sizeAdj = (sizeof(double)>>1);
+	    break;
+
+	  case SND_FORMAT_MULAW_8:
+	    sizeAdj = (sizeof(char)>>1);
+	    break;
+	    
+	  default:
+	    sizeAdj = (sizeof(short)>>1);
+	    break;
+	}
+
+	/* find the first sound_struct that contains the first sample
+	   of our output data */
+
+	while ( sampleLocation >= fragmentSamples ) {
+
+	  if ( *sound_structs == NULL )
+	    fprintf(stderr,"Uh oh! Grievous inconsistency!\n");
+
+	  sampleLocation -= fragmentSamples;
+	  fragmentSamples = ((*sound_structs)->dataSize) >> sizeAdj;
+	  
+	  sampleLand = (void *) ((char *) (*sound_structs) +
+				  (*sound_structs)->dataLocation);
+	  ++sound_structs;
+	}
+
+	/* construct out output buffer given the current format */
+
+	for ( index=0; index < bufferFrameSize; index++ ) {
+
+	  if ( currentSample >= playEnd * [self channelCount] ) {
+	      
+	    finished = YES;
+	    break;
+	  }
+
+	  switch ( (*sound_structs)->dataFormat ) {
+
+	    case SND_FORMAT_FLOAT:
+	      *(soundBuffer+index) = *((float *) sampleLand + sampleLocation);
+	      break;
+
+	    case SND_FORMAT_LINEAR_16:
+	      *(soundBuffer+index) = *((short *) sampleLand + sampleLocation) /
+				32767.;
+	      break;
+	      
+	    case SND_FORMAT_DOUBLE:
+	      *(soundBuffer+index) = *((double *) sampleLand + sampleLocation);
+	      break;
+
+	    case SND_FORMAT_MULAW_8:
+	      *(soundBuffer+index) = SndiMulaw( *((char *) sampleLand +
+						  sampleLocation) ) / 32767.;
+	      break;
+	      
+	    default:
+	      *(soundBuffer+index) = 0.;
+	      break;
+	  }
+
+	  currentSample++;
+	  sampleLocation++;
+	}
+      }
+
+      else {
+
+	for ( index=0; index < bufferFrameSize; index++ ) {
+
+	  if ( currentSample >= playEnd * [self channelCount] ) {
+	      
+	    finished = YES;
+	    break;
+	  }
+
+	  switch ([self dataFormat]) {
+
+	  case SND_FORMAT_FLOAT:
+
+	    *(soundBuffer+index) = *((float *) data+currentSample);
+	    break;
+	    
+	  case SND_FORMAT_LINEAR_16:
+
+	    *(soundBuffer+index) = *((short *) data + currentSample) /
+								32767.;
+	    break;
+	      
+	  case SND_FORMAT_DOUBLE:
+	    
+	    *(soundBuffer+index) = *((double *) data+currentSample);
+	    break;
+
+	  case SND_FORMAT_MULAW_8:
+
+	    *(soundBuffer+index) = 
+		    SndiMulaw( *((char *) data + currentSample) ) / 32767.;
+	    break;
+	  
+	  default:
+	    break;
+	  }
+
+	  currentSample++;
+	}
+      }
+    }
+
+    /*
+      fwrite( soundBuffer, bufferFrameSize, sizeof(float), stdout);
+    */
+
+    if (first) {
+
+      /* start playback */
+
+      clientDataHack = self;
+
+      CAstatus = AudioDeviceAddIOProc(outputDeviceID, SndKitSndIOProc,
+				    (void *) &clientDataHack);
+      if (CAstatus) {
+	fprintf(stderr, "AudioDeviceAddIOProc returned %d\n", (int) CAstatus);
+	exit(1);
+      }
+
+      CAstatus = AudioDeviceStart(outputDeviceID, SndKitSndIOProc);
+
+      if (CAstatus) {
+	fprintf(stderr, "AudioDeviceStart returned %d\n", (int) CAstatus);
+	exit(1);
+      }
+
+      /* we won't need to return here */
+
+      first = NO;
+    }
+
+    /* otherwise we sleep until resumed by the callback function */
+
+    else {
+
+      /* have thread wait for sound driver  to send data before filling up
+	 the next buffer */
+
+      [self wait];
+    }
+
+    /* we might have the chance to use the most beautiful function in
+       computer science */
+
+    if (stopRequest) {
+
+      stopRequest = NO;
+      goto CLEANUP;
+    }
+
+    bufferCount++;
+
+    if (bufferCount % 2)
+      soundBuffer = bufferOdd;
+
+    else
+      soundBuffer = bufferEven;
+
+    bzero(soundBuffer, bufferByteSize);
+  }
+
+  [self wait];
+
+ CLEANUP:
+
+  /* stop audio playback */
+
+  CAstatus = AudioDeviceStop(outputDeviceID, SndKitSndIOProc);
+
+  if (CAstatus) {
+    fprintf(stderr, "AudioDeviceStop returned %d\n", (int) CAstatus);
+    exit(1);
+  }
+
+  soundPlaying = NO;
+
+  /* free our audio buffers */
+
+  NSZoneFree( NSDefaultMallocZone(), bufferEven );
+  NSZoneFree( NSDefaultMallocZone(), bufferOdd );
+
+/* disable the objective-c runtime thread protection, assuming that
+   only one MixDocument is playing at a time, submix concerns abound! */
+
+//  objc_setMultithreaded(NO);
+
+  if (playSender && [playSender respondsToSelector:@selector(didPlay:)])
+    [playSender didPlay:self];
+
+  /* end our thread */
+
+  pthread_join(soundThread, NULL);
+
+  return;
+}
+
+#endif
+
 //#if defined(__ppc__) || defined(WIN32)
 - (void)sound:(NSSound *)sound didFinishPlaying:(BOOL)aBool;
 {
@@ -737,6 +1314,30 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 #endif
 }
 
+#ifdef macosx
+- (void) wait {
+
+  /* ask current thread to wait on condition */
+
+  /* initialize mutex lock */
+  pthread_mutex_init( &soundMutex, NULL );
+
+  /* initialize condition for waiting */
+  pthread_cond_init ( &soundCondition, NULL );
+
+  /* acquire the lock */
+  pthread_mutex_lock( &soundMutex );
+
+  /* wait */
+  pthread_cond_wait( &soundCondition, &soundMutex );
+
+  /* relinguish the lock */
+  pthread_mutex_unlock( &soundMutex );
+
+  return;
+}
+#endif
+
 - (int)record
 {
     [self record:self];
@@ -770,7 +1371,14 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (void)stop:(id)sender
 {
-#ifdef USE_PERFORM_SOUND_IO
+#if defined(macosx)
+
+  if (soundPlaying)
+    stopRequest = YES;
+
+  return;
+
+#elif defined(USE_PERFORM_SOUND_IO)
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     if (tag) {
@@ -789,7 +1397,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     if(tag) {
         tag = 0;
     }
-#endif
+#endif // macosx
 }
 
 - (int)stop
@@ -832,18 +1440,27 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     NSDictionary *fileAttributeDictionary;
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    if (soundStruct) SndFree(soundStruct);
+    if (soundStruct)
+        SndFree(soundStruct);
+
     if (name) {
         free(name);
         name = NULL;
     }
-    // check its seekable, by checking its POSIX regular.
-    fileAttributeDictionary = [fileManager fileAttributesAtPath: filename traverseLink: YES];
-    if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
-              return SND_ERR_CANNOT_OPEN;
 
-    err = SndReadSoundfile([filename cString],&soundStruct);
-    if (!err) soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+    // check its seekable, by checking its POSIX regular.
+    fileAttributeDictionary = [fileManager fileAttributesAtPath: filename
+					   traverseLink: YES];
+
+    if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
+        return SND_ERR_CANNOT_OPEN;
+
+    err = SndReadSoundfile([filename cString], &soundStruct);
+
+    // soundStructDescription(soundStruct);
+    if (!err)
+        soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+
     return err;
 }
 
@@ -1201,4 +1818,45 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 {
     return conversionQuality;
 }
+
+#ifdef macosx
+
+- (int) bufferCount {
+
+  return bufferCount;
+}
+
+- (int) bufferFrameSize {
+
+  return bufferFrameSize;
+}
+
+
+- (float *) bufferEven {
+
+  return bufferEven;
+}
+
+- (float *) bufferOdd {
+
+  return bufferOdd;
+}
+
+- (pthread_t *) soundThread {
+
+  return &soundThread;
+}
+
+- (pthread_cond_t *) soundCondition {
+
+  return &soundCondition;
+}
+
+- (pthread_mutex_t *) soundMutex {
+
+  return &soundMutex;
+}
+
+#endif
+
 @end
