@@ -182,7 +182,10 @@ static int ioTags = 1000;
     return [super init];
 }
 
-- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (float) samplingRate
+- initWithFormat: (int) format
+	channels: (int) channels
+	  frames: (int) frames
+    samplingRate: (float) samplingRate
 {
   self = [self init];
   if (soundStruct == NULL)
@@ -295,9 +298,9 @@ static int ioTags = 1000;
     return [NSArray arrayWithArray: fileTypes]; // make it immutable
 }
 
-+ (BOOL) isPathForSoundFile: (NSString*) path
++ (BOOL) isPathForSoundFile: (NSString *) path
 {
-  NSArray *exts = [Snd soundFileExtensions];
+  NSArray *exts = [[self class] soundFileExtensions];
   NSString *ext  = [path pathExtension];
   int i, c = [exts count];
   for (i = 0; i < c; i++) {
@@ -575,47 +578,42 @@ static int ioTags = 1000;
     return delegate;
 }
 
-- (void)setDelegate:(id)anObject
+- (void) setDelegate: (id) anObject
 {
     delegate = anObject;
 }
 
-- (double)samplingRate
+- (double) samplingRate
 {
     if (!soundStruct) return 0;
     return (double)(soundStruct->samplingRate);
 
 }
 
-- (int)sampleCount
+- (int) sampleCount
 {
     if (!soundStruct) return 0;
     return SndSampleCount(soundStruct);
 }
 
-- (double)duration
+- (double) duration
 {
     if (!soundStruct) return 0.0;
     if ((double)(soundStruct->samplingRate) == 0) return 0.0; /* cop-out */
     return (double)[self sampleCount] / (double)(soundStruct->samplingRate);
 }
 
-- (int)channelCount
+- (int) channelCount
 {
     if (!soundStruct) return 0;
     return soundStruct->channelCount;
 }
 
-- (char *)info
+- (NSString *) info
 {
-    if (!soundStruct) return NULL;
-    return (char *)(soundStruct->info);
-}
-
-- (int)infoSize
-{
-    if (!soundStruct) return 0;
-    return strlen((char *)(soundStruct->info));
+    if (!soundStruct)
+	return nil;
+    return [NSString stringWithCString: (char *)(soundStruct->info)];
 }
 
 #if !USE_STREAMING
@@ -1110,9 +1108,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return NO;
 }
 	
-- (int)convertToFormat:(int)aFormat
-	   samplingRate:(double)aRate
-	   channelCount:(int)aChannelCount
+- (int) convertToFormat: (int) aFormat
+	   samplingRate: (double) aRate
+	   channelCount: (int) aChannelCount
 {
     int err;
     SndSoundStruct *toSound;
@@ -1121,15 +1119,19 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     switch (conversionQuality) {
     case SND_CONVERT_LOWQ:
     default:
-        err = SndConvertSound(soundStruct, &toSound);
+	/* fastest conversion, non-interpolated */
+	err = SndConvertSound(soundStruct, &toSound, YES, NO, NO, YES);
         break;
     case SND_CONVERT_MEDQ:
-        err = SndConvertSoundGoodQuality(soundStruct, &toSound);
+	/* medium conversion, small filter, uses interpolation */
+	err = SndConvertSound(soundStruct, &toSound, YES, NO, YES, NO);
         break;
     case SND_CONVERT_HIQ:
-        err = SndConvertSoundHighQuality(soundStruct, &toSound);
+	/* slow, accurate conversion, large filter, uses interpolation */
+	err = SndConvertSound(soundStruct, &toSound, YES, YES, YES, NO);
     }
     if (!err) {
+	// TODO this should be after soundStruct is assigned to toSound, surely?
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
         SndFree(soundStruct);
         soundStruct = toSound;
@@ -1137,11 +1139,11 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return err;
 }
 
-- (int)convertToFormat:(int)aFormat
+- (int) convertToFormat: (int) aFormat
 {
-    return [self convertToFormat:aFormat
-                    samplingRate:soundStruct->samplingRate
-                    channelCount:soundStruct->channelCount];
+    return [self convertToFormat: aFormat
+                    samplingRate: soundStruct->samplingRate
+                    channelCount: soundStruct->channelCount];
 }
 
 - (int)deleteSamples
@@ -1427,22 +1429,30 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return [ab autorelease];
 }
 
-- (void) fillAudioBuffer:(SndAudioBuffer*)buff withSamplesInRange: (NSRange) r
+- (void) insertIntoAudioBuffer: (SndAudioBuffer *) buff
+		    startingAt: (long) bufferStartIndex
+		samplesInRange: (NSRange) sndSampleRange
 {
-  int   sampleSize    = SndFrameSize(soundStruct);
-  void* dataPtr       = [self data] + sampleSize * r.location;
-  [buff copyBytes:dataPtr count:r.length * sampleSize format: soundStruct];
+    int   sndFrameSize  = SndFrameSize(soundStruct);
+    void  *sndDataPtr = [self data] + sndFrameSize * sndSampleRange.location;
+    int   buffFrameSize = [buff frameSizeInBytes];
+    NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
+
+    if([buff dataFormat] != [self dataFormat]) {
+	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d, converting", [buff dataFormat], [self dataFormat]);
+	// TODO should be:
+	// SndConvertSound
+	SndChangeSampleType(sndDataPtr, [buff bytes] + bufferByteRange.location, [self dataFormat], [buff dataFormat], sndSampleRange.length * soundStruct->channelCount);
+    }
+    else {
+	NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
+	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: soundStruct];
+    }
 }
 
-- (void) insertSamplesInRange: (NSRange) sndSampleRange
-	      intoAudioBuffer: (SndAudioBuffer*) buff
-		   startingAt: (long) bufferStartIndex;
+- (void) fillAudioBuffer: (SndAudioBuffer *) buff withSamplesInRange: (NSRange) r
 {
-    int   sampleSize    = SndFrameSize(soundStruct);
-    void* dataPtr       = [self data] + sampleSize * sndSampleRange.location;
-    NSRange bufferByteRange = { bufferStartIndex * sampleSize, sndSampleRange.length * sampleSize };
-
-    [buff copyBytes: dataPtr intoRange: bufferByteRange format: soundStruct];
+    [self insertIntoAudioBuffer: buff startingAt: 0 samplesInRange: r];
 }
 
 - (void) setLoopWhenPlaying: (BOOL) yesOrNo
