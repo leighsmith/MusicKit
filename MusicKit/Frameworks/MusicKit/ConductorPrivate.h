@@ -1,47 +1,46 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
-*/
-/*
-  $Log$
-  Revision 1.10  2002/04/08 19:10:28  sbrandon
-  added prototypes for new private methods introduced in last commit
-
-  Revision 1.9  2002/04/08 17:23:49  sbrandon
-  added new method _rescheduleMsgRequestWithObjectArgs:... which optionally
-  retains its arguments
-
-  Revision 1.8  2000/03/31 00:12:29  leigh
-  theTimeToWait now a shared function
-
-  Revision 1.7  2000/03/24 16:25:16  leigh
-  Removed redundant AppKit headers
-
-  Revision 1.6  2000/01/27 19:06:28  leigh
-  Now using NSPort replacing C Mach port API
-
-  Revision 1.5  2000/01/20 17:15:36  leigh
-  Replaced sleepMs with OpenStep NSThread delay
-
-  Revision 1.4  2000/01/13 06:54:04  leigh
-  Added a missing (pre-OpenStep conversion!) _error: method
-
-  Revision 1.3  1999/09/04 22:02:16  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.2  1999/07/29 01:25:42  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
+  Defined In: The MusicKit
+  
+  Description:
+    This file contains private methods, functions and defines.
+  
+  Original Author: David Jaffe
+  
+  Copyright 1988-1992, NeXT Inc. All rights reserved.
+  Portions Copyright (c) 1999-2003 The MusicKit Project.
+ */
 #ifndef __MK__Conductor_H___
 #define __MK__Conductor_H___
-#import "MKConductor.h"
 
-//#import	<mach/message.h>
+#import "MKConductor.h"
 #import <Foundation/Foundation.h>
 
 #define _MK_ONLY_ONE_MTC_SUPPORTED 1 /* Do we ever need more than one? */
 #define _MK_DEFAULT_MTC_POLL_PERIOD (1/30.0)
+
+#define DELEGATE_RESPONDS_TO(_self,_msgBit) ((_self)->delegateFlags & _msgBit)
+#define BEAT_TO_CLOCK 1
+#define CLOCK_TO_BEAT 2
+
+// This used to be NX_FOREVER which is obsolete with OpenStep. There's no reason not to include it manually though.
+#define MK_FOREVER	(6307200000.0)	/* 200 years of seconds */
+
+#define ENDOFLIST (MK_FOREVER)
+#define PAUSETIME (MK_ENDOFTIME - 2.0) /* See ISENDOFTIME below */
+
+/* Macros for safe float compares */
+#define ISENDOFLIST(_x) (_x > (ENDOFLIST - 1.0))
+#define ISENDOFTIME(_x) (_x > (MK_ENDOFTIME - 1.0))
+
+#define TARGETFREES NO
+#define CONDUCTORFREES YES
+
+#define NOTIMEDENTRY nil
+
+#define PEEKTIME(pq) (pq)->_timeOfMsg
+
+#define COUNT_MSG_QUEUE_LENGTH 0
 
 typedef enum _backgroundThreadAction {
     exitThread,
@@ -101,6 +100,8 @@ extern double _MKTheTimeToWait(double nextMsgTime);
   arg2:(id)arg2 retain:(BOOL)retainArg2;
 + (void) masterConductorBody:(NSTimer *) unusedTimer;
 - _error: (NSString *) errorMsg;
+-_pause;
+-_resume;
 
 @end
 
@@ -115,7 +116,15 @@ extern double _MKTheTimeToWait(double nextMsgTime);
 -(double)_MTCPerformerActivateOffset:sender;
 -_setMTCSynch:aMidiObj;
 
-@end
+void setupMTC(void);
+void resetMTCTime(void);
+BOOL weGotMTC(void);
+BOOL mtcEndOfTime(void);
+void adjustTime();
+BOOL checkForEndOfTime();
+void repositionCond(MKConductor *cond, double nextMsgTime);
+double beatToClock(MKConductor *self, double newBeat);
 
+@end
 
 #endif
