@@ -447,9 +447,9 @@ enum {
         fprintf(stderr,"[%s] SYNTH THREAD: ... LOCKED\n", [clientName cString]);
 #endif
         {
-          innerPool = [[NSAutoreleasePool alloc] init];
+          NSAutoreleasePool *innerPool2 = [[NSAutoreleasePool alloc] init];
           [self processBuffers];
-          [innerPool release];
+          [innerPool2 release];
         }
 #if SNDSTREAMCLIENT_DEBUG                  
         fprintf(stderr,"[%s] SYNTH THREAD: ... done processBuffers\n", [clientName cString]);
