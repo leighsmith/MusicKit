@@ -4,22 +4,23 @@
   HEADER FILES: MusicKit.h
 
   Description:
-    A MKSynthPatch contains a List of unit generators which behave as
+    A MKSynthPatch contains an NSArray of unit generators which behave as
     a functional unit.
-    SynthPatches are not created by the application. Rather, they
-    are created by the Orchestra. The Orchestra is also
-    responsible for filling the MKSynthPatch instance with UnitGenerator and
-    SynthData instances. It does this on the basis of a template provided by the
+    
+    MKSynthPatches are not created by the application. Rather, they
+    are created by the MKOrchestra. The MKOrchestra is also
+    responsible for filling the MKSynthPatch instance with MKUnitGenerator and
+    MKSynthData instances. It does this on the basis of a template provided by the
     MKSynthPatch class method +patchTemplate. The subclass designer implements
-    this method to provide a PatchTemplate which specifies what the mix of
-    UnitGenerators and SynthData objects should
+    this method to provide a MKPatchTemplate which specifies what the mix of
+    MKUnitGenerators and MKSynthData objects should
     be, in what order it should be allocated, and how to connect them up.
-    (See PatchTemplate.)
-    The MKSynthPatch instance, thus, is List
-    containing the UnitGenerators and SynthData objects in the order they were
-    specified in the template and connected as specified in the temlate.
+    (See MKPatchTemplate.)
+    The MKSynthPatch instance, thus, is an NSArray containing the MKUnitGenerators
+    and MKSynthData objects in the order they were specified in the template and
+    connected as specified in the template.
 
-    SynthPatches can be in one of three states:
+    MKSynthPatches can be in one of three states:
     MK_running
     MK_finishing
     MK_idle
@@ -28,12 +29,11 @@
     (creation), noteOn, noteOff, noteUpdate and end-of-note (noteEnd) times, as
     described below.
 
-    SynthPatches are ordinarilly used in conjunction with a Conducted
-    performance
-    by using a SynthInstrument. The SynthInstrument manages the allocation
-    of SynthPatches in response to incoming Notes. Alternatively, SynthPatches
+    MKSynthPatches are ordinarily used in conjunction with a Conducted
+    performance by using a MKSynthInstrument. The MKSynthInstrument manages the allocation
+    of MKSynthPatches in response to incoming MKNotes. Alternatively, MKSynthPatches
     may be used in a stand-alone fashion. In this case, you must allocate the
-    MKSynthPatch by sending the Orchestra the -allocSynthPatch: or
+    MKSynthPatch by sending the MKOrchestra the -allocSynthPatch: or
     allocSynthPatch:patchTemplate: method.
 
   Original Author: David A. Jaffe
@@ -41,9 +41,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 23:26:10  leigh
+  Enforced ivar privacy
+
   Revision 1.3  2000/03/24 21:11:35  leigh
   Cleanups of doco, removed the objc_loadmodules include causing compilation probs on MOXS 1.2
 
@@ -81,7 +85,7 @@ MKPhraseStatus;
     BOOL isAllocated;      // YES if the object is allocated.
     id orchestra;          // MKOrchestra instance on which the object is allocated and on which this MKSynthPatch is running.
 
-    /* The following for internal use only */
+@private
     unsigned short _whichList;  // Which list am I on?
     int _orchIndex;             // Which DSP?
     id _next;                   // Used internally for linked list of active SynthPatches.

@@ -1,10 +1,66 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    MKUnitGenerator is an abstract class; each subclass provides a
+    particular music synthesis operation or function.  A MKUnitGenerator
+    object represents a DSP unit generator, a program that runs on the
+    DSP.
+    
+    You never create MKUnitGenerator objects directly in an application,
+    they can only be created by the MKOrchestra through its
+    allocUnitGenerator: method.  MKUnitGenerators are typically owned by a
+    MKSynthPatch, an object that configures a set of MKSynthData and
+    MKUnitGenerator objects into a DSP software instrument.  The MusicKit
+    provides a number of MKUnitGenerator subclasses that can be configured
+    to create new MKSynthPatch classes.
+    
+    Most of the methods defined in the MKUnitGenerator class are subclass
+    responsiblities or are provided to help define the functionality of a
+    subclass.  The most important of these are runSelf, idleSelf, and
+    finishSelf.  These methods implement the behavior of the object in
+    response to the run, finish, and idle messages, respectively.
+    
+    In addition to implementing the subclass responsibility methods, you
+    should also provide methods for poking values into the memory
+    arguments of the DSP unit generator that the MKUnitGenerator represents.
+    For example, an oscillator MKUnitGenerator would provide a setFreq:
+    method to set the frequency of the unit generator that's running on
+    the DSP.
+    
+    MKUnitGenerator subclasses are created from DSP macro code.  The utility
+    dspwrap turns a DSP macro into a MKUnitGenerator master class,
+    implementing some of the subclass responsibility methods.
+    
+    It also creates a number of classes that inherit from your
+    MKUnitGenerator subclass; these are called leaf classes.  A leaf class
+    represents a specific memory space configuration on the DSP.  For
+    example, OnePoleUG is a one-pole filter MKUnitGenerator master class
+    provided by the Music Kit.  It has an input and an output argument
+    that refer to either the x or the y memory spaces on the DSP.  To
+    provide for all memory space configurations, dspwrap creates the leaf
+    classes OnePoleUGxx, OnePoleUGxy, OnePoleUGyx, and OnePoleUGyy.
+    
+    You can modify a master class (the setFreq: method mentioned above
+    would be implemented in a master class), but you never create an
+    instance of one.  UnitGenerator objects are always instances of leaf
+    classes.
+    
+    CF: MKSynthData, MKSynthPatch, MKOrchestra
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 23:24:03  leigh
+  Enforced ivar privacy
+
   Revision 1.3  1999/08/26 19:57:47  leigh
   extra doco
 
@@ -37,59 +93,11 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
 #import "dspwrap.h"
 
 @interface MKUnitGenerator : NSObject
-/*
- * 
- * MKUnitGenerator is an abstract class; each subclass provides a
- * particular music synthesis operation or function.  A MKUnitGenerator
- * object represents a DSP unit generator, a program that runs on the
- * DSP.
- * 
- * You never create MKUnitGenerator objects directly in an application,
- * they can only be created by the Orchestra through its
- * allocUnitGenerator: method.  MKUnitGenerators are typically owned by a
- * MKSynthPatch, an object that configures a set of SynthData and
- * MKUnitGenerator objects into a DSP software instrument.  The Music Kit
- * provides a number of MKUnitGenerator subclasses that can be configured
- * to create new MKSynthPatch classes.
- * 
- * Most of the methods defined in the MKUnitGenerator class are subclass
- * responsiblities or are provided to help define the functionality of a
- * subclass.  The most important of these are runSelf, idleSelf, and
- * finishSelf.  These methods implement the behavior of the object in
- * response to the run, finish, and idle messages, respectively.
- * 
- * In addition to implementing the subclass responsibility methods, you
- * should also provide methods for poking values into the memory
- * arguments of the DSP unit generator that the UnitGenerator represents.
- * For example, an oscillator UnitGenerator would provide a setFreq:
- * method to set the frequency of the unit generator that's running on
- * the DSP.
- * 
- * MKUnitGenerator subclasses are created from DSP macro code.  The utility
- * dspwrap turns a DSP macro into a UnitGenerator master class,
- * implementing some of the subclass responsibility methods.
- * 
- * It also creates a number of classes that inherit from your
- * MKUnitGenerator subclass; these are called leaf classes.  A leaf class
- * represents a specific memory space configuration on the DSP.  For
- * example, OnePoleUG is a one-pole filter MKUnitGenerator master class
- * provided by the Music Kit.  It has an input and an output argument
- * that refer to either the x or the y memory spaces on the DSP.  To
- * provide for all memory space configurations, dspwrap creates the leaf
- * classes OnePoleUGxx, OnePoleUGxy, OnePoleUGyx, and OnePoleUGyy.
- * 
- * You can modify a master class (the setFreq: method mentioned above
- * would be implemented in a master class), but you never create an
- * instance of one.  UnitGenerator objects are always instances of leaf
- * classes.
- * 
- * CF: SynthData, SynthPatch, Orchestra
- */
 {
     id synthPatch;      /* The SynthPatch that owns this object, if any. */
     id orchestra;       /* The Orchestra on which the object is allocated. */
 
-    /* The following for internal use ony */
+@protected
     unsigned short _orchIndex;
     unsigned short _synthPatchLoc;
     id _sharedKey;
@@ -103,7 +111,6 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
     MKSynthStatus status;
     MKOrchMemStruct relocation;
 
-    /* The following for internal use ony */
     MKLeafUGStruct *_classInfo; /* Same as [[self class] classInfo]. 
                                    Stored in instance as an optimization. */ 
     id _next;                   /* For available linked lists. */
