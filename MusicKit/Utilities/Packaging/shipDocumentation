@@ -11,7 +11,7 @@ TARBALLLOC=/tmp
 TARBALL=MusicKitREADME.tar.gz
 SITEUSER=leighsmith
 SITE=musickit.sourceforge.net
-SITEHTMLDIR=/home/groups/musickit
+SITEHTMLDIR=/home/groups/m/mu/musickit
 
 scp $TARBALLLOC/$TARBALL $SITEUSER@$SITE:$TARBALL
 ssh -l $SITEUSER $SITE "cd $SITEHTMLDIR; tar xzvf ~/$TARBALL"
