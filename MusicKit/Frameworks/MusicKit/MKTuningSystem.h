@@ -45,6 +45,11 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/07/02 16:48:16  sbrandon
+  - added (Class)_transpose:(double)semitones method, identical to (Class)transpose:(double)semitones
+    This is because GNUStep does not like sending messages to class objects
+    that have the same method signature as some other instance method.
+
   Revision 1.4  2000/05/13 17:17:49  leigh
   Added MKPitchNameForKeyNum()
 
@@ -177,7 +182,7 @@ extern NSString *MKPitchNameForKeyNum(int keyNum);
   * method.
   */
 
-+ transpose:(double)semitones; 
++ (Class)transpose:(double)semitones; 
  /* 
   * Transposes the installed tuning system by semitones half-steps.  (The
   * half-step used here is 12-tone equal-tempered.)  If semitones is
@@ -186,6 +191,12 @@ extern NSString *MKPitchNameForKeyNum(int keyNum);
   * the tuning system by increments smaller than a half-step.  Returns the
   * receiver.
   */
+
+ /* some versions of gcc can't deal properly with class methods that have
+  * the same name as instance methods in other classes. So I have renamed
+  * this one because of a conflict with NSResponder:-transpose
+  */
++ (Class)_transpose:(double)semitones;
 
 - transpose:(double)semitones; 
  /* 

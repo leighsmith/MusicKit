@@ -20,6 +20,11 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/07/02 16:48:49  sbrandon
+  - added (Class)_transpose:(double)semitones method, identical to (Class)transpose:(double)semitones
+    This is because GNUStep does not like sending messages to class objects
+    that have the same method signature as some other instance method.
+
   Revision 1.6  2000/10/25 18:07:51  leigh
   Added Stephen's check for at least one entry in the array
 
@@ -583,7 +588,24 @@ int _MKFindPitchVar(id aVar)
     return MAXINT;
 }    
 
-+transpose:(double)semitones
++(Class)_transpose:(double)semitones
+  /* this is an unfortunate duplicate of the method below, because of gcc silliness
+   * on GNUSTEP
+   */
+{
+    register int i;
+    register id *p = pitchVars;
+    double fact = pow(2.0,semitones/12.0);
+    dontSort = YES;
+    if (!tuningInited)
+      _MKCheckInit();
+    for (i=0; i<MIDI_NUMKEYS; i++, p++)
+      _MKSetDoubleSFVar(*p,_MKParAsDouble(_MKSFVarGetParameter(*p)) * fact);
+    dontSort = NO;
+    sortPitches(nil);
+    return self;                                                                                                     }
+
++(Class)transpose:(double)semitones
   /* Transposes the installed tuning system by the specified amount.
      If semitones is positive, the installed tuning system is transposed
      up. If semitones is negative, the installed tuning system is transposed
