@@ -1182,7 +1182,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>org.musickit.MusicKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -1190,7 +1190,7 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Music representation, synthesis and performance</string>
+	<string>V5.2.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -1300,6 +1300,7 @@
 				02CDDD2DFEF16257CFED3B93,
 				02CDDD30FEF166B5CFED3B93,
 				0142566BFFBF5179CFED3B96,
+				0143254AFFD43C27CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -3439,6 +3440,17 @@
 				ATTRIBUTES = (
 					Public,
 				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0143254AFFD43C27CFED3B96 = {
+			fileRef = 00D5A062FED5ABC1CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
 				INCLUDED_OSS = (
 					MACOS,
 					WINDOWS,
