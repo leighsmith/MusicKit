@@ -524,6 +524,8 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
             [lock unlock];
             return NO;
         }
+        [ampEnvLock lock];
+        [bearingEnvLock lock];
         if (!bearingEnv) bearingEnv = [[envClass alloc] init];
         else if (!ampEnv) ampEnv = [[envClass alloc] init];
 
@@ -562,6 +564,8 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
          */
         if ((!countBearing || (nextBearingIndx == 0 && (nextBearingX > maxX))) &&
             (!countAmp || (nextAmpIndx == 0 && (nextAmpX > maxX)))) {
+            [bearingEnvLock unlock];
+            [ampEnvLock unlock];
             [lock unlock];
             return NO;
         }
@@ -669,6 +673,10 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
         uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, maxX);
         uee[xPtr].bearingY = _lookupEnvForX(self, bearingEnv,maxX);
         xPtr++;
+
+        /* finished with ampEnv and bearingEnv now */
+        [bearingEnvLock unlock];
+        [ampEnvLock unlock];
 
         /* log 'em */
 #if 0
