@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.18  2001/08/27 23:51:47  skotmcdonald
+  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
+
   Revision 1.17  2001/08/27 21:03:23  skotmcdonald
   Added playNote method which plays the Snd at the absolute audio stream time. Calls new Snd play:atTime:withDuration method. Needed for sample accurate timing as we can't guarantee relative dts to be accurate enough
 
@@ -224,7 +227,7 @@
       duration  = [aNote dur] * factor;
     }
     
-    newPerformance = [existingSound playAtTimeInSeconds:  noteTime + 1.0
+    newPerformance = [existingSound playAtTimeInSeconds:  noteTime + [MKConductor deltaT]
                                   withDurationInSeconds: duration];
 
     // keep a dictionary of playing notes (keyed by note instance, added in time order) and their performances.
@@ -433,7 +436,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     // [MKConductor sel:to:withDelay:argCount:] takes delay parameters in beats.
     double  deltaT = MKGetDeltaT() / [conductor beatSize]; 
 
-    NSLog(@"MKSamplePLayer::realizeNote - deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
+//    NSLog(@"MKSamplePLayer::realizeNote - deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
     if ((type == MK_noteOn) || (type == MK_noteDur)) {
         [self prepareSoundWithNote: aNote];
         

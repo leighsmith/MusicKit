@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/08/27 23:51:47  skotmcdonald
+  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
+
   Revision 1.11  2001/07/05 22:57:58  leighsmith
   Added useful status methods and removed _wakeUpMKThread
 
@@ -177,8 +180,8 @@ extern void MKFinishPerformance(void);
 -(double) timeOffset; 
 - sel:(SEL) aSelector to: toObject withDelay:(double) beats argCount:(int) argCount, ...;
 - sel:(SEL) aSelector to: toObject atTime:(double) time argCount:(int) argCount, ...;
-+(double) time; 
--(double) time; 
++(double) timeInSeconds; 
+-(double) timeInBeats; 
 - emptyQueue; 
 -(BOOL) isCurrentConductor;
 +(MKMsgStruct *) afterPerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
@@ -205,13 +208,13 @@ extern void MKFinishPerformance(void);
 + useSeparateThread:(BOOL) yesOrNo;
 
 /*!
-    @method separateThreaded
+    @function separateThreaded
     @description Returns YES if the MKConductor is separate threaded, NO if it runs in the application thread.
 */
 + (BOOL) separateThreaded;
 
 /*!
-    @method separateThreadedAndInMusicKitThread
+    @function separateThreadedAndInMusicKitThread
     @description Returns YES if the MKConductor is separate threaded and the calling code is running
         in the separate thread, NO if the code is running in the application thread.
 */

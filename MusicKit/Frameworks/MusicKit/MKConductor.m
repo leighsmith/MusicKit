@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.22  2001/08/27 23:51:47  skotmcdonald
+  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
+
   Revision 1.21  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -297,7 +300,7 @@ static void adjustTimedEntry(double nextMsgTime)
     if (separateThread)
         sendMessageToWakeUpMKThread();
     else {
-	if (timedEntry != NOTIMEDENTRY) {
+        if (timedEntry != NOTIMEDENTRY) {
             [timedEntry invalidate];
             [timedEntry release];
         }
@@ -306,7 +309,7 @@ static void adjustTimedEntry(double nextMsgTime)
 			       selector: @selector(masterConductorBody:)
 			       userInfo: nil
 			       repeats: NO] retain];
-	[[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
+        [[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
 }
 
@@ -319,14 +322,13 @@ static BOOL weGotMTC(void);
 static BOOL checkForEndOfTime()
 {
     if ((dontHang || (!isClocked)) && ISENDOFTIME(condQueue->nextMsgTime) && mtcEndOfTime()) {
-	[MKConductor finishPerformance];
-	return YES;
+        [MKConductor finishPerformance];
+        return YES;
     } 
     return NO;
 }
 
-static void
-repositionCond(MKConductor *cond,double nextMsgTime)
+static void repositionCond(MKConductor *cond,double nextMsgTime)
     /* Enqueue a MKConductor (this happens every time a new message is 
        scheduled.)
 
@@ -349,8 +351,7 @@ repositionCond(MKConductor *cond,double nextMsgTime)
       return;
     /* remove conductor from doubly-linked list. */
     if (cond == condQueue) { /* It's first */
-	if ((!cond->_condNext) ||
-	    (t < ((MKConductor *)cond->_condNext)->nextMsgTime)) { 
+      if ((!cond->_condNext) || (t < ((MKConductor *)cond->_condNext)->nextMsgTime)) { 
 	    /* It's us again. */
 	    /* We use < to avoid doing an adjustTimedEntry if possible. */
 	    /* No need to reposition. */
@@ -548,7 +549,7 @@ BOOL _MKAdjustTimeIfNotBehind(void)
     return YES;
 }
 
-+(double)time
++(double)timeInSeconds
     /* Returns the time in seconds as viewed by the clock conductor.
        Same as [[Conductor clockConductor] time]. 
        Returns MK_NODVAL if not in
@@ -593,7 +594,7 @@ unclockedLoop()
     setjmp(conductorJmp);
     if (inPerformance)
       for (; ;) {
-	  [MKConductor masterConductorBody: nil];
+        [MKConductor masterConductorBody: nil];
       }
 #else
     while(inPerformance) {
@@ -761,9 +762,10 @@ static void condInit()
 /*sb: changed from void to (id)callingObj because I need to tell initializeBackgroundThread which object the main conductor is, so that the conductor can be sent objC messages from the background thread.
  */
 {
-    allConductors = [[NSMutableArray alloc] init];
-    defaultCond = [MKConductor new];
-    clockCond = [MKConductor new];
+
+    allConductors = [NSMutableArray new];
+    defaultCond   = [MKConductor new];
+    clockCond     = [MKConductor new];
     /* This actually works ok for +new. The first time +new is called,
        it creates defaultCond, clockCond and the new Cond. */
     initializeBackgroundThread();
@@ -928,12 +930,12 @@ static void _runSetup()
     }
     if (!separateThread) {
         /*sb: I am assuming that self, in a class method, equals the class method. */
-	timedEntry = [[NSTimer timerWithTimeInterval: condQueue->nextMsgTime
+        timedEntry = [[NSTimer timerWithTimeInterval: condQueue->nextMsgTime
 			       target: [self class]
 			       selector: @selector(masterConductorBody:)
 			       userInfo: nil
 			       repeats: YES] retain];
-	[[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
+        [[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
     if (startTime) [startTime autorelease];
     startTime = [[NSDate date] retain];//sb: was getTime();
@@ -1031,6 +1033,7 @@ static void evalAfterQueues()
     else
         _jmpSet = NO;
 #endif
+
     return self;
 }
 
@@ -1423,7 +1426,7 @@ static void evalAfterQueues()
     return beatToClock(self,beatTime);
 }    
 
--(double)time
+-(double)timeInBeats
   /* TYPE: Querying; Returns the receiver's notion of the current time.
    * Returns the receiver's notion of the current time
    * in beats.
@@ -1633,6 +1636,7 @@ static MKMsgStruct *newMsgRequest(
         break;
     }
     return(sp);
+  return NULL;
 }	
 
 +(MKMsgStruct *)afterPerformanceSel:(SEL)aSelector 
@@ -1651,9 +1655,10 @@ static MKMsgStruct *newMsgRequest(
  * passed to cancelMsgRequest:.
  */
 {
-    id arg1,arg2;
     MKMsgStruct *sp;
+    id arg1,arg2;
     va_list ap;
+
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
@@ -1662,6 +1667,7 @@ static MKMsgStruct *newMsgRequest(
 					    aSelector, toObject, argCount, arg1, arg2),
 			 afterPerformanceQueue,&afterPerformanceQueueEnd);
     va_end(ap);
+
     return(sp);
 }
 
@@ -1682,9 +1688,10 @@ static MKMsgStruct *newMsgRequest(
  * passed to cancelMsgRequest:.
  */
 {
-    id arg1,arg2;
     MKMsgStruct *sp;
+    id arg1,arg2;
     va_list ap;
+
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
@@ -1704,8 +1711,8 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
     register MKMsgStruct *curProc;
 
     while (queue) {
-	curProc = popMsgQueue(&(queue));
-	if (curProc == *queueEnd)
+        curProc = popMsgQueue(&(queue));
+        if (curProc == *queueEnd)
             *queueEnd = NULL;
         if(curProc->_toObject) {  // ensure we have a valid object to perform a selector
             switch (curProc->_argCount) {
@@ -1721,13 +1728,13 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
             default:
                 break;
             }
-	}
+        }
 //	else {
 //            NSLog(@"Warning, nil object on special queue\n");
 //      }
-	if (curProc->_conductorFrees)
+        if (curProc->_conductorFrees)
             freeSp(curProc);
-    }
+    }    
     return NULL;
 }
 
@@ -1753,10 +1760,10 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
 {
     delegateFlags = 0;
     if ([aDecoder versionForClassName:@"MKConductor"] >= VERSION2) {
-	[aDecoder decodeValuesOfObjCTypes: "ddc", &beatSize, &timeOffset, &(archivingFlags)];
+        [aDecoder decodeValuesOfObjCTypes: "ddc", &beatSize, &timeOffset, &(archivingFlags)];
     }
     if ([aDecoder versionForClassName:@"MKConductor"] >= VERSION3) {
-	activePerformers = [[aDecoder decodeObject] retain];
+          activePerformers = [[aDecoder decodeObject] retain];
     }
     return self;
 }
@@ -1772,23 +1779,24 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
      list and nil is returned. */
 {
     if (archivingFlags == CLOCKCOND) {
-	if (delegate)
-	  [clockCond setDelegate:delegate];
-	[super release];
-	return clockCond;
+        if (delegate)
+            [clockCond setDelegate:delegate];
+        [super release];
+        return clockCond;
     } else if (inPerformance) {
-	[super release];
-	return defaultCond;
+        [super release];
+        return defaultCond;
     } else if (archivingFlags == DEFAULTCOND) {
-	[defaultCond setDelegate:delegate];
-	[defaultCond setBeatSize:beatSize];
-	[defaultCond setTimeOffset:timeOffset];
-	[super release];
-	return defaultCond;
+        [defaultCond setDelegate:delegate];
+        [defaultCond setBeatSize:beatSize];
+        [defaultCond setTimeOffset:timeOffset];
+        [super release];
+        return defaultCond;
     } 
     [allConductors addObject:self];
     inverseBeatSize = 1.0/beatSize;
     [self _initialize];
+
     return self;
 }
 
@@ -1814,8 +1822,8 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
     unsigned char flags;
     delegate = object;
     if (!delegate) {
-	delegateFlags = 0;
-	return;
+        delegateFlags = 0;
+        return;
     }
     flags = 0;
     if ([self->delegate respondsToSelector:@selector(beatToClock:from:)]) 
@@ -1946,6 +1954,8 @@ static double getNextMsgTime(MKConductor *aCond)
         }
         // NSLog(@"curRunningCond at end of loop %x\n", curRunningCond);
     } while (PEEKTIME(curRunningCond->_msgQueue)  <= curRunningCond->time);
+
+
     if (!curRunningCond->isPaused) {
         double theNextTime = PEEKTIME(curRunningCond->_msgQueue);
         repositionCond(curRunningCond,beatToClock(curRunningCond,theNextTime));
@@ -1972,8 +1982,8 @@ static double getNextMsgTime(MKConductor *aCond)
   to the musickit.
 */
 {
-    id arg1,arg2;
     MKMsgStruct *sp;
+    id arg1,arg2;
     va_list ap;
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);

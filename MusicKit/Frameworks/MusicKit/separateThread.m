@@ -18,6 +18,9 @@
   Modification history:
 
   $Log$
+  Revision 1.25  2001/08/27 23:51:47  skotmcdonald
+  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
+
   Revision 1.24  2001/07/05 22:55:28  leighsmith
   Simplified separate thread aborting using NSConditionLock, requiring abandonment of NSConnection comms between MK and AppKit threads.This is acceptable since MK to AppKit comms could be rethought entirely and is unimplemented currently
 
@@ -402,7 +405,7 @@ static void removeTimedEntry(int arg)
 void _MKAddPort(NSPort *aPort,
                 id handlerObj,
 		unsigned max_msg_size, // unused
-		void *anArg,  // unused
+		void *anArg,  // unused 
 		NSString *priority) // unused, but should be
 {
     if (!allConductors)
@@ -567,8 +570,8 @@ static BOOL getThreadInfo(int *info)
     unsigned int count = THREAD_INFO_MAX;
     ec = thread_info(thread_self(), THREAD_SCHED_INFO, (thread_info_t)info, &count);
     if (ec != KERN_SUCCESS) {
-	_MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"getThreadInfo");
-	return NO;
+        _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"getThreadInfo");
+        return NO;
     }
     return YES;
 }
@@ -577,11 +580,11 @@ static BOOL getThreadInfo(int *info)
 #if PRIORITY_THREADING // LMS: disabled until we find a OpenStep way of changing thread priority...i.e forever.
 static BOOL setThreadPriority(int priority)
 {
-   kern_return_t ec = thread_priority(thread_self(), priority, 0);
+    kern_return_t ec = thread_priority(thread_self(), priority, 0);
     if (ec != KERN_SUCCESS) {
-	_MKErrorf(MK_machErr, COND_ERROR,
-		  mach_error_string(ec), @"setThreadPriority");
-	return NO;
+        _MKErrorf(MK_machErr, COND_ERROR,
+        mach_error_string(ec), @"setThreadPriority");
+        return NO;
     }
     return YES;
 }
@@ -593,8 +596,8 @@ static void setPriority(void)
     int info[THREAD_INFO_MAX];
     thread_sched_info_t sched_info;
     if (threadPriorityFactor == 0.0 || /* No change */
-	!getThreadInfo(info))
-      return;
+        !getThreadInfo(info))
+        return;
     sched_info = (thread_sched_info_t)info;
     /*
      * Increase our thread priority to our current max priority.
@@ -602,13 +605,13 @@ static void setPriority(void)
      * with nice -20!)
      */
     if (useFixedPolicy && (sched_info->policy != POLICY_FIXEDPRI)) {
-	oldPolicy = sched_info->policy;
-	thread_policy(thread_self(), POLICY_FIXEDPRI, QUANTUM);
+        oldPolicy = sched_info->policy;
+        thread_policy(thread_self(), POLICY_FIXEDPRI, QUANTUM);
     } else oldPolicy = INVALID_POLICY;
     if (sched_info->base_priority < sched_info->max_priority) {
-	oldPriority = sched_info->base_priority;
+        oldPriority = sched_info->base_priority;
 	/* Set it to (max - base) * threadPriorityFactor + base */
-	setThreadPriority(((sched_info->max_priority - 
+        setThreadPriority(((sched_info->max_priority - 
 			    sched_info->base_priority) * threadPriorityFactor) 
 			  + sched_info->base_priority);
     } else oldPriority = MAXINT; /* No priority to be set. */
@@ -621,9 +624,9 @@ static void resetPriority(void)
     int info[THREAD_INFO_MAX];
     thread_sched_info_t sched_info;
     if (oldPolicy != INVALID_POLICY) /* Reset it only if it was set. */
-      thread_policy(thread_self(), oldPolicy, QUANTUM);
+        thread_policy(thread_self(), oldPolicy, QUANTUM);
     if (oldPriority == MAXINT ||  /* No change */
-	!getThreadInfo(info))
+        !getThreadInfo(info))
       return;
     sched_info = (thread_sched_info_t)info;
     setThreadPriority(oldPriority);
@@ -638,8 +641,9 @@ static void resetPriority(void)
 // This is the main loop for a separate-threaded performance.
 + (void) separateThreadLoop
 {
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+
     double timeToWait; // In fractions of seconds
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     lockIt();                // Must be the first thing in this function
     [abortPlayLock initWithCondition: MK_PLAYING_UNINTERRUPTED];
@@ -648,7 +652,7 @@ static void resetPriority(void)
 
     while ([MKConductor inPerformance]) {
         BOOL didAbort;
-        
+
         // finishPerformance can be called from within the MusicKit thread
         // or from the application thread.  In both cases, inPerformance gets
         // set to NO. In the application thread case, we also set the MK_ABORTED_PLAYING
@@ -662,7 +666,7 @@ static void resetPriority(void)
             NSLog(@"timeToWait in seconds %lf\n", timeToWait);
 
         // if we need to wait longer than 100 uSec, use the timed condition lock, this is just a zero check.
-	if(timeToWait > 0.0001) { 
+        if(timeToWait > 0.0001) { 
             // We better have the lock and we know we want to give it up.
             unlockIt(recursive); 
 
@@ -684,7 +688,8 @@ static void resetPriority(void)
             // check if we aborted, preventing calling masterConductorBody
             if(!didAbort)
                 [MKConductor masterConductorBody: nil];
-	}
+                
+        }
         else
             [MKConductor masterConductorBody: nil];
     }
@@ -695,6 +700,7 @@ static void resetPriority(void)
     unlockIt(nonrecursive);
 
     [pool release];
+    [NSThread exit];
 }
 
 static void launchThread(void)

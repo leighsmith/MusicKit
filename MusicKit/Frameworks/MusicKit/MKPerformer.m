@@ -108,6 +108,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/08/27 23:51:47  skotmcdonald
+  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
+
   Revision 1.8  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -332,6 +335,7 @@ Modification history:
     /* perform before daemon. */
     if (status != MK_active)  /* This check might be unnecessary? */
       return nil;
+      
     performCount++;
     time = _performMsgPtr->_timeOfMsg - _pauseOffset;
 
@@ -340,21 +344,22 @@ Modification history:
     /* Performer perform after daemon. */
     switch (status) {
       case MK_paused: 
-	return self;
+        return self;
       case MK_active:
-	_performMsgPtr->_timeOfMsg += nextPerform;
-	if (_endTime <= _performMsgPtr->_timeOfMsg) /* Duration expired? */
-	  break;
-	MKScheduleMsgRequest(_performMsgPtr,conductor);
-	return self;
+        _performMsgPtr->_timeOfMsg += nextPerform;
+        if (_endTime <= _performMsgPtr->_timeOfMsg) /* Duration expired? */
+          break;
+        MKScheduleMsgRequest(_performMsgPtr,conductor);
+        return self;
       case MK_inactive:  
-	/* Subclass perform method may have sent deactivate */
+        /* Subclass perform method may have sent deactivate */
       	return self;
       default:
-	break;
+        break;
     }
     status = MK_paused;
     [self deactivate];
+
     return self;
 }
 
@@ -458,7 +463,7 @@ Modification history:
     if (![self activateSelf])
       return nil;
     performCount = 0;
-    condTime = [conductor time];
+    condTime = [conductor timeInBeats];
     self->time = 0.0;
     _pauseOffset = condTime + timeShift; 
     _performMsgPtr->_timeOfMsg = (_pauseOffset + nextPerform +
@@ -537,7 +542,7 @@ Modification history:
     if (status == MK_inactive || status == MK_paused) 
       return self;
     _performMsgPtr = MKCancelMsgRequest(_performMsgPtr);
-    _pauseOffset -= [conductor time];
+    _pauseOffset -= [conductor timeInBeats];
     status = MK_paused;
     if ([delegate respondsToSelector:@selector(performerDidPause:)])
       [delegate performerDidPause:self];
@@ -550,9 +555,9 @@ Modification history:
       return nil;
     [self pause];
     if (_pauseForMsgPtr)/* Already doing a "pauseFor"? */
-      MKRepositionMsgRequest(_pauseForMsgPtr,[conductor time] + beats);
+      MKRepositionMsgRequest(_pauseForMsgPtr,[conductor timeInBeats] + beats);
     else {             /* New "pauseFor". */
-	_pauseForMsgPtr = MKNewMsgRequest([conductor time] + beats,
+	_pauseForMsgPtr = MKNewMsgRequest([conductor timeInBeats] + beats,
 					  @selector(resume),self,0);
 	MKScheduleMsgRequest(_pauseForMsgPtr,conductor);
     }
@@ -569,7 +574,7 @@ Modification history:
     double resumeTime;
     if (status != MK_paused)
       return self;
-    _pauseOffset += [conductor time];
+    _pauseOffset += [conductor timeInBeats];
     resumeTime = nextPerform + self->time + _pauseOffset;
     if (resumeTime > _endTime)
       return nil;
@@ -591,7 +596,7 @@ Modification history:
     double condTime;
     if (status != MK_active)
       return nil;
-    condTime = [conductor time];
+    condTime = [conductor timeInBeats];
     if (aTime < condTime)
       aTime = condTime;
     /* Try to keep nextPerform reasonable, in case subclass depends on it. */ 
@@ -612,7 +617,7 @@ Modification history:
     double condTime;
     if (status != MK_active)
       return nil;
-    condTime = [conductor time];
+    condTime = [conductor timeInBeats];
     if (_performMsgPtr->_timeOfMsg + aTimeIncrement < condTime) 
       aTimeIncrement = condTime - _performMsgPtr->_timeOfMsg;
     /* Try to keep nextPerform reasonable, in case subclass depends on it. */ 
