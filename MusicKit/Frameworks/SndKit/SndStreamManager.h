@@ -141,20 +141,20 @@
 
 /*!
     @method     delegateMessageThread
-    @abstract   a very lightweight thread used for sending delegate messages
+    @abstract   A very lightweight thread used for sending delegate messages
                 from the background threads to the main thread.
-    @param      ports a pair of NSPorts in an NSArray, used for setting up the
-                DO between this thread and the main thread.
+    @param      ports A pair of NSPorts in an NSArray, used for setting up the
+                distributed object between this thread and the main thread.
     @discussion You should never need to call this. The manager calls this method
                 as it starts up (in <I>init</I>) then the thread just sits there
                 waiting for a signal to say that there's a delegate message sitting
                 in an array, waiting to be sent. The delegate message should have
-                been sent to -sendMessageInMainThreadToTarget::::. After arriving
+                been sent to -sendMessageInMainThreadToTarget:sel:arg1:arg2:. After arriving
                 in the delegate message thread it is dispatched to the main thread
                 via Distributed Objects, and will be sent on to the requested
                 delegate at the next convenient time in the NSRunLoop.
 */
-- (void) delegateMessageThread:(NSArray*)ports;
+- (void) delegateMessageThread: (NSArray*) ports;
 
 /*!
     @method     addClient: 
@@ -265,17 +265,7 @@
     @param      arg1 the first argument in the selector
     @param      arg2 the second argument in the selector
 */
-- (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2;
-
-/*!
-    @method   _sendDelegateInvocation:
-    @abstract INTERNAL USE ONLY 
-    @param    mesg an NSInvocation object containing the final delegate message,
-              cast as an unsigned long to prevent interpretation by OpenStep.
-    @discussion INTERNAL USE ONLY. Used as part of the delegate system for passing
-              delegate messages out of background threads into the foreground thread
-*/
-- (void) _sendDelegateInvocation:(in unsigned long) mesg;
+- (void) sendMessageInMainThreadToTarget: (id) target sel: (SEL) sel arg1: (id) arg1 arg2: (id) arg2;
 
 @end
 
