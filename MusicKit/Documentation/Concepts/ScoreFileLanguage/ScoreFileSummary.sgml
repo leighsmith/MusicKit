@@ -1,0 +1,462 @@
+<appendix id="ScoreFileSummary">
+<title>Summary of <productname>ScoreFile</productname> Language Syntax</title>
+
+<para>This appendix gives a succinct summary of the syntax of the
+<productname>ScoreFile</productname> language.  <xref
+linkend="ScoreFileRef"> provides a general description and explanation
+of <productname>ScoreFile</productname> syntax and
+<productname>ScoreFile</productname> program organization.</para>
+
+<sect1 id="ProgramStructureSummary">
+<title>Program Structure</title>
+
+<para><emphasis>scorefile</emphasis>:	</para>
+
+<para>[ <emphasis>header</emphasis> ] [ <emphasis role="bold">BEGIN</emphasis> <emphasis role="bold">;</emphasis> [ <emphasis>body</emphasis> [ <emphasis role="bold">END</emphasis> ; ] ] ]</para>
+
+<para><emphasis>header</emphasis>:	</para>
+
+<para><emphasis>headerStatement</emphasis> <emphasis role="bold">;</emphasis> [ <emphasis>header</emphasis> ]</para>
+
+<para><emphasis>headerStatement</emphasis>:	</para>
+
+<para><emphasis>scoreInfoStatement</emphasis>	</para>
+
+<para><emphasis>partDeclaration</emphasis> 	</para>
+
+<para><emphasis>partInfoStatement</emphasis>	</para>
+
+<para><emphasis>tagRangeDeclaration</emphasis> 	</para>
+
+<para><emphasis>headerOrBodyStatement</emphasis> </para>
+
+<para><emphasis>body</emphasis>:	</para>
+
+<para><emphasis>bodyStatement</emphasis> <emphasis role="bold">;</emphasis> [ <emphasis>body</emphasis> ]</para>
+
+<para><emphasis>bodyStatement</emphasis>:	</para>
+
+<para><emphasis>timeStatement</emphasis> 	</para>
+
+<para><emphasis>noteStatement</emphasis>	</para>
+
+<para><emphasis>headerOrBodyStatement</emphasis> </para>
+
+<para><emphasis>headerOrBodyStatement</emphasis>:	</para>
+
+<para><emphasis>variableDeclaration</emphasis> 	</para>
+
+<para><emphasis>envelopeDeclaration</emphasis> 	</para>
+
+<para><emphasis>waveTableDeclaration</emphasis> 	</para>
+
+<para><emphasis>objectDeclaration</emphasis> 	</para>
+
+<para><emphasis>assignmentStatement</emphasis> 	</para>
+
+<para><emphasis>includeStatement</emphasis> 	</para>
+
+<para><emphasis>printStatement</emphasis> 	</para>
+
+<para><emphasis>tuneStatement</emphasis> 	</para>
+
+<para><emphasis>commentStatement</emphasis> 	</para>
+
+<para><emphasis>endCommentStatement</emphasis></para>
+
+</sect1>
+<sect1 id="HeaderStatementsSummary">
+<title>Header Statements</title>
+
+<para><emphasis>scoreInfoStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">info</emphasis> [<emphasis role="bold"> ,</emphasis> <emphasis>parameters</emphasis> ]</para>
+
+<para><emphasis>partDeclaration</emphasis>:	</para>
+
+<para><emphasis role="bold">part</emphasis> <emphasis>partList</emphasis></para>
+
+<para><emphasis>partList</emphasis>:	</para>
+
+<para><emphasis>partName</emphasis> [<emphasis role="bold"> ,</emphasis> <emphasis>partList</emphasis> ]</para>
+
+<para><emphasis>partName</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis></para>
+
+<para><emphasis>partInfoStatement</emphasis>:	</para>
+
+<para><emphasis>partName</emphasis> [<emphasis role="bold"> ,</emphasis> <emphasis>parameters</emphasis> ]</para>
+
+<para><emphasis>tagRangeDeclaration</emphasis>:	</para>
+
+<para><emphasis role="bold">tagRange</emphasis> <emphasis>integer</emphasis> <emphasis role="bold">to</emphasis> <emphasis>integer</emphasis></para>
+
+</sect1>
+<sect1 id="HeaderOrBody">
+<title>Header or Body Statements</title>
+
+<para>The large, bold brackets, braces, and parentheses in the
+components of the envelope, waveTable, and object declarations below
+are to be typed where shown.</para>
+
+<para><emphasis>variableDeclaration</emphasis>:	</para>
+
+<para><emphasis>dataType</emphasis> <emphasis>initVariableList</emphasis></para>
+
+<para><emphasis>dataType</emphasis>:	</para>
+
+<para><emphasis role="bold">double</emphasis> 	</para>
+
+<para><emphasis role="bold">int</emphasis> 	</para>
+
+<para><emphasis role="bold">string</emphasis> 	</para>
+
+<para><emphasis role="bold">var</emphasis> 	</para>
+
+<para><emphasis role="bold">obj</emphasis> 	</para>
+
+<para><emphasis role="bold">wave</emphasis> 	</para>
+
+<para><emphasis role="bold">env</emphasis></para>
+
+<para><emphasis>initVariableList</emphasis>:	</para>
+
+<para><emphasis>initVariable</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>initVariableList</emphasis> ]</para>
+
+<para><emphasis>initVariable</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis> [ <emphasis role="bold">=</emphasis> <emphasis>expression</emphasis> ]</para>
+
+<para><emphasis>envelopeDeclaration</emphasis>:	</para>
+
+<para><emphasis role="bold">envelope</emphasis> <emphasis>envelopeName</emphasis> <emphasis role="bold">=</emphasis> <emphasis>envelopeConstant</emphasis></para>
+
+<para><emphasis>envelopeName</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis></para>
+
+<para><emphasis>envelopeConstant</emphasis>:	</para>
+
+<para><emphasis role="bold">[</emphasis> <emphasis>envelopePointList</emphasis> <emphasis role="bold">] </emphasis></para>
+
+<para><emphasis>envelopePointList</emphasis>:	</para>
+
+<para><emphasis>envelopePoint</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>envelopePointList</emphasis> ]</para>
+
+<para><emphasis>envelopePoint</emphasis>:	</para>
+
+<para><emphasis role="bold">(</emphasis> <emphasis>xValue</emphasis> <emphasis role="bold">,</emphasis> <emphasis>yValue</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>smoothingValue</emphasis>] <emphasis role="bold">)</emphasis></para>
+
+<para><emphasis>waveTableDeclaration</emphasis>:	</para>
+
+<para><emphasis role="bold">waveTable</emphasis> <emphasis>waveTableName</emphasis> <emphasis role="bold">=</emphasis> <emphasis>waveTableConstant</emphasis></para>
+
+<para><emphasis>waveTableName</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis></para>
+
+<para><emphasis>waveTableConstant</emphasis>:	</para>
+
+<para><emphasis role="bold">[</emphasis> <emphasis>partialsList</emphasis> <emphasis role="bold">]</emphasis> 	</para>
+
+<para><emphasis role="bold">[</emphasis> <emphasis role="bold">{</emphasis> <emphasis>soundfileName</emphasis> <emphasis role="bold">}</emphasis> <emphasis role="bold">]</emphasis></para>
+
+<para><emphasis>partialsList</emphasis>:	</para>
+
+<para><emphasis>partial</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>partialsList</emphasis> ]</para>
+
+<para><emphasis>partial</emphasis>:	</para>
+
+<para><emphasis role="bold">{</emphasis> <emphasis>frequencyRatio</emphasis> <emphasis role="bold">,</emphasis> <emphasis>amplitudeRatio</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>phase</emphasis> ] <emphasis role="bold">}</emphasis></para>
+
+<para><emphasis>soundfileName</emphasis>:	</para>
+
+<para><emphasis>fileName</emphasis></para>
+
+<para><emphasis>fileName</emphasis>:	</para>
+
+<para><emphasis role="bold">"</emphasis><emphasis>fileName</emphasis><emphasis role="bold">"</emphasis></para>
+
+<para><emphasis>objectDeclaration</emphasis>:	</para>
+
+<para><emphasis role="bold">object</emphasis> <emphasis>objectName</emphasis> <emphasis role="bold">=</emphasis> <emphasis>objectConstant</emphasis></para>
+
+<para><emphasis>objectName</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis></para>
+
+<para><emphasis>objectConstant</emphasis>:	</para>
+
+<para><emphasis role="bold">[</emphasis> <emphasis>className</emphasis> <emphasis>objectDescription</emphasis> <emphasis role="bold">]</emphasis></para>
+
+<para><emphasis>objectDescription</emphasis>:	</para>
+
+<para>defined by <emphasis>className; </emphasis>can contain anything except <emphasis role="bold">]</emphasis></para>
+
+<para><emphasis>assignmentStatement</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis> <emphasis role="bold">=</emphasis> <emphasis>expression</emphasis></para>
+
+<para><emphasis>includeStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">include</emphasis> <emphasis>fileName</emphasis></para>
+
+<para><emphasis>printStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">print</emphasis> <emphasis>expressionList</emphasis></para>
+
+<para><emphasis>expressionList</emphasis>:	</para>
+
+<para><emphasis>expression</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>expressionList</emphasis> ]</para>
+
+<para><emphasis>tuneStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">tune</emphasis> <emphasis>pitchVariable</emphasis> <emphasis role="bold">=</emphasis> <emphasis>expression</emphasis>	</para>
+
+<para><emphasis role="bold">tune</emphasis><emphasis> expression</emphasis></para>
+
+<para><emphasis>commentStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">comment</emphasis></para>
+
+<para><emphasis>endCommentStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">endComment</emphasis></para>
+
+</sect1>
+<sect1 id="BodyStatementsSummary">
+<title>Body Statements</title>
+
+<para><emphasis>timeStatement</emphasis>:	</para>
+
+<para><emphasis role="bold">t</emphasis> [ <emphasis role="bold">+</emphasis> ] <emphasis>expression</emphasis></para>
+
+<para><emphasis>noteStatement</emphasis>:	</para>
+
+<para><emphasis>partName</emphasis> <emphasis role="bold">,</emphasis> <emphasis role="bold">(</emphasis> <emphasis>typeAndTag</emphasis> <emphasis role="bold">)</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>parameters</emphasis> ]</para>
+
+<para><emphasis>typeAndTag</emphasis>:	</para>
+
+<para><emphasis>duration</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>noteTag</emphasis> ] 	</para>
+
+<para><emphasis role="bold">noteOn ,</emphasis> <emphasis>noteTag</emphasis> 	</para>
+
+<para><emphasis role="bold">noteOff</emphasis> <emphasis role="bold">,</emphasis> <emphasis>noteTag</emphasis> 	</para>
+
+<para><emphasis role="bold">noteUpdate</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>noteTag</emphasis> ] 	</para>
+
+<para><emphasis role="bold">mute</emphasis></para>
+
+<para><emphasis>duration</emphasis>:	</para>
+
+<para><emphasis>expression</emphasis></para>
+
+<para><emphasis>noteTag</emphasis>:	</para>
+
+<para><emphasis>integerExpression</emphasis></para>
+
+<para><emphasis>parameters</emphasis>:	</para>
+
+<para><emphasis>parameter</emphasis> [ <emphasis role="bold">,</emphasis> <emphasis>parameters</emphasis> ]</para>
+
+<para><emphasis>parameter</emphasis>:	</para>
+
+<para><emphasis>parameterName</emphasis> <emphasis role="bold">:</emphasis> <emphasis>parameterValue</emphasis></para>
+
+<para><emphasis>parameterName</emphasis>:	</para>
+
+<para><emphasis>identifier</emphasis></para>
+
+<para><emphasis>parameterValue</emphasis>:	</para>
+
+<para><emphasis>expression</emphasis></para>
+
+</sect1>
+<sect1 id="OperatorsSummary">
+<title>Operators</title>
+
+<para>Operators are shown in descending priority.  Operators on the
+same line are of equal priority; they're processed in the order that
+they occur in the scorefile.</para>
+
+<para><emphasis>operator</emphasis>:	</para>
+
+<para><emphasis>groupingOperator</emphasis> 	</para>
+
+<para><emphasis>prefixOperator</emphasis> <emphasis>postfixOperator</emphasis> 	</para>
+
+<para><emphasis>arithmeticOperator</emphasis> 	</para>
+
+<para><emphasis>envelopeLookupOperator</emphasis> <emphasis>stringConcatenationOperator</emphasis> 	</para>
+
+<para><emphasis>assignmentOperator</emphasis> 	</para>
+
+<para><emphasis>sequenceSeparator</emphasis></para>
+
+<para><emphasis>groupingOperator</emphasis>:	</para>
+
+<para><emphasis role="bold">( )</emphasis></para>
+
+<para><emphasis>prefixOperator</emphasis>:	</para>
+
+<para>-</para>
+
+<para><emphasis>postfixOperator</emphasis>:	</para>
+
+<para><emphasis role="bold">dB</emphasis></para>
+
+<para><emphasis>arithmeticOperator</emphasis>:	</para>
+
+<para><emphasis role="bold">^ ~ </emphasis>	</para>
+
+<para><emphasis role="bold">* / % </emphasis>	</para>
+
+<para><emphasis role="bold">+ </emphasis>-</para>
+
+<para><emphasis>envelopeLookupOperator</emphasis>:	</para>
+
+<para><emphasis role="bold">@</emphasis></para>
+
+<para><emphasis>stringConcatenationOperator</emphasis>:	</para>
+
+<para><emphasis role="bold">&amp;</emphasis></para>
+
+<para><emphasis>assignmentOperator</emphasis>:	</para>
+
+<para><emphasis role="bold">=</emphasis></para>
+
+<para><emphasis>sequenceSeparator</emphasis>:	</para>
+
+<para><emphasis role="bold">,</emphasis></para>
+
+</sect1>
+<sect1 id="ConstantsEtc">
+<title>Constants, Predeclared Variables, and Special Symbols</title>
+
+<para><emphasis>midiConstants</emphasis>:	</para>
+
+<para><emphasis>channelModeConstant</emphasis> 	</para>
+
+<para><emphasis>systemRealTimeConstant</emphasis></para>
+
+<para><emphasis>channelModeConstant</emphasis>:	</para>
+
+<para><emphasis role="bold">resetControllers </emphasis>	</para>
+
+<para><emphasis role="bold">localControlModeOn </emphasis>	</para>
+
+<para><emphasis role="bold">localControlModeOff </emphasis>	</para>
+
+<para><emphasis role="bold">allNotesOff </emphasis>	</para>
+
+<para><emphasis role="bold">omniModeOff </emphasis>	</para>
+
+<para><emphasis role="bold">omniModeOn </emphasis>	</para>
+
+<para><emphasis role="bold">monoMode </emphasis>	</para>
+
+<para><emphasis role="bold">polyMode</emphasis></para>
+
+<para><emphasis>systemRealTimeConstant</emphasis>:	</para>
+
+<para><emphasis role="bold">sysClock </emphasis>	</para>
+
+<para><emphasis role="bold">sysUndefined0xf9 </emphasis>	</para>
+
+<para><emphasis role="bold">sysStart </emphasis>	</para>
+
+<para><emphasis role="bold">sysContinue </emphasis>	</para>
+
+<para><emphasis role="bold">sysStop </emphasis>	</para>
+
+<para><emphasis role="bold">sysUndefined0xfd </emphasis>	</para>
+
+<para><emphasis role="bold">sysActiveSensing </emphasis>	</para>
+
+<para><emphasis role="bold">sysReset</emphasis></para>
+
+<para><emphasis>otherConstants</emphasis>:	</para>
+
+<para><emphasis>keyNumber</emphasis> 	</para>
+
+<para><emphasis role="bold">NO</emphasis>	(equal to 0) 	</para>
+
+<para><emphasis role="bold">YES</emphasis>	(equal to 1)</para>
+
+<para><emphasis>predeclaredVariable</emphasis>:	</para>
+
+<para><emphasis>pitchVariable</emphasis></para>
+
+<para><productname>ScoreFile</productname> reserves more than 200
+keywords for the representation of pitch names and key numbers.
+Rather than list the entire set of these keywords, formulas are given
+here that describe the form of the <emphasis>keyNumber</emphasis> and
+<emphasis>pitchVariable</emphasis> names.</para>
+
+<para><emphasis>keyNumber</emphasis>:	</para>
+
+<para><emphasis>pitchVariable</emphasis><emphasis role="bold">k</emphasis></para>
+
+<para><emphasis>pitchVariable</emphasis>:	</para>
+
+<para><emphasis>pitchLetter</emphasis> [ <emphasis>sharpOrFlat</emphasis> ] <emphasis>octave</emphasis></para>
+
+<para><emphasis>pitchLetter</emphasis>:	</para>
+
+<para><emphasis role="bold">c </emphasis>	</para>
+
+<para><emphasis role="bold">d </emphasis>	</para>
+
+<para><emphasis role="bold">e </emphasis>	</para>
+
+<para><emphasis role="bold">f </emphasis>	</para>
+
+<para><emphasis role="bold">g </emphasis>	</para>
+
+<para><emphasis role="bold">a </emphasis>	</para>
+
+<para><emphasis role="bold">b</emphasis></para>
+
+<para><emphasis>sharpOrFlat</emphasis>:	</para>
+
+<para><emphasis role="bold">s </emphasis>	</para>
+
+<para><emphasis role="bold">f</emphasis></para>
+
+<para><emphasis>octave</emphasis>:	</para>
+
+<para><emphasis role="bold">00</emphasis>	</para>
+
+<para><emphasis role="bold">0</emphasis>	</para>
+
+<para><emphasis role="bold">1</emphasis>	</para>
+
+<para><emphasis role="bold">2</emphasis>	</para>
+
+<para><emphasis role="bold">3</emphasis>	</para>
+
+<para><emphasis role="bold">4</emphasis>	</para>
+
+<para><emphasis role="bold">5</emphasis>	</para>
+
+<para><emphasis role="bold">6</emphasis>	</para>
+
+<para><emphasis role="bold">7</emphasis>	</para>
+
+<para><emphasis role="bold">8</emphasis>	</para>
+
+<para><emphasis role="bold">9</emphasis></para>
+
+<para>The <productname>ScoreFile</productname> special symbols are
+read-only variables that can manipulate their own value.  Special
+symbols should never be assigned a value in an assignment
+statement.</para>
+
+<para><emphasis>specialSymbols</emphasis>:	</para>
+
+<para><emphasis role="bold">t </emphasis>	</para>
+
+<para><emphasis role="bold">ran</emphasis></para>
+</sect1>
+</appendix>
