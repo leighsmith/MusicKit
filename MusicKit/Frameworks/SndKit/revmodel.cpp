@@ -6,7 +6,7 @@
 
 #include "revmodel.h"
 
-revmodel::revmodel()
+sndreverb_revmodel::sndreverb_revmodel()
 {
 	// Tie the components to their buffers
 	combL[0].setbuffer(bufcombL1,combtuningL1);
@@ -54,7 +54,7 @@ revmodel::revmodel()
 	mute();
 }
 
-void revmodel::mute()
+void sndreverb_revmodel::mute()
 {
 	if (getmode() >= freezemode)
 		return;
@@ -71,7 +71,7 @@ void revmodel::mute()
 	}
 }
 
-void revmodel::processreplace(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip)
+void sndreverb_revmodel::processreplace(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip)
 {
 	float outL,outR,input;
 
@@ -106,7 +106,7 @@ void revmodel::processreplace(float *inputL, float *inputR, float *outputL, floa
 	}
 }
 
-void revmodel::processmix(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip)
+void sndreverb_revmodel::processmix(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip)
 {
 	float outL,outR,input;
 
@@ -141,7 +141,7 @@ void revmodel::processmix(float *inputL, float *inputR, float *outputL, float *o
 	}
 }
 
-void revmodel::update()
+void sndreverb_revmodel::update()
 {
 // Recalculate internal values after parameter change
 
@@ -181,67 +181,67 @@ void revmodel::update()
 // because as you develop the reverb model, you may
 // wish to take dynamic action when they are called.
 
-void revmodel::setroomsize(float value)
+void sndreverb_revmodel::setroomsize(float value)
 {
 	roomsize = (value*scaleroom) + offsetroom;
 	update();
 }
 
-float revmodel::getroomsize()
+float sndreverb_revmodel::getroomsize()
 {
 	return (roomsize-offsetroom)/scaleroom;
 }
 
-void revmodel::setdamp(float value)
+void sndreverb_revmodel::setdamp(float value)
 {
 	damp = value*scaledamp;
 	update();
 }
 
-float revmodel::getdamp()
+float sndreverb_revmodel::getdamp()
 {
 	return damp/scaledamp;
 }
 
-void revmodel::setwet(float value)
+void sndreverb_revmodel::setwet(float value)
 {
 	wet = value*scalewet;
 	update();
 }
 
-float revmodel::getwet()
+float sndreverb_revmodel::getwet()
 {
 	return wet/scalewet;
 }
 
-void revmodel::setdry(float value)
+void sndreverb_revmodel::setdry(float value)
 {
 	dry = value*scaledry;
 }
 
-float revmodel::getdry()
+float sndreverb_revmodel::getdry()
 {
 	return dry/scaledry;
 }
 
-void revmodel::setwidth(float value)
+void sndreverb_revmodel::setwidth(float value)
 {
 	width = value;
 	update();
 }
 
-float revmodel::getwidth()
+float sndreverb_revmodel::getwidth()
 {
 	return width;
 }
 
-void revmodel::setmode(float value)
+void sndreverb_revmodel::setmode(float value)
 {
 	mode = value;
 	update();
 }
 
-float revmodel::getmode()
+float sndreverb_revmodel::getmode()
 {
 	if (mode >= freezemode)
 		return 1;

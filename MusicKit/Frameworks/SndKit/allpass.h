@@ -8,10 +8,10 @@
 #define _allpass_
 #include "denormals.h"
 
-class allpass
+class sndreverb_allpass
 {
 public:
-					allpass();
+					sndreverb_allpass();
 			void	setbuffer(float *buf, int size);
 	inline  float	process(float inp);
 			void	mute();
@@ -27,7 +27,7 @@ public:
 
 // Big to inline - but crucial for speed
 
-inline float allpass::process(float input)
+inline float sndreverb_allpass::process(float input)
 {
 	float output;
 	float bufout;

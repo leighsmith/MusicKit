@@ -6,41 +6,41 @@
 
 #include "comb.h"
 
-comb::comb()
+sndreverb_comb::sndreverb_comb()
 {
 	filterstore = 0;
 	bufidx = 0;
 }
 
-void comb::setbuffer(float *buf, int size) 
+void sndreverb_comb::setbuffer(float *buf, int size) 
 {
 	buffer = buf; 
 	bufsize = size;
 }
 
-void comb::mute()
+void sndreverb_comb::mute()
 {
 	for (int i=0; i<bufsize; i++)
 		buffer[i]=0;
 }
 
-void comb::setdamp(float val) 
+void sndreverb_comb::setdamp(float val) 
 {
 	damp1 = val; 
 	damp2 = 1-val;
 }
 
-float comb::getdamp() 
+float sndreverb_comb::getdamp() 
 {
 	return damp1;
 }
 
-void comb::setfeedback(float val) 
+void sndreverb_comb::setfeedback(float val) 
 {
 	feedback = val;
 }
 
-float comb::getfeedback() 
+float sndreverb_comb::getfeedback() 
 {
 	return feedback;
 }

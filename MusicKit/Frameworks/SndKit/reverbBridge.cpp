@@ -14,74 +14,74 @@
 
 void* reverbCreate(void)
 {
-  return (void*) (new revmodel);
+  return (void*) (new sndreverb_revmodel);
 }
 void reverbDestroy(void* reverbobj)
 {
-  delete ((revmodel*)reverbobj);
+  delete ((sndreverb_revmodel*)reverbobj);
 }
 
 void  reverbProcessReplacing(void *r, float* inL, float* inR, float* outL, float *outR, int length, int skip)
 {
-  ((revmodel*) r)->processreplace(inL, inR, outL, outR, length, skip);
+  ((sndreverb_revmodel*) r)->processreplace(inL, inR, outL, outR, length, skip);
 }
 
 void setRoomSize(void *r, float value) 
 {
-  ((revmodel*) r)->setroomsize(value);
+  ((sndreverb_revmodel*) r)->setroomsize(value);
 }
 
 float	getRoomSize(void *r) 
 {
-  return ((revmodel*) r)->getroomsize();
+  return ((sndreverb_revmodel*) r)->getroomsize();
 }
 
 void	setDamp(void *r,float value)
 {
-  ((revmodel*) r)->setdamp(value);
+  ((sndreverb_revmodel*) r)->setdamp(value);
 }
 
 float	getDamp(void *r)
 {
-  return ((revmodel*) r)->getdamp();
+  return ((sndreverb_revmodel*) r)->getdamp();
 }
 
 void	setWet(void *r,float value)
 {
-  return ((revmodel*) r)->setwet(value);
+  return ((sndreverb_revmodel*) r)->setwet(value);
 }
 
 float	getWet(void *r)
 {
-  return ((revmodel*) r)->getwet();
+  return ((sndreverb_revmodel*) r)->getwet();
 }
 
 void setDry(void *r,float value)
 {
-  ((revmodel*) r)->setdry(value);
+  ((sndreverb_revmodel*) r)->setdry(value);
 }
 
 float	getDry(void *r)
 {
-  return ((revmodel*) r)->getdry();
+  return ((sndreverb_revmodel*) r)->getdry();
 }
 
 void setWidth(void *r,float value)
 {
-  ((revmodel*) r)->setwidth(value);
+  ((sndreverb_revmodel*) r)->setwidth(value);
 }
 
 float	getWidth(void *r)
 {
-  return ((revmodel*) r)->getwidth();
+  return ((sndreverb_revmodel*) r)->getwidth();
 }
 
 void setMode(void *r,float value)
 {
-  ((revmodel*) r)->setmode(value);
+  ((sndreverb_revmodel*) r)->setmode(value);
 }
 
 float	getMode(void *r)
 {
-  return ((revmodel*) r)->getmode();
+  return ((sndreverb_revmodel*) r)->getmode();
 }

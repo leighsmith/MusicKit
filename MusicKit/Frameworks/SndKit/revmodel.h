@@ -11,10 +11,10 @@
 #include "allpass.h"
 #include "tuning.h"
 
-class revmodel
+class sndreverb_revmodel
 {
 public:
-					revmodel();
+					sndreverb_revmodel();
 			void	mute();
 			void	processmix(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip);
 			void	processreplace(float *inputL, float *inputR, float *outputL, float *outputR, long numsamples, int skip);
@@ -46,12 +46,12 @@ private:
 	// with its subsequent error-checking messiness
 
 	// Comb filters
-	comb	combL[numcombs];
-	comb	combR[numcombs];
+	sndreverb_comb	combL[numcombs];
+	sndreverb_comb	combR[numcombs];
 
 	// Allpass filters
-	allpass	allpassL[numallpasses];
-	allpass	allpassR[numallpasses];
+	sndreverb_allpass	allpassL[numallpasses];
+	sndreverb_allpass	allpassR[numallpasses];
 
 	// Buffers for the combs
 	float	bufcombL1[combtuningL1];

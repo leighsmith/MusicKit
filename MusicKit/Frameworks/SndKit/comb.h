@@ -9,10 +9,10 @@
 
 #include "denormals.h"
 
-class comb
+class sndreverb_comb
 {
 public:
-					comb();
+					sndreverb_comb();
 			void	setbuffer(float *buf, int size);
 	inline  float	process(float inp);
 			void	mute();
@@ -33,7 +33,7 @@ private:
 
 // Big to inline - but crucial for speed
 
-inline float comb::process(float input)
+inline float sndreverb_comb::process(float input)
 {
 	float output;
 
