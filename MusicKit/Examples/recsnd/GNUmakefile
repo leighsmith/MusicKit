@@ -26,8 +26,7 @@ TOOL_NAME = \
 
 ADDITIONAL_LIB_DIRS =
 
-ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base \
-                        -lgnustep-gui -lst -ljpeg
+ADDITIONAL_TOOL_LIBS += -lSndKit
 
 ADDITIONAL_FLAGS += -g
 ADDITIONAL_LDFLAGS += -g
