@@ -13,8 +13,9 @@ PROJECTVERSION = 2.8
 PROJECT_TYPE = Application
 ICONSECTIONS =	-sectcreate __ICON app $(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Resources/NSDefaultApplicationIcon.tiff
 
+English_RESOURCES = InfoPanel.nib PerformerExample.nib
 
-GLOBAL_RESOURCES = InfoPanel.nib PerformerExample.nib
+LANGUAGES = English
 
 CLASSES = PerformerController.m RandomPerformer.m
 
