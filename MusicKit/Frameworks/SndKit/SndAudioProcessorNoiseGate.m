@@ -13,6 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioProcessorNoiseGate.h"
+#import "SndFunctions.h"
 
 #define timeDiv 44100  // Time divisor for hold times etc
 

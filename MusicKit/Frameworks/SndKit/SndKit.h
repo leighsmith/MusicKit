@@ -30,6 +30,7 @@ OF THIS AGREEMENT.
 #import "SndEndianFunctions.h"
 #import "SndTable.h"
 #import "Snd.h"
+#import "SndExpt.h"
 #import "SndView.h"
 #ifndef USE_NEXTSTEP_SOUND_IO
 # import "sounderror.h"

@@ -84,7 +84,7 @@ architecture, as described in the <b>SndStruct</b> header.
 
 @interface Snd : NSObject
 {
- @private
+ @protected
 /*! @var soundStruct <p>The sound data structure.</p>
   <p>This is defined in the MKPerformSndMIDI framework as follows:</p>
   <pre>

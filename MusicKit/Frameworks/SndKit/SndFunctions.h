@@ -374,6 +374,8 @@ SNDKIT_API int SndReadHeader(const char *path,
 SNDKIT_API int SndReadSoundfile(const char *path,
                             SndSoundStruct **sound);
 
+int SndReadSoundfileRange(const char *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
+
 /*!
 @function SndWriteHeader
  @abstract To come 

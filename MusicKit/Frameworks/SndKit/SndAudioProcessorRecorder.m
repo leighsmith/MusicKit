@@ -13,6 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <MKPerformSndMIDI/SndStruct.h>
+#import "SndFunctions.h"
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorRecorder.h"
 
