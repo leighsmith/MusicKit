@@ -19,7 +19,7 @@
 # binaries don't have to.
 
 LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
-                         -lobjc -lst -lstdc++ -lgsm
+                         -lobjc -lstdc++
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
@@ -41,7 +41,16 @@ else
   LIBRARIES_DEPEND_UPON += -lgnustep-gui -lshout -lmp3lame
   ST_CONFIG=$(shell which libst-config 2>/dev/null)
   ifneq ($(ST_CONFIG),)
-    LIBRARIES_DEPEND_UPON += $(shell libst-config --libs)
+    LIBRARIES_DEPEND_UPON += -lst -lgsm $(shell libst-config --libs)
     SHARED_LD_POSTFLAGS += $(shell libst-config --cflags)
+  endif
+
+  PKG_CONFIG=$(shell which pkg-config 2>/dev/null)
+  ifneq ($(PKG_CONFIG),"")
+    SNDFILE_LIBS=$(shell pkg-config --libs sndfile 2>/dev/null)
+      ifneq ($(SNDFILE_LIBS),)
+        LIBRARIES_DEPEND_UPON += $(SNDFILE_LIBS)
+        SndKit_CPPFLAGS += $(shell pkg-config --cflags)
+      endif
   endif
 endif
