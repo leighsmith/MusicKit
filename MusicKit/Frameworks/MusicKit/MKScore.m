@@ -20,6 +20,10 @@
  Modification history:
 
  $Log$
+ Revision 1.33  2002/05/01 14:33:35  sbrandon
+ Added static array to hold plugins, added +bundleExtensions to return info collected from plugins, added documentation from the Standard MIDI File Spec defining how time signatures are stored, added the implementation of +addPlugin:, fixed a problem in score merging that caused an endless loop under certain situations, altered readScoreFile to try to open files with plugins if extension is appropriate.
+ Note that the plugin implementation is under review.
+
  Revision 1.32  2002/04/03 03:59:41  skotmcdonald
  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -161,12 +165,16 @@
 #import "_musickit.h"
 #import "PartPrivate.h"
 #import "NotePrivate.h"
+#import "MKPlugin.h"
 #import "_midi.h"
 #import "midifile.h"
 #import "tokens.h"
 #import "_error.h"
 
 #import "ScorePrivate.h"
+
+static NSMutableArray *plugins = nil;
+
 @implementation MKScore
 
 #define READIT 0
@@ -276,6 +284,21 @@ static id readScorefile(MKScore *self, NSData *stream,
 {
   NSData *stream;
   id rtnVal;
+  int i,count;
+  id e = [fileName pathExtension];
+  MKLoadAllBundlesOneOff();
+  count=[plugins count];
+  if ([[MKScore bundleExtensions] containsObject:e]) {
+      for (i = 0 ; i < count ; i++) {
+          id<MusicKitPlugin> p = [plugins objectAtIndex:i];
+          if ([[p fileOpeningSuffixes] containsObject:e]) {
+              id s = [p openFileName:fileName forScore:self];
+              if (s) return s;
+              else NSLog(@"Plugin failed to read file, though it should have managed");
+          }
+      }
+  }
+  
   stream = _MKOpenFileStreamForReading(fileName,
                                        _MK_BINARYSCOREFILEEXT,NO);
   if (!stream)
@@ -607,10 +630,28 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
   return [NSArray arrayWithObjects: _MK_SCOREFILEEXT, _MK_BINARYSCOREFILEEXT, nil];
 }
 
++ (NSArray *) bundleExtensions
+{
+    int i,count;
+    NSMutableArray *a = [NSMutableArray new];
+    id<MusicKitPlugin> p;
+    count = [plugins count];
+    for (i = 0 ; i < count ; i++) {
+        p = [plugins objectAtIndex:i];
+        if ([[[p class] protocolVersion] isEqualToString:@"1"]) {
+            [a addObjectsFromArray:[p fileOpeningSuffixes]];
+            [a addObjectsFromArray:[p fileSavingSuffixes]];
+        }
+    }
+    return [a autorelease];
+}
+
 // return all fileExtensions readable/writable by this class.
 + (NSArray *) fileExtensions
 {
-  return [[MKScore scorefileExtensions] arrayByAddingObjectsFromArray: [MKScore midifileExtensions]];
+    NSArray *basic = [[MKScore scorefileExtensions] arrayByAddingObjectsFromArray: [MKScore midifileExtensions]];
+    MKLoadAllBundlesOneOff();
+    return [basic arrayByAddingObjectsFromArray:[MKScore bundleExtensions]];
 }
 
 #define T timeInQuanta(fileStructP,(t+timeShift))
@@ -656,11 +697,35 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
         allData = 0;
       }
       else {
+
+/*  From the Standard MIDI File Spec:
+ The time signature defined with 4 bytes, a numerator, a denominator, a
+ metronome pulse and number of 32nd notes per MIDI quarter-note. The
+ numerator is specified as a literal value, but the denominator is
+ specified as (get ready) the value to which the power of 2 must be
+ raised to equal the number of subdivisions per whole note. For example,
+ a value of 0 means a whole note because 2 to the power of 0 is 1 (whole
+ note), a value of 1 means a half-note because 2 to the power of 1 is 2
+ (half-note), and so on. The metronome pulse specifies how often the
+ metronome should click in terms of the number of clock signals per click,
+ which come at a rate of 24 per quarter-note. For example, a value of 24
+ would mean to click once every quarter-note (beat) and a value of 48
+ would mean to click once every half-note (2 beats). And finally, the
+ fourth byte specifies the number of 32nd notes per 24 MIDI clock signals.
+ This value is usually 8 because there are usually 8 32nd notes in a
+ quarter-note. At least one Time Signature Event should appear in the
+ first track chunk (or all track chunks in a Type 2 file) before any
+ non-zero delta time events. If one is not specified 4/4, 24, 8 should
+ be assumed.
+ */
         timeSigScan = [NSScanner scannerWithString: timeSigString];
         [timeSigScan scanInt: &nn];  // numerator
         [timeSigScan scanInt: &dd];  // denominator
-        [timeSigScan scanInt: &cc];  // ?? to check against SMF spec
-        [timeSigScan scanInt: &bb];  // ?? to check against SMF spec
+                                     // 0 is whole note, 1 is 1/2, 2 is 1/4,
+                                     // 3 is 1/8, 4 is 1/16 (semiquaver)
+        [timeSigScan scanInt: &cc];  // clock sigs per metronome click
+                                     // 24 = quarter note, 48 = half note etc
+        [timeSigScan scanInt: &bb];  // 
         allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
       }
       MKMIDIFileWriteSig(fileStructP,T,MKMIDI_timeSig, allData);
@@ -1044,8 +1109,8 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
           if (t == 0) {
             if (lastTempoTime == 0) {
               /* Supress duplicate tempi, which can arise because of
-              the way we duplicate tempo in info (do it by
-                                                  bypassing the addNote, below) */
+                 the way we duplicate tempo in info (do it by bypassing
+                 the addNote, below) */
               break;
             }
             else { /* First setting of tempo for current track. */
@@ -1338,7 +1403,7 @@ MKParts.
     maxcounts[max++] = [[listOfLists objectAtIndex:k] count];
 
   while (listCount > 0) {
-    t = MK_ENDOFTIME;
+    t = MK_ENDOFTIME + 1;
     theNote = nil;
     i = 0;
     while (i < listCount) {
@@ -1631,6 +1696,18 @@ static BOOL isUnarchiving = NO;
   [self addPart:aPart];
   [aPart autorelease];
   return aPart; /* sb: I have checked, and it's ok to return "reference" here rather than retained object */
+}
+
+@end
+
+@implementation MKScore (PluginSupport)
+
++ (void) addPlugin: (id) plugin
+{
+    if (!plugins) {
+        plugins = [[NSMutableArray alloc] init];
+    }
+    [plugins addObject:plugin];
 }
 
 @end
