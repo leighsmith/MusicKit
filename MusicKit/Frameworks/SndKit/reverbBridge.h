@@ -29,4 +29,4 @@ float	getMode(void *r);
 
 #ifdef __cplusplus
 }
-#endif  
+#endif
