@@ -29,6 +29,8 @@
 				00D2C454FEDB2CB5CFED3B93,
 				00D2C429FEDB2CB5CFED3B93,
 				B5799BA701DBCF75002A0494,
+				B508535C01F8D71B002A0494,
+				B508535D01F8D71B002A0494,
 			);
 			isa = PBXGroup;
 			name = SndKit;
@@ -383,6 +385,7 @@
 				B5B66B0001E0EF45002A0494,
 				B552CD7401F4908E002A0494,
 				B52BE0FA01F8BD38002A0494,
+				B508535E01F8D71B002A0494,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -537,6 +540,7 @@
 				B552CD7501F4908E002A0494,
 				B52BE0FB01F8BD38002A0494,
 				B52BE0FD01F8D0AD002A0494,
+				B508535F01F8D71C002A0494,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -1512,6 +1516,31 @@
 //B52
 //B53
 //B54
+		B508535C01F8D71B002A0494 = {
+			isa = PBXFileReference;
+			path = SndExpt.h;
+			refType = 4;
+		};
+		B508535D01F8D71B002A0494 = {
+			isa = PBXFileReference;
+			path = SndExpt.m;
+			refType = 4;
+		};
+		B508535E01F8D71B002A0494 = {
+			fileRef = B508535C01F8D71B002A0494;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		B508535F01F8D71C002A0494 = {
+			fileRef = B508535D01F8D71B002A0494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		B512F13901D3D819002A0494 = {
 			isa = PBXFileReference;
 			path = SndAudioProcessorInspector.h;
@@ -1588,6 +1617,9 @@
 			fileRef = B52BE0F801F8BD38002A0494;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		B52BE0FB01F8BD38002A0494 = {
