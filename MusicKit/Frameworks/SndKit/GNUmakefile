@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.10  2001/10/31 16:16:35  sbrandon
+# Major rehash of makefile to aid win32 compilation. For mingw32, now compiles as a library rather than a framework, until GNUstep frameworks are sorted out properly on Windows (they are ok on UNIX).
+#
 # Revision 1.9  2001/10/03 10:45:05  sbrandon
 # added SndAudioProcessorMP3Encoder.h and SndAudioProcessorMP3Encoder.m
 #
@@ -46,6 +49,7 @@
 #
 #
 
+
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 
@@ -55,38 +59,48 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 srcdir = .
 
+SK_COMPILE_MP3_ENCODER = no
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  SK_COMPILE_APPKIT_CLASSES = no
+else
+  SK_COMPILE_APPKIT_CLASSES = yes
+endif
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  LIBRARY_NAME = libSndKit
+  MY_NAME = $(LIBRARY_NAME)
+else
 # The framework to be compiled
-FRAMEWORK_NAME = SndKit
+  FRAMEWORK_NAME = SndKit
+  MY_NAME=$(FRAMEWORK_NAME)
+endif
 
 # The framework resource files and directories
-$(FRAMEWORK_NAME)_RESOURCE_FILES = 
+$(MY_NAME)_RESOURCE_FILES = 
 
-$(FRAMEWORK_NAME)_RESOURCE_DIRS = 
-
-# The framework libraries to link against
-#sb: not sure about this...
-#$(FRAMEWORK_NAME)BUNDLE_LIBS = 
+$(MY_NAME)_RESOURCE_DIRS = 
 
 ADDITIONAL_FLAGS += -g -Wall
 ADDITIONAL_LDFLAGS += -g
 
 # The Bundle Objective-C source files to be compiled
-$(FRAMEWORK_NAME)_OBJC_FILES = \
+$(MY_NAME)_OBJC_FILES = \
           Snd.m SndAudioBuffer.m SndDisplayData.m SndDisplayDataList.m\
-          SndStreamClient.m SndStreamManager.m SndView.m sounderror.m\
+          SndStreamClient.m SndStreamManager.m sounderror.m\
           SndFunctions.m SndStreamRecorder.m SndStreamMixer.m SndPlayer.m\
           SndPerformance.m SndAudioProcessorChain.m\
           SndAudioProcessor.m  SndAudioProcessorDelay.m SndEnvelope.m\
           SndAudioFader.m SndBreakpoint.m\
           SndAudioBufferQueue.m SndAudioProcessorReverb.m \
-          SndAudioProcessorMP3Encoder.m #SndMeter.m
+          #SndMeter.m
 
-$(FRAMEWORK_NAME)_C_FILES = \
+$(MY_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
          _Sndresamplesubs.c
 
 # The framework installed header files
-$(FRAMEWORK_NAME)_HEADER_FILES = \
+$(MY_NAME)_HEADER_FILES = \
          Snd.h SndAudioBuffer.h SndDisplayData.h SndDisplayDataList.h\
          SndEndianFunctions.h SndFunctions.h SndKit.h SndResample.h\
          SndStdefs.h SndStreamClient.h SndStreamManager.h SndView.h\
@@ -96,17 +110,41 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          SndPlayer.h SndPerformance.h\
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
          SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
-         SndAudioProcessorReverb.h SndAudioProcessorMP3Encoder.h
+         SndAudioProcessorReverb.h
 
-$(FRAMEWORK_NAME)_SUBPROJECTS = cpp.subproj
+
+$(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
+
+# Extra DLL exports file
+$(MY_NAME)_DLL_DEF = $(MY_NAME).def
+
+ifeq ($(SK_COMPILE_MP3_ENCODER), yes)
+  $(MY_NAME)_OBJC_FILES += SndAudioProcessorMP3Encoder.m
+  $(MY_NAME)_HEADER_FILES += SndAudioProcessorMP3Encoder.h
+else
+  ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
+endif
+
+ifeq (yes, $(SK_COMPILE_APPKIT_CLASSES))
+  $(MY_NAME)_OBJC_FILES += SndView.m
+  ADDITIONAL_FLAGS += -DSK_COMPILE_APPKIT_CLASSES
+else
+  $(MY_NAME)_OBJC_FILES += SndConditionLock.m
+endif
+
+$(MY_NAME)_SUBPROJECTS = cpp.subproj
 
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
 
--include Makefile.preamble
+-include GNUMakefile.preamble
 
 -include GNUmakefile.local
 
-include $(GNUSTEP_MAKEFILES)/framework.make
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  include $(GNUSTEP_MAKEFILES)/library.make
+else
+  include $(GNUSTEP_MAKEFILES)/framework.make
+endif
 
 -include Makefile.postamble
