@@ -2,9 +2,9 @@
 //
 //  $Id$
 //
-//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -459,7 +459,7 @@ static SndStreamManager *sm = nil;
 
   if (!alreadyRegistered) {
     SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
-    if (oldClientCount == 0) // There were no clients previously - better start the stream...
+    if (oldClientCount == 0 && !active) // There were no clients previously - better start the stream...
       [self startStreaming];
     [client welcomeClientWithBuffer: buff manager: self];
   }
