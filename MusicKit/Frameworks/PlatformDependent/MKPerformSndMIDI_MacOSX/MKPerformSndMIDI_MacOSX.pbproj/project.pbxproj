@@ -36,8 +36,8 @@
 			children = (
 				016D5A29FED483BBCFED3B93,
 				016D5A27FED483BBCFED3B93,
-				016D5A2BFED483BBCFED3B93,
 				07B2BE640034BFE6CFED3B96,
+				155A3D8F00376A7BCFED3B96,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -51,11 +51,6 @@
 		016D5A29FED483BBCFED3B93 = {
 			isa = PBXFileReference;
 			path = midi_driver.h;
-			refType = 4;
-		};
-		016D5A2BFED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = PerformSoundPrivate.h;
 			refType = 4;
 		};
 		016D5A2EFED483BBCFED3B93 = {
@@ -164,8 +159,8 @@
 			files = (
 				016D5A3CFED483BBCFED3B93,
 				016D5A3EFED483BBCFED3B93,
-				016D5A40FED483BBCFED3B93,
 				07B2BE650034BFE6CFED3B96,
+				155A3D9000376A7BCFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -191,17 +186,6 @@
 				ATTRIBUTES = (
 					Public,
 				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		016D5A40FED483BBCFED3B93 = {
-			fileRef = 016D5A2BFED483BBCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
 				INCLUDED_OSS = (
 					MACOS,
 					WINDOWS,
@@ -348,6 +332,22 @@
 		};
 		1001C129FFAE92E2CFED3B93 = {
 			fileRef = 1001C128FFAE92E2CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		155A3D8F00376A7BCFED3B96 = {
+			isa = PBXFileReference;
+			path = SndFormats.h;
+			refType = 4;
+		};
+		155A3D9000376A7BCFED3B96 = {
+			fileRef = 155A3D8F00376A7BCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				INCLUDED_OSS = (

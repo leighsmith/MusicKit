@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/02/12 17:41:19  leigh
+  Added streaming support
+
   Revision 1.4  2001/02/11 22:51:00  leigh
   First draft of simplistic working sound playing using CoreAudio
 
@@ -39,24 +42,25 @@
 
 #define PERFORM_API 
 
-// these don't seem to be defined anywhere standard - probably they
-// are in GnuStep
-#ifndef FALSE
-typedef char BOOL;
-#define FALSE 0
-#define TRUE !(FALSE)
-#endif
-
 // TODO either include objc/objc.h for FALSE etc or Foundation.h if PerformSound is a .m
+#include <objc/objc.h>
 
 #include <stdlib.h> // for NULL definition
 #include "SndStruct.h"
+#include "SndFormats.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif 
 
 typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
+typedef struct SNDStreamBuffer {
+    SndSoundStruct streamFormat;
+    void *streamData;
+} SNDStreamBuffer;
+
+// in and out are with respect to the audio hardware, i.e out == play
+typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream, SNDStreamBuffer *outStream, void *userData);
 
 #define SND_NULL_FUN ((SNDNotificationFun)0)
 
@@ -96,6 +100,12 @@ PERFORM_API void SNDResume(int tag);
 PERFORM_API int SNDUnreserve(int dunno);
 
 PERFORM_API void SNDTerminate(void);
+
+PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
+
+PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
+
+PERFORM_API BOOL SNDStreamStop(void);
 
 #ifdef __cplusplus
 }
