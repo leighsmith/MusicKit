@@ -35,17 +35,17 @@ void merror(int er)
 
 + (void)initialize
 {
+#if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
+    char **driverNames;
+#endif
 	printf("Snd class initialize\n");
 //	malloc_error(&merror);
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
 #if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
-//	{
-//	    char **driverNames;
-//            SNDInit(TRUE);
-//            driverNames = SNDGetAvailableDriverNames();
-//            printf("driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
-//	}
+        SNDInit(TRUE);
+        driverNames = SNDGetAvailableDriverNames();
+        printf("driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
 #endif
     }
     return;
@@ -113,7 +113,7 @@ void merror(int er)
 {
     if ([nameTable objectForKey:aname]) return nil; /* already exists */
     if (!aSnd) return nil;
-    [aSnd setName:aname];
+    [(Snd *)aSnd setName:aname];
     [nameTable setObject:aSnd forKey:aname];
     return aSnd;
 }
@@ -213,7 +213,7 @@ void merror(int er)
 	_scratchSnd = NULL;
 	_scratchSize = 0;
 	tag = 0;
-#if 1
+#if 0 // disabled as this should be done in initialize
 	SNDInit(TRUE);
 #endif
 	return [super init];
@@ -616,7 +616,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 		0 /*	int preempt		*/, 
 		(SNDNotificationFun) beginFun,
 		(SNDNotificationFun) endFun);
-	if (err) printf("Playback error %d\n",err);
+	if (err) NSLog(@"Playback error %d\n",err);
 	return self;
 #else
 	return self;
