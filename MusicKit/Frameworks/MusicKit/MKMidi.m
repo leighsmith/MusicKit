@@ -6,7 +6,7 @@
   Description:
     MKMidi is made to look somewhat like a MKPerformer. It differs from a
     performer, however, in that it responds not to messages sent by a
-    conductor, but by midi input which arives through the serial port.
+    conductor, but by MIDI input which arrives through the serial port.
 
     Note that the MKConductor must be clocked to use MKMidi.
 
@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  1999/10/28 01:40:52  leigh
+  driver names and units now returned by separate class methods, renamed ivars, Win32 driver naming
+
   Revision 1.7  1999/09/28 03:05:29  leigh
   Cleaned up warnings
 
@@ -105,7 +108,7 @@ Modification history:
 /* end sb move */
 
 #import <mach/mach_init.h>
-// #import <midi_driver_compatability.h> // LMS obsolete
+// #import <midi_driver_compatability.h> // LMS obsoleted by the following include 
 #import <MKPerformSndMIDI/midi_driver.h>
 #import <AppKit/dpsclient.h>
 #import <AppKit/NSDPSContext.h>
@@ -121,12 +124,15 @@ Modification history:
 
 #import "MidiPrivate.h"
 
-@implementation MKMidi:NSObject
+@implementation MKMidi: NSObject
 
 #define DEFAULT_SOFT_NAME @"midi0"
 
 #define MIDIINPTR(midiobj) ((_MKMidiInStruct *)((MKMidi *)(midiobj))->_pIn)
 #define MIDIOUTPTR(midiobj) ((_MKMidiOutStruct *)(midiobj)->_pOut)
+
+#define INPUTENABLED(_x) (_x != 'o')
+#define OUTPUTENABLED(_x) (_x != 'i')
 
 #define VARIABLE 3
 
@@ -134,7 +140,7 @@ Modification history:
 NSLocalizedStringFromTableInBundle(@"MIDI driver is unavailable. Perhaps another application is using it", _MK_ERRTAB, _MKErrorBundle(), "")
 
 #define UNAVAIL_UNIT_ERROR \
-NSLocalizedStringFromTableInBundle(@"MIDI serial port is unavailable. Perhaps another application is using the serial port", _MK_ERRTAB, _MKErrorBundle(), "")
+NSLocalizedStringFromTableInBundle(@"MIDI port is unavailable. Perhaps another application is using the port", _MK_ERRTAB, _MKErrorBundle(), "")
 
 #define INPUT_ERROR \
 NSLocalizedStringFromTableInBundle(@"Problem receiving MIDI from serial port", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when an error is received from the Mach MIDI driver when receiving MIDI data.")
@@ -153,6 +159,17 @@ NSLocalizedStringFromTableInBundle(@"Problem finding MIDI device driver", _MK_ER
 
 #define CLOCK_ERROR \
 NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driver clock", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when a Mach error occurs in the course of communicating between the Music Kit and the MIDI device driver clock.")
+
+/* Defines for system ignores. */
+#define IGNORE_CLOCK	 0x0100
+#define IGNORE_START	 0x0400
+#define IGNORE_CONTINUE	 0x0800
+#define IGNORE_STOP	 0x1000
+#define IGNORE_ACTIVE	 0x4000
+#define IGNORE_RESET	 0x8000
+#define IGNORE_REAL_TIME    0xdd00  /* All of the above */
+
+#define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 // TODO LMS
 
 /* Mach stuff */
 
@@ -199,26 +216,22 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 //sb: removed the following (now = method)
 //static void midiIn(msg_header_t *msg,void *self); /* Forward ref */
 
-static int deallocPort(portP)
-    port_name_t *portP;
+static int addedPortsCount = 0;
+static NSMutableDictionary *portTable = nil; // class variable
+static NSDictionary *MKMIDIDefaults = nil;
+
+static int deallocPort(port_name_t *portP)
 {
     int ec;
     if (*portP != PORT_NULL) {
-	ec = port_deallocate(task_self(), *portP);
-	if (ec != KERN_SUCCESS) {
-	    return ec;
-	}
-	*portP  = PORT_NULL;
+        ec = port_deallocate(task_self(), *portP);
+        if (ec != KERN_SUCCESS) {
+            return ec;
+        }
+        *portP  = PORT_NULL;
     }
     return KERN_SUCCESS;
 }
-
-static int addedPortsCount = 0;
-
-static NSMutableDictionary *portTable = nil; // class variable
-
-#define INPUTENABLED(_x) (_x != 'o')
-#define OUTPUTENABLED(_x) (_x != 'i')
 
 - (BOOL) unitHasMTC
 {
@@ -274,14 +287,14 @@ static int closeMidiDev(MKMidi *self)
 	return KERN_SUCCESS;
     otherUnits = [MKMidi midisOnHost: self->hostname otherThanUnit: self->unit];
     MIDIReleaseUnit(self->devicePort,self->ownerPort,self->unit);
-    if (INPUTENABLED(self->_mode)) {
+    if (INPUTENABLED(self->ioMode)) {
 	if (self->recvPort) {
 	    _MKRemovePort(self->recvPort);
 	    addedPortsCount--;
 	    deallocPort(&self->recvPort);
 	}
     }
-    if (OUTPUTENABLED(self->_mode))  
+    if (OUTPUTENABLED(self->ioMode))  
 	deallocPort(&self->queuePort);
     if ([self unitHasMTC])
       tearDownMTC(self);
@@ -347,7 +360,7 @@ static int openMidiDev(MKMidi *self)
     int r;
     BOOL b;
     NSMutableArray *otherUnits;
-    self->unit = getNumSuffix([self->midiDev cString],&b);
+    self->unit = getNumSuffix([self->midiDevName cString],&b);
 #ifndef WIN32
     r = netname_look_up(name_server_port, [self->hostname cString], [DRIVER_NAME cString],
 			&(self->devicePort));
@@ -411,7 +424,7 @@ static int openMidiDev(MKMidi *self)
     }
 
     /* Input */
-    if (INPUTENABLED(self->_mode)) {
+    if (INPUTENABLED(self->ioMode)) {
 	r = port_allocate(task_self(), &self->recvPort);
 	if (r != KERN_SUCCESS) {
 	    _MKErrorf(MK_machErr,OPEN_ERROR,mach_error_string( r),
@@ -427,7 +440,7 @@ static int openMidiDev(MKMidi *self)
 
 	addedPortsCount++;
     }
-    if (OUTPUTENABLED(self->_mode)) {
+    if (OUTPUTENABLED(self->ioMode)) {
 	r = port_allocate(task_self(), &self->queuePort);
 	if (r != KERN_SUCCESS) {
 	    _MKErrorf(MK_machErr,OPEN_ERROR,mach_error_string( r),
@@ -563,17 +576,6 @@ static int emptyMidi(MKMidi *self)
 		"emptyMidi");
     return r;
 }
-
-/* Defines for system ignores. */
-#define IGNORE_CLOCK	 0x0100
-#define IGNORE_START	 0x0400
-#define IGNORE_CONTINUE	 0x0800
-#define IGNORE_STOP	 0x1000
-#define IGNORE_ACTIVE	 0x4000
-#define IGNORE_RESET	 0x8000
-#define IGNORE_REAL_TIME    0xdd00  /* All of the above */
-
-#define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 // TODO LMS
 
 static int setMidiSysIgnore(MKMidi *self,unsigned bits)
     /* Tell driver to ignore particular incoming MIDI system messages */
@@ -1025,15 +1027,18 @@ static unsigned ignoreBit(unsigned param)
    MK_NAME.  However, in case we ever support others, I want to support
    the general API.  And since this code was already written for the DSP
    case, I thought I'd just grab it from there.
+   LMS: The day is rapidly approaching when we need all of David's functionality
+   with Win32 named ports, MOXS USB MIDI devices etc.
  */
 
-static NSString **midiDriverNames = NULL;
-static int *midiDriverUnits = NULL;
-static int midiDriverCount = 0;
+// These will be the same size.
+static NSArray *midiDriverNames = nil;
+static NSArray *midiDriverUnits = nil;
 
-// Return YES if able to initialise for the driverKit MIDI driver,
-// NO if there was no MIDI driver found. 
-static BOOL initDriverKitBasedMIDIs(void)
+// Return YES if able to initialise for the MIDI driver which registers available MIDI output ports.
+// This includes DriverKit based MIDI drivers and Windows DirectMusic (MKPerformSndMIDI) based drivers.
+// Returns NO if there was no MIDI driver found. 
+static BOOL initRegisterableMIDIDevs(void)
 {
 #if  i386  && !WIN32
     char *s;
@@ -1050,7 +1055,17 @@ static BOOL initDriverKitBasedMIDIs(void)
     }
     else
         driverInfoInitialized = YES;
-#if  i386  && !WIN32
+#if WIN32
+    // Windows98/NT YellowBox/NT, WebObjects or OpenStep Enterprise using the MKPerformSndMIDI framework
+    char **driverNames = MIDIGetAvailableDrivers(&selectedMidiDriver);
+    midiDriverNames = [NSArray arrayWithCapacity: midiDriverCount];
+    midiDriverUnits = [NSArray arrayWithCapacity: midiDriverCount];
+    for(i = 0; driverNames[i] != NULL; i++) {
+        midiDriverNames = [NSArray arrayWithObject: [NSString stringWithCString: driverNames[i]]];
+        midiDriverUnits = [NSArray arrayWithObject: [NSNumber numberWithInt: i]];
+    }
+#elif  i386 
+    // RDR2/Intel or OpenStep 4.X/Intel
     installedDrivers = [IOConfigTable tablesForInstalledDrivers];
     /* Creates, if necessary, and returns IOConfigTables, one for each
        device that has been loaded into the system.  This method knows only
@@ -1077,29 +1092,27 @@ static BOOL initDriverKitBasedMIDIs(void)
 	[midiDriverList release];
 	return NO;
     }
-    midiDriverNames = (NSString **) malloc(sizeof(NSString *) * midiDriverCount);
-    midiDriverUnits = (int *) malloc(sizeof(int) * midiDriverCount);
+//    midiDriverNames = (NSString **) malloc(sizeof(NSString *) * midiDriverCount);
+    midiDriverNames = [NSArray arrayWithCapacity: midiDriverCount];
+    midiDriverUnits = [NSArray arrayWithCapacity: midiDriverCount];
+//    midiDriverUnits = (int *) malloc(sizeof(int) * midiDriverCount);
     for (i=0; i < midiDriverCount; i++) {
 	/* Or "Server Name"? */
 	aConfigTable = [midiDriverList objectAtIndex:i];
-        midiDriverNames[i] = [[NSString stringWithCString:(char *)[aConfigTable valueForStringKey:"Class Names"]] retain];
+        [midiDriverNames insertObject: [NSString stringWithCString:(char *)[aConfigTable valueForStringKey:"Class Names"]]
+	                 atIndex: i];
 	s = (char *)[aConfigTable valueForStringKey:"Instance"];
-	midiDriverUnits[i] = s ? atoi(s) : 0;
+	[midiDriverUnits insertObject: s ? atoi(s) : 0 atIndex: i];
     }
 #elif ppc
     // hardwire this for MOXS1.0 until tablesForInstalledDrivers gives us what we expect
-    midiDriverCount = 1;
-    midiDriverNames = (NSString **) malloc(sizeof(NSString *) * midiDriverCount);
-    midiDriverUnits = (int *) malloc(sizeof(int) * midiDriverCount);
-    for (i=0; i < midiDriverCount; i++) {
-        midiDriverNames[i] = @"Mididriver";
-        midiDriverUnits[i] = 0;
-    }
+    midiDriverNames = [NSArray arrayWithObject: @"Mididriver"];
+    midiDriverUnits = [NSArray arrayWithObject: [NSNumber numberWithInt: 0]];
 #endif
+    [midiDriverNames retain];
+    [midiDriverUnits retain];
     return YES;
 }
-
-static NSDictionary *MKMIDIDefaults = nil;
 
 static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevStrArr)
     /* Maps a name of the form "midi0" to a name of the form "Mididriver2".
@@ -1156,47 +1169,34 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
     /* Otherwise, just use soft number as a hard number */
     *midiDevStrArr = [NSString stringWithFormat:@"%@%d",DRIVER_NAME,num];
 
-    initDriverKitBasedMIDIs();
-    for (i=0; i < midiDriverCount; i++) {
-        if (([DRIVER_NAME isEqualToString:midiDriverNames[i]]) && 
-	    (midiDriverUnits[i] == num))
+    initRegisterableMIDIDevs();
+    for (i=0; i < [midiDriverNames count]; i++) {
+        if (([DRIVER_NAME isEqualToString: [midiDriverNames objectAtIndex:i]]) && 
+	    ([[midiDriverUnits objectAtIndex: i] intValue] == num))
 	  return YES;
     }
     return NO;
 }
 
-+(int)getDriverNames:(NSString ***)driverNames units:(int **)driverUnits
-  /* Creates new arrays and copies driverNames and units into them.
-   * Returns size of array.
-   * sb: err, no. Just returns by reference the addresses at which the
-   * info is stored. Doesn't allocate more space or copy anything.
-   */
+// Returns autoreleased copies of all available driverNames as an NSArray
++ (NSArray *) getDriverNames
 {
-    initDriverKitBasedMIDIs();
-    *driverNames = midiDriverNames;
-    *driverUnits = midiDriverUnits;
-    return midiDriverCount;
+    initRegisterableMIDIDevs();
+    return [midiDriverNames autorelease];
 }
 
-
-#if 0
-+(int)getInUseDriverNames:(char ***)driverNames units:(int **)driverUnits
-  /* Creates new arrays and copies driverNames and units into them.
-   * Returns size of array.
-   */
+// Returns autoreleased copies of all available driverUnits
++ (NSArray *) getDriverUnits
 {
-    initDriverKitBasedMIDIs();
-    *driverNames = inUseDriverNames;
-    *driverUnits = inUseDriverUnits;
-    return MK_MAXMIDIS;
+    initRegisterableMIDIDevs();
+    return [midiDriverUnits autorelease];
 }
-#endif
 
 #endif
 
 -(NSString *)driverName 
 {
-    return midiDev;
+    return midiDevName;
 }
 
 -(int)driverUnit
@@ -1231,14 +1231,14 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
 #endif
     hostAndDevName = [hostName stringByAppendingString: devName];
     if ((obj = [portTable objectForKey: hostAndDevName]) == nil) {         // Doesn't already exist
-        self->hostname = [hostName copy];
-        self->tvs = getTimeInfoFromHost(hostName);
-        self->midiDev = [devName retain];
+        hostname = [hostName copy];
+        tvs = getTimeInfoFromHost(hostName);
+        midiDevName = [devName retain];
         [portTable setObject:self forKey: hostAndDevName]; 
     }
 
     if (noteSenders != nil) /* Already initialized */
-      return nil;
+        return nil;
     outputIsTimed = YES;               /* Default is outputIsTimed */
     noteSenders = [NSMutableArray arrayWithCapacity:_MK_MIDINOTEPORTS];
     [noteSenders retain];
@@ -1246,15 +1246,15 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
     [noteReceivers retain];
     for (i = 0; i < _MK_MIDINOTEPORTS; i++) {
         aNoteReceiver = [MKNoteReceiver new];
-         [noteReceivers addObject:aNoteReceiver];
-         [aNoteReceiver _setOwner:self];
-         [aNoteReceiver _setData:aParam = _MKNewIntPar(0,MK_noPar)];
-         _MKSetIntPar(aParam,i);
-         aNoteSender = [MKNoteSender new];
-         [noteSenders addObject:aNoteSender];
-         [aNoteSender _setPerformer:self];
-         [aNoteReceiver release];
-         [aNoteSender release]; /*sb: retains are held in arrays */
+        [noteReceivers addObject:aNoteReceiver];
+        [aNoteReceiver _setOwner:self];
+        [aNoteReceiver _setData:aParam = _MKNewIntPar(0,MK_noPar)];
+        _MKSetIntPar(aParam,i);
+        aNoteSender = [MKNoteSender new];
+        [noteSenders addObject:aNoteSender];
+        [aNoteSender _setPerformer:self];
+        [aNoteReceiver release];
+        [aNoteSender release]; /*sb: retains are held in arrays */
      }
      useInputTimeStamps = YES;
      _timeOffset = 0;
@@ -1265,9 +1265,9 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
                     IGNORE_STOP);
      deviceStatus = MK_devClosed;
      _MKCheckInit(); /* Maybe we don't want this here, in case we ever want
-                        to use Midi without Notes. (?) FIXME */
+                        to use MKMidi without MKNotes. (?) FIXME */
      _MKClassOrchestra(); /* Force find-class here */
-     _mode = 'a';
+     ioMode = 'a';
      return self;
 }
 
@@ -1283,14 +1283,14 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
 
 + midiOnDevice:(NSString *) devName host:(NSString *) hostName
 {
-    self = [self alloc]; // Problem? LMS [Midi alloc]??
+    self = [self alloc]; // Should this be [MKMidi alloc]??
     [self initOnDevice: devName hostName: hostName];
     return self;
 }
 
 + midiOnDevice:(NSString *) devName
 {
-    self = [self alloc]; // Problem? LMS [Midi alloc]??
+    self = [self alloc]; // Should this be [MKMidi alloc]??
     [self initOnDevice:devName];
     return self;
 }
@@ -1328,7 +1328,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
     [noteSenders makeObjectsPerformSelector:@selector(disconnect)];
     [noteSenders removeAllObjects];  
     [noteSenders release];
-    [portTable removeObjectForKey:midiDev];
+    [portTable removeObjectForKey:midiDevName];
 //    free(_extraVars);
     [super dealloc];
 }
@@ -1345,11 +1345,11 @@ static id openMidi(MKMidi *self)
 {
     if (openMidiDev(self) != KERN_SUCCESS)
       return nil;
-    if (INPUTENABLED(self->_mode))
+    if (INPUTENABLED(self->ioMode))
       if (!(self->_pIn = (void *)_MKInitMidiIn()))
 	return nil;
       else setMidiSysIgnore(self,self->_ignoreBits);
-    if (OUTPUTENABLED(self->_mode)) {
+    if (OUTPUTENABLED(self->ioMode)) {
 	if (!(self->_pOut = (void *)_MKInitMidiOut()))
 	  return nil;
 	{
@@ -1422,7 +1422,7 @@ int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts
     MIDIRawEvent *tmpBufPtr = &(tmpMidiBuf[1]);
     unsigned char chan;
     int i,r;
-    if (deviceStatus == MK_devClosed || !OUTPUTENABLED(_mode))
+    if (deviceStatus == MK_devClosed || !OUTPUTENABLED(ioMode))
 	return nil;
     for (i=0; i<128; i++) {
 	tmpBufPtr->time = 0; 
@@ -1493,13 +1493,13 @@ static void cancelQueueReq(MKMidi *self)
       case MK_devOpen:
 	break;
       case MK_devRunning:
-	if (INPUTENABLED(_mode)) 
+	if (INPUTENABLED(ioMode)) 
 	    listenToMIDI(self,NO);
-	if (OUTPUTENABLED(_mode)) 
+	if (OUTPUTENABLED(ioMode)) 
 	    cancelQueueReq(self);
 	/* no break here */
       case MK_devStopped:
-	if (OUTPUTENABLED(_mode))
+	if (OUTPUTENABLED(ioMode))
 	  emptyMidi(self);
 	resetAndStopMidiClock(self);
 	deviceStatus = MK_devOpen;
@@ -1513,17 +1513,17 @@ static void cancelQueueReq(MKMidi *self)
 -openOutputOnly
   /* Same as open but does not enable output. */
 {
-    if ((deviceStatus != MK_devClosed) && (_mode != 'o'))
+    if ((deviceStatus != MK_devClosed) && (ioMode != 'o'))
       [self close];
-    _mode = 'o';
+    ioMode = 'o';
     return [self _open];
 }
 
 -openInputOnly
 {
-    if ((deviceStatus != MK_devClosed) && (_mode != 'i'))
+    if ((deviceStatus != MK_devClosed) && (ioMode != 'i'))
       [self close];
-    _mode = 'i';
+    ioMode = 'i';
     return [self _open];
 }
 
@@ -1534,9 +1534,9 @@ static void cancelQueueReq(MKMidi *self)
      Returns nil if failure.
      */
 {
-    if ((deviceStatus != MK_devClosed) && (_mode != 'a'))
+    if ((deviceStatus != MK_devClosed) && (ioMode != 'a'))
       [self close];
-    _mode = 'a';
+    ioMode = 'a';
     return [self _open];
 }
 
@@ -1563,7 +1563,7 @@ static void cancelQueueReq(MKMidi *self)
 	_timeOffset = MKGetTime(); /* This is needed by MidiOut. */
 	/* no break here */
       case MK_devStopped:
-	if (INPUTENABLED(_mode)) 
+	if (INPUTENABLED(ioMode)) 
 	  listenToMIDI(self,YES);
 	resumeMidiClock(self);
 	deviceStatus = MK_devRunning;
@@ -1583,9 +1583,9 @@ static void cancelQueueReq(MKMidi *self)
 	return self;
       case MK_devRunning:
 	stopMidiClock(self);
-	if (INPUTENABLED(_mode)) 
+	if (INPUTENABLED(ioMode)) 
 	    listenToMIDI(self,NO);
-	if (OUTPUTENABLED(_mode)) 
+	if (OUTPUTENABLED(ioMode)) 
 	    cancelQueueReq(self);
 	deviceStatus = MK_devStopped;
       default:
@@ -1600,14 +1600,14 @@ static void cancelQueueReq(MKMidi *self)
       case MK_devClosed:
 	break;
       case MK_devRunning:
-	if (INPUTENABLED(_mode)) 
+	if (INPUTENABLED(ioMode)) 
 	    listenToMIDI(self,NO);
-	if (OUTPUTENABLED(_mode)) 
+	if (OUTPUTENABLED(ioMode)) 
 	    cancelQueueReq(self);
 	/* No break here */
       case MK_devStopped:
       case MK_devOpen:
-	if (OUTPUTENABLED(_mode)) {
+	if (OUTPUTENABLED(ioMode)) {
 	    emptyMidi(self);
 	}
 	_pIn = (void *)_MKFinishMidiIn(MIDIINPTR(self));
@@ -1627,18 +1627,18 @@ static void cancelQueueReq(MKMidi *self)
       case MK_devClosed:
 	break;
       case MK_devRunning:
-	if (INPUTENABLED(_mode)) 
+	if (INPUTENABLED(ioMode)) 
 	    listenToMIDI(self,NO);
-	if (OUTPUTENABLED(_mode)) 
+	if (OUTPUTENABLED(ioMode)) 
 	    cancelQueueReq(self);
 	/* No break here */
       case MK_devStopped:
       case MK_devOpen:
-	if (INPUTENABLED(_mode)) {
+	if (INPUTENABLED(ioMode)) {
 	    _pIn = (void *)_MKFinishMidiIn(MIDIINPTR(self));
 	    incomingDataCount = 0;
 	}
-	if (OUTPUTENABLED(_mode)) {
+	if (OUTPUTENABLED(ioMode)) {
 	    if (deviceStatus == MK_devRunning) 
 		awaitMidiOutDone(self,MIDI_NO_TIMEOUT);
 	    emptyMidi(self);
@@ -1765,8 +1765,10 @@ static void cancelQueueReq(MKMidi *self)
 // Download the patch numbers supplied in the array as Downloadable Sounds (DLS).
 // The patch format per integer follows the Microsoft convention:
 // X0000000MMMMMMM0LLLLLLL0PPPPPPP
-// bit 31 = Patch is a DrumKit, bitsbits 24-16=MSB Bank Select(cc=0), bits 15-8 = LSB bank select(cc=32)
-// bit 7 = 0, bits 6-0=Program Change number 
+// X bit 31     = Patch is a DrumKit
+// M bits 24-16 = MSB Bank Select(cc=0)
+// L bits 15-8  = LSB bank select(cc=32)
+// P bits 6-0   = Program Change number 
 - (void) downloadDLS: (NSArray *) dlsPatches
 {
     unsigned int *dlsPatchArray;
