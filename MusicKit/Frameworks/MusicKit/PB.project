@@ -267,7 +267,8 @@
             MKPatchTemplate.h, 
             MKSamplerInstrument.h, 
             MKMixerInstrument.h, 
-            MKScorefileObject.h
+            MKScorefileObject.h, 
+            fastFFT.h
         ); 
     }; 
     LANGUAGE = English; 

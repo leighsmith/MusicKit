@@ -113,7 +113,7 @@ PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  MKSamples.h MKWaveTable.h MKPartials.h\
                  MKUnitGenerator.h MKSynthData.h MKPatchTemplate.h\
                  MKSamplerInstrument.h MKMixerInstrument.h\
-                 MKScorefileObject.h
+                 MKScorefileObject.h fastFFT.h
 
 PROJECT_HEADERS = MusicKit.h
 
