@@ -36,6 +36,7 @@ enum {
     BG_stopNow,
     BG_startNow,
     BG_abortNow,
+    BG_delegateMessageReady,
     BG_hasStarted
 };
 
@@ -69,15 +70,29 @@ static SndStreamManager *sm = nil;
 
 - init
 {
+    NSPort *managerReceivePort,*managerSendPort;
+    
     [super init];
 
     mixer         = [[SndStreamMixer sndStreamMixer] retain];
     bg_threadLock = [[NSConditionLock alloc] initWithCondition: BG_ready];
+    delegateMessageArrayLock = [[NSLock alloc] init];
     active        = FALSE;
     bg_active     = FALSE;
     nowTime       = 0;
+    delegateMessageArray = [[NSMutableArray alloc] init];
     SNDStreamNativeFormat(&format);
+    /* might as well set up the delegate background thread now too */
+    managerReceivePort = [NSPort port]; /* we don't need to retain - the connection will do that */
+    managerSendPort    = [NSPort port]; 
+    threadConnection = [[NSConnection alloc] initWithReceivePort:managerReceivePort
+                                                        sendPort:managerSendPort]; 
 
+    //Set the connection's root object to the manager, so we can forward from here in the main thread.
+    [threadConnection setRootObject:self];
+    [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
+                             toTarget: self
+                           withObject: [NSArray arrayWithObjects:managerSendPort, managerReceivePort, nil]];
     return self;
 }
 
@@ -95,6 +110,8 @@ static SndStreamManager *sm = nil;
         NSLog(@"SndStreamManager::dealloc - Error: stream is still active!!!");
 
     [mixer release];
+    [delegateMessageArray release];
+    [delegateMessageArrayLock release];
 //    NSLog(@"Manager version: MIXER");
 
 #if SNDSTREAMMANAGER_DEBUG
@@ -132,9 +149,7 @@ static SndStreamManager *sm = nil;
 
     // if all goes well with init,
     // active = TRUE
-
-    // Get the native hardware stream format....
-
+    
     if (!bg_active) {
         [NSThread detachNewThreadSelector: @selector(streamStartStopThread)
                                  toTarget: self
@@ -145,6 +160,45 @@ static SndStreamManager *sm = nil;
     [bg_threadLock unlockWithCondition:BG_hasFlag];
     [bg_threadLock lockWhenCondition:BG_hasStarted];
     [bg_threadLock unlockWithCondition:BG_ready];
+}
+
+- (void)delegateMessageThread:(NSArray*)ports
+{
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    id controllerProxy = nil;
+    [self retain];
+    while (1) {
+        [bgdm_threadLock lockWhenCondition:BG_hasFlag];
+        if (bgdm_sem == BG_delegateMessageReady) {
+            NSInvocation *delegateMessage = nil;
+            int count;
+            while (1) {
+                [delegateMessageArrayLock lock];
+                count = [delegateMessageArray count];
+                if (count) {
+                    delegateMessage = [[delegateMessageArray objectAtIndex:0] retain];
+                    [delegateMessageArray removeObjectAtIndex:0];
+                }
+                [delegateMessageArrayLock unlock];
+                if (!count) break;
+                if (!controllerProxy) {
+                    controllerProxy = [[NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
+                                                      sendPort:[ports objectAtIndex:1]] rootProxy];
+                    [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
+                }
+                /* cast to unsigned long to prevent compiler warnings */
+                [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
+            }
+        }
+        [bgdm_threadLock unlockWithCondition:BG_ready];
+    }
+    [self release];
+    [localPool release];
+    /* even if there is a new thread is created between the following two
+     * statements, that would be ok -- there would temporarily be one
+     * extra thread but it won't cause a problem
+     */
+    [NSThread exit];
 }
 
 
@@ -205,6 +259,37 @@ static SndStreamManager *sm = nil;
      */
     bg_active = FALSE;
     [NSThread exit];
+}
+
+/* we cast to unsigned long to prevent MacOSX (and maybe GNUstep) from interpreting
+ * the argument as an NSInvocation. When it does this, it tries to be too smart, and
+ * creates a connection to the object in the thread the NSInvocation was created in
+ * (which is what we're trying to avoid).
+ */
+- (void) _sendDelegateInvocation:(in unsigned long) mesg
+/* this should only be called while in the main thread. Internal use only. */
+{
+    [(NSInvocation *)mesg invoke];
+}
+
+- (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2
+{
+    NSMethodSignature *aSignature = [[target class] instanceMethodSignatureForSelector:sel];
+    NSInvocation *anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
+    
+    [anInvocation setSelector:sel];
+    [anInvocation setTarget:target];
+    [anInvocation setArgument:&arg1 atIndex:2];
+    [anInvocation setArgument:&arg2 atIndex:3];
+    [anInvocation retainArguments];
+    
+    [delegateMessageArrayLock lock];
+    [delegateMessageArray addObject:anInvocation];
+    [delegateMessageArrayLock unlock];
+    
+    [bgdm_threadLock lock];
+    bgdm_sem = BG_delegateMessageReady;
+    [bgdm_threadLock unlockWithCondition:BG_hasFlag];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
