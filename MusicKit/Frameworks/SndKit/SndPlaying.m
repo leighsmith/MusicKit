@@ -62,7 +62,7 @@
     return SNDIsMuted();
 }
 
-+ setMute:(BOOL)aFlag
++ setMute: (BOOL) aFlag
 {
     SNDSetMute(aFlag);
     return self;
@@ -317,7 +317,7 @@
 {
     // NSLog(@"*newLoopStart %ld, *newLoopEnd %ld\n", *newLoopStart, *newLoopEnd);
     if(*newLoopEnd < startSample + sampleCountRemoved)
-	*newLoopEnd = MIN(*newLoopEnd, [self lengthInSampleFrames]);
+	*newLoopEnd = MIN(*newLoopEnd, [self lengthInSampleFrames] - 1); // loop end points at last sample played.
     else {
 	*newLoopEnd -= sampleCountRemoved;
 	if(*newLoopEnd < 0)
@@ -341,20 +341,20 @@
 {
     long soundLength = [self lengthInSampleFrames];
     
-    NSLog(@"adding %ld to *newLoopStart %ld, *newLoopEnd %ld \n", sampleCountAdded, *newLoopStart, *newLoopEnd);
+    // NSLog(@"adding %ld to *newLoopStart %ld, *newLoopEnd %ld \n", sampleCountAdded, *newLoopStart, *newLoopEnd);
     if(*newLoopEnd < startSample)
-	*newLoopEnd = MIN(*newLoopEnd, soundLength);
+	*newLoopEnd = MIN(*newLoopEnd, soundLength - 1);  // loop end points at last sample played.
     else {
 	*newLoopEnd += sampleCountAdded;
-	if(*newLoopEnd > soundLength)
-	    *newLoopEnd = soundLength;
+	if(*newLoopEnd >= soundLength)
+	    *newLoopEnd = soundLength - 1;  // loop end points at last sample played.
     }
     if(*newLoopStart >= startSample) {
 	*newLoopStart += sampleCountAdded;
-	if(*newLoopStart > soundLength)
-	    *newLoopStart = soundLength;	    
+	if(*newLoopStart >= soundLength)
+	    *newLoopStart = soundLength - 1;  // loop start points at first sample played.
     }
-    NSLog(@"after adding *newLoopStart %ld, *newLoopEnd %ld, soundLength %ld\n", *newLoopStart, *newLoopEnd, soundLength);    
+    // NSLog(@"after adding *newLoopStart %ld, *newLoopEnd %ld, soundLength %ld\n", *newLoopStart, *newLoopEnd, soundLength);    
 }
 
 - (void) adjustLoopsAfterAdding: (BOOL) adding 
@@ -377,11 +377,12 @@
 		   startingAt: startSample];
     }
     for(performanceIndex = 0; performanceIndex < [performancesArray count]; performanceIndex++) {
-	SndPerformance *performance = [performancesArray objectAtIndex: performanceIndex];
+	SndPerformance *performance;
 	long performanceStartLoopIndex;
 	long performanceEndLoopIndex;
 	
 	[performancesArrayLock lock]; // TODO check this is right.
+	performance = [performancesArray objectAtIndex: performanceIndex];
 	performanceStartLoopIndex = [performance loopStartIndex];
 	performanceEndLoopIndex = [performance loopEndIndex];
 	if(adding) {
@@ -390,15 +391,22 @@
 		      afterAdding: sampleCount
 		       startingAt: startSample];
 	    [performance setEndAtIndex: [performance endAtIndex] + sampleCount];
-	    NSLog(@"performanceEndLoopIndex %ld endIndex %ld\n", performanceEndLoopIndex, [performance endAtIndex]);
 	}
 	else {
 	    [self adjustLoopStart: &performanceStartLoopIndex
 			      end: &performanceEndLoopIndex
 		    afterRemoving: sampleCount
 		       startingAt: startSample];
+	    // We need to check if playIndex is beyond the potential new endAtIndex. 
+	    // If so, we need to adjust it, otherwise it will be set to the endAtIndex in setEndAtIndex:
+	    if([performance playIndex] >= [performance endAtIndex] - sampleCount) {
+		// NSLog(@"beyond the new end, need to reset the startIndex to beginning\n");
+		[performance setPlayIndex: 0];
+	    }
 	    [performance setEndAtIndex: [performance endAtIndex] - sampleCount];
 	}
+	// NSLog(@"performanceEndLoopIndex %ld startAtIndex %ld endAtIndex %ld\n",
+	//      performanceEndLoopIndex, [performance startAtIndex], [performance endAtIndex]);
 	[performance setLoopStartIndex: performanceStartLoopIndex];
 	[performance setLoopEndIndex: performanceEndLoopIndex];
 	[performancesArrayLock unlock];
