@@ -35,6 +35,9 @@
 Modification history:
 
  $Log$
+ Revision 1.13  2003/12/31 00:43:10  leighsmith
+ Cleaned up naming of methods, removing underscores
+
  Revision 1.12  2002/04/16 15:27:34  sbrandon
  several string-appending functions simplified for speed
 
@@ -534,7 +537,7 @@ Writes itself in the form:
           return self;
 }
 
--_writeBinaryScorefileStream:(NSMutableData *)aStream
+- writeBinaryScorefileStream: (NSMutableData *) aStream
 /* Writes on aStream the following:
    Writes itself in the form:
   (0.0, 0.0, 1.0)(1.0,2.0,1.0)|(1.0,1.0,1.0)

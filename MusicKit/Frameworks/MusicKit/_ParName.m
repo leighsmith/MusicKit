@@ -52,6 +52,9 @@
 Modification history:
 
  $Log$
+ Revision 1.18  2003/12/31 00:38:52  leighsmith
+ Cleaned up naming of methods, removing underscores
+
  Revision 1.17  2003/08/04 21:14:33  leighsmith
  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -672,7 +675,7 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
   }
   else
     if (binary)
-      [dataObj _writeBinaryScorefileStream:aStream];
+      [dataObj writeBinaryScorefileStream: aStream];
   else {
     [dataObj writeScorefileStream:aStream];
     [aStream appendBytes:"]" length:1];

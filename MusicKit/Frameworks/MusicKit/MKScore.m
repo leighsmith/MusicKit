@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.36  2003/12/31 00:32:53  leighsmith
+ Cleaned up naming of methods, removing underscores
+
  Revision 1.35  2003/08/04 21:14:33  leighsmith
  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -396,9 +399,11 @@ static id readScorefile(MKScore *self, NSData *stream,
 
 static void writeNotes();
 
--_writeScorefileStream:(NSMutableData *)aStream firstTimeTag:(double)firstTimeTag
-           lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift
-                binary:(BOOL)isBinary
+- writeScorefileStream: (NSMutableData *) aStream
+          firstTimeTag: (double) firstTimeTag
+           lastTimeTag: (double) lastTimeTag
+             timeShift: (double) timeShift
+                binary: (BOOL) isBinary
 /* Same as writeScorefileStream: but only writes notes within specified
   time bounds. */
 {
@@ -424,15 +429,20 @@ static void writeNotes();
   return self;
 }
 
--_writeScorefile:(NSString *)aFileName firstTimeTag:(double)firstTimeTag
-     lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift
-          binary:(BOOL)isBinary
+- writeScorefile: (NSString *) aFileName
+    firstTimeTag: (double) firstTimeTag
+     lastTimeTag: (double) lastTimeTag
+       timeShift: (double) timeShift
+          binary: (BOOL) isBinary
 {
   NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
   BOOL success;
 
-  [self _writeScorefileStream:stream firstTimeTag:firstTimeTag
-                  lastTimeTag:lastTimeTag timeShift:timeShift binary:isBinary];
+    [self writeScorefileStream: stream
+                  firstTimeTag: firstTimeTag
+                   lastTimeTag: lastTimeTag
+                     timeShift: timeShift
+                        binary: isBinary];
 
   success = _MKOpenFileStreamForWriting(aFileName,
                                         (isBinary) ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT,
@@ -446,126 +456,138 @@ static void writeNotes();
     return self;
 }
 
--writeScorefile:(NSString *)aFileName
-   firstTimeTag:(double)firstTimeTag
-    lastTimeTag:(double)lastTimeTag
-      timeShift:(double)timeShift
+- writeScorefile: (NSString *) aFileName
+    firstTimeTag: (double) firstTimeTag
+     lastTimeTag: (double) lastTimeTag
+       timeShift: (double) timeShift
   /* Write scorefile to file with specified name within specified
   bounds. */
 {
-  return [self _writeScorefile:aFileName
-                  firstTimeTag:firstTimeTag
-                   lastTimeTag:lastTimeTag
-                     timeShift:timeShift
-                        binary:NO];
+  return [self writeScorefile: aFileName
+                 firstTimeTag: firstTimeTag
+                  lastTimeTag: lastTimeTag
+                    timeShift: timeShift
+                       binary: NO];
 }
 
--writeScorefileStream:(NSMutableData *)aStream
-         firstTimeTag:(double)firstTimeTag
-          lastTimeTag:(double)lastTimeTag
-            timeShift:(double)timeShift
+- writeScorefileStream: (NSMutableData *) aStream
+          firstTimeTag: (double) firstTimeTag
+           lastTimeTag: (double) lastTimeTag
+             timeShift: (double) timeShift
 /* Same as writeScorefileStream: but only writes notes within specified
   time bounds. */
 {
-  return [self _writeScorefileStream:aStream
-                        firstTimeTag:firstTimeTag
-                         lastTimeTag:lastTimeTag
-                           timeShift:timeShift binary:NO];
+  return [self writeScorefileStream: aStream
+                       firstTimeTag: firstTimeTag
+                        lastTimeTag: lastTimeTag
+                          timeShift: timeShift
+                             binary: NO];
 }
 
--writeOptimizedScorefile:(NSString *)aFileName
-            firstTimeTag:(double)firstTimeTag
-             lastTimeTag:(double)lastTimeTag
-               timeShift:(double)timeShift
+- writeOptimizedScorefile: (NSString *) aFileName
+             firstTimeTag: (double) firstTimeTag
+              lastTimeTag: (double) lastTimeTag
+                timeShift: (double) timeShift
   /* Write scorefile to file with specified name within specified
   bounds. */
 {
-  return [self _writeScorefile:aFileName
-                  firstTimeTag:firstTimeTag
-                   lastTimeTag:lastTimeTag
-                     timeShift:timeShift
-                        binary:YES];
+    return [self writeScorefile: aFileName
+                   firstTimeTag: firstTimeTag
+                    lastTimeTag: lastTimeTag
+                      timeShift: timeShift
+                         binary: YES];
 }
 
--writeOptimizedScorefileStream:(NSMutableData *)aStream
-                  firstTimeTag:(double)firstTimeTag
-                   lastTimeTag:(double)lastTimeTag
-                     timeShift:(double)timeShift
+- writeOptimizedScorefileStream: (NSMutableData *) aStream
+                   firstTimeTag: (double) firstTimeTag
+                    lastTimeTag: (double) lastTimeTag
+                      timeShift: (double) timeShift
   /* Same as writeScorefileStream: but only writes notes within specified
   time bounds. */
 {
-  return [self _writeScorefileStream:aStream
-                        firstTimeTag:firstTimeTag
-                         lastTimeTag:lastTimeTag
-                           timeShift:timeShift binary:YES];
+    return [self writeScorefileStream: aStream
+                        firstTimeTag: firstTimeTag
+                        lastTimeTag: lastTimeTag
+                          timeShift: timeShift
+                           binary: YES];
 }
 
 /* Scorefile writing "convenience methods" ------------------------ */
 
--writeScorefile:(NSString *)aFileName
-   firstTimeTag:(double)firstTimeTag
-    lastTimeTag:(double)lastTimeTag
+- writeScorefile: (NSString *) aFileName
+    firstTimeTag: (double) firstTimeTag
+     lastTimeTag: (double) lastTimeTag
 {
-  return [self _writeScorefile:aFileName
-                  firstTimeTag:firstTimeTag
-                   lastTimeTag:lastTimeTag
-                     timeShift:0.0
-                        binary:NO];
+  return [self writeScorefile: aFileName
+                  firstTimeTag: firstTimeTag
+                   lastTimeTag: lastTimeTag
+                     timeShift: 0.0
+                        binary: NO];
 }
 
--writeScorefileStream:(NSMutableData *)aStream
-         firstTimeTag:(double)firstTimeTag
-          lastTimeTag:(double)lastTimeTag
+- writeScorefileStream: (NSMutableData *) aStream
+          firstTimeTag: (double) firstTimeTag
+           lastTimeTag: (double) lastTimeTag
 {
-  return [self _writeScorefileStream:aStream
-                        firstTimeTag:firstTimeTag
-                         lastTimeTag:lastTimeTag
-                           timeShift:0.0 binary:NO];
+    return [self writeScorefileStream: aStream
+                         firstTimeTag: firstTimeTag
+                          lastTimeTag: lastTimeTag
+                            timeShift: 0.0
+                               binary: NO];
 }
 
--writeScorefile:(NSString *)aFileName
+- writeScorefile: (NSString *) aFileName
 {
-  return [self writeScorefile:aFileName firstTimeTag:0.0
-                  lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+    return [self writeScorefile: aFileName
+                   firstTimeTag: 0.0
+                    lastTimeTag: MK_ENDOFTIME
+                      timeShift: 0.0];
 }
 
--writeScorefileStream:(NSMutableData *)aStream
+- writeScorefileStream: (NSMutableData *) aStream
 {
-  return [self writeScorefileStream:aStream firstTimeTag:0.0
-                        lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+    return [self writeScorefileStream: aStream
+                         firstTimeTag: 0.0
+                          lastTimeTag: MK_ENDOFTIME
+                            timeShift: 0.0];
 }
 
--writeOptimizedScorefile:(NSString *)aFileName
-            firstTimeTag:(double)firstTimeTag
-             lastTimeTag:(double)lastTimeTag
+- writeOptimizedScorefile: (NSString *) aFileName
+            firstTimeTag: (double) firstTimeTag
+             lastTimeTag: (double) lastTimeTag
 {
-  return [self _writeScorefile:aFileName
-                  firstTimeTag:firstTimeTag
-                   lastTimeTag:lastTimeTag
-                     timeShift:0.0
-                        binary:YES];
+  return [self writeScorefile: aFileName
+                  firstTimeTag: firstTimeTag
+                   lastTimeTag: lastTimeTag
+                     timeShift: 0.0
+                        binary: YES];
 }
 
--writeOptimizedScorefileStream:(NSMutableData *)aStream
-                  firstTimeTag:(double)firstTimeTag
-                   lastTimeTag:(double)lastTimeTag
+- writeOptimizedScorefileStream: (NSMutableData *) aStream
+                  firstTimeTag: (double) firstTimeTag
+                   lastTimeTag: (double) lastTimeTag
 {
-  return [self _writeScorefileStream:aStream
-                        firstTimeTag:firstTimeTag
-                         lastTimeTag:lastTimeTag
-                           timeShift:0.0 binary:YES];
+  return [self writeScorefileStream: aStream
+                        firstTimeTag: firstTimeTag
+                         lastTimeTag: lastTimeTag
+                           timeShift: 0.0
+                            binary: YES];
 }
 
--writeOptimizedScorefile:(NSString *)aFileName
+- writeOptimizedScorefile: (NSString *) aFileName
 {
-  return [self writeOptimizedScorefile:aFileName firstTimeTag:0.0
-                           lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+    return [self writeOptimizedScorefile: aFileName
+                            firstTimeTag: 0.0
+                             lastTimeTag: MK_ENDOFTIME
+                               timeShift: 0.0];
 }
 
--writeOptimizedScorefileStream:(NSMutableData *)aStream
+- writeOptimizedScorefileStream: (NSMutableData *) aStream
 {
-  return [self writeOptimizedScorefileStream:aStream firstTimeTag:0.0
-                                 lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+    return [self writeOptimizedScorefileStream: aStream
+                                  firstTimeTag: 0.0
+                                   lastTimeTag: MK_ENDOFTIME
+                                     timeShift: 0.0];
 }
 
 
@@ -943,17 +965,21 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
 
 /* Reading MIDI files ---------------------------------------------- */
 
-- readMidifile:(NSString *)aFileName firstTimeTag:(double) firstTimeTag
-   lastTimeTag:(double) lastTimeTag timeShift:(double)timeShift
+- readMidifile: (NSString *) aFileName
+  firstTimeTag: (double) firstTimeTag
+   lastTimeTag: (double) lastTimeTag
+     timeShift: (double) timeShift
 {
-  id rtnVal;
-  id stream;/*sb: could be NSMutableData or NSData */
+    id rtnVal;
+    id stream;/*sb: could be NSMutableData or NSData */
 
     stream = _MKOpenFileStreamForReading(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], YES);
-    if (!stream)
-      return nil;
-    rtnVal = [self readMidifileStream:stream firstTimeTag:firstTimeTag
-                          lastTimeTag:lastTimeTag timeShift:timeShift];
+    if (stream == nil)
+        return nil;
+    rtnVal = [self readMidifileStream: stream
+                         firstTimeTag: firstTimeTag
+                          lastTimeTag: lastTimeTag
+                            timeShift: timeShift];
     return rtnVal;
 }
 

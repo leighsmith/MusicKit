@@ -26,6 +26,9 @@
  Modification history:
 
  $Log$
+ Revision 1.16  2003/12/31 00:39:53  leighsmith
+ Cleaned up naming of methods, removing underscores
+
  Revision 1.15  2003/08/04 21:14:33  leighsmith
  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -872,7 +875,7 @@ automatically if necessary by the various getData: methods
 
 @implementation MKPartials(Private)
 
--_writeBinaryScorefileStream:(NSMutableData *)aStream
+- writeBinaryScorefileStream: (NSMutableData *) aStream
 /* Writes on aStream the following:
 {1.0, 0.3, 0.0}{2.0,.1,0.0}{3.0,.01,0.0}
   Returns nil if ampRatios or freqRatios is NULL, otherwise self. */

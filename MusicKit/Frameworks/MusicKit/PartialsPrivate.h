@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2003/12/31 00:35:43  leighsmith
+  Cleaned up naming of methods, removing underscores
+
   Revision 1.2  1999/07/29 01:25:56  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -16,7 +19,7 @@
 
 @interface MKPartials(Private)
 
--_writeBinaryScorefileStream:(NSMutableData *)aStream;
+- writeBinaryScorefileStream: (NSMutableData *) aStream;
 - _setPartialNoCopyCount: (int)howMany
   freqRatios: (short *)fRatios
   ampRatios: (float *)aRatios
