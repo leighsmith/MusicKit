@@ -52,7 +52,7 @@
 
 + streamRecorder
 {
-  return  [[[SndStreamRecorder alloc] init] autorelease]; 
+  return  [[SndStreamRecorder new] autorelease]; 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +64,7 @@
   [super init];
   [self setNeedsInput: TRUE];
   [self setGeneratesOutput: TRUE];  
+  
   return self;
 }
 
@@ -91,35 +92,64 @@
 // prepareToRecordForDuration:
 ////////////////////////////////////////////////////////////////////////////////
 
-- prepareToRecordForDuration: (double) time
+- (BOOL) prepareToRecordForDuration: (double) time
 {
-  if (!isRecording) {
+  BOOL r = FALSE;
+  
+  if (isRecording) 
+    fprintf(stderr,"SndStreamRecorder::prepareToRecordForDuration - Error: already recording!\n");
+  
+  else {
     [self lockOutputBuffer];
     {
       SndAudioBuffer *outB = [self outputBuffer]; 
-      if (recordBuffer != nil) 
-        [recordBuffer release];
       
-      recordBuffer = [SndAudioBuffer audioBufferWithFormat: [outB format] 
-                                                duration: time]; 
-      [recordBuffer retain];
+      // This ain't an optimal situation - recorder shouldn't even HAVE an output buffer.
+      // However, it is the only way at present to get format info from manager 
+      // Ideally, we would like the recorder to connect to the stream manager itself
+      if (outB == nil)
+        fprintf(stderr,"SndStreamRecorder::prepareToRecordForDuration - Error: outBuffer is nil.\n");
+        
+      else {  
+        if (recordBuffer != nil) 
+          [recordBuffer release];
+      
+        recordBuffer = [SndAudioBuffer audioBufferWithFormat: [outB format] 
+                                                    duration: time]; 
+        if (recordBuffer == nil)
+          fprintf(stderr,"SndStreamRecorder::prepareToRecordForDuration - Error: record buffer is nil.\n");
+        else {
+          [recordBuffer retain];
+          r = TRUE;
+        }
+      }
     }
     [self unlockOutputBuffer];
-  }  
-  return self;
+  }
+    
+  return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // startRecording
 ////////////////////////////////////////////////////////////////////////////////
 
-- startRecording
+- (BOOL) startRecording
 {
-  if (recordBuffer != nil && !isRecording) {
-    position = 0;
+  BOOL r = FALSE;
+  
+  if (recordBuffer == nil)
+    fprintf(stderr,"SndStreamRecorder::startRecording - Error: recordBuffer is nil.\n");
+
+  else if (isRecording) 
+    fprintf(stderr,"SndStreamRecorder::startRecording - Error: already recording!\n");
+  
+  else {
+    position    = 0;
     isRecording = TRUE;	
-  }  
-  return self;
+    r           = TRUE;
+  }
+  return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,19 +158,29 @@
 
 - (BOOL) setUpRecordFile: (NSString*) filename
 {
-  if ((recordFile = fopen([filename cString],"wb")) == NULL) {
-    fprintf(stderr,"Error opening file '%s' for recording.\n",[filename cString]);
-    return FALSE;
-  }
+  if ((recordFile = fopen([filename cString],"wb")) == NULL) 
+    fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error opening file '%s' for recording.\n",[filename cString]);
+
+  else if ([self synthBuffer] == nil)
+    fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error: synthBuffer is nil.\n");
+
+  else
   {
     SndSoundStruct *format = [[self synthBuffer] format];
-    fwrite(format, sizeof(SndSoundStruct), 1, recordFile);
+    if (format == nil) 
+      fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error: synthBuffer format is NULL.\n");
+    
+    else {
+      fwrite(format, sizeof(SndSoundStruct), 1, recordFile);
+      if (recordFileName != nil)
+        [recordFileName release];
+        
+      recordFileName = [[filename copy] retain];
+      return TRUE;
+    }
   }
-  if (recordFileName != nil)
-    [recordFileName release];
-  recordFileName = [[filename copy] retain];
   
-  return TRUE;
+  return FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,17 +191,15 @@
 {
   // We have to seek back to the beginning of the recorded file to rewrite the
   // file header so that it contains the size of the recorded data, and the
-  // file-stream format
-  
+  // file-stream format  
+  SndSoundStruct format;
   fseek(recordFile, 0, SEEK_SET);
-  {
-    SndSoundStruct format;
-    memcpy (&format, [[self synthBuffer] format], sizeof(SndSoundStruct));
-    format.dataLocation = sizeof(SndSoundStruct);
-    format.dataSize     = bytesRecorded;
-    format.dataFormat   = SND_FORMAT_LINEAR_16;
-    fwrite (&format, sizeof(SndSoundStruct), 1, recordFile);
-  }
+  memcpy (&format, [[self synthBuffer] format], sizeof(SndSoundStruct));
+  format.magic = SND_MAGIC;
+  format.dataLocation = sizeof(SndSoundStruct);
+  format.dataSize     = bytesRecorded;
+  format.dataFormat   = SND_FORMAT_LINEAR_16;
+  fwrite (&format, sizeof(SndSoundStruct), 1, recordFile);
   fclose(recordFile);
   recordFile = NULL;
   
@@ -178,15 +216,27 @@
 {
   BOOL b = FALSE;
   
-  if (!isRecording) {
-    [self prepareToRecordForDuration: 1.0];
-    if ([self setUpRecordFile: filename] && recordBuffer != nil) {
-      conversionBuffer = (short*) malloc(sizeof(short) * 44100);
-      position = 0;
-      isRecording = TRUE;
-      bytesRecorded = 0;
-      b = TRUE;	
-    }  
+  if (isRecording) 
+    fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
+
+  else if (![self prepareToRecordForDuration: 1.0]) 
+    fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error in prepareTorecordForDuration.\n");
+
+  else  if (![self setUpRecordFile: filename]) 
+    fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error in setUpRecordFile\n");
+
+  else if (recordBuffer == nil) 
+    fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error: recordBuffer is nil.\n");
+      
+  else if ((conversionBuffer = (short*) malloc(sizeof(short) * [recordBuffer lengthInSamples] * [recordBuffer channelCount])) == NULL)
+    fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error: bad malloc for conversionBuffer\n");
+  
+  else
+  {
+    position      = 0;
+    bytesRecorded = 0;
+    isRecording   = TRUE;
+    b             = TRUE;	
   }
   return b;
 }
@@ -205,63 +255,79 @@
 // processBuffers
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) processBuffers
-{
-  if (isRecording)
-  {
-    SndAudioBuffer *inB = [self inputBuffer];
-    long length     = [inB lengthInBytes];
-    void *recData   = [recordBuffer data];
-    void *inputData = [inB data]; 
-    long bufferSizeInBytes = [recordBuffer lengthInBytes];
-    long remainder  = 0;
+//static long buffCount = 0; 
 
-    if (position == 0) {
-      // TODO: send 'started recording' message to delegate here.
+- (void) processBuffers
+{  
+  if (!isRecording && recordFile == NULL) {
+//    fprintf(stderr,"Processing... (skip) buff: %li\n",buffCount++);
+    return;
+  }
+  else {
+    SndAudioBuffer *inB       = [self inputBuffer];
+    void *recData             = [recordBuffer data];
+    void *inputData           = [inB data]; 
+    long inBuffLengthInBytes  = [inB lengthInBytes];
+    long recBuffLengthInBytes = [recordBuffer lengthInBytes];
+    long remainder            = 0;
+    long length               = 0;
+
+    if (bytesRecorded == 0) {
+      if (delegate != nil && [delegate respondsToSelector: @selector(didStartRecording)]) 
+        [delegate didStartRecording: self];
     }
+    
     // work out how much of the incoming buffer we can dump in the
     // record buffer...
-    if (length + position > bufferSizeInBytes) {
-      remainder = (length + position) - bufferSizeInBytes;
-      length    = bufferSizeInBytes - position;
+    if (inBuffLengthInBytes + position > recBuffLengthInBytes) {
+      remainder = (inBuffLengthInBytes + position) - recBuffLengthInBytes;
+      length    = recBuffLengthInBytes - position;
+    }
+    else {
+      length = inBuffLengthInBytes;
     }
     // transfer the incoming data...
     memcpy(recData + position, inputData, length);
 
     position += length;
     
+    
+//    fprintf(stderr,"Processing... (pos: %li / %li  length: %li)\n",position,recBuffLengthInBytes,length);
+    
     // have we filled a record buffer?
-    if (position == [recordBuffer lengthInBytes]) {
+    if (position == recBuffLengthInBytes) {      
+    
       if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
-        {
-          int i;
-          int c = bufferSizeInBytes / sizeof(float);
-          float *f = (float*) recData; 
+        float *f = (float*) recData; 
+        int    i, samsToConvert = recBuffLengthInBytes / sizeof(float);
+        float  highest = 0;
 
-          for (i = 0; i < c; i++)
-            conversionBuffer[i] = (short)(f[i] * 32767.0f);
-            
-          fwrite(conversionBuffer, c * sizeof(short), 1, recordFile);
-          bytesRecorded += c * sizeof(short);
+        for (i = 0; i < samsToConvert; i++) {
+          conversionBuffer[i] = (short)(f[i] * 32767.0f);            
+          if (highest  < f[i])
+            highest = f[i];
         }
-        position = 0; 
-        if (remainder) {
-          memcpy(recData, inputData + length, remainder);
-          position += remainder;
-        }
+              
+        fwrite(conversionBuffer, samsToConvert * sizeof(short), 1, recordFile);
+//        fprintf(stderr,"Writing to disk (sams: %i highest: %f)\n",samsToConvert, highest);
       }
-      else { 
-        // we are streaming to a memory buffer, and have reached 
-        // our buffer's limit - stop recording
-        isRecording = FALSE;
-        // TODO: send 'finished recording' message to delegate here
-      }
-    }
-  }
-  else if (!isRecording && recordFile != NULL)
-  {
-    [self closeRecordFile];
-    // TODO: send 'finished recording' message to delegate here
+      else
+       isRecording = FALSE;
+
+      position = 0;
+      bytesRecorded += remainder * sizeof(short);
+    }        
+    if (remainder) {
+      memcpy(recData, inputData + length, remainder);
+      position += remainder;
+    }    
+  } // end of isRecording
+  
+  if (!isRecording) { // has record state changed? If so, shut down stuff.
+    if (recordFile != NULL)
+      [self closeRecordFile];      
+    if (delegate != nil && [delegate respondsToSelector: @selector(didFinishRecording)]) 
+      [delegate didFinishRecording: self];
   }
 }
 

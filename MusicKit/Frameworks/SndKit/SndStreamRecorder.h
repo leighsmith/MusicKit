@@ -31,8 +31,8 @@
 - init;
 - (void) dealloc;
 - (NSString*) description;
-- prepareToRecordForDuration: (double) time;
-- startRecording;
+- (BOOL) prepareToRecordForDuration: (double) time;
+- (BOOL) startRecording;
 - (BOOL) startRecordingToFile: (NSString*) filename;
 - (BOOL) setUpRecordFile: (NSString*) filename;
 - (BOOL) closeRecordFile;
