@@ -131,6 +131,8 @@
 	else
 	    [performancesArray removeAllObjects];
 	
+	editingLock = [[NSRecursiveLock alloc] init];
+	
 	// initialize loop points to legal values
 	loopWhenPlaying = NO;
 	loopStartIndex = 0;
@@ -215,10 +217,10 @@
   unsigned ss = 0;
   if (soundStruct) {
     // take into account all basic metadata, including size, formate, rate, channels
-    ss = ((unsigned *)soundStruct)[0] + ((unsigned *)soundStruct)[1] + 
-         ((unsigned *)soundStruct)[2] + ((unsigned *)soundStruct)[3] +
-	 ((unsigned *)soundStruct)[4] + ((unsigned *)soundStruct)[5] +
-         ((unsigned *)soundStruct)[6] + ((unsigned *)soundStruct)[7];
+    ss = ((unsigned *) soundStruct)[0] + ((unsigned *) soundStruct)[1] + 
+         ((unsigned *) soundStruct)[2] + ((unsigned *) soundStruct)[3] +
+	 ((unsigned *) soundStruct)[4] + ((unsigned *) soundStruct)[5] +
+         ((unsigned *) soundStruct)[6] + ((unsigned *) soundStruct)[7];
   }
   return [name length] * 256 + 512 * tag + ss + 1023 * soundStructSize;
 }
@@ -237,6 +239,8 @@
     performancesArray = nil;
     [performancesArrayLock release];
     performancesArrayLock = nil;
+    [editingLock release];
+    editingLock = nil;
     [info release];
     info = nil;
     [audioProcessorChain release];
@@ -880,45 +884,6 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     return soundStruct;
 }
 
-/* returns the base address of the block the sample resides in,
- * with appropriate indices for the last sample the block holds.
- * Indices count from 0 so they can be utilised directly.
- */
-- (void *) fragmentOfFrame: (int) frame 
-	   indexInFragment: (unsigned int *) currentFrame 
-	    fragmentLength: (unsigned int *) fragmentLength
-		dataFormat: (SndSampleFormat *) dataFormat
-{            
-    *dataFormat = [self dataFormat];
-    if (soundStruct->dataFormat != SND_FORMAT_INDIRECT) {
-	*fragmentLength = [self lengthInSampleFrames];
-	*currentFrame = frame < *fragmentLength ? frame : *fragmentLength - 1;
-	return [self data];
-    }
-    else {
-	int frameSize = SndFrameSize(soundFormat);
-	SndSoundStruct **ssList;
-	SndSoundStruct *theStruct;
-	int i = 0, count = 0, oldCount = 0;
-
-	ssList = (SndSoundStruct **)([self soundStruct]->dataLocation);
-	while ((theStruct = ssList[i++]) != NULL) {
-	    int numberOfFramesInFragment = (theStruct->dataSize) / frameSize;
-	    
-	    count += numberOfFramesInFragment;
-	    if (count > frame) {
-		*fragmentLength = numberOfFramesInFragment;
-		*currentFrame = frame - oldCount;
-		return (char *) theStruct + theStruct->dataLocation;
-	    }
-	    oldCount = count;
-	}
-	*currentFrame = 0;
-	*fragmentLength = 0;
-	return NULL;	
-    }
-}
-
 // retrieve a sound value at the given frame, for a specified channel, or average over all channels.
 // channelNumber is 0 - channelCount to retrieve a single channel, channelCount to average all channels
 - (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channelNumber
@@ -934,8 +899,8 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     unsigned long sampleIndex;
     unsigned long sampleNumber;
     void *pcmData;
-    int fragmentIndex;
-    int fragmentLength;
+    unsigned long fragmentIndex;
+    unsigned long fragmentLength;
     SndSampleFormat dataFormat;
     
     if (channelNumber == channelCount) {
@@ -1048,6 +1013,13 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     NSRange wholeSound = { 0, [self lengthInSampleFrames] };
     SndAudioBuffer *audioBufferOfEntireSound = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
     
+#if 0
+    {
+	float max, min;
+	[audioBufferOfEntireSound findMin: &min max: &max];
+	NSLog(@"%@ max %f min %f\n", self, max, min);
+    }
+#endif
     [audioBufferOfEntireSound normalise];
 
     // We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
