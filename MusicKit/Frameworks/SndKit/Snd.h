@@ -834,6 +834,12 @@ typedef enum {
  */
 - (void) normalise;
 
+/*!
+  @method maximumAmplitude
+  @abstract Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
+  @result Returns the maximum value of a sample.
+ */
+- (double) maximumAmplitude;
 
 @end
 

@@ -406,6 +406,13 @@ typedef enum {
 - (void) findMin: (float *) pMin max: (float *) pMax;
 
 /*!
+  @method maximumAmplitude
+  @abstract Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
+  @result Returns the maximum value of a sample.
+ */
+- (double) maximumAmplitude;
+
+/*!
     @method normalise
     @abstract Scale signal to maximum dynamic range of data format.
     @discussion Manages both signals below the dynamic range and in the case of floating point format,

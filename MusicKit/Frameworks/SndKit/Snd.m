@@ -65,6 +65,7 @@
 #import "SndTable.h"
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorChain.h"
+#import "SndMuLaw.h"
 
 @implementation Snd
 
@@ -1147,6 +1148,11 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	soundStruct = toSound;
 	soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;	
     }
+}
+
+- (double) maximumAmplitude
+{
+    return SndMaximumAmplitude([self dataFormat]);
 }
 
 @end

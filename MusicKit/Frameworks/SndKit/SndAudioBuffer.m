@@ -777,6 +777,11 @@
 #endif
 }
 
+- (double) maximumAmplitude
+{
+    return SndMaximumAmplitude([self dataFormat]);
+}
+
 - (void) normalise
 {
     float minSample, maxSample, maximumExcursion;
@@ -800,6 +805,7 @@
 	break;
     }
     default:
+	// TODO [self maximumAmplitude]
 	NSLog(@"normalise unsupported format %d\n", format.dataFormat);
     }
 #else
