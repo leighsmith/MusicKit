@@ -21,13 +21,13 @@
 
 enum
 {
-  flanger_kRate,
-  flanger_kMin,
-  flanger_kMax,
-  flanger_kSwap,
-  flanger_kPhase,
-  flanger_kFeedback,
-  flanger_kNumParams
+  flanger_kRate      = 0,
+  flanger_kMin       = 1,
+  flanger_kMax       = 2,
+  flanger_kSwap      = 3,
+  flanger_kPhase     = 4,
+  flanger_kFeedback  = 5,
+  flanger_kNumParams = 6
 };
 
 @interface SndAudioProcessorFlanger : SndAudioProcessor {
@@ -62,10 +62,9 @@ enum
 
 - (void)  setParam: (int) index toValue: (float) value;
 - (float) paramValue: (int) index;
-
+- (NSString*) paramName:    (int) index;
 - (NSString*) paramLabel:   (int) index;
 - (NSString*) paramDisplay: (int) index;
-- (NSString*) paramName:    (int) index;
 
 - setActive: (BOOL) b;
 - (void)  setToDefault;
