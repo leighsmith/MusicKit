@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/05/12 09:28:36  sbrandon
+  - GNUSTEP: don't import ArielQP.h or DSPSerialPortDevice.h
+
   Revision 1.9  2000/10/05 08:05:47  skot
   Added fastFFt.h
 
@@ -77,9 +80,11 @@ extern "Objective-C" {
 #define MK_MIDIMAGIC  ((int)1297377380)  // "MThd"
 
 /* Music Kit classes. */
-#import "ArielQP.h"
+#ifndef GNUSTEP
+# import "ArielQP.h"
+# import "DSPSerialPortDevice.h"
+#endif
 #import "MKConductor.h"
-#import "DSPSerialPortDevice.h"
 #import "MKEnvelope.h"
 #import "MKFilePerformer.h"
 #import "MKFileWriter.h"
