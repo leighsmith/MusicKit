@@ -28,10 +28,10 @@
 				00D2C42BFEDB2CB5CFED3B93,
 				00D2C432FEDB2CB5CFED3B93,
 				00D2C444FEDB2CB5CFED3B93,
+				B5799BA701DBCF75002A0494,
 				00D2C44BFEDB2CB5CFED3B93,
 				00D2C454FEDB2CB5CFED3B93,
 				00D2C429FEDB2CB5CFED3B93,
-				B5799BA701DBCF75002A0494,
 			);
 			isa = PBXGroup;
 			name = SndKit;
@@ -261,16 +261,9 @@
 		};
 		00D2C454FEDB2CB5CFED3B93 = {
 			children = (
-				00D2C455FEDB2CB5CFED3B93,
-				00D2C457FEDB2CB5CFED3B93,
-				00D2C458FEDB2CB5CFED3B93,
-				055C7F3A0049CD79CFED3B96,
-				04F0C04C00EA6A89CFED3B8B,
+				D88C365A04082AB4002A0496,
 				D85E24940403DCE30055A8A6,
-				011279890169158CCFED3B94,
-				011279830168CEA1CFED3B94,
-				3AE3B96C007931DBCFED3B8B,
-				B52BE0CC01F775D6002A0494,
+				D88C366004082B7C002A0496,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -863,7 +856,7 @@
 		011279830168CEA1CFED3B94 = {
 			isa = PBXFileReference;
 			name = libmp3lame.a;
-			path = /usr/local/lib/libmp3lame.a;
+			path = /Local/Unix/lib/libmp3lame.a;
 			refType = 0;
 		};
 		011279840168CEA1CFED3B94 = {
@@ -902,7 +895,7 @@
 		011279890169158CCFED3B94 = {
 			isa = PBXFileReference;
 			name = libshout.a;
-			path = /usr/local/lib/libshout.a;
+			path = /Local/Unix/lib/libshout.a;
 			refType = 0;
 		};
 		0112798A0169158CCFED3B94 = {
@@ -1393,7 +1386,7 @@
 		3AE3B96C007931DBCFED3B8B = {
 			isa = PBXFileReference;
 			name = libst.a;
-			path = /usr/local/lib/libst.a;
+			path = /Local/Unix/lib/libst.a;
 			refType = 0;
 		};
 		3AE3B96D007931DBCFED3B8B = {
@@ -1651,7 +1644,7 @@
 		B52BE0CC01F775D6002A0494 = {
 			isa = PBXFileReference;
 			name = libgsm.a;
-			path = /usr/local/lib/libgsm.a;
+			path = /Local/Unix/lib/libgsm.a;
 			refType = 0;
 		};
 		B52BE0CD01F775D6002A0494 = {
@@ -1814,7 +1807,7 @@
 				B5799BA801DBCF75002A0494,
 			);
 			isa = PBXGroup;
-			name = GUIBits;
+			name = Interfaces;
 			refType = 4;
 		};
 		B5799BA801DBCF75002A0494 = {
@@ -1983,6 +1976,29 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		D88C365A04082AB4002A0496 = {
+			children = (
+				00D2C455FEDB2CB5CFED3B93,
+				00D2C457FEDB2CB5CFED3B93,
+				00D2C458FEDB2CB5CFED3B93,
+				055C7F3A0049CD79CFED3B96,
+				04F0C04C00EA6A89CFED3B8B,
+			);
+			isa = PBXGroup;
+			name = "System Frameworks";
+			refType = 4;
+		};
+		D88C366004082B7C002A0496 = {
+			children = (
+				011279890169158CCFED3B94,
+				011279830168CEA1CFED3B94,
+				3AE3B96C007931DBCFED3B8B,
+				B52BE0CC01F775D6002A0494,
+			);
+			isa = PBXGroup;
+			name = Libraries;
+			refType = 4;
 		};
 		D89773830402E43700A80103 = {
 			buildRules = (
