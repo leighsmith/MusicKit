@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		00D59F54FED5A538CFED3B93 = {
 			buildStyles = (
@@ -13,7 +13,7 @@
 			isa = PBXProject;
 			mainGroup = 00D59F55FED5A538CFED3B93;
 			productRefGroup = 00D59F56FED5A538CFED3B93;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				00D59F9CFED5A538CFED3B93,
 			);
@@ -229,6 +229,12 @@
 		00D59F81FED5A538CFED3B93 = {
 			children = (
 				021446B5008B4BFECFED3B96,
+				2A8807A5015A77E0CFED3B96,
+				2A8807A7015A78D0CFED3B96,
+				2A8807A9015BDC42CFED3B96,
+				55E6D13C015BE163CFED3B96,
+				55E6D13E015BE47CCFED3B96,
+				55E6D140015C055FCFED3B96,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -267,11 +273,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks\"";
-				FRAMEWORK_VERSION = 5.3;
+				FRAMEWORK_VERSION = 5.4;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(LOCAL_DEVELOPER_DIR)/Libraries\"";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -281,8 +286,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -312,11 +315,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>MKDSP V5.3.0</string>
+	<string>MKDSP V5.4.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.3.0</string>
+	<string>5.4.0</string>
 </dict>
 </plist>
 ";
@@ -615,6 +618,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				021446B7008B4BFECFED3B96,
+				2A8807A6015A77E0CFED3B96,
+				2A8807A8015A78D0CFED3B96,
+				2A8807AA015BDC42CFED3B96,
+				55E6D13D015BE163CFED3B96,
+				55E6D13F015BE47CCFED3B96,
+				55E6D141015C055FCFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -647,6 +656,16 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//000
+//001
+//002
+//003
+//004
+//010
+//011
+//012
+//013
+//014
 		0177D6FE00A9B7FFCFED3B96 = {
 			isa = PBXFileReference;
 			path = DSPObject_stubs.h;
@@ -658,6 +677,16 @@
 			settings = {
 			};
 		};
+//010
+//011
+//012
+//013
+//014
+//020
+//021
+//022
+//023
+//024
 		021446B4008B4BFECFED3B96 = {
 			isa = PBXFileReference;
 			path = dsp_types.h;
@@ -680,16 +709,37 @@
 			settings = {
 			};
 		};
+//020
+//021
+//022
+//023
+//024
+//060
+//061
+//062
+//063
+//064
 		06D6961EFF81A5A1CFED3B93 = {
 			isa = PBXFrameworkReference;
 			path = MKDSP.framework;
 			refType = 3;
 		};
+//060
+//061
+//062
+//063
+//064
+//130
+//131
+//132
+//133
+//134
 		139A74CD0049D879CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -702,6 +752,92 @@
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
+		};
+//130
+//131
+//132
+//133
+//134
+//2A0
+//2A1
+//2A2
+//2A3
+//2A4
+		2A8807A5015A77E0CFED3B96 = {
+			isa = PBXFileReference;
+			path = _DSPString.c;
+			refType = 4;
+		};
+		2A8807A6015A77E0CFED3B96 = {
+			fileRef = 2A8807A5015A77E0CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2A8807A7015A78D0CFED3B96 = {
+			isa = PBXFileReference;
+			path = DSPError.m;
+			refType = 4;
+		};
+		2A8807A8015A78D0CFED3B96 = {
+			fileRef = 2A8807A7015A78D0CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2A8807A9015BDC42CFED3B96 = {
+			isa = PBXFileReference;
+			path = DSPGlobals.m;
+			refType = 4;
+		};
+		2A8807AA015BDC42CFED3B96 = {
+			fileRef = 2A8807A9015BDC42CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//2A0
+//2A1
+//2A2
+//2A3
+//2A4
+//550
+//551
+//552
+//553
+//554
+		55E6D13C015BE163CFED3B96 = {
+			isa = PBXFileReference;
+			path = _DSPCV.c;
+			refType = 4;
+		};
+		55E6D13D015BE163CFED3B96 = {
+			fileRef = 55E6D13C015BE163CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		55E6D13E015BE47CCFED3B96 = {
+			isa = PBXFileReference;
+			path = _DSPUtilities.c;
+			refType = 4;
+		};
+		55E6D13F015BE47CCFED3B96 = {
+			fileRef = 55E6D13E015BE47CCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		55E6D140015C055FCFED3B96 = {
+			isa = PBXFileReference;
+			path = DSPObject.m;
+			refType = 4;
+		};
+		55E6D141015C055FCFED3B96 = {
+			fileRef = 55E6D140015C055FCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 00D59F54FED5A538CFED3B93;
