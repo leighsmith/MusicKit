@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/05/06 01:11:10  leigh
+  Parenthetised to remove warnings
+
   Revision 1.6  2000/04/16 04:25:11  leigh
   Removed assignment in condition warning
 
@@ -157,23 +160,26 @@ id _MKFixupUG(MKUnitGenerator *self,DSPFix48 *ts)
     int *fixupCount = self->_classInfo->master->fixupCount;
     setLoadAddrs(loadAddresses,&(self->relocation));
     data = &self->_classInfo->data[(int)DSP_LC_P];
-    for (i = 0; i < (int)DSP_LC_NUM_P; i++, data++) 
-      if (*data) {
-	  reloc = loadAddresses[i + (int)DSP_LC_P];
-	  for (j = fixupCount[i], fixup = fixupsArr[i]; j--; fixup++) {
-	      word = loadAddresses[fixup->locationCounter] + fixup->relAddress;
-	      /* Set data->data[fixup->refOffset] if you want to set data */
-	      ec = DSPMKSendValueTimed(ts,
-				       /* What: */
-				       word,
-				       /* Where: */
-				       DSP_MS_P,fixup->refOffset + reloc); 
-	      if (ec)
-		if (ec == DSP_EABORT)
-		  [self->orchestra _notifyAbort];
-                  else return _MKErrorf(MK_ugLoadErr, NSStringFromClass([self class]));
-	  }
-      }
+    for (i = 0; i < (int)DSP_LC_NUM_P; i++, data++) {
+        if (*data) {
+            reloc = loadAddresses[i + (int)DSP_LC_P];
+            for (j = fixupCount[i], fixup = fixupsArr[i]; j--; fixup++) {
+                word = loadAddresses[fixup->locationCounter] + fixup->relAddress;
+                /* Set data->data[fixup->refOffset] if you want to set data */
+                ec = DSPMKSendValueTimed(ts,
+                                        /* What: */
+                                        word,
+                                        /* Where: */
+                                        DSP_MS_P,fixup->refOffset + reloc);
+                if (ec) {
+                    if (ec == DSP_EABORT)
+                            [self->orchestra _notifyAbort];
+                        else
+                            return _MKErrorf(MK_ugLoadErr, NSStringFromClass([self class]));
+                }
+            }
+        }
+    }
     return self;
 }
 
@@ -648,16 +654,18 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
 	value.high24 = val;
 	value.low24 = 0;
 	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
-	  _MKOrchTrace(self->orchestra,MK_TRACEDSP,
+            _MKOrchTrace(self->orchestra,MK_TRACEDSP,
 		       "Setting (L-just, 0-filled) %s of UG%d_%s to datum 0x%x.",
                 argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString],val);
 	ec = DSPMKSendLongTimed(aTimeStamp,&value,p->addrStruct.address);
-	if (ec)
-	  if (ec == DSP_EABORT)
-	    [self->orchestra _notifyAbort];
-          else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+        if (ec) {
+            if (ec == DSP_EABORT)
+                [self->orchestra _notifyAbort];
+            else
+                return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
 				argName(self,argNum), [NSStringFromClass([self class]) cString]);
-	return self;
+        }
+        return self;
     }
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
 	_MKOrchTrace(self->orchestra,MK_TRACEDSP,
@@ -666,11 +674,13 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
     ec = DSPMKSendValueTimed(aTimeStamp,val,
 			    p->addrStruct.memSpace,
 			    p->addrStruct.address);
-    if (ec)
-      if (ec == DSP_EABORT)
-	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+    if (ec) {
+        if (ec == DSP_EABORT)
+            [self->orchestra _notifyAbort];
+        else
+            return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
 			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
+    }
     return self;
 }
 
@@ -705,12 +715,14 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
 		       "Setting %s of UG%d_%s to long: {0x%x,0x%x}.",
 		       argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString],
 		       val->high24,val->low24);
-	ec = DSPMKSendLongTimed(aTimeStamp,val,p->addrStruct.address); 
-	if (ec)
-	  if (ec == DSP_EABORT)
-	    [self->orchestra _notifyAbort];
-          else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+	ec = DSPMKSendLongTimed(aTimeStamp,val,p->addrStruct.address);
+        if (ec) {
+            if (ec == DSP_EABORT)
+                [self->orchestra _notifyAbort];
+            else
+                return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
 				argName(self,argNum), [NSStringFromClass([self class]) cString]);
+        }
     }
     else {
 	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
@@ -721,11 +733,13 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
 	ec = DSPMKSendValueTimed(aTimeStamp,val->high24,
 				 p->addrStruct.memSpace,
 				 p->addrStruct.address);
-	if (ec)
-	  if (ec == DSP_EABORT)
-	    [self->orchestra _notifyAbort];
-          else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+        if (ec) {
+            if (ec == DSP_EABORT)
+                [self->orchestra _notifyAbort];
+            else
+                return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
 				argName(self,argNum), [NSStringFromClass([self class]) cString]);
+        }
     }
     return self;
 }
@@ -767,23 +781,26 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 			   argName(self,argNum), NSStringFromClass([self class]));
     }
     if (optimize(self,argNum,argP,memP->address,0))
-      return self;
-    if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
+        return self;
+    if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP)) {
 	_MKOrchTrace(self->orchestra,MK_TRACEDSP,
 		     "Setting %s of UG%d_%s to %s%d (0x%x).",argName(self,argNum),
 		     self->_instanceNumber,[NSStringFromClass([self class]) cString],
 		     [self->orchestra segmentName:memP->memSegment],
 		     [memoryObj instanceNumber],memP->address);
+    }
     DSPSetCurrentDSP(self->_orchIndex);
     CHECKADJUSTTIME();
     ec = DSPMKSendValueTimed(TIMESTAMP(),memP->address,
 			     argP->addrStruct.memSpace,
 			     argP->addrStruct.address);
-    if (ec)
-      if (ec == DSP_EABORT)
-	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+    if (ec) {
+        if (ec == DSP_EABORT)
+            [self->orchestra _notifyAbort];
+        else
+            return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
 			    argName(self,argNum), [NSStringFromClass([self class]) cString]);
+    }
     return self;
 }
 
@@ -815,11 +832,13 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
     ec = DSPMKSendValueTimed(TIMESTAMP(),addr,
 			     argP->addrStruct.memSpace,
 			     argP->addrStruct.address);
-    if (ec)
-      if (ec == DSP_EABORT)
-	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
+    if (ec) {
+        if (ec == DSP_EABORT)
+            [self->orchestra _notifyAbort];
+        else
+            return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
 			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
+    }
     return self;
 }
 
@@ -861,11 +880,13 @@ static id specialAddressVal(self,argNum,orchSel)
     ec = DSPMKSendValueTimed(TIMESTAMP(),memP->address,
 			     argP->addrStruct.memSpace,
 			     argP->addrStruct.address);
-    if (ec)
-      if (ec == DSP_EABORT)
-	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+    if (ec) {
+        if (ec == DSP_EABORT)
+            [self->orchestra _notifyAbort];
+        else
+            return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
 			    argName(self,argNum), [NSStringFromClass([self class]) cString]);
+    }
     return self;
 }
 
@@ -1193,10 +1214,12 @@ extern int _MKOrchestraGetNoops(void);
     [aUG->orchestra beginAtomicSection];
     ec = sendUGTimed(_MKCurSample(anOrch),
 		     aUG->_classInfo,&aUG->relocation,looper);
-    if (ec)
-      if (ec == DSP_EABORT)
-	[aUG->orchestra _notifyAbort];
-        else return _MKErrorf(MK_ugLoadErr, NSStringFromClass([aUG class]));
+    if (ec) {
+        if (ec == DSP_EABORT)
+            [aUG->orchestra _notifyAbort];
+        else
+            return _MKErrorf(MK_ugLoadErr, NSStringFromClass([aUG class]));
+    }
     /* Relocate arguments. */
     if (aUG->_classInfo->master->argCount > 0) { 
 	/* Allocate a block of args and relocate args. */
