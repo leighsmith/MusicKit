@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2001/09/07 18:37:52  leighsmith
+  Generates lists and moved @class before headerdoc declaration
+
   Revision 1.11  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -45,6 +48,10 @@
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
+@class MKNote;
+@class MKScore;
+@class MKNoteSender;
+
 /*!
   @class MKPart
   @abstract A MKPart is a timeTag-ordered collection of MKNotes that can be edited
@@ -61,7 +68,7 @@ removed from its old MKPart.  Similarly, adding a MKPart to a MKScore
 removes it from its previous MKScore.
 
 You can add MKNotes to a MKPart either by invoking one of MKPart's
-<b>addNote:</b> methods, or by &#170;recording&#186; them with a
+<b>addNote:</b> methods, or by &ldquo;recording&rdquo; them with a
 MKPartRecorder, a type of MKInstrument that realizes MKNotes by adding
 copies of them to a specified MKPart.  Any number of MKPartRecorders
 can simultaneously record into the same MKPart.  A MKPart is added to
@@ -145,37 +152,45 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
     when necessary. In particular, the NSArray is sorted, if necessary, when an
     access method is invoked. The access methods are:
    
-      - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
-      - atTime:(double )timeTag;
-      - atOrAfterTime:(double )timeTag;
-      - nth:(unsigned )n;
-      - atOrAfterTime:(double )timeTag nth:(unsigned )n;
-      - atTime:(double )timeTag nth:(unsigned )n;
-      - next:aNote;
-      - notes;
-   
+<ul>
+      <li>firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;</li>
+      <li>atTime:(double )timeTag;</li>
+      <li>atOrAfterTime:(double )timeTag;</li>
+      <li>nth:(unsigned )n;</li>
+      <li>atOrAfterTime:(double )timeTag nth:(unsigned )n;</li>
+      <li>atTime:(double )timeTag nth:(unsigned )n;</li>
+      <li>next:aNote;</li>
+      <li>notes;</li>
+</ul>
+
     Other methods that cause a sort, if necessary, are:
    
-      - combineNotes;
-      - removeNotes:aList;
-      - removeNote:aNote;
+<ul>
+      <li>combineNotes;</li>
+      <li>removeNotes:aList;</li>
+      <li>removeNote:aNote;</li>
+</ul>
 
     Methods that may alter the NSArray such that its MKNotes are no longer sorted are
     the following:
-   
-      - addNoteCopies:aList timeShift:(double )shift;
-      - addNotes:aList timeShift:(double )shift;
-      - addNote:aNote;
-      - addNoteCopy:aNote;
-      - splitNotes
+
+<ul>   
+      <li>addNoteCopies:aList timeShift:(double )shift;</li>
+      <li>addNotes:aList timeShift:(double )shift;</li>
+      <li>addNote:aNote;</li>
+      <li>addNoteCopy:aNote;</li>
+      <li>splitNotes</li>
+</ul>
    
     This scheme works well for most cases. However, there are situations where
     it can be problematic. For example:
    
-      for (i=0; i<100; i++) {
-        [aPart addNote:anArray[i]];
-        [aPart removeNote:anotherArray[i]];
+    <tt>
+      for (i=0; i<100; i++) {<br>
+        [aPart addNote:anArray[i]];<br>
+        [aPart removeNote:anotherArray[i]];<br>
       }
+      </tt>
 
     In this case, the MKPart will be sorted each time removeNote: is called,
     causing N-squared behavior. You can get around this by first adding all the
@@ -201,10 +216,6 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
 #define __MK_Part_H___
 
 #import <Foundation/NSObject.h>
-
-@class MKNote;
-@class MKScore;
-@class MKNoteSender;
 
 @interface MKPart : NSObject
 {
@@ -635,34 +646,34 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               containing only these parameters:
               	
                 
-<table cellspacing=2 cellpadding=0 align=center>
+<table border=1 cellspacing=2 cellpadding=0 align=center>
 <thead>
 <tr>
 <th align=center>Parameter Tag</th>
 <th align=center>Expected Value</th>
-<th align=center>Typical Use</th>
+<th align=left>Typical Use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td align=center>MK_synthPatch</td>
 <td align=center>MKSynthPatch subclass</td>
-<td align=center>Argument to MKSynthInstrument's <b>setSynthPatchClass:</b> method.</td>
+<td align=left>Argument to MKSynthInstrument's <b>setSynthPatchClass:</b> method.</td>
 </tr>
 <tr>
 <td align=center>MK_synthPatchCount</td>
 <td align=center>integer</td>
-<td align=center>Argument to MKSynthInstrument's <b>setSynthPatchCount:</b> method.</td>
+<td align=left>Argument to MKSynthInstrument's <b>setSynthPatchCount:</b> method.</td>
 </tr>
 <tr>
 <td align=center>MK_midiChan</td>
 <td align=center>integer</td>
-<td align=center>Argument to MKMidi's <b>channelNoteReceiver:</b> method.</td>
+<td align=left>Argument to MKMidi's <b>channelNoteReceiver:</b> method.</td>
 </tr>
 <tr>
 <td align=center>MK_track</td>
 <td align=center>integer</td>
-<td align=center>Automatically set when a midifile is read into a MKScore.</td>
+<td align=left>Automatically set when a midifile is read into a MKScore.</td>
 </tr>
 </tbody>
 </table>
