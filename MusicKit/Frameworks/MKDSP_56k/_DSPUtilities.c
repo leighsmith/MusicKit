@@ -107,13 +107,17 @@ FILE *infile; char *string, *tklist; int lstr;
 	  continue;
 	if(leading && (c==' ' || c=='\n' || c=='\t'))continue;
 /*	printf("index(%s,%c)=%d\n",tklist,c,index(tklist,c));	*/
-	if (index(tklist,c)) {*string++ = c; nstr++; leading = FALSE; continue;}
-	    else if ( !leading )
-	    {
+	if (strchr(tklist,c)) {
+	    *string++ = c;
+            nstr++;
+            leading = FALSE;
+            continue;
+        }
+	else if ( !leading ) {
 		*string = '\0'; 
 		/* printf("_DSPGetField: returning /%s/\n",(string-nstr+1)); */
 		return(c);
-	    }
+	}
     }
     return(EOF);
 }
