@@ -14,32 +14,7 @@
   Portions Copyright (c) 1999-2000 The MusicKit Project
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.9  2002/01/29 16:04:36  sbrandon
-  changed declaration of _MKOrchTrace to use NSString
-
-  Revision 1.8  2002/01/24 13:26:09  sbrandon
-  added function prototype for _MKDeepMutableArrayCopy (new in utilities.m)
-
-  Revision 1.7  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.6  2001/07/02 16:55:33  sbrandon
-  - commented out cruft after endif
-
-  Revision 1.5  2001/05/12 09:31:44  sbrandon
-  - changed from "id aClass" to Class aClass to avoid compiler warnings on GNUSTEP
-
-  Revision 1.4  2000/10/11 16:56:10  leigh
-  Removed objc-runtime.h since it is included by FoundationKit.h
-
-  Revision 1.3  2000/04/16 04:04:31  leigh
-  removed unnecessary includes and defines
-
-  Revision 1.2  1999/07/29 01:26:02  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history before commital to CVS repository:
 
   09/15/89/daj - Added caching of Note class. (_MKClassNote())
   09/22/89/daj - Moved _MKNameTable functions to _MKNameTable.h.
@@ -171,6 +146,13 @@ extern BOOL _MKInheritsFrom(id aFactObj,id superObj);
 #define _MK_DPSPRIORITY NSDefaultRunLoopMode 	/*sb: or is it NSEventTrackingRunLoopMode?
 						 * originally: 30 */
 						/* Almost maximum. Display Postscript priority */
+
+ /*
+  * The following magic number appears as the first 4 bytes of the optimized 
+  * scorefile (".playscore" file extension). It is used for type checking and 
+  * byte ordering information.
+  */
+#define MK_SCOREMAGIC ((int)0x2e706c61)  // ".pla"
 
 /* Initialization of musickit */
 extern void _MKCheckInit();
