@@ -113,7 +113,8 @@ static double ranNum()
     aNote = [[MKNote alloc] init];
     [aNote setPar:MK_synthPatch toString: @"Pluck"];
     [aPart setInfoNote:aNote];
-    [aScore writeOptimizedScorefile: @"/tmp/test.playscore"];
+    // [aScore writeOptimizedScorefile: @"/tmp/test.playscore"];
+    [aScore writeScorefile: @"/tmp/test.score"];
     return self;
 }
 
