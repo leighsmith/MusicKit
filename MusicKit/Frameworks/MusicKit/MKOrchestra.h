@@ -29,9 +29,13 @@
   Copyright 1988-1992, NeXT Inc.  All rights reserved.
   DSP Serial Port and subclass support and other 4.0 release extensions,
   Copyright 1993, CCRMA, Stanford Univ.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.8  2000/10/01 06:53:39  leigh
+  Changed NXHashTable to NSHashTable.
+
   Revision 1.7  2000/06/16 23:22:54  leigh
   Imported all of Foundation since we are typing against several classes
 
@@ -58,7 +62,6 @@
 #import "orch.h"
 #import "MKDeviceStatus.h"
 #import "MKSynthData.h"
-#import <objc/HashTable.h> // for NXHashTable
 
 typedef enum _MKOrchSharedType {
     MK_noOrchSharedType = 0, 
@@ -79,10 +82,10 @@ extern void MKSetPreemptDuration(double seconds);
 @interface MKOrchestra : NSObject
 {
     double computeTime;      /* Runtime of orchestra loop in seconds. */
-    double samplingRate;  /* Sampling rate. */
-    NSMutableArray *stack;      /* Stack of UnitGenerator instances in the order they
-                      appear in DSP memory. SynthData instances are not on
-                      this stack. */
+    double samplingRate;     /* Sampling rate. */
+    /* Stack of MKUnitGenerator instances in the order they appear in DSP memory. 
+    MKSynthData instances are not on this unitGeneratorStack. */
+    NSMutableArray *unitGeneratorStack;      
     NSString *outputSoundfile; /* For output sound samples. */
     id outputSoundDelegate;
     NSString *inputSoundfile; /* For output sound samples. */ /* READ DATA */
@@ -157,7 +160,7 @@ extern void MKSetPreemptDuration(double seconds);
     NSString *_driverParMonitorFileName;
     // added in by LMS, thawing the ancient ivar freeze
     double previousTime;
-    NXHashTable *sharedGarbage;
+    NSHashTable *sharedGarbage;
     char *simulatorFile;
     id readDataUG;
     id xReadData;
