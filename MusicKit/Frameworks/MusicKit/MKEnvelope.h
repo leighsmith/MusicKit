@@ -12,24 +12,6 @@
   Portions Copyright (c) 1994 Stanford University
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.6  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.5  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.4  2000/10/04 06:16:15  skot
-  Added description selectors
-
-  Revision 1.3  2000/04/02 16:50:32  leigh
-  Cleaned up doco
-
-  Revision 1.2  1999/07/29 01:25:44  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKEnvelope
   @abstract The MKEnvelope class provides basic support for creating line segment functions. 
@@ -155,13 +137,20 @@ MKEnvStatus;
 
 @interface MKEnvelope : NSObject
 {
-    double defaultSmoothing;    /* If no Smoothing-array, this is time constant. */
-    double samplingPeriod;	/* If no X-array, this is abcissa scale */
-    double *xArray;             /* Array of x values, if any. */
-    double *yArray;	        /* Arrays of data values */
-    double *smoothingArray;     /* Array of time constants. */
-    int stickPoint;		/* Index of "steady-state", if any */
-    int pointCount;		/* Number of points in envelope */
+    /*! @var defaultSmoothing If no Smoothing-array, this is time constant. */
+    double defaultSmoothing;
+    /*! @var samplingPeriod If no X-array, this is abcissa scale */
+    double samplingPeriod;
+    /*! @var xArray Array of x values, if any. */
+    double *xArray;
+    /*! @var yArray Arrays of data values */
+    double *yArray;
+    /*! @var smoothingArray Array of time constants. */
+    double *smoothingArray;
+    /*! @var stickPoint Index of "steady-state", if any */
+    int stickPoint;
+    /*! @var pointCount Number of points in envelope */
+    int pointCount;
 }
 
 /*!
@@ -180,17 +169,7 @@ MKEnvStatus;
   @result Returns an int.
   @discussion Returns the number of breakpoints in the object.
 */
--(int) pointCount;
- 
-- (void)dealloc; 
-- copyWithZone:(NSZone *)zone;
-
-/*!
-  @method copy
-  @result Returns an id.
-  @discussion Copies MKEnvelope and its arrays.
-*/
--copy;
+- (int) pointCount;
 
 /*!
   @method defaultSmoothing
@@ -199,7 +178,7 @@ MKEnvStatus;
               there's a smoothing array.  (Use <b>MKIsNoDVal()</b> to check for
               MK_NODVAL.)
 */
--(double) defaultSmoothing;
+- (double) defaultSmoothing;
 
 /*!
   @method samplingPeriod
@@ -207,14 +186,14 @@ MKEnvStatus;
   @discussion Returns the sampling period, or MK_NODVAL if there's an <i>x</i>
               array.  (Use <b>MKIsNoDVal()</b> to check for MK_NODVAL.)
 */
--(double) samplingPeriod;
+- (double) samplingPeriod;
 
 /*!
   @method stickPoint
   @result Returns an int.
   @discussion Returns the stickpoint, or MAXINT if none.
 */
--(int) stickPoint; 
+- (int) stickPoint; 
 
 /*!
   @method setStickPoint:
@@ -225,7 +204,7 @@ MKEnvStatus;
               is out of bounds.  Setting the stickpoint to MAXINT removes
               it.
 */
-- setStickPoint:(int)sp; 
+- setStickPoint: (int) sp; 
 
 /*!
   @method setPointCount:xArray:orSamplingPeriod:yArray:smoothingArray:orDefaultSmoothing:
@@ -244,12 +223,12 @@ MKEnvStatus;
               <i>smoothingPtr</i>.  If <i>yPtr</i> is NULL, the object's y array
               is unchanged. Returns the object.
 */
--    setPointCount:(int) n
-            xArray:(double *) xPtr
-  orSamplingPeriod:(double) period
-            yArray:(double *) yPtr
-    smoothingArray:(double *) smoothingPtr
-orDefaultSmoothing:(double) smoothing;
+-    setPointCount: (int) n
+            xArray: (double *) xPtr
+  orSamplingPeriod: (double) period
+            yArray: (double *) yPtr
+    smoothingArray: (double *) smoothingPtr
+orDefaultSmoothing: (double) smoothing;
 
 /*!
   @method setPointCount:xArray:yArray:
@@ -264,9 +243,9 @@ orDefaultSmoothing:(double) smoothing;
               to insure that the new value of <i>n</i> is the same as the <i>pointCount</i> of the old array. 
               Returns the object.
 */
-- setPointCount:(int) n
-         xArray:(double *) xPtr
-         yArray:(double *) yPtr;
+- setPointCount: (int) n
+         xArray: (double *) xPtr
+         yArray: (double *) yPtr;
          
 /*!
   @method yArray
@@ -274,7 +253,7 @@ orDefaultSmoothing:(double) smoothing;
   @discussion Returns a pointer to the object's <i>y</i> array, or
               NULL if none.
 */
--(double *) yArray;
+- (double *) yArray;
 
 /*!
   @method xArray
@@ -282,7 +261,7 @@ orDefaultSmoothing:(double) smoothing;
   @discussion Returns a pointer to the object's <i>x</i> array, or NULL if
               none.
 */
--(double *) xArray;
+- (double *) xArray;
 
 /*!
   @method smoothingArray
@@ -290,7 +269,7 @@ orDefaultSmoothing:(double) smoothing;
   @discussion Returns a pointer to the object's smoothing array, or NULL if
               none.
 */
--(double *) smoothingArray;
+- (double *) smoothingArray;
 
 /*!
   @method getNth:x:y:smoothing:
@@ -313,14 +292,14 @@ orDefaultSmoothing:(double) smoothing;
               If the object's y array is <b>NULL,</b>or its <i>x</i> array is NULL
               and its sampling period is 0.0, <b>MK_noMorePoints</b> is returned.
 */
--(MKEnvStatus) getNth:(int) n
-                    x:(double *) xPtr
-                    y:(double *) yPtr
-            smoothing:(double *) smoothingPtr; 
+- (MKEnvStatus) getNth: (int) n
+                     x: (double *) xPtr
+                     y: (double *) yPtr
+             smoothing: (double *) smoothingPtr; 
 
 /*!
   @method writeScorefileStream:
-  @param  aStream is a NXStream *.
+  @param  aStream is a NSMutableData instance.
   @result Returns an id.
   @discussion Writes the object to the stream <i>aStream</i> in scorefile format. 
               The stream must already be open.  The object's breakpoints are
@@ -333,7 +312,7 @@ orDefaultSmoothing:(double) smoothing;
               
               Returns <b>nil</b> if the object's y array is NULL.  Otherwise returns the object.
 */
-- writeScorefileStream:(NSMutableData *)aStream; 
+- writeScorefileStream: (NSMutableData *) aStream; 
 
 /*!
   @method lookupYForX:
@@ -348,7 +327,7 @@ orDefaultSmoothing:(double) smoothing;
               array is NULL, this returns MK_NODVAL.  (Use <b>MKIsNoDVal()</b> to
               check for MK_NODVAL.)
 */
--(double)lookupYForX:(double) xVal;
+- (double) lookupYForX: (double) xVal;
 
 /*!
   @method lookupYForXAsymptotic:
@@ -357,7 +336,7 @@ orDefaultSmoothing:(double) smoothing;
   @discussion Same as <b>lookupYForX</b>, but assumes an asymptotic envelope, such
               as is produced by the AsympUG MKUnitGenerator.  
 */
--(double)lookupYForXAsymptotic:(double) xVal;
+- (double) lookupYForXAsymptotic: (double) xVal;
 
 /*!
   @method releaseDur
@@ -368,7 +347,7 @@ orDefaultSmoothing:(double) smoothing;
               doesn't have a stickpoint, or if the stickpoint is out of
               bounds.
 */
--(double)releaseDur;
+- (double) releaseDur;
 
 /*!
   @method attackDur
@@ -379,15 +358,7 @@ orDefaultSmoothing:(double) smoothing;
               have a stickpoint (or if the stickpoint is out of bounds), the
               duration of the entire MKEnvelope is returned.
 */
--(double)attackDur;
-
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-
-- (NSString*) description;
-
-/* The following methods are obsolete */
-+ new; 
+- (double) attackDur;
 
 @end
 

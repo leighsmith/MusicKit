@@ -35,6 +35,9 @@
 Modification history:
 
  $Log$
+ Revision 1.14  2004/08/21 23:32:12  leighsmith
+ Removed redundant and erroneous new and init methods
+
  Revision 1.13  2003/12/31 00:43:10  leighsmith
  Cleaned up naming of methods, removing underscores
 
@@ -89,14 +92,6 @@ Modification history:
 
 #import "EnvelopePrivate.h"
 @implementation  MKEnvelope
-
-+  new
-  /* This is how you make up an empty seg envelope */
-{
-  self = [super allocWithZone:NSDefaultMallocZone()];
-  [self init];
-  return self;
-}
 
 #define VERSION2 2
 
@@ -242,11 +237,6 @@ id MKGetEnvelopeClass(void)
  samplingPeriod  yArray:yArray smoothingArray:smoothingArray orDefaultSmoothing:defaultSmoothing];
   [newObj setStickPoint:stickPoint];
   return newObj;
-}
-
--copy
-{
-  return [self copyWithZone:[self zone]];
 }
 
 - (int)	pointCount
