@@ -21,6 +21,10 @@
 */
 /*
   $Log$
+  Revision 1.14  2001/07/02 16:42:38  sbrandon
+  - GNUSTEP does not have objc_msgSend. I replaced objc_msgSend with a couple
+    of other functions which do the same job on GNUSTEP (ifdef'd the code)
+
   Revision 1.13  2001/04/20 02:53:25  leighsmith
   Revised to use stopInFuture: and SndPerformances for correct stopping and performance management
 
@@ -348,11 +352,20 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
 }
 #endif
 
+#ifdef GNUSTEP
+#define TIMEDSENDTO(conductor,receiver,selector,dt,arg) \
+  { /* NSLog(@"dt=%lf\n",dt); */ \
+    if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,arg]; \
+    else (*(objc_msg_lookup(receiver, selector)))(receiver, selector); \
+  }
+
+#else
 #define TIMEDSENDTO(conductor,receiver,selector,dt,arg) \
   { /* NSLog(@"dt=%lf\n",dt); */ \
     if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,arg]; \
     else objc_msgSend(receiver,selector,arg); \
   }
+#endif
 
 // The problem is currently we can't request a Snd instance to play at some future moment in time
 // with respect to the playback clock like we can with the MIDI driver used within MKMidi.
