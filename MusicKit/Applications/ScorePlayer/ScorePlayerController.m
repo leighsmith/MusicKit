@@ -1,98 +1,48 @@
 /*
-  $Id$  
-
-  Description:
-    This is NOT a good programming example.  It is full of special-purpose
-    hacks, some of which have only historical significance.  Please see
-    MusicKit/Examples for good examples of how to use the Music Kit.
-
-  Original Author: David A. Jaffe
-
-  Copyright (c) 1988-1992, NeXT Computer, Inc.
-  Addition of timecode and Intel support copyright David A. Jaffe, 1992
-  Portions Copyright (c) 1999-2000 The MusicKit Project
-*/
+ $Id$  
+ 
+ Description:
+ This is NOT a good programming example.  It is full of special-purpose
+ hacks, some of which have only historical significance.  Please see
+ MusicKit/Examples for good examples of how to use the MusicKit.
+ 
+ Original Author: David A. Jaffe
+ 
+ Copyright (c) 1988-1992, NeXT Computer, Inc.
+ Addition of timecode and Intel support copyright David A. Jaffe, 1992
+ Portions Copyright (c) 1999-2004 The MusicKit Project
+ */
 /*
-Modification history:
+ Modification history prior to commitment to CVS:
+ 
+ 8/9/90/daj - Changed to allow abort on all alert panels.
+ 8/9/90/daj - Changes for thread safety.
+ 8/14/90/daj - Added setuid(getuid())
+ 8/18/90/daj - Increased deltaT to .75 from .5.  Especially in view of the
+ -open bug (the buffers don't seem to be filling properly)
+ this is probably a good idea.
+ 8/20/90/daj - Added automatic tempo adjustment when falling out of real 
+ time.
+ This required starting the tempo animation at the start of 
+ the performance.
+ 10/8/90/daj - Changed to make automatic tempo adjustment NOT the default.
+ 1/25/91/daj - Changed to use scrolling alert panel for Music Kit messages.
+ 4/24/91/daj - Changed to not complain if there's no part info or no
+ synthpatch in the part info.
+ 4/26/91/daj - More work on the damn alert panel stuff.
+ 8/22/91/daj - Localized.
+ 6/06/92/daj - Added resetting of tuning system before reading a new file.
+ 10/21/92/daj - Various fixes.
+ 9/28/94/daj - Changes for Intel support.
+ */   
 
-  $Log$
-  Revision 1.18  2002/02/05 15:51:44  leighsmith
-  Added extra checks that we were able to initialise a MIDI device
-
-  Revision 1.17  2002/01/24 17:01:43  sbrandon
-  fixed a number of release problems (mainly pathnames)
-
-  Revision 1.16  2001/09/19 23:43:34  leighsmith
-  Upgraded to more descriptive parTagForName: and parNameForTag: methods
-
-  Revision 1.15  2001/04/19 14:57:55  leighsmith
-  Now allocate MIDI devices dynamically, added abort to MKSamplerInstrument, help file is now HTML
-
-  Revision 1.14  2001/04/16 23:16:56  leighsmith
-  Now uses the NSOpenPanel default location
-
-  Revision 1.13  2001/03/22 20:17:49  leigh
-  Made tempo changeable during playback
-
-  Revision 1.12  2001/03/17 02:04:39  leigh
-  Forced synthPatches to midi if we loaded a midi file, not a score
-
-  Revision 1.11  2001/03/12 02:02:01  leigh
-  Updated to findPatchClass method
-
-  Revision 1.10  2001/03/02 04:09:18  leigh
-  Added MIDI file reading, automatic menu validation, now relying on MKScore to tell us the file extensions
-
-  Revision 1.9  2001/03/01 17:56:32  leigh
-  Removed unnecessary condClass define
-
-  Revision 1.8  2001/02/15 01:51:08  leigh
-  Added MKSamplerInstrument support, retrieved valid filename extensions from MKScore
-
-  Revision 1.7  2001/02/06 20:23:04  leigh
-  Retained MKMidi instances which were preventing second play of score\
-  Now using a single sound saving panel and updating the message
-
-  Revision 1.6  2001/02/06 02:28:31  leigh
-  Removed unnecessary retains, fixed rereading files, replacing the prompt with a log message
-
-  Revision 1.5  2000/12/15 02:01:19  leigh
-  Initial Revision
-
-  Revision 1.4  2000/11/28 23:10:38  leigh
-  Removed dependency on Edit.app and OpenStep directory structure
-
-  Revision 1.3  2000/10/22 18:21:59  leigh
-  added SB's OpenStep conversions
-
-   8/9/90/daj - Changed to allow abort on all alert panels.
-   8/9/90/daj - Changes for thread safety.
-   8/14/90/daj - Added setuid(getuid())
-   8/18/90/daj - Increased deltaT to .75 from .5.  Especially in view of the
-		 -open bug (the buffers don't seem to be filling properly)
-		 this is probably a good idea.
-   8/20/90/daj - Added automatic tempo adjustment when falling out of real 
-                 time.
-                 This required starting the tempo animation at the start of 
-		 the performance.
-   10/8/90/daj - Changed to make automatic tempo adjustment NOT the default.
-   1/25/91/daj - Changed to use scrolling alert panel for Music Kit messages.
-   4/24/91/daj - Changed to not complain if there's no part info or no
-                 synthpatch in the part info.
-   4/26/91/daj - More work on the damn alert panel stuff.
-   8/22/91/daj - Localized.
-   6/06/92/daj - Added resetting of tuning system before reading a new file.
-   10/21/92/daj - Various fixes.
-   9/28/94/daj - Changes for Intel support.
-*/   
+#import <AppKit/AppKit.h>
+#import <Foundation/NSBundle.h>
+#import <MusicKit/MusicKit.h>
 
 #import "ErrorLog.h"
 #import "MKAlert.h"
 #import "ScorePlayerController.h"
-#import "Animator.h"
-#import <AppKit/AppKit.h>
-#import <Foundation/NSBundle.h>
-#import <MusicKit/MusicKit.h>
 
 @implementation ScorePlayerController
 
@@ -126,7 +76,7 @@ static MKMidi *timeCodeMIDIDevice = nil;
 static unsigned capabilities;
 static double samplingRate;
 static id mySelf;
-static id tempoAnimator = nil;
+static NSTimer *tempoAnimator = nil;
 
 static NSString *outputFilePath; /* Complete output file path */
 static NSString *outputFileDir;	 /* Just the directory */
@@ -232,13 +182,13 @@ static BOOL errorDuringPlayback = NO;
     [timeCodeTextField setStringValue:@"Time code starting..."];
     return self;
 }
- 
+
 - showConductorDidReverse
 {
-     [timeCodeTextField setStringValue:@"Time code running backwards"];
-     return self;
+    [timeCodeTextField setStringValue:@"Time code running backwards"];
+    return self;
 }
- 
+
 - showConductorDidPause
 {
     [timeCodeTextField setStringValue:@"Time code stopped.  Waiting for time code to start"];
@@ -256,24 +206,18 @@ static BOOL errorDuringPlayback = NO;
     [errorLog show]; 
 }
 
--runAlert:(NSString *)text
+- runAlert: (NSString *) text
 {
-    [errorLog addText:text];
+    [errorLog addText: text];
     [text release];
     errorDuringPlayback = YES;
     return self;
 }
 
-// LMS disabled, the console is good enough for us to see ObjectiveC errors.
-// static int handleObjcError(const char *className)
-//{
-//    return 0;
-//}
-
 static void handleMKError(NSString *msg)
 {
     if (!PLAYING) {
-        [errorLog addText:msg];
+        [errorLog addText: msg];
 	if (!mkRunAlertPanel(STR_SCOREPLAYER_ERROR,msg,STR_OK,STR_CANCEL,NULL)) {
             MKSetScorefileParseErrorAbort(0);
             userCancelFileRead = YES;         /* A kludge for now. */
@@ -321,60 +265,38 @@ static BOOL needToReread(void)
 #define  GENERIC 4
 
 static int soundOutType;
-static id serialSoundOutDevice = nil;
-static id SSAD64xDev = nil,StealthDAI2400Dev = nil,ProPortDev = nil;
-//static id SSAD64xPanel = nil,StealthDAI2400Panel = nil,NeXTDACPanel = nil;
 
 /* Should figure a way to get rid of these case statements! */
 
 static NSArray *soundOutputTagToName;
 
--(int)_soundOutputNameToTag:(NSString *)s
+-(int)_soundOutputNameToTag: (NSString *) s
 {
     int tag = GENERIC;
     int i;
-    for (i=1; i<GENERIC; i++)
-        if ([[soundOutputTagToName objectAtIndex:i] isEqualToString:s])
+    for (i = 1; i < GENERIC; i++)
+        if ([[soundOutputTagToName objectAtIndex: i] isEqualToString: s])
             tag = i;
-    [serialPortDeviceMatrix selectCellWithTag:tag];
+    [serialPortDeviceMatrix selectCellWithTag: tag];
     return tag;
 }
 
-- (void)_setSoundOutDeviceTag:(int)aTag
+- (void) setSoundOutDeviceTag: (int) aTag
 {
     NSString *soundOutputName;
+    
     warnedAboutSrate = NO;
     soundOutType = aTag;
     switch (aTag) {
-      case PROPORT:
-	if (!ProPortDev)
-	  ProPortDev = serialSoundOutDevice = [[ArielProPort alloc] init];
-	else serialSoundOutDevice = ProPortDev;
-	soundOutputName = @"Ariel ProPort";
-	break;
-      case DAI2400:
-	if (!StealthDAI2400Dev)
-	  StealthDAI2400Dev = serialSoundOutDevice = [[StealthDAI2400 alloc] init];
-	else serialSoundOutDevice = StealthDAI2400Dev;
-	soundOutputName = @"Stealth DAI2400";
-	break;
-      case AD64x:
-	if (!SSAD64xDev)
-	  SSAD64xDev = serialSoundOutDevice = [[SSAD64x alloc] init];
-	else serialSoundOutDevice = SSAD64xDev;
-	soundOutputName = @"Singular Solutions A/D64x";
-	break;
-      default:
-      case GENERIC:
-	soundOutputName = @"Serial port sound";
-	serialSoundOutDevice = nil;
-	break;
-      case NEXT_SOUND:
-	soundOutputName = @"NeXT Sound";
-	serialSoundOutDevice = nil;
-	break;
+	default:
+	case GENERIC:
+	    soundOutputName = @"Default sound device";
+	    break;
+	case NEXT_SOUND:
+	    soundOutputName = @"NeXT Sound";
+	    break;
     }
-    [serialPortDeviceNameField setStringValue:soundOutputName];
+    [serialPortDeviceNameField setStringValue: soundOutputName];
     /* Run alert panel here if we're playing? FIXME */
 }
 
@@ -383,22 +305,22 @@ static NSArray *soundOutputTagToName;
     return @"TextEdit";
 }
 
-- (void)setSoundOutFrom:sender
-  /* Invoked by U.I. */
+/* Invoked by U.I. */
+- (void) setSoundOutFrom: sender
 {
     int tag = [[sender selectedCell] tag];
+    
     if (soundOutType == tag)
-      return;
-    if (tag == NEXT_SOUND && 
-	(!([theOrch capabilities] & MK_hostSoundOut))) {
+	return;
+    if (tag == NEXT_SOUND && (!([theOrch capabilities] & MK_hostSoundOut))) {
 	NSRunAlertPanel(STR_SCOREPLAYER, @"NeXT sound not supported on this architecture", STR_OK, nil, nil);
-	[serialPortDeviceMatrix selectCellWithTag:soundOutType];
+	[serialPortDeviceMatrix selectCellWithTag: soundOutType];
 	return;
     }
-    [self _setSoundOutDeviceTag:tag];
+    [self setSoundOutDeviceTag: tag];
 }
 
-- (void)saveAsDefaultDevice:sender
+- (void) saveAsDefaultDevice: sender
 {
     unsigned caps = [theOrch capabilities];
     if (caps & MK_hostSoundOut) {
@@ -406,85 +328,63 @@ static NSArray *soundOutputTagToName;
         [[NSUserDefaults standardUserDefaults] persistentDomainForName:NSGlobalDomain];
         NSMutableDictionary *pdm = [[pdi mutableCopy] autorelease];
         
-        [pdm setObject:(soundOutType == NEXT_SOUND) ? @"Host" : @"SSI"
-                forKey:@"MKOrchestraSoundOut"];
-        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:NSGlobalDomain];
-        [[NSUserDefaults standardUserDefaults] setPersistentDomain:pdm forName:NSGlobalDomain]; 
-
+        [pdm setObject: (soundOutType == NEXT_SOUND) ? @"Host" : @"SSI"
+                forKey: @"MKOrchestraSoundOut"];
+        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName: NSGlobalDomain];
+        [[NSUserDefaults standardUserDefaults] setPersistentDomain: pdm forName: NSGlobalDomain]; 
+	
     }
     if (caps & MK_nextCompatibleDSPPort)
         if (soundOutType != NEXT_SOUND) {
-            NSDictionary *pdi =
-            [[NSUserDefaults standardUserDefaults] persistentDomainForName:NSGlobalDomain];
+            NSDictionary *pdi = [[NSUserDefaults standardUserDefaults] persistentDomainForName: NSGlobalDomain];
             NSMutableDictionary *pdm = [[pdi mutableCopy] autorelease];
-
-            [pdm setObject:[soundOutputTagToName objectAtIndex:soundOutType]
-                    forKey:@"MKDSPSerialPortDevice0"];
-            [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:NSGlobalDomain];
-            [[NSUserDefaults standardUserDefaults] setPersistentDomain:pdm forName:NSGlobalDomain]; 
-
+	    
+            [pdm setObject: [soundOutputTagToName objectAtIndex: soundOutType]
+                    forKey: @"MKDSPSerialPortDevice0"];
+            [[NSUserDefaults standardUserDefaults] removePersistentDomainForName: NSGlobalDomain];
+            [[NSUserDefaults standardUserDefaults] setPersistentDomain: pdm forName: NSGlobalDomain]; 
         }
-    [[NSUserDefaults standardUserDefaults] synchronize];
+	    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)deviceSpecificSettings:sender
+- (void) deviceSpecificSettings: sender
 {
     switch (soundOutType) {
-      case DAI2400:
-	if (!StealthDAI2400Panel) {
-	    [NSBundle loadNibNamed:@"StealthDAI2400.nib" owner:self];
+	case DAI2400:
+	    if (!StealthDAI2400Panel) {
+		[NSBundle loadNibNamed:@"StealthDAI2400.nib" owner:self];
 //#error ApplicationConversion:  NXGetNamedObject() is obsolete. Replace with nib file outlets.
 //	    StealthDAI2400Panel = NXGetNamedObject("StealthDAI2400Panel",self);
-	}
-	[StealthDAI2400Panel makeKeyAndOrderFront:self];
-	break;
-      case AD64x:
-	if (!SSAD64xPanel) {
-	    [NSBundle loadNibNamed:@"SSAD64x.nib" owner:self];
+	    }
+	    [StealthDAI2400Panel makeKeyAndOrderFront:self];
+	    break;
+	case AD64x:
+	    if (!SSAD64xPanel) {
+		[NSBundle loadNibNamed:@"SSAD64x.nib" owner:self];
 //#error ApplicationConversion:  NXGetNamedObject() is obsolete. Replace with nib file outlets.
 //	    SSAD64xPanel = NXGetNamedObject("SSAD64xPanel",self);
-	}
-	[SSAD64xPanel makeKeyAndOrderFront:self];
-	break;
-      case NEXT_SOUND:
-	if (!NeXTDACPanel) {
-	    [NSBundle loadNibNamed:@"NextDACs.nib" owner:self];
+	    }
+	    [SSAD64xPanel makeKeyAndOrderFront:self];
+	    break;
+	case NEXT_SOUND:
+	    if (!NeXTDACPanel) {
+		[NSBundle loadNibNamed:@"NextDACs.nib" owner:self];
 //#error ApplicationConversion:  NXGetNamedObject() is obsolete. Replace with nib file outlets.
 //	    NeXTDACPanel = NXGetNamedObject("NeXTDACPanel",self);
-	}
-	[NeXTDACPanel makeKeyAndOrderFront:self];
-	break;
-      default:
-      case PROPORT:
-      case GENERIC:
-	NSRunAlertPanel(STR_SCOREPLAYER, @"No special settings for this device", STR_OK, nil, nil);
-	break;
+	    }
+	    [NeXTDACPanel makeKeyAndOrderFront:self];
+	    break;
+	default:
+	case GENERIC:
+	    NSRunAlertPanel(STR_SCOREPLAYER, @"No special settings for this device", STR_OK, nil, nil);
+	    break;
     } 
 }
 
-- (void)setAD64xConsumer:sender
-{
-    [SSAD64xDev setProfessional:NO]; 
-}
-
-- (void)setAD64xProfessional:sender
-{
-    [SSAD64xDev setProfessional:YES]; 
-}
-
-- (void)setDAI2400CopyProhibit:sender
-{
-    [StealthDAI2400Dev setCopyProhibit:[sender intValue]];
-}
-
-- (void)setDAI2400Emphasis:sender
-{
-    [StealthDAI2400Dev setEmphasis:[sender intValue]];
-}
-
+// - (void) setOrchestraVolume: (id) sender
 - (void)setNeXTDACVolume:sender
 {
-    [Snd setVolume:[sender doubleValue] :[sender doubleValue]];
+    [[[theOrch audioProcessorChain] postFader] setAmp: [sender floatValue] clearingEnvelope: NO];
 }
 
 - (void)setNeXTDACMute:sender
@@ -494,13 +394,12 @@ static NSArray *soundOutputTagToName;
 
 - (void)getNeXTDACCurrentValues:sender
 {
-    float l,r;
-    [Snd getVolume:&l :&r];
-    [NeXTDacVolumeSlider setFloatValue:l];
-    [NeXTDacMuteSwitch setIntValue:[Snd isMuted]];
+    float l = [[[theOrch audioProcessorChain] postFader] getAmp];
+    [NeXTDacVolumeSlider setFloatValue: l];
+    [NeXTDacMuteSwitch setIntValue: [Snd isMuted]];
 }
 
-- (void)openEditFile:sender
+- (void) openEditFile: sender
 {
     NSString *editor;
     
@@ -520,7 +419,7 @@ static NSArray *soundOutputTagToName;
 }
 
 static int fileType(NSString *name)
-     /* return the file type for the specified name */
+/* return the file type for the specified name */
 {
     NSString *ext = [name pathExtension];
     
@@ -573,7 +472,7 @@ static BOOL setFile(ScorePlayerController *self)
     [tuningSys release];
     userCancelFileRead = NO;
     loadResult = (scoreForm == MIDI_FILE) ? [scoreObj readMidifile: fileName] :
-                                            [scoreObj readScorefile: fileName];
+	[scoreObj readScorefile: fileName];
     if (!loadResult || userCancelFileRead) {  
 	/* Error in file? */
 	if (!userCancelFileRead) 
@@ -620,17 +519,17 @@ static BOOL setFile(ScorePlayerController *self)
 #endif
 	}
 	/* Note: there is a .1 second indeterminacy (in the 22khz case) due 
-	   to not knowing where we are in soundout buffering. Using more, 
-	   but smaller buffers would solve this. */
+	    to not knowing where we are in soundout buffering. Using more, 
+	    but smaller buffers would solve this. */
     }
-    lastTempo = desiredTempo = initialTempo;
-    [self->tempoSlider setFloatValue: 0.0];
-    [self->tempoTextField setFloatValue: initialTempo];
-    [self->theMainWindow setTitle: shortFileName];
-    [self->theMainWindow display];
-    [self->playButton setEnabled: YES];
-    [scoreObj retain];  // yep, keep it.
-    return YES;
+lastTempo = desiredTempo = initialTempo;
+[self->tempoSlider setFloatValue: 0.0];
+[self->tempoTextField setFloatValue: initialTempo];
+[self->theMainWindow setTitle: shortFileName];
+[self->theMainWindow display];
+[self->playButton setEnabled: YES];
+[scoreObj retain];  // yep, keep it.
+return YES;
 }
 
 
@@ -654,7 +553,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
 {
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
-
+    
     [theOrch close]; /* This will block! */
     while ((midiDev = [midiDevEnumerator nextObject])) {
 	[midiDev close];
@@ -668,7 +567,9 @@ static BOOL setUpFile(NSString *workspaceFileName);
 	[theOrch setOutputSoundfile: NULL];
     }
     [theOrch setHostSoundOut: (soundOutType == NEXT_SOUND)];
-    [tempoAnimator stopEntry];
+    [tempoAnimator invalidate];
+    [tempoAnimator release];
+    tempoAnimator = nil;
     [playButton setImage: playImage];
     [playButton display];
     [tooFastErrorMsg setTextColor: [NSColor lightGrayColor]];
@@ -682,14 +583,14 @@ static BOOL setUpFile(NSString *workspaceFileName);
     [theMainWindow setTitle: shortFileName];
     [theMainWindow display];
     [soundSavePanel close];
-    [self _enableMTCControls:YES];
+    [self _enableMTCControls: YES];
     return self;
 }
 
 #if 0  /*sb: as this is never called */
 void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
 {
-    [tempoAnimator stopEntry];
+    [tempoAnimator invalidate];
     [myself->playButton setImage:playImage];
     [myself->playButton display];
     [myself->tooFastErrorMsg setTextColor:[NSColor lightGrayColor]];
@@ -721,16 +622,16 @@ static BOOL isMidiClassName(NSString *className)
 
 static BOOL checkForMidi(MKScore *obj)
 {
-    NSArray *subobjs;
+    NSArray *subobjs = [obj parts];
     int i,cnt;
-    id info;
-    subobjs = [obj parts];
+    MKNote *info;
+    
     if (!subobjs)
-      return NO;
+	return NO;
     cnt = [subobjs count];
-    for (i=0; i<cnt; i++) {
-	info = [(MKPart *)[subobjs objectAtIndex:i] infoNote];
-	if ([info isParPresent:MK_synthPatch] &&
+    for (i = 0; i < cnt; i++) {
+	info = [(MKPart *)[subobjs objectAtIndex: i] infoNote];
+	if ([info isParPresent: MK_synthPatch] &&
 	    (isMidiClassName([info parAsStringNoCopy:MK_synthPatch]))) {
 	    return YES;
 	}
@@ -741,15 +642,15 @@ static BOOL checkForMidi(MKScore *obj)
 
 static double tempoExponent = 1.5;
 
+/* scales the initial tempo by the current slider value (-1,1) */
 static double getTempo(float val)
-    /* scales the initial tempo by the current slider value (-1,1) */
 {
     val = pow(tempoExponent,val);
     return initialTempo * val;
 }
 
+/* reverses above mapping */
 static double getUntempo(float tempoVal)
-    /* reverses above mapping */
 {
     return log(tempoVal/initialTempo) / log(tempoExponent);
 }
@@ -769,67 +670,62 @@ static void playIt(ScorePlayerController *self)
     MKSynthInstrument *anIns;
     MKNote *partInfo;
     MKPart *aPart;
-    NSString *writeMsg;
+    NSString *writeMsg = nil;
     NSEnumerator *midiDevEnumerator;
     MKMidi *midiDev;
-
+    
     /* Could keep these around, in repeat-play cases: */ 
     [scorePerformer release];
     scorePerformer = nil;
     [synthInstruments release];
-    [self _enableMTCControls:NO];
-
+    [self _enableMTCControls: NO];
+    
     if (synchToTimeCode) {
 	timeCodeMIDIDevice = [[MKMidi midiOnDevice: timeCodeDevice] retain];
 	[[MKConductor defaultConductor] setMTCSynch: timeCodeMIDIDevice];
     }
     else
         [[MKConductor defaultConductor] setMTCSynch: nil];
-
-    theOrch = [MKOrchestra newOnDSP: 0]; /* A noop if it exists */
-
-    [theOrch setHeadroom:headroom];    /* Must be reset for each play */ 
-    if (serialSoundOutDevice)
-        [theOrch setSerialPortDevice: serialSoundOutDevice];
+    
+    theOrch = [[MKOrchestra alloc] initOnDSP: 0]; /* A noop if it exists */
+    
+    [theOrch setHeadroom: headroom];    /* Must be reset for each play */ 
     switch (soundOutType) {
-    case NEXT_SOUND:
-	if (![theOrch supportsSamplingRate:samplingRate]) {
-	    msg = STR_BAD_SRATE;
-	    actualSrate = [theOrch defaultSamplingRate];
-	}
-	else actualSrate = samplingRate;
-	break;
-    case GENERIC:
-	actualSrate = samplingRate;
-	break;
-    default:
-    case PROPORT:
-    case AD64x:
-    case DAI2400:
-	if (![theOrch supportsSamplingRate:samplingRate]){
-	    msg = STR_BAD_SSI_SRATE;
-	    actualSrate = [theOrch defaultSamplingRate];
-	}
-	else actualSrate = samplingRate;
-	break;
+	case NEXT_SOUND:
+	    if (![theOrch supportsSamplingRate: samplingRate]) {
+		msg = STR_BAD_SRATE;
+		actualSrate = [theOrch defaultSamplingRate];
+	    }
+	    else actualSrate = samplingRate;
+	    break;
+	case GENERIC:
+	    actualSrate = samplingRate;
+	    break;
+	default:
+	    if (![theOrch supportsSamplingRate: samplingRate]){
+		msg = STR_BAD_SSI_SRATE;
+		actualSrate = [theOrch defaultSamplingRate];
+	    }
+	    else actualSrate = samplingRate;
+	    break;
     }
     if (msg && !warnedAboutSrate) {	
-        [errorLog addText:msg];
+        [errorLog addText: msg];
 	warnedAboutSrate = YES;
-	NSRunAlertPanel(STR_SCOREPLAYER,msg,STR_OK,NULL,NULL);
+	NSRunAlertPanel(STR_SCOREPLAYER, msg, STR_OK, NULL, NULL);
     }
-    [theOrch setSamplingRate:actualSrate];
-
+    [theOrch setSamplingRate: actualSrate];
+    
 #if SOUND_OUT_PAUSE_BUG
     if (checkForMidi(scoreObj))
 	[theOrch setFastResponse:YES];
-    else [theOrch setFastResponse:NO];
+    else
+	[theOrch setFastResponse:NO];
 #endif
-    [theOrch setOutputCommandsFile:(DSPCommands)?outputFilePath:nil];
-    [theOrch setOutputSoundfile:(writeData)?outputFilePath:nil];
-    [theOrch setHostSoundOut:!writeData && (soundOutType == NEXT_SOUND)];
-    [theOrch setSerialSoundOut:(soundOutType != NEXT_SOUND) && !writeData];
-
+    [theOrch setOutputCommandsFile: (DSPCommands) ? outputFilePath : nil];
+    [theOrch setOutputSoundfile: (writeData) ? outputFilePath : nil];
+    [theOrch setHostSoundOut: !writeData && (soundOutType == NEXT_SOUND)];
+    
 #if 0 // LMS disabled until cross-platform orchestra opening works
     if (![theOrch open]) {
         [errorLog addText: STR_CANT_OPEN_DSP];
@@ -867,7 +763,7 @@ static void playIt(ScorePlayerController *self)
 		midiChan = 0;
             if ([className isEqualToString: @"midi"])  // set the default MIDI device.
 		className = @"midi0"; /* Was "midi1" -- changed 9/30/94 */
-                       
+	    
 	    if ((newMIDI = [midis objectForKey: className]) == nil) {
                 newMIDI = [MKMidi midiOnDevice: className];
                 // Check that newMIDI is not nil, i.e midiOnDevice did initialise
@@ -903,7 +799,7 @@ static void playIt(ScorePlayerController *self)
 	    if (synthPatchCount < voices) {
                 errMsg = [NSString stringWithFormat: STR_TOO_MANY_SYNTHPATCHES,
                     synthPatchCount, voices, className, MKGetObjectName(aPart)];
-
+		
                 [errorLog addText: errMsg];
 		if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, NULL))
 		    return;
@@ -919,41 +815,43 @@ static void playIt(ScorePlayerController *self)
     [self->playButton setImage: stopImage];
     [self->playButton display];
     if (synchToTimeCode)
-        [self showConductorDidPause];
+    [self showConductorDidPause];
     if (writeData) {
-        writeMsg = @"Writing sound file (silently) ...";
+	writeMsg = @"Writing sound file (silently) ...";
     }
     else if (DSPCommands) {
-        writeMsg = @"Writing DSP Commands format soundfile.";
+	writeMsg = @"Writing DSP Commands format soundfile.";
     }
     if (writeData || DSPCommands) {
-        [self->soundWriteMsg setStringValue: writeMsg];
+	[self->soundWriteMsg setStringValue: writeMsg];
 	[self->soundSavePanel orderFront: self];
     }
-    [tempoAnimator setIncrement: ANIMATE_INCREMENT];
-    [tempoAnimator startEntry];
-    
+    tempoAnimator = [[NSTimer scheduledTimerWithTimeInterval: ANIMATE_INCREMENT
+						      target: self
+						    selector: @selector(animateTempo:)
+						    userInfo: nil
+						     repeats: YES] retain];
+
     midiDevEnumerator = [midis objectEnumerator];
     while ((midiDev = [midiDevEnumerator nextObject])) {
-        if ([midiDev openOutputOnly]) {
-            // set the localDeltaT time offset, negative values are for orchestras
-            if (midiOffset > 0) 
-                [midiDev setLocalDeltaT: midiOffset];
-            else if (midiOffset < 0)
-                [theOrch setLocalDeltaT: -midiOffset];
-            [midiDev run];
-        }
-        else {
-            mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
-        }
+	if ([midiDev openOutputOnly]) {	// set the localDeltaT time offset, negative values are for orchestras
+	    if (midiOffset > 0) 
+		[midiDev setLocalDeltaT: midiOffset];
+	    else if (midiOffset < 0)
+		[theOrch setLocalDeltaT: -midiOffset];
+	    [midiDev run];
+	}
+	else {
+	    mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
+	}
     }
     [theOrch run];
     [MKConductor startPerformance];     
 }
 
--setTempoAdjustment:sender
+- setTempoAdjustment: sender
 {
-    [MKConductor setDelegate:([[sender selectedCell] tag] == 0) ? self : nil];
+    [MKConductor setDelegate: ([[sender selectedCell] tag] == 0) ? self : nil];
     return self;
 }
 
@@ -961,7 +859,7 @@ static void playIt(ScorePlayerController *self)
 {
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
-
+    
     while ((midiDev = [midiDevEnumerator nextObject])) {
         NSLog([midiDev driverName]);
 //      [midiDev close];
@@ -978,30 +876,29 @@ static id localIconImage(NSString *s)
     return [[NSImage alloc] initByReferencingFile:buf];
 }
 
-+ (void)initialize
++ (void) initialize
 {
-    NSDictionary *ScorePlayerDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSDictionary *scorePlayerDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
         @"NeXTsound", @"SoundOutput", NULL, NULL];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:ScorePlayerDefaults];
-    return;
+    [[NSUserDefaults standardUserDefaults] registerDefaults: scorePlayerDefaults];
 }
 
 static void abortNow();
 
-- orchestraDidAbort:whichOrch
-  /* This is received by the appkit thread */
+- orchestraDidAbort: whichOrch
+    /* This is received by the appkit thread */
 {
     NSRunAlertPanel(STR_SCOREPLAYER,STR_HUNG_DSP,NULL,NULL,NULL);
     abortNow();
     return self;
 }
 
-- (void)applicationWillFinishLaunching:(NSNotification *)aNotification 
+- (void) applicationWillFinishLaunching: (NSNotification *) aNotification 
 {
     NSString *s;
     static int inited = 0;
     NSUserDefaults *scorePlayerDefaults = [NSUserDefaults standardUserDefaults];
-
+    
     if (inited++)
         return;
     mySelf = self;
@@ -1011,15 +908,15 @@ static void abortNow();
         @"ScorePlayerDoc", @"ScorePlayerDoc2", @"Midi", @"Sound", @"Sound",nil];
     /* These are the class names */
     soundOutputTagToName = [[NSArray alloc] initWithObjects:
-      @"",@"StealthDAI2400",@"SSAD64x",@"ArielProPort",@"DSPSerialPortDevice",nil];
-
+	@"",@"StealthDAI2400",@"SSAD64x",@"ArielProPort",@"DSPSerialPortDevice",nil];
+    
     SSAD64xPanel = StealthDAI2400Panel = NeXTDACPanel = nil;
     playImage = localIconImage(@"play");
-    [playButton setImage:playImage];
+    [playButton setImage: playImage];
     [playButton display];
     openFileExtensions = [[MKScore fileExtensions] retain];  // accept both MIDI and Scorefiles.
     errorLog = [[ErrorLog alloc] init];
-    [MKConductor setThreadPriority:1.0];
+    [MKConductor setThreadPriority: 1.0];
     [MKPartPerformer setFastActivation:YES]; /* We're not modifying parts while playing */
     setuid(getuid()); /* Must be after setThreadPriority. */
     [MKConductor useSeparateThread:YES];
@@ -1035,43 +932,35 @@ static void abortNow();
     [[NSRunLoop currentRunLoop] addPort:[NSPort portWithMachPort:endOfTimePort] forMode:30];
 #endif
     MKSetErrorProc(handleMKError);
-   
-    /* Create the tempo aminmator, but don't start it yet */
-    tempoAnimator = [Animator newChronon: 0.0
-	                   adaptation: 0.0				
-		           target:     self
-		           action:     @selector(animateTempo:)
-		           autoStart:  NO
-		           eventMask:  NSAnyEventMask];
-
+        
     /* set up the playButton */
     stopImage = localIconImage(@"stop");
     playHImage = localIconImage(@"playH");
     [playButton setAlternateImage:playHImage];
-
+    
     midis = [[NSMutableDictionary dictionaryWithCapacity: 8] retain]; // heaps!
     [MKOrchestra setAbortNotification:self]; 
-    theOrch = [MKOrchestra new];
+    theOrch = [[MKOrchestra alloc] init];
     capabilities = [theOrch capabilities];
-
+    
     if (capabilities & MK_hostSoundOut) {
         s = [scorePlayerDefaults stringForKey: @"MKOrchestraSoundOut"];
 	if ([s isEqual: @"Host"]) {
-	    [self _setSoundOutDeviceTag: NEXT_SOUND];
+	    [self setSoundOutDeviceTag: NEXT_SOUND];
 	}
 	else {
             s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
-	    [self _setSoundOutDeviceTag:[self _soundOutputNameToTag: s]];
+	    [self setSoundOutDeviceTag: [self _soundOutputNameToTag: s]];
 	}
     } else {
 	if ((capabilities & MK_nextCompatibleDSPPort)) {
             s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
-	    [self _setSoundOutDeviceTag:[self _soundOutputNameToTag: s]];
+	    [self setSoundOutDeviceTag: [self _soundOutputNameToTag: s]];
 	}
 	else {
-	    [self _setSoundOutDeviceTag:GENERIC];
-	    [serialPortDeviceMatrix selectCellWithTag:GENERIC];
-	    [serialPortDeviceMatrix setEnabled:NO];
+	    [self setSoundOutDeviceTag: GENERIC];
+	    [serialPortDeviceMatrix selectCellWithTag: GENERIC];
+	    [serialPortDeviceMatrix setEnabled: NO];
 	}
     }
     
@@ -1079,7 +968,7 @@ static void abortNow();
     // [driverPopup removeAllItems];
     // [driverPopup addItemsWithTitles: [MKMidi getDriverNames]];
     // [driverPopup selectItemWithTitle: [[MKMidi midi] driverName]]; 
-
+    
 }
 
 static BOOL setUpFile(NSString *workspaceFileName)
@@ -1093,23 +982,23 @@ static BOOL setUpFile(NSString *workspaceFileName)
     if (!workspaceFileName) {
 	if (firstTime) {
             NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
-
+	    
             success = [openPanel runModalForDirectory: [[libraryDirs objectAtIndex: 0]
                        stringByAppendingPathComponent: @"/Music/Scores"]
                                                  file: @"Examp1.score"
                                                 types: openFileExtensions];
         }
         else if (dir) {
-             success = [openPanel runModalForDirectory: dir
-                                                  file: shortFileName 
-                                                 types: openFileExtensions]; 
-	     [dir release];
-	     dir = nil;
+	    success = [openPanel runModalForDirectory: dir
+						 file: shortFileName 
+						types: openFileExtensions]; 
+	    [dir release];
+	    dir = nil;
 	}
 	else 
-	  success = [openPanel runModalForTypes:openFileExtensions];
+	    success = [openPanel runModalForTypes:openFileExtensions];
 	if (!success)
-	  return NO;
+	    return NO;
         [fileName release];
         fileName = [[openPanel filename] retain];
         [shortFileName release];
@@ -1134,7 +1023,7 @@ static void abortNow()
 {
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
-
+    
     if (PLAYING) {
 	[MKConductor lockPerformance];
         while ((midiDev = [midiDevEnumerator nextObject])) {
@@ -1230,16 +1119,17 @@ static void adjustTempo(double slowDown)
 {
     double diff;
     BOOL forceAdjustment;
+    
     if (forceAdjustment = isLate) 
         adjustTempo(SUBSEQUENT_SLOWDOWN_FACTOR);
     if ((isLate || wasLate) && !messageFlashed) {
-	[tooFastErrorMsg setTextColor:[NSColor blackColor]];
-	[tooFastErrorMsg setBackgroundColor:[NSColor lightGrayColor]];
+	[tooFastErrorMsg setTextColor: [NSColor blackColor]];
+	[tooFastErrorMsg setBackgroundColor: [NSColor lightGrayColor]];
 	messageFlashed = YES;
     }
     else if (!isLate && messageFlashed) {
-	[tooFastErrorMsg setTextColor:[NSColor lightGrayColor]];
-	[tooFastErrorMsg setBackgroundColor:[NSColor lightGrayColor]];
+	[tooFastErrorMsg setTextColor: [NSColor lightGrayColor]];
+	[tooFastErrorMsg setBackgroundColor: [NSColor lightGrayColor]];
 	messageFlashed = NO;
 	wasLate = NO;
     }
@@ -1249,11 +1139,11 @@ static void adjustTempo(double slowDown)
     if (!forceAdjustment && diff < ANIMATE_DIFF_THRESHOLD) /* diff too small */
         return self;
     [MKConductor lockPerformance];
-    [[MKConductor defaultConductor] setTempo:desiredTempo];
+    [[MKConductor defaultConductor] setTempo: desiredTempo];
     [MKConductor unlockPerformance];
     [tempoTextField setFloatValue:desiredTempo];
     if (wasLate || isLate)
-       [tempoSlider setFloatValue:getUntempo(desiredTempo)];
+	[tempoSlider setFloatValue:getUntempo(desiredTempo)];
     lastTempo = desiredTempo;
     return self;
 }
@@ -1263,10 +1153,10 @@ static void adjustTempo(double slowDown)
     double val = [sender doubleValue];
     desiredTempo = getTempo(val);
     // LMS it's unclear if this was only able to happen when not playing due to earlier MK limitations.
-//    if (!PLAYING) {  
-	[[MKConductor defaultConductor] setTempo: desiredTempo];
-	[tempoTextField setFloatValue:desiredTempo];
-	lastTempo = desiredTempo;
+    //    if (!PLAYING) {  
+    [[MKConductor defaultConductor] setTempo: desiredTempo];
+    [tempoTextField setFloatValue:desiredTempo];
+    lastTempo = desiredTempo;
 //    }
 }
 
@@ -1286,14 +1176,14 @@ static void adjustTempo(double slowDown)
 - conductorWillSeek:sender
 {
     [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorWillSeek)
-     to:self argCount:0];
+					    to:self argCount:0];
     return self;
 }
 
 - conductorDidSeek:sender
 {
     [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidSeek)
-     to:self argCount:0];
+					    to:self argCount:0];
     return self;
 }
 
@@ -1309,7 +1199,7 @@ static void adjustTempo(double slowDown)
 {
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
-
+    
     [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidPause) to: self argCount: 0];
     [synthInstruments makeObjectsPerformSelector: @selector(allNotesOff)];
     
@@ -1331,12 +1221,12 @@ static void adjustTempo(double slowDown)
 }
 
 BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *theType)
-     /* Set up and run the Save panel for the given type.  The accessory view
-      * is a button which allows the type to be changed when saving scores.
-      */
+/* Set up and run the Save panel for the given type.  The accessory view
+* is a button which allows the type to be changed when saving scores.
+*/
 {
     BOOL flag;
-
+    
     if (!savePanel) {
 	savePanel = [NSSavePanel new];
 	[savePanel setTitle:@"ScorePlayer Save"];
@@ -1352,12 +1242,12 @@ BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *
     if (flag)
         *returnBuf = [savePanel filename];
     soundFile = (saveType==SOUND_FILE) ? *returnBuf : NULL;
-
+    
     return flag;
 }
 
 NSString *getPath(NSString *dir, NSString *name, NSString *ext)
-     /* Construct a path given a file name, directory, and type */
+/* Construct a path given a file name, directory, and type */
 {
     if (!dir || ![dir length]) dir = [NSHomeDirectory() retain];
     if (!name ) name=@"";
@@ -1413,35 +1303,35 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     [self setSaveType: fileType(outputFilePath)];
     [outputFilePath release];
     outputFilePath = [getPath(outputFileDir, outputFileName,
-                             [saveFileExtensions objectAtIndex: saveType]) retain];
+			      [saveFileExtensions objectAtIndex: saveType]) retain];
     switch (saveType) {
-    case SCORE_FILE: 
-        [scoreObj writeScorefile:outputFilePath];
-        break;
-    case PLAYSCORE_FILE: 
-        [scoreObj writeOptimizedScorefile:outputFilePath];
-        break;
-    case MIDI_FILE:
-        [scoreObj writeMidifile:outputFilePath];
-        break;
-    case DSP_COMMANDS_FILE:
-        /* Here we play the score, capturing the performance in the DSPCommands file. */
-        DSPCommands = YES;
-        [playButton performClick:self];
-        break;
-    case SOUND_FILE:
-        /* Here we play the score, capturing the performance in the sound file. */
-        writeData = YES;
-        [playButton performClick:self];
-        break;
-    default:
-        break;
+	case SCORE_FILE: 
+	    [scoreObj writeScorefile:outputFilePath];
+	    break;
+	case PLAYSCORE_FILE: 
+	    [scoreObj writeOptimizedScorefile:outputFilePath];
+	    break;
+	case MIDI_FILE:
+	    [scoreObj writeMidifile:outputFilePath];
+	    break;
+	case DSP_COMMANDS_FILE:
+	    /* Here we play the score, capturing the performance in the DSPCommands file. */
+	    DSPCommands = YES;
+	    [playButton performClick:self];
+	    break;
+	case SOUND_FILE:
+	    /* Here we play the score, capturing the performance in the sound file. */
+	    writeData = YES;
+	    [playButton performClick:self];
+	    break;
+	default:
+	    break;
     }
     [[NSCursor arrowCursor] set]; 
 }
 
 - (void)help:sender
- /* Display the help file formatted as HTML with the default handling application. */
+    /* Display the help file formatted as HTML with the default handling application. */
 {
     /* Look in the app wrapper */
     NSString *helpfile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"help.html"];
