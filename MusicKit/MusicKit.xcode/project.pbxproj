@@ -692,7 +692,7 @@
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -framework AppKit -seg1addr 3A0000";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit -seg1addr 3B0000";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
@@ -8383,7 +8383,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
 				OTHER_REZFLAGS = "";
@@ -11247,6 +11246,7 @@
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
@@ -15219,7 +15219,7 @@
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -seg1addr 380000";
+				OTHER_LDFLAGS = "-framework Foundation -seg1addr 390000";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
