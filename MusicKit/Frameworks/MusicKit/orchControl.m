@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/03/31 00:07:48  leigh
+  Added SBs notes
+
   Revision 1.6  2000/03/07 18:19:17  leigh
   Removed redundant getTime function (using NSDate nowdays)
 
@@ -927,7 +930,8 @@ static void
      do so generates an error. 
      Returns self unless there's some problem
      closing the DSP, in which case, returns nil.
-     
+
+     SB's Notes: bufferTime is absolute in seconds.
      */
 {
     if (deviceStatus == MK_devRunning) { /* If not, can't wait for end of time */ 
