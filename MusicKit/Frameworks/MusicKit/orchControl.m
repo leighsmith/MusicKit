@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2003/08/16 22:29:11  leighsmith
+  replaced some i386 #if conditions with a tighter check to verify it is only in the case of Intel NeXTStep platforms, several chunks of code were being compiled on Intel machines running GnuStep
+
   Revision 1.16  2002/01/29 16:45:53  sbrandon
   changed all uses of _MKOrchTrace to use NSString args.
 
@@ -670,7 +673,7 @@ static void
 	}
         if (!loadOrchLoop(self))  
           return nil;
-#if i386
+#if i386 && defined(__NeXT__)
         DSPSetHostMessageMode();
 #endif
 	if (serialSoundIn)

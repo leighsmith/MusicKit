@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.14  2003/08/16 22:29:11  leighsmith
+ replaced some i386 #if conditions with a tighter check to verify it is only in the case of Intel NeXTStep platforms, several chunks of code were being compiled on Intel machines running GnuStep
+
  Revision 1.13  2003/08/04 21:14:33  leighsmith
  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -597,7 +600,7 @@ void _MKCheckInit(void)
     @"", @"MKDSPSerialPortDevice14",
     @"", @"MKDSPSerialPortDevice15",
 #endif
-#if i386
+#if i386 && defined(__NeXT__)
     @"SSI", @"MKOrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
 #else
     @"Host", @"MKOrchestraSoundOut",
