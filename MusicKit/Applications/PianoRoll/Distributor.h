@@ -6,15 +6,17 @@
 
 @interface Distributor:NSObject
 {
-	id infoPanel;
-	id helpPanel;
-	id openPanel;
-	id savePanel;
-	id tadList;
-	NSMutableArray *docList;	
-        PlayScore *scorePlayer;
+    id infoPanel;
+    id helpPanel;
+    id openPanel;
+    id savePanel;
+    id tadList;
+    NSMutableArray *docList;	
+    PlayScore *scorePlayer;
 }
 
+- init;
+- setTadList:theList;
 - (void)closeDoc:sender;
 - (void)openDoc:sender;
 - (void)saveDocAs:sender;

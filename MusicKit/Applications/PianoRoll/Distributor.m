@@ -21,13 +21,13 @@
 	return self;
 }
 
-+ setTadList:theList
+- setTadList:theList
 {
 	tadList = theList;
 	return self;
 }
 
-+ returnTadList
+- returnTadList
 {
 	return tadList;
 }
