@@ -56,9 +56,10 @@ find $APPCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
 cd $APPCHECKEDOUT_SRCLOC
 # rename the directory to the current version.
 mv $APPNAME ${APPNAME}-$RELEASE
-$TAR czf $TARLOC/${PACKAGENAME}_V$RELEASE.s.tar.gz ${APPNAME}-$RELEASE
+PACKAGEFILE=$TARLOC/${PACKAGENAME}-${RELEASE}.s.tar.gz
+$TAR czf $PACKAGEFILE ${APPNAME}-${RELEASE}
 
-echo Archive generated at $TARLOC/${PACKAGENAME}_V$RELEASE.s.tar.gz
+echo Archive generated at $PACKAGEFILE
 echo ChangeLog generated at $TARLOC/ChangeLog
 
 # blow away the checked out source.
