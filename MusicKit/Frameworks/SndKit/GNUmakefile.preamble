@@ -14,6 +14,12 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.7  2002/05/09 11:24:55  sbrandon
+#  Added support for new sox config script (libst-config), available in cvs
+#  of sox, which provides the dynamic libraries that sox was linked against.
+#  This means that end-user binaries no longer have to explicitly link against
+#  these, since SndKit does this by itself. (changes affect GNUstep only)
+#
 #  Revision 1.6  2002/02/01 12:22:17  sbrandon
 #  Tidied path situation for Win32 by using "cygpath" utility to decide which
 #  drive the external libraries would have been installed in. Added libmm as
@@ -49,7 +55,7 @@
 # binaries don't have to.
 
 LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
-                         -lobjc -lst #-lgsm
+                         -lobjc -lst
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
@@ -68,5 +74,9 @@ ifeq (mingw32, $(GNUSTEP_TARGET_OS))
 
 else
   LIBRARIES_DEPEND_UPON += -lgnustep-gui -lshout -lmp3lame
+  ST_CONFIG=$(shell which libst-config 2>/dev/null)
+  ifneq ($(ST_CONFIG),)
+    LIBRARIES_DEPEND_UPON += $(shell libst-config --libs)
+    SHARED_LD_POSTFLAGS += $(shell libst-config --cflags)
+  endif
 endif
-
