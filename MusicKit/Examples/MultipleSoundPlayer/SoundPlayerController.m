@@ -35,7 +35,7 @@
 
     NSLog(@"Accepting %@\n", fileTypes);
     [oPanel setAllowsMultipleSelection:YES];
-    result = [oPanel runModalForDirectory: NSHomeDirectory() file:nil types:fileTypes];
+    result = [oPanel runModalForDirectory: nil file: nil types: fileTypes];
     if (result == NSOKButton) {
         int i, count;
         filesToPlay = [oPanel filenames];
