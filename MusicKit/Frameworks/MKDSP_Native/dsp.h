@@ -10,6 +10,8 @@
 #ifndef DSP_H
 #define DSP_H
 
+#include "MKDSPDefines.h"
+
 #define DSP_SYS_VER_C 65
 #define DSP_SYS_REV_C 41
 
@@ -152,17 +154,12 @@
 /* Make alloca() safe */
 
 /**** Include files ****/
-#ifdef GNUSTEP
 #include "dsp_structs.h"		/* DSP struct declarations */
 #include "dsp_errno.h"		/* Error codes for DSP C functions */
 #include "libdsp.h"		/* Function prototypes for libdsp functions */
-#else
-#import "dsp_structs.h"		/* DSP struct declarations */
-#import "dsp_errno.h"		/* Error codes for DSP C functions */
-#import "libdsp.h"		/* Function prototypes for libdsp functions */
-#endif
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
+// Stephen Brandon: MINGW32 has winsock.h imported anyway and it conflicts
 // LMS it turns out -ObjC++ barfs including winsock.h
 // so these are taken from winsock.h
 typedef unsigned int u_int;
@@ -174,21 +171,14 @@ struct timeval {
         long    tv_usec;        /* and microseconds */
 };
 #else // WIN32
- #ifdef GNUSTEP
  #include <unistd.h>
- #else
- #import <unistd.h> // LMS do we need this?
- #endif
 #endif
 
-#ifdef GNUSTEP
-# import <sys/types.h> // LMS replacement
-# import <stdio.h>
-# import <math.h>
-#else
-# import <sys/types.h> // LMS replacement
-# import <stdio.h>
-# import <math.h>
+#include <sys/types.h> // LMS replacement
+#include <stdio.h>
+#include <math.h>
+
+#ifndef GNUSTEP
 # import <mach/mach.h>
 #endif
 
@@ -197,8 +187,8 @@ struct timeval {
 #define DSPMK_UNTIMED NULL	/* Denotes untimed, not tick-synchronized */
 
 /*** GLOBAL VARIABLES ***/	/* defined in DSPGlobals.c */
-extern int DSPErrorNo;
-extern DSPTimeStamp DSPMKTimeStamp0; /* Tick-synchronized, untimed */
+MKDSP_DECLARE int DSPErrorNo;
+MKDSP_DECLARE DSPTimeStamp DSPMKTimeStamp0; /* Tick-synchronized, untimed */
 
 /* Numerical conversion */
 #define DSP_TWO_TO_24   ((double)16777216.0)
@@ -250,12 +240,12 @@ extern DSPTimeStamp DSPMKTimeStamp0; /* Tick-synchronized, untimed */
 #define DSP_ERRORS_FILE "/tmp/dsperrors"
 #define DSP_WHO_FILE "/tmp/dsp.who"
 
-extern const char *DSPGetDSPDirectory();	/* as above or $DSP if $DSP set */
-extern char *DSPGetSystemDirectory();	/* /u/l/l/monitor|$DSP/monitor */
-extern char *DSPGetImgDirectory();	/* /u/l/l/dsp/img or $DSP/img */
-extern char *DSPGetAPDirectory();	/* /u/l/l/dsp/imgap or $DSP/imgap */
-extern char *DSPGetMusicDirectory();	/* DSP_MUSIC_DIRECTORY */
-extern char *DSPGetLocalBinDirectory(); /* /usr/bin or $DSP/bin */
+MKDSP_API const char *DSPGetDSPDirectory();	/* as above or $DSP if $DSP set */
+MKDSP_API char *DSPGetSystemDirectory();	/* /u/l/l/monitor|$DSP/monitor */
+MKDSP_API char *DSPGetImgDirectory();	/* /u/l/l/dsp/img or $DSP/img */
+MKDSP_API char *DSPGetAPDirectory();	/* /u/l/l/dsp/imgap or $DSP/imgap */
+MKDSP_API char *DSPGetMusicDirectory();	/* DSP_MUSIC_DIRECTORY */
+MKDSP_API char *DSPGetLocalBinDirectory(); /* /usr/bin or $DSP/bin */
 
 /* 
    Convert Y-space address in DSP "XY memory partition" 
@@ -343,10 +333,12 @@ extern char *DSPGetLocalBinDirectory(); /* /usr/bin or $DSP/bin */
 
 /* Exports from DSPGlobals.c */
 
-extern int DSPErrorNo;		 /* Last DSP error */
-extern int DSPDefaultTimeLimit;  /* Default is 1000 which is 1 second */
-extern int DSPAPTimeLimit;	 /* Default is 0 which means "forever" */
-extern DSPFix48 DSPMKTimeStamp0; /* Always {0,0} (tick-synchronizer) */
+// this is declared above
+//MKDSP_DECLARE int DSPErrorNo;		 /* Last DSP error */
+MKDSP_DECLARE int DSPDefaultTimeLimit;  /* Default is 1000 which is 1 second */
+MKDSP_DECLARE int DSPAPTimeLimit;	 /* Default is 0 which means "forever" */
+// this is declared above with DSPTimeStamp. Which is right?
+// MKDSP_DECLARE DSPFix48 DSPMKTimeStamp0; /* Always {0,0} (tick-synchronizer) */
 
 #define DSP_ATOMIC 1
 #define DSP_NON_ATOMIC 0
@@ -356,3 +348,4 @@ extern DSPFix48 DSPMKTimeStamp0; /* Always {0,0} (tick-synchronizer) */
 #endif /* DSP_H */
 
 #endif
+
