@@ -36,6 +36,7 @@ int main (int argc, const char *argv[])
     double lastTimeTag = MK_ENDOFTIME;
     double timeShift = 0;
     MKScore *aScore = [MKScore score];
+	NSFileManager *fm = [NSFileManager defaultManager];
 
     // either getopt or better
 
@@ -59,13 +60,15 @@ int main (int argc, const char *argv[])
                 firstTimeTag = 0;  /* Reset variables for next file */
                 lastTimeTag = MK_ENDOFTIME;
                 timeShift = 0;
-                inputFileName = [NSString stringWithCString: argv[i]];
+                inputFileName = [fm stringWithFileSystemRepresentation: argv[i]
+					                                    length:strlen(argv[i])];
             }
         else if (!strcmp(argv[i],"-o")) /* Output file */
             if (++i == argc)
                 fprintf(stderr,"Missing output file name.\n");
             else {
-                outputFileName = [NSString stringWithCString: argv[i]];
+                outputFileName = [fm stringWithFileSystemRepresentation: argv[i]
+					                                    length:strlen(argv[i])];
             }
         else if (!strcmp(argv[i],"-f")) /* Arguments */
             if (++i == argc)
