@@ -111,7 +111,6 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
     int i,count;
     double max=0.0;
     double tempMax;
-    int insLocation=0;
 
     if (!breakpoints) {
         breakpoints = [[NSMutableArray alloc] init];
@@ -121,12 +120,11 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
         tempMax = [(SndBreakpoint *)[breakpoints objectAtIndex:i] getXVal];
         /* if there are other breakpoints at same x location, place this one after the others */
         if (tempMax > xVal) {
-            insLocation = i;
             break;
         }
     }
-    insLocation = [self insertXValue:xVal yValue:yVal flags:flags atBreakpoint:insLocation];
-    return insLocation;
+    i = [self insertXValue:xVal yValue:yVal flags:flags atBreakpoint:i];
+    return i;
 
 }
 
@@ -145,7 +143,7 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
     if (bp >= count) {
         [breakpoints addObject:newBreakpoint];
         [newBreakpoint release]; /* let the array hold the release */
-        return count + 1;
+        return count;
     }
     [breakpoints insertObject:newBreakpoint atIndex:bp];
     [newBreakpoint release];
