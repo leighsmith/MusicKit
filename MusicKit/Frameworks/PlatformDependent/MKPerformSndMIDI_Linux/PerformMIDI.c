@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.1  2001/04/21 21:44:31  sbrandon
+  renamed mididriverUser.c to PerformMIDI.c
+
   Revision 1.4  2000/12/15 02:02:29  leigh
   Initial Revision
 
@@ -30,9 +33,12 @@ Modification history:
   Initial revision
  
 */
-#include "midi_driver.h"
+
+#include "mididriverUser.h"
 
 #include "PerformSoundPrivate.h"
+
+#include "PerformMIDI.h"
 
 #define FUNCLOG 1
 
@@ -339,10 +345,10 @@ PERFORM_API kern_return_t MKMDSetSystemIgnores (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
-	int sys_ignores)
+	unsigned int ignoreBits)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDSetSystemIgnores called 0x%x sys_ignores\n", sys_ignores);
+  fprintf(debug, "MKMDSetSystemIgnores called 0x%x sys_ignores\n", ignoreBits);
 #endif
   return 0;
 }
@@ -386,15 +392,15 @@ PERFORM_API kern_return_t MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions 
  For detailed information on these topics, see the document entitled Downloadable Sounds Level 1, published
  by the MIDI Manufacturers Association."
  */
-PERFORM_API kern_return_t MIDIDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
+PERFORM_API kern_return_t MKMDDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
 {
     return TRUE;
 }
 
 // retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
-PERFORM_API const char **MIDIGetAvailableDrivers(unsigned int *selectedDriver)
+PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
-    static char *silentDriver = "silent MIDI Driver";
+    static const char *silentDriver = "silent MIDI Driver";
     *selectedDriver = 0;
     return &silentDriver;
 }
