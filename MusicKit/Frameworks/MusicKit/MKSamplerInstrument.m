@@ -6,7 +6,7 @@
     Rewritten from original code by Michael McNabb as part of the Ensemble open source program.
     Each MKSamplerInstrument holds a collection of sound files indexed by noteTag.
     There is a PlayingSound for each sound file.
-    a MKNote has a MK_filename parameter which is the soundfile to be played, together with any
+    A MKNote has a MK_filename parameter which is the soundfile to be played, together with any
     particular tuning deviation to be applied to it using a keynumber or frequency which forms a ratio
     from the unity key number located in the (AIFF or ?WAV?). That does imply being able to load the file
     immediately (within the Delta) for playback. But then, we should be spooling from disk anyway.
@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/26 20:05:31  leigh
+  Removed definition of MK_filename
+
   Revision 1.2  1999/09/24 16:47:20  leigh
   Ensures only stopping a note with a filename
 
@@ -24,7 +27,7 @@
   Added sample playback support
 
 */
-#import "_musicKit.h"
+#import "_musickit.h"
 #import <SndKit/SndKit.h>
 #import "MKSamplerInstrument.h"
 
@@ -34,13 +37,12 @@
 
 int activeSoundMax = DEFAULT_ACTIVE_SOUND_MAX;
 int activeSoundCount = 0;
-int MK_filename;
 
 @implementation MKSamplerInstrument
 
 - reset
 {
-  int i;
+  //int i;
   // this should be taken from the note parameter
   //	amp = (double)strtol([ampField stringValue], NULL, 10);
   linearAmp = MKdB(amp);
@@ -97,7 +99,6 @@ int MK_filename;
 - init
 {
   [super init];
-  MK_filename = [MKNote parTagForName: @"filename"]; // this should be done in parNames.m in the MusicKit
   if (!soundTable) {
     soundTable = [NSMutableDictionary dictionaryWithCapacity: DEFAULT_ACTIVE_SOUND_MAX];
     [soundTable retain];
@@ -202,7 +203,7 @@ int MK_filename;
 //  [playingSample setDuration: MK_ENDOFTIME]; // [aNote dur];
 //  [playingSample setNoteTag: noteTag];
   if (velocity != MAXINT) {
-    float v = (float) velocity / 127.0;
+//    float v = (float) velocity / 127.0;
 //    [playingSample setVelocity: 1.0 - (1.0 - (v * v)) * velocitySensitivity];
   }
 //  [playingSample setAmp: linearAmp volume: volume bearing: bearing / 45.0];
@@ -307,7 +308,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 - setVolume: (int) noteTag
 {
-  int i;
+//  int i;
 //  for (i = 0; i < MAX_PERFORMERS; i++)
 //    if ((noteTag == MAXINT) || (noteTag == [playingSamples[i] noteTag]))
 //      [playingSamples[i] setVolume:volume];
@@ -316,8 +317,8 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 - setBearing: (int) noteTag
 {
-  int i;
-  float tmp = bearing/45.0;
+//  int i;
+//  float tmp = bearing/45.0;
 
 //  for (i = 0; i < MAX_PERFORMERS; i++)
 //    if ((noteTag == MAXINT) || (noteTag == [playingSamples[i] noteTag]))
@@ -327,7 +328,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 - setPitchBend: (int) noteTag
 {
-  int i;
+//  int i;
 
 //  for (i = 0; i < MAX_PERFORMERS; i++)
 //    if ((noteTag == MAXINT) || (noteTag == [playingSamples[i] noteTag]))
@@ -337,7 +338,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 - activate:(int)noteTag
 {
-  int i;
+//  int i;
 
 //  for (i = 0; i < MAX_PERFORMERS; i++)
 //    if (playingSamples[i] && ((noteTag == MAXINT) || (noteTag == [playingSamples[i] noteTag]))) {
@@ -349,7 +350,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 - deactivate:(int)noteTag
 {
-  int i;
+//  int i;
 
 #if 0 // only needed when we are recording.
   if (noteTag == recordTag) {
@@ -387,7 +388,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 - abort
 {
-  int i;
+//  int i;
 #if 0
   if ([recorder isActive])
     [recorder stopRecording];
@@ -460,9 +461,9 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
   //if (isControlPresent(aNote, recordModeController))
   //	recordMode = getControlValAsInt(aNote, recordModeController) > 0;
   if (MKIsNoteParPresent(aNote, MK_controlChange)) {
+#if 0
     int controller = MKGetNoteParAsInt(aNote, MK_controlChange);
 
-#if 0
     if (controller == MIDI_DAMPER) {
       damperOn = (MKGetNoteParAsInt(aNote, MK_controlVal) >= 64);
       if (!damperOn)
