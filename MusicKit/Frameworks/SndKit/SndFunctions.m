@@ -48,38 +48,38 @@ int st_ausunencoding(int size, int encoding);  // from sox au.c
 
 int SndSampleWidth(int format)
 {
-	int width;
-		switch (format) {
-			case SND_FORMAT_MULAW_8:
-			case SND_FORMAT_LINEAR_8:
-				width = 1;
-				break;
-			case SND_FORMAT_EMPHASIZED:
-			case SND_FORMAT_COMPRESSED:
-			case SND_FORMAT_COMPRESSED_EMPHASIZED:
-			case SND_FORMAT_DSP_DATA_16:
-			case SND_FORMAT_LINEAR_16:
-				width = 2;
-				break;
-			case SND_FORMAT_LINEAR_24:
-			case SND_FORMAT_DSP_DATA_24:
-				width = 3;
-				break;
-			case SND_FORMAT_LINEAR_32:
-			case SND_FORMAT_DSP_DATA_32:
-				width = 4;
-				break;
-			case SND_FORMAT_FLOAT:
-				width = sizeof(float);
-				break;
-			case SND_FORMAT_DOUBLE:
-				width = sizeof(double);
-				break;
-			default: /* just in case */
-				width = 2;
-				break;
-		}
-	return width;
+    int width;
+    switch (format) {
+    case SND_FORMAT_MULAW_8:
+    case SND_FORMAT_LINEAR_8:
+        width = 1;
+        break;
+    case SND_FORMAT_EMPHASIZED:
+    case SND_FORMAT_COMPRESSED:
+    case SND_FORMAT_COMPRESSED_EMPHASIZED:
+    case SND_FORMAT_DSP_DATA_16:
+    case SND_FORMAT_LINEAR_16:
+        width = 2;
+        break;
+    case SND_FORMAT_LINEAR_24:
+    case SND_FORMAT_DSP_DATA_24:
+        width = 3;
+        break;
+    case SND_FORMAT_LINEAR_32:
+    case SND_FORMAT_DSP_DATA_32:
+        width = 4;
+        break;
+    case SND_FORMAT_FLOAT:
+        width = sizeof(float);
+        break;
+    case SND_FORMAT_DOUBLE:
+        width = sizeof(double);
+        break;
+    default: /* just in case */
+        width = 2;
+        break;
+    }
+    return width;
 }
 int mcheck()
 {
@@ -1136,8 +1136,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
                (informat.info.channels > 1) ? "channels" : "channel");
             if (informat.comment)
                 printf("Input file: comment \"%s\"\n", informat.comment);
-            printf("Location:%d size:%d format:%d sr:%d cc:%d info:%s\n",
-                s->dataLocation, s->dataSize, s->dataFormat, s->samplingRate, s->channelCount, s->info);
+            SndPrintStruct(s);
         }
 
 	*sound = s;
