@@ -38,17 +38,23 @@
 }
 
 /*!
-    @method   player
+    @method     player
     @abstract   Factory method
     @discussion To come
     @result     A freshly initialized and autoreleased SndPlayer
 */
 + player;
 
+/*!
+    @method     defaultSndplayer
+    @abstract   Factory method
+    @discussion To come
+    @result     The default SndPlayer object
+*/
 + (SndPlayer*) defaultSndPlayer;
 
 /*!
-    @method   playSnd:withTimeOffset:
+    @method     playSnd:withTimeOffset:
     @abstract   Begin playing a Snd instance immediately.
     @param      s The sound to start playing
     @result     The SndPerformance object assocaited with this instance of the Snd's performance 
@@ -172,6 +178,17 @@
 */
 - (NSArray *) performancesOfSnd: (Snd *) snd;
 
+/*!
+    @method     setRemainConnectedToManager:
+    @abstract   Sets the SndPlayer disconnection behaviour when no sounds
+                remain in the pending or play arrays. 
+    @discussion By default, the SndPlayer remains connected to the stream manager, which
+                in turn means that streaming is still active. If you are only playing sounds
+                occassionaly, you may notwish to incur this slight overhead. The trade off
+                is that if disconnection is set to be the behaviour, you will have a higher
+                performance cost when starting the play back of a new sound in the future, as
+                new threads are brought into existance, and streaming is started up.
+*/
 - setRemainConnectedToManager: (BOOL) b;
 
 @end
