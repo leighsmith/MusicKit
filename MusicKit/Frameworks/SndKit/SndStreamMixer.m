@@ -24,12 +24,12 @@
 @implementation SndStreamMixer
 
 ////////////////////////////////////////////////////////////////////////////////
-// sndStreamMixer
+// mixer
 ////////////////////////////////////////////////////////////////////////////////
 
-+ sndStreamMixer
++ mixer
 {
-  return [SndStreamMixer new];
+    return [[[SndStreamMixer alloc] init] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,18 +66,18 @@
 // description
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) description
+- (NSString *) description
 {
-  int c = [self clientCount];
-  return [NSString stringWithFormat: @"%@ with %i client%s", [super description], c, c > 1 ? "s" : ""];
+    int c = [self clientCount];
+    return [NSString stringWithFormat: @"%@ with %i client%s", [super description], c, c > 1 ? "s" : ""];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // processInBuffer:outBuffer:nowTime:
 ////////////////////////////////////////////////////////////////////////////////
 
-- processInBuffer: (SndAudioBuffer*) inB
-        outBuffer: (SndAudioBuffer*) outB
+- processInBuffer: (SndAudioBuffer *) inB
+        outBuffer: (SndAudioBuffer *) outB
           nowTime: (double) t
 {
     int clientCount, clientIndex;
@@ -91,7 +91,7 @@
 //    [outB mixWithBuffer: inB];
 
 #if SNDSTREAMMIXER_DEBUG
-    NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n",t);
+    NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n", nowTime);
 #endif
 
     [outB zero];
@@ -111,7 +111,7 @@
 	    if (currentlyExposedOutputBuffer != nil) {
 #if SNDSTREAMMIXER_DEBUG
 		long framesMixed = [outB mixWithBuffer: currentlyExposedOutputBuffer];
-		NSLog(@"[mixer] Mixed %ld frames\n", framesMixed);
+		NSLog(@"[mixer] Mixed %ld frames from mixing buffer %p\n", framesMixed, currentlyExposedOutputBuffer);
 #else
 		[outB mixWithBuffer: currentlyExposedOutputBuffer];
 #endif
@@ -131,7 +131,7 @@
     [streamClientsLock unlock];
 
 #if SNDSTREAMMIXER_DEBUG
-    fprintf(stderr, "[mixer] Leaving processInBuffer\n");
+    NSLog(@"[mixer] Leaving processInBuffer\n");
 #endif
     return self;
 }
@@ -143,7 +143,7 @@
 // couldn't start streaming... true if all is well.
 ////////////////////////////////////////////////////////////////////////////////
 
-- (int) addClient: (SndStreamClient*) client
+- (int) addClient: (SndStreamClient *) client
 {
     int  clientCount;
     BOOL clientPresent;    
@@ -156,7 +156,7 @@
     clientCount   = [streamClients count];
 
 #if SNDSTREAMMIXER_DEBUG    
-    fprintf(stderr, "[mixer] SndStreamManager::addClient - client added.");
+    NSLog(@"[mixer] -addClient: client added.");
 #endif
     
     [streamClientsLock unlock];
@@ -167,7 +167,7 @@
 // removeClient:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) removeClient: (SndStreamClient*) client
+- (BOOL) removeClient: (SndStreamClient *) client
 {
     BOOL clientPresent = [streamClients containsObject: client];
 
@@ -175,12 +175,12 @@
         [streamClientsLock lock];
         [streamClients removeObject: client];        
 #if SNDSTREAMMIXER_DEBUG    
-        fprintf(stderr, "[mixer] SndStreamManager::removeClient - Removing client");
+        NSLog(@"[mixer] -removeClient: Removed client");
 #endif
         [streamClientsLock unlock];
     }
     else
-        NSLog(@"[mixer] SndStreamManager::removeClient - Error: client was not present.");
+        NSLog(@"[mixer] -removeClient: Error: client was not present.");
     
     return clientPresent;
 }
@@ -195,24 +195,22 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// managerIsShuttingDown
+// finishMixing
 ////////////////////////////////////////////////////////////////////////////////
 
-- managerIsShuttingDown
+- (void) finishMixing
 {
     [streamClientsLock lock];    // wait for current processBuffers to finish.
     if ([streamClients count] > 0)
-      [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];    
+	[streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];    
     [streamClientsLock unlock];
-    
-    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // audioProcessorChain
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioProcessorChain*) audioProcessorChain
+- (SndAudioProcessorChain *) audioProcessorChain
 {
   return [[processorChain retain] autorelease]; 
 }
