@@ -131,10 +131,26 @@ NSArray *SndFileExtensions(void)
 static int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCode)
 {
     int sndfileFormat;
+    int formatIndex, formatCount;
+    SF_FORMAT_INFO sfFormatInfo;
     
-    // Determine major format from file extension
-    // TODO for now just fix it to AIFF
+    // Determine major format from file extension, default to AIFF
     sndfileFormat = SF_FORMAT_AIFF;
+    
+    // libsndfile's "major" formats are different standard sound file formats, 
+    // the "subtype" formats are various encodings within each format.
+    sf_command(NULL, SFC_GET_FORMAT_MAJOR_COUNT, &formatCount, sizeof(int));
+
+    for (formatIndex = 0; formatIndex < formatCount; formatIndex++) {	
+	sfFormatInfo.format = formatIndex;
+        if(sf_command(NULL, SFC_GET_FORMAT_MAJOR, &sfFormatInfo, sizeof(sfFormatInfo)) == 0) {
+            if(strcmp(extension, sfFormatInfo.extension) == 0) {
+                sndfileFormat = sfFormatInfo.format;
+                break;
+            }
+        }
+    }
+    
     switch (sndFormatCode) {
     case SND_FORMAT_MULAW_8:
 	sndfileFormat |= SF_FORMAT_ULAW;
@@ -587,6 +603,9 @@ int SndReadSoundfile(NSString *path, SndSoundStruct **sound)
 //
 #ifdef LIBSNDFILE_AVAILABLE
 
+// TODO: Isolates format from data, and file format from file name.
+// int SndWriteSoundfile(NSString *filename, NSString *fileFormat, SndFormat *soundFormat, NSData *soundData)
+
 int SndWriteSoundfile(NSString *filename, SndSoundStruct *sound)
 {
     SF_INFO sfinfo;
@@ -597,7 +616,9 @@ int SndWriteSoundfile(NSString *filename, SndSoundStruct *sound)
     sfinfo.samplerate = (int) sound->samplingRate;
     sfinfo.channels = sound->channelCount;
     // TODO, at the moment we only set the output format from the format of the soundStruct itself, which
-    // nowdays will typically be float since all buffers will read that way. We need a writing format parameter when calling this function. This should probably happen at the same time we abandon SndSoundStructs.
+    // nowdays will typically be float since all buffers will read that way. 
+    // We enforce any desired format changes to be done within the Snd and this function writes whatever it is given.
+    // This should probably happen at the same time we abandon SndSoundStructs.
     sfinfo.format = SndDataFormatToSndFileEncoding([[filename pathExtension] cString], sound->dataFormat);
     // comment       = sound->info;
 
