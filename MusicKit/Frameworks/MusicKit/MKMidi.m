@@ -77,6 +77,11 @@
 Modification history:
 
   $Log$
+  Revision 1.45  2002/01/29 16:20:33  sbrandon
+  tidied up object retain/release in getAvailableMidiDevices,
+  preventing array leaks/stale pointers when no MIDI devices are
+  present
+
   Revision 1.44  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -1244,11 +1249,14 @@ static BOOL getAvailableMidiDevices(void)
     midiDriverNames = [NSMutableArray array];
     midiDriverUnits = [NSMutableArray array];
     for(i = 0; systemDriverNames[i] != NULL; i++) {
-        [midiDriverNames insertObject: [NSString stringWithCString: systemDriverNames[i]] atIndex: i];
-        [midiDriverUnits insertObject: [NSNumber numberWithInt: i] atIndex: i];
+        [midiDriverNames addObject: [NSString stringWithCString: systemDriverNames[i]]];
+        [midiDriverUnits addObject: [NSNumber numberWithInt: i]];
     }
-    if([midiDriverNames count] == 0)
+    if([midiDriverNames count] == 0) {
+        midiDriverNames = nil; /* ensure we don't have stale pointers around */
+        midiDriverUnits = nil;
         return NO;
+    }
     // NSLog([midiDriverNames description]);
     [midiDriverNames retain];
     [midiDriverUnits retain];
@@ -1259,7 +1267,7 @@ static BOOL getAvailableMidiDevices(void)
 
 static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverNameAndUnit)
     /* Maps a name of the form "midi0" to a name of the form "Mididriver2".
-     * See above long explanation.  Returns copy of hard name.
+     * See above long explanation.  Returns temporary NSString of hard name.
      */
 {
     NSString *midiNumStrArr;
@@ -1279,22 +1287,22 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
         // This is what we want to allow for different applications to use different MIDI
         // devices if necessary.
         defaultsValue = (NSString *) [[NSUserDefaults standardUserDefaults] objectForKey: midiNumStrArr];
-	if ([defaultsValue length]) 
+	if ([defaultsValue length]) {
             num = getNumSuffix(defaultsValue, &isSoft);
-	else if (num == 0) { 
+	} else if (num == 0) { 
             // Use the system default MIDI driver for midi0, not necessarily the first entry.
             // TODO this should probably be changed to allow "midiDefault" as a device name,
             // or consign midi0 to be the default, midi1 as [midiDriverNames objectAtIndex: 0], etc.
-            *driverNameAndUnit = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
+            *driverNameAndUnit = [midiDriverNames objectAtIndex: systemDefaultDriverNum];
             return YES;
 	}
         else {
-            *driverNameAndUnit = [[midiDriverNames objectAtIndex: num] copy];
+            *driverNameAndUnit = [midiDriverNames objectAtIndex: num];
             return YES;
         }
     }
     // here we assume if we didn't have a soft device name, we are referring to a described device.
-    *driverNameAndUnit = [[devName copy] retain];
+    *driverNameAndUnit = devName;
 
     // ensure the driver was on the legitimate list
     for (i=0; i < [midiDriverNames count]; i++) {
@@ -1396,7 +1404,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
         [portTable setObject: self forKey: hostAndDevName]; 
     }
     // even if the device is in the portTable, we still need to set the device and host name
-    hostname = [hostName copy];
+    hostname = [hostName retain];
     midiDevName = [devName retain];
 
     if (noteSenders != nil) /* Already initialized */
