@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.12  2001/04/28 21:27:56  leighsmith
+// Added Guillaume Outters patch for retrieving the driver list, now returns the full driver list, albeit potentially two drivers are named the same, e.g for input and for output
+//
 // Revision 1.11  2001/04/13 01:27:39  leighsmith
 // Ensured that sample times are reset regardless of other errors
 //
@@ -308,9 +311,6 @@ static BOOL retrieveDriverList(void)
     int driverIndex = 0;
     AudioDeviceID *allDeviceIDs;
 
-    // TODO for now, fudge we have only one driver, the default. We should retrieve the full list.
-    numOfDevices = 1; // TODO assume there is at least one.
-
     CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propertySize, &propertyWritable);
     // fprintf(stderr, "AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
     //    (char *) &CAstatus, propertySize, propertyWritable);
@@ -320,30 +320,30 @@ static BOOL retrieveDriverList(void)
         return FALSE;
     }
 
-    CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDevices,
-                    &propertySize, &allDeviceIDs);
+    allDeviceIDs = (AudioDeviceID *) malloc(propertySize);
+
+    CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propertySize, allDeviceIDs);
     // fprintf(stderr, "AudioHardwareGetProperty kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld\n", (char *) &CAstatus, propertySize);
     if (CAstatus) {
         fprintf(stderr, "AudioDeviceGetProperty 1 returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
-    // fprintf(stderr, "numOfDevices = %ld\n", propertySize / sizeof(AudioDeviceID));
-    // allDeviceIDs = %d\n", allDeviceIDs);
+    numOfDevices = propertySize / sizeof(AudioDeviceID);
+    // fprintf(stderr, "numOfDevices = %d\n", numOfDevices);
 
     if((driverList = (char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
         fprintf(stderr, "Unable to malloc driver list\n");
         return FALSE;
     }
     
-#if 0
     for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
-        char* deviceName;
+        char *deviceName;
         CAstatus = AudioDeviceGetPropertyInfo(allDeviceIDs[driverIndex], 0, false,
                                             kAudioDevicePropertyDeviceName,
                                             &propertySize, &propertyWritable);
-        fprintf(stderr, "output device CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-            getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
+        //fprintf(stderr, "output device CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
+        //    getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
             
         // malloc up enough memory for the name.
         if((deviceName = (char *) malloc(propertySize * sizeof(char))) == NULL) {
@@ -359,12 +359,11 @@ static BOOL retrieveDriverList(void)
             fprintf(stderr, "AudioDeviceGetProperty 2 returned %s\n", getCoreAudioErrorStr(CAstatus));
             return FALSE;
         }
-        else
-          fprintf(stderr,"DevID: %p   name: %s\n", allDeviceIDs[driverIndex], deviceName);
+
+        // fprintf(stderr,"DevID: %p   name: %s\n", allDeviceIDs[driverIndex], deviceName);
     
         driverList[driverIndex] = deviceName;
     }
-#endif
 
     driverList[driverIndex] = NULL; // NULL terminate the list
     return TRUE;
@@ -407,15 +406,15 @@ static BOOL isDeviceRunning(AudioDeviceID deviceID, bool isInput)
 void dumpStreamDescription(AudioStreamBasicDescription *StrBasDesc)
 {
   fprintf(stderr,"samplerate:      %f\nformat:           %li\nFormatflags:     %X\n",
-  StrBasDesc->mSampleRate,		    //	the native sample rate of the audio stream
-  StrBasDesc->mFormatID,		  	  //	the specific encoding type of audio stream
-  (unsigned int)StrBasDesc->mFormatFlags);		  //	flags specific to each format
+  StrBasDesc->mSampleRate,		            // the native sample rate of the audio stream
+  StrBasDesc->mFormatID,		  	    // the specific encoding type of audio stream
+  (unsigned int)StrBasDesc->mFormatFlags);	    // flags specific to each format
   fprintf(stderr,"bytesPerPacket:  %li\nframesPerPacket: %li\nBytesPerFrame:   %li\n",
-  StrBasDesc->mBytesPerPacket,	  //	the number of bytes in a packet
-  StrBasDesc->mFramesPerPacket,  	//	the number of frames in each packet
-  StrBasDesc->mBytesPerFrame);	  //	the number of bytes in a frame
+  StrBasDesc->mBytesPerPacket,                      // the number of bytes in a packet
+  StrBasDesc->mFramesPerPacket,                     // the number of frames in each packet
+  StrBasDesc->mBytesPerFrame);                      // the number of bytes in a frame
   fprintf(stderr,"ChannelsPerFrame:%li\nBitsPerChannel:  %li\n",
-  StrBasDesc->mChannelsPerFrame,	//	the number of channels in each frame
+  StrBasDesc->mChannelsPerFrame,                    // the number of channels in each frame
   StrBasDesc->mBitsPerChannel);
 }
 
@@ -645,30 +644,10 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // The client application should not attempt to free the pointers.
 // TODO return driverIndex by reference
 PERFORM_API char **SNDGetAvailableDriverNames(void)
-{
-    char *deviceName;
-    OSStatus CAstatus;
-    UInt32 propertySize = 256;
-    
-    // This needs to be called after initialising. TODO - probably should call the initialisation.
+{    
+    // We need the initialisation to retrieve the driver list.
     if(!initialised)
-        return NULL;
-
-// TODO all this should move into retrieveDriverList
-    if((deviceName = (char *) malloc(propertySize * sizeof(char))) == NULL) {
-        fprintf(stderr, "Unable to malloc deviceName string\n");
-        return NULL;
-    }
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
-                                    kAudioDevicePropertyDeviceName,
-                                    &propertySize, deviceName);
-    if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty 7 returned %s\n", getCoreAudioErrorStr(CAstatus));
-        return NULL;
-    }
-
-    driverList[driverIndex] = deviceName;
-// TODO
+        SNDInit(TRUE);
 
     return driverList;
 }
