@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2002/01/24 13:55:39  sbrandon
+  fixed a couple of places where notes could possibly get dealloced between
+  being removed from one array and added to another
+
   Revision 1.20  2002/01/24 13:26:57  sbrandon
   return NSOrderedAscending instead of int from _MKNoteCompare, removed some
   needless comments.
@@ -506,7 +510,6 @@ static int nAppBitVects(); /* forward ref */
 {
     *aNoteOff = [(*aNoteOn = [self copyWithZone:NSDefaultMallocZone()]) _splitNoteDurNoCopy];
     [*aNoteOff retain];
-    [*aNoteOn retain];
     if (*aNoteOff)
       return self;
     return nil;
@@ -587,10 +590,12 @@ static int nAppBitVects(); /* forward ref */
 { 
     double tmp = timeTag;
     id aPart = part;    /* Save it because remove causes it to be set to nil */
-    newTimeTag = MIN(MAX(newTimeTag,0.0),MK_ENDOFTIME); 
+    newTimeTag = MIN(MAX(newTimeTag,0.0),MK_ENDOFTIME);
+	[self retain]; /* so there's no chance of being dealloced in the next line */
     [aPart removeNote:self];
     timeTag = newTimeTag;
     [aPart addNote:self];
+	[self release];
     return tmp; 
 }
 
@@ -614,11 +619,13 @@ static int nAppBitVects(); /* forward ref */
             double tmp     = timeTag;
             double endTime = getNoteEndTime(self);
             id aPart = part;    /* Save it because remove causes it to be set to nil */
+			[self retain]; /* ensure we don't get dealloced when removed from array */
             newTimeTag = MIN(MAX(newTimeTag,0.0), endTime);
             [aPart removeNote:self];
             [self setDur: endTime - newTimeTag];
             timeTag = newTimeTag;
             [aPart addNote:self];
+			[self release];
             return tmp;
         }
         default:
