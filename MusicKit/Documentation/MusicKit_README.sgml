@@ -157,15 +157,14 @@ are available at the same distribution site.
 </para>
 
 <para>
-Source code is available for everything, with
-the exception of the NeXT hardware implementation of the low-level
-sound and DSP drivers.  This means researchers and developers may
-study the source or even customize the Music Kit and DSP Tools to suit
-their needs.  Enhancements can be sent to 
-<email>leigh@tomandandy.com</email>
-to have them incorporated for future releases. Commercial software
-developers may freely incorporate and adapt the software to accelerate
-development of software products.
+Source code is available for everything, with the exception of the
+NeXT hardware implementation of the low-level sound and DSP drivers.
+This means researchers and developers may study the source or even
+customize the Music Kit and DSP Tools to suit their needs.
+Enhancements can be committed to the <link linkend=fixes>CVS
+repository</link> to have them incorporated for future
+releases. Commercial software developers may freely incorporate and
+adapt the software to accelerate development of software products.
 </para>
 
     <sect2 id=features>
@@ -314,7 +313,8 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-announce</ulink>.
 
 	<listitem>
 	  <para>
-Discussions on development of the MusicKit are sent to
+Discussions on development of the MusicKit and notices of updates
+committed to the CVS source repository are sent to
 <email>musickit-developer@lists.sourceforge.net</email>. 
 Subscribe to the list by visiting 
 <ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-developer">
@@ -334,9 +334,11 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-users</ulink>.
 	</listitem>
       </itemizedlist>
       <para>
-Don't assume nothing is being done if you don't hear anything for a while!
-The maintainers are usually adding fixes/code, but full releases are
-less frequent. The <link linkend=fixes>CVS repository</link> can be made available to track all updates.
+Don't assume nothing is being done if you don't hear anything for a
+while!  The maintainers are usually adding fixes/code, but full
+releases are less frequent. The <link linkend=fixes>CVS
+repository</link> can be used to track all updates and obtain them as
+they are committed by developers.
 </para>
     </sect2>
 
@@ -443,7 +445,7 @@ MusicKit Tutorials
 	    <entry>N</entry>
 	  </row>
 	  <row>
-	    <entry>MacOS X Public Beta</entry>
+	    <entry>MacOS X</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
@@ -929,6 +931,12 @@ the <productname class="Registered">Midiman</productname>
 	</listitem>
 	<listitem>
 	  <para><application>Ensemble</application> (Michael McNabb)</para>
+<para>
+		Ensemble combines elements of a sequencer, a voicing
+			application and an algorithmic composition 
+			application. 
+</para>
+
 	</listitem>
 	<listitem>
 	  <para><application>EnvelopeEd</application> (Fernando Lopez Lezcano)</para>
@@ -959,86 +967,236 @@ the <productname class="Registered">Midiman</productname>
 	</listitem>
 	<listitem>
 	  <para><application>ResonSound</application> (David Jaffe)</para>
+	  <para>
+Real time processing of sound from the <acronym>DSP</acronym> serial port.
+</para>
 	</listitem>
       </itemizedlist>
     </sect2>
 
     <sect2 id="examples">
       <title>Example code in the distribution</title>
-      <itemizedlist>
-	<listitem>
-	  <para><application>MidiFilePlayback</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>MidiEcho</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>MidiLoop</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>MidiPlay</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>MidiRecord</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>PerformerExample</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>PlayNote</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>QuintProcessor</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>ResonSound</application></para>
-	</listitem>
-	<listitem>
-	  <para><application>SineGen</application></para>
-	</listitem>
-	<listitem>
-	  <para>playpart</para>
-	</listitem>
-	<listitem>
-	  <para>playscorefile2</para>
-	</listitem>
-	<listitem>
-	  <para>process_soundfiles_dsp</para>
-	</listitem>
-	<listitem>
-	  <para>mixscorefiles</para>
-	</listitem>
-	<listitem>
-	  <para>mixsounds</para>
-	</listitem>
-	<listitem>
-	  <para>playscorefile</para>
-	</listitem>
-	<listitem>
-	  <para>playscorefilemidi</para>
-	</listitem>
-	<listitem>
-	  <para>example1</para>
-	</listitem>
-	<listitem>
-	  <para>example3</para>
-	</listitem>
-	<listitem>
-	  <para>example4</para>
-	</listitem>
-	<listitem>
-	  <para>example5</para>
-	</listitem>
-	<listitem>
-	  <para>exampleSynthPatch</para>
-	</listitem>
-	<listitem>
-	  <para>exampleUnitGenerator</para>
-	</listitem>
-	<listitem>
-	  <para>metronome</para>
-	</listitem>
-      </itemizedlist>
+      <para>
+There are two kinds of programming examples.  Programs
+with names entirely in lowercase, such as <command>playscorefile</command>, are
+command-line programs.  Programs with names beginning with an
+uppercase letter, such as <application>PlayNote</application>, are applications
+(i.e. graphic-interface programs).
+</para>
+
+      <para>
+The complete set of programs is listed below.  For further information
+on a given programming example, see the README file in its directory.
+</para>
+
+      <variablelist>
+	<title>Simple command-line programming examples</title>
+
+	<varlistentry>
+	  <term><command>playpart</command></term>
+	  <listitem>
+	    <para>
+Create notes algorithmically and play them.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>playscorefile</command></term>
+	  <listitem>
+	    <para>
+Read a scorefile into a <classname>MKScore</classname> and play it on
+the <acronym>DSP</acronym>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>playscorefile2</command></term>
+	  <listitem>
+	    <para>
+Read a scorefile and play it on the DSP as it is read.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>playscorefilemidi</command></term>
+	  <listitem>
+	    <para>
+Play scorefile through <acronym>MIDI</acronym> out.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>mixscorefiles</command></term>
+	  <listitem>
+	    <para>
+Mix any number of scorefiles and write the result out.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>process_soundfiles_dsp</command></term>
+	  <listitem>
+	    <para>
+Process a sound file through the <acronym>DSP</acronym>
+(non-real-time).  Includes <classname>MKSynthPatch</classname>es for
+resonating and enveloping sounds.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>mixsounds</command></term>
+	  <listitem>
+	    <para>
+Soundfile mixer that shows how to make your own
+<classname>MKInstrument</classname> (non-real-time).
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>exampleSynthPatch</command></term>
+	  <listitem>
+	    <para>
+Demonstrates how to build a <classname>MKSynthPatch</classname> and play it.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>exampleUnitGenerator</command></term>
+	  <listitem>
+	    <para>
+Demonstrates how to build a <classname>MKUnitGenerator</classname>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>example1</command></term>
+	  <listitem>
+	    <para>
+Simple <classname>MKNote</classname> and
+<classname>MKScore</classname> generation.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>example2</command></term>
+	  <listitem>
+	    <para>
+Demonstration of playing <classname>MKNote</classname>s.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>example3</command></term>
+	  <listitem>
+	    <para>
+Simple algorithmic melody generation.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>example4</command></term>
+	  <listitem>
+	    <para>
+Simple algorithmic melody generation using <classname>MKPart</classname>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><command>example5</command></term>
+	  <listitem>
+	    <para>
+Demonstration of <classname>MKUnitGenerator</classname>s.
+</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+      
+      <variablelist>
+	<title>Simple application programming examples</title>
+	<varlistentry>
+	  <term><application>Metronome</application></term>
+	  <listitem>
+	    <para>
+Simple note playing.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>MidiFilePlayback</application></term>
+	  <listitem>
+	    <para>
+Play MIDI files with samples using <classname>MKSamplerInstrument</classname>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>MidiEcho</application></term>
+	  <listitem>
+	    <para>
+Take <acronym>MIDI</acronym> in, generate echoes, and send to
+<acronym>MIDI</acronym> output.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>MidiLoop</application></term>
+	  <listitem>
+	    <para>
+Take <acronym>MIDI</acronym> input and send it right out
+<acronym>MIDI</acronym> again.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>MidiPlay</application></term>
+	  <listitem>
+	    <para>
+Take <acronym>MIDI</acronym> input and play the <acronym>DSP</acronym>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>MidiRecord</application></term>
+	  <listitem>
+	    <para>
+Read <acronym>MIDI</acronym> input into a
+<classname>MKScore</classname> obj, write a scorefile.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>PerformerExample</application></term>
+	  <listitem>
+	    <para>
+Adjust algorithmically-generated music playing on <acronym>DSP</acronym>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>PlayNote</application></term>
+	  <listitem>
+	    <para>
+Click a button to play and adjust notes on the <acronym>DSP</acronym>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>QuintProcessor</application></term>
+	  <listitem>
+	    <para>
+Interactive application for the <productname>Ariel</productname>
+<productname>QuintProcessor</productname>.
+</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><application>SineGen</application></term>
+	  <listitem>
+	    <para>
+Interactively adjust the frequency of a sine wave.
+</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
     </sect2>
   </sect1>
 
@@ -1063,7 +1221,7 @@ build the entire source tree. Use
 <application>ProjectBuilder</application> or <command>make</command>
 on <productname>OpenStep</productname> or <productname>MacOS X Server
 V1.X</productname>, and the new <application>Project
-Builder</application> or <command>pbxbuild install</command> on
+Builder</application> or <command>pbxbuild install DSTROOT=/</command> on
 <productname>MacOS X</productname>. The steps to build are:
 </para>
 
@@ -1168,32 +1326,41 @@ The current list of tasks to be done is listed on the
       </listitem>
       <listitem>
 	<para>
-DSP on non-56K DSP systems. Stephen mentioned he got sound out under
-OS4.2. However none of the dsp drivers have been ported from NeXTStep
-V3.3 (as they are all ISA bus cards and I don't know of a PCI 56K card
-with published interface specs).
+<acronym>DSP</acronym> on non-56K <acronym>DSP</acronym>
+systems. Stephen mentioned he got sound out under OS4.2. However none
+of the <acronym>DSP</acronym> drivers have been ported from
+<productname>NeXTStep</productname> V3.3 (as they are all
+<acronym>ISA</acronym> bus cards and I don't know of a
+<acronym>PCI</acronym> <hardware>56K</hardware> card with published
+interface specs).
 </para>
 	<para>
 A more fruitful avenue seems to be to convert the unit generators to
-the MPEG Layer 4 structured audio language <ulink
-url="http://www.saol.net">SAOL</ulink>
+the <acronym>MPEG</acronym> Layer 4 structured audio language <ulink
+url="http://www.saol.net"><acronym>SAOL</acronym></ulink>
 <citation>ScheirerVercoe99</citation> and modify the MKDSP framework
 to download to a supporting card or do the emulation using the native
 processor.  If emulating with the native processor, it would then be
-possible to use Apples AltiVec vector libraries for increased
+possible to use <productname>Apple</productname>s
+<productname>AltiVec</productname> vector libraries for increased
 performance.
 </para>
       </listitem>
 
       <listitem>
 	<para>
-For this current revision the .nibs have been upgraded to work with
-MacOS X and MacOS X-Server and will not load with OpenStep 4.2. The
-.nibs which are compatible with OpenStep 4.2 are now named
-nibname-openstep.nib. At the moment you will need to manually
-symbolically link these to compile for OpenStep 4.2. Eventually
-Apple's
-InterfaceBuilder will produce XML based nibs which should reduce the
+For this current revision the <filename>.nib</filename>s have been
+upgraded to work with <productname>MacOS X</productname> and
+<productname>MacOS X-Server</productname> and will not load with
+<productname>OpenStep</productname> 4.2. The
+<filename>.nib</filename>s which are compatible with
+<productname>OpenStep</productname> 4.2 are now named
+<filename><replaceable>nibname</replaceable>-openstep.nib</filename>. At
+the moment you will need to manually symbolically link these to
+compile for <productname>OpenStep</productname> 4.2. Eventually
+<productname>Apple</productname>'s
+<application>InterfaceBuilder</application> will produce
+<acronym>XML</acronym> based nibs which should reduce the
 compatibility issue.
 </para>
       </listitem>
@@ -1203,16 +1370,15 @@ compatibility issue.
   <sect1 id=fixes>
     <title>Contributing Fixes</title>
     <para>
-Please! I am maintaining changes via a closed CVS system (<systemitem
-class="systemname">anoncvs.tomandandy.com</systemitem>) at the moment,
-since <systemitem class="systemname">sourceforge</systemitem> does not
-provide a CVS which supports -t/-f wrappers necessary for .rtfd
-support. If you send me <email>leigh@tomandandy.com</email> changes I
-will incorporate them and check them in. If you are planning to do
-major work, I can provide access to the CVS server. The long-term goal
-is to make the CVS tree fully available to all interested developers
-on sourceforge, but this requires all .rtfd files to be replaced.
-please help!
+Please! Changes are maintained via an open CVS system (<systemitem
+class="systemname">cvs.musickit.sourceforge.net</systemitem>). If you
+send me <email>leigh@tomandandy.com</email> changes I will incorporate
+them and check them in. If you are planning to do major work, I can
+register you as a developer to provide access to the CVS server.
+</para>
+<para>
+If you have discovered a bug, please report it via the
+<productname>sourceforge</productname> bug tracker.
 </para>
   </sect1>
 
