@@ -93,7 +93,7 @@
 		};
 		016D5A30FED483BBCFED3B93 = {
 			isa = PBXFileReference;
-			path = PerformSound.c;
+			path = PerformSound.m;
 			refType = 4;
 		};
 		016D5A38FED483BBCFED3B93 = {
@@ -129,7 +129,6 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";

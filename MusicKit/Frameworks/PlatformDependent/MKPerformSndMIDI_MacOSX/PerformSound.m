@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.1  2001/10/31 19:37:29  skotmcdonald
+// Changed PerformSound from .c to objC .m file to allow use of NSLock to support slightly hacky work around 10.1 core audios apparent dislike of having the same callback function for input and output devices, even tho the API clearly has buffers for both. hmm. Added second lightweight input callback which copies input data into local buffer for simultaneous presentation with output data from inside the output callback.
+//
 // Revision 1.19  2001/09/17 09:12:52  sbrandon
 // - repaired SndMute code to use the right variable for the start of the
 //   buffer to zero out (compiles properly now!)
@@ -83,10 +86,8 @@
 //
 */
 
+#import <Foundation/Foundation.h>
 #include <CoreAudio/CoreAudio.h>
-#include <c.h>         // for FALSE etc
-#include <stdlib.h>    // for NULL definition
-#include <stdio.h>     // for stderr
 #include "PerformSound.h"
 
 #ifdef __cplusplus
@@ -152,6 +153,8 @@ static double        firstSampleTime = -1.0; // indicates this has not been assi
 
 static float         *fInputBuffer = NULL;
 static BOOL          isMuted = FALSE;
+
+static NSLock* inputLock;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -269,6 +272,15 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
 // easy way to do the conversion without anyone writing their own converter.
 ////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+// vendBuffersToStreamManagerIOProc
+//
+// We vend the output and input buffers in their native format to avoid 
+// redundant conversions. This allows postponing the conversion to the last 
+// possible moment. The SndConvertFormat() function in the SndKit makes for an 
+// easy way to do the conversion without anyone writing their own converter.
+////////////////////////////////////////////////////////////////////////////////
+
 static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                           const AudioTimeStamp *inNow,
                           const AudioBufferList *inInputData,
@@ -327,6 +339,8 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
           inStream.streamData  = fInputBuffer;  
           outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
 
+          [inputLock lock];
+
           if (!inputInit) {
             memset(fInputBuffer, 0, bufferSizeInBytes);
           }
@@ -334,8 +348,11 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
           // hand over the stream buffers to the processor/stream manager.
           // the output time goes out as a relative time, noted from the 
           // first sample time we first receive.
+
           (*streamProcessor)(inOutputTime->mSampleTime - firstSampleTime,
                              &inStream, &outStream, streamUserData);
+
+          [inputLock unlock];
 
           if (isMuted) {
               memset(outStream.streamData,0,bufferSizeInBytes);
@@ -344,6 +361,47 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
     }
 #if DEBUG_CALLBACK    
     fprintf(stderr,"[SND] ending vend...\n");
+#endif
+    
+    return 0; // TODO need better definition...
+}
+
+static OSStatus vendBuffersToStreamManagerIOProcAux(AudioDeviceID inDevice,
+                          const AudioTimeStamp *inNow,
+                          const AudioBufferList *inInputData,
+                          const AudioTimeStamp *inInputTime,
+                          AudioBufferList *outOutputData,
+                          const AudioTimeStamp *inOutputTime,
+                          void *inClientData)
+{
+    SNDStreamBuffer inStream, outStream;
+    int bufferIndex;
+    
+#if DEBUG_CALLBACK    
+    fprintf(stderr,"[SND] starting vend aux...\n");
+#endif
+
+    if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
+        fprintf(stderr, "sample time is not valid!\n");
+    }
+    if(firstSampleTime == -1.0) {
+        firstSampleTime = inOutputTime->mSampleTime;
+    }
+
+    for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
+        if (inputInit) {
+            if (inInputData->mNumberBuffers == 0)
+                inStream.streamData = NULL;
+            else {
+                [inputLock lock];
+                memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+                [inputLock unlock];
+            }
+        }
+    }
+    
+#if DEBUG_CALLBACK    
+    fprintf(stderr,"[SND] ending vend aux...\n");
 #endif
     
     return 0; // TODO need better definition...
@@ -636,9 +694,11 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     if(!retrieveDriverList())
         return FALSE;
     
-    if(!initialised)
+    if(!initialised) {
         initialised = TRUE;                   // SNDSetDriverIndex() needs to think we're initialised.
-
+        inputLock   = [[NSLock alloc] init]; 
+    }
+    
     /* initialize CoreAudio device */
     if(guessTheDevice) {
         /* Get the default sound output device */    
@@ -910,7 +970,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         r = FALSE;
     }
     if (inputInit) {
-        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
+        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendBuffersToStreamManagerIOProcAux, NULL);
         if (CAstatus) {
             fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
          				getCoreAudioErrorStr(CAstatus));
@@ -925,7 +985,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
             r = FALSE;
         }
         if (inputInit) {
-            CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProc);
+            CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProcAux);
             if (CAstatus) {
                 fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
                         getCoreAudioErrorStr(CAstatus));
