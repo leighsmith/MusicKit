@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/03/07 18:19:17  leigh
+  Removed redundant getTime function (using NSDate nowdays)
+
   Revision 1.5  2000/02/03 19:12:22  leigh
   Renamed for MKDSP framework
 
@@ -119,34 +122,6 @@ static int DSPMKResumeSoundOut(void);
 
 
 #if 1
-static NSDate * getTime(void) /*sb: was static double... */
-/* returns the time in seconds.  A 52 bit mantissa in a IEEE double gives us 
-   16-17 digits of accuracy.  Taking off six digits for the microseconds in a 
-   struct timeval, this leaves 10 digits of seconds,  which is ~300 years.
-
-   The only catch is that this routine must be called at least every 72 min.
-   FIXME
-*/
-{
-/*
-    struct tsval ts;
-    static unsigned int lastStamp = 0;
-    static double accumulatedTime = 0.0;
-#   define MICRO ((double)0.000001)
-#   define WRAP_TIME (((double)0xffffffff) * MICRO)
-    kern_timestamp(&ts);
-    if (ts.low_val < lastStamp)
-	accumulatedTime += WRAP_TIME;
-    lastStamp = ts.low_val;
-    return accumulatedTime + ((double)ts.low_val) * MICRO;
- */
-
- /*sb: replaced all of above with new class, NSDate.
-  * There's really not much point in keeping this function, as it can be replaced in all instances
-  * by the NSDate call.
-  */
-    return [NSDate date];
-}
 
 #define TSTAMPS 100
 static NSDate *tstamps[TSTAMPS]; /*sb: was double... */

@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/03/07 18:21:14  leigh
+  Removed redundant getTime function (using NSDate nowdays)
+
   Revision 1.3  2000/01/13 06:41:46  leigh
   Corrected _MKErrorf to take NSString error message
 
@@ -284,29 +287,6 @@ Modification history:
  */
 
 #define _runT _reservedArielQP1 
-
-static NSDate * getTime(void) /*sb: was static double... */
-    /* Taken from Conductor.m */
-{
-/*
-    struct tsval ts;
-    static unsigned int lastStamp = 0;
-    static double accumulatedTime = 0.0;
-#   define MICRO ((double)0.000001)
-#   define WRAP_TIME (((double)0xffffffff) * MICRO)
-    kern_timestamp(&ts);
-    if (ts.low_val < lastStamp)
-	accumulatedTime += WRAP_TIME;
-    lastStamp = ts.low_val;
-    return accumulatedTime + ((double)ts.low_val) * MICRO;
- */
-    /*sb: replaced all of above with new class, NSDate.
-     * There's really not much point in keeping this function, as it can be replaced in all instances
-     * by the NSDate call.
-     */
-       return [NSDate date];
-
-}
 
 -awaitEndOfTime:(double)endOfTime timeStamp:(DSPTimeStamp *)aTimeStampP
 /* sb: endOfTime should be relative, so _runT needs to be absolute  (relative - (abs - abs))*/
