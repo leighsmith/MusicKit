@@ -5,8 +5,28 @@
 	};
 	objectVersion = 32;
 	objects = {
+		014D8B030104EDD0CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		014D8B040104EDD0CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
 		0F211414008FE77ECFED3B96 = {
 			buildStyles = (
+				014D8B030104EDD0CFED3B96,
+				014D8B040104EDD0CFED3B96,
 			);
 			isa = PBXProject;
 			mainGroup = 0F211415008FE77ECFED3B96;
@@ -152,7 +172,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -161,7 +180,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
