@@ -454,7 +454,7 @@
 	}
 	else {
 	    convertedBuffer = [[buff audioBufferConvertedToFormat: selfDataFormat
-							 channelCount: selfNumChannels
+						     channelCount: selfNumChannels
 						     samplingRate: [self samplingRate]] retain];
 	    in = [convertedBuffer bytes];
 	}
@@ -470,16 +470,16 @@
 #endif
     }
     out += startFrame * buffNumChannels;
-    // TODO we need a universal altivec mixer for all sample formats.
+    // TODO we need a universal altivec mixer for all destination sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
 #ifdef __VEC__
 	/* TODO need to do extra check to ensure altivec is supported at runtime */
 	vadd(in, 1, out, 1, out, 1, lengthInSamples);
 #else
-	int i;
+	unsigned long sampleIndex;
 	
-	for (i = 0; i < lengthInSamples; i++) {
-	    out[i] += in[i]; // interleaving automatically taken care of!
+	for (sampleIndex = 0; sampleIndex < lengthInSamples; sampleIndex++) {
+	    out[sampleIndex] += in[sampleIndex]; // interleaving automatically taken care of!
 	}
 #endif
 #if DEBUG_MIXING
@@ -704,21 +704,23 @@
 
 - (void) findMin: (float *) pMin max: (float *) pMax
 {
-    int i, samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
+    unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
+#ifndef __VEC__
+    unsigned long sampleIndex;
     const void *samplePtr = [data bytes];
     *pMin = 0.0;
     *pMax = 0.0;
 
     // Check all channels
-    for (i = 0; i < samplesInBuffer; i++) {
+    for (sampleIndex = 0; sampleIndex < samplesInBuffer; sampleIndex++) {
 	float sample = 0.0;
 
 	switch(format.dataFormat) {
 	case SND_FORMAT_FLOAT:
-	    sample = ((float *) samplePtr)[i];
+	    sample = ((float *) samplePtr)[sampleIndex];
 	    break;
 	case SND_FORMAT_LINEAR_16:
-	    sample = ((short *) samplePtr)[i];
+	    sample = ((short *) samplePtr)[sampleIndex];
 	    break;
 	default:
 	    NSLog(@"findMin:max: unsupported format %d\n", format.dataFormat);
@@ -729,6 +731,87 @@
 	else if (sample > *pMax)
 	    *pMax = sample;
     }
+#else
+    // Altivec implementation
+    switch(format.dataFormat) {
+	case SND_FORMAT_FLOAT: {
+	    const vector float *samplePtr = (vector float *) [data bytes];
+	    unsigned int vectorsInBuffer = samplesInBuffer / 4; // TODO FLOATS_IN_ALTIVECTOR
+	    unsigned int vectorIndex;
+	    vector unsigned int minusZero;
+	    vector float max, min;
+	    vector float rotatedMax, partialMax;
+	    vector float rotatedMin, partialMin;
+	    
+	    minusZero = vec_splat_u32(-1); 
+	    minusZero = vec_sl(minusZero, minusZero);
+	    min = max = (vector float) minusZero;
+	    
+	    for(vectorIndex = 0; vectorIndex < vectorsInBuffer; vectorIndex++) {
+		max = vec_max(max, samplePtr[vectorIndex]);
+		min = vec_min(min, samplePtr[vectorIndex]);
+	    }
+	    // We now have the max and min for each element location in the vector,
+	    // we now need to determine which is the max/min within the vector.
+	    rotatedMax = vec_sld(max, max, 4);			// rotate one float left = [2,3,4,1]
+	    partialMax = vec_max(max, rotatedMax);		// compare = [1>2, 2>3, 3>4, 4>1] -> highest and second highest values.
+	    rotatedMax = vec_sld(partialMax, partialMax, 8);    // rotate result two floats = [3>4, 4>1, 1>2, 2>3]
+	    max = vec_max(partialMax, rotatedMax);		// compare = [(1>2)>(3>4), (2>3)>(4>1), (3>4)>(1>2), (4>1)>(2>3)]
+	    // Choose the first element from the vector for the maximum value within the vector.
+	    vec_ste(max, 0, pMax);
+
+	    // determine min within the vector
+	    rotatedMin = vec_sld(min, min, 4);			// rotate one float left = [2,3,4,1]
+	    partialMin = vec_min(min, rotatedMin);		// compare = [1<2, 2<3, 3<4, 4<1] -> highest and second highest values.
+	    rotatedMin = vec_sld(partialMin, partialMin, 8);    // rotate result two floats = [3<4, 4<1, 1<2, 2<3]
+	    min = vec_min(partialMin, rotatedMin);		// compare = [(1<2)<(3<4), (2<3)<(4<1), (3<4)<(1<2), (4<1)<(2<3)]
+	    // Choose the first element from the vector for the minimum value within the vector.
+	    vec_ste(min, 0, pMin);
+	}
+	break;
+	// case SND_FORMAT_LINEAR_16:
+        // break;
+	default:
+	    NSLog(@"findMin:max: unsupported format %d\n", format.dataFormat);
+    }
+#endif
+}
+
+- (void) normalise
+{
+    float minSample, maxSample, maximumExcursion;
+    unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
+
+    [self findMin: &minSample max: &maxSample];
+    maximumExcursion = MAX(fabs(maxSample), fabs(minSample));
+    
+//#ifndef __VEC__
+#if 1
+    // Scalar implementation
+    switch(format.dataFormat) {
+    case SND_FORMAT_FLOAT: {
+	unsigned long sampleIndex;
+	float *samplePtr = (float *) [data bytes];
+
+	// Check all channels
+	for (sampleIndex = 0; sampleIndex < samplesInBuffer; sampleIndex++) {	    
+	    samplePtr[sampleIndex] /= maximumExcursion;
+	}
+	break;
+    }
+    default:
+	NSLog(@"normalise unsupported format %d\n", format.dataFormat);
+    }
+#else
+    // Altivec implementation
+    switch(format.dataFormat) {
+	case SND_FORMAT_FLOAT: {
+	    
+	}
+	default:
+	    NSLog(@"normalise unsupported format %d\n", format.dataFormat);
+    }
+#endif
 }
 
 - (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel
