@@ -20,7 +20,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity mkvertuple "5.4.1">
 <!entity sndvertuple "2.2.0">
 <!entity soxvertuple "12.17.3">
-<!entity lamevertuple "3.91">
+<!entity lamevertuple "3.92">
 <!entity icesvertuple "0.2.2">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://ftp.musickit.org/musickit">
@@ -104,7 +104,7 @@ tomandandy music inc.
       <para>
 These are overall comments (incorporating original notes by David
 A. Jaffe) and serve as the highest level overview of the
-MusicKit &horbar; the &ldquo;README&rdquo;.
+MusicKit &mkvertuple; &horbar; the &ldquo;README&rdquo;.
       </para>
     </abstract>
   </artheader>
@@ -166,26 +166,27 @@ as open source to the community.
    </para>
 
    <para>
-The <link linkend="availability"><productname>MusicKit</productname> Distribution</link> is a
-comprehensive package that includes <link linkend=onlinedoco>on-line
-documentation</link>, <link linkend=examples>programming
-examples</link>, <link linkend=applications>utilities,
-applications</link> and sample score documents. The <productname>MusicKit</productname> is
-dependent on the <productname>SndKit</productname> distribution, originally written by Stephen
-Brandon, and both Framework collections are available at the same
-distribution site.
+The <link linkend="availability"><productname>MusicKit</productname>
+Distribution</link> is a comprehensive package that includes <link
+linkend=onlinedoco>on-line documentation</link>, <link
+linkend=examples>programming examples</link>, <link
+linkend=applications>utilities, applications</link> and sample score
+documents. The <productname>MusicKit</productname> is dependent on the
+<productname>SndKit</productname> distribution, originally written by
+Stephen Brandon, and both Framework collections are available at the
+same distribution site.
 </para>
 
 <para>
 Source code is available for everything, with the exception of the
 <productname>NeXT</productname> hardware implementation of the
-low-level sound and <acronym>DSP</acronym> drivers.  This means researchers and
-developers may study the source or even customize the Music Kit and
-<acronym>DSP</acronym> Tools to suit their needs.  Enhancements can be committed to the
-<link linkend=fixes>CVS repository</link> to have them incorporated
-for future releases. Commercial software developers may freely
-incorporate and adapt the software to accelerate development of
-software products.
+low-level sound and <acronym>DSP</acronym> drivers.  This means
+researchers and developers may study the source or even customize the
+Music Kit and <acronym>DSP</acronym> Tools to suit their needs.
+Enhancements can be committed to the <link linkend=fixes>CVS
+repository</link> to have them incorporated for future
+releases. Commercial software developers may freely incorporate and
+adapt the software to accelerate development of software products.
 </para>
 
     <sect2 id=features>
@@ -582,7 +583,8 @@ library has been partially completed, porting the
 <productname>Intel</productname>
 <productname>Linux</productname>. Streaming sound works, but
 <acronym>MIDI</acronym> needs further work, please help! Potentially
-other platforms can work (<productname>Solaris</productname>,
+other <productname>Unix</productname> platforms will work
+(<productname>Solaris</productname>,
 <productname>FreeBSD</productname>, <productname>AIX</productname>
 etc) if they are supported in the PortAudio library and GnuStep.
 </para>
@@ -699,19 +701,21 @@ contributors (acknowledged in code comments).</para></listitem>
 	<para>
 Stephen Brandon <email>sbrandon@music.gla.ac.uk</email> did the
 initial OpenStep port in early 1998 and the majority of the conversion
-work. The <productname>MusicKit</productname> now uses the <productname>SndKit</productname>, written by Stephen Brandon,
-rather than the SoundKit for its sound processing.
+work. The <productname>MusicKit</productname> now uses the
+<productname>SndKit</productname>, written by Stephen Brandon, rather
+than the SoundKit for its sound processing.
 </para>
       </listitem>
 
       <listitem>
 	<para>
 Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
-<email>leigh@tomandandy.com</email> fixed bugs and ported the <productname>MusicKit</productname>
-and <acronym>MIDI</acronym> drivers to Intel and PowerPC Rhapsody in late 1998 and
-reorganised the packages and documentation for MacOS X-Server and in
-2000, to various developer previews of MacOS X.  The frameworks were
-ported to Windows 98/NT using DirectMusic in 1999.</para></listitem>
+<email>leigh@tomandandy.com</email> fixed bugs and ported the
+<productname>MusicKit</productname> and <acronym>MIDI</acronym>
+drivers to Intel and PowerPC Rhapsody in late 1998 and reorganised the
+packages and documentation for MacOS X-Server and in 2000, to various
+developer previews of MacOS X.  The frameworks were ported to Windows
+98/NT using DirectMusic in 1999.</para></listitem>
 
       <listitem><para>DirectSound interface code for Windows, MP3
 encoding and FX architecture was contributed by SKoT McDonald
@@ -1014,11 +1018,6 @@ sudo make install-lib
               The <ulink
 url="http://www.sourceforge.net/projects/lame">LAME</ulink> library
 provides <acronym>MP3</acronym> encoding/decoding capability.
-<!-- While 3.91 is the latest released version -->
-Unfortunately 3.91 needs patching to add
-<userinput>-fno-common</userinput> to compile. You will need to use
-the CVS repository version until a new release appears.
-<!-- While 3.91 is the latest released version --> 
 Newer versions than &lamevertuple; will probably just work.
               </para>
 	    </listitem>
@@ -1565,9 +1564,9 @@ MacOS X Developer release includes source for a generic
 There is also a driver binary for the <productname
 class="Registered">MIDIMan</productname>
 <trademark>MIDISPORT</trademark> <acronym>USB</acronym> interfaces for
-MacOS X <link linkend="availability">available</link> for download
-from <ulink url="http://www.midiman.com">MIDIMan's web page</ulink>
-and other vendors may well have drivers available for their hardware.
+MacOS X available for download from <ulink
+url="http://www.midiman.com">MIDIMan's web page</ulink> and other
+vendors may well have drivers available for their hardware.
 </para>
 
 	</listitem>
