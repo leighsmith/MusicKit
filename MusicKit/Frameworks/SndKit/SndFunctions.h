@@ -44,59 +44,56 @@ CONDITIONS OF THIS AGREEMENT.
 #include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 #include <stdio.h>     /* for FILE */
 
+/*
+ @abstract A library of functions intended to be compatible with NeXTs now defunct SoundKit.
+ 
+ Stephen Brandon, 1999
+ stephen@brandonitconsulting.co.uk
+ */
+
 @class NSString;
 
-	/*
-	 *   functions.h
-	 * A library of functions intended to be compatible with NeXTs
-	 * now defunct SoundKit.
-	 *
-	 *		Stephen Brandon, 1999
-	 *		stephen@brandonitconsulting.co.uk
-	 */
-
 /*!
-@function SndStructDescription
- @abstract To come 
- @param sound A SndStructSound containing the Snd
- @result Returns a pointer to a c-string description of the sound.
+  @function SndStructDescription
+  @abstract Returns a NSString description of the sound. 
+  @param sound A SndStructSound containing the Snd
+  @result Returns a NSString description of the sound.
  */
 SNDKIT_API NSString *SndStructDescription(SndSoundStruct *sound);
 
 /*!
-@function SndPrintStruct
- @abstract To come 
- @param sound A SndStructSound containing the Snd
- @result prints a description of the sound to stderr. 
+  @function SndPrintStruct
+  @abstract Prints a description of the sound to stderr.
+  @param sound A SndStructSound containing the Snd.
  */
 SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
 
 /*!
-@function SndPrintFrags
- @abstract To come 
- @param sound A SndStructSound containing the Snd
- @result Prints, to stdout, a description of the data fragments in the sound.
+  @function SndPrintFrags
+  @abstract Prints, to stdout, a description of the data fragments in the sound.
+  @param sound A SndStructSound containing the Snd
+  @result Returns?
  */
 SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
 
 /*!
-@function SndFrameSize
- @abstract Returns the size of a sample frame, that is, the number of bytes comprising a sample times the number of channels.
- @param sound A SndStructSound containing the Snd
- @result Returns the size of a sample frame in bytes.
+  @function SndFrameSize
+  @abstract Returns the size of a sample frame, that is, the number of bytes comprising a sample times the number of channels.
+  @param sound A SndStructSound containing the Snd
+  @result Returns the size of a sample frame in bytes.
  */
 SNDKIT_API int SndFrameSize(SndSoundStruct* sound);
 
 /*!
-@function SndSampleWidth
- @abstract To come 
- @param format 
- @result Returns the size of a sample in bytes.
+  @function SndSampleWidth
+  @abstract To come 
+  @param format 
+  @result Returns the size of a sample in bytes.
  */
 SNDKIT_API int  SndSampleWidth(int format);
 
 /*!
-@function SndBytesToSamples
+ @function SndBytesToSamples
  @abstract Given the data size in bytes, the number of channels and the data format, return the number of samples.
  @param byteCount The size of sample data in bytes.
  @param channelCount The number of audio channels.
@@ -138,6 +135,8 @@ SNDKIT_API float SndConvertLinearToDecibels(float lin);
 /*!
  @function SndConvertSound
  @abstract Convert from one sound struct format to another.
+ @discussion Converts from one sound struct to another, where toSound defines the format the data is to be
+             converted to and provides the location for the converted sound data.
  @param fromSound Defines the sound data to be converted.
  @param toSound Defines the format the data is to be converted to and provides the location
                 for the converted sound data.
@@ -145,7 +144,7 @@ SNDKIT_API float SndConvertLinearToDecibels(float lin);
  @param largeFilter Use a large filter for better quality resampling.
  @param interpFilter Use interpolated filter for conversion for better quality resampling.
  @param fast Do the conversion fast, without filtering, low quality resampling.
- @result
+ @result Returns various SND_ERR constants, or SND_ERR_NONE if the conversion worked.
  */
 SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
                                      SndSoundStruct **toSound,
