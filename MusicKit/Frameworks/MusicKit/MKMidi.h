@@ -1,16 +1,44 @@
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description: 
+    The MKMidi object provides Midi input/output access. It emulates some of the
+    behavior of a Performer: It contains a List of NoteSenders, one per MIDI
+    channel (as well as an extra one for MIDI system and channel mode messages).
+    You can receive Notes derived from MIDI input by connecting an Instrument's
+    NoteReceivers to the NoteSenders of a Midi instance.
+   
+    Similarly, Midi emulates some of the behavior of an Instrument: It contains
+    an array of NoteReceivers, one per MIDI channel (as well as the extra one).
+    You can send Notes to MIDI output by connecting a Performer's NoteSenders
+    to the NoteReceivers of a Midi instance.
+   
+    However, the Midi object is unlike a Performer in that it represents a 
+    real-time  device. In this manner, Midi is somewhat like Orchestra, 
+    which represents the DSP. The protocol for controlling Midi is the same 
+    as that for the Orchestra. This protocol is described in the file 
+    <MusicKit/MKDeviceStatus.h>.
+    
+    The conversion between Music Kit and MIDI semantics is described in the
+    Music Kit documentation.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 CCRMA, Stanford University
+  Portions (Time code extensions) Copyright (c) 1993 Pinnacle Research
 */
 /*
   $Log$
+  Revision 1.3  1999/08/08 01:59:22  leigh
+  Removed extraVars cruft
+
   Revision 1.2  1999/07/29 01:25:45  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Time code extensions copyright Pinnacle Research, 1993. */
-/* Intel extensions copyright CCRMA, Stanford University, 1994 */
 #ifndef __MK_Midi_H___
 #define __MK_Midi_H___
 
@@ -18,27 +46,21 @@
 #import "MKDeviceStatus.h"
 #import "params.h"
 
+// this is a private structure that now has to live in a public header after the ivar freeze,
+// but it will become an object one day anyway.
+
+typedef struct _timeVars {
+    id synchConductor;         /* If non-nil, time mode is MTC Synch */
+    port_name_t exceptionPort; /* Exception port.  Only one unit per device may have one */
+    port_name_t alarmPort;     /* Alarm port.  Only one unit per device may have one */
+    id midiObj;                /* Which unit is receiving MTC. */
+    double alarmTime;
+    int intAlarmTime;
+    BOOL alarmTimeValid;
+    BOOL alarmPending;
+} timeVars;
+
 @interface MKMidi:NSObject
-/* The MKMidi object provides Midi input/output access. It emulates some of the
- * behavior of a Performer: It contains a List of NoteSenders, one per MIDI
- * channel (as well as an extra one for MIDI system and channel mode messages).
- * You can receive Notes derived from MIDI input by connecting an Instrument's
- * NoteReceivers to the NoteSenders of a Midi instance.
- *
- * Similarly, Midi emulates some of the behavior of an Instrument: It contains
- * an array of NoteReceivers, one per MIDI channel (as well as the extra one).
- * You can send Notes to MIDI output by connecting a Performer's NoteSenders
- * to the NoteReceivers of a Midi instance.
- *
- * However, the Midi object is unlike a Performer in that it represents a 
- * real-time  device. In this manner, Midi is somewhat like Orchestra, 
- * which represents the DSP. The protocol for controlling Midi is the same 
- * as that for the Orchestra. This protocol is described in the file 
- * <musickit/MKDeviceStatus.h>.
- * 
- * The conversion between Music Kit and MIDI semantics is described in the
- * Music Kit documentation. 
- */
 {
     NSMutableArray * noteSenders;        /* The object's collection of NoteSenders. */
     NSMutableArray * noteReceivers;      /* The object's collection of NoteReceivers */
@@ -50,12 +72,25 @@
     double localDeltaT;   /* Offset added to MIDI-out time stamps.(see below)*/
 
     /* The following are for internal use only.  */
-    void *_reservedMidi1; 
     unsigned _ignoreBits;
     void *_pIn;
     void *_pOut;
     double _timeOffset;
     char _mode;
+    // the following are from the ivar thaw
+    BOOL isOwner;
+    // should become NSPort
+    port_name_t devicePort; /* Device port */
+    port_name_t ownerPort;  
+    port_name_t recvPort;   /* Port on which we receive midiIn messages */
+    port_name_t queuePort; /* Queues.  */
+    BOOL mergeInput;
+    NSString *hostname;
+    int unit;
+    int queueSize;
+    id conductor;             /* Used by conductor and setConductor: methods */
+    /* MTC additions */
+    timeVars *tvs;
 }
 
 #define MK_MAXMIDIS 16  /* Maximum number of Intel-based Midi objects */

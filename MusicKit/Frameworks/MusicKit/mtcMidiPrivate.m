@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/08 01:59:22  leigh
+  Removed extraVars cruft
+
   Revision 1.2  1999/07/29 01:26:10  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -26,20 +29,22 @@ Modification history:
 
 static MKMidi *mtcMidi = nil;
 
+// LMS these will no longer be called due to the change to handleMachMessage. We should call them from the handler or 
+// incorporate their functionality into the handler.
+#if 0
 static void my_alarm_reply(port_t replyPort, int requestedTime, int actualTime)
 {
     MKMidi *self = mtcMidi;
     if (!self)
 	return;
-    if (!XVARS(self)->tvs->alarmTimeValid || 
-	XVARS(self)->tvs->intAlarmTime != requestedTime) 
+    if (!self->tvs->alarmTimeValid || 
+	self->tvs->intAlarmTime != requestedTime) 
       /* Filter out old messages. E.g. it's possible that a message will have been
        * sent to the port and at the same time, we try to cancel it. */
       return;
-    XVARS(self)->tvs->alarmPending = NO;
-    XVARS(self)->tvs->alarmTimeValid = NO;
-    [XVARS(self)->tvs->synchConductor _runMTC:XVARS(self)->tvs->alarmTime 
-     :actualTime * _MK_MIDI_QUANTUM_PERIOD];
+    self->tvs->alarmPending = NO;
+    self->tvs->alarmTimeValid = NO;
+    [self->tvs->synchConductor _runMTC:self->tvs->alarmTime :actualTime * _MK_MIDI_QUANTUM_PERIOD];
 }
 
 static void my_exception_reply(port_t replyPort, int exception)
@@ -47,13 +52,17 @@ static void my_exception_reply(port_t replyPort, int exception)
     MKMidi *self = mtcMidi;
     if (!self)
 	return;
-    [XVARS(self)->tvs->synchConductor _MTCException:exception];
+    [self->tvs->synchConductor _MTCException:exception];
 }
+#endif
 
 #else
 #warning "Incomplete implementation of multiple MTC conductors."
 #endif
 
+// LMS these will no longer be called due to the change to handleMachMessage. We should incorporate their functionality
+// into the handler.
+#if 0
 static void midiAlarm(msg_header_t *msg,void *self)
    /* Called by driver when midi alarm occurs. */
 {
@@ -75,6 +84,7 @@ static void midiException(msg_header_t *msg,void *self)
       _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
 		"midiException");
 } 
+#endif
 
 @implementation MKMidi(Private)
 
@@ -100,12 +110,12 @@ static void midiException(msg_header_t *msg,void *self)
     double t;
     if (deviceStatus == MK_devClosed)
       return 0;
-    r = MIDIGetClockTime(XVARS(self)->devicePort,XVARS(self)->ownerPort,&theTime);
+    r = MIDIGetClockTime(self->devicePort,self->ownerPort,&theTime);
     if (r != KERN_SUCCESS) 
       _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
 		"_time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
-    if (XVARS(self)->tvs->synchConductor)
+    if (self->tvs->synchConductor)
       t -= mtcTimeOffset;
     return t;
 }
@@ -116,23 +126,23 @@ static void midiException(msg_header_t *msg,void *self)
     #define ISENDOFTIME(_x) (_x > (MK_ENDOFTIME - 1.0))
     if (ISENDOFTIME(requestedTime)) {
 	if (deviceStatus == MK_devRunning) 
-	  MIDIRequestAlarm(XVARS(self)->devicePort,XVARS(self)->ownerPort,PORT_NULL,0);
-	XVARS(self)->tvs->alarmTimeValid = NO;
-	XVARS(self)->tvs->alarmPending = NO;
+	  MIDIRequestAlarm(self->devicePort,self->ownerPort,PORT_NULL,0);
+	self->tvs->alarmTimeValid = NO;
+	self->tvs->alarmPending = NO;
 	return self;
     }
     newIntTime = requestedTime * _MK_MIDI_QUANTUM;
     if (deviceStatus == MK_devRunning) {
-	if (!XVARS(self)->tvs->alarmPending || 
-	    XVARS(self)->tvs->intAlarmTime != newIntTime) {
-	    MIDIRequestAlarm(XVARS(self)->devicePort,XVARS(self)->ownerPort,
-			     XVARS(self)->tvs->alarmPort,newIntTime);
-	    XVARS(self)->tvs->alarmPending = YES;
+	if (!self->tvs->alarmPending || 
+	    self->tvs->intAlarmTime != newIntTime) {
+	    MIDIRequestAlarm(self->devicePort,self->ownerPort,
+			     self->tvs->alarmPort,newIntTime);
+	    self->tvs->alarmPending = YES;
 	}
     }
-    XVARS(self)->tvs->alarmTimeValid = YES;
-    XVARS(self)->tvs->intAlarmTime = newIntTime;
-    XVARS(self)->tvs->alarmTime = requestedTime;
+    self->tvs->alarmTimeValid = YES;
+    self->tvs->intAlarmTime = newIntTime;
+    self->tvs->alarmTime = requestedTime;
     return self;
 }
 
@@ -151,13 +161,13 @@ static void midiException(msg_header_t *msg,void *self)
 {
     /* References to mtcMidi below will change if we ever support more than one synch */
     if (aCond) {
-	XVARS(self)->tvs->midiObj = self;
-	XVARS(self)->tvs->synchConductor = aCond;
+	self->tvs->midiObj = self;
+	self->tvs->synchConductor = aCond;
 	mtcMidi = self;
     } else {
 	if (mtcMidi == self) { 
-	    XVARS(self)->tvs->midiObj = nil;
-	    XVARS(self)->tvs->synchConductor = aCond;
+	    self->tvs->midiObj = nil;
+	    self->tvs->synchConductor = aCond;
 	    mtcMidi = nil;
 	}
     }
@@ -166,7 +176,7 @@ static void midiException(msg_header_t *msg,void *self)
     if (aCond) {
 	setUpMTC(self);
 	if (deviceStatus == MK_devRunning)
-	  resumeMidiClock(XVARS(self));
+	  resumeMidiClock(self);
     }
     else tearDownMTC(self);
     return self;
@@ -176,40 +186,40 @@ static void midiException(msg_header_t *msg,void *self)
 
 static int setUpMTC(MKMidi *self)
 {
-    int r = port_allocate(task_self(), &XVARS(self)->tvs->exceptionPort);
+    int r = port_allocate(task_self(), &self->tvs->exceptionPort);
     if (r != KERN_SUCCESS) {
 	_MKErrorf(MK_machErr,OPEN_ERROR,mach_error_string( r), "setUpMTC");
 	return r;
     }
-    r = port_allocate(task_self(), &XVARS(self)->tvs->alarmPort);
+    r = port_allocate(task_self(), &self->tvs->alarmPort);
     if (r != KERN_SUCCESS) {
 	_MKErrorf(MK_machErr,OPEN_ERROR,mach_error_string( r), "setUpMTC");
 	return r;
     }
-    XVARS(self)->tvs->alarmTimeValid = NO;
-    XVARS(self)->tvs->alarmPending = NO;
+    self->tvs->alarmTimeValid = NO;
+    self->tvs->alarmPending = NO;
     // 2nd arg was midiAlarm, changed to self as it handleMachMessage - LMS
-    _MKAddPort(XVARS(self)->tvs->alarmPort,self,MSG_SIZE_MAX,self, _MK_DPSPRIORITY);
+    _MKAddPort(self->tvs->alarmPort,self,MSG_SIZE_MAX,self, _MK_DPSPRIORITY);
     // 2nd arg was midiException, changed to self as it handleMachMessage - LMS
-    _MKAddPort(XVARS(self)->tvs->exceptionPort,self,MSG_SIZE_MAX,self, _MK_DPSPRIORITY);
+    _MKAddPort(self->tvs->exceptionPort,self,MSG_SIZE_MAX,self, _MK_DPSPRIORITY);
     addedPortsCount += 2;
     return r;
 }
 
 static int tearDownMTC(MKMidi *self)
 {
-    MIDIRequestExceptions(XVARS(self)->devicePort,XVARS(self)->ownerPort,PORT_NULL);
-    _MKRemovePort(XVARS(self)->tvs->exceptionPort);
-    deallocPort(&XVARS(self)->tvs->exceptionPort);
+    MIDIRequestExceptions(self->devicePort,self->ownerPort,PORT_NULL);
+    _MKRemovePort(self->tvs->exceptionPort);
+    deallocPort(&self->tvs->exceptionPort);
     /* Could call MIDIStopClock here? */
-    MIDIRequestAlarm(XVARS(self)->devicePort,XVARS(self)->ownerPort,PORT_NULL,0);
-    XVARS(self)->tvs->alarmPending = NO;
-    XVARS(self)->tvs->alarmTimeValid = NO;
-    _MKRemovePort(XVARS(self)->tvs->alarmPort);
+    MIDIRequestAlarm(self->devicePort,self->ownerPort,PORT_NULL,0);
+    self->tvs->alarmPending = NO;
+    self->tvs->alarmTimeValid = NO;
+    _MKRemovePort(self->tvs->alarmPort);
     addedPortsCount -= 2;
-    return deallocPort(&XVARS(self)->tvs->alarmPort);
+    return deallocPort(&self->tvs->alarmPort);
 }
 
-static int resumeMidiClock(extraInstanceVars *ivars); /* Forward decl */
+//static int resumeMidiClock(extraInstanceVars *ivars); /* Forward decl */
 
 

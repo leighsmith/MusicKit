@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/08 01:59:22  leigh
+  Removed extraVars cruft
+
   Revision 1.2  1999/07/29 01:26:10  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -24,7 +27,7 @@ Modification history:
 
 static double mangleTime(MKMidi *self,double driverTime)
 {
-    if (XVARS(self)->tvs->synchConductor)
+    if (self->tvs->synchConductor)
       driverTime -= mtcTimeOffset;
     if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE)
       driverTime += MKGetDeltaT();
@@ -40,7 +43,7 @@ static double mangleTime(MKMidi *self,double driverTime)
 	 * has been set, this time has deltaT added to it. 
 	 */
 {
-    int r = MIDIGetMTCTime(XVARS(self)->devicePort,XVARS(self)->ownerPort,format,h,m,s,f);
+    int r = MIDIGetMTCTime(self->devicePort,self->ownerPort,format,h,m,s,f);
     double seconds;
     if (r != KERN_SUCCESS) 
       _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
@@ -63,7 +66,7 @@ static double mangleTime(MKMidi *self,double driverTime)
     double t;
     if (deviceStatus == MK_devClosed)
       return 0;
-    r = MIDIGetClockTime(XVARS(self)->devicePort,XVARS(self)->ownerPort,&theTime);
+    r = MIDIGetClockTime(self->devicePort,self->ownerPort,&theTime);
     if (r != KERN_SUCCESS) 
       _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
 		"time");
@@ -73,5 +76,5 @@ static double mangleTime(MKMidi *self,double driverTime)
 
 -synchConductor
 {
-    return XVARS(self)->tvs->synchConductor;
+    return self->tvs->synchConductor;
 }
