@@ -37,14 +37,13 @@
     [oPanel setAllowsMultipleSelection:YES];
     result = [oPanel runModalForDirectory: nil file: nil types: fileTypes];
     if (result == NSOKButton) {
-        int i, count;
         [filesToPlay release];
         filesToPlay = [[oPanel filenames] retain];
-        count = [filesToPlay count];
         [playButton setEnabled: YES];
     }
     [soundFileNameTextBox setDataSource:self];
     [soundFileNameTextBox deselectAll:self];
+    [soundFileNameTextBox reloadData];
 }
 
 - (void) playSound: (id) sender
@@ -52,7 +51,6 @@
     Snd *sound;
     int i, count = [filesToPlay count];
 
-    NSLog(@"reading %@\n", filesToPlay);
     for (i=0; i<count; i++) {
         NSString *soundFileName = [filesToPlay objectAtIndex:i];
         sound = [[Snd alloc] initFromSoundfile: soundFileName];
@@ -68,8 +66,6 @@
 - (void) willPlay: (Snd *) sound duringPerformance: (SndPerformance *) performance
 {
     NSLog(@"will begin playing sound number %d named %@\n", soundTag, [sound name]);
-    // NSLog(@"performance %@\n", performance);
-    // NSLog(@"performance ptr = %x\n", performance);
     [currentPerformances setObject: [NSNumber numberWithInt: soundTag++]
                             forKey: performance];
 }
@@ -79,20 +75,15 @@
     NSNumber *soundTagNumber;
     NSEnumerator *performanceEnum;
     id currentPerf;
-    // NSLog(@"currentPerformances %@\n", currentPerformances);
-    // NSLog(@"performance %@\n", performance);
-    // NSLog(@"performance ptr = %x\n", performance);
     performanceEnum = [currentPerformances keyEnumerator];
     while((currentPerf = [performanceEnum nextObject])) {
-        // NSLog(@"%@ is equal to: %@ == %d\n", currentPerf, performance, [currentPerf isEqual: performance]);
         if([currentPerf isEqual: performance]) {
-            // NSLog(@"attempting to retrieve object using key\n");
-            // soundTagNumber = [currentPerformances objectForKey: performance]; // there is something wierd that breaks this...
-            soundTagNumber = [currentPerformances objectForKey: currentPerf];  // yet works with this?
-            NSLog(@"did finish playing sound number %d named %@\n", [soundTagNumber intValue], [sound name]);
-            [currentPerformances removeObjectForKey: performance];
+            break;
         }
     }
+    soundTagNumber = [currentPerformances objectForKey: currentPerf];  // yet works with this?
+    NSLog(@"did finish playing sound number %d named %@\n", [soundTagNumber intValue], [sound name]);
+    [currentPerformances removeObjectForKey: performance];
 }
 
 - (void) hadError: (Snd *) sound
