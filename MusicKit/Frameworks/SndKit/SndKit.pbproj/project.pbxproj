@@ -186,7 +186,7 @@
 		00D2C440FEDB2CB5CFED3B93 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = _Sndlibst.h;
+			path = SndMuLaw.h;
 			refType = 4;
 		};
 		00D2C442FEDB2CB5CFED3B93 = {
@@ -236,7 +236,7 @@
 		00D2C449FEDB2CB5CFED3B93 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = _Sndlibst.c;
+			path = SndMuLaw.m;
 			refType = 4;
 		};
 		00D2C44AFEDB2CB5CFED3B93 = {
@@ -303,7 +303,7 @@
 				FRAMEWORK_VERSION = 2.3;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /Local/Unix/lib;
 				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "-Wall -faltivec";
 				OTHER_LDFLAGS = "-Wall -seg1addr 180000";
@@ -498,6 +498,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
+					Public,
 				);
 			};
 		};
@@ -649,6 +650,7 @@
 				0112798A0169158CCFED3B94,
 				B52BE0CD01F775D6002A0494,
 				D87070F4040CA58D00A80103,
+				D8CC46AF048BEDBA00A80164,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2030,6 +2032,7 @@
 		};
 		D88C366004082B7C002A0496 = {
 			children = (
+				D8CC46AE048BEDBA00A80164,
 				3AE3B96C007931DBCFED3B8B,
 				B52BE0CC01F775D6002A0494,
 				011279890169158CCFED3B94,
@@ -2050,6 +2053,18 @@
 			};
 			isa = PBXBuildStyle;
 			name = Embedded;
+		};
+		D8CC46AE048BEDBA00A80164 = {
+			isa = PBXFileReference;
+			name = libsndfile.a;
+			path = /Local/Unix/lib/libsndfile.a;
+			refType = 0;
+		};
+		D8CC46AF048BEDBA00A80164 = {
+			fileRef = D8CC46AE048BEDBA00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 00D2C427FEDB2CB5CFED3B93;
