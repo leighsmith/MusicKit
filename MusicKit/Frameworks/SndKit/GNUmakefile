@@ -15,6 +15,11 @@
 
 # Modification history:
 # $Log$
+# Revision 1.13  2001/11/27 17:41:01  sbrandon
+# now do prelinking of libraries on all platforms, so SndKit projects don't
+# need to know the ins and outs of which libraries are being used. They just
+# have to say they're using SndKit and it looks after everything.
+#
 # Revision 1.12  2001/11/21 23:19:49  sbrandon
 # made makefile distinguish between MinGW and 'other' targets when deciding
 # whether or not to include the SndAudioProcessorMP3Encoder.h header (fix
@@ -146,7 +151,7 @@ $(MY_NAME)_SUBPROJECTS = cpp.subproj
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
 
--include GNUMakefile.preamble
+-include GNUmakefile.preamble
 
 -include GNUmakefile.local
 
