@@ -6917,7 +6917,9 @@ BRIEF int DSPAwaitCondition(
 	    _DSPReadRegs();
 	    if ( (s_regs & mask) == value )
 	      goto dsp_ready;
+#ifndef WIN32
 	    select(0,0,0,0,&_DSPTenMillisecondTimer);
+#endif
 
 	    /* Nick:  6/5/96 */
 	    if (s_dsp_abortfn && (*s_dsp_abortfn)()) /* DAJ/Nick/5/8/96 */
@@ -7478,9 +7480,10 @@ BRIEF int DSPAwaitMessages(int msTimeLimit)
 	while (!DSPMessageIsAvailable()) {
 	    if (msTimeLimit != 0 && i++ > tl)
 	      return _DSPError(DSP_ETIMEOUT,
-			       "DSPAwaitMessages: Timed out waiting "
-			       "for RXDF in DSP");
+			       "DSPAwaitMessages: Timed out waiting for RXDF in DSP");
+#ifndef WIN32
 	    select(0,0,0,0,&_DSPTenMillisecondTimer);
+#endif
 	    /* Nick:  6/5/96 */
 	    if (s_dsp_abortfn && (*s_dsp_abortfn)()) /* Nick/DAJ/5/8/96 */
 	      return _DSPBailOutNow();
@@ -7527,9 +7530,10 @@ BRIEF int DSPAwaitData(int msTimeLimit)
     while (DSPDataIsAvailable() == 0) {
 	if (msTimeLimit != 0 && i++ > tl)
 	  return _DSPError(DSP_ETIMEOUT,
-			   "DSPAwaitData: Timed out waiting "
-			   "for RXDF in DSP");
+			   "DSPAwaitData: Timed out waiting for RXDF in DSP");
+#ifndef WIN32
 	select(0,0,0,0,&_DSPTenMillisecondTimer);
+#endif
     }		
     return 0;
 }
