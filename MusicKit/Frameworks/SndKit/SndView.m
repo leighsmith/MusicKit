@@ -61,22 +61,23 @@ OF THIS AGREEMENT.
 #define PlatformSoundPasteboardType @"NXSoundPboardType"
 #endif
 
-// Imitates the SoundView initial reduction factor when divided by the sample rate.
-#define SAMPLE_RATE_REDUCTION 184 
-
 // debugging
 // #define DEBUG_MOUSE(x) NSLog(@"Debug mouse: %@\n", (x))
 #define DEBUG_MOUSE(x)
 
-
 #define CURSOR_TIMER_HALF_PERIOD 0.5 // in seconds.
+#define CURSOR_WIDTH 1 // in pixels
+
 #define DEFAULT_RECORD_SECONDS 5
 
 #define TENPERCENT 0.05
 #define FASTSKIPSTART 29
 #define FASTSKIPAMOUNT 8
 #define CROSSTHRESH 0.34
-#define CURSOR_WIDTH 1 // in pixels
+
+// Imitates the SoundView initial reduction factor when divided by the sample rate.
+#define SAMPLE_RATE_REDUCTION 184 
+
 
 @implementation SndView
 
@@ -1625,6 +1626,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	//      clickedWithinPreviousSelection, mouseDownLocation.x, adjustableSelectionRect.origin.x, adjustableSelectionRect.size.width);
 	// If it's clicked within a selection, not a cursor, we don't update until after the release of the drag.
 	if (cachedSelectionRect.size.width > 1) {
+	    //NSLog(@"cachedSelectionRect.origin.x = %f cachedSelectionRect.size.width = %f selection.location = %d selection.length = %d\n",
+	    //      cachedSelectionRect.origin.x, cachedSelectionRect.size.width, selectionRange.location, selectionRange.length);
 	    if(!clickedWithinPreviousSelection) {
 		DEBUG_MOUSE(@"clicked outside previous selection, setting setNeedsDisplayInRect\n");
 		[self setNeedsDisplayInRect: cachedSelectionRect];
@@ -1976,6 +1979,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     [self showCursor];
     DEBUG_MOUSE(@"mouseUp: setting setNeedsDisplayInRect of cachedSelectionRect\n");
     [self setNeedsDisplayInRect: cachedSelectionRect];
+    cachedSelectionRect = [self selectionRect];
 }
 
 - (void) pasteboard: (NSPasteboard *) thePasteboard provideDataForType: (NSString *) pboardType
