@@ -23,6 +23,10 @@
 #ifndef _LIBDSP_
 #define _LIBDSP_
 
+#ifdef GNUSTEP
+#define import include
+#endif
+
 #define SIMULATOR_POSSIBLE 0
 #define TRACE_POSSIBLE 1
 
