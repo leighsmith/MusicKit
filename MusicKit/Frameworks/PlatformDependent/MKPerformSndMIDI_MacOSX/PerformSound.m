@@ -18,82 +18,6 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
-/*
-// $Log$
-// Revision 1.4  2001/12/18 18:29:47  skotmcdonald
-// Fixed an init sequence potential bug - could try to get native format before init.
-//
-// Revision 1.3  2001/12/09 02:41:34  skotmcdonald
-// Fixed bug in input stream routine that allowed a memcpy into possibly dealloced memory; fixed bug that shut down output before shutting down the currently dependent input.
-//
-// Revision 1.2  2001/11/07 17:55:10  sbrandon
-// changed bool to BOOL in method declaration. How did this work before?
-//
-// Revision 1.1  2001/10/31 19:37:29  skotmcdonald
-// Changed PerformSound from .c to objC .m file to allow use of NSLock to support slightly hacky work around 10.1 core audios apparent dislike of having the same callback function for input and output devices, even tho the API clearly has buffers for both. hmm. Added second lightweight input callback which copies input data into local buffer for simultaneous presentation with output data from inside the output callback.
-//
-// Revision 1.19  2001/09/17 09:12:52  sbrandon
-// - repaired SndMute code to use the right variable for the start of the
-//   buffer to zero out (compiles properly now!)
-//
-// Revision 1.18  2001/09/12 11:26:44  sbrandon
-// added snd muting functions (output only)
-//
-// Revision 1.17  2001/09/05 17:01:49  skotmcdonald
-// Fixed nasty bug: freeing input buffer memory BEFORE the streaming shutdown function call had been made - this has appeared due to the across-thread stop call made by the new startStop signalling SK thread. Added extra paranoia debug statements, gated by #ifs
-//
-// Revision 1.16  2001/08/28 16:49:28  skotmcdonald
-// Put debug #defines around SND::start/stop messages to reduce everyday useage spam
-//
-// Revision 1.15  2001/08/23 20:06:05  skotmcdonald
-// Fixed a nasty bug that caused framework to crash if no valid input detected - failed to allocate a buffer to send up filled with zeros to streaming arch.
-//
-// Revision 1.14  2001/08/06 22:58:05  skotmcdonald
-// Fixed teeny does-input-exist flag bug that was sending streaming arch to send blank recording buffers up to clients. Doh.
-//
-// Revision 1.13  2001/05/18 20:35:44  skotmcdonald
-// Added inputInit flag to gate input-handling routines when no input device is present
-//
-// Revision 1.12  2001/04/28 21:27:56  leighsmith
-// Added Guillaume Outters patch for retrieving the driver list, now returns the full driver list, albeit potentially two drivers are named the same, e.g for input and for output
-//
-// Revision 1.11  2001/04/13 01:27:39  leighsmith
-// Ensured that sample times are reset regardless of other errors
-//
-// Revision 1.10  2001/04/06 21:56:58  skotmcdonald
-// Fixed local input buffer size bug
-//
-// Revision 1.9  2001/04/06 18:16:06  skotmcdonald
-// Added input stream functionality to SndStreaming system. 
-//
-// Revision 1.8  2001/03/21 02:59:43  leigh
-// Removed old debugging info
-//
-// Revision 1.7  2001/03/12 19:15:58  leigh
-// Cleaned up debugging info
-//
-// Revision 1.6  2001/03/08 18:48:30  leigh
-// controlled debugging info, adopted 4K46 CoreAudio buffer use
-//
-// Revision 1.5  2001/02/23 03:17:41  leigh
-// Converted times from absolute to relative
-//
-// Revision 1.4  2001/02/12 17:41:19  leigh
-// Added streaming support
-//
-// Revision 1.3  2001/02/11 22:50:05  leigh
-// First draft of simplistic working sound playing using CoreAudio
-//
-// Revision 1.2  2000/05/05 22:42:48  leigh
-// ensure we don't have boolean constants predefined
-//
-// Revision 1.1  2000/03/11 01:42:19  leigh
-// Initial Release
-//
-// Revision 1.1.1.1  2000/01/14 00:14:33  leigh
-// Initial revision
-//
-*/
 
 #import <Foundation/Foundation.h>
 #include <CoreAudio/CoreAudio.h>
@@ -388,7 +312,7 @@ static OSStatus vendBuffersToStreamManagerIOProcAux(AudioDeviceID inDevice,
     fprintf(stderr,"[SND] starting vend aux...\n");
 #endif
     if( fInputBuffer ) {
-      SNDStreamBuffer inStream, outStream;
+      SNDStreamBuffer inStream; //, outStream;
       int bufferIndex;
 
       if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
