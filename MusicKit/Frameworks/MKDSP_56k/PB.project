@@ -4,7 +4,7 @@
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
         CLASSES = (DSPObjectObjc.m); 
-        FRAMEWORKS = (Foundation.framework, SndKit.framework, SoundKit.framework, System.framework); 
+        FRAMEWORKS = (Foundation.framework, SndKit.framework, System.framework); 
         FRAMEWORKSEARCH = (
             "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
             "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks"
