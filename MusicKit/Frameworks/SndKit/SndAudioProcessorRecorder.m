@@ -6,12 +6,21 @@
 //  Created by skot on Wed Dec 05 2001.
 //  Copyright (c) 2001 tomandandy. All rights reserved.
 //
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorRecorder.h"
 
+////////////////////////////////////////////////////////////////////////////////
+// Debug defines
+////////////////////////////////////////////////////////////////////////////////
+
+#define SNDAUDIOPROCRECORDER_DEBUG 0
 
 @implementation SndAudioProcessorRecorder
 
@@ -39,13 +48,17 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// isRecording
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) isRecording
 {
   return isRecording;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// setRecordBuffer:
+////////////////////////////////////////////////////////////////////////////////
 
 - setRecordBuffer: (SndAudioBuffer*) buffer
 {
@@ -54,6 +67,10 @@
   recordBuffer = [buffer retain];
   return self;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// bytesRecorded
+////////////////////////////////////////////////////////////////////////////////
 
 - (long) bytesRecorded
 {
@@ -67,9 +84,10 @@
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB;
 {
-//  fprintf(stderr,"process\n");        
   if (!isRecording) {
-//    fprintf(stderr,"Finished recording BBB\n");        
+#if SNDAUDIOPROCRECORDER_DEBUG  
+    fprintf(stderr,"SndAudioProcessor::processReplacing: Finished recording BBB\n");        
+#endif    
     if (bytesRecorded == 0 && position == 0)
       return FALSE;
   }
@@ -115,7 +133,9 @@
     
         if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
           [self streamToDiskData: recData length: recBuffLengthInBytes];
-//        fprintf(stderr,"Processing... (pos: %li / %li  length: %li)\n",position,recBuffLengthInBytes,bytesRecorded);
+#if SNDAUDIOPROCRECORDER_DEBUG  
+          fprintf(stderr,"SndAudioProcessor::processReplacing: Processing... (pos: %li / %li  length: %li)\n",position,recBuffLengthInBytes,bytesRecorded);
+#endif
         }
         else {
           bytesRecorded += length;
@@ -134,7 +154,9 @@
             [self streamToDiskData: recData length: position];
         
           [self closeRecordFile];
-//        fprintf(stderr,"closed record file\n");
+#if SNDAUDIOPROCRECORDER_DEBUG  
+        fprintf(stderr,"SndAudioProcessor::processReplacing: closed record file\n");
+#endif
         }      
       }
     }
@@ -150,24 +172,31 @@
 {
   BOOL r = FALSE;
   
-  if (isRecording) 
+  if (isRecording) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: already recording!\n");
-  
+#endif
+  }
   else {
     // This ain't an optimal situation - recorder shouldn't even HAVE an output buffer.
     // However, it is the only way at present to get format info from manager 
     // Ideally, we would like the recorder to connect to the stream manager itself
-    if (format == NULL)
+    if (format == NULL) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
       fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: format is NULL.\n");
-        
+#endif
+    }
     else {  
       if (recordBuffer != nil) 
         [recordBuffer release];
       
       recordBuffer = [SndAudioBuffer audioBufferWithFormat: format 
                                                   duration: time]; 
-      if (recordBuffer == nil)
+      if (recordBuffer == nil) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
         fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: record buffer is nil.\n");
+#endif
+      }
       else {
         [recordBuffer retain];
         r = TRUE;
@@ -185,12 +214,16 @@
 {
   BOOL r = FALSE;
   
-  if (recordBuffer == nil)
+  if (recordBuffer == nil) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecording - Error: recordBuffer is nil.\n");
-
-  else if (isRecording) 
+#endif
+  }
+  else if (isRecording) {  
+#if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecording - Error: already recording!\n");
-  
+#endif
+  }
   else {
     position    = 0;
     isRecording = TRUE;	
@@ -227,17 +260,22 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// setUpRecordFile:withFormat:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) setUpRecordFile: (NSString*) filename withFormat: (SndSoundStruct*) format
 {
-  if ((recordFile = fopen([filename fileSystemRepresentation],"wb")) == NULL) 
-    fprintf(stderr,"SndAudioProcessorRecorder::setupRecordFile - Error opening file '%s' for recording.\n",[filename cString]);
-
+  if ((recordFile = fopen([filename fileSystemRepresentation],"wb")) == NULL) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
+    fprintf(stderr, "SndAudioProcessorRecorder::setupRecordFile - Error opening file '%s' for recording.\n",[filename cString]);
+#endif
+  }
   else  {
-    if (format == NULL)
+    if (format == NULL) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
       fprintf(stderr,"SndAudioProcessorRecorder::setupRecordFile - Error: synthBuffer format is NULL.\n");
+#endif
+    }
     else {
       writeWavFormatHeader(format, recordFile, 0);
       if (recordFileName != nil)
@@ -277,24 +315,35 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 {
   BOOL b = FALSE;
   
-  if (![self prepareToRecordForDuration: 1.0 withFormat: format]) 
+  if (![self prepareToRecordForDuration: 1.0 withFormat: format]) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error in prepareTorecordForDuration.\n");
-
-  else  if (![self setUpRecordFile: filename withFormat: format]) 
+#endif
+  }
+  else  if (![self setUpRecordFile: filename withFormat: format]) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error in setUpRecordFile\n");
-
-  else if (recordBuffer == nil) 
+#endif
+  }
+  else if (recordBuffer == nil) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error: recordBuffer is nil.\n");
-      
-  else if ((conversionBuffer = (short*) malloc(sizeof(short) * [recordBuffer lengthInSamples] * [recordBuffer channelCount])) == NULL)
-    fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error: bad malloc for conversionBuffer\n");
-  
-  else
-  {
-    position      = 0;
-    bytesRecorded = 0;
-    isRecording   = TRUE;
-    b             = TRUE;	
+#endif
+  }
+  else {
+    long size = sizeof(short) * [recordBuffer lengthInSamples] * [recordBuffer channelCount];
+    if ((conversionBuffer = (short*) malloc(size)) == NULL) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
+      fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error: bad malloc for conversionBuffer\n");
+#endif
+    }
+    else
+    {
+      position      = 0;
+      bytesRecorded = 0;
+      isRecording   = TRUE;
+      b             = TRUE;	
+    }
   }
   return b;
 }
@@ -310,7 +359,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// stopRecordingWait:
 ////////////////////////////////////////////////////////////////////////////////
 
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
@@ -318,14 +367,9 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   isRecording = FALSE; // signal to recording thread that we want to stop.
   
   if (bWait) {
-//    fprintf(stderr,"Waiting...\n");
     while (recordFile != NULL) {
-//      usleep(100000);
       [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-//      fprintf(stderr,"."); fflush(stderr);
     }
-//    fprintf(stderr,"Waiting done.\n");
-//    active = FALSE;
   }
   return self;
 }
@@ -350,7 +394,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// primeStartTrigger
 ////////////////////////////////////////////////////////////////////////////////
 
 - primeStartTrigger
@@ -360,7 +404,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// setStartTriggerThreshold:
 ////////////////////////////////////////////////////////////////////////////////
 
 - setStartTriggerThreshold: (float) f

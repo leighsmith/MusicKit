@@ -1,10 +1,16 @@
+////////////////////////////////////////////////////////////////////////////////
 //
 //  SndAudioBufferQueue.h
 //  SndKit
 //
 //  Created by skot on Wed Aug 29 2001.
-//  Copyright (c) 2001 __CompanyName__. All rights reserved.
+//  Copyright (c) 2001 tomandandy.com. All rights reserved.
 //
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SNDAUDIOBUFFERQUEUE_H__
 #define __SNDAUDIOBUFFERQUEUE_H__
@@ -34,16 +40,17 @@ typedef enum {
     NSMutableArray  *pendingBuffers;
 /*! @var processedBuffers Array of processed buffers (post consumption) */
     NSMutableArray  *processedBuffers;
-/*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
 #ifndef __MINGW32__
+/*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
     NSConditionLock *pendingBuffersLock;
-/*! @var processedBuffersLock Lock for thread safety around processed buffers array */
     NSConditionLock *processedBuffersLock;
-/*! @var numBuffers Total number of buffers in the queue, both pending and processed */
 #else
+/*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
     SndConditionLock *pendingBuffersLock;
+/*! @var processedBuffersLock Lock for thread safety around processed buffers array */
     SndConditionLock *processedBuffersLock;
 #endif
+/*! @var numBuffers Total number of buffers in the queue, both pending and processed */
     int              numBuffers;
 }
 

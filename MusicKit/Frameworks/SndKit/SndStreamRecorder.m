@@ -6,6 +6,10 @@
 //  Created by SKoT McDonald on Thu Apr 05 2001.
 //  Copyright (c) 2001 tomandandy. All rights reserved.
 //
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <MKPerformSndMIDI/SndStruct.h>
@@ -74,6 +78,10 @@
   return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// stopRecordingWait:disconnectFromStream:
+////////////////////////////////////////////////////////////////////////////////
+
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
 {
   [recorder stopRecordingWait: bWait disconnectFromStream: bDisconnectFromStream];
@@ -99,7 +107,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// prepareToRecordForDuration:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) prepareToRecordForDuration: (double) time
@@ -107,15 +115,13 @@
   BOOL r = FALSE;
   
   if ([recorder isRecording]) 
-    fprintf(stderr,"SndStreamRecorder::prepareToRecordForDuration - Error: already recording!\n");
+    NSLog(@"SndStreamRecorder::prepareToRecordForDuration - Error: already recording!\n");
   
   else {
+    SndAudioBuffer *outB;
     [self lockOutputBuffer];
-    {
-      SndAudioBuffer *outB = [self outputBuffer]; 
-      r = [recorder prepareToRecordForDuration: time withFormat: [outB format]];
-      
-    }
+    outB = [self outputBuffer]; 
+    r    = [recorder prepareToRecordForDuration: time withFormat: [outB format]];
     [self unlockOutputBuffer];
   }
   return r;
@@ -135,9 +141,8 @@
     [outputBufferLock lockWhenCondition: OB_isInit];
     [outputBufferLock unlockWithCondition: OB_isInit];
   }
-  
   if ([recorder isRecording]) 
-    fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
+    NSLog(@"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
 
   b = [recorder startRecordingToFile: filename withFormat: [exposedOutputBuffer format]];
   

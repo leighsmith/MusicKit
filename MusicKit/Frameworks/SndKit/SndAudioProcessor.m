@@ -6,9 +6,9 @@
 //  Created by SKoT McDonald on Tue Mar 27 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,15 +1,17 @@
-/*
-  $Id$
-    
-  Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
-  Further work: SKoT McDonald, <skot@tomandandy.com>
-
-  Sat 28-Feb-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//    
+//  Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
+//  Further work: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Sat 28-Feb-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SND_PERFORMANCE_H__
 #define __SND_PERFORMANCE_H__
@@ -154,5 +156,7 @@
 - (NSString *) description;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

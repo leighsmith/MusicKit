@@ -106,7 +106,8 @@ architecture, as described in the <b>SndStruct</b> header.
     int currentError;
 /*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
     int conversionQuality;	 
-    
+
+/*! @var performancesArray An array of all active AND pending performances of this Snd */
     NSMutableArray *performancesArray;
     
 @public
@@ -148,11 +149,50 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 + findSoundFor:(NSString *)aName;
 
+/*!
+  @method     addName:sound:
+  @abstract
+  @param  	  name
+  @param  	  aSnd
+  @result
+  @discussion
+*/
 + addName:(NSString *)name sound:aSnd;
+/*!
+  @method     addName:fromSoundfile:
+  @abstract
+  @param      name
+  @param      filename
+  @result
+  @discussion
+*/
 + addName:(NSString *)name fromSoundfile:(NSString *)filename;
+/*!
+  @method     addName:fromSection:
+  @abstract
+  @param      name
+  @param  	  sectionName
+  @result
+  @discussion
+*/
 + addName:(NSString *)name fromSection:(NSString *)sectionName;
+/*!
+  @method     addName:fromBundle:
+  @abstract
+  @param      aName
+  @param  	  aBundle
+  @result
+  @discussion
+*/
 + addName:(NSString *)aName fromBundle:(NSBundle *)aBundle;
 
+/*!
+  @method     removeSoundForName: 
+  @abstract
+  @param      name
+  @result
+  @discussion
+*/
 + (void) removeSoundForName:(NSString *)name;
 
 /*!
@@ -987,9 +1027,35 @@ architecture, as described in the <b>SndStruct</b> header.
 
 - (void)_setStatus:(int)newStatus; /* Private! not for general use. */
 
+/*!
+  @method     performances
+  @abstract   Performance array accessor.
+  @result     NSArray of performances.
+  @discussion Mainly for use by SndPlayer
+*/
 - (NSArray*) performances;
+/*!
+  @method     addPerformance:
+  @abstract   Adds a performance to the pwerformance array.
+  @param      p A performance
+  @result     self
+  @discussion Mainly for use by SndPlayer
+*/
 - addPerformance: (SndPerformance*) p;
+/*!
+  @method     removePerformance:
+  @abstract   Removes a performance from the performance array.
+  @param      p A performance to be removed.
+  @result     self
+  @discussion Mainly for use by SndPlayer
+*/
 - removePerformance: (SndPerformance*) p;
+/*!
+  @method     performanceCount
+  @abstract   returns the number of active AND pending performances 
+  @result     self
+  @discussion Mainly for use by SndPlayer
+*/
 - (int) performanceCount;
 
 @end

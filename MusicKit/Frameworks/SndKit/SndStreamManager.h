@@ -1,16 +1,19 @@
-/*
-  $Id$
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
 #ifndef __SNDSTREAMMANAGER_H__
 #define __SNDSTREAMMANAGER_H__
 
@@ -260,5 +263,7 @@
 - (void) _sendDelegateInvocation:(in unsigned long) mesg;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

@@ -6,9 +6,9 @@
 //  Created by skot on Wed Mar 28 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
 //
 //  FreeVerb-based
 //  FreeVerb originally written by Jezar at Dreampoint, June 2000
@@ -45,7 +45,7 @@ enum {
   rvrbNumParams = 6
 };
 
-/*!
+/*! 
     @class      SndAudioProcessorReverb
     @abstract   A reverb processor
     @discussion To come.
@@ -57,19 +57,16 @@ enum {
 }
 
 /*!
-  @method reverb
-  @result An SndAudioProcessorReverb object
-  @discussion Convenience creation method returning a new reverb object.
-*/
-+ reverb;
-
-/*!
   @method init
   @result self
   @discussion Initializes the CPP reverb model.
 */
 - init;
-
+/*!
+  @method dealloc
+  @discussion Destructor.
+*/
+- (void) dealloc;
 /*!
   @method processReplacingInputBuffer:outputBuffer:
   @param  inB  inputBuffer
@@ -78,15 +75,8 @@ enum {
   @discussion Main FX processing function - automatically called by the host SndAudioProcessorChain.
               See discussion in SndAudioProcessor.
 */
-- processReplacingInputBuffer: (SndAudioBuffer*) inB 
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
                  outputBuffer: (SndAudioBuffer*) outB;
-
-/*!
-  @method paramCount:
-  @result The number of parameters in the reverb model.
-  @discussion See discussion in SndAudioProcessor 
-*/
-- (int) paramCount;
 
 /*!
   @method paramValue:

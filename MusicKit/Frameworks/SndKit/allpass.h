@@ -11,17 +11,19 @@
 class sndreverb_allpass
 {
 public:
-					sndreverb_allpass();
-			void	setbuffer(float *buf, int size);
+				sndreverb_allpass();
+	void	setbuffer(float *buf, int size);
 	inline  float	process(float inp);
-			void	mute();
-			void	setfeedback(float val);
-			float	getfeedback();
+	void	processBufferReplacing(float *input, float *output, long bufferLength, int skip);
+	void	mute();
+	void	setfeedback(float val);
+	float	getfeedback();
+  
 // private:
-	float	feedback;
+	float	 feedback;
 	float	*buffer;
-	int		bufsize;
-	int		bufidx;
+	int		 bufsize;
+	int		 bufidx;
 };
 
 

@@ -6,9 +6,9 @@
 //  Created by SKoT McDonald on Wed Mar 28 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
 //
 //  Based on / uses FreeVerb
 //  FreeVerb originally written by Jezar at Dreampoint, June 2000
@@ -22,21 +22,13 @@
 @implementation SndAudioProcessorReverb
 
 ////////////////////////////////////////////////////////////////////////////////
-// reverb
-////////////////////////////////////////////////////////////////////////////////
-
-+ reverb
-{
-  return [[SndAudioProcessorReverb new] autorelease];
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // init
 ////////////////////////////////////////////////////////////////////////////////
 
 - init
 {
   [super init];
+  numParams = rvrbNumParams;
   cppFreeReverbObj = reverbCreate();
   NSLog(@"[Freeverb] cpp object created!");
   return self;
@@ -57,8 +49,8 @@
 //                outputBuffer: (SndAudioBuffer*) outB 
 ////////////////////////////////////////////////////////////////////////////////
 
-- processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                 outputBuffer: (SndAudioBuffer*) outB
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
+                        outputBuffer: (SndAudioBuffer*) outB
 {
   if ([outB lengthInSamples] == [inB lengthInSamples] &&
       [outB channelCount]    == [inB channelCount]    &&
@@ -74,16 +66,7 @@
   }
   else
     printf("SndAudioProcessorReverb::processreplacing: ERR: Buffers have different formats\n");
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// paramCount
-////////////////////////////////////////////////////////////////////////////////
-
-- (int) paramCount
-{
-  return rvrbNumParams;
+  return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

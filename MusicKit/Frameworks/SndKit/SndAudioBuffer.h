@@ -1,23 +1,25 @@
-/*
-  $Id$
-
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description: An object for containings raw audio data, and doing audio 
+//               operations on that data
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SNDAUDIOBUFFER_H__
 #define __SNDAUDIOBUFFER_H__
 
 #import <Foundation/Foundation.h>
 #import "SndKit.h"
-
 
 /*!
     @class      SndAudioBuffer 
@@ -35,7 +37,7 @@
 }
 
 /*!
-    @method   audioBufferWithFormat:duration:
+    @method     audioBufferWithFormat:duration:
     @abstract   Factory method
     @discussion
     @param      format
@@ -45,7 +47,7 @@
 + audioBufferWithFormat: (SndSoundStruct*) format duration: (double) timeInSec;
 
 /*!
-    @method   audioBufferWithFormat:data:
+    @method     audioBufferWithFormat:data:
     @abstract   Factory method
     @discussion The dataLength member of format MUST be set to the length of d (in bytes)!
     @param      format
@@ -55,7 +57,7 @@
 + audioBufferWithFormat: (SndSoundStruct*) format data: (void*) d;
 
 /*!
-    @method   audioBufferWrapperAroundSNDStreamBuffer:
+    @method     audioBufferWrapperAroundSNDStreamBuffer:
     @abstract   Factory method
     @discussion
     @param      cBuff
@@ -64,7 +66,7 @@
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff;
 
 /*!
-    @method   audioBufferWithSndSeg:range:
+    @method     audioBufferWithSndSeg:range:
     @abstract   Factory method
     @discussion
     @param      snd 
@@ -74,7 +76,7 @@
 + audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r;
 
 /*!
-    @method   initWithFormat:data:
+    @method     initWithFormat:data:
     @abstract   Initialization method
     @discussion
     @param      f
@@ -84,7 +86,7 @@
 - initWithFormat: (SndSoundStruct*) f data: (void*) d;
 
 /*!
-    @method   mixWithBuffer:fromStart:toEnd:
+    @method     mixWithBuffer:fromStart:toEnd:
     @abstract   Initialization method
     @discussion
     @param      buff
@@ -104,7 +106,7 @@
 - mixWithBuffer: (SndAudioBuffer*) buff;
 
 /*!
-    @method   copy
+    @method     copy
     @abstract
     @discussion
     @result     A duplicate SndAudioBuffer with its own, identical data.
@@ -112,7 +114,7 @@
 - copy;
 
 /*!
-    @method   copyData:
+    @method     copyData:
     @abstract
     @discussion
     @param      ab
@@ -121,7 +123,7 @@
 - copyData: (SndAudioBuffer*) ab;
 
 /*!
-    @method   lengthInSamples
+    @method     lengthInSamples
     @abstract
     @discussion
     @result     buffer length in sample frames
@@ -129,7 +131,7 @@
 - (long) lengthInSamples;
 
 /*!
-    @method lengthInBytes
+    @method     lengthInBytes
     @abstract
     @discussion
     @result     buffer length in bytes
@@ -137,7 +139,7 @@
 - (long) lengthInBytes;
 
 /*!
-    @method   duration
+    @method     duration
     @abstract
     @discussion
     @result     Duration in seconds (as determined by format sampling rate)
@@ -145,7 +147,7 @@
 - (double) duration;
 
 /*!
-    @method   samplingRate
+    @method     samplingRate
     @abstract
     @discussion
     @result     sampling rate
@@ -153,7 +155,7 @@
 - (double) samplingRate;
 
 /*!
-    @method   channelCount
+    @method     channelCount
     @abstract
     @discussion
     @result     Number of channels
@@ -161,7 +163,7 @@
 - (int) channelCount;
 
 /*!
-    @method   dataFormat
+    @method     dataFormat
     @abstract
     @discussion
     @result     Data format identifier
@@ -169,7 +171,7 @@
 - (int) dataFormat;
 
 /*!
-    @method   data
+    @method     data
     @abstract
     @discussion
     @result     pointer to raw data bytes
@@ -177,7 +179,7 @@
 - (void*) data;
 
 /*!
-    @method   format
+    @method     format
     @abstract
     @discussion
     @result     Pointer to SndSoundStruct format description
@@ -201,15 +203,23 @@
 - (void) zeroForeignBuffer;
 
 /*!
-    @method   multiChannelSampleSizeInBytes
+    @method     multiChannelSampleSizeInBytes
     @abstract
     @discussion
     @result     Integer size of sample frame (channels * sample size in bytes)
 */
 - (int) multiChannelSampleSizeInBytes;
 
+/*!
+    @method     description
+    @abstract    
+    @discussion 
+    @result     Integer size of sample frame (channels * sample size in bytes)
+*/
 - (NSString*) description;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

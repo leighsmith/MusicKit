@@ -6,11 +6,14 @@
 //  Created by skot on Wed Mar 28 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
+
+#ifndef __SNDAUDIOPROCESSORDELAY_H_
+#define __SNDAUDIOPROCESSORDELAY_H_
 
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
@@ -28,7 +31,7 @@ enum {
   dlyNumParams = 2
 } SndDelayParam;
 
-/*!
+/*! 
     @class      SndAudioProcessorDelay
     @abstract   A delay processor
     @discussion To come
@@ -53,70 +56,69 @@ enum {
 /*!
     @method   delayWithLength:feedback:
     @abstract   Factory method
-    @discussion
     @param      nSams
     @param      fFB
     @result     A Freshly initialized, autoreleased  delay processor.
+    @discussion
 */
 + delayWithLength: (long) nSams feedback: (float) fFB;
 /*!
     @method intWithLength:feedback:
     @abstract 
-    @discussion
     @param nSams
     @param fFB
     @result 
+    @discussion
 */
 - initWithLength: (long) nSams feedback: (float) fFB;
 /*!
-    @method freemem
+    @method     freemem
     @abstract 
-    @discussion
-    @param nSams
-    @param fFB
+    @param      nSams
+    @param      fFB
     @result self
+    @discussion
 */
 - freemem;
 /*!
     @method dealloc
     @abstract 
-    @discussion
     @result
+    @discussion
 */
 - (void) dealloc;
 /*!
     @method paramCount
     @abstract 
-    @discussion
     @result
+    @discussion
 */
 - (int) paramCount;
 /*!
     @method paramValue:
     @abstract 
-    @discussion
     @param index
     @result Parameter value in the range [0,1]
+    @discussion
 */
 - (float) paramValue: (int) index;
 /*!
     @method paramName
     @abstract 
-    @discussion
     @param index
     @result parameter name
+    @discussion
 */
 - (NSString*) paramName: (int) index;
 /*!
     @method setParam:toValue:
     @abstract 
-    @discussion
     @param index
     @param v
     @result self
+    @discussion
 */
 - setParam: (int) index toValue: (float) v;
-
 /*!
     @method processReplacingInputBuffer:outputBuffer:
     @abstract 
@@ -127,5 +129,8 @@ enum {
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
                         outputBuffer: (SndAudioBuffer*) outB;
-
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+
+#endif

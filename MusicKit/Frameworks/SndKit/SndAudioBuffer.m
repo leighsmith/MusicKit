@@ -1,16 +1,19 @@
-/*
-  $Id$
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  12 Feb 2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  12 Feb 2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
 #import "SndAudioBuffer.h"
 
 #ifdef __VEC__
@@ -20,7 +23,7 @@
 @implementation SndAudioBuffer
 
 ////////////////////////////////////////////////////////////////////////////////
-// 
+// audioBufferWithFormat:data: 
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioBufferWithFormat: (SndSoundStruct*) f data: (void*) d
@@ -33,7 +36,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// audioBufferWrapperAroundSNDStreamBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff
@@ -45,7 +48,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// audioBufferWithSndSeg:range:
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r
@@ -101,7 +104,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// description
 ////////////////////////////////////////////////////////////////////////////////
 
 - (NSString*) description
@@ -111,7 +114,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// initWithFormat:data:
 ////////////////////////////////////////////////////////////////////////////////
 
 - initWithFormat: (SndSoundStruct*) f data: (void*) d
@@ -150,13 +153,17 @@
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// zeroForeignBuffer
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) zeroForeignBuffer
 {
     memset(data, 0, formatSnd.dataSize);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// micro accessors
 ////////////////////////////////////////////////////////////////////////////////
 
 - (int) dataFormat
@@ -165,7 +172,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// data
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void*) data
@@ -173,16 +180,23 @@
     return data;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// channelCount
+////////////////////////////////////////////////////////////////////////////////
+
 - (int) channelCount
 {
     return formatSnd.channelCount;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Note: This is only an interim proof of concept implementation and doesn't manage all 
-// combinations of formats. Instead of adding extra formats, this code should be
-// changed to use a version of SndConvertSoundInternal() that has been suitably modified
-// to accept presupplied buffers (SndConvertSoundInternal currently allocates them itself).
+// mixWithBuffer:fromStart:toEnd:
+//
+// Note: This is only an interim proof of concept implementation and doesn't 
+// manage all combinations of formats. Instead of adding extra formats, this 
+// code should be changed to use a version of SndConvertSoundInternal() that 
+// has been suitably modified to accept presupplied buffers.
+//  (SndConvertSoundInternal currently allocates them itself).
 ////////////////////////////////////////////////////////////////////////////////
 
 - mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end
@@ -225,8 +239,9 @@
                     switch (buffNumChannels) {
                         case 1:
                             for (i = 0; i < frameCount; i++) {
-                                out[i+start]   += in[i]; // interleaving automatically taken care of!
-                                out[i*2+start] += in[i]; // interleaving automatically taken care of!
+                                register int pos = (i<<1)+start;
+                                out[pos]   += in[i]; 
+                                out[pos+1] += in[i]; 
                             }
                             break;
                         default:
@@ -237,7 +252,7 @@
                     switch (buffNumChannels) {
                         case 2:
                             for (i = 0; i < frameCount; i++) {
-                                out[i+start] += in[i*2]; // copy left channel into output buffer
+                                out[i+start] += in[i<<1]; // copy left channel into output buffer
                             }
                             break;
                         default:
@@ -263,14 +278,15 @@
                 }
                 else if (buffNumChannels == 1)  {
                     for (i = 0; i < frameCount; i++) {
+                        register int pos = (i<<1)+start;
                         f = (float) in[i] / 32768.0f;
-                        out[i*2+start]   += f; // interleaving automatically taken care of!
-                        out[i*2+start+1] += f; // interleaving automatically taken care of!
+                        out[pos]   += f; // interleaving automatically taken care of!
+                        out[pos+1] += f; // interleaving automatically taken care of!
                     }
                 }
                 else if (buffNumChannels == 2)  {
                     for (i = 0; i < frameCount; i++) {
-                        f = (float) in[i*2] / 32768.0f;
+                        f = (float) in[i<<1] / 32768.0f;
                         out[i+start] += f; // interleaving automatically taken care of!
                     }
                 }
@@ -279,7 +295,6 @@
             default:
                 NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: unsupported format %d", [buff dataFormat]);
         }
-
     }
     else {
         NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: miss-matched buffer formats - write converter");
@@ -287,6 +302,9 @@
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// mixWithBuffer:
+////////////////////////////////////////////////////////////////////////////////
 
 - mixWithBuffer: (SndAudioBuffer*) buff
 {
@@ -294,12 +312,11 @@
     // NSLog(@"buffer to mix: %s", SndStructDescription(&(buff->formatSnd)));
     
     [self mixWithBuffer: buff fromStart: 0 toEnd: formatSnd.dataSize / [self multiChannelSampleSizeInBytes]];
-    
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// copy
 ////////////////////////////////////////////////////////////////////////////////
 
 - copy
@@ -310,7 +327,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// copyData:
 ////////////////////////////////////////////////////////////////////////////////
 
 - copyData: (SndAudioBuffer*) from
@@ -328,13 +345,17 @@
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// multiChannelSampleSizeInBytes
+////////////////////////////////////////////////////////////////////////////////
+
 - (int) multiChannelSampleSizeInBytes
 {
     return formatSnd.channelCount * SndSampleWidth([self dataFormat]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @lengthInSamples
+// lengthInSamples
 ////////////////////////////////////////////////////////////////////////////////
 
 - (long) lengthInSamples
@@ -342,21 +363,26 @@
     return formatSnd.dataSize / [self multiChannelSampleSizeInBytes];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// lengthInBytes
+////////////////////////////////////////////////////////////////////////////////
+
 - (long) lengthInBytes
 {
   return formatSnd.dataSize;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @duration
+// duration
 ////////////////////////////////////////////////////////////////////////////////
 
 - (double) duration
 {
-    return (double) [self lengthInSamples] / (double) formatSnd.samplingRate;
+    return (double) [self lengthInSamples] / [self samplingRate];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// samplingRate
 ////////////////////////////////////////////////////////////////////////////////
 
 - (double) samplingRate
@@ -365,6 +391,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// format
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndSoundStruct*) format

@@ -33,4 +33,31 @@ float sndreverb_allpass::getfeedback()
 	return feedback;
 }
 
+/*
+inline float sndreverb_allpass::process(float input)
+{
+	float output;
+	float bufout;
+	
+	bufout = buffer[bufidx];
+	undenormalise(bufout);
+	
+	output = -input + bufout;
+	buffer[bufidx] = input + (bufout*feedback);
+
+	if(++bufidx>=bufsize) bufidx = 0;
+
+	return output;
+}
+*/
+
+void	sndreverb_allpass::processBufferReplacing(float *input, float *output, long bufferLength, int skip)
+{
+  long i;
+  float bufout;
+  
+  for (i = 0; i < bufferLength; i += skip) 
+    output[i] = process(input[i]);
+}
+
 //ends

@@ -21,7 +21,7 @@
 @class SndAudioProcessor;
 @class SndAudioFader;
 
-/*!
+/*! 
     @class    SndAudioProcessorChain
     @abstract 
     @discussion To come
@@ -40,69 +40,61 @@
 }
 
 /*!
-    @method   audioProcessorChain
+    @method     audioProcessorChain
     @abstract   Factory method
     @result     A freshly initialized, autoreleased SndAudioProcessorChain.
 */
 + audioProcessorChain;
-
 /*!
-    @method   init
+    @method     init
     @abstract   Initializer
     @result     Self
 */
 - init;
-
 /*!
-    @method   dealloc
+    @method     dealloc
     @abstract   Destructor
 */
 - (void) dealloc;
-
 /*!
-    @method   bypassProcessors:
+    @method     bypassProcessors:
     @abstract   Sets the internal FX bypass flag
     @param      b Bypass flag - TRUE if bypass is to be enabled
     @result     self.
 */
 - bypassProcessors: (BOOL) b; 
-
 /*!
-    @method   addAudioProcessor:
+    @method     addAudioProcessor:
     @abstract   Adds an SndAudioProcessor to the FX chain
     @discussion
     @param      proc The SndAudioProcessor to be added to the FX chain
     @result     Self
 */
 - addAudioProcessor: (SndAudioProcessor*) proc;
-
 /*!
-    @method   removeAudioProcessor:
+    @method     removeAudioProcessor:
     @abstract   Removes an SndAudioProcesor from the FX chain
     @discussion
     @param      proc SndAudioProcessor to be removed from the FX chain
     @result     self
 */
 - removeAudioProcessor: (SndAudioProcessor*) proc;
-
 /*!
-    @method   processorAtIndex:
+    @method     processorAtIndex:
     @abstract   Get the processor at a certain index
     @discussion
     @param      index
     @result     Reference to an SndAudioProcessor
 */
 - (SndAudioProcessor*) processorAtIndex: (int) index;
-
 /*!
-    @method   removeAllProcessors
+    @method     removeAllProcessors
     @abstract   Removes all processors from the processor chain.
     @result     self
 */
 - removeAllProcessors;
-
 /*!
-    @method   processBuffer:
+    @method     processBuffer:
     @abstract
     @discussion The t parameter tells the processor chain at what time
                 the buffer is destined to start to be played. This
@@ -112,49 +104,43 @@
     @result     self.
 */
 - processBuffer: (SndAudioBuffer*) buff forTime:(double) t;
-
 /*!
-    @method   processorCount
+    @method     processorCount
     @abstract
     @discussion
     @result     number of processors in the processor chain.
 */
 - (int) processorCount; 
-
 /*!
-    @method   processorArray
+    @method     processorArray
     @abstract   Accessor to the internal processor array
     @discussion Provided for speed
     @result     NSArray containing the processors (in order)
 */
 - (NSArray*) processorArray;
-
 /*!
-    @method   isBypassingFX
+    @method     isBypassingFX
     @abstract
     @discussion
     @result     TRUE is FX chain is being bypassed
 */
 - (BOOL) isBypassingFX;
-
 /*!
-    @method   setBypass:
+    @method     setBypass:
     @abstract
     @discussion
     @param      b Bypass flag - TRUE to enable bypass 
 */
 - (void) setBypass: (BOOL) b;
-
 /*!
-    @method   postFader
+    @method     postFader
     @abstract
     @discussion
     @result     id of the postFader object at the end of the chain
 */
 - (SndAudioFader *) postFader;
-
 /*!
-    @method   nowTime
+    @method     nowTime
     @abstract
     @discussion
     @result     double indicating the start time of the buffer being
@@ -163,5 +149,7 @@
 - (double) nowTime;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

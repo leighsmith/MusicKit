@@ -1,13 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// SndAudioProcessorMP3Encoder.m
-// SndKit
+//  SndAudioProcessorMP3Encoder.m
+//  SndKit
 //
 //  Created by SKoT McDonald <skot@tomandandy.com> on Mon Oct 01 2001.
+//  Copyright (c) 2001 tomandandy music inc.
 //
-// Requires the libshout library produced by the Icecast 
-// mp3 shoutcasting library (see http://www.icecast.org), 
-// and the LAME MP3 encoder / decoder (http://www.lame.org)
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+//  Requires the libshout library produced by the Icecast 
+//  mp3 shoutcasting library (see http://www.icecast.org), 
+//  and the LAME MP3 encoder / decoder (http://www.lame.org)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -189,8 +194,8 @@
 // processReplacingInputBuffer:outputBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
-- processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                 outputBuffer: (SndAudioBuffer*) outB
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
+                        outputBuffer: (SndAudioBuffer*) outB
 {
 
   if (bShoutcastActive) {
@@ -242,8 +247,8 @@
     [encodeNShoutcastLock unlock];
   // shout_sleep(&conn);
   }
-  [outB copyData: inB];
-  return self;
+  return FALSE; // False because we haven't touched inB - signal that it is still 
+                // valid for next processor.
 }
 
 ////////////////////////////////////////////////////////////////////////////////

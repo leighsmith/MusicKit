@@ -6,9 +6,9 @@
 //  Created by skot on Tues Mar 27 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +36,6 @@
     double                 nowTime;
     double                 lastNowTime;
 }
-
 /*!
     @method   sndStreamMixer
     @abstract   Factory method
@@ -44,7 +43,6 @@
     @result     A freshly initialized and autoreleased SndStreamMixer object
 */
 + sndStreamMixer;
-
 /*!
     @method   init
     @abstract   Initializer method
@@ -52,14 +50,12 @@
     @result     self.
 */
 - init;
-
 /*!
     @method   dealloc
     @abstract   Destructor method
     @discussion
 */
 - (void) dealloc;
-
 /*!
     @method   processInBuffer:outBuffer:nowTime:
     @abstract
@@ -72,7 +68,6 @@
 - processInBuffer: (SndAudioBuffer*) inB
         outBuffer: (SndAudioBuffer*) outB
           nowTime: (double) t;
-
 /*!
     @method   removeClient:
     @abstract
@@ -81,7 +76,6 @@
     @result     TRUE if client was successfully removed
 */
 - (BOOL) removeClient: (SndStreamClient*) client;
-
 /*!
     @method   addClient:
     @abstract
@@ -90,7 +84,6 @@
     @result 
 */
 - (int) addClient: (SndStreamClient*) client;
-
 /*!
     @method managerIsShuttingDown
     @abstract
@@ -98,7 +91,6 @@
     @result self
 */
 - managerIsShuttingDown;
-
 /*!
     @method clientCount
     @abstract
@@ -106,7 +98,6 @@
     @result     Number of stream clients currently connected to the mixer
 */
 - (int) clientCount;
-
 /*!
     @method   audioProcessorChain
     @abstract   Accessor
@@ -114,7 +105,6 @@
     @result     Reference to the data member audioprocessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
-
 /*!
     @method resetTime:
     @abstract Resets the mixer's sense of time, and pro
@@ -123,5 +113,7 @@
 - (void) resetTime: (double) originTimeInSeconds;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

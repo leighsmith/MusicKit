@@ -6,15 +6,19 @@
 //  Created by SKoT McDonald on Tues Mar 27 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <MKPerformSndMIDI/PerformSound.h>
 #import "SndStreamMixer.h"
 #import "SndAudioProcessor.h"
+
+////////////////////////////////////////////////////////////////////////////////
+// Debug defines
+////////////////////////////////////////////////////////////////////////////////
 
 #define SNDSTREAMMIXER_DEBUG 0
 
@@ -77,7 +81,7 @@
 //    [outB mixWithBuffer: inB];
 
 #if SNDSTREAMMIXER_DEBUG    
-    fprintf(stderr, "[mixer] Entering processInBuffer at time: %f *********************\n",t);
+    fprintf(stderr, "[mixer] Entering processInBuffer at time: %f **********\n",t);
 #endif
 
     [outB zeroForeignBuffer];
@@ -161,7 +165,7 @@
         [streamClientsLock unlock];
     }
     else
-        fprintf(stderr, "[mixer] SndStreamManager::removeClient - Error: client was not present.");
+        NSLog(@"[mixer] SndStreamManager::removeClient - Error: client was not present.");
     
     return clientPresent;
 }
@@ -176,7 +180,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @managerIsShuttingDown
+// managerIsShuttingDown
 ////////////////////////////////////////////////////////////////////////////////
 
 - managerIsShuttingDown
@@ -190,7 +194,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @audioProcessorChain
+// audioProcessorChain
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndAudioProcessorChain*) audioProcessorChain
@@ -199,7 +203,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// resetTime:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) resetTime: (double) originTimeInSeconds

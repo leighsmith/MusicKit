@@ -1,17 +1,19 @@
-/*
-  $Id$
-
-  Description:
-    See the header description below.
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//    See the header description below.
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SND_PLAYER_H__
 #define __SND_PLAYER_H__
@@ -38,8 +40,9 @@
     NSLock         *playingLock; // controls access to the toBePlayed and playing arrays.
 /*! @var            bRemainConnectedToManager */
     BOOL            bRemainConnectedToManager;
+/*! @var            removalArray */
+    NSMutableArray *removalArray;
 }
-
 /*!
     @method     player
     @abstract   Factory method
@@ -47,7 +50,6 @@
     @result     A freshly initialized and autoreleased SndPlayer
 */
 + player;
-
 /*!
     @method     defaultSndplayer
     @abstract   Factory method
@@ -55,7 +57,6 @@
     @result     The default SndPlayer object
 */
 + (SndPlayer*) defaultSndPlayer;
-
 /*!
     @method     playSnd:withTimeOffset:
     @abstract   Begin playing a Snd instance immediately.
@@ -63,7 +64,6 @@
     @result     The SndPerformance object assocaited with this instance of the Snd's performance 
 */
 - (SndPerformance *) playSnd: (Snd*) s;
-
 /*!
     @method   playSnd:withTimeOffset:
     @abstract   Begin playing a Snd instance at some in point time in the future.
@@ -72,7 +72,6 @@
     @result     The SndPerformance object assocaited with this instance of the Snd's performance
 */
 - (SndPerformance *) playSnd: (Snd*) s withTimeOffset: (double) inSeconds;
-
 /*!
     @method playSnd:withTimeOffset:beginAtIndex:endAtIndex:
     @abstract Begin playing a Snd instance at some time in the future.
@@ -86,7 +85,6 @@
               withTimeOffset: (double) inSeconds
                 beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endIndex;
-                  
 /*!
     @method playSnd:atTimeInSeconds:beginAtIndex:endAtIndex:
     @abstract Begin playing a Snd instance at some absolute stream time.
@@ -100,7 +98,6 @@
              atTimeInSeconds: (double) playT
                 beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endAtIndex;                  
-
 /*!
     @method playSnd:atTimeInSeconds:beginAtIndex:endAtIndex:
     @abstract Begin playing a Snd instance at some absolute stream time.
@@ -112,7 +109,6 @@
 - (SndPerformance *) playSnd: (Snd *) s
              atTimeInSeconds: (double) playT
        withDurationInSeconds: (double) d;                  
-
 /*!
     @method stopSnd:withTimeOffset:
     @abstract Stop all performances of the sound, at some point in the future.
@@ -121,7 +117,6 @@
     @result Self.
 */
 - stopSnd: (Snd*) s withTimeOffset: (double) inSeconds;
-
 /*!
     @method stopSnd:
     @abstract Stop all performances of the sound immediately.
@@ -129,7 +124,6 @@
     @result   Self.
 */
 - stopSnd: (Snd *) s;
-
 /*!
     @method stopPerformance:inFuture:
     @abstract Stop the given performance at some time in the future.
@@ -143,7 +137,6 @@
     @result
 */
 - stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds;
-
 /*!
     @method   processBuffers
     @abstract   Main Snd performance method.
@@ -152,40 +145,40 @@
                 positions updated, playing and tobePlayed arrays updated as required. 
 */
 - (void) processBuffers;
-
 /*!
     @method init
     @abstract Initializer
     @result   Self.
 */
 - init;
-
 /*!
     @method dealloc
     @abstract Destructor
 */
 - (void) dealloc;
-
 /*!
     @method description
     @abstract Produces a brief description of the SndPlayer.
     @result   NSString containing a brief description of the object
 */
 - (NSString *) description;
-
 /*!
     @method     setRemainConnectedToManager:
     @abstract   Sets the SndPlayer disconnection behaviour when no sounds
                 remain in the pending or play arrays. 
-    @discussion By default, the SndPlayer remains connected to the stream manager, which
-                in turn means that streaming is still active. If you are only playing sounds
-                occassionaly, you may notwish to incur this slight overhead. The trade off
-                is that if disconnection is set to be the behaviour, you will have a higher
-                performance cost when starting the play back of a new sound in the future, as
-                new threads are brought into existance, and streaming is started up.
+    @discussion By default, the SndPlayer remains connected to the stream 
+                manager, which in turn means that streaming is still active. 
+                If you are only playing sounds occassionaly, you may not wish 
+                to incur this slight overhead. The trade off is that if 
+                disconnection is set to be the behaviour, you will have a higher
+                performance cost when starting the play back of a new sound in 
+                the future, as new threads are brought into existance, and 
+                streaming is started up.
 */
 - setRemainConnectedToManager: (BOOL) b;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

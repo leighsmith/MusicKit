@@ -1,21 +1,25 @@
-/*
-  $Id$
-
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioBuffer.h"
 #import "SndPlayer.h"
 #import "SndStreamManager.h"
 #import "SndPerformance.h"
+
+#define SNDPLAYER_DEBUG 0
 
 ////////////////////////////////////////////////////////////////////////////////
 //  SndPlayer
@@ -27,7 +31,7 @@ static SndPlayer *defaultSndPlayer;
 @implementation SndPlayer
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// player
 ////////////////////////////////////////////////////////////////////////////////
 
 + player
@@ -47,37 +51,41 @@ static SndPlayer *defaultSndPlayer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// init
 ////////////////////////////////////////////////////////////////////////////////
 
 - init
 {
-    [super init];
+  self = [super init];
     bRemainConnectedToManager = TRUE;
-    if (toBePlayed  == nil)
-        toBePlayed  = [[NSMutableArray arrayWithCapacity: 10] retain];
-    if (playing     == nil)
-        playing     = [[NSMutableArray arrayWithCapacity: 10] retain];
-    if (playingLock == nil)
-        playingLock = [[NSLock alloc] init];  // controls adding and removing sounds from the playing list.
-    [self setClientName: @"SndPlayer"];
-    return self;
+  if (toBePlayed  == nil)
+    toBePlayed   = [[NSMutableArray arrayWithCapacity: 10] retain];
+  if (playing     == nil)
+    playing      = [[NSMutableArray arrayWithCapacity: 10] retain];
+  if (playingLock == nil)
+    playingLock  = [[NSLock alloc] init];  // controls adding and removing sounds from the playing list.
+  if (removalArray == nil)
+    removalArray = [[NSMutableArray alloc] init];
+
+  [self setClientName: @"SndPlayer"];
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// dealloc
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) dealloc
 {
-    [toBePlayed release];
-    [playing release];
-    [playingLock release];
+    [toBePlayed   release];
+    [playing      release];
+    [playingLock  release];
+    [removalArray release];
     [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// description
 ////////////////////////////////////////////////////////////////////////////////
 
 - (NSString*) description
@@ -89,9 +97,15 @@ static SndPlayer *defaultSndPlayer;
     return description;
 }
 
-// Start the given performance immediately by adding it to the playing list and firing off the delegate.
-// We assume that any method calling this is doing the locking itself, hence this should not be used
+////////////////////////////////////////////////////////////////////////////////
+// _startPerformance:
+//
+// Start the given performance immediately by adding it to the playing list and 
+// firing off the delegate. We assume that any method calling this is doing the 
+// locking itself, hence this should not be used
 // outside this class.
+////////////////////////////////////////////////////////////////////////////////
+
 - _startPerformance: (SndPerformance *) performance
 {
     Snd *snd = [performance snd];
@@ -110,11 +124,15 @@ static SndPlayer *defaultSndPlayer;
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// stopPerformance:inFuture:
+////////////////////////////////////////////////////////////////////////////////
+
 - stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds
 {
     double whenToStop;
     double beginPlayTime;
-    long stopAtSample;
+    long   stopAtSample;
 
     if(![self isActive]) {
         [[SndStreamManager defaultStreamManager] addClient: self];
@@ -144,7 +162,9 @@ static SndPlayer *defaultSndPlayer;
 
 - (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt 
 {
-//    fprintf(stderr,"PlaySnd: withTimeOffset: %f\n",dt);
+#if SNDPLAYER_DEBUG
+    fprintf(stderr,"PlaySnd: withTimeOffset: %f\n",dt);
+#endif
     return [self playSnd: s withTimeOffset: dt beginAtIndex: 0 endAtIndex: -1];
 }
 
@@ -157,46 +177,44 @@ static SndPlayer *defaultSndPlayer;
                 beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endAtIndex
 {
-    double playT;
+  SndPerformance *perf;
+  double playT;
     
-    if(![self isActive])
-        [[SndStreamManager defaultStreamManager] addClient: self];
+  if(![self isActive])
+      [[SndStreamManager defaultStreamManager] addClient: self];
         
-    if (dt < 0.0)
-        playT = 0.0;
-    else
-        playT = [self streamTime] + dt;
+  playT = (dt < 0.0) ? 0.0 : [self streamTime] + dt;
      
-//    fprintf(stderr,"SndPlayer: timeOffset:%f playT:%f clientNowTime:%f begin:%li end:%li\n", dt, playT,clientNowTime,beginAtIndex,endAtIndex);
-    {
-      SndPerformance *perf = [self playSnd: s
-                           atTimeInSeconds: playT
-                              beginAtIndex: beginAtIndex
-                                endAtIndex: endAtIndex]; 
-//      NSLog([perf description]);
-      return perf;
-    }
+#if SNDPLAYER_DEBUG
+    fprintf(stderr,"SndPlayer: timeOffset:%f playT:%f clientNowTime:%f begin:%li end:%li\n", 
+            dt, playT,clientNowTime,beginAtIndex,endAtIndex);
+#endif
+  perf = [self playSnd: s atTimeInSeconds: playT
+          beginAtIndex: beginAtIndex endAtIndex: endAtIndex]; 
+  return perf;
 } 
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// playSnd:atTimeInSeconds:withDurationInSeconds:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndPerformance *) playSnd: (Snd *) s atTimeInSeconds: (double) t withDurationInSeconds: (double) d
+- (SndPerformance *) playSnd: (Snd *) s atTimeInSeconds: (double) t 
+       withDurationInSeconds: (double) d
 {
     long endIndex = -1;
 
     if (d > 0)
-        endIndex =  d * [s samplingRate]; 
+        endIndex =  d * [s samplingRate];
  
-//    NSLog(@"SndPlayer::play:atTimeInSeconds: %f", t);
-       
     return [self playSnd: s
          atTimeInSeconds: t
             beginAtIndex: 0
               endAtIndex: endIndex];  
 }  
 
+////////////////////////////////////////////////////////////////////////////////
+// playSnd:atTimeInSeconds:beginAtIndex:endAtIndex:
+////////////////////////////////////////////////////////////////////////////////
 
 - (SndPerformance *) playSnd: (Snd *) s
              atTimeInSeconds: (double) playT
@@ -210,7 +228,10 @@ static SndPlayer *defaultSndPlayer;
         endAtIndex = [s sampleCount];	// Ensure the end of play can't exceed the sound data
     }
     if (beginAtIndex > endAtIndex) {
-//      NSLog(@"SndPlayer::playSnd:atTimeInSeconds:beginAtIndex:endAtIndex: - WARNING: beginAtIndex > endAtIndex - ignoring play cmd");
+#if SNDPLAYER_DEBUG    
+      NSLog(@"SndPlayer::playSnd:atTimeInSeconds:beginAtIndex:endAtIndex:"
+            " - WARNING: beginAtIndex > endAtIndex - ignoring play cmd");
+#endif
       return nil;
     }
     if(beginAtIndex < 0) {
@@ -219,10 +240,11 @@ static SndPlayer *defaultSndPlayer;
     if(![self isActive]) {
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
-
-//    fprintf(stderr,"PlaySnd:atStreamTime:%f beginAtIndex:%li endAtIndex:%li clientTime:%f streamTime:%f\n", 
-//            playT, beginAtIndex, endAtIndex, clientNowTime, [manager nowTime]);
-
+#if SNDPLAYER_DEBUG    
+    fprintf(stderr,"PlaySnd:atStreamTime:%f beginAtIndex:%li endAtIndex:%li"
+            " clientTime:%f streamTime:%f\n", 
+            playT, beginAtIndex, endAtIndex, clientNowTime, [manager nowTime]);
+#endif
     if (playT <= clientNowTime) {  // play now!
         SndPerformance *nowPerformance;
         nowPerformance = [SndPerformance performanceOfSnd: s 
@@ -236,10 +258,8 @@ static SndPlayer *defaultSndPlayer;
         [s addPerformance: nowPerformance];
         return nowPerformance;
     }		
-    else {            // play later!
-        int i;
-        int numToBePlayed;
-        int insertIndex;
+    else {            // play later - we must insert the performance in Time Order
+        int i, numToBePlayed, insertIndex;
         SndPerformance *laterPerformance;
         
         laterPerformance = [SndPerformance performanceOfSnd: s
@@ -273,19 +293,29 @@ static SndPlayer *defaultSndPlayer;
     return [self playSnd: s withTimeOffset: 0.0];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// stopSnd:withTimeOffset:
+//
 // stop all performances of the sound, at some point in the future.
+////////////////////////////////////////////////////////////////////////////////
+
 - stopSnd: (Snd *) s withTimeOffset: (double) inSeconds
 {
     NSArray *performancesToStop = [s performances];
-    int performanceIndex, count = [performancesToStop count];
+    int i, count = [performancesToStop count];
 
-    for(performanceIndex = 0; performanceIndex < count; performanceIndex++) {
-        [self stopPerformance: [performancesToStop objectAtIndex: performanceIndex] inFuture: inSeconds];
+    for (i = 0; i < count; i++) {
+        SndPerformance *thePerf = [performancesToStop objectAtIndex: i];
+        [self stopPerformance: thePerf inFuture: inSeconds];
     }
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// stopSnd
 // stop all performances of the sound immediately.
+////////////////////////////////////////////////////////////////////////////////
+
 - stopSnd: (Snd *) s
 {
     return [self stopSnd: s withTimeOffset: 0.0];
@@ -293,6 +323,9 @@ static SndPlayer *defaultSndPlayer;
 
 ////////////////////////////////////////////////////////////////////////////////
 // processBuffers
+//
+// This is the big cheese, the main enchilata.
+//
 // nowTime must be the CLIENT now time as this is a process-head capable
 // thread - our client's synthesis sense of time is ahead of the manager's
 // closer-to-absolute sense of time.
@@ -300,37 +333,40 @@ static SndPlayer *defaultSndPlayer;
  
 - (void) processBuffers  
 {
-    SndAudioBuffer* ab   = [self synthOutputBuffer];
-    double       bufferDur     = [ab duration];
-//    double       sampleRate    = [ab samplingRate];
-    double       bufferEndTime = [self synthesisTime] + bufferDur;
-    int numberToBePlayed;
-    int numberPlaying;
-    int buffLength = [ab lengthInSamples];
-    int i;
-    NSMutableArray *removalArray = [NSMutableArray arrayWithCapacity: 10];
+    SndAudioBuffer* ab  = [self synthOutputBuffer];
+    int    numberPlaying;
+    int    i;
 
     [playingLock lock];
+    
     // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
-    numberToBePlayed = [toBePlayed count];
-    for (i = 0; i < numberToBePlayed; i++) {
+    {
+      double bufferDur     = [ab duration];
+      double bufferEndTime = [self synthesisTime] + bufferDur;
+      int numberToBePlayed = [toBePlayed count];
+      for (i = 0; i < numberToBePlayed; i++) {
         SndPerformance *performance = [toBePlayed objectAtIndex: i];
         if ([performance playTime] < bufferEndTime) {
+            float timeOffset  = ([performance playTime] - [self synthesisTime]);
+            long thePlayIndex = -[[performance snd] samplingRate] * timeOffset;
             [removalArray addObject: performance];
-            [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - [self synthesisTime])];
+            [performance setPlayIndex: thePlayIndex];
             [self _startPerformance: performance];
         }
+      }
+      [toBePlayed removeObjectsInArray: removalArray];
+      [removalArray removeAllObjects];
     }
-    [toBePlayed removeObjectsInArray: removalArray];
-    [removalArray removeAllObjects];
     
-    //*The plan*
-    //
-    // Create a temporary wrapper buffer around each audio segment we are mixing.
-
+    // The playing-sounds-mixing-zone.
+    
     numberPlaying = [playing count];
-    for (i = 0; i < numberPlaying; i++) {
+    
+    if (numberPlaying > 0) {
+      int buffLength = [ab lengthInSamples];
+
+      for (i = 0; i < numberPlaying; i++) {
         SndPerformance *performance = [playing objectAtIndex: i];
         Snd    *snd          = [performance snd];
         long    startIndex   = [performance playIndex];
@@ -345,44 +381,43 @@ static SndPlayer *defaultSndPlayer;
             playRegion.length += startIndex;
             playRegion.location = 0;
         }
-
-        //NSLog(@"SYNTH THREAD: startIndex = %ld, endAtIndex = %ld, location = %d, length = %d\n", startIndex, endAtIndex, playRegion.location, playRegion.length);
+#if SNDPLAYER_DEBUG            
+        NSLog(@"SYNTH THREAD: startIndex = %ld, endAtIndex = %ld,"
+              " location = %d, length = %d\n", 
+        			startIndex, endAtIndex, playRegion.location, playRegion.length);
+#endif        
         // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
-        if(buffLength > 0) {      
-            int start = 0, end = buffLength;
-            SndAudioBuffer *temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: playRegion];
+        if (buffLength > 0) {      
+          int start = 0, end = buffLength;
+          SndAudioBuffer *temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: playRegion];
     
-            if (startIndex < 0)
-                start = -startIndex;
-            if (end + startIndex > endAtIndex)
-                end = endAtIndex - startIndex;
+          if (startIndex < 0)                 start = -startIndex;
+          if (end + startIndex > endAtIndex)  end   = endAtIndex - startIndex;
 
-            // NSLog(@"SYNTH THREAD: calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
-            [ab mixWithBuffer: temp fromStart: start toEnd: end];
-	    //NSLog(@"\nSndPlayer: mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
-	    // start, end, playRegion.location, playRegion.length, (((short *)[snd data])[playRegion.location])/(float)32768);
-
-            [performance setPlayIndex: startIndex + buffLength];
+#if SNDPLAYER_DEBUG            
+          NSLog(@"SYNTH THREAD: calling mixWithBuffer from SndPlayer "
+                "processBuffers start = %ld, end = %ld\n", start, end);
+#endif          
+          [ab mixWithBuffer: temp fromStart: start toEnd: end];
+#if SNDPLAYER_DEBUG            
+	        NSLog(@"\nSndPlayer: mixing buffer from %d to %d, playregion %d"
+                " for %d, val at start = %f\n",
+	              start, end, playRegion.location, playRegion.length, 
+                (((short *)[snd data])[playRegion.location])/(float)32768);
+#endif
+          [performance setPlayIndex: startIndex + buffLength];
         }
-        
         // When at the end of sounds, signal the delegate and remove the performance.
-        
         if ([performance playIndex] >= endAtIndex) {
-            [removalArray addObject: performance];
-            [snd removePerformance: performance];
-//            fprintf(stderr,"Detected an end of performance... %i objs\n",[removalArray count]); 
+          [removalArray addObject: performance];
+          [snd removePerformance: performance];
             
-  // SKoT: Dangerous - what if we have multiple performances of a single sound? Comment out for now.       
- //           [[performance snd] _setStatus: SND_SoundStopped];
- //           [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
- //                        duringPerformance: performance];
-
 /* sbrandon Nov 2001: now check thru all performances, and if this one was the last
  * one using this snd, we set the snd to SND_SoundStopped
  */
-            if ([snd performanceCount] == 0) {
-                [snd _setStatus: SND_SoundStopped];
-            }
+          if ([snd performanceCount] == 0) {
+              [snd _setStatus: SND_SoundStopped];
+          }
 
 /* sbrandon Nov 2001: re-instated delegate messaging, but fixed it up for multithreaded
  * use. Note that the arguments HAVE to be objects - hence arg1 here is not a SEL as one
@@ -391,35 +426,42 @@ static SndPlayer *defaultSndPlayer;
  * received in the NSRunLoop in the same way that keyboard, mouse or GUI actions are
  * received.
  */
-            [manager sendMessageInMainThreadToTarget: snd
-                                                 sel: @selector(tellDelegateString:duringPerformance:)
-                                                arg1: @"didPlay:duringPerformance:"
-                                                arg2: performance];
-
+          [manager sendMessageInMainThreadToTarget: snd
+                                               sel: @selector(tellDelegateString:duringPerformance:)
+                                              arg1: @"didPlay:duringPerformance:"
+                                              arg2: performance];
         }
-    }
-
-    // NSLog(@"SYNTH THREAD: playing %d sounds", [playing count]);
-    if ([removalArray count] > 0) {
-//        fprintf(stderr,"removing... removal:%i toBePlayed:%i playing:%i\n",[removalArray count],[toBePlayed count],[playing count]);
+      }
+      if ([removalArray count] > 0) {
         [playing removeObjectsInArray: removalArray];
         if ([toBePlayed count] == 0 && [playing count] == 0) {
-            if (!bRemainConnectedToManager) {
-                active = FALSE;
-//                fprintf(stderr,"[SndPlayer] Setting inactive...\n");
-            }
-            else {
-//                fprintf(stderr,"[SndPlayer] remaining active...\n");
-            }
+          if (!bRemainConnectedToManager) {
+                     active = FALSE;
+#if SNDPLAYER_DEBUG            
+              fprintf(stderr,"[SndPlayer] Setting inactive...\n");
+#endif
+          }
+          else {
+#if SNDPLAYER_DEBUG            
+              fprintf(stderr,"[SndPlayer] remaining active...\n");
+#endif
+          }
         }
+      }
     }
     [playingLock unlock];    
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// setRemainConnectedToManager:
+////////////////////////////////////////////////////////////////////////////////
 
 - setRemainConnectedToManager: (BOOL) b
 {
   bRemainConnectedToManager = b;
   return self;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 @end

@@ -6,9 +6,9 @@
 //  Created by Stephen Brandon on Mon Jun 23 2001. <stephen@brandonitconsulting.co.uk>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -97,24 +97,39 @@ movements, then insert it into the SndAudioProcessorChain later.
 
 @interface SndAudioFader : SndAudioProcessor
 {
+/*! @var envClass */  
   id     envClass; /* Class object used in initialising new envelopes */
+/*! @var ampEnv */  
   id     <SndEnveloping, NSObject> ampEnv;
+/*! @var staticAmp */  
   float  staticAmp;
+/*! @var balanceEnv */  
   id     <SndEnveloping,NSObject> balanceEnv;
+/*! @var staticBalance */  
   float  staticBalance;
 
+/*! @var uee */  
   SndUnifiedEnvelopeEntry *uee;
-
+  
+/*! @var */
   NSLock *lock; // locks changes to the envelope objects (?)
+/*! @var */  
   NSLock *balanceEnvLock;
+/*! @var */
   NSLock *ampEnvLock;
 
 @public
+/*! @var bpBeforeOrEqual */
   BpBeforeOrEqualIMP  bpBeforeOrEqual;
+/*! @var bpAfter */
   BpAfterIMP          bpAfter;
+/*! @var flagsForBp */
   FlagsForBpIMP       flagsForBp;
+/*! @var yForBp */
   YForBpIMP           yForBp;
+/*! @var yForX */
   YForXIMP            yForX;
+/*! @var xForBp */
   XForBpIMP           xForBp;
 }
 

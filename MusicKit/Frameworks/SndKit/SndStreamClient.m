@@ -1,16 +1,16 @@
-/*
-  $Id$
-
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and non-commercial
+//  purposes so long as the author attribution and copyright messages remain intact and
+//  accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
@@ -78,7 +78,7 @@ enum {
     generatesOutput         = TRUE;
     processFinishedCallback = NULL;
     manager                 = nil;
-    clientName              = nil; // [NSString stringWithString: @"streamClient"];
+    clientName              = nil; 
     
     bDelegateRespondsToOutputBufferSkipSelector = FALSE;
     bDelegateRespondsToInputBufferSkipSelector  = FALSE;
@@ -87,7 +87,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// clientName
 ////////////////////////////////////////////////////////////////////////////////
 
 - (NSString*) clientName
@@ -135,9 +135,6 @@ enum {
       fprintf(stderr,"[%s] dealloc: 3\n", [clientName cString]);
 #endif          
     [clientName release];
-
-//    if (manager)
-//        [manager release];
 
     [super dealloc];
 }
@@ -245,7 +242,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @manager
+// manager
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndStreamManager*) manager
@@ -311,7 +308,8 @@ enum {
     {
         oc = [outputQueue processedBuffersCount];
 #if SNDSTREAMCLIENT_DEBUG            
-      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
+      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", 
+              [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
 #endif          
 
       if (oc > 0) {
@@ -322,12 +320,18 @@ enum {
       else if (bDelegateRespondsToOutputBufferSkipSelector)
         [delegate outputBufferSkipped: self];
       else if (active) {
-//        NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? [%s]", clientName);
+#if SNDSTREAMCLIENT_DEBUG            
+        NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? [%s]", clientName);
+#endif
       }    
-//          NSLog(@"startprocessing: stage2");
+#if SNDSTREAMCLIENT_DEBUG                  
+      NSLog(@"startprocessing: stage2");
+#endif
     }
 
+#if SNDSTREAMCLIENT_DEBUG                  
     // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
+#endif
     if (needsInput) {
       if (inB == nil)
         NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
@@ -343,7 +347,9 @@ enum {
         else if (bDelegateRespondsToInputBufferSkipSelector)
           [delegate inputBufferSkipped: self];
         else if (active) {
-//          NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
+#if SNDSTREAMCLIENT_DEBUG                  
+          NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
+#endif
         }
       }
     }
@@ -360,11 +366,11 @@ enum {
 #endif        
       }
     }
-/*
+#if SNDSTREAMCLIENT_DEBUG                  
     fprintf(stderr,"Input: pending:%i processed:%i  Output: pending:%i processed:%i\n",
             [pendingInputBuffers count],  [processedInputBuffers count],
             [pendingOutputBuffers count], [processedOutputBuffers count]);
-*/
+#endif        
     return self;
 }
 
@@ -379,7 +385,9 @@ enum {
     
     [self retain];
     active = TRUE;
-    // NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
+#if SNDSTREAMCLIENT_DEBUG                  
+    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
+#endif        
     while (active) {
         innerPool = [[NSAutoreleasePool alloc] init];
         [synthThreadLock lock];
@@ -390,11 +398,13 @@ enum {
         if (needsInput) {
           synthInputBuffer = [[inputQueue popNextPendingBuffer] retain];
         }
-//        NSLog(@"SYNTH THREAD: going to processBuffers\n");
-                        
+#if SNDSTREAMCLIENT_DEBUG                  
+        NSLog(@"SYNTH THREAD: going to processBuffers\n");
+#endif                        
         [self processBuffers];
-
-//        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
+#if SNDSTREAMCLIENT_DEBUG                  
+        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
+#endif
         if (synthOutputBuffer != nil) {
           [processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
         }        
@@ -526,7 +536,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @isActive
+// isActive
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) isActive;
@@ -558,34 +568,18 @@ enum {
 
 - lockOutputBuffer
 {
-  //[outputBufferLock lock];
+  [outputBufferLock lock];
   return self;
 }
 
 - unlockOutputBuffer
 {
-  //[outputBufferLock unlock];
-  return self;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// Input buffer lock / unlock
-////////////////////////////////////////////////////////////////////////////////
-
-- lockInputBuffer
-{
-//  [inputBufferLock lock];
-  return self;
-}
-
-- unlockInputBuffer
-{
-//  [inputBufferLock unlock];
+  [outputBufferLock unlock];
   return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @audioProcessorChain
+// audioProcessorChain
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndAudioProcessorChain*) audioProcessorChain
@@ -614,6 +608,8 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// input/output buffer queue length accessors
+////////////////////////////////////////////////////////////////////////////////
 
 - (int) inputBufferCount
 {
@@ -625,6 +621,10 @@ enum {
   return [outputQueue bufferCount];
 }
  
+////////////////////////////////////////////////////////////////////////////////
+// input/output buffer queue length mutators
+////////////////////////////////////////////////////////////////////////////////
+
 - (BOOL) setInputBufferCount: (int) n
 {
   if (active)
@@ -645,18 +645,25 @@ enum {
   return TRUE;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// resetTime:
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) resetTime: (double) originTimeInSeconds
 {
-//  [synthThreadLock lock];
+  [synthThreadLock lock];
   clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
-//  [synthThreadLock unlock];
+  [synthThreadLock unlock];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// outputLatencyInSeconds
+////////////////////////////////////////////////////////////////////////////////
 
 - (double) outputLatencyInSeconds
 {
   if (exposedOutputBuffer != nil) {
       double latency = [outputQueue bufferCount] * [exposedOutputBuffer duration];
-//      NSLog(@"Latecy: %.3f",latency);
       return latency;
   }
   else

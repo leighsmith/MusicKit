@@ -1,16 +1,18 @@
-/*
-  $Id$
-
-  Description:
-
-  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
-
-  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __SNDSTREAMCLIENT__
 #define __SNDSTREAMCLIENT__
@@ -31,6 +33,10 @@ enum {
 @class SndConditionLock;
 #endif
 
+////////////////////////////////////////////////////////////////////////////////
+// SndStreamClientDelegate
+////////////////////////////////////////////////////////////////////////////////
+
 /*!
     @class      SndStreamClientDelegate
     @abstract   Informal protocol for a SndStreamClient delegate
@@ -39,18 +45,23 @@ enum {
 @interface SndStreamClientDelegate
 
 /*!
-    @method   inputBufferSkipped
-    @abstract   Message sent when the client was not ready to accept the next input buffer
+    @method     inputBufferSkipped
+    @abstract   Message sent when the client was not ready to accept the 
+                next input buffer
 */
 - inputBufferSkipped:  sender;
 
 /*!
-    @method   outputBufferSkipped
-    @abstract   Message sent when the client was not ready to provide the next outputBuffer
+    @method     outputBufferSkipped
+    @abstract   Message sent when the client was not ready to provide the 
+                next outputBuffer
 */
 - outputBufferSkipped: sender;
 @end
 
+////////////////////////////////////////////////////////////////////////////////
+// SndStreamClient
+////////////////////////////////////////////////////////////////////////////////
 
 /*!
     @class      SndStreamClient
@@ -347,24 +358,6 @@ enum {
     @result     self.
 */
 - unlockOutputBuffer;
-
-/*!
-    @method   lockInputBuffer
-    @abstract   Blocks calling thread until inputBuffer is available for locking.  
-    @discussion Lock the input buffer before doing anything with it, otherwise 
-                the synthesis thread may swap the buffers on you!
-    @result     self.
-*/
-- lockInputBuffer;
-
-/*!
-    @method   unlockInputBuffer
-    @abstract   Releases lock on the outputBuffer.
-    @result     self.
-*/
-- unlockInputBuffer;
-
-
 /*!
     @method   prepareToStreamWithBuffer: 
     @abstract   Prepare-to-stream-with-buffers-that-look-like-this message.
@@ -463,5 +456,7 @@ enum {
 - setClientName: (NSString*) name;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

@@ -6,9 +6,9 @@
 //  Created by stephen brandon on Mon Jun 23 2001. <stephen@brandonitconsulting.co.uk>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef __SNDENVELOPE_H__
@@ -301,6 +301,8 @@
 - (BOOL) replaceXValue:(double)xVal yValue:(float)yVal flags:(int)flags atBreakpoint:(int)bp;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif
 

@@ -45,4 +45,13 @@ float sndreverb_comb::getfeedback()
 	return feedback;
 }
 
+void sndreverb_comb::processBuffer(float *input, float *output, long bufferlength, int skip)
+{
+  int i;
+  
+  for (i = 0; i < bufsize; i += skip)
+    output[i] += process(input[i]);
+}
+
+
 // ends

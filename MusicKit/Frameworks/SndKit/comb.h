@@ -12,14 +12,15 @@
 class sndreverb_comb
 {
 public:
-					sndreverb_comb();
-			void	setbuffer(float *buf, int size);
+        sndreverb_comb();
+	void  setbuffer(float *buf, int size);
+  void  processBuffer(float *input, float *output, long bufferlength, int skip);      
 	inline  float	process(float inp);
-			void	mute();
-			void	setdamp(float val);
-			float	getdamp();
-			void	setfeedback(float val);
-			float	getfeedback();
+  void	mute();
+	void	setdamp(float val);
+	float	getdamp();
+	void	setfeedback(float val);
+	float	getfeedback();
 private:
 	float	feedback;
 	float	filterstore;

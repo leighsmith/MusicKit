@@ -32,97 +32,8 @@ CONDITIONS OF THIS AGREEMENT.
 
 ******************************************************************************/
 /* HISTORY
- * $Log$
- * Revision 1.34  2001/12/09 02:13:43  skotmcdonald
- * Added an NSArray of SndPerformances, and accessor and mutator methods to the Snd object. Now each sound is aware of all instances of its being played without messy searches thru the all the SndPlayer performances.
- *
- * Revision 1.33  2001/11/21 17:49:02  sbrandon
- * - Added new method tellDelegateString: which is similar to tellDelegate: except accepts an NSString as argument instead of a SEL. This is to aid sending messages via NSInvocations where SEL types cannot be used as arguments.
- * - tidied up some internal formatting
- *
- * Revision 1.32  2001/11/07 12:41:29  sbrandon
- * - cleaned up formatting of license
- * - added defines to force new version of sox lib (libst.h) to import correct
- *   headers
- *
- * Revision 1.31  2001/10/31 15:35:04  sbrandon
- * replaced htonl() calls with equivalent NSSwap...() function
- *
- * Revision 1.30  2001/09/12 12:06:32  sbrandon
- * changed uses of -cString to -fileSystemRepresentation to better cope with
- * unicode characters in filenames, and prepare way for Win32 implementations
- *
- * Revision 1.29  2001/09/11 20:36:00  sbrandon
- * Added methods to Snd object for data endian swapping - swapHostToSnd and
- * swapSndToHost. These methods wrap the corresponding Snd functions. To swap
- * just a part of a Snd use the function interface not the method.
- *
- * Revision 1.28  2001/09/04 19:26:10  skotmcdonald
- * Shifted default SndPlayer var to SndPlayer, added accessor, updated Snd.
- *
- * Revision 1.27  2001/09/03 12:16:37  sbrandon
- * added +sndPlayer method to return the internal (class variable) SndPlayer
- * object, the one used for all [snd play...] methods. It needs to be able to
- * be queried sometimes.
- *
- * Revision 1.26  2001/08/28 16:33:31  skotmcdonald
- * Added missing beginAtIndex arguments, associated logic and methods for Snd playback
- *
- * Revision 1.25  2001/08/27 23:49:07  skotmcdonald
- * Slight change to the clientNowTime system - it is always computed per buffer as synth-head-buffers*buffer-duration+streamTime
- *
- * Revision 1.24  2001/08/27 21:07:18  skotmcdonald
- * Added new playAtTimeInSeconds:withDurationInSeconds method to support sample-accurate stream placement with SndPlayer
- *
- * Revision 1.23  2001/07/18 13:12:45  sbrandon
- * - changed playInFuture:beginSample:sampleCount: implementation to take
- *   advantage of new SndPlayer API (can specify the playEnd sample)
- *
- * Revision 1.22  2001/05/12 09:45:22  sbrandon
- * - GNUSTEP: don't include libc.h
- *
- * Revision 1.21  2001/04/18 17:33:45  leighsmith
- * Introduced stopInFuture:, removeAllSounds, and stopPerformance: methods
- *
- * Revision 1.20  2001/04/13 01:02:17  leighsmith
- * Now checking that SNDInit is working correctly
- *
- * Revision 1.19  2001/04/12 20:46:14  leighsmith
- * Made playInFuture:beginSample:count: the fundamental play method
- *
- * Revision 1.18  2001/03/07 22:07:38  leigh
- * Adopted NSCopying protocol
- *
- * Revision 1.17  2001/03/03 03:12:06  leigh
- * SndPerformance used to indicate samplesProcessed and identifying delegates
- *
- * Revision 1.16  2001/02/28 20:26:10  leigh
- * Added soundfileExtensions method and didPlay/willPlay delegation for streaming
- *
- * Revision 1.15  2001/02/22 22:49:18  leigh
- * Removed crufty stopping code, maintained status
- *
- * Revision 1.14  2001/02/16 21:30:03  leigh
- * Added description function and SndPlayer usage, replacing Snd() functions with streams
- *
- * Revision 1.13  2001/02/14 17:54:28  leigh
- * Renamed status messages to SND prefixes
- *
- * Revision 1.12  2001/02/12 18:30:45  leigh
- * Added autorelease pools for begin and end functions for play
- *
- * Revision 1.11  2001/02/11 03:15:22  leigh
- * Factored all platform specific code for playback and recording into MKPerformSndMIDI.framework
- *
- * Revision 1.10  2001/02/08 00:17:56  leigh
- * Added Christopher Penroses additions for MacOS X Public Beta CoreAudio
- *
- * Revision 1.9  2000/08/11 01:18:06  leigh
- * Commented out debugging info
- *
- * Revision 1.8  2000/06/29 18:03:37  leigh
- * Merged the NSDictionary use with MacOsX support branches
- *
+ * ..is now contained in the cvs log.
+ * pre cvs:
  * 20/6/99 sb: added check to -compactSamples to ensure sound needs it
  */
 
@@ -329,18 +240,7 @@ static int ioTags = 1000;
     _scratchSize = 0;
     tag = 0;
 
-    /*
-    soundStruct = (SndSoundStruct *) calloc( 1, sizeof(SndSoundStruct) );
-
-    soundStruct->magic = SND_MAGIC;
-    soundStruct->dataLocation = sizeof(SndSoundStruct);
-    soundStruct->dataSize = 0;
-    soundStruct->dataFormat = SND_FORMAT_UNSPECIFIED;
-    */
-    
     performancesArray = [[NSMutableArray alloc] init];
-
-
     return [super init];
 }
 

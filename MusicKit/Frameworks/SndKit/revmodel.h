@@ -80,6 +80,11 @@ private:
 	float	bufallpassR3[allpasstuningR3];
 	float	bufallpassL4[allpasstuningL4];
 	float	bufallpassR4[allpasstuningR4];
+  
+  long   bufferLength;
+  float *inputMix;
+  float *outputAccumL;
+  float *outputAccumR;
 };
 
 #endif//_revmodel_

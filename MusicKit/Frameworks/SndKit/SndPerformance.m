@@ -1,30 +1,40 @@
-/*
-  $Id$
-
-  Description:
-    Holds the state associated with each sounding (or soon to be) Snd.
-    This differs from a Snd instance itself, since we can have multiple overlapping
-    performances of the same Snd. We need some way of indicating to the delegate
-    exactly which performance has completed.
-    
-  Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
-
-  Sat 28-Feb-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
-
-  Permission is granted to use and modify this code for commercial and non-commercial
-  purposes so long as the author attribution and copyright messages remain intact and
-  accompany all relevant code.
-*/
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description:
+//    Holds the state associated with each sounding (or soon to be) Snd.
+//    This differs from a Snd instance itself, since we can have multiple overlapping
+//    performances of the same Snd. We need some way of indicating to the delegate
+//    exactly which performance has completed.
+//    
+//  Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
+//
+//  Sat 28-Feb-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and 
+//  non-commercial purposes so long as the author attribution and copyright 
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #import "SndPerformance.h"
 
 @implementation SndPerformance
+
+////////////////////////////////////////////////////////////////////////////////
+// performanceOfSnd:playingAtTime:
+////////////////////////////////////////////////////////////////////////////////
 
 + (SndPerformance *) performanceOfSnd: (Snd *) s
                         playingAtTime: (double) t;
 {
     return [[[SndPerformance alloc] initWithSnd: s playingAtTime: t] autorelease];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// performanceOfSnd:playingAtTime:beginAtIndex:endAtIndex:
+////////////////////////////////////////////////////////////////////////////////
 
 + (SndPerformance *) performanceOfSnd: (Snd *) s
                         playingAtTime: (double) t
@@ -37,6 +47,10 @@
 				                             endAtIndex: endIndex] autorelease];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// initWithSnd:playingAtTime:
+////////////////////////////////////////////////////////////////////////////////
+
 - initWithSnd: (Snd *) s playingAtTime: (double) t
 {
     if (!snd) {
@@ -45,11 +59,15 @@
     return [self initWithSnd:s playingAtTime:t beginAtIndex: 0 endAtIndex:[s sampleCount]];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// initWithSnd:playingAtTime:beginAtIndex:endAtIndex:
+////////////////////////////////////////////////////////////////////////////////
+
 - initWithSnd: (Snd *) s playingAtTime: (double) t 
                           beginAtIndex: (long) beginIndex
                             endAtIndex: (long) endIndex
 {
-    [super init];
+    self = [super init];
     snd        = [s retain];
     playTime   = t;
     playIndex  = beginIndex;
@@ -57,13 +75,22 @@
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// dealloc
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) dealloc
 {
     [snd release];
     [super dealloc]; 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// copyWithZone:
+//
 // Copies receiver, including its Snd reference, play time and index.
+////////////////////////////////////////////////////////////////////////////////
+
 - copyWithZone: (NSZone *) zone
 {
     SndPerformance *newPerformance = [[SndPerformance allocWithZone: zone] init];
@@ -76,9 +103,14 @@
     return newPerformance; // no need to autorelease (by definition, "copy" is retained)
 }
 
-// We consider the performances to be equal if they are the same sound and start at the same time.
-// The reason we don't consider the playIndex is because a performance would never match
-// unless it is playing at exactly same sample.
+////////////////////////////////////////////////////////////////////////////////
+// isEqual:
+//
+// We consider the performances to be equal if they are the same sound and start 
+// at the same time. The reason we don't consider the playIndex is because a 
+// performance would never match unless it is playing at exactly same sample.
+////////////////////////////////////////////////////////////////////////////////
+
 - (BOOL) isEqual: (id) anotherPerformance
 {
     BOOL equal = ((SndPerformance *) anotherPerformance)->snd == snd &&
@@ -88,44 +120,78 @@
     return equal;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// description
+////////////////////////////////////////////////////////////////////////////////
+
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"%@, playing at %f, from %ld, to %ld", snd, playTime, playIndex, endAtIndex];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// snd
+////////////////////////////////////////////////////////////////////////////////
 
 - (Snd*) snd
 {
     return [[snd retain] autorelease];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// playTime
+////////////////////////////////////////////////////////////////////////////////
+
 - (double) playTime
 {
     return playTime;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// playIndex
+////////////////////////////////////////////////////////////////////////////////
 
 - (long) playIndex
 {
     return playIndex;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// setPlayIndex:
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) setPlayIndex: (long) newPlayIndex
 {
     playIndex = newPlayIndex;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// endAtIndex
+////////////////////////////////////////////////////////////////////////////////
 
 - (long) endAtIndex
 {
     return endAtIndex;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// setEndAtIndex:
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) setEndAtIndex: (long) newEndAtIndex
 {
     endAtIndex = newEndAtIndex;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// stopInFuture:
+////////////////////////////////////////////////////////////////////////////////
+
 - (void) stopInFuture: (double) inSeconds
 {
     [Snd stopPerformance: self inFuture: inSeconds];
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 @end
