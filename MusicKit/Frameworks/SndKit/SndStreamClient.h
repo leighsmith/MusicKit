@@ -22,6 +22,10 @@
 @class SndStreamManager;
 @class SndAudioProcessorChain;
 
+#ifdef __MINGW32__
+@class SndConditionLock;
+#endif
+
 /*!
     @class      SndStreamClientDelegate
     @abstract   Informal protocol for a SndStreamClient delegate
@@ -62,8 +66,12 @@
 /*! @var                 inputQueue */
     SndAudioBufferQueue *inputQueue;
     
+#ifndef __MINGW32__
 /*! @var       synthThreadLock */
     NSConditionLock *synthThreadLock;
+#else
+    SndConditionLock *synthThreadLock;
+#endif
 /*! @var       active */
     BOOL       active;
 /*! @var       needsInput */

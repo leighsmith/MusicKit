@@ -20,6 +20,10 @@
 #define SNDSTREAMMANAGER_DEBUG                  0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 
+#ifdef __MINGW32__
+#define NSConditionLock SndConditionLock
+#endif
+
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
 /* the enums are dual purpose -- they serve as condition locks for

@@ -21,6 +21,10 @@
 @class SndStreamClient;
 @class SndStreamMixer;
 
+#ifdef __MINGW32__
+@class SndConditionLock;
+#endif
+
 #define SSM_VERSION 1 
 
 /*!
@@ -45,7 +49,11 @@
     BOOL            bg_sem;
 /*! @var            bg_threadLock used for signalling to background thread to start streaming,
                     stop streaming, or abort itself. */
+#ifndef __MINGW32__
     NSConditionLock *bg_threadLock;
+#else
+    SndConditionLock *bg_threadLock;
+#endif
 }
 
 /*!

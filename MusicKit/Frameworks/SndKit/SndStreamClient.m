@@ -20,6 +20,10 @@
 
 #define SNDSTREAMCLIENT_DEBUG 0
 
+#ifdef __MINGW32__
+# define NSConditionLock SndConditionLock
+#endif
+
 enum {
     SC_noData,
     SC_hasData
