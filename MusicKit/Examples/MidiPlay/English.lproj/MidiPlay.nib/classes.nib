@@ -2,6 +2,13 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
+            ACTIONS = {go = id; showInfoPanel = id; }; 
+            CLASS = MidiPlayController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = NSPanel; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
             ACTIONS = {go = id; showInfoPanel = id; terminate = id; }; 
             CLASS = MyApp; 
             LANGUAGE = ObjC; 
