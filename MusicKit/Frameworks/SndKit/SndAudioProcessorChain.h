@@ -156,6 +156,15 @@
 - (SndAudioFader *) postFader;
 
 /*!
+  @method     setPostFader:
+  @abstract   Assigns the SndAudioFader which is the last effect at the end of this SndAudioProcessorChain instance.
+  @discussion There is a default post-send fader which is usually sufficient. This method is only necessary to use
+              if a ganged fading of several playing streams is required. 
+  @param     newPostFader A SndAudioFader instance to become the postFader object at the end of the chain.
+ */
+- (void) setPostFader: (SndAudioFader *) newPostFader;
+
+/*!
     @method     nowTime
     @abstract   Returns the time the buffer is to be played.
     @discussion
