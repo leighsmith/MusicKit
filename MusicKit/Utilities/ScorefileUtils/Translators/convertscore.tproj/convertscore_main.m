@@ -1,141 +1,57 @@
-/* $Id$ */
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* updated for OpenStep by Leigh Smith 1999/8/31 */
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    This is a command line scorefile conversion utility, converting to and from
+    standard MIDI files (SMF), text scorefiles and binary playscorefiles.
+    See help string below for details.
+
+  Original Author: David A. Jaffe.
+  Converted to OpenStep: Leigh M. Smith <leigh@tomandandy.com>
+
+  Copyright 1988-1992, NeXT Inc.  All rights reserved.
+*/
+/*
+ Modification history:
+   $Log$
+   Revision 1.4  2000/06/13 17:50:28  leigh
+   Made file searches use platform independent approach, add note combining
+
+*/
 #import <Foundation/Foundation.h>
 #import <MusicKit/MusicKit.h>
 
-#import <string.h>
-#import <stdlib.h>
-#import <pwd.h>
-#import <sys/types.h>
-#import <sys/file.h>
+#define SCORE_DIR @"Music/Scores/"
 
-#define PERMS 0660 /* RW for owner and group. */
-#define HOME_SCORE_DIR "/Library/Music/Scores/"
-#define LOCAL_SCORE_DIR "/Local/Library/Music/Scores/"
-#define SYSTEM_SCORE_DIR "/System/Library/Music/Scores/"
+// Make sure these two match array indexes and order and then everything's sweet.
+enum fileFormat {none=-1,midi=0,score=1,playscore=2};
+static NSArray *scorefileExtensions;
 
-#import <stdio.h>
-
-static char *getHomeDirectory()
+static NSString *findFile(NSString *name)
 {
-    static char *homeDirectory;
-    struct passwd  *pw;
-    if (!homeDirectory) {
-	pw = getpwuid(getuid());
-	if (pw && (pw->pw_dir) && (*pw->pw_dir)) {
-	    homeDirectory = (char *)malloc(strlen(pw->pw_dir)+1);
-	    strcpy(homeDirectory,pw->pw_dir);
-	}
-    }
-    return homeDirectory;
-}
+    NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
+    unsigned i, j;
 
-static int tryIt(char *filename,char *extension,char *name,int addExt,
-                 char *dir1,char *dir2)
-{
-    int fd;
-    if (dir1) {
-        strcpy(filename,dir1);
-        if (dir2)
-          strcat(filename,dir2);
-        strcat(filename,name);
+    if (!name) {
+        fprintf(stderr,"No file name specified.\n");
+        exit(1);
     }
-    else strcpy(filename,name);
-    if (addExt)
-      strcat(filename,extension);
-    fd = open(filename,O_RDONLY,PERMS);
-    if (fd == -1) {
-        if (addExt) {
-            /* Try it without extension */
-            filename[strlen(filename)-strlen(extension)] = '\0';
-            fd = open(filename,O_RDONLY,PERMS);
+    if([[NSFileManager defaultManager] isReadableFileAtPath: name])
+        return name;
+    for(i = 0; i < [libraryDirs count]; i++) {
+        NSString *directoryQualifiedName;
+        directoryQualifiedName = [[[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: SCORE_DIR]
+                                        stringByAppendingPathComponent: name];
+        for(j = 0; j < [scorefileExtensions count]; j++) {
+            NSString *fullyQualifiedName = [directoryQualifiedName
+                                            stringByAppendingPathExtension: [scorefileExtensions objectAtIndex: j]];
+            if([[NSFileManager defaultManager] isReadableFileAtPath: fullyQualifiedName])
+                return fullyQualifiedName;
         }
     }
-    return fd;
+    return nil;
 }
-
-static BOOL extensionPresent(char *filename,char *extension)
-{
-    char *ext = strrchr(filename,'.');
-    if (!ext)
-      return NO;
-    return (strcmp(ext,extension) == 0);
-}
-
-static int findFile(char *name)
-{
-    int fd;
-    char filename[1024], *p;
-    int addScoreExt,addMidiExt, addPlayscoreExt;
-    if (!name) {
-	fprintf(stderr,"No file name specified.\n");
-	exit(1);
-    }
-    addScoreExt = (!extensionPresent(name,".score"));
-    addPlayscoreExt = (!extensionPresent(name,".playscore"));
-    addMidiExt = (!extensionPresent(name,".midi"));
-    fd = tryIt(filename,".score",name,addScoreExt,NULL,NULL);
-    if (fd != -1) 
-      return fd;
-    fd = tryIt(filename,".playscore",name,addPlayscoreExt,NULL,NULL);
-    if (fd != -1) 
-      return fd;
-    fd = tryIt(filename,".midi",name,addMidiExt,NULL,NULL);
-    if (fd != -1) 
-      return fd;
-    if (name[0] != '/') { /* There's hope */
-	if (p = getHomeDirectory()) {
-	    fd = tryIt(filename,".score",name,addScoreExt,p,HOME_SCORE_DIR);
-	    if (fd != -1) 
-	      return fd;
-	    fd = tryIt(filename,".playscore",name,addPlayscoreExt,p,HOME_SCORE_DIR);
-	    if (fd != -1) 
-	      return fd;
-	    fd = tryIt(filename,".midi",name,addMidiExt,p,HOME_SCORE_DIR);
-	    if (fd != -1) 
-	      return fd;
-	}
-	
-	fd = tryIt(filename,".score",name,addScoreExt,LOCAL_SCORE_DIR,NULL);
-	if (fd != -1) 
-	  return fd;
-	fd = tryIt(filename,".playscore",name,addPlayscoreExt,LOCAL_SCORE_DIR,NULL);
-	if (fd != -1) 
-	  return fd;
-	fd = tryIt(filename,".midi",name,addMidiExt,LOCAL_SCORE_DIR,NULL);
-	if (fd != -1) 
-	  return fd;
-	
-	fd = tryIt(filename,".score",name,addScoreExt,SYSTEM_SCORE_DIR,NULL);
-	if (fd != -1) 
-	  return fd;
-	fd = tryIt(filename,".playscore",name,addPlayscoreExt,SYSTEM_SCORE_DIR,NULL);
-	if (fd != -1) 
-	  return fd;
-	fd = tryIt(filename,".midi",name,addMidiExt,SYSTEM_SCORE_DIR,NULL);
-	if (fd != -1) 
-	  return fd;
-    }
-    if (fd == -1) {
-	fprintf(stderr,"Can't find %s.\n",name);
-	exit(1);
-    }
-    return fd;
-}
-
-const char * const help = "\n"
-"usage : convertscore [-mpst] [-o file] file\n"
-"        [-m] write midifile (.midi) format \n"
-"        [-p] write optimized scorefile (.playscore) format \n"
-"        [-s] write scorefile (.score) format \n"
-"        [-t] convert tempo changes to time tags, defaulting tempo to 60BPM\n"
-"        [-n] write key number names in symbolic format, defaulting to numeric\n"
-"        [-o <output file>] \n"
-"\n";
-
-
-enum fileFormat {none,midi,score,playscore};
 
 static char *formatStr(int aFormat)
 {
@@ -144,23 +60,37 @@ static char *formatStr(int aFormat)
 
 enum fileFormat determineInputFormat(NSString *inputFile)
 {
-    id fh;
-    int fd;
+    NSFileHandle *fh;
     int firstWord;
     NSData *firstWordData;
+    NSString *foundFile;
 
-    fd = findFile([inputFile cString]);
-    fh = [[NSFileHandle alloc] initWithFileDescriptor: fd];
+    foundFile = findFile(inputFile);
+    if (foundFile == nil) {
+        fprintf(stderr,"Can't find %s.\n", [foundFile cString]);
+        exit(1);
+    }
+    fh = [NSFileHandle fileHandleForReadingAtPath: foundFile];
     firstWordData = [fh readDataOfLength: 4];
     firstWord = NSSwapBigIntToHost(*((int *)[firstWordData bytes]));
-    #   define MIDIMAGIC 1297377380
     if (firstWord == MK_SCOREMAGIC)
         return playscore;
-    else if (firstWord == MIDIMAGIC)
+    else if (firstWord == MK_MIDIMAGIC)
         return midi;
     else
         return score;
 }
+
+const char * const help = "\n"
+"usage : convertscore [-m]|[-p]|[-s] [-tnc] [-o file] file\n"
+"        [-m] write midifile (.midi) format \n"
+"        [-p] write optimized scorefile (.playscore) format \n"
+"        [-s] write scorefile (.score) format \n"
+"        [-t] convert tempo changes to time tags, defaulting tempo to 60 BPM\n"
+"        [-n] write key number names in symbolic format, defaulting to numeric\n"
+"        [-c] combine note-on/off pairs to noteDur\'s when writing scorefiles\n"
+"        [-o <output file>] \n"
+"\n";
 
 int main (int argc, const char *argv[])
 {
@@ -171,10 +101,12 @@ int main (int argc, const char *argv[])
     enum fileFormat outFormat = none,inFormat = none;
     int i;
     MKScore *aScore;
+    BOOL combineNotes = NO;
     BOOL writeKeyNames = NO;
     BOOL absoluteTempo = NO;	/* by default, we use the tempo from the */
     				/* midifile & convert the time-tags without */
 				/* considering the tempo. */
+    scorefileExtensions = [NSArray arrayWithObjects:  @"midi", @"score", @"playscore", nil];
     if (argc == 1) {
 	fprintf(stderr,help);
 	exit(1);
@@ -190,6 +122,8 @@ int main (int argc, const char *argv[])
             absoluteTempo = YES;
         else if (strcmp(argv[i],"-n") == 0)
             writeKeyNames = YES;
+        else if (strcmp(argv[i],"-c") == 0)
+            combineNotes = YES;
 	else if (strcmp(argv[i],"-o") == 0)  {
 	    i++;
 	    if (i < argc)
@@ -227,6 +161,9 @@ int main (int argc, const char *argv[])
         printf("%d parts\n", [aScore partCount]);
         parts = [aScore parts];
         [parts makeObjectsPerformSelector: @selector(setInfoNote:) withObject: aNoteInfo];
+        if(combineNotes) {
+            [aScore combineNotes];
+        }
         break;
     }
     case none:
