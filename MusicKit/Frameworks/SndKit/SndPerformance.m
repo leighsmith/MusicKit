@@ -10,7 +10,7 @@
 //
 //  Original Author: Leigh Smith, <leigh@tomandandy.com>
 //
-//  Sat 28-Feb-2001, Copyright (c) 2001 SndKit project All rights reserved.
+//  Copyright (c) 2001-2002, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -20,6 +20,8 @@
 
 #import "SndPlayer.h"
 #import "SndPerformance.h"
+
+#define SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER 0
 
 @implementation SndPerformance
 
@@ -83,7 +85,7 @@ playingAtTime: (double) t
 }
 
 - initWithSnd: (Snd *) s
-     playTime: (double) _playTime
+playingAtTime: (double) _playTime
 startPosition: (double) startPosition
      duration: (double) duration
     deltaTime: (double) _deltaTime;
@@ -215,7 +217,11 @@ startPosition: (double) startPosition
 
 - (void) setPlayIndex: (double) newPlayIndex
 {
-  playIndex = newPlayIndex;
+    // If we are going to move the play index after the end index, allow that,
+    // but adjust the end index in order to stay legal.
+    if(newPlayIndex > endAtIndex)
+	endAtIndex = newPlayIndex;
+    playIndex = newPlayIndex;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +237,11 @@ startPosition: (double) startPosition
 
 - (void) setEndAtIndex: (long) newEndAtIndex
 {
-  endAtIndex = newEndAtIndex; 
+    // If we are going to move the end index before the start, allow that,
+    // but adjust the start index in order to stay legal.
+    if(newEndAtIndex < playIndex)
+	playIndex = newEndAtIndex;
+    endAtIndex = newEndAtIndex; 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -279,14 +289,75 @@ startPosition: (double) startPosition
   return self;
 }
 
-- processBuffer: (SndAudioBuffer*) aBuffer
+// Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
+// (which allows us to play a sub-section of a sound). playIndex is updated, and looping is
+// respected.
+- (void) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
 {
-  actualTime +=  [aBuffer duration];
-  if (audioProcessorChain != nil) {
-//printf("time: %f\n",relativePlayTime);
-    [audioProcessorChain processBuffer: aBuffer forTime: actualTime];
-  }
-  return self;
+    // deltaTime may be a misnomer, it is a multiple of buffers
+    double  stretchedBufferLength = deltaTime * buffLength;
+    NSRange playRegion   = {playIndex, stretchedBufferLength + MAX(2, deltaTime)};
+
+    if (playRegion.length > endAtIndex - playIndex) {
+	buffLength = (endAtIndex - playIndex) / deltaTime;
+	playRegion.length = (buffLength) * deltaTime + MAX(2, deltaTime);
+    }
+    if (playIndex > -stretchedBufferLength) {
+	if (playIndex < 0) {
+	    playRegion.length += playIndex;
+	    playRegion.location = 0;
+	}
+#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+	NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %.2f, endAtIndex = %ld, location = %d, length = %d\n",
+              playIndex, endAtIndex, playRegion.location, playRegion.length);
+#endif
+	// Negative buffer length means the endAtIndex was moved before the current playIndex,
+	// so we should skip any mixing and stop.
+	if (buffLength > 0) {
+	    int start = 0;
+#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+	    int end = buffLength;
+#endif
+
+	    if (deltaTime == 1.0) {
+		[snd fillAudioBuffer: bufferToFill withSamplesInRange: playRegion];
+	    }
+	    else {
+		SndAudioBuffer *aBuffer = [[bufferToFill copy] setLengthInSampleFrames: playRegion.length];
+		double offset = playIndex - (long)playIndex;
+		[snd fillAudioBuffer: aBuffer withSamplesInRange: playRegion];
+
+		[SndAudioBuffer resampleByLinearInterpolation: aBuffer
+							 dest: bufferToFill
+						       factor: deltaTime
+						       offset: offset];
+		[aBuffer release];
+	    }
+
+	    if (playIndex < 0) {
+		start = -playIndex;
+		start %= buffLength;
+	    }
+	    
+            // if (end / deltaTime >  playIndex - endAtIndex)  end = (endAtIndex - playIndex) / deltaTime;
+
+	    actualTime +=  [bufferToFill duration];
+	    if (audioProcessorChain != nil) {
+                 // printf("time: %f\n",relativePlayTime);
+		[audioProcessorChain processBuffer: bufferToFill forTime: actualTime];
+	    }
+#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+	    NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, playregion %d for %d, val at start = %f\n",
+	          start, end, playRegion.location, playRegion.length, (((short *)[snd data])[playRegion.location])/(float)32768);
+#endif
+	}
+    }
+    playIndex += stretchedBufferLength;
+}
+
+- (BOOL) atEndOfPerformance
+{
+    return playIndex >= endAtIndex - 1.0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

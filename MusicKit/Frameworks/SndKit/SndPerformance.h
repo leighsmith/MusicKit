@@ -5,7 +5,7 @@
 //  Original Author: Leigh Smith, <leigh@tomandandy.com>
 //  Further work: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 28-Feb-2001, Copyright (c) 2001 SndKit project All rights reserved.
+//  Copyright (c) 2001-2002, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -23,22 +23,23 @@
 @class SndPerformance
 @abstract   Holds the state associated with each sounding (or soon to be) Snd.
 @discussion This differs from a Snd instance itself, since we can have multiple overlapping
-            performances of the same (potentially huge) Snd. We need some way of indicating
-            to the delegate exactly which performance has completed.
+            simultaneous performances of the same (potentially huge) Snd, some looping, others not.
+            We need some way of indicating to the delegate exactly which performance has completed,
+            hence this class.
 */
 @interface SndPerformance : NSObject
 {
-/*! @var  	snd */
+/*! @var snd The sound being performed*/
     Snd    *snd;
-/*! @var 				playTime */
+/*! @var playTime */
     double  playTime;
-/*! @var    startIndex */
+/*! @var startIndex */
     long    startAtIndex;
-/*! @var 				playIndex */
+/*! @var playIndex */
     double  playIndex;
-/*! @var 				endAtIndex */
+/*! @var endAtIndex */
     long    endAtIndex;
-/*! @var 				paused */
+/*! @var paused */
     BOOL    paused;
     // TODO playState should be here, not Snd.
 /*! @var audioProcessorChain */
@@ -50,51 +51,64 @@
 }
 
 /*!
-    @method   performanceOfSnd:playingAtTime:
-    @abstract   Create and return an autoreleased instance of SndPerformance with a sound
-                and a time to begin playing. Convenience method to
-                performanceOfSnd:playingAtTime:endAtIndex
-    @param      s
-    @param      seconds
-    @result     Returns the newly created instance if able to initialise, nil if unable.
+  @method     performanceOfSnd:playingAtTime:
+  @abstract   Create and return an autoreleased instance of SndPerformance with a sound
+              and a time to begin playing. Convenience method to
+              performanceOfSnd:playingAtTime:endAtIndex
+   @param     s The sound to be played
+   @param     seconds Time in seconds to start playing the sound
+   @result    Returns the newly created instance if able to initialise, nil if unable.
 */
 + (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) seconds;
+
 /*!
-    @method   performanceOfSnd:playingAtTime:endAtIndex:
-    @abstract   Create and return an autoreleased instance of SndPerformance with a sound
-                and a time to begin playing.
-    @param      s
-    @param      seconds
-    @param      endIndex
-    @result     Returns the newly created instance if able to initialise, nil if unable.
+  @method     performanceOfSnd:playingAtTime:beginAtIndex:endAtIndex:
+  @abstract   Create and return an autoreleased instance of SndPerformance with a sound
+              and a time to begin playing.
+  @param      s The sound to be played
+  @param      seconds Time in seconds to start playing the sound
+  @param      beginIndex The sample index at which to start playback
+  @param      endIndex The sample index at which to stop playback
+  @result     Returns the newly created instance if able to initialise, nil if unable.
 */
 + (SndPerformance *) performanceOfSnd: (Snd *) s 
                         playingAtTime: (double) seconds
                          beginAtIndex: (long) beginIndex
                            endAtIndex: (long) endIndex;
 /*!
-    @method   initWithSnd:playingAtTime:
+    @method     initWithSnd:playingAtTime:
     @abstract   Initialise a performance with a sound and a time to begin playing.
     @discussion Convenience method to initWithSnd:playingAtTime:endAtIndex:
     @param      s The sound to be played
-    @param      seconds Time to start playing the sound
-    @param      endIndex Index within the sound data at which to stop playing.
+    @param      seconds Time in seconds to start playing the sound
     @result     Returns self if able to initialise, nil if unable.
 */
 - initWithSnd: (Snd *) s playingAtTime: (double) t;
 
 /*!
-    @method   initWithSnd:playingAtTime:endAtIndex:
+    @method     initWithSnd:playingAtTime:beginAtIndex:endAtIndex:
     @abstract   Initialise a performance with a sound and a time to begin playing,
-                and the index of the last sample of the sound to play.
-    @param      t The time to begin playback
+                and the index of the first and last samples of the sound to play.
+    @param      seconds Time in seconds to start playing the sound
+    @param      beginIndex The sample index at which to start playback
     @param      endIndex The sample index at which to stop playback
     @result     Returns self if able to initialise, nil if unable.
 */
-- initWithSnd: (Snd *) s playingAtTime: (double) t beginAtIndex: (long) beginIndex endAtIndex: (long) endIndex;
-
 - initWithSnd: (Snd *) s
-     playTime: (double) playTime
+playingAtTime: (double) seconds
+ beginAtIndex: (long) beginIndex
+   endAtIndex: (long) endIndex;
+
+/*!
+  @method   initWithSnd:playingAtTime:startPosition:duration:deltaTime:
+  @abstract   Initialise a performance with a sound and a time to begin playing,
+              and the index of the last sample of the sound to play.
+  @param      t The time to begin playback
+  @param      endIndex The sample index at which to stop playback
+  @result     Returns self if able to initialise, nil if unable.
+ */
+- initWithSnd: (Snd *) s
+playingAtTime: (double) playTime
 startPosition: (double) startPosition
      duration: (double) duration
     deltaTime: (double) deltaTime;
@@ -107,12 +121,16 @@ startPosition: (double) startPosition
 - (Snd *) snd;
 
 /*!
-    @method   playTime
-    @abstract   Returns the time the sound is to begin playing.
-    @result     Returns the time interval in seconds from the current time the sound is to begin playing.
+  @method   playTime
+  @abstract   Returns the time the sound is to begin playing.
+  @result     Returns the time interval in seconds from the current time the sound is to begin playing.
 */
 - (double) playTime;
 
+/*!
+  @method   setPlayTime:
+  @abstract Sets the time interval in seconds from the current time the sound is to begin playing.
+  */
 - setPlayTime: (double) t;
 
 - (double) deltaTime;
@@ -139,6 +157,7 @@ startPosition: (double) startPosition
     @result     Returns the sample index to stop playing at.
 */
 - (long) endAtIndex;
+
 /*!
   @method   startAtIndex
   @abstract   Returns the sample to start playing at.
@@ -159,10 +178,12 @@ startPosition: (double) startPosition
     @param      inSeconds The time interval when to stop the performance.
 */
 - (void) stopInFuture: (double) inSeconds;
+
 /*!
     @method stopNow
 */
 - (void) stopNow;
+
 /*!
     @method   isEqual:
     @abstract 
@@ -182,42 +203,60 @@ startPosition: (double) startPosition
     @result     A string containing a brief description of the performance object
 */
 - (NSString *) description;
+
 /*!
   @method   isPaused
   @result   Boolean - YES/TRUE if the performance is paused
 */
 - (BOOL) isPaused;
+
 /*!
   @method   setPaused
   @param    b a flag to signal whether or not the performance is paused.
   @result   self
 */
 - setPaused: (BOOL) b;
+
 /*!
   @method   pause
   @abstract pauses a performance
 */
 - pause;
+
 /*!
   @method   resume
   @abstract resumes a paused performance
 */
 - resume;
+
 /*!
   @method audioProcessorChain
   @result The audioProcessorChain associated with this performance 
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
+
 /*!
   @method setAudioProcessorChain:
   @param anAudioProcessorChain
 */
 - setAudioProcessorChain: (SndAudioProcessorChain*) anAudioProcessorChain;
+
 /*!
-  @method processBuffer:
-  @param aBuffer
-*/
-- processBuffer: (SndAudioBuffer*) aBuffer;
+  @method retrieveAPerformBuffer:ofLength:
+  @param bufferToFill
+  @param buffLength
+  @discussion Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
+  	      (which allows us to play a sub-section of a sound). playIndex is updated, and looping is
+              respected.
+ */
+- (void) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength;
+
+/*!
+  @method atEndOfPerformance
+  @discussion Tests if the play index has reached the end index, indicating that the performance
+              has completed.
+ */
+- (BOOL) atEndOfPerformance;
 
 @end
 

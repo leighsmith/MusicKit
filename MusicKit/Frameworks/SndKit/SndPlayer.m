@@ -315,6 +315,10 @@ static SndPlayer *defaultSndPlayer;
                                       playingAtTime: playT
                                        beginAtIndex: beginAtIndex
                                          endAtIndex: endAtIndex];
+  // Prime the loop behaviour during performance from the Snd's settings.
+  // [thePerformance setLoopStartIndex: [s loopStartIndex]];
+  // [thePerformance setLoopEndIndex: [s loopEndIndex]];
+  // [thePerformance setLooping: [s loopWhenPlaying]];
   [self addPerformance: thePerformance];
   return thePerformance;
 }
@@ -344,7 +348,8 @@ static SndPlayer *defaultSndPlayer;
     fprintf(stderr,"SndPlayer::playSnd(4) playing unlock...\n");
 #endif
   }
-  else {            // play later - we must insert the performance in Time Order
+  else {
+    // play later - we must insert the performance into the toBePlayed queue in time order
     int i, numToBePlayed, insertIndex;
     double playT = [aPerformance playTime];
 
@@ -398,7 +403,9 @@ static SndPlayer *defaultSndPlayer;
       [pendingToRemove addObject: thePerf];
   }
   //  printf("Found %i pending - killed \n",[pendingToRemove count]);
+  // [playingLock lock];
   [toBePlayed removeObjectsInArray: pendingToRemove];
+  // [playingLock unlock];
   [pendingToRemove release];
   return self;
 }
@@ -442,170 +449,113 @@ static SndPlayer *defaultSndPlayer;
 
 - (void) processBuffers
 {
-  SndAudioBuffer* ab  = [self synthOutputBuffer];
-  int    numberPlaying;
-  int    i;
+    SndAudioBuffer *ab = [self synthOutputBuffer];
+    int    numberPlaying;
+    int    i;
 
-  [playingLock lock];
+    [playingLock lock];
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
-  fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing lock...\n");
+    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing lock...\n");
 #endif
-
-  // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
-  // If so, add 'em to the play array
-  {
-    double bufferDur     = [ab duration];
-    double bufferEndTime = [self synthesisTime] + bufferDur;
-    int numberToBePlayed = [toBePlayed count];
-    for (i = 0; i < numberToBePlayed; i++) {
-      SndPerformance *performance = [toBePlayed objectAtIndex: i];
-      if ([performance playTime] < bufferEndTime) {
-        float timeOffset  = ([performance playTime] - [self synthesisTime]);
-        long thePlayIndex = [performance playIndex] - [[performance snd] samplingRate] * timeOffset;
-        [removalArray addObject: performance];
-        [performance setPlayIndex: thePlayIndex];
-        [self _startPerformance: performance];
-      }
+    
+    // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
+    // If so, add 'em to the play array
+    {
+	double bufferDur     = [ab duration];
+	double bufferEndTime = [self synthesisTime] + bufferDur;
+	int numberToBePlayed = [toBePlayed count];
+	for (i = 0; i < numberToBePlayed; i++) {
+	    SndPerformance *performance = [toBePlayed objectAtIndex: i];
+	    if ([performance playTime] < bufferEndTime) {
+		float timeOffset  = ([performance playTime] - [self synthesisTime]);
+		long thePlayIndex = [performance playIndex] - [[performance snd] samplingRate] * timeOffset;
+		[removalArray addObject: performance];
+		[performance setPlayIndex: thePlayIndex];
+		[self _startPerformance: performance];
+	    }
+	}
+	[toBePlayed removeObjectsInArray: removalArray];
+	[removalArray removeAllObjects];
     }
-    [toBePlayed removeObjectsInArray: removalArray];
-    [removalArray removeAllObjects];
-  }
 
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
-  fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing zone...\n");
+    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing zone...\n");
 #endif
-  // The playing-sounds-mixing-zone.
+    // The playing-sounds-mixing-zone.
 
-  numberPlaying = [playing count];
+    numberPlaying = [playing count];
 
-  if (numberPlaying > 0) {
-    int buffLength = [ab lengthInSampleFrames];
+    if (numberPlaying > 0) {
+        long synthOutputBufferLength = [ab lengthInSampleFrames];
+	
+	for (i = 0; i < numberPlaying; i++) {
+	    SndPerformance *performance = [playing objectAtIndex: i];
+            Snd *snd = [performance snd];
 
-    for (i = 0; i < numberPlaying; i++) {
-      SndPerformance *performance = [playing objectAtIndex: i];
-      Snd    *snd          = [performance snd];
-      double  startIndex   = [performance playIndex];
-      double  endAtIndex   = [performance endAtIndex];  // allows us to play a sub-section of a sound.
-      double  deltaTime    = [performance deltaTime];
-      double  stretchedBufferLength = deltaTime * buffLength;
-      NSRange playRegion   = {startIndex, stretchedBufferLength + MAX(2, deltaTime)};
+	    if ([performance isPaused])
+		continue;
 
-      if ([performance isPaused])
-        continue;
+	    [performance retrieveAPerformBuffer: tempBuffer ofLength: synthOutputBufferLength];
+	    [ab mixWithBuffer: tempBuffer fromStart: 0 toEnd: synthOutputBufferLength canExpand:YES];
 
-      if (playRegion.length > endAtIndex - startIndex) {
-        buffLength = (endAtIndex - startIndex) / deltaTime;
-        playRegion.length = (buffLength) * deltaTime + MAX(2, deltaTime);
-      }
-      if (startIndex > -stretchedBufferLength) {
-        if (startIndex < 0) {
-          playRegion.length += startIndex;
-          playRegion.location = 0;
-        }
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
-        NSLog(@"[SndPlayer][SYNTH THREAD] startIndex = %.2f, endAtIndex = %.2f,  location = %d, length = %d\n",
-              startIndex, endAtIndex, playRegion.location, playRegion.length);
-#endif
-      // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
-        if (buffLength > 0) {
-          int start = 0, end = buffLength;
+            // When at the end of sounds, signal the delegate and remove the performance.
+	    if ([performance atEndOfPerformance] == YES) {
+		[removalArray addObject: performance];
+		[snd removePerformance: performance];
 
-          if (deltaTime == 1.0) {
-            [snd fillAudioBuffer:tempBuffer withSamplesInRange: playRegion];
-          }
-          else {
-            SndAudioBuffer *aBuffer = [[tempBuffer copy] setLengthInSampleFrames: playRegion.length];
-            double offset = startIndex - (long)startIndex;
-            [snd fillAudioBuffer:aBuffer withSamplesInRange:playRegion];
+		/* Check thru all performances, and if this one was the last
+		 * one using this snd, we set the snd to SND_SoundStopped
+		 */
+		if ([snd performanceCount] == 0) {
+		    [snd _setStatus: SND_SoundStopped];
+		}
 
-            [SndAudioBuffer resampleByLinearInterpolation: aBuffer
-                                                     dest: tempBuffer
-                                                   factor: deltaTime
-                                                   offset: offset];
-
-            [aBuffer release];
-          }
-
-          if (startIndex < 0) {
-            start = -startIndex;
-            start %= buffLength;
-          }
-          //          if (end / deltaTime >  startIndex - endAtIndex)  end = (endAtIndex - startIndex) / deltaTime;
-
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
-          NSLog(@"[SndPlayer][SYNTH THREAD] calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
-#endif
-          [performance processBuffer: tempBuffer];
-          [ab mixWithBuffer: tempBuffer fromStart: start toEnd: end canExpand:YES];
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
-          NSLog(@"[SndPlayer][SYNTH THREAD] mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
-                start, end, playRegion.location, playRegion.length,
-                (((short *)[snd data])[playRegion.location])/(float)32768);
-#endif
-        }
-      }
-      startIndex += stretchedBufferLength;
-      [performance setPlayIndex: startIndex];
-      
-      // When at the end of sounds, signal the delegate and remove the performance.
-      if (startIndex >= endAtIndex - 1.0) {
-        [removalArray addObject: performance];
-        [snd removePerformance: performance];
-
-        /* sbrandon Nov 2001: now check thru all performances, and if this one was the last
-          * one using this snd, we set the snd to SND_SoundStopped
-          */
-        if ([snd performanceCount] == 0) {
-          [snd _setStatus: SND_SoundStopped];
-        }
-
-        /* sbrandon Nov 2001: re-instated delegate messaging, but fixed it up for multithreaded
-          * use. Note that the arguments HAVE to be objects - hence arg1 here is not a SEL as one
-          * would expect but an NSString, and we convert to a SEL in the Snd object.
-          * Note also that the messages received in the main thread are asynchronous, being
-          * received in the NSRunLoop in the same way that keyboard, mouse or GUI actions are
-          * received.
-          */
+		/* Multithreaded delegate messaging. Note that the arguments HAVE to be objects -
+		 * hence arg1 here is not a SEL as one would expect but an NSString, and we convert to a SEL in the Snd object.
+		 * Note also that the messages received in the main thread are asynchronous, being
+		 * received in the NSRunLoop in the same way that keyboard, mouse or GUI actions are
+		 * received.
+		 */
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
-        fprintf(stderr,"[SndPlayer][SYNTH THREAD] sending delegate message...\n");
+		fprintf(stderr,"[SndPlayer][SYNTH THREAD] sending delegate message...\n");
 #endif
-        [manager sendMessageInMainThreadToTarget: snd
-                                             sel: @selector(tellDelegateString:duringPerformance:)
-                                            arg1: @"didPlay:duringPerformance:"
-                                            arg2: performance];
-      }
+		[manager sendMessageInMainThreadToTarget: snd
+						     sel: @selector(tellDelegateString:duringPerformance:)
+						    arg1: @"didPlay:duringPerformance:"
+						    arg2: performance];
+	    }
+	}
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+	fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing remove...\n");
+#endif
+	if ([removalArray count] > 0) {
+	    [playing removeObjectsInArray: removalArray];
+	    if ([toBePlayed count] == 0 && [playing count] == 0) {
+		if (!bRemainConnectedToManager) {
+		    active = FALSE;
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
+		    fprintf(stderr,"[SndPlayer][SYNTH THREAD] Setting inactive...\n");
+#endif
+		}
+		else {
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
+		    fprintf(stderr,"[SndPlayer][SYNTH THREAD] remaining active...\n");
+#endif
+		}
+	    }
+	}
     }
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
-    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing remove...\n");
-#endif
-    if ([removalArray count] > 0) {
-      [playing removeObjectsInArray: removalArray];
-      if ([toBePlayed count] == 0 && [playing count] == 0) {
-        if (!bRemainConnectedToManager) {
-          active = FALSE;
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
-          fprintf(stderr,"[SndPlayer][SYNTH THREAD] Setting inactive...\n");
-#endif
-        }
-        else {
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
-          fprintf(stderr,"[SndPlayer][SYNTH THREAD] remaining active...\n");
-#endif
-        }
-      }
+#if SNDPLAYER_DEBUG
+    {
+	float min, max;
+	[ab findMin: &min max: &max];
+	printf("SndPlayer: min: %5.3f max: %5.3f\n",min, max);
     }
-  }
-#if SNDPLAYER_DEBUG  
-  {
-    float min, max;
-    [ab findMin: &min max: &max];
-    printf("SndPlayer: min: %5.3f max: %5.3f\n",min, max);
-  }
 #endif
-  
-[playingLock unlock];
+
+    [playingLock unlock];
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
-  fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing unlock...\n");
+    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing unlock...\n");
 #endif
 
 }
@@ -616,19 +566,19 @@ static SndPlayer *defaultSndPlayer;
 
 - setRemainConnectedToManager: (BOOL) b
 {
-  bRemainConnectedToManager = b;
-  return self;
+    bRemainConnectedToManager = b;
+    return self;
 }
 
 - (BOOL) autoStartManager
 {
-  return bAutoStartManager;
+    return bAutoStartManager;
 }
 
 - setAutoStartManager: (BOOL) b
 {
-  bAutoStartManager = b;
-  return self;
+    bAutoStartManager = b;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
