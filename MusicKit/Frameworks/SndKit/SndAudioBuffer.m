@@ -104,6 +104,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+- (NSString*) description
+{
+  return [NSString stringWithFormat: @"SndAudioBuffer [dataSize: %i dataFormat: %i samplingRate: %i channels: %i]", 
+          formatSnd.dataSize, formatSnd.dataFormat, formatSnd.samplingRate, formatSnd.channelCount];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
 - initWithFormat: (SndSoundStruct*) f data: (void*) d
 {
     memcpy(&formatSnd, f, sizeof(SndSoundStruct));

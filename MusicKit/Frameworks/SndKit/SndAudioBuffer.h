@@ -208,6 +208,8 @@
 */
 - (int) multiChannelSampleSizeInBytes;
 
+- (NSString*) description;
+
 @end
 
 #endif
