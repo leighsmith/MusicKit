@@ -11,11 +11,15 @@
 
   Copyright (c) Pinnacle Research, 1993
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.6  2000/11/13 23:22:12  leigh
+  Integrated tvs structure into MKMidi ivars, removed machPort dependency on comms ports
+
   Revision 1.5  2000/01/27 19:04:07  leigh
   Now using NSPort replacing C Mach port API
 
@@ -33,15 +37,18 @@ Modification history:
 
 static double mangleTime(MKMidi *self,double driverTime)
 {
-    if (self->tvs->synchConductor)
-      driverTime -= mtcTimeOffset;
+    if (self->synchConductor)
+        driverTime -= mtcTimeOffset;
     if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE)
-      driverTime += MKGetDeltaT();
+        driverTime += MKGetDeltaT();
     return driverTime;
 }
 
-- getMTCFormat:(short *)format hours:(short*)h min:(short *)m sec:(short *)s 
- frames:(short *)f;
+- getMTCFormat:(short *) format
+         hours:(short*) h
+           min:(short *) m
+           sec:(short *) s 
+        frames:(short *) f;
 	/* This only works if the receiver is in MTC synch mode.  Unlike 
 	 * most of the Music Kit time methods and functions, this one gets the
 	 * current time, whether or not [Conductor adjustTime] or 
@@ -49,13 +56,13 @@ static double mangleTime(MKMidi *self,double driverTime)
 	 * has been set, this time has deltaT added to it. 
 	 */
 {
-    int r = MIDIGetMTCTime([self->devicePort machPort], [self->ownerPort machPort],format,h,m,s,f);
+    MKMDReturn r = MKMDGetMTCTime(devicePort, ownerPort, format, h, m, s, f);
     double seconds;
-    if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"getMTCFormat:");
-    seconds = MKConvertMTCToSeconds(*format,*h,*m,*s,*f);
-    seconds = mangleTime(self,seconds);
-    MKConvertSecondsToMTC(seconds,*format,h,m,s,f);
+    if (r != MKMD_SUCCESS) 
+        _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"getMTCFormat:");
+    seconds = MKConvertMTCToSeconds(*format, *h, *m, *s, *f);
+    seconds = mangleTime(self, seconds);
+    MKConvertSecondsToMTC(seconds, *format, h, m, s, f);
     return self;
 }
 
@@ -67,18 +74,18 @@ static double mangleTime(MKMidi *self,double driverTime)
    */
 {
     int theTime;
-    int r; 
+    MKMDReturn r; 
     double t;
     if (deviceStatus == MK_devClosed)
-      return 0;
-    r = MIDIGetClockTime([self->devicePort machPort], [self->ownerPort machPort], &theTime);
-    if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"time");
+        return 0;
+    r = MKMDGetClockTime(devicePort, ownerPort, &theTime);
+    if (r != MKMD_SUCCESS) 
+        _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
-    return mangleTime(self,t);
+    return mangleTime(self, t);
 }
 
 -synchConductor
 {
-    return self->tvs->synchConductor;
+    return self->synchConductor;
 }
