@@ -39,6 +39,9 @@ Modification history before CVS commital:
 #import "_scorefile.h"
 #import "_error.h"
 #import "MKSamples.h"
+#if HAVE_CONFIG_H
+# import "MusicKitConfig.h"
+#endif
 
 // This allows all formats of Snd, but probably breaks traditional MKSample use until _fillTableLength: has been modified
 #define PRECONVERT 0 
@@ -155,8 +158,10 @@ id MKGetSamplesClass(void)
     
     if([Snd isPathForSoundFile: aSoundfile])
 	aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
+#if HAVE_LIBMP3HIP
     else if([SndMP3 isPathForSoundFile: aSoundfile])
 	aTmpSound = [[SndMP3 alloc] initFromSoundfile: aSoundfile];
+#endif
 
     if (!aTmpSound)
 	return NO;
