@@ -39,32 +39,40 @@
  
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface SndMP3 : Snd {
+@interface SndMP3 : Snd
+{
     /*! @var mp3Data The MP3 bitstream (encoded) data. */
     NSData *mp3Data;
-    /*! @var mp3DataDescription Preserves the state of the MP3 stream decoding. */
+    /*! @var mp3DataDescription Preserves the state of the MP3 stream decoding used by HIP. */
     HIP_File mp3DataDescription;
     /*! @var encodedFrameLocations An array of longs which give the locations in the MP3 bitstream data of the start of each MP3 frame. */
     long *encodedFrameLocations;
     /*! @var encodedFrameLocationsCount The number of frame locations in encodedFrameLocations. */
     long encodedFrameLocationsCount;
-    /*! @var currentMP3FrameID The most recently decoded bitstream frame index into encodedFrameLocations. */
+    /*! @var currentMP3FrameID The most recently decoded bitstream frame index into encodedFrameLocations. 
+	Keeps track of the which MP3 frame ID HIP is expecting next to identify when to backtrack decoding. */
     int currentMP3FrameID;
-    /*! @var decodedPCMBuffer Cached most recently decoded bitstream frame as a SndAudioBuffer. Held in 16 bit PCM data (left and right channels) format. */
-    SndAudioBuffer *decodedPCMBuffer;
-    // TODO There is scope to hold the last n frames, rather than just one, if we are simultaneously performing the same SndMP3.
-
+    /*! @var decodedBufferCache Caches the n most recently decoded bitstream frames, when we are simultaneously accessing the same SndMP3.
+	Each key is the MP3 frame ID, each object is a SndAudioBuffer in 16 bit PCM data (left and right channels) format. */
+    NSMutableDictionary *decodedBufferCache;   /* TODO this should become SndAgedDictionary */
+    
+    NSMutableDictionary *decodedBufferAccessCount;
+    int accessTime;
+	
     /*! @var pcmBufferToAccess */
     SndAudioBuffer *pcmBufferToAccess;
 	
     /*! @var duration The duration of the sound (when decoded) in seconds. Necessary only as long as Snd uses SndSoundStructs. */
     double duration;
 
+    /*! @var pcmDataLock Locks the decoding of a bitstream frame (and any preceding frames necessary to backtrack). */ 
+    NSLock *pcmDataLock;
+
     // Variables used in separate threaded predecoding.
     NSMutableData *pcmData; // the decoded linear sample data.
     long           decodedSampleCount; // Number of samples decoded so far.
     BOOL           bDecoding;    // we are decoding.
-    NSLock        *pcmDataLock;
+    
 }
 
 /*!
@@ -100,10 +108,10 @@
 - (SndSampleFormat) dataFormat;
 
 /*!
-  @method convertToFormat:samplingRate:channelCount:
+  @method convertToSampleFormat:samplingRate:channelCount:
   @discussion Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
  */
-- (int) convertToFormat: (SndSampleFormat) toFormat
+- (int) convertToSampleFormat: (SndSampleFormat) toFormat
 	   samplingRate: (double) toRate
 	   channelCount: (int) toChannelCount;
 
@@ -139,7 +147,14 @@
 	        intoFrameRange: (NSRange) bufferRange
 	        samplesInRange: (NSRange) sndReadingRange;
 
+/*!
+  @method readSoundfile:
+ */
 - (int) readSoundfile: (NSString*) filename;
+
+/*!
+  @method readSoundURL:startTimePosition:duration:
+ */
 - (int) readSoundURL: (NSURL*) soundURL
    startTimePosition: (double) segmentStartTime
             duration: (double) segmentDuration;
@@ -153,21 +168,21 @@
 + (NSArray *) soundFileExtensions;
 
 /*!
-  @method playInFuture:beginSample:sampleCount:
-  @abstract Begin playback at some time in the future, over a region of the sound.
-  @param inSeconds The number of seconds beyond the current time point to begin playback.
-  @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
-  @param count The number of samples to play. Use sampleCount to play the entire sound.
-  @result Returns the performance that represents the sound playing.
+  @method fragmentOfFrame:indexInFragment:fragmentLength:dataFormat:
  */
-- (SndPerformance *) playInFuture: (double) inSeconds
-		      beginSample: (unsigned long) begin
-		      sampleCount: (unsigned long) count;
-
 - (void *) fragmentOfFrame: (int) frame 
-	   indexInFragment: (int *) currentFrame 
-       lastFrameInFragment: (int *) lastFrameInBlock
+	   indexInFragment: (unsigned int *) currentFrame 
+	    fragmentLength: (unsigned int *) lastFrameInBlock
 		dataFormat: (SndSampleFormat *) dataFormat;
+
+/*!
+  @method soundFromSamplesInRange:
+  @abstract Return an uncompressed Snd instance of a range of frames.
+  @param frameRange The specifies the uncompressed frames to return in a new Snd instance. 
+                    The frameRange must be within 0 - [self lengthInSampleFrames].
+  @result Returns an autoreleased Snd instance.
+ */
+- (Snd *) soundFromSamplesInRange: (NSRange) frameRange;
 
 @end
 
