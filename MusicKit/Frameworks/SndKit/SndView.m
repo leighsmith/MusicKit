@@ -1888,8 +1888,12 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         if (stat == SND_SoundPlaying || stat == SND_SoundPlayingPending)
                 [_scratchSound pause];
     }
+    if (sound) {
+      [sound pause];
+    }
     return;
 }
+
 - (void)resume:sender
 {
     int stat;
@@ -1897,6 +1901,9 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         stat = [_scratchSound status];
         if (stat == SND_SoundPlayingPaused)
             [_scratchSound resume];
+    }
+    if (sound) {
+      [sound resume];
     }
     return;
 }
