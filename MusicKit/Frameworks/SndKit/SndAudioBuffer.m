@@ -357,13 +357,13 @@
 	    in = [convertedBuffer bytes];
 	}
 #if DEBUG_MIXING
-	NSLog(@"mixbuffer: had to convert to format %d, nChannels = %d\n", selfDataFormat, buffNumChannels);
+	NSLog(@"mixWithBuffer: had to convert to format %d, nChannels = %d\n", selfDataFormat, buffNumChannels);
 #endif
     }
     else {
 	in = [buff bytes];
 #if DEBUG_MIXING
-	NSLog(@"mixbuffer: no conversion mixing.");
+	NSLog(@"mixWithBuffer: no conversion mixing.");
 #endif
     }
     out += start * buffNumChannels;
@@ -373,6 +373,8 @@
 	/* FIXME need to do extra check to ensure altivec is supported at runtime */
 	vadd(in, 1, out, 1, out, 1, lengthInSamples);
 #else
+	int i;
+	
 	for (i = 0; i < lengthInSamples; i++) {
 	    out[i] += in[i]; // interleaving automatically taken care of!
 	}
@@ -380,6 +382,9 @@
 #if DEBUG_MIXING
 	NSLog(@"out[0]: %f   maxpos:%li\n", out[0], lengthInSamples);
 #endif
+    }
+    else {
+	NSLog(@"mixWithBuffer: attempting to mix into buffer of unsupported format %d\n", selfDataFormat);
     }
     if (convertedBuffer)
 	[convertedBuffer release];
@@ -538,19 +543,33 @@
   return byteCount;
 }
 
-- (void) findMin:(float*) pMin max:(float*) pMax
+- (void) findMin: (float *) pMin max: (float *) pMax
 {
-  int i, c = [self lengthInSampleFrames] * channelCount;
-  const float *pE = [data bytes];
-  *pMin = 0.0;
-  *pMax = 0.0;
+    int i, samplesInBuffer = [self lengthInSampleFrames] * channelCount;
+    const void *samplePtr = [data bytes];
+    *pMin = 0.0;
+    *pMax = 0.0;
 
-  for (i = 0; i < c; i += channelCount){
-    if (pE[i] < *pMin)
-      *pMin = pE[i];
-    else if (pE[i] > *pMax)
-      *pMax = pE[i];
-  }
+    // Check all channels
+    for (i = 0; i < samplesInBuffer; i++) {
+	float sample;
+
+	switch(dataFormat) {
+	case SND_FORMAT_FLOAT:
+	    sample = ((float *) samplePtr)[i];
+	    break;
+	case SND_FORMAT_LINEAR_16:
+	    sample = ((short *) samplePtr)[i];
+	    break;
+	default:
+	    NSLog(@"findMin:max: unsupported format %d\n", dataFormat);
+	}
+	
+	if (sample < *pMin)
+	    *pMin = sample;
+	else if (sample > *pMax)
+	    *pMax = sample;
+    }
 }
 
 @end
