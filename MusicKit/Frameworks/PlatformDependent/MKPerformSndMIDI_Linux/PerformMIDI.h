@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/04/07 21:08:35  leighsmith
+  Renamed header file to suit new more descriptive name used in MusicKit framework
+
   Revision 1.2  2000/12/15 02:02:28  leigh
   Initial Revision
 
