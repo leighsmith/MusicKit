@@ -1,7 +1,6 @@
 /*
   $Id$
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
 
   Description:
     This file should contain only utilities that we always want. 
@@ -10,72 +9,12 @@
   Original Author: David A. Jaffe
   
   Copyright (c) 1988-1992, NeXT Computer, Inc.
-  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT.
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2003, The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.20  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.19  2003/01/29 02:57:39  leighsmith
-  Updated formatting
-
-  Revision 1.18  2002/05/01 14:24:58  sbrandon
-  Defined functions MKLoadAllBundlesOneOff() and MKLoadAllBundles() which attempt to load all plugins in standard Library directories/MusicKitPlugins/name.mkplugin
-
-  Revision 1.17  2002/04/16 15:22:33  sbrandon
-  a couple of string-appending functions simplified for speed
-
-  Revision 1.16  2002/01/24 13:25:43  sbrandon
-  added function _MKDeepMutableArrayCopy() which gives what it says it does, and
-  is guaranteed to do so cross-platform (NSArray:-mutableCopy does the same on
-  MacOSX but not GNUstep).
-
-  Revision 1.15  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.14  2000/11/25 22:42:43  leigh
-  Doco cleanup
-
-  Revision 1.13  2000/07/22 00:25:02  leigh
-  Now properly manages error stream assignments.
-
-  Revision 1.12  2000/04/01 23:16:44  leigh
-  removed redundant extensionPresent function
-
-  Revision 1.11  2000/03/31 00:08:28  leigh
-  _MKErrorf doco cleanup
-
-  Revision 1.10  2000/03/24 16:28:35  leigh
-  cthreads are now just a memory
-
-  Revision 1.9  2000/01/20 17:13:45  leigh
-  Fixed ancient bug which incorrectly checked the MKNote class instead of MKMidi class
-
-  Revision 1.8  1999/11/12 01:29:16  leigh
-  Fixed general MK error messages from %s to %@
-
-  Revision 1.7  1999/11/09 00:16:28  leigh
-  dummy error message printout to NSLog
-
-  Revision 1.6  1999/09/22 16:03:13  leigh
-  Allocation error messages more meaningful and standard
-
-  Revision 1.5  1999/09/04 22:57:11  leigh
-  _MKLightweightArrayCopy now addsObjectsFromArray so that the array is mutable
-
-  Revision 1.4  1999/08/26 20:02:44  leigh
-  new MKError Prototype and localised strings now searched within the Framework
-
-  Revision 1.3  1999/08/04 16:35:45  leigh
-  fixed copyright and removed _MKSprintf include
-
-  Revision 1.2  1999/07/29 01:26:18  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history pre-CVS:
 
   09/15/89/daj - Added caching of Note class. (_MKCheckClassNote())
   10/27/89/daj - Added argument to _MKOpenFileStream to surpress error msg.
@@ -137,13 +76,13 @@ void _MKLinkUnreferencedClasses()
 }
 /* The following mechanism is to make it so it's fast to check if a class
    is loaded. See the macros in _musickit.h */ 
-static id checkClass(_MKClassLoaded *cl,NSString *className)
+static id checkClass(_MKClassLoaded *cl, NSString *className)
     /* Gets and initializes class. There are macros that only invoke
        this when the class isn't initialized yet. */
 {
     cl->alreadyChecked = YES;
-    cl->aClass = _MK_FINDCLASS(className);
-    [(Class) (cl->aClass) performSelector:@selector(initialize)]; /* Initialize it now, not later.*/
+    cl->aClass = NSClassFromString(className);
+    [((id) cl->aClass) performSelector:@selector(initialize)]; /* Initialize it now, not later.*/
     return cl->aClass;
 }
 
@@ -668,36 +607,32 @@ BOOL _MKOpenFileStreamForWriting(NSString * fileName,NSString *defaultExtension,
     return YES;
 }
 
-NSData *_MKOpenFileStreamForReading(NSString * fileName,
-			    NSString *defaultExtension,BOOL errorMsg)
+NSData *_MKOpenFileStreamForReading(NSString * fileName, NSString *defaultExtension, BOOL errorMsg)
     /* The algorithm is as follows:
        For write: append the extension if it's not already there somewhere.
        For read: look up without extension. If it's no there, append
        extension and try again. */
-/*sb: changed as follows: for reading, returns file contents as an NSData object.
- *    No longer supports file writing (see function above).
- *    The fd is no longer used.
- */
-
+    /*sb: changed as follows: for reading, returns file contents as an NSData object.
+    *    No longer supports file writing (see function above).
+    */
 {
-#   define OPENFAIL(_x) (_x == -1)
     NSMutableData *rtnVal = nil;
-//    BOOL nameChanged = NO;
     BOOL isDir;
     NSFileManager *manager = [NSFileManager defaultManager];
-    if (!fileName) return nil;
-    if (![fileName length]) return nil;
+    
+    if (fileName == nil)
+        return nil;
+    if (![fileName length])
+        return nil;
 
-    if ([manager fileExistsAtPath:fileName isDirectory:&isDir]
-                && !isDir)
-        rtnVal = [NSData dataWithContentsOfFile:fileName];
-    else if (defaultExtension) {
-        if ([manager fileExistsAtPath:[fileName stringByAppendingPathExtension:defaultExtension] isDirectory:&isDir]
-                 && !isDir)
-            rtnVal = [NSData dataWithContentsOfFile:[fileName stringByAppendingPathExtension:defaultExtension]];
-            }
+    if ([manager fileExistsAtPath: fileName isDirectory: &isDir] && !isDir)
+        rtnVal = [NSData dataWithContentsOfFile: fileName];
+    else if (defaultExtension != nil) {
+        if ([manager fileExistsAtPath: [fileName stringByAppendingPathExtension: defaultExtension] isDirectory: &isDir] && !isDir)
+            rtnVal = [NSData dataWithContentsOfFile: [fileName stringByAppendingPathExtension: defaultExtension]];
+    }
     else if (errorMsg)
-        _MKErrorf(MK_cantOpenFileErr,fileName);
+        _MKErrorf(MK_cantOpenFileErr, fileName);
 
     return rtnVal;
 }
