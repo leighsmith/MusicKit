@@ -50,11 +50,11 @@
         OTHER_LIBS = (st); 
         OTHER_LINKED = (
             SndEndianFunctions.c, 
-            SndFunctions.c, 
             _SndConvert.c, 
             _Sndfilterkit.c, 
             _Sndlibst.c, 
-            _Sndresamplesubs.c
+            _Sndresamplesubs.c, 
+            SndFunctions.m
         ); 
         OTHER_SOURCES = (
             Makefile.preamble, 

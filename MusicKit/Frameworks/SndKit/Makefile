@@ -21,8 +21,10 @@ HFILES = performsound.h Snd.h SndDisplayData.h SndDisplayDataList.h\
          sounderror.h soundstruct.h UserPath.h _Sndfilterkit.h\
          _Sndlargefilter.h _Sndlibst.h _Sndsmallfilter.h SndStdefs.h
 
-CFILES = SndEndianFunctions.c SndFunctions.c _SndConvert.c\
-         _Sndfilterkit.c _Sndlibst.c _Sndresamplesubs.c
+MFILES = SndFunctions.m
+
+CFILES = SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
+         _Sndresamplesubs.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
             h.template make.sh platform.make packageSndKit
