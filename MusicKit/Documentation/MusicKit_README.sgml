@@ -148,10 +148,11 @@ as open source to the community.
 
    <para>
 The <link linkend="availability">MusicKit Distribution</link> is a
-comprehensive package that includes on-line documentation, <link
-linkend=examples>programming examples</link>, <link
-linkend=applications>utilities, applications</link> and sample score
-documents. The MusicKit is dependent on the SndKit distribution,
+comprehensive package that includes
+<link linkend=onlinedoco>on-line documentation</link>,
+<link linkend=examples>programming examples</link>,
+<link linkend=applications>utilities, applications</link>
+and sample score documents. The MusicKit is dependent on the SndKit distribution,
 originally written by Stephen Brandon, and both Framework collections
 are available at the same distribution site.
 </para>
