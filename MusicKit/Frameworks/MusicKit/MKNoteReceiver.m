@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/08/27 20:00:31  leighsmith
+  Added automatic sending of allNotesOff to the owner of the receiver when squelching
+
   Revision 1.9  2001/08/07 16:18:48  leighsmith
   Corrected encoding of an NSArray of noteSenders
 
@@ -84,12 +87,15 @@ Modification history:
    * sendNote:atTime: or sendNote:withDelay even if the
    * receiver is squelched.
    * However, if the receiver is still squelched when the
-   * sendNote: message is received, the Note isn't sent.
+   * sendNote: message is received, the MKNote isn't sent.
    *
    * Returns the receiver.
    */
 {
     isSquelched = YES;
+    // This shuts down any sounding notes, otherwise it can be very annoying when
+    // the instrument such as an MKSamplerInstrument is playing a long sounding note.
+    [owner allNotesOff];  
     return self;
 }
 
