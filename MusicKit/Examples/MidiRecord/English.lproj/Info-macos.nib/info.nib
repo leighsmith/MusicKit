@@ -3,16 +3,14 @@
 <plist version="0.9">
 <dict>
 	<key>IBDocumentLocation</key>
-	<string>25 19 354 230 0 4 1600 1174 </string>
-	<key>IBUserGuides</key>
-	<dict>
-		<key>InfoPanel</key>
-		<dict>
-			<key>guideLocations</key>
-			<array/>
-			<key>guidesLocked</key>
-			<string>NO</string>
-		</dict>
-	</dict>
+	<string>16 8 356 240 0 0 1152 746 </string>
+	<key>IBFramework Version</key>
+	<string>263.2</string>
+	<key>IBOpenObjects</key>
+	<array>
+		<integer>5</integer>
+	</array>
+	<key>IBSystem Version</key>
+	<string>5S66</string>
 </dict>
 </plist>
