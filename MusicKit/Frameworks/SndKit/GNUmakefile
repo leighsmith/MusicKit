@@ -15,6 +15,11 @@
 
 # Modification history:
 # $Log$
+# Revision 1.22  2002/05/09 11:21:58  sbrandon
+# added support for rpm generation, removed unecessary debugging info (better
+# to do "make debug=yes" if that's what you want), and sorted list of source
+# files.
+#
 # Revision 1.21  2002/05/07 08:20:06  sbrandon
 # added SndMP3 source files
 #
@@ -89,9 +94,6 @@
 # Revision 1.1  2001/05/12 16:59:25  sbrandon
 # - inclusion of GNUmakefile should allow the use of "make" on GNUstep platforms
 #   (certainly does for me!)
-#
-#
-
 
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
@@ -99,6 +101,10 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 
 include $(GNUSTEP_MAKEFILES)/common.make
+
+# For use in rpm generation:
+PACKAGE_NAME = SndKit
+VERSION = 2.2.0
 
 srcdir = .
 
@@ -124,47 +130,97 @@ $(MY_NAME)_RESOURCE_FILES =
 
 $(MY_NAME)_RESOURCE_DIRS = 
 
-ADDITIONAL_FLAGS += -g -Wall
-ADDITIONAL_LDFLAGS += -g
-
 # The Bundle Objective-C source files to be compiled
 $(MY_NAME)_OBJC_FILES = \
-          Snd.m SndAudioBuffer.m SndDisplayData.m SndDisplayDataList.m\
-          SndStreamClient.m SndStreamManager.m sounderror.m\
-          SndFunctions.m SndStreamRecorder.m SndStreamMixer.m SndPlayer.m\
-          SndPerformance.m SndAudioProcessorChain.m\
-          SndAudioProcessor.m  SndAudioProcessorDelay.m SndEnvelope.m\
-          SndAudioFader.m SndBreakpoint.m\
-          SndAudioBufferQueue.m SndAudioProcessorReverb.m \
-	  SndAudioProcessorDistortion.m	SndAudioProcessorFlanger.m \
-	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
-          SndAudioProcessorToneGenerator.m SndAudioProcessorNoiseGate.m \
-          SndStreamArchitectureView.m SndView.m SndTable.m SndExpt.m \
-	  SndFunctionsDiskIO.m _SndConvert.m _Sndresamplesubs.m \
-          #SndMeter.m
+         Snd.m \
+         SndAudioBuffer.m \
+         SndAudioBufferQueue.m \
+         SndAudioFader.m \
+         SndAudioProcessor.m \
+         SndAudioProcessorChain.m \
+         SndAudioProcessorDelay.m \
+         SndAudioProcessorDistortion.m \
+         SndAudioProcessorFlanger.m \
+         SndAudioProcessorInspector.m \
+         SndAudioProcessorNoiseGate.m \
+         SndAudioProcessorRecorder.m \
+         SndAudioProcessorReverb.m \
+         SndAudioProcessorToneGenerator.m \
+         SndBreakpoint.m \
+         SndDisplayData.m \
+         SndDisplayDataList.m \
+         SndEnvelope.m \
+         SndExpt.m \
+         SndFunctions.m \
+         SndFunctionsDiskIO.m \
+         SndStreamArchitectureView.m \
+         SndStreamClient.m \
+         SndStreamManager.m \
+         SndStreamMixer.m \
+         SndStreamRecorder.m \
+         SndPerformance.m \
+         SndPlayer.m\
+         SndTable.m \
+         SndView.m \
+         _SndConvert.m \
+         _Sndresamplesubs.m \
+         sounderror.m \
+         #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
-         SndEndianFunctions.c _Sndfilterkit.c _Sndlibst.c
+         SndEndianFunctions.c \
+         _Sndfilterkit.c \
+         _Sndlibst.c
 
-$(MY_NAME)_CC_FILES = allpass.cpp comb.cpp reverbBridge.cpp revmodel.cpp
+$(MY_NAME)_CC_FILES = \
+         allpass.cpp \
+         comb.cpp \
+         reverbBridge.cpp \
+         revmodel.cpp
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \
-         Snd.h SndAudioBuffer.h SndDisplayData.h SndDisplayDataList.h\
-         SndEndianFunctions.h SndFunctions.h SndKit.h SndResample.h\
-         SndStdefs.h SndStreamClient.h SndStreamManager.h SndView.h\
-         Sound.h sounderror.h _Sndfilterkit.h\
-         _Sndlargefilter.h _Sndlibst.h _Sndsmallfilter.h\
-         SndStreamRecorder.h SndStreamMixer.h\
-         SndPlayer.h SndPerformance.h\
-         SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
-         SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
-         SndAudioProcessorReverb.h SndKitDefines.h \
-	 SndAudioProcessorDistortion.h SndAudioProcessorFlanger.h \
-	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h \
-         SndAudioProcessorToneGenerator.h SndAudioProcessorNoiseGate.h \
-         SndStreamArchitectureView.h SndTable.h SndExpt.h \
-         SndConditionLock.h
+         Snd.h \
+         SndAudioBuffer.h \
+         SndAudioBufferQueue.h \
+         SndAudioFader.h \
+         SndAudioProcessor.h \
+         SndAudioProcessorChain.h \
+         SndAudioProcessorDelay.h \
+         SndAudioProcessorDistortion.h \
+         SndAudioProcessorFlanger.h \
+         SndAudioProcessorInspector.h \
+         SndAudioProcessorNoiseGate.h \
+         SndAudioProcessorRecorder.h \
+         SndAudioProcessorReverb.h \
+         SndAudioProcessorToneGenerator.h \
+         SndBreakpoint.h \
+         SndConditionLock.h \
+         SndDisplayData.h \
+         SndDisplayDataList.h \
+         SndEndianFunctions.h \
+         SndEnvelope.h \
+         SndExpt.h \
+         SndFunctions.h \
+         SndKitDefines.h \
+         SndKit.h \
+         SndPerformance.h \
+         SndPlayer.h \
+         SndResample.h \
+         SndStdefs.h \
+         SndStreamArchitectureView.h \
+         SndStreamClient.h \
+         SndStreamManager.h \
+         SndStreamMixer.h \
+         SndStreamRecorder.h \
+         SndTable.h \
+         SndView.h\
+         sounderror.h \
+         Sound.h \
+         _Sndfilterkit.h \
+         _Sndlargefilter.h \
+         _Sndlibst.h \
+         _Sndsmallfilter.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
@@ -181,8 +237,6 @@ endif
 #ifeq (yes, $(SK_COMPILE_APPKIT_CLASSES))
 #  $(MY_NAME)_OBJC_FILES += SndView.m
 #  ADDITIONAL_FLAGS += -DSK_COMPILE_APPKIT_CLASSES
-#else
-#  $(MY_NAME)_OBJC_FILES += SndConditionLock.m
 #endif
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
