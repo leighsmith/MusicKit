@@ -50,10 +50,10 @@ static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
 
 static AudioStreamBasicDescription outputStreamBasicDescription;
 static AudioDeviceID outputDeviceID;
-static AudioHardwareIOProcStreamUsage outputStreamIOProcUsage;
+static AudioHardwareIOProcStreamUsage *outputStreamIOProcUsage;
 static AudioStreamBasicDescription inputStreamBasicDescription;
 static AudioDeviceID inputDeviceID;
-static AudioHardwareIOProcStreamUsage inputStreamIOProcUsage;
+static AudioHardwareIOProcStreamUsage *inputStreamIOProcUsage;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
@@ -61,7 +61,7 @@ static void          *streamUserData;
 static double        firstSampleTime = -1.0; // indicates this has not been assigned.
 static float         *fInputBuffer = NULL;
 static BOOL          isMuted = FALSE;
-static NSLock        *inputLock;
+static NSLock        *inputLock = nil;
 
 ////////////////////////////////////////////////////////////////////////////////
 // getCoreAudioErrorString
@@ -116,22 +116,22 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 #endif
 
     if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
-        fprintf(stderr, "sample time is not valid!\n");
+        fprintf(stderr, "[SND] sample time is not valid!\n");
     }
     if(firstSampleTime == -1.0) {
         firstSampleTime = inOutputTime->mSampleTime;
     }
 
 #if DEBUG_CALLBACK
-    fprintf(stderr, "vendOutputBuffersToStreamManagerIOProc number of buffers = input %ld, output %ld\n",
+    fprintf(stderr, "[SND] vendOutputBuffersToStreamManagerIOProc number of buffers = input %ld, output %ld\n",
 	    inInputData->mNumberBuffers, outOutputData->mNumberBuffers);    
 #endif
 
     // The IO Proc should receive the same number of buffers as the number of AudioStreams, although only a subset
     // typically need to be filled.
-    if(outOutputData->mNumberBuffers != outputStreamIOProcUsage.mNumberStreams) {
-	fprintf(stderr, "assertion outOutputData->mNumberBuffers == outputStreamIOProcUsage.mNumberStreams failed %ld, %ld\n",
-	    outOutputData->mNumberBuffers, outputStreamIOProcUsage.mNumberStreams);
+    if(outOutputData->mNumberBuffers != outputStreamIOProcUsage->mNumberStreams) {
+	fprintf(stderr, "[SND] assertion outOutputData->mNumberBuffers == outputStreamIOProcUsage->mNumberStreams failed %ld, %ld\n",
+	    outOutputData->mNumberBuffers, outputStreamIOProcUsage->mNumberStreams);
     }
     
     for(bufferIndex = 0; bufferIndex < outOutputData->mNumberBuffers; bufferIndex++) {
@@ -140,10 +140,10 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 
         // to tell the client the format it is receiving.
         if (inputInit) {
-            // inInputData->mNumberBuffers can differ from inputStreamIOProcUsage.mNumberStreams, since the former describes outDevices
+            // inInputData->mNumberBuffers can differ from inputStreamIOProcUsage->mNumberStreams, since the former describes outDevices
             // number of input buffers, whereas the latter can describe the streams on potentially a different device.
 	    // TODO The whole approach of using two vending IOProcs which initiate one stream manager callback needs rethinking.
-            if(bufferIndex < inInputData->mNumberBuffers && inputStreamIOProcUsage.mStreamIsOn[bufferIndex]) {
+            if(bufferIndex < inInputData->mNumberBuffers && inputStreamIOProcUsage->mStreamIsOn[bufferIndex]) {
 		// TODO we only copy across the first buffers data to fInputBuffer.
                 memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
 	    }
@@ -156,7 +156,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	fprintf(stderr,"[SND] vend middle...\n");
 #endif
 
-        if(outputStreamIOProcUsage.mStreamIsOn[bufferIndex]) {
+        if(outputStreamIOProcUsage->mStreamIsOn[bufferIndex]) {
             // to tell the client the format it should send.
 
 	    SNDStreamNativeFormat(&outStream.streamFormat);
@@ -164,9 +164,9 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 
 	    inStream.streamData  = fInputBuffer;
 	    outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
-
+            
 	    [inputLock lock];
-
+            
 	    if (!inputInit) {
 #if DEBUG_CALLBACK
 		fprintf(stderr,"[SND] vend no input initialized zeroing input buffer...\n");
@@ -213,31 +213,31 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
     fprintf(stderr,"[SND] starting vendInputBuffersToStreamManagerIOProc...\n");
 #endif
     if (fInputBuffer) {
-      SNDStreamBuffer inStream; //, outStream;
-      int bufferIndex;
+        SNDStreamBuffer inStream; //, outStream;
+        int bufferIndex;
 
-      if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
-        fprintf(stderr, "sample time is not valid!\n");
-      }
-      if(firstSampleTime == -1.0) {
-        firstSampleTime = inOutputTime->mSampleTime;
-      }
+        if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
+            fprintf(stderr, "sample time is not valid!\n");
+        }
+        if(firstSampleTime == -1.0) {
+            firstSampleTime = inOutputTime->mSampleTime;
+        }
 
-      for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
-        if (inputInit) {
-            if (inInputData->mNumberBuffers == 0)
-                inStream.streamData = NULL;
-            else {
-                [inputLock lock];
-                memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
-                [inputLock unlock];
+        for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
+            if (inputInit) {
+                if (inInputData->mNumberBuffers == 0)
+                    inStream.streamData = NULL;
+                else {
+                    [inputLock lock];
+                    memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+                    [inputLock unlock];
+                }
             }
         }
-      }
     }
     else {
 #if DEBUG_CALLBACK    
-      fprintf(stderr,"[SND] input vend: input buffer is NULL!\n");
+        fprintf(stderr,"[SND] input vend: input buffer is NULL!\n");
 #endif
     }
     
@@ -272,7 +272,10 @@ static BOOL retrieveDriverList(void)
         return FALSE;
     }
 
-    allDeviceIDs = (AudioDeviceID *) malloc(propertySize);
+    if((allDeviceIDs = (AudioDeviceID *) malloc(propertySize)) == NULL) {
+        fprintf(stderr, "Unable to malloc device ids\n");
+        return FALSE;
+    }
 
     CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propertySize, allDeviceIDs);
     // fprintf(stderr, "AudioHardwareGetProperty kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld\n", (char *) &CAstatus, propertySize);
@@ -447,7 +450,7 @@ static BOOL determineBasicDescription(AudioDeviceID deviceID,
 // Determine which AudioStreams of the AudioDevice should be serviced by our IOProc.
 // If a stream is marked as not being used, the given IOProc will see a corresponding NULL buffer
 // pointer in the AudioBufferList passed to it's IO proc.
-static BOOL getAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStreamUsage *ioProcStreamUsage,
+static BOOL getAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStreamUsage **ioProcStreamUsage,
 					void *ioProc, BOOL isInput)
 {
     OSStatus CAstatus;
@@ -462,11 +465,16 @@ static BOOL getAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStr
 	return FALSE;
     }
 
-    ioProcStreamUsage->mIOProc = ioProc;
+    if((*ioProcStreamUsage = (AudioHardwareIOProcStreamUsage *) malloc(propertySize)) == NULL) {
+        fprintf(stderr, "Unable to malloc input buffer of %ld\n", bufferSizeInBytes);
+        return FALSE;
+    }
+
+    (*ioProcStreamUsage)->mIOProc = ioProc;
 
     CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
 				      kAudioDevicePropertyIOProcStreamUsage,
-				      &propertySize, ioProcStreamUsage);
+				      &propertySize, *ioProcStreamUsage);
     if (CAstatus) {
 	fprintf(stderr, "AudioDeviceGetProperty kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
@@ -474,11 +482,12 @@ static BOOL getAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStr
 
 #if DEBUG_IOPROCUSAGE
     {
-	int i;
+	unsigned int i;
 
-	fprintf(stderr, "ioProcStreamUsage->mNumberStreams = %ld\n", ioProcStreamUsage->mNumberStreams);
-	for(i = 0; i < ioProcStreamUsage->mNumberStreams; i++) {
-	    fprintf(stderr, "ioProcStreamUsage->mStreamIsOn[%d] = %ld\n", i, ioProcStreamUsage->mStreamIsOn[i]);
+	fprintf(stderr, "%s (*ioProcStreamUsage)->mNumberStreams = %ld\n", isInput ? "input" : "output", 
+            (*ioProcStreamUsage)->mNumberStreams);
+	for(i = 0; i < (*ioProcStreamUsage)->mNumberStreams; i++) {
+	    fprintf(stderr, "(*ioProcStreamUsage)->mStreamIsOn[%d] = %ld\n", i, (*ioProcStreamUsage)->mStreamIsOn[i]);
 	}
     }
 #endif
@@ -506,9 +515,10 @@ static BOOL setAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStr
 
 #if DEBUG_IOPROCUSAGE
     {
-	int i;
+	unsigned int i;
 
-	fprintf(stderr, "setting ioProcStreamUsage->mNumberStreams = %ld\n", ioProcStreamUsage->mNumberStreams);
+	fprintf(stderr, "setting %s ioProcStreamUsage->mNumberStreams = %ld\n", 
+            isInput ? "input" : "output", ioProcStreamUsage->mNumberStreams);
 	for(i = 0; i < ioProcStreamUsage->mNumberStreams; i++) {
 	    fprintf(stderr, "setting ioProcStreamUsage->mStreamIsOn[%d] = %ld\n", i, ioProcStreamUsage->mStreamIsOn[i]);
 	}
@@ -840,8 +850,10 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         return FALSE;  // invalid sound structure.
 
     // Even if we don't have input, we still need an input buffer to send up empty to the rest of the arch.
-    if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
+    if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL) {
+        fprintf(stderr, "Unable to malloc input buffer of %ld\n", bufferSizeInBytes);
         return FALSE;
+    }
     memset(fInputBuffer, 0, bufferSizeInBytes);
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
@@ -849,7 +861,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
-    
+
     CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendOutputBuffersToStreamManagerIOProc, NULL);
     if (CAstatus) {
         fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
@@ -865,11 +877,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 	// TODO turn off all but the first stream. This isn't right in the general case, we should use what the
 	// the user has nominated as the default AudioStream in the default AudioDevice, but there doesn't seem to be
 	// a means to determine this. For now, we do what iTunes seems to do, use the first AudioStream.
-	for(streamIndex = 1; streamIndex < outputStreamIOProcUsage.mNumberStreams; streamIndex++)
-	    outputStreamIOProcUsage.mStreamIsOn[streamIndex] = NO;
+	for(streamIndex = 1; streamIndex < outputStreamIOProcUsage->mNumberStreams; streamIndex++)
+	    outputStreamIOProcUsage->mStreamIsOn[streamIndex] = NO;
     }
 
-    if(!setAudioStreamsToVend(outputDeviceID, &outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
+    if(!setAudioStreamsToVend(outputDeviceID, outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
 	return FALSE;
 
     if (inputInit) {
