@@ -464,7 +464,7 @@ SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
   @param outCount Length in samples of the original buffer, counting number of channels, that is duration in samples * number of channels.
   @result Returns error code.
  */
-SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, int dfFrom, int dfTo, unsigned int outCount);
+SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, int dfFrom, int dfTo, long outCount);
 
 /*!
   @function SndChangeSampleRate

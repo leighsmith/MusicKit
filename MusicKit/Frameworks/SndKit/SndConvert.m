@@ -252,9 +252,9 @@ int SndChangeChannelCount(void *inPtr, void *outPtr, unsigned int numberOfSample
 // TODO this is probably a good candidate for Altivec optimisation.
 //////////////////////////////////////////////////////////////
 
-int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDataFormat, unsigned int sampleCount)
+int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDataFormat, long sampleCount)
 {
-    unsigned int i;
+    long i;
     static double ONE_OVER_TWO_THIRTYONE   = 1.0/2147483647.0f; /* 1/((2 ^ 31) - 1) */
     static double ONE_OVER_TWO_TWENTYTHREE = 1.0/8388607.0f;    /* 1/((2 ^ 23) - 1) */
     static double ONE_OVER_TWO_FIFTEEN     = 1.0/32767.0f;      /* 1/((2 ^ 15) - 1) */
