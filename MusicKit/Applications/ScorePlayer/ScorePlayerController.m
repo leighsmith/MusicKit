@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/04/19 14:57:55  leighsmith
+  Now allocate MIDI devices dynamically, added abort to MKSamplerInstrument, help file is now HTML
+
   Revision 1.14  2001/04/16 23:16:56  leighsmith
   Now uses the NSOpenPanel default location
 
@@ -84,8 +87,6 @@ Modification history:
 
 @implementation ScorePlayerController
 
-#define MAX_MIDIS 2
-
 static NSMutableArray *synthInstruments;
 static id openPanel;
 static NSString *fileName, *shortFileName;
@@ -104,11 +105,15 @@ static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
 static id stopImage,playImage,playHImage;
-static MKMidi *midis[MAX_MIDIS] = {nil, nil};
-static MKSamplerInstrument *sampleInstrument;
+// MIDI management
+static NSMutableDictionary *midis;
+static MKSamplerInstrument *sampleInstrument = nil;
 static int midiOffset;
+// MTC sync
 static BOOL synchToTimeCode = NO;
-static int timeCodePort = 0;
+static NSString *timeCodeDevice;
+static MKMidi *timeCodeMIDIDevice = nil;
+
 static unsigned capabilities;
 static double samplingRate;
 static id mySelf;
@@ -146,7 +151,6 @@ static BOOL errorDuringPlayback = NO;
 #if m68k
 #define SOUND_OUT_PAUSE_BUG 1 /* Workaround for problem synching MIDI to DSP */
 #endif
-
 
 
 /* Localizable strings */
@@ -639,22 +643,22 @@ static BOOL setUpFile(NSString *workspaceFileName);
 
 - endOfTime	// called by the musickit thread
 {
-    int i;
+    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    MKMidi *midiDev;
+
     [theOrch close]; /* This will block! */
-    for (i = 0; i < MAX_MIDIS; i++) {
-	[midis[i] close];
-        [midis[i] release];
-	midis[i] = nil;
+    while ((midiDev = [midiDevEnumerator nextObject])) {
+	[midiDev close];
     }
     if (DSPCommands) {
 	DSPCommands = NO;
-	[theOrch setOutputCommandsFile:NULL];
+	[theOrch setOutputCommandsFile: NULL];
     }
     else if (writeData) {
 	writeData = NO;
-	[theOrch setOutputSoundfile:NULL];
+	[theOrch setOutputSoundfile: NULL];
     }
-    [theOrch setHostSoundOut:(soundOutType == NEXT_SOUND)];
+    [theOrch setHostSoundOut: (soundOutType == NEXT_SOUND)];
     [tempoAnimator stopEntry];
     [playButton setImage: playImage];
     [playButton display];
@@ -696,6 +700,7 @@ void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
 }
 #endif
 
+/* TODO make this more encompassing of all MIDI device namings */
 static BOOL isMidiClassName(NSString *className)
 {
     return (className && ([className isEqualToString:@"midi"] ||
@@ -745,7 +750,7 @@ static double getUntempo(float tempoVal)
 
 static void playIt(ScorePlayerController *self)
 {
-    int partCount, synthPatchCount, voices, i, whichMidi, midiChan;
+    int partCount, synthPatchCount, voices, i, midiChan;
     NSString *className;
     NSString *msg = nil;
     double actualSrate;  
@@ -756,6 +761,8 @@ static void playIt(ScorePlayerController *self)
     MKNote *partInfo;
     MKPart *aPart;
     NSString *writeMsg;
+    NSEnumerator *midiDevEnumerator;
+    MKMidi *midiDev;
 
     /* Could keep these around, in repeat-play cases: */ 
     [scorePerformer release];
@@ -764,8 +771,8 @@ static void playIt(ScorePlayerController *self)
     [self _enableMTCControls:NO];
 
     if (synchToTimeCode) {
-	midis[timeCodePort] = [[MKMidi midiOnDevice: (timeCodePort) ? @"midi1" : @"midi0"] retain];
-	[[MKConductor defaultConductor] setMTCSynch: midis[timeCodePort]];
+	timeCodeMIDIDevice = [[MKMidi midiOnDevice: timeCodeDevice] retain];
+	[[MKConductor defaultConductor] setMTCSynch: timeCodeMIDIDevice];
     }
     else
         [[MKConductor defaultConductor] setMTCSynch: nil];
@@ -774,22 +781,22 @@ static void playIt(ScorePlayerController *self)
 
     [theOrch setHeadroom:headroom];    /* Must be reset for each play */ 
     if (serialSoundOutDevice)
-      [theOrch setSerialPortDevice:serialSoundOutDevice];
+        [theOrch setSerialPortDevice: serialSoundOutDevice];
     switch (soundOutType) {
-      case NEXT_SOUND:
+    case NEXT_SOUND:
 	if (![theOrch supportsSamplingRate:samplingRate]) {
 	    msg = STR_BAD_SRATE;
 	    actualSrate = [theOrch defaultSamplingRate];
 	}
 	else actualSrate = samplingRate;
 	break;
-      case GENERIC:
+    case GENERIC:
 	actualSrate = samplingRate;
 	break;
-      default:
-      case PROPORT:
-      case AD64x:
-      case DAI2400:
+    default:
+    case PROPORT:
+    case AD64x:
+    case DAI2400:
 	if (![theOrch supportsSamplingRate:samplingRate]){
 	    msg = STR_BAD_SSI_SRATE;
 	    actualSrate = [theOrch defaultSamplingRate];
@@ -814,11 +821,13 @@ static void playIt(ScorePlayerController *self)
     [theOrch setHostSoundOut:!writeData && (soundOutType == NEXT_SOUND)];
     [theOrch setSerialSoundOut:(soundOutType != NEXT_SOUND) && !writeData];
 
+#if 0 // LMS disabled until cross-platform orchestra opening works
     if (![theOrch open]) {
         [errorLog addText: STR_CANT_OPEN_DSP];
         NSRunAlertPanel(STR_SCOREPLAYER, STR_CANT_OPEN_DSP, STR_OK, NULL, NULL);
-//	return; // LMS disabled until cross-platform orchestra opening works
+	return; 
     }
+#endif
     scorePerformer = [MKScorePerformer new];
     [scorePerformer setScore: scoreObj];
     [scorePerformer activate]; 
@@ -840,28 +849,28 @@ static void playIt(ScorePlayerController *self)
         if(![partInfo isParPresent: MK_synthPatch] && scoreForm == MIDI_FILE) {
             [partInfo setPar: MK_synthPatch toString: @"midi"];
         }
-        className = [partInfo parAsStringNoCopy:MK_synthPatch];
+        className = [partInfo parAsStringNoCopy: MK_synthPatch];
 	if (isMidiClassName(className)) {
-	    midiChan = [partInfo parAsInt:MK_midiChan];
+            MKMidi *newMIDI;
+            
+	    midiChan = [partInfo parAsInt: MK_midiChan];
 	    if ((midiChan == MAXINT) || (midiChan > 16))
 		midiChan = 0;
-            if ([className isEqualToString:@"midi"])
+            if ([className isEqualToString: @"midi"])  // set the default MIDI device.
 		className = @"midi0"; /* Was "midi1" -- changed 9/30/94 */
-            if ([className isEqualToString:@"midi1"])
-		whichMidi = 1;
-	    else
-            	whichMidi = 0;
-	    if (midis[whichMidi] == nil)
-		midis[whichMidi] = [[MKMidi midiOnDevice:className] retain];
-	    [[partPerformer noteSender] connect: [midis[whichMidi] channelNoteReceiver:midiChan]];
+                       
+	    if ((newMIDI = [midis objectForKey: className]) == nil) {
+                newMIDI = [MKMidi midiOnDevice: className];
+                [midis setObject: newMIDI forKey: className];
+            }
+	    [[partPerformer noteSender] connect: [newMIDI channelNoteReceiver: midiChan]];
 	}
         else if([className isEqualToString: @"Samples"]) {
             sampleInstrument = [[MKSamplerInstrument alloc] init];
             [[partPerformer noteSender] connect: [sampleInstrument noteReceiver]];
         }
 	else {
-	    synthPatchClass = ([className length]) ? 
-			       [MKSynthPatch findPatchClass:className] : nil;
+	    synthPatchClass = ([className length]) ? [MKSynthPatch findPatchClass: className] : nil;
 	    if (!synthPatchClass) {         /* Class not loaded in program? */
                 errMsg = [NSString stringWithFormat: STR_NO_SYNTHPATCH, className];
                 [errorLog addText: errMsg];
@@ -871,12 +880,12 @@ static void playIt(ScorePlayerController *self)
 		continue;
 	    }
 	    anIns = [MKSynthInstrument new];      
-	    [synthInstruments addObject:anIns];
-	    [[partPerformer noteSender] connect:[anIns noteReceiver]];
-	    [anIns setSynthPatchClass:synthPatchClass];
-	    if (![partInfo isParPresent:MK_synthPatchCount])
+	    [synthInstruments addObject: anIns];
+	    [[partPerformer noteSender] connect: [anIns noteReceiver]];
+	    [anIns setSynthPatchClass: synthPatchClass];
+	    if (![partInfo isParPresent: MK_synthPatchCount])
 		continue;         
-	    voices = [partInfo parAsInt:MK_synthPatchCount];
+	    voices = [partInfo parAsInt: MK_synthPatchCount];
 	    synthPatchCount = [anIns setSynthPatchCount: voices
                                           patchTemplate: [synthPatchClass patchTemplateFor:partInfo]];
 	    if (synthPatchCount < voices) {
@@ -912,17 +921,21 @@ static void playIt(ScorePlayerController *self)
     }
     [tempoAnimator setIncrement: ANIMATE_INCREMENT];
     [tempoAnimator startEntry];
-    for (i = 0; i < MAX_MIDIS; i++) 
-        if (midis[i] && ![midis[i] openOutputOnly]) /* midis[i] is nil if not in use */
+    
+    midiDevEnumerator = [midis objectEnumerator];
+    while ((midiDev = [midiDevEnumerator nextObject])) {
+        if ([midiDev openOutputOnly]) {
+            // set the localDeltaT time offset, negative values are for orchestras
+            if (midiOffset > 0) 
+                [midiDev setLocalDeltaT: midiOffset];
+            else if (midiOffset < 0)
+                [theOrch setLocalDeltaT: -midiOffset];
+            [midiDev run];
+        }
+        else {
             mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
-    for (i = 0; i < MAX_MIDIS; i++) {
-        if (midiOffset > 0) 
-	    [midis[i] setLocalDeltaT: midiOffset];
-	else if (midiOffset < 0)
-	    [theOrch setLocalDeltaT: -midiOffset];
+        }
     }
-    for (i=0; i<MAX_MIDIS; i++) 
-	[midis[i] run];
     [theOrch run];
     [MKConductor startPerformance];     
 }
@@ -935,14 +948,16 @@ static void playIt(ScorePlayerController *self)
 
 - (void) setMidiDriverName: (id) sender
 {
-    int i;
-//    [midis[i] close];
-//    [midis[i] release];
-//    midis[i] = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
-//    [midis[i] retain];
-    
-    for(i = 0; i < MAX_MIDIS; i++)
-        NSLog([midis[i] driverName]);
+    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    MKMidi *midiDev;
+
+    while ((midiDev = [midiDevEnumerator nextObject])) {
+        NSLog([midiDev driverName]);
+//      [midiDev close];
+//      [midiDev release];
+//      midiDev = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
+//      [midiDev retain];
+    }
 }
 
 static id localIconImage(NSString *s)
@@ -1022,7 +1037,8 @@ static void abortNow();
     stopImage = localIconImage(@"stop");
     playHImage = localIconImage(@"playH");
     [playButton setAlternateImage:playHImage];
-	    
+
+    midis = [[NSMutableDictionary dictionaryWithCapacity: 8] retain]; // heaps!
     [MKOrchestra setAbortNotification:self]; 
     theOrch = [MKOrchestra new];
     capabilities = [theOrch capabilities];
@@ -1105,23 +1121,22 @@ static BOOL setUpFile(NSString *workspaceFileName)
 
 static void abortNow()
 {
-    int i;
+    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    MKMidi *midiDev;
+
     if (PLAYING) {
 	[MKConductor lockPerformance];
-	for (i=0; i<MAX_MIDIS; i++) {
-            if (midis[i]) {
-                // This is tricky. allNotesOff sends note offs to all channels immediately,
-                //  while abort will remove any pending events beyond time 0.
-                [midis[i] allNotesOff];
-                [midis[i] abort];
-            }
+        while ((midiDev = [midiDevEnumerator nextObject])) {
+            // This is tricky. allNotesOff sends note offs to all channels immediately,
+            //  while abort will remove any pending events beyond time 0.
+            [midiDev allNotesOff];
+            [midiDev abort];
         }
+        if(sampleInstrument)
+            [sampleInstrument abort];
 	[theOrch abort];
 	[MKConductor finishPerformance];
 	[MKConductor unlockPerformance];
-
-//	while (PLAYING) /* Make sure it's really done. */
-//	  usleep(1000);
     }
 }
 
@@ -1253,7 +1268,7 @@ static void adjustTempo(double slowDown)
 - (void)setTimeCodeSerialPort:sender
 {
     /* 0 for portA, 1 for portB */
-    timeCodePort = [[sender selectedCell] tag]; 
+    timeCodeDevice = [[sender selectedCell] title]; 
 }
 
 
@@ -1273,18 +1288,22 @@ static void adjustTempo(double slowDown)
 
 - conductorDidReverse:sender
 {
-    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidReverse)
-     to:self argCount:0];
+    [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidReverse)
+                                            to: self
+                                      argCount: 0];
     return self;
 }
 
 - conductorDidPause:sender
 {
-    int i;
+    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    MKMidi *midiDev;
+
     [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidPause) to: self argCount: 0];
     [synthInstruments makeObjectsPerformSelector: @selector(allNotesOff)];
-    for (i=0; i<MAX_MIDIS; i++) {
-        [midis[i] allNotesOff];
+    
+    while ((midiDev = [midiDevEnumerator nextObject])) {
+        [midiDev allNotesOff];
     }
     return self;
 }
@@ -1409,11 +1428,11 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
 }
 
 - (void)help:sender
- /* Display the help text file with Edit. */
+ /* Display the help file formatted as HTML with the default handling application. */
 {
     /* Look in the app wrapper */
-    NSString *helpfile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"help.rtfd"];
-    if (![[NSWorkspace sharedWorkspace] openFile:helpfile])
+    NSString *helpfile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"help.html"];
+    if (![[NSWorkspace sharedWorkspace] openFile: helpfile])
         NSRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, @"", nil, nil);
 }
 
