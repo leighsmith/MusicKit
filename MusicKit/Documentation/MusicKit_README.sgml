@@ -754,17 +754,6 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/MIDISPORT2x2-V&midisportvertuple;.b.tar.gz">MIDISPORT2x2-V&midisportvertuple;.b.tar.gz</ulink>
-            </term>
-	      <listitem>
-		<para>
-                The Mac OS X MIDI plugin binary for the Midiman USB
-                MIDISPORT 2x2 interface.
-              </para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term>
               <ulink url="http://download.sourceforge.net/musickit/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
             </term>
 	      <listitem>
@@ -840,6 +829,17 @@ Newer versions of will probably just work.
 	      <listitem>
 		<para>
               The MacOS X-Server frameworks (including the SndKit).
+              </para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
+              <ulink url="http://download.sourceforge.net/musickit/MIDISPORT2x2-V&midisportvertuple;.b.tar.gz">MIDISPORT2x2-V&midisportvertuple;.b.tar.gz</ulink>
+            </term>
+	      <listitem>
+		<para>
+                The Mac OS X MIDI plugin binary for the Midiman USB
+                MIDISPORT 2x2 interface.
               </para>
 	      </listitem>
 	    </varlistentry>
