@@ -160,11 +160,13 @@
         err = SndReadSoundfileRange([theFileName fileSystemRepresentation], &cacheStruct,
                                     cachedBufferRange.location,
                                     cachedBufferRange.length, TRUE);
-        [cachedBuffer initWithFormat: cacheStruct data: ((char*)cacheStruct) + cacheStruct->dataLocation];
+        if (cacheStruct)
+          [cachedBuffer initWithFormat: cacheStruct data: ((char*)cacheStruct) + cacheStruct->dataLocation];
       }
       else {
         //      printf("Hit the cache!\n");
       }
+      if (cacheStruct)
       {
         // woohoo! we are inside the cache...
         SndSoundStruct theStruct;
