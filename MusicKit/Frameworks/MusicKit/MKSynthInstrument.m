@@ -38,11 +38,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.9  2000/11/25 22:33:12  leigh
+  doco cleanup
+
   Revision 1.8  2000/07/22 00:33:37  leigh
   Minor doco and typing cleanups.
 
@@ -467,10 +471,9 @@ static void alternatePatchMsg(void)
 	break;
       case MK_mute:
 	if (MKIsTraced(MK_TRACESYNTHINS))
-	  NSLog(@"MKSynthInstrument receives mute Note at time %f.\n", MKGetTime());
+            NSLog(@"MKSynthInstrument receives mute Note at time %f.\n", MKGetTime());
 	if (MKIsNoteParPresent(aNote,MK_synthPatch)) {
 	    NSString *sp = [aNote parAsStringNoCopy:MK_synthPatch];
-//	    if (*sp != '\0') {
 	    if (sp != nil) {
                 if ([sp length]) {
                     id aClass = [MKSynthPatch findSynthPatchClass:sp];
@@ -481,7 +484,7 @@ static void alternatePatchMsg(void)
 	}
 	if (MKIsNoteParPresent(aNote,MK_synthPatchCount)) 
 	    [self setSynthPatchCount:[aNote parAsInt:MK_synthPatchCount]
-	     patchTemplate:[synthPatchClass patchTemplateFor:aNote]];
+	               patchTemplate:[synthPatchClass patchTemplateFor:aNote]];
  	[self mute:aNote];
 	/* no break here. */
       default:       /* NoteOn or noteOff with no tag or a mute (ignored) */
