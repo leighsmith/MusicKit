@@ -58,6 +58,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h> /* for memmove() */
+// TODO these should be able to be purged once we move the pasteboard stuff into SndView.
 #include <AppKit/NSPasteboard.h>
 #include <AppKit/NSApplication.h>
 
@@ -67,6 +68,7 @@
 #import "SndPlayer.h"
 #import "SndTable.h"
 #import "SndAudioBuffer.h"
+#import "SndAudioProcessorChain.h"
 
 // TODO this needs upgrading
 #ifndef USE_NEXTSTEP_SOUND_IO
@@ -151,9 +153,8 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     loopStartIndex = 0;
     loopEndIndex = 0;
 
-    // initialize the priming volume and balance for playback.
-    allChannelsVolume = 1.0;  // full volume,
-    balance = 0.0;            // center panning.
+    // initialize the priming audio processor chain for playback.
+    audioProcessorChain = nil;
     
     return [super init];
 }
@@ -302,6 +303,8 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     performancesArrayLock = nil;
     [info release];
     info = nil;
+    [audioProcessorChain release];
+    audioProcessorChain = nil;
     //[delegate release]; // We don't retain it so we don't release it.
     //delegate = nil;
     [super dealloc];
@@ -1067,10 +1070,7 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     newSound->loopStartIndex = loopStartIndex;
     newSound->loopEndIndex = loopEndIndex;
 
-    newSound->useVolumeWhenPlaying = useVolumeWhenPlaying;
-    newSound->allChannelsVolume = allChannelsVolume;
-    newSound->useBalanceWhenPlaying = useBalanceWhenPlaying;
-    newSound->balance = balance;
+    [newSound setAudioProcessorChain: [self audioProcessorChain]];
     
     return newSound;
 }
@@ -1508,26 +1508,6 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     return [self audioBufferForSamplesInRange: sndFrameRange looping: NO];
 }
 
-- (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo
-{
-    useVolumeWhenPlaying = yesOrNo;
-}
-
-- (BOOL) useVolumeWhenPlaying
-{
-    return useVolumeWhenPlaying;
-}
-
-- (void) setUseBalanceWhenPlaying: (BOOL) yesOrNo
-{
-    useBalanceWhenPlaying = yesOrNo;
-}
-
-- (BOOL) useBalanceWhenPlaying
-{
-    return useBalanceWhenPlaying;
-}
-
 - (void) setLoopWhenPlaying: (BOOL) yesOrNo
 {
     loopWhenPlaying = yesOrNo;
@@ -1558,11 +1538,6 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     return loopEndIndex;
 }
 
-- (float) allChannelsVolume
-{
-    return allChannelsVolume;
-}
-
 - (BOOL) isPlaying
 {
     // if any performances are currently playing, return YES.
@@ -1578,29 +1553,15 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     return NO;
 }
 
-- setAllChannelsVolume: (float) newAllChannelsVolume
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain
 {
-    // TODO Check to see if this sound is playing, if so, update the volume of the performance
-    //[self isPlaying]
-    // Can we hide this within [self performance] setAllChannelsVolume: 
-    //[[[self performance] audioProcessorChain] postFader] setAmp
-    // Regardless of the sound performance, update the priming sound value.
-    allChannelsVolume = newAllChannelsVolume;
-    return [self class];
+    [audioProcessorChain release];
+    audioProcessorChain = [newAudioProcessorChain retain];
 }
 
-- (float) balance
+- (SndAudioProcessorChain *) audioProcessorChain
 {
-    return balance;
-}
-
-- setBalance: (float) newBalance
-{
-    // TODO Check to see if this sound is playing, if so, update the balance of the performance
-    //[self isPlaying]
-    // Regardless of the sound performance, update the priming sound value.
-    balance = newBalance;
-    return [self class];
+    return [[audioProcessorChain retain] autorelease];
 }
 
 @end

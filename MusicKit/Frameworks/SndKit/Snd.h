@@ -63,6 +63,7 @@ extern NSString *NXSoundPboardType;
 @class SndPlayer;
 @class SndPerformance;
 @class SndAudioBuffer;
+@class SndAudioProcessorChain;
 
 /*!
 @class Snd
@@ -70,7 +71,7 @@ extern NSString *NXSoundPboardType;
           It supports reading and writing to a soundfile, playback of sound,
           recording of sampled sound, conversion among various sampled formats, 
           basic editing of the sound, and name and storage
-          management for sounds.
+          management for sounds. It holds parameters that prime it's performance at the start of play.
 
 @discussion 
 
@@ -164,54 +165,45 @@ typedef enum {
   </pre>
   */
     SndSoundStruct *soundStruct; // TODO this is deprecated in favour of soundFormat.
-/*! @var soundFormat The parameters defining the format of the sound. */
+    /*! @var soundFormat The parameters defining the format of the sound. */
     SndFormat soundFormat;
-/*! @var info A descriptive information string read from a sound file. */
+    /*! @var info A descriptive information string read from a sound file. */
     NSString *info;
-/*! @var soundStructSize the length of the structure in bytes */
+    /*! @var soundStructSize the length of the structure in bytes */
     int soundStructSize;
 
-/*! @var priority the priority of the sound */
+    /*! @var priority the priority of the sound */
     int priority;		 
-/*! @var delegate the target of notification messages */
+    /*! @var delegate the target of notification messages */
     id delegate;		 
-/*! @var status what the object is currently doing */
+    /*! @var status what the object is currently doing */
     int status;			 
-/*! @var name The name of the sound */
+    /*! @var name The name of the sound */
     NSString *name;
-/*! @var currentError */
+    /*! @var currentError */
     int currentError;
-/*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
+    /*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
     SndConversionQuality conversionQuality;	 
 
-/*! @var performancesArray An array of all active AND pending performances of this Snd */
+    /*! @var performancesArray An array of all active AND pending performances of this Snd */
     NSMutableArray *performancesArray;
-/*! @var performancesArrayLock An NSLock to protect the performancesArray */
+    /*! @var performancesArrayLock An NSLock to protect the performancesArray */
     NSLock *performancesArrayLock;
 
-/*! @var loopWhenPlaying Indicates whether the default behaviour is to loop when playing.
-	 This is set from reading the sound file.
- */
+    /*! @var loopWhenPlaying Indicates whether the default behaviour is to loop when playing.
+	This is set from reading the sound file.
+     */
     BOOL loopWhenPlaying;
-/*! @var loopStartIndex The sample the loop begins at. This is just the priming value for each performance. */
+    /*! @var loopStartIndex The sample the loop begins at. This is just the priming value for each performance. */
     long loopStartIndex;
-/*! @var loopEndIndex The sample the loop ends at. This is just the priming value for each performance. */
+    /*! @var loopEndIndex The sample the loop ends at. This is just the priming value for each performance. */
     long loopEndIndex;
 
-/*! @var useVolumeWhenPlaying Indicates whether to create a SndAudioFader per performance and assign it the allChannelsVolume setting. */
-    BOOL useVolumeWhenPlaying;
-/*! @var allChannelsVolume The initial volume setting for all channels when playing.
-	Between 0.0 (silence) and 1.0 (maximum volume). Therefore this is an attenuating value, not boosting.
- */
-    float allChannelsVolume;
-
-/*! @var useBalanceWhenPlaying Indicates whether to create a SndAudioFader per performance and assign it the balance setting. */
-    BOOL useBalanceWhenPlaying;
-/*! @var balance The initial balance between stereo (left, right) channels when playing.
-	Between -1.0 (left), 0.0 (center) and 1.0 (right).
- */
-    float balance;
-    
+    /*! @var audioProcessorChain Typically used to prime a performance of this Snd with a chain of audio effects
+	including volume and balance settings (via it's postFader). 
+     */
+    SndAudioProcessorChain *audioProcessorChain;
+        
 @public
 /*! @var tag A unique identifier tag for the Snd */
     int tag;
@@ -1266,47 +1258,6 @@ typedef enum {
  */
 - initWithAudioBuffer: (SndAudioBuffer *) aBuffer;
 
-
-/*!
-  @method     setUseVolumeWhenPlaying:
-  @abstract   Sets the default behaviour whether to assign volume during play.
-  @discussion Passing YES to this method causes the sound's volume setting to
-              be used to control a SndAudioFader associated with each SndPerformance
-              when beginning sound playing. While this can be done manually after starting
-              sound playback, setting this parameter guarantees the volume setting is used
-              at the very beginning of playback, so that no buffers will not be modified in
-              volume.
-  @param      yesOrNo YES causes the volume setting to be used during play.
- */
-- (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo;
-
-/*!
-  @method     useVolumeWhenPlaying
-  @abstract   Returns whether the default behaviour is to use volume during play.
-  @result     Returns whether the default behaviour is to use volume during play.
- */
-- (BOOL) useVolumeWhenPlaying;
-
-/*!
-  @method     setUseBalanceWhenPlaying:
-  @abstract   Sets the default behaviour whether to assign stereo balance during play.
-  @discussion Passing YES to this method causes the sound's balance setting to
-	      be used to control a SndAudioFader associated with each SndPerformance
-	      when beginning sound playing. While this can be done manually after starting
-	      sound playback, setting this parameter guarantees the balance setting is used
-	      at the very beginning of playback, so that no buffers will not be modified in
-	      balance.
-  @param      yesOrNo YES causes the balance setting to be used during play.
- */
-- (void) setUseBalanceWhenPlaying: (BOOL) yesOrNo;
-
-/*!
-  @method     useBalanceWhenPlaying
-  @abstract   Returns whether the default behaviour is to use the balance during play.
-  @result     Returns whether the default behaviour is to use the balance during play.
- */
-- (BOOL) useBalanceWhenPlaying;
-
 /*!
   @method     setLoopWhenPlaying:
   @abstract   Sets the default behaviour whether to loop during play.
@@ -1356,48 +1307,20 @@ typedef enum {
 - (long) loopEndIndex;
 
 /*!
-  @method allChannelsVolume
-  @result Returns an float.
-  @discussion Returns the output level of all channels as a floating-point
-              number between 0.0 and 1.0.
+  @method     setAudioProcessorChain:
+  @abstract   Assigns the audioProcessorChain to this Snd instance. 
+  @discussion This is typically used during playback of the Snd, but could be used for any other (i.e offline processing of the Snd).
+  @param newAudioProcessorChain A SndAudioProcessorChain instance.
  */
-- (float) allChannelsVolume;
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain;
 
 /*!
-  @method setAllChannelsVolume:
-  @param  allChannelsVolume is a float.
-  @result Returns an id.
-  @discussion  Sets the output levels of all channels of this Snd when performed.
-     <i>allChannelsVolume</i> must be a floating-point number between
-     0.0 (minimum, silence) and 1.0 (maximum, full volume).
-     If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
+  @method     audioProcessorChain
+  @abstract   Returns the audioProcessorChain associated with this Snd instance. 
+  @discussion This is typically used during playback of the Snd, but could be used for any other (i.e offline processing of the Snd).
+  @result     Returns a SndAudioProcessorChain instance.
  */
-- setAllChannelsVolume: (float) allChannelsVolume;
-
-/*!
-  @method balance
-  @result Returns an float.
-  @discussion Returns the between stereo channels as a floating-point
-    number between -1.0 (left) and 1.0 (right).
- */
-- (float) balance;
-
-/*!
-  @method setBalance:
-  @param  newBalance is a float.
-  @result Returns an id.
-  @discussion  Sets the balance between stereo (2 channel) sounds.
-    <i>newBalance</i> must be a floating-point number between
-    -1.0 (left) 0.0 (centre) and 1.0 (right).
-    If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
-    For greater than 2 channel sound, balance must be defined as between
-    two lateral planes of outputs. So a 5.1 surround system should map balance
-    between the combined left front and left surround speaker vs. the right front
-    and right surround speaker. This needs further description as to how stereo panning
-    should map onto other multichannel formats and in the most general sense, i.e even is left,
-    odd is right.
- */
-- setBalance: (float) newBalance;
+- (SndAudioProcessorChain *) audioProcessorChain;
 
 @end
 
