@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.12  2000/04/01 01:17:23  leigh
+  made timeToWait checks use method interface in prep for moving separateThread to its own category. Properly defined NSPort workaround
+
   Revision 1.11  2000/03/31 00:04:40  leigh
   Moved the MK->AppKit communication to _MKAppProxy
 
@@ -124,8 +127,8 @@ static int oldPriority = MAXINT;
 static int oldPolicy = INVALID_POLICY;
 #endif
 
-#if 1 // MacOsX-Server or OpenStep
-#define NSMessagePort NSPort  // fudge around MacOsX-Server old concrete NSPort
+#if !defined(__ppc__)
+#define NSMessagePort NSPort  // fudge around MacOsX-Server old concrete NSPort for MacOsX-Server or OpenStep
 #endif
 
 static NSMessagePort *appToMKPortObj = nil; /*sb: added these 2 to provide NSPort objects */
@@ -354,9 +357,9 @@ static void removeTimedEntry(int arg)
 // it's ok to send normal objC messages between them.
 void _MKAddPort(NSPort *aPort,
                 id handlerObj,
-		unsigned max_msg_size, 
-		void *anArg,
-		NSString *priority)
+		unsigned max_msg_size, // unused
+		void *anArg,  // unused
+		NSString *priority) // unused, but should be
 {
     if (!allConductors)
         condInit();
@@ -597,15 +600,15 @@ static void resetPriority(void)
     setPriority();           // if ever this does something, we may need to retrieve the currentRunLoop afterwards.
     [theLoop addPort: appToMKPortObj forMode: interThreadThreshold];
 
-    while (inPerformance) {
+    while ([MKConductor inPerformance]) {
         // finishPerformance can be called from within the MusicKit thread
         // or from the AppKit thread.  In both cases, inPerformance gets
         // set to NO. In the AppKit thread case, we also send a message
         // (with sendMessageToWakeUpMKThread) to kick the MusicKit thread outta bed.
 
         /**************************** GOODNIGHT ***************************/
-        timeToWait = (performanceIsPaused ? MK_ENDOFTIME :
-                      (isClocked ? _MKTheTimeToWait(condQueue->nextMsgTime) : 0.0));
+        timeToWait = ([MKConductor isPaused] ? MK_ENDOFTIME :
+                      ([MKConductor isClocked] ? _MKTheTimeToWait(condQueue->nextMsgTime) : 0.0));
 
         if (MKIsTraced(MK_TRACECONDUCTOR))
             NSLog(@"timeToWait in seconds %lf\n", timeToWait);
