@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2000/01/20 17:15:36  leigh
+  Replaced sleepMs with OpenStep NSThread delay
+
   Revision 1.10  1999/11/14 21:33:53  leigh
   Corrected _MKErrorf arguments to be NSStrings, properly return error codes from initOnDevice, fixed hardnamed device initialisation.
 
@@ -111,7 +114,6 @@ Modification history:
 #import <driverkit/IODevice.h>
 #endif
 
-#import <mach/mach_init.h>
 // #import <midi_driver_compatability.h> // LMS obsoleted by the following include 
 #import <MKPerformSndMIDI/midi_driver.h>
 
@@ -279,9 +281,11 @@ NSString *midiDriverErrorString(int errorCode)
     return aList;
 }
 
+// Given the Mach port, retrieve the MKMidi instance that is receiving on that port.
 static MKMidi *getMidiFromRecvPort(port_t aPort)
 {
     MKMidi *midiObj;
+
     // This is inefficient, once we can do better compares we should use a search mechanism.
     // which has the port as the key
     NSEnumerator *enumerator = [portTable objectEnumerator];
@@ -908,26 +912,12 @@ static void my_data_reply(port_t reply_port, short unit, MIDIRawEvent *events, u
     }
 }
 
-#if 0  // To remove LMS
-static void midiIn(msg_header_t *msg,void *self)
-    /* Called by driver when midi input occurs. */
-{
-    int r;
-    MIDIReplyFunctions recvStruct =  
-	{ /* Tells driver funcs to call */ my_data_reply,0,0,0};
-//    extraInstanceVars *ivars = ((Midi *)self)->_extraVars;
-    r = MIDIHandleReply(msg,&recvStruct);        /* This gets data */
-    if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"midiIn");
-} 
-#endif
-
-/*sb: added the following method to handle mach messages. This replaces the function
- * above, because instead of DPSAddPort specifying a function,
+/*sb: added the following method to handle mach messages. This replaces the earlier function
+ * because instead of DPSAddPort specifying a function,
  * DPSAddPort() replaced with:
  * [[NSPort portWithMachPort:] retain]
- * [nsport setDelegate:]
- * [nsrunLoop addPort:forMode:]
+ * [NSPort setDelegate:]
+ * [NSRunLoop addPort:forMode:]
  *
  * The delegate has to repond to selector -handleMachMessage or -handlePortMessage
  */
@@ -1380,19 +1370,6 @@ static id openMidi(MKMidi *self)
     return self;
 }
 
-static void sleepMs(int ms) {
-    port_t aPort;
-    struct {
-	msg_header_t header;
-    } null_msg;
-    if (port_allocate(task_self(),&aPort) != KERN_SUCCESS)
-      return;
-    null_msg.header.msg_local_port = aPort;
-    null_msg.header.msg_size = sizeof(null_msg);
-    (void)msg_receive((msg_header_t *)&null_msg, RCV_TIMEOUT, ms);
-    (void)port_deallocate(task_self(),aPort);
-}
-
 -allNotesOff
    /* This is a conservative version of allNotesOff.  It only sends
     * noteOffs for notes if those notes are sounding.
@@ -1461,10 +1438,12 @@ int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts
 		r = MIDISendData(devicePort, ownerPort, unit, &(tmpMidiBuf[j]), MIN(MIDI_MAX_EVENT,k));
 	        if (r != MIDI_ERROR_QUEUE_FULL)
 		    break;
-		sleepMs(k/3);   /* MIDI goes at a rate of a byte every 1/3 ms */
+		/* MIDI goes at a rate of a byte every 1/3 ms */
+                [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(k/3)/1000.0]];
 	    }
 	    MIDIFlushQueue(devicePort, ownerPort, unit);
-	    sleepMs(_MKAllNotesOffPause);   /* Slow it down so synths don't freak out */
+	    /* Slow it down so synths don't freak out */
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(_MKAllNotesOffPause)/1000.0]];
 	}
 	MIDIFlushQueue(devicePort, ownerPort, unit);
 	if (r != KERN_SUCCESS) {
