@@ -432,7 +432,8 @@ enum {
 //    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
 #endif        
     while (active) {
-        if (generatesOutput) {
+      innerPool = [NSAutoreleasePool new];
+      if (generatesOutput) {
           synthOutputBuffer = [[[outputQueue popNextPendingBuffer] retain] zero];
         }
         if (needsInput) {
@@ -478,6 +479,7 @@ enum {
           [inputQueue addProcessedBuffer: synthInputBuffer];
           [synthInputBuffer release];    
         }
+        [innerPool release];
     }
     bDisconnect = TRUE;
     [self autorelease];
