@@ -1,0 +1,254 @@
+#ifndef __MK_dsp_memory_map_ap_H___
+#define __MK_dsp_memory_map_ap_H___
+/* dsp_memory_map_ap.h -  1.0 compatibility include file
+
+The "DSPAP_" defined constants here have been replaced by the more generic
+"DSP_" defines.  Instead of importing this file, you should change your
+source code, replacing "DSPAP_" by "DSP_".  Import this file, if you must,
+after first importing dsp_memory_map.h (which is imported by dsp.h).
+
+Note that the definitions are not valid until after you have booted the DSP
+(or at least called DSPSetSystem).  If you must have the constants before
+booting, you can use the old 1.0 version of this file,
+dsp_memory_map_ap_1.0.h, but then your code will be compiled only for 8K
+words of DSP static RAM.
+
+------------------------------------------------------------------------------
+
+This include file contains definitions for Array Processing DSP Monitor 
+memory addresses.  Address names are of the form 
+
+		DSPAP_{X,Y,P,L}{L,H}{I,E}_{USR,SYS}
+
+where {X,Y,P,L} are the possible memory spaces in the DSP, {L,H} specifies 
+lower or higher memory segment boundary, {I,E} specifies internal or 
+external memory, and {USR,SYS} specifies user or system memory segments. 
+For example, PHE_USR specifies the maximum address available to the user 
+in external program memory.  In general, the system occupies the lowest and 
+highest address range in each space, with the user having all addresses in 
+between.
+
+Names of the form 'DSPAP_I_<name>' denote integer constants.
+Names of the form 'DSPAP_NB_<name>' denote buffer sizes.
+Names of the form 'DSPAP_N{X,Y,L,P}{I,E}_{USR,SYS}' denote memory segment sizes.
+
+*/ 
+
+/***** GLOBAL SYMBOLS *****/
+#define DSPAP_DEGMON_FLAG DSP_DEGMON_FLAG
+#define DSPAP_DEGMON_FLAG2 DSP_DEGMON_FLAG2
+#define DSPAP_DEGMON_H DSP_DEGMON_H
+#define DSPAP_DEGMON_HCR DSP_DEGMON_HCR
+#define DSPAP_DEGMON_HPD2 DSP_DEGMON_HPD2
+#define DSPAP_DEGMON_IPR DSP_DEGMON_IPR
+#define DSPAP_DEGMON_L DSP_DEGMON_L
+#define DSPAP_DEGMON_N DSP_DEGMON_N
+#define DSPAP_DEGMON_PC DSP_DEGMON_PC
+#define DSPAP_DEGMON_RUN_LOC DSP_DEGMON_RUN_LOC
+#define DSPAP_DEGMON_SR DSP_DEGMON_SR
+#define DSPAP_DEGMON_SR2 DSP_DEGMON_SR2
+#define DSPAP_DEGMON_TRACER_LOC DSP_DEGMON_TRACER_LOC
+#define DSPAP_HE_USR DSP_HE_USR
+#define DSPAP_I_0DBU16 DSP_I_0DBU16
+#define DSPAP_I_0DBU24 DSP_I_0DBU24
+#define DSPAP_I_DEFIPR DSP_I_DEFIPR
+#define DSPAP_I_DEFOMR DSP_I_DEFOMR
+#define DSPAP_I_EPS DSP_I_EPS
+#define DSPAP_I_M12DBU16 DSP_I_M12DBU16
+#define DSPAP_I_M12DBU24 DSP_I_M12DBU24
+#define DSPAP_I_MAXPOS DSP_I_MAXPOS
+#define DSPAP_I_MINPOS DSP_I_MINPOS
+#define DSPAP_I_ONEHALF DSP_I_ONEHALF
+#define DSPAP_I_OUTY DSP_I_OUTY
+#define DSPAP_LE_USR DSP_LE_USR
+#define DSPAP_LHE_SEG DSP_LHE_SEG
+#define DSPAP_LHE_SYS DSP_LHE_SYS
+#define DSPAP_LHE_USG DSP_LHE_USG
+#define DSPAP_LHE_USR DSP_LHE_USR
+#define DSPAP_LHI_SYS DSP_LHI_SYS
+#define DSPAP_LHI_USR DSP_LHI_USR
+#define DSPAP_LLE_SEG DSP_LLE_SEG
+#define DSPAP_LLE_SYS DSP_LLE_SYS
+#define DSPAP_LLE_USG DSP_LLE_USG
+#define DSPAP_LLE_USR DSP_LLE_USR
+#define DSPAP_LLI_SYS DSP_LLI_SYS
+#define DSPAP_LLI_USR DSP_LLI_USR
+#define DSPAP_NAE_SYS DSP_NAE_SYS
+#define DSPAP_NB_DMA DSP_NB_DMA
+#define DSPAP_NB_DMA_R DSP_NB_DMA_R
+#define DSPAP_NB_DMA_W DSP_NB_DMA_W
+#define DSPAP_NB_DMQ DSP_NB_DMQ
+#define DSPAP_NB_HMS DSP_NB_HMS
+#define DSPAP_NB_TMQ DSP_NB_TMQ
+#define DSPAP_NE_USR DSP_NE_USR
+#define DSPAP_NLE_SEG DSP_NLE_SEG
+#define DSPAP_NLE_SYS DSP_NLE_SYS
+#define DSPAP_NLE_USG DSP_NLE_USG
+#define DSPAP_NLE_USR DSP_NLE_USR
+#define DSPAP_NLI_SYS DSP_NLI_SYS
+#define DSPAP_NLI_USR DSP_NLI_USR
+#define DSPAP_NPE_SEG DSP_NPE_SEG
+#define DSPAP_NPE_SYS DSP_NPE_SYS
+#define DSPAP_NPE_SYSEP DSP_NPE_SYSEP
+#define DSPAP_NPE_USG DSP_NPE_USG
+#define DSPAP_NPE_USR DSP_NPE_USR
+#define DSPAP_NPI_RAM DSP_NPI_RAM
+#define DSPAP_NPI_ROM DSP_NPI_ROM
+#define DSPAP_NPI_SYS DSP_NPI_SYS
+#define DSPAP_NPI_USR DSP_NPI_USR
+#define DSPAP_NXE_SEG DSP_NXE_SEG
+#define DSPAP_NXE_SYS DSP_NXE_SYS
+#define DSPAP_NXE_USG DSP_NXE_USG
+#define DSPAP_NXE_USR DSP_NXE_USR
+#define DSPAP_NXI_RAM DSP_NXI_RAM
+#define DSPAP_NXI_ROM DSP_NXI_ROM
+#define DSPAP_NXI_SYS DSP_NXI_SYS
+#define DSPAP_NXI_USR DSP_NXI_USR
+#define DSPAP_NYE_SEG DSP_NYE_SEG
+#define DSPAP_NYE_SYS DSP_NYE_SYS
+#define DSPAP_NYE_USG DSP_NYE_USG
+#define DSPAP_NYE_USR DSP_NYE_USR
+#define DSPAP_NYI_RAM DSP_NYI_RAM
+#define DSPAP_NYI_ROM DSP_NYI_ROM
+#define DSPAP_NYI_SYS DSP_NYI_SYS
+#define DSPAP_NYI_USR DSP_NYI_USR
+#define DSPAP_PHE_RAM DSP_PHE_RAM
+#define DSPAP_PHE_SEG DSP_PHE_SEG
+#define DSPAP_PHE_SYS DSP_PHE_SYS
+#define DSPAP_PHE_SYSEP DSP_PHE_SYSEP
+#define DSPAP_PHE_USG DSP_PHE_USG
+#define DSPAP_PHE_USR DSP_PHE_USR
+#define DSPAP_PHI_RAM DSP_PHI_RAM
+#define DSPAP_PHI_ROM DSP_PHI_ROM
+#define DSPAP_PHI_SYS DSP_PHI_SYS
+#define DSPAP_PHI_USR DSP_PHI_USR
+#define DSPAP_PLE_RAM DSP_PLE_RAM
+#define DSPAP_PLE_SEG DSP_PLE_SEG
+#define DSPAP_PLE_SYS DSP_PLE_SYS
+#define DSPAP_PLE_SYSEP DSP_PLE_SYSEP
+#define DSPAP_PLE_USG DSP_PLE_USG
+#define DSPAP_PLE_USR DSP_PLE_USR
+#define DSPAP_PLI_RAM DSP_PLI_RAM
+#define DSPAP_PLI_ROM DSP_PLI_ROM
+#define DSPAP_PLI_SYS DSP_PLI_SYS
+#define DSPAP_PLI_USR DSP_PLI_USR
+#define DSPAP_XHE_RAM DSP_XHE_RAM
+#define DSPAP_XHE_SEG DSP_XHE_SEG
+#define DSPAP_XHE_SYS DSP_XHE_SYS
+#define DSPAP_XHE_USG DSP_XHE_USG
+#define DSPAP_XHE_USR DSP_XHE_USR
+#define DSPAP_XHI_RAM DSP_XHI_RAM
+#define DSPAP_XHI_ROM DSP_XHI_ROM
+#define DSPAP_XHI_SYS DSP_XHI_SYS
+#define DSPAP_XHI_USR DSP_XHI_USR
+#define DSPAP_XLE_RAM DSP_XLE_RAM
+#define DSPAP_XLE_SEG DSP_XLE_SEG
+#define DSPAP_XLE_SYS DSP_XLE_SYS
+#define DSPAP_XLE_USG DSP_XLE_USG
+#define DSPAP_XLE_USR DSP_XLE_USR
+#define DSPAP_XLI_RAM DSP_XLI_RAM
+#define DSPAP_XLI_ROM DSP_XLI_ROM
+#define DSPAP_XLI_SYS DSP_XLI_SYS
+#define DSPAP_XLI_USR DSP_XLI_USR
+#define DSPAP_YHE_RAM DSP_YHE_RAM
+#define DSPAP_YHE_SEG DSP_YHE_SEG
+#define DSPAP_YHE_SYS DSP_YHE_SYS
+#define DSPAP_YHE_USG DSP_YHE_USG
+#define DSPAP_YHE_USR DSP_YHE_USR
+#define DSPAP_YHI_RAM DSP_YHI_RAM
+#define DSPAP_YHI_ROM DSP_YHI_ROM
+#define DSPAP_YHI_SYS DSP_YHI_SYS
+#define DSPAP_YHI_USR DSP_YHI_USR
+#define DSPAP_YLE_RAM DSP_YLE_RAM
+#define DSPAP_YLE_SEG DSP_YLE_SEG
+#define DSPAP_YLE_SYS DSP_YLE_SYS
+#define DSPAP_YLE_USG DSP_YLE_USG
+#define DSPAP_YLE_USR DSP_YLE_USR
+#define DSPAP_YLI_RAM DSP_YLI_RAM
+#define DSPAP_YLI_ROM DSP_YLI_ROM
+#define DSPAP_YLI_SYS DSP_YLI_SYS
+#define DSPAP_YLI_USR DSP_YLI_USR
+#define DSPAP_NPE_SYSEP_FREE DSP_NPE_SYSEP_FREE
+#define DSPAP_SYS_REV DSP_SYS_REV
+#define DSPAP_SYS_VER DSP_SYS_VER
+
+/***** X SYMBOLS *****/
+#define DSPAP_X_ABORT_A1 DSP_X_ABORT_A1
+#define DSPAP_X_ABORT_DMASTAT DSP_X_ABORT_DMASTAT
+#define DSPAP_X_ABORT_HCR DSP_X_ABORT_HCR
+#define DSPAP_X_ABORT_HSR DSP_X_ABORT_HSR
+#define DSPAP_X_ABORT_M_IO DSP_X_ABORT_M_IO
+#define DSPAP_X_ABORT_RUNSTAT DSP_X_ABORT_RUNSTAT
+#define DSPAP_X_ABORT_R_HMS DSP_X_ABORT_R_HMS
+#define DSPAP_X_ABORT_R_I1 DSP_X_ABORT_R_I1
+#define DSPAP_X_ABORT_R_IO DSP_X_ABORT_R_IO
+#define DSPAP_X_ABORT_SP DSP_X_ABORT_SP
+#define DSPAP_X_ABORT_SR DSP_X_ABORT_SR
+#define DSPAP_X_ABORT_X0 DSP_X_ABORT_X0
+#define DSPAP_X_DMASTAT DSP_X_DMASTAT
+#define DSPAP_X_DMA_R_M DSP_X_DMA_R_M
+#define DSPAP_X_DMA_W_M DSP_X_DMA_W_M
+#define DSPAP_X_DMQRP DSP_X_DMQRP
+#define DSPAP_X_DMQWP DSP_X_DMQWP
+#define DSPAP_X_DSPMSG_A1 DSP_X_DSPMSG_A1
+#define DSPAP_X_DSPMSG_B0 DSP_X_DSPMSG_B0
+#define DSPAP_X_DSPMSG_B1 DSP_X_DSPMSG_B1
+#define DSPAP_X_DSPMSG_B2 DSP_X_DSPMSG_B2
+#define DSPAP_X_DSPMSG_M_O DSP_X_DSPMSG_M_O
+#define DSPAP_X_DSPMSG_R_O DSP_X_DSPMSG_R_O
+#define DSPAP_X_DSPMSG_X0 DSP_X_DSPMSG_X0
+#define DSPAP_X_DSPMSG_X1 DSP_X_DSPMSG_X1
+#define DSPAP_X_HMSRP DSP_X_HMSRP
+#define DSPAP_X_HMSWP DSP_X_HMSWP
+#define DSPAP_X_SAVED_A0 DSP_X_SAVED_A0
+#define DSPAP_X_SAVED_A1 DSP_X_SAVED_A1
+#define DSPAP_X_SAVED_A2 DSP_X_SAVED_A2
+#define DSPAP_X_SAVED_B0 DSP_X_SAVED_B0
+#define DSPAP_X_SAVED_B1 DSP_X_SAVED_B1
+#define DSPAP_X_SAVED_B2 DSP_X_SAVED_B2
+#define DSPAP_X_SAVED_HOST_RCV1 DSP_X_SAVED_HOST_RCV1
+#define DSPAP_X_SAVED_HOST_RCV2 DSP_X_SAVED_HOST_RCV2
+#define DSPAP_X_SAVED_HOST_XMT1 DSP_X_SAVED_HOST_XMT1
+#define DSPAP_X_SAVED_HOST_XMT2 DSP_X_SAVED_HOST_XMT2
+#define DSPAP_X_SAVED_M_HMS DSP_X_SAVED_M_HMS
+#define DSPAP_X_SAVED_M_I1 DSP_X_SAVED_M_I1
+#define DSPAP_X_SAVED_M_I2 DSP_X_SAVED_M_I2
+#define DSPAP_X_SAVED_M_O DSP_X_SAVED_M_O
+#define DSPAP_X_SAVED_N_HMS DSP_X_SAVED_N_HMS
+#define DSPAP_X_SAVED_N_I1 DSP_X_SAVED_N_I1
+#define DSPAP_X_SAVED_N_I2 DSP_X_SAVED_N_I2
+#define DSPAP_X_SAVED_N_O DSP_X_SAVED_N_O
+#define DSPAP_X_SAVED_REGISTERS DSP_X_SAVED_REGISTERS
+#define DSPAP_X_SAVED_R_HMS DSP_X_SAVED_R_HMS
+#define DSPAP_X_SAVED_R_I1 DSP_X_SAVED_R_I1
+#define DSPAP_X_SAVED_R_I2 DSP_X_SAVED_R_I2
+#define DSPAP_X_SAVED_R_O DSP_X_SAVED_R_O
+#define DSPAP_X_SAVED_X0 DSP_X_SAVED_X0
+#define DSPAP_X_SAVED_X1 DSP_X_SAVED_X1
+#define DSPAP_X_SAVED_Y0 DSP_X_SAVED_Y0
+#define DSPAP_X_SAVED_Y1 DSP_X_SAVED_Y1
+#define DSPAP_X_SCRATCH1 DSP_X_SCRATCH1
+#define DSPAP_X_SCRATCH2 DSP_X_SCRATCH2
+#define DSPAP_X_START DSP_X_START
+#define DSPAP_X_XHM_R_I1 DSP_X_XHM_R_I1
+#define DSPAP_X_ZERO DSP_X_ZERO
+
+/***** Y SYMBOLS *****/
+#define DSPAP_YB_DMA_W DSP_YB_DMA_W
+#define DSPAP_YB_DMA_W0 DSP_YB_DMA_W0
+#define DSPAP_YB_DMA_W2 DSP_YB_DMA_W2
+#define DSPAP_YB_DMQ DSP_YB_DMQ
+#define DSPAP_YB_DMQ0 DSP_YB_DMQ0
+#define DSPAP_YB_HMS DSP_YB_HMS
+#define DSPAP_YB_HMS0 DSP_YB_HMS0
+#define DSPAP_YB_TMQ DSP_YB_TMQ
+#define DSPAP_YB_TMQ0 DSP_YB_TMQ0
+#define DSPAP_YB_TMQ2 DSP_YB_TMQ2
+#define DSPAP_Y_RUNSTAT DSP_Y_RUNSTAT
+#define DSPAP_Y_ZERO DSP_Y_ZERO
+
+/***** L SYMBOLS *****/
+#define DSPAP_L_STATUS DSP_L_STATUS
+#define DSPAP_L_ZERO DSP_L_ZERO
+
+#endif
