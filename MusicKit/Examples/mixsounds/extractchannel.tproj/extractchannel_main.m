@@ -9,11 +9,13 @@ int main (int argc, const char *argv[])
 {
    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    static SndSoundStruct *aStruct;
+    Snd *sound;
+    Snd *newSound;
     NSString *inFile,*outFile;
     short *data, *dataEnd, *newDataPtr;
     unsigned whichChan = 1;
     int argumentIndex;
+    int channelCount;
     
     if (argc < 3) {
         fprintf(stderr,help);
@@ -32,32 +34,37 @@ int main (int argc, const char *argv[])
     }
     outFile = [NSString stringWithCString: argv[argc - 1]];
     inFile = [NSString stringWithCString: argv[argc - 2]];
-    if (SndReadSoundfile(inFile, &aStruct) != SND_ERR_NONE) {
-        NSLog(@"Can't find file.\n");
+    sound = [[Snd alloc] initFromSoundfile: inFile];
+    if (sound == nil) {
+        NSLog(@"Can't find file %@\n", inFile);
         exit(1);
     }
-    if (aStruct->channelCount != 2) {
+    channelCount = [sound channelCount];
+    if (channelCount >= 2) {
         NSLog(@"Input file must be stereo.\n");
         exit(1);
     }
-    if (aStruct->dataFormat != SND_FORMAT_LINEAR_16) {
+    if ([sound dataFormat] != SND_FORMAT_LINEAR_16) {
         NSLog(@"Input file must be in 16-bit linear format.\n");
         exit(1);
     }
-    data = (short *)(((char *)aStruct) + aStruct->dataLocation);
-    dataEnd = (short *)(((char *)data) + aStruct->dataSize);
-    newDataPtr = data;
-    if (whichChan == 2)
-      data++;
+    data = (short *)[sound data];
+    dataEnd = (short *)(((char *)data) + [sound dataSize]);
+
+    newSound = [[Snd alloc] initWithFormat: [sound dataFormat]
+			      channelCount: 1
+				    frames: [sound lengthInSampleFrames]
+			      samplingRate: [sound samplingRate]];
+    
+    newDataPtr = (short *)[newSound data];
     NSLog(@"Extracting channel %d...\n", (int) whichChan);
+    data += whichChan - 1;
     while (data < dataEnd) {
         *newDataPtr++ = *data;
-        data += 2;
+        data += channelCount;
     }
-    aStruct->dataSize /= 2;
-    aStruct->channelCount = 1;
-    if (SndWriteSoundfile(outFile, aStruct) != SND_ERR_NONE) {
-        NSLog(@"Can't write file.\n");
+    if ([newSound writeSoundfile: outFile] != SND_ERR_NONE) {
+        NSLog(@"Can't write file %@\n", outFile);
         exit(1);
     }
     NSLog(@"done\n");
