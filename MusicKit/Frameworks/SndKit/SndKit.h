@@ -31,6 +31,7 @@ OF THIS AGREEMENT.
 #import "SndTable.h"
 #import "Snd.h"
 #import "SndFunctions.h"
+#import "SndMuLaw.h"
 #import "SndExpt.h"
 
 #import "SndView.h"
