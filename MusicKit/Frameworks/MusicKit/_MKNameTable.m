@@ -36,6 +36,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/05/13 17:19:10  leigh
+  stricter typing
+
   Revision 1.4  2000/04/22 20:10:24  leigh
   user defaults standardised to MK prefix
 
@@ -458,7 +461,7 @@ static const int keyWordsArr[] = {
 static id addReadOnlyVar(NSString * name,int val)
 {
     /* Add a read-only variable to the global parse table. */
-    id rtnVal;
+    _ScorefileVar *rtnVal;
     _MKNameGlobal(name,rtnVal = _MKNewScorefileVar(_MKNewIntPar(val,MK_noPar),name,NO,YES),
 		  _MK_typedVar | _MK_NOFREESTRINGBIT,YES,NO);
     return rtnVal;
