@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/03/24 16:28:35  leigh
+  cthreads are now just a memory
+
   Revision 1.9  2000/01/20 17:13:45  leigh
   Fixed ancient bug which incorrectly checked the MKNote class instead of MKMidi class
 
@@ -74,9 +77,6 @@ Modification history:
 
 #import "_error.h"
 
-#ifndef WIN32
-#import <mach/cthreads.h>  // LMS only needed for cthread_set_errno_self and that seems nearly redundant
-#endif
 #import <stddef.h>  /* errno */
 #import <Foundation/NSBundle.h>
 
@@ -283,11 +283,9 @@ NSString * _MKGetErrStr(int errCode)
     if (errCode < MK_ERRORBASE || errCode > (int) MK_highestErr)
       return UNKNOWN_ERROR;
     errno = errCode;
-#ifndef WIN32
     // LMS: since cthread_errno() is not called anywhere this is probably redundant and could be removed.
     // alternatively we could use the [NSThread threadDictionary] to store it if we wanted to retrieve it.
-    cthread_set_errno_self(errCode);
-#endif
+    // cthread_set_errno_self(errCode);
     switch (errCode) {
       case MK_musicKitErr:   /* Generic Music Kit error. */
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: %@.", _MK_ERRTAB, _MKErrorBundle(), "This error is used as a way of specifying Music Kit errors not otherwise defined in this list.");
@@ -562,9 +560,7 @@ id _MKErrorf(int errorCode,...)
     va_list ap;
     va_start(ap,errorCode);
     errno = errorCode;
-#ifndef WIN32
-    cthread_set_errno_self(errorCode);
-#endif
+    // cthread_set_errno_self(errorCode);
     fmt = _MKGetErrStr(errorCode);
     if (errorProc) {
 	//_MKVsprintf(_errBuf,[fmt cString],ap); // LMS _MKVsprintf only existed to be thread-safe
