@@ -187,8 +187,8 @@ struct timeval {
 #define DSPMK_UNTIMED NULL	/* Denotes untimed, not tick-synchronized */
 
 /*** GLOBAL VARIABLES ***/	/* defined in DSPGlobals.c */
-MKDSP_DECLARE int DSPErrorNo;
-MKDSP_DECLARE DSPTimeStamp DSPMKTimeStamp0; /* Tick-synchronized, untimed */
+MKDSP_API int DSPErrorNo;
+MKDSP_API DSPTimeStamp DSPMKTimeStamp0; /* Tick-synchronized, untimed */
 
 /* Numerical conversion */
 #define DSP_TWO_TO_24   ((double)16777216.0)
@@ -334,11 +334,11 @@ MKDSP_API char *DSPGetLocalBinDirectory(); /* /usr/bin or $DSP/bin */
 /* Exports from DSPGlobals.c */
 
 // this is declared above
-//MKDSP_DECLARE int DSPErrorNo;		 /* Last DSP error */
-MKDSP_DECLARE int DSPDefaultTimeLimit;  /* Default is 1000 which is 1 second */
-MKDSP_DECLARE int DSPAPTimeLimit;	 /* Default is 0 which means "forever" */
+//MKDSP_API int DSPErrorNo;		 /* Last DSP error */
+MKDSP_API int DSPDefaultTimeLimit;  /* Default is 1000 which is 1 second */
+MKDSP_API int DSPAPTimeLimit;	 /* Default is 0 which means "forever" */
 // this is declared above with DSPTimeStamp. Which is right?
-// MKDSP_DECLARE DSPFix48 DSPMKTimeStamp0; /* Always {0,0} (tick-synchronizer) */
+// MKDSP_API DSPFix48 DSPMKTimeStamp0; /* Always {0,0} (tick-synchronizer) */
 
 #define DSP_ATOMIC 1
 #define DSP_NON_ATOMIC 0
