@@ -1012,9 +1012,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, char *fileTypeStr)
         if (fp == NULL) 
 		return SND_ERR_CANNOT_OPEN;
         informat.fp = fp;
-
-        fstat(fileno(informat.fp), &st);
-	informat.seekable = ((st.st_mode & S_IFMT) == S_IFREG);
+        informat.seekable = YES;
         informat.filetype = fileTypeStr;
         informat.info.rate = 0;
         informat.info.size = -1;
