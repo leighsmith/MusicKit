@@ -35,14 +35,11 @@
 #import "Animator.h"
 @implementation Animator
 
-void TimerFunc(teNum,now,self)
-int	teNum;
-double	now;
-Animator* self;
+- (void) timerFunc:(NSTimer *)teNum
 {
-  gettimeofday(&self->entrytime,&self->tzone);
-  if(self->howOften > 0.) [self adapt];
-  [self->target perform:self->action with:self];
+  gettimeofday(&entrytime,&tzone);
+  if(howOften > 0.) [self adapt];
+  [target performSelector:action withObject:self];
 }
  
 + newChronon: (double) dt	/* The time increment desired. */
@@ -55,23 +52,22 @@ Animator* self;
   Animator *newObj = [super new];
   newObj->ticking = NO;
   newObj->desireddt = dt;
-  [newObj setIncrement: dt];
-  [newObj setAdaptation: howoft];
-  [newObj setTarget: targ];
-  [newObj setAction: act];
+  [newObj setIncrement:dt];
+  [newObj setAdaptation:howoft];
+  [newObj setTarget:targ];
+  [newObj setAction:act];
   if(start) [newObj startEntry];
   newObj->mask = eMask;
   [newObj resetRealTime];
   return newObj;
 }
 
-- resetRealTime { 
+- (void)resetRealTime { 
 /* After this call, getDoubleRealTime is the real time that ensues. */
 	gettimeofday(&realtime,&tzone);
 	synctime = realtime.tv_sec + realtime.tv_usec/1000000.0;
 	passcounter = 0;
-	t0 = 0.0;
-	return self;
+	t0 = 0.0; 
 }
 
 - (double) getSyncTime {
@@ -93,25 +89,23 @@ Animator* self;
 	return([self getDoubleRealTime]);
 }
 
-- adapt {
+- (void)adapt {
 /* Adaptive time-step algorithm. */
   double t;
-  if(!ticking) return self;
+  if(!ticking) return;
   ++passcounter;
   t = [self getDoubleEntryTime];
   if(t - t0 >= howOften) {  	
   	adapteddt *= desireddt*passcounter/(t - t0);
-	[self setIncrement: adapteddt];
+	[self setIncrement:adapteddt];
 	[self startEntry];
 	passcounter = 0;
 	t0 = t;
-  }
-  return self;
+  } 
 }
   
-- setBreakMask : (int) eventMask {
-  mask = eventMask;
-  return self;
+- (void)setBreakMask:(int)eventMask {
+  mask = eventMask; 
 }
 
 - (int) getBreakMask {
@@ -124,64 +118,69 @@ Animator* self;
    
 - (int) shouldBreak  {
 /* Call this to see if you want to exit a loop in your action method. */
-   NXEvent *e, eBuffer;
+   NSEvent *e, *eBuffer;
    
-    e = [NXApp peekNextEvent:mask
-	      into:&eBuffer
-	      waitFor:0.0
-	      threshold:NX_BASETHRESHOLD];
+    e = (eBuffer = [NSApp nextEventMatchingMask:mask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.0] inMode:NSEventTrackingRunLoopMode dequeue:NO]);
    if (e == NULL)
    	return 0;
    else
    	return 1;
 }
 
-- setIncrement: (double) dt {
+- (void)setIncrement:(double)dt {
   adapteddt = dt;
-  interval = dt;
-  return self;
+  interval = dt; 
 }
 
 - (double) getIncrement {
   return(adapteddt);
 }
 
-- setAdaptation: (double) oft {
-  howOften = oft;
-  return self;
+- (void)setAdaptation:(double)oft {
+  howOften = oft; 
 }
 
-- setTarget: (id) targ {
+- (void)setTarget:(id)targ {
   target = targ;
-  return self;
 }
 
-- setAction:(SEL) aSelector
+- (void)setAction:(SEL)aSelector
 {
     action = aSelector;
-    return self;
 }
 
-- startEntry
+- (void)startEntry
 { 
   [self stopEntry];
-  teNum =(int)DPSAddTimedEntry(interval, (DPSTimedEntryProc)TimerFunc,
-  		self, NX_MODALRESPTHRESHOLD+5);
-  ticking = YES;
-  return self;
+//#error DPSConversion: DPSAddTimedEntry is obsolete.  Use the NSTimer class instead:
+// [[NSTimer timerWithTimeInterval:interval target:<target> selector:TimerFunc userInfo:self repeats:YES] retain].  <target> should be an objects that implements method ([aTarget TimerFunc:timer])
+    [teNum release];
+    teNum = [[NSTimer timerWithTimeInterval:interval
+                                     target:self
+                                   selector:@selector(timerFunc)
+                                   userInfo:self
+                                    repeats:YES] retain];
+//  teNum =(int)DPSAddTimedEntry(interval, (DPSTimedEntryProc)TimerFunc, self, NSModalResponseThreshold+5);
+  ticking = YES; 
 }
 
-- stopEntry
+- (void)stopEntry
 {
-  if (ticking) DPSRemoveTimedEntry((DPSTimedEntry)teNum);
-  ticking = NO;
-  return self;
+  if (ticking) {
+    [teNum invalidate];
+    [teNum release];
+    teNum=nil;
+  }
+  ticking = NO; 
 }
 
-- free
+- (void)dealloc
 {
-  if(ticking)DPSRemoveTimedEntry((DPSTimedEntry)teNum);
-  return [super free];
+  if(ticking) {
+    [teNum invalidate];
+    [teNum release];
+  }  
+  [super dealloc];
 }
 @end	
 

@@ -9,28 +9,43 @@
 
 NAME = MusicKitPrefs
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Loadable Bundle
+English_RESOURCES = MKPrefs_intel.nib MKPrefs_next.nib
 
-LOCAL_RESOURCES = MKPrefs_intel.nib MKPrefs_next.nib
+LANGUAGES = English
 
-GLOBAL_RESOURCES = MusicKitPrefs.tiff driverinfo
+GLOBAL_RESOURCES = MusicKitPrefs.tiff
 
 CLASSES = MusicKitPrefs.m
 
-HFILES = MusicKitPrefs.h MusicKitPrefs_r.h
+HFILES = MusicKitPrefs.h
 
 OTHERSRCS = Makefile Makefile.postamble Makefile.preamble
 
 
-MAKEFILEDIR = $(SYSTEM_DEVELOPER_DIR)/Makefiles/app
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = bundle.make
-INSTALLDIR = /LocalLibrary/Preferences
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
+NEXTSTEP_INSTALLDIR = /LocalLibrary/Preferences
+WINDOWS_INSTALLDIR = /LocalLibrary/Preferences
+PDO_UNIX_INSTALLDIR = /LocalLibrary/Preferences
+LIBS = 
+DEBUG_LIBS = $(LIBS)
+PROF_LIBS = $(LIBS)
 BUNDLE_EXTENSION = bundle
 
+
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
 
 -include Makefile.preamble
 

@@ -1,6 +1,7 @@
+// $Id$
 
 #import <AppKit/AppKit.h>
-#import <MusicKit/MKScore.h>
+#import <MusicKit/MusicKit.h>
 #ifdef NeXT
 #import <synthpatches/Pluck.h> // TODO: MOXS MusicKit can't compile synthpatches yet.
 #endif
@@ -58,7 +59,7 @@
 		NSRunAlertPanel(@"PianoRoll", @"No parts in file.", @"OK", nil, nil);
 		return;
 	}
-	newDoc = [[Document alloc] initScore:aScore];
+	newDoc = [[Document alloc] initWithScore:aScore];
         [aScore release];
 	[newDoc setName:[openPanel filename]];
 	[[newDoc docWindow] setTitleWithRepresentedFilename:[openPanel filename]];
@@ -67,7 +68,7 @@
 
 - (void)saveDocAs:sender
 {
-	id aScore;
+        MKScore *aScore;
 	
 	aScore = [[self findCurrent] whatScore];
 	if (!aScore)
@@ -83,7 +84,7 @@
 
 - (void)play:sender 
 {
-	id aScore;
+	MKScore *aScore;
 	
 	aScore = [[self findCurrent] whatScore];
 	if (aScore) {
@@ -134,7 +135,7 @@
 	[helpPanel makeKeyAndOrderFront:self]; 
 }
 
-- findCurrent
+- (Document *) findCurrent
 {
 	int i;
 	id aDoc;

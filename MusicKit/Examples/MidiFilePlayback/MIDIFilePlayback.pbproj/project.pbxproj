@@ -1,0 +1,432 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		39202A5CFF87E29ECFED3B93 = {
+			isa = PBXProject;
+			mainGroup = 39202A5DFF87E29ECFED3B93;
+			productRefGroup = 39202A76FF87E29ECFED3B93;
+			projectDirPath = .;
+			targets = (
+				39202A78FF87E29ECFED3B93,
+			);
+		};
+		39202A5DFF87E29ECFED3B93 = {
+			children = (
+				39202A5EFF87E29ECFED3B93,
+				39202A60FF87E29ECFED3B93,
+				39202A62FF87E29ECFED3B93,
+				39202A64FF87E29ECFED3B93,
+				39202A67FF87E29ECFED3B93,
+				39202A69FF87E29ECFED3B93,
+				39202A70FF87E29ECFED3B93,
+				39202A76FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = MIDIFilePlayback;
+			refType = 4;
+		};
+		39202A5EFF87E29ECFED3B93 = {
+			children = (
+				39202A5FFF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		39202A5FFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = MIDIFileController.m;
+			refType = 4;
+		};
+		39202A60FF87E29ECFED3B93 = {
+			children = (
+				39202A61FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		39202A61FF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = MIDIFileController.h;
+			refType = 4;
+		};
+		39202A62FF87E29ECFED3B93 = {
+			children = (
+				39202A63FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		39202A63FF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = MIDIFilePlayback_main.m;
+			refType = 4;
+		};
+		39202A64FF87E29ECFED3B93 = {
+			children = (
+				39202A65FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+		};
+		39202A65FF87E29ECFED3B93 = {
+			children = (
+				39202A66FF87E29ECFED3B93,
+			);
+			isa = PBXVariantGroup;
+			name = MIDIFilePlayback.nib;
+			refType = 4;
+		};
+		39202A66FF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/MIDIFilePlayback.nib;
+			refType = 4;
+		};
+		39202A67FF87E29ECFED3B93 = {
+			children = (
+				39202A68FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+		};
+		39202A68FF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = midi.tiff;
+			refType = 4;
+		};
+		39202A69FF87E29ECFED3B93 = {
+			children = (
+				39202A6AFF87E29ECFED3B93,
+				39202A6BFF87E29ECFED3B93,
+				39202A6CFF87E29ECFED3B93,
+				39202A6DFF87E29ECFED3B93,
+				39202A6EFF87E29ECFED3B93,
+				39202A6FFF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		39202A6AFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		39202A6BFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		39202A6CFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		39202A6DFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		39202A6EFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		39202A6FFF87E29ECFED3B93 = {
+			isa = PBXFileReference;
+			path = java.template;
+			refType = 4;
+		};
+		39202A70FF87E29ECFED3B93 = {
+			children = (
+				39202A71FF87E29ECFED3B93,
+				39202A72FF87E29ECFED3B93,
+				39202A73FF87E29ECFED3B93,
+				39202A74FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		39202A71FF87E29ECFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		39202A72FF87E29ECFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		39202A73FF87E29ECFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		39202A74FF87E29ECFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		39202A76FF87E29ECFED3B93 = {
+			children = (
+				39202A77FF87E29ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		39202A77FF87E29ECFED3B93 = {
+			isa = PBXApplicationReference;
+			path = MIDIFilePlayback.app;
+			refType = 3;
+		};
+		39202A78FF87E29ECFED3B93 = {
+			buildPhases = (
+				39202A79FF87E29ECFED3B93,
+				39202A7BFF87E29ECFED3B93,
+				39202A7EFF87E29ECFED3B93,
+				39202A81FF87E29ECFED3B93,
+				39202A86FF87E29ECFED3B93,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = app;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = "MIDIFilePlayback (Application)";
+			productInstallPath = /Applications;
+			productName = MIDIFilePlayback;
+			productReference = 39202A77FF87E29ECFED3B93;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>midi</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>midi.tiff</string>
+			<key>CFBundleTypeName</key>
+			<string>Standard MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>MIDIFilePlayback</string>
+	<key>CFBundleGetInfoString</key>
+	<string>MIDI and Sample Player</string>
+	<key>CFBundleIconFile</key>
+	<string>midi.tiff</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.musickit.MIDIFilePlayback</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>MIDIFilePlayback</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict>
+		<key>midi</key>
+		<dict>
+			<key>NSIcon</key>
+			<string>midi.tiff</string>
+		</dict>
+	</dict>
+	<key>NSMainNibFile</key>
+	<string>MIDIFilePlayback</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 0;
+		};
+		39202A79FF87E29ECFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				39202A7AFF87E29ECFED3B93,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		39202A7AFF87E29ECFED3B93 = {
+			fileRef = 39202A61FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A7BFF87E29ECFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				39202A7CFF87E29ECFED3B93,
+				39202A7DFF87E29ECFED3B93,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		39202A7CFF87E29ECFED3B93 = {
+			fileRef = 39202A65FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A7DFF87E29ECFED3B93 = {
+			fileRef = 39202A68FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A7EFF87E29ECFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				39202A7FFF87E29ECFED3B93,
+				39202A80FF87E29ECFED3B93,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		39202A7FFF87E29ECFED3B93 = {
+			fileRef = 39202A5FFF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A80FF87E29ECFED3B93 = {
+			fileRef = 39202A63FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A81FF87E29ECFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				39202A82FF87E29ECFED3B93,
+				39202A83FF87E29ECFED3B93,
+				39202A84FF87E29ECFED3B93,
+				39202A85FF87E29ECFED3B93,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		39202A82FF87E29ECFED3B93 = {
+			fileRef = 39202A71FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A83FF87E29ECFED3B93 = {
+			fileRef = 39202A72FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A84FF87E29ECFED3B93 = {
+			fileRef = 39202A73FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A85FF87E29ECFED3B93 = {
+			fileRef = 39202A74FF87E29ECFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		39202A86FF87E29ECFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 39202A5CFF87E29ECFED3B93;
+}

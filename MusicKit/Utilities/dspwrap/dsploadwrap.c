@@ -32,7 +32,7 @@ Modification history
 #import <libc.h>
 #include <strings.h>
 #include <sys/file.h>
-#include <dsp/dsp.h>
+#include <MKDSP/dsp.h>
 #include <ctype.h>
 
 #define USAGE "dsploadwrap [-{relative,absolute}] [-{ug,ap}] [-system] [-bootstrap]  [-simulator] [-argtemplate <string>] [-start <address>] [-trace <n>] [-prefixAP <string> [-stackable]] <filename(s)>"

@@ -6,8 +6,8 @@
         English_INTERFACES = (MidiLoop.nib, Info.nib); 
         FRAMEWORKS = (
             AppKit.framework, 
-            dsp.framework, 
             Foundation.framework, 
+            MKDSP.framework, 
             MusicKit.framework, 
             SoundKit.framework
         ); 

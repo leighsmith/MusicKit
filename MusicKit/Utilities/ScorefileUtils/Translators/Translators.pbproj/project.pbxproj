@@ -1,0 +1,499 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		01478068FFC4506BCFED3B96 = {
+			isa = PBXProject;
+			mainGroup = 01478069FFC4506BCFED3B96;
+			productRefGroup = 01478088FFC4506BCFED3B96;
+			projectDirPath = .;
+			targets = (
+				0147808BFFC4506BCFED3B96,
+				0147808DFFC4506BCFED3B96,
+				01478096FFC4506BCFED3B96,
+			);
+		};
+		01478069FFC4506BCFED3B96 = {
+			children = (
+				0147806AFFC4506BCFED3B96,
+				01478070FFC4506BCFED3B96,
+				01478084FFC4506BCFED3B96,
+				01478088FFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = Translators;
+			refType = 4;
+		};
+		0147806AFFC4506BCFED3B96 = {
+			children = (
+				0147806BFFC4506BCFED3B96,
+				0147806CFFC4506BCFED3B96,
+				0147806DFFC4506BCFED3B96,
+				0147806EFFC4506BCFED3B96,
+				0147806FFFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		0147806BFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		0147806CFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		0147806DFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		0147806EFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = cmt2scorefile.sno;
+			refType = 4;
+		};
+		0147806FFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = ravel2scorefile.sno;
+			refType = 4;
+		};
+		01478070FFC4506BCFED3B96 = {
+			children = (
+				01478071FFC4506BCFED3B96,
+				0147807BFFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = Subprojects;
+			refType = 4;
+		};
+		01478071FFC4506BCFED3B96 = {
+			children = (
+				01478072FFC4506BCFED3B96,
+				01478074FFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = convertscore;
+			path = convertscore.tproj;
+			refType = 4;
+		};
+		01478072FFC4506BCFED3B96 = {
+			children = (
+				01478073FFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		01478073FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = convertscore_main.m;
+			refType = 4;
+		};
+		01478074FFC4506BCFED3B96 = {
+			children = (
+				01478075FFC4506BCFED3B96,
+				01478076FFC4506BCFED3B96,
+				01478077FFC4506BCFED3B96,
+				01478078FFC4506BCFED3B96,
+				01478079FFC4506BCFED3B96,
+				0147807AFFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		01478075FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		01478076FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		01478077FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		01478078FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		01478079FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		0147807AFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = convertscore.1;
+			refType = 4;
+		};
+		0147807BFFC4506BCFED3B96 = {
+			children = (
+				0147807CFFC4506BCFED3B96,
+				0147807EFFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = scorefile2stella;
+			path = scorefile2stella.tproj;
+			refType = 4;
+		};
+		0147807CFFC4506BCFED3B96 = {
+			children = (
+				0147807DFFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		0147807DFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = scorefile2stella_main.m;
+			refType = 4;
+		};
+		0147807EFFC4506BCFED3B96 = {
+			children = (
+				0147807FFFC4506BCFED3B96,
+				01478080FFC4506BCFED3B96,
+				01478081FFC4506BCFED3B96,
+				01478082FFC4506BCFED3B96,
+				01478083FFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		0147807FFFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		01478080FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		01478081FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		01478082FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		01478083FFC4506BCFED3B96 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		01478084FFC4506BCFED3B96 = {
+			children = (
+				01478085FFC4506BCFED3B96,
+				01478086FFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		01478085FFC4506BCFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		01478086FFC4506BCFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		01478088FFC4506BCFED3B96 = {
+			children = (
+				01478089FFC4506BCFED3B96,
+				0147808AFFC4506BCFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		01478089FFC4506BCFED3B96 = {
+			isa = PBXExecutableFileReference;
+			path = convertscore;
+			refType = 3;
+		};
+		0147808AFFC4506BCFED3B96 = {
+			isa = PBXExecutableFileReference;
+			path = scorefile2stella;
+			refType = 3;
+		};
+		0147808BFFC4506BCFED3B96 = {
+			buildPhases = (
+				0147809EFFC4506BCFED3B96,
+			);
+			buildSettings = {
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+				0147808CFFC4506BCFED3B96,
+				01478095FFC4506BCFED3B96,
+			);
+			isa = PBXAggregateTarget;
+			name = "Translators (Aggregate)";
+			productName = Translators;
+			shouldUseHeadermap = 0;
+		};
+		0147808CFFC4506BCFED3B96 = {
+			isa = PBXTargetDependency;
+			target = 0147808DFFC4506BCFED3B96;
+		};
+		0147808DFFC4506BCFED3B96 = {
+			buildPhases = (
+				0147808EFFC4506BCFED3B96,
+				0147808FFFC4506BCFED3B96,
+				01478091FFC4506BCFED3B96,
+				01478094FFC4506BCFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = "convertscore (Tool)";
+			productName = convertscore;
+			productReference = 01478089FFC4506BCFED3B96;
+			shouldUseHeadermap = 0;
+		};
+		0147808EFFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		0147808FFFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				01478090FFC4506BCFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		01478090FFC4506BCFED3B96 = {
+			fileRef = 01478073FFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		01478091FFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				01478092FFC4506BCFED3B96,
+				01478093FFC4506BCFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		01478092FFC4506BCFED3B96 = {
+			fileRef = 01478085FFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		01478093FFC4506BCFED3B96 = {
+			fileRef = 01478086FFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		01478094FFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+		01478095FFC4506BCFED3B96 = {
+			isa = PBXTargetDependency;
+			target = 01478096FFC4506BCFED3B96;
+		};
+		01478096FFC4506BCFED3B96 = {
+			buildPhases = (
+				01478097FFC4506BCFED3B96,
+				01478098FFC4506BCFED3B96,
+				0147809AFFC4506BCFED3B96,
+				0147809DFFC4506BCFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = "scorefile2stella (Tool)";
+			productName = scorefile2stella;
+			productReference = 0147808AFFC4506BCFED3B96;
+			shouldUseHeadermap = 0;
+		};
+		01478097FFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		01478098FFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				01478099FFC4506BCFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		01478099FFC4506BCFED3B96 = {
+			fileRef = 0147807DFFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0147809AFFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0147809BFFC4506BCFED3B96,
+				0147809CFFC4506BCFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		0147809BFFC4506BCFED3B96 = {
+			fileRef = 01478085FFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0147809CFFC4506BCFED3B96 = {
+			fileRef = 01478086FFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0147809DFFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+		0147809EFFC4506BCFED3B96 = {
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				0147809FFFC4506BCFED3B96,
+				014780A0FFC4506BCFED3B96,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			name = "Copy Files";
+		};
+		0147809FFFC4506BCFED3B96 = {
+			fileRef = 01478089FFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		014780A0FFC4506BCFED3B96 = {
+			fileRef = 0147808AFFC4506BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+	};
+	rootObject = 01478068FFC4506BCFED3B96;
+}

@@ -3,14 +3,14 @@
 #import <AppKit/AppKit.h>
 #import <MusicKit/MusicKit.h>
 
-@interface MidiLoop : NSApplication
+@interface MidiLoop : NSObject
 {
     MKMidi *midiObj;
     id infoPanel;
     id stringTable;
 }
 
-- (void)terminate:(id)sender;
+- (void) applicationWillTerminate: (NSNotification *) aNotification;
 - go:sender;
 - showInfoPanel:sender;
 

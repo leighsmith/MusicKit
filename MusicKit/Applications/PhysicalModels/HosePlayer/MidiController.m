@@ -4,11 +4,7 @@
 #import "MidiController.h"
 #import "Controller.h"
 #import <AppKit/AppKit.h>
-#import <mididriver/midi_driver.h>
-#import <mididriver/midi_spec.h>
-#import <musickit/Note.h>
-#import <musickit/NoteSender.h>
-#import <musickit/params.h>
+#import <MusicKit/MusicKit.h>
 #import <libc.h>
 
     int keyTable[20] = {52,53,55,57,59,60,62,64,65,67,69,71,72,74,76,77,79,81,83,84};
@@ -80,7 +76,7 @@
     /* Sent when an instance is created. */
 {    
     [super init];
-    noteReceiver = [self addNoteReceiver:[[NoteReceiver alloc] init]];
+    noteReceiver = [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 //    noteSender = [self addNoteSender:[[NoteSender alloc] init]];
     [self reset];
     return self;

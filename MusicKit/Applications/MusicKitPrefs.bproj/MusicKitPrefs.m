@@ -11,7 +11,7 @@
 */
 
 
-#import <appkit/appkit.h>
+#import <AppKit/AppKit.h>
 #import <ansi/ctype.h>
 
 #import "MusicKitPrefs.h"

@@ -9,13 +9,16 @@
 
 NAME = Reson
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+NEXTSTEP_APPICON = Reson.tiff
+ICONSECTIONS =	-sectcreate __ICON app Reson.tiff
 
-APPICON = Reson.tiff
-LOCAL_RESOURCES = Info.nib Reson.nib
+English_RESOURCES = Reson.nib Info.nib
 
-GLOBAL_RESOURCES = Reson.tiff help.rtfd mkmon_A_32k.dsp mkmon_A_8k.dsp
+LANGUAGES = English
+
+GLOBAL_RESOURCES = Reson.tiff help.rtfd
 
 CLASSES = ResonController.m ResonSound.m
 
@@ -26,21 +29,31 @@ MFILES = Reson_main.m
 OTHERSRCS = Makefile
 
 
-MAKEFILEDIR = /NextDeveloper/Makefiles/app
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app Reson.tiff
-
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
+MAKEFILE = app.make
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
 LIBS = -lunitgenerators -lmusickit -ldsp -lNeXT_s -lDriver
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
+
 -include Makefile.preamble
 
-include $(MAKEFILEDIR)/app.make
+include $(MAKEFILEDIR)/$(MAKEFILE)
 
 -include Makefile.postamble
 

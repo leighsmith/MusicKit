@@ -1,6 +1,6 @@
 #ifndef __MK_Chord_H___
 #define __MK_Chord_H___
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 #import "EnsembleNoteFilter.h"
 
 #define MAXCHORDSIZE 5

@@ -4,6 +4,7 @@
     FILESTABLE = {
         CLASSES = (ClarIns.m, Controller.m, MidiController.m); 
         C_FILES = (); 
+        English_INTERFACES = (ClariNot.nib); 
         FRAMEWORKS = (
             AppKit.framework, 
             dsp.framework, 
@@ -14,7 +15,7 @@
         FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
         H_FILES = (ClarIns.h, Controller.h, MidiController.h); 
         IMAGES = (); 
-        INTERFACES = (ClariNot.nib); 
+        INTERFACES = (); 
         M_FILES = (); 
         OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, Media_s, NeXT_s, Driver); 
         OTHER_LINKED = (ClariNot_main.m); 
@@ -29,6 +30,7 @@
     LOCALIZABLE_FILES = {}; 
     MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles; 
     NEXTSTEP_APPICON = Clarer.tiff; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
     NEXTSTEP_DOCUMENTEXTENSIONS = (); 
     NEXTSTEP_INSTALLDIR = "$(HOME)/Apps"; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 

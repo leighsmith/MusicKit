@@ -1,0 +1,38 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!ENTITY chap2 SYSTEM "MusicData.sgml">
+<!ENTITY appendixA SYSTEM "MusicTables.sgml">
+]>
+<book id="MusicKitConcepts">
+  <title>MusicKit and SndKit Concepts</title>
+  <bookinfo>
+    <copyright>
+      <year>1990</year>
+      <holder>NeXT Computer, Inc.  All Rights Reserved.</holder>
+    </copyright>
+    <copyright>
+      <year>1993</year> 
+      <holder>CCRMA, Stanford University (Updates).  All Rights Reserved.</holder>
+    </copyright>
+    <copyright>
+      <year>1999-2000</year>
+      <holder>The MusicKit Project (Updates). All Rights Reserved.</holder>
+    </copyright>
+    <revhistory>
+      <revision>
+	<revnumber>Release 2.0</revnumber>
+	<date>1990</date>
+      </revision>
+      <revision>
+	<revnumber>Release 4.0</revnumber>
+	<date>1993</date>
+      </revision>
+      <revision>
+        <revnumber>Release 5.0</revnumber>
+	<date>1999-2000</date>
+      </revision>
+    </revhistory>
+  </bookinfo>
+
+&chap2;
+&appendixA;
+</book>

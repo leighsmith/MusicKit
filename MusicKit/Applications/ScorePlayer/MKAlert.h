@@ -5,8 +5,6 @@
 	Alert.h
 */
 
-//#import <objc/Object.h>
-//#import <appkit/graphics.h>
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
@@ -16,16 +14,16 @@
     id	panel;
     id	title;
     id  first,second,third;
-    NSCoord buttonHeight, buttonSpacing;
+//    NSCoord buttonHeight, buttonSpacing;
     NSSize defaultPanelSize;
 }
 
 + new;
 - init;
 
-- buttonPressed:sender;
+- (void)buttonPressed:sender;
 
-int mkRunAlertPanel(const char *title, const char *s, const char *first, const char *second, const char *third);
+int mkRunAlertPanel(NSString *title, NSString *s, NSString *first, NSString *second, NSString *third);
 
 @end
 

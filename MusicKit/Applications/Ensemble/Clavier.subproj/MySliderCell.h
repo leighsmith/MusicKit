@@ -1,13 +1,13 @@
 #ifndef __MK_MySliderCell_H___
 #define __MK_MySliderCell_H___
-#import <appkit/SliderCell.h>
+#import <AppKit/NSSliderCell.h>
 
-@interface MySliderCell:SliderCell
+@interface MySliderCell:NSSliderCell
 {
     double returnValue;
 }
 
-- setReturnValue:(double)aValue;
+- (void) setReturnValue:(double)aValue;
 
 @end
 

@@ -1,0 +1,184 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		0899F109FFD585C4CFED3B96 = {
+			isa = PBXProject;
+			mainGroup = 0899F10AFFD585C4CFED3B96;
+			productRefGroup = 0899F119FFD585C4CFED3B96;
+			projectDirPath = .;
+			targets = (
+				0899F11BFFD585C4CFED3B96,
+			);
+		};
+		0899F10AFFD585C4CFED3B96 = {
+			children = (
+				0899F10BFFD585C4CFED3B96,
+				0899F10DFFD585C4CFED3B96,
+				0899F114FFD585C4CFED3B96,
+				0899F119FFD585C4CFED3B96,
+			);
+			isa = PBXGroup;
+			name = playscorefilemidi;
+			refType = 4;
+		};
+		0899F10BFFD585C4CFED3B96 = {
+			children = (
+				0899F10CFFD585C4CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		0899F10CFFD585C4CFED3B96 = {
+			isa = PBXFileReference;
+			path = playscorefilemidi.m;
+			refType = 4;
+		};
+		0899F10DFFD585C4CFED3B96 = {
+			children = (
+				0899F113FFD585C4CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		0899F113FFD585C4CFED3B96 = {
+			isa = PBXFileReference;
+			path = README;
+			refType = 4;
+		};
+		0899F114FFD585C4CFED3B96 = {
+			children = (
+				0899F116FFD585C4CFED3B96,
+				0899F117FFD585C4CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		0899F116FFD585C4CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		0899F117FFD585C4CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		0899F119FFD585C4CFED3B96 = {
+			children = (
+				0899F11AFFD585C4CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		0899F11AFFD585C4CFED3B96 = {
+			isa = PBXExecutableFileReference;
+			path = playscorefilemidi;
+			refType = 3;
+		};
+		0899F11BFFD585C4CFED3B96 = {
+			buildPhases = (
+				0899F11CFFD585C4CFED3B96,
+				0899F11DFFD585C4CFED3B96,
+				0899F11FFFD585C4CFED3B96,
+				0899F123FFD585C4CFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = "playscorefilemidi (Tool)";
+			productInstallPath = /bin;
+			productName = playscorefilemidi;
+			productReference = 0899F11AFFD585C4CFED3B96;
+			shouldUseHeadermap = 0;
+		};
+		0899F11CFFD585C4CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		0899F11DFFD585C4CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0899F11EFFD585C4CFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		0899F11EFFD585C4CFED3B96 = {
+			fileRef = 0899F10CFFD585C4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0899F11FFFD585C4CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0899F121FFD585C4CFED3B96,
+				0899F122FFD585C4CFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		0899F121FFD585C4CFED3B96 = {
+			fileRef = 0899F116FFD585C4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0899F122FFD585C4CFED3B96 = {
+			fileRef = 0899F117FFD585C4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0899F123FFD585C4CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 0899F109FFD585C4CFED3B96;
+}

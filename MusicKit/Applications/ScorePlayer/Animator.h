@@ -2,13 +2,13 @@
 #define __MK_Animator_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 
-#import <objc/Object.h>
+#import <Foundation/NSObject.h>
 #include <sys/time.h>
 
-@interface Animator : Object
+@interface Animator : NSObject
 {
 	int mask;
-	int teNum;
+	NSTimer * teNum;
 	int ticking;
 	double interval;
 	struct timezone tzone;
@@ -24,24 +24,24 @@
 	int passcounter;
 }
 + newChronon:(double )dt adaptation:(double )howoft target:(id )targ action:(SEL )act autoStart:(int )start eventMask:(int )eMask; 
-- resetRealTime; 
+- (void)resetRealTime; 
 -(double ) getSyncTime; 
 -(double ) getDoubleEntryTime; 
 -(double ) getDoubleRealTime; 
 -(double ) getDouble; 
-- adapt; 
-- setBreakMask:(int )eventMask; 
+- (void)adapt; 
+- (void)setBreakMask:(int )eventMask; 
 -(int ) getBreakMask; 
 -(int ) isTicking; 
 -(int ) shouldBreak; 
-- setIncrement:(double )dt; 
+- (void)setIncrement:(double )dt; 
 -(double ) getIncrement; 
-- setAdaptation:(double )oft; 
-- setTarget:(id )targ; 
-- setAction:(SEL )aSelector; 
-- startEntry; 
-- stopEntry; 
-- free; 
+- (void)setAdaptation:(double )oft; 
+- (void)setTarget:(id )targ; 
+- (void)setAction:(SEL )aSelector; 
+- (void)startEntry; 
+- (void)stopEntry; 
+- (void)dealloc; 
 
 @end
 

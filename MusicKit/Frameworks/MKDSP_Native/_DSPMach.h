@@ -14,8 +14,15 @@
 #import <mach/mach.h>
 
 // kludge around missing definitions in MacOsX
+#if !defined(macosx)
+#define macosx (defined(__ppc__) && !defined(ppc))
+#define macosx_server (defined(__ppc__) && defined(ppc))
+#endif
+
+#if macosx
 typedef natural_t msg_type_t;
 typedef long msg_type_long_t;
+#endif
 
 #if !m68k && (defined(NeXT) || (defined(__APPLE__) && defined(__MACH__)) || defined(WIN32))
 #import "dspdriverAccess.h"

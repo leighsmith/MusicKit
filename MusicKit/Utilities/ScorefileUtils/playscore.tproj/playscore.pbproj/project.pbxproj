@@ -1,0 +1,293 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		01422A87FFABBF7CCFED3B93 = {
+			isa = PBXLibraryReference;
+			path = playscore.1;
+			refType = 3;
+		};
+		01422A88FFABBF7CCFED3B93 = {
+			buildPhases = (
+				01422A89FFABBF7CCFED3B93,
+				01422A8AFFABBF7CCFED3B93,
+				01422A8BFFABBF7CCFED3B93,
+				01422A8CFFABBF7CCFED3B93,
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				LIBRARY_STYLE = STATIC;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXLibraryTarget;
+			name = playscore.1;
+			productInstallPath = /usr/local/man/man1;
+			productName = playscore.1;
+			productReference = 01422A87FFABBF7CCFED3B93;
+			shouldUseHeadermap = 0;
+		};
+		01422A89FFABBF7CCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		01422A8AFFABBF7CCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		01422A8BFFABBF7CCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		01422A8CFFABBF7CCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+		0E49EA09FF8401D7CFED3B93 = {
+			isa = PBXProject;
+			mainGroup = 0E49EA0AFF8401D7CFED3B93;
+			productRefGroup = 0E49EA1AFF8401D7CFED3B93;
+			projectDirPath = .;
+			targets = (
+				0E49EA1CFF8401D7CFED3B93,
+				01422A88FFABBF7CCFED3B93,
+			);
+		};
+		0E49EA0AFF8401D7CFED3B93 = {
+			children = (
+				0E49EA0BFF8401D7CFED3B93,
+				0E49EA13FF8401D7CFED3B93,
+				0E49EA1AFF8401D7CFED3B93,
+			);
+			isa = PBXGroup;
+			name = playscore;
+			refType = 4;
+		};
+		0E49EA0BFF8401D7CFED3B93 = {
+			children = (
+				0E49EA0CFF8401D7CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		0E49EA0CFF8401D7CFED3B93 = {
+			isa = PBXFileReference;
+			path = playscore_main.m;
+			refType = 4;
+		};
+		0E49EA13FF8401D7CFED3B93 = {
+			children = (
+				0E49EA14FF8401D7CFED3B93,
+				0E49EA15FF8401D7CFED3B93,
+				0E49EA16FF8401D7CFED3B93,
+				0E49EA17FF8401D7CFED3B93,
+				0E49EA18FF8401D7CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		0E49EA14FF8401D7CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		0E49EA15FF8401D7CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = SndKit.framework;
+			path = /Library/Frameworks/SndKit.framework;
+			refType = 0;
+		};
+		0E49EA16FF8401D7CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MKDSP.framework;
+			path = /Library/Frameworks/MKDSP.framework;
+			refType = 0;
+		};
+		0E49EA17FF8401D7CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		0E49EA18FF8401D7CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		0E49EA1AFF8401D7CFED3B93 = {
+			children = (
+				0E49EA1BFF8401D7CFED3B93,
+				01422A87FFABBF7CCFED3B93,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		0E49EA1BFF8401D7CFED3B93 = {
+			isa = PBXExecutableFileReference;
+			path = playscore;
+			refType = 3;
+		};
+		0E49EA1CFF8401D7CFED3B93 = {
+			buildPhases = (
+				0E49EA1DFF8401D7CFED3B93,
+				0E49EA1EFF8401D7CFED3B93,
+				0E49EA20FF8401D7CFED3B93,
+				0E49EA26FF8401D7CFED3B93,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = "playscore (Tool)";
+			productInstallPath = /usr/local/bin;
+			productName = playscore;
+			productReference = 0E49EA1BFF8401D7CFED3B93;
+			shouldUseHeadermap = 0;
+		};
+		0E49EA1DFF8401D7CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		0E49EA1EFF8401D7CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				0E49EA1FFF8401D7CFED3B93,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		0E49EA1FFF8401D7CFED3B93 = {
+			fileRef = 0E49EA0CFF8401D7CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0E49EA20FF8401D7CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				0E49EA21FF8401D7CFED3B93,
+				0E49EA22FF8401D7CFED3B93,
+				0E49EA23FF8401D7CFED3B93,
+				0E49EA24FF8401D7CFED3B93,
+				0E49EA25FF8401D7CFED3B93,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		0E49EA21FF8401D7CFED3B93 = {
+			fileRef = 0E49EA14FF8401D7CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0E49EA22FF8401D7CFED3B93 = {
+			fileRef = 0E49EA15FF8401D7CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0E49EA23FF8401D7CFED3B93 = {
+			fileRef = 0E49EA16FF8401D7CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0E49EA24FF8401D7CFED3B93 = {
+			fileRef = 0E49EA17FF8401D7CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0E49EA25FF8401D7CFED3B93 = {
+			fileRef = 0E49EA18FF8401D7CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0E49EA26FF8401D7CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 0E49EA09FF8401D7CFED3B93;
+}
