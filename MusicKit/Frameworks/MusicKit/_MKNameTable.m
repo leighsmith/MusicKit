@@ -36,6 +36,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/07 22:45:03  leigh
+  Cleaned up defaults usage, removed redundant DSP output assignments (which are better covered using the IOKit).
+
   Revision 1.2  1999/07/29 01:25:59  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -478,45 +481,17 @@ initKeyWords()
     inited = YES;
 }
 
-static NSDictionary *MKDefaults = nil;
-#if 0
-//#error DefaultsConversion: the NXDefaultsVector type is obsolete. Construct a dictionary of default registrations and use the NSUserDefaults 'registerDefaults:' method
-static NXDefaultsVector MKDefaults = {
-    {"MKTrace", NULL},
-    {"DSPSerialPortDevice0", "ArielProPort"},
-    {"DSPSerialPortDevice1", "ArielProPort"},
-    {"DSPSerialPortDevice2", "ArielProPort"},
-    {"DSPSerialPortDevice3", "ArielProPort"},
-    {"DSPSerialPortDevice4", "ArielProPort"},
-    {"DSPSerialPortDevice5", "ArielProPort"},
-    {"DSPSerialPortDevice6", "ArielProPort"},
-    {"DSPSerialPortDevice8", "ArielProPort"},
-    {"DSPSerialPortDevice9", "ArielProPort"},
-    {"DSPSerialPortDevice10", "ArielProPort"},
-    {"DSPSerialPortDevice11", "ArielProPort"},
-    {"DSPSerialPortDevice12", "ArielProPort"},
-    {"DSPSerialPortDevice13", "ArielProPort"},
-    {"DSPSerialPortDevice14", "ArielProPort"},
-    {"DSPSerialPortDevice15", "ArielProPort"},
-#if i386
-    {"OrchestraSoundOut", "SSI"},   /* One of "Host", "SSI", "IRQA", "IRQB" */
-#else
-    {"OrchestraSoundOut", "Host"},   
-#endif
-    {NULL}
-};
-#endif
-
+/* set up defaults which will apply to each app linked to the MK framework. */
 void _MKCheckInit(void)
-    /* */
 {
-    NSString *s;
-    NSUserDefaults *ourDefaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *MKDefaults;
     
     if (globalParseNameTable)  /* Been here? */
       return;
-    if (MKDefaults == nil) MKDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
+    MKDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
         @"",@"MKTrace",
+#if 0  // disabled as it is becoming redundant as we move DSP to native CPU
         @"ArielProPort",@"DSPSerialPortDevice0",
         @"ArielProPort",@"DSPSerialPortDevice1",
         @"ArielProPort",@"DSPSerialPortDevice2",
@@ -533,28 +508,21 @@ void _MKCheckInit(void)
         @"ArielProPort",@"DSPSerialPortDevice13",
         @"ArielProPort",@"DSPSerialPortDevice14",
         @"ArielProPort",@"DSPSerialPortDevice15",
+#endif
     #if i386
-        @"SSI",@"OrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
+        @"SSI",@"MKOrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
     #else
-        @"Host",@"OrchestraSoundOut",
+        @"Host",@"MKOrchestraSoundOut",
     #endif
         NULL,NULL] retain];
 
-//#error DefaultsConversion: NXRegisterDefaults() is obsolete. Construct a dictionary of default registrations and use the NSUserDefaults 'registerDefaults:' method
-    
-//    NXRegisterDefaults("MusicKit", MKDefaults);
-    [ourDefaults registerDefaults:MKDefaults];//stick these in the temporary area that is searched last.
-    
-//#warning DefaultsConversion: This used to be a call to NXGetDefaultValue with the owner "MusicKit".  If the owner was different from your applications name, you may need to modify this code.
+    [defaults registerDefaults:MKDefaults]; //stick these in the temporary area that is searched last.
 
-        s = [ourDefaults objectForKey:@"MKTrace"];
-    if (s != nil)
-        if ([s length])
-            MKSetTrace([s intValue]);
+    MKSetTrace([defaults integerForKey:@"MKTrace"]);
+
     /*sb: I don't think we need to register anything here. */
     MKSetErrorStream(NULL);
-    /* We don't try and use the Appkit error mechanism. It's not well-suited
-       to real-time. */
+    /* We don't try and use the Appkit error mechanism. It's not well-suited to real-time. */
 //  NXRegisterErrorReporter( MK_ERRORBASE, MK_ERRORBASE+1000,_MKWriteError);
     globalParseNameTable = [[_MKNameTable alloc] initWithCapacity: GLOBALTABLESIZE];
     mkNameTable = [[_MKNameTable alloc] initWithCapacity: 0];
