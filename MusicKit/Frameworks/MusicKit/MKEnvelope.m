@@ -35,6 +35,9 @@
 Modification history:
 
  $Log$
+ Revision 1.12  2002/04/16 15:27:34  sbrandon
+ several string-appending functions simplified for speed
+
  Revision 1.11  2002/04/15 14:14:23  sbrandon
  added -hash and -isEqual methods to aid use of envelopes as keys in
  maptables/dictionaries.
@@ -489,7 +492,7 @@ Writes itself in the form:
   double xVal;
   double *yP,*xP,*smoothingP;
   if (yArray == NULL) {
-    [aStream appendData:[@"[/* Empty envelope. */]" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [aStream appendBytes:"[/* Empty envelope. */]" length:23];
     return nil;
   }
   if (xArray == NULL)
@@ -503,10 +506,10 @@ Writes itself in the form:
       else
         [aStream appendData:[[NSString stringWithFormat:@"(%.5f, %.5f, %.5f)", xVal,*yP++,*smoothingP++] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
       if (i == stickPoint)
-        [aStream appendData:[@" | " dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [aStream appendBytes:" | " length:3];
 #         if _MK_LINEBREAKS
       if ((++i % 5 == 0) && i < pointCount)
-        [aStream appendData:[@"\n\t" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [aStream appendBytes:"\n\t" length:2];
 #         else
       i++;
 #         endif
@@ -520,10 +523,10 @@ Writes itself in the form:
               [aStream appendData:[[NSString stringWithFormat:@"(%.5f, %.5f)", *xP++,*yP++] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
           else [aStream appendData:[[NSString stringWithFormat:@"(%.5f, %.5f, %.5f)", *xP++,*yP++,*smoothingP++] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
           if (i == stickPoint)
-            [aStream appendData:[@" | " dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+            [aStream appendBytes:" | " length:3];
 #         if _MK_LINEBREAKS
           if ((++i % 5 == 0) && i < pointCount)
-            [aStream appendData:[@"\n\t" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+            [aStream appendBytes:"\n\t" length:2];
 #         else
           ++i;
 #         endif
