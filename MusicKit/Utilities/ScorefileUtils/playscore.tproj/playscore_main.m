@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.10  2004/01/19 20:35:21  leighsmith
+  Changed argv typing to reduce warnings
+
   Revision 1.9  2001/09/19 23:43:34  leighsmith
   Upgraded to more descriptive parTagForName: and parNameForTag: methods
 
@@ -326,7 +329,7 @@ static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
     return 0;
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, const char **argv)
 {
     int i, repeatCount, repeat, optch;
     NSString *inputFile;
