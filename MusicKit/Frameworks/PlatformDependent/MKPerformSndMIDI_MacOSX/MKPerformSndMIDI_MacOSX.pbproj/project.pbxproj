@@ -3,14 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		01575C4F0048D569CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				OPTIMIZATION_CFLAGS = "-O3";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -20,11 +25,15 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
 		016D5A22FED483BACFED3B93 = {
+			buildSettings = {
+			};
 			buildStyles = (
 				01575C4F0048D569CFED3B96,
 				01575C500048D569CFED3B96,
@@ -49,6 +58,7 @@
 			isa = PBXGroup;
 			name = MKPerformSndMIDI;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A24FED483BBCFED3B93 = {
 			children = (
@@ -57,6 +67,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A26FED483BBCFED3B93 = {
 			children = (
@@ -68,18 +79,23 @@
 			isa = PBXGroup;
 			name = Headers;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A27FED483BBCFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformSound.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A29FED483BBCFED3B93 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformMIDI.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A2EFED483BBCFED3B93 = {
 			children = (
@@ -89,18 +105,23 @@
 			isa = PBXGroup;
 			name = Sources;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A2FFED483BBCFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformMIDI.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A30FED483BBCFED3B93 = {
+			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformSound.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A38FED483BBCFED3B93 = {
 			children = (
@@ -112,12 +133,16 @@
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		016D5A39FED483BBCFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		016D5A3AFED483BBCFED3B93 = {
 			buildPhases = (
@@ -292,9 +317,12 @@
 //063
 //064
 		06D6961DFF81940ECFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			path = MKPerformSndMIDI.framework;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //060
 //061
@@ -307,10 +335,13 @@
 //073
 //074
 		07B2BE620034ACD5CFED3B96 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = CoreAudio.framework;
 			path = /System/Library/Frameworks/CoreAudio.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		07B2BE630034ACD5CFED3B96 = {
 			fileRef = 07B2BE620034ACD5CFED3B96;
@@ -319,10 +350,12 @@
 			};
 		};
 		07B2BE640034BFE6CFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStruct.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		07B2BE650034BFE6CFED3B96 = {
 			fileRef = 07B2BE640034BFE6CFED3B96;
@@ -344,10 +377,13 @@
 //103
 //104
 		1001C124FFAE54A5CFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = CoreMIDI.framework;
 			path = /System/Library/Frameworks/CoreMIDI.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		1001C125FFAE54A5CFED3B93 = {
 			fileRef = 1001C124FFAE54A5CFED3B93;
@@ -356,10 +392,13 @@
 			};
 		};
 		1001C128FFAE92E2CFED3B93 = {
+			expectedFileType = wrapper.framework;
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
 			name = CoreServices.framework;
 			path = /System/Library/Frameworks/CoreServices.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		1001C129FFAE92E2CFED3B93 = {
 			fileRef = 1001C128FFAE92E2CFED3B93;
@@ -378,10 +417,12 @@
 //153
 //154
 		155A3D8F00376A7BCFED3B96 = {
+			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFormats.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		155A3D9000376A7BCFED3B96 = {
 			fileRef = 155A3D8F00376A7BCFED3B96;
