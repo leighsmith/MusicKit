@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.15  2001/08/07 17:20:35  leighsmith
+  Corrected initWithCoder to MK prefixed class name
+
   Revision 1.14  2001/07/02 16:42:38  sbrandon
   - GNUSTEP does not have objc_msgSend. I replaced objc_msgSend with a couple
     of other functions which do the same job on GNUSTEP (ifdef'd the code)
@@ -472,7 +475,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
   /* Unarchive the instrument from a typed stream. */
 {
   [super initWithCoder: decoder];
-  if ([decoder versionForClassName:@"SamplerInstrument"] == 1) {
+  if ([decoder versionForClassName: @"MKSamplerInstrument"] == 1) {
     [decoder decodeValuesOfObjCTypes:"iiiccci", &keyNum, &testKey,
 	     &voiceCount, &diatonic, &tieRepeats, &preloadingEnabled, &recordModeController];
   }
