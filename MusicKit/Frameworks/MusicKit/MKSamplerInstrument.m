@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/03/31 00:11:31  leigh
+  Cleaned up cruft
+
   Revision 1.4  2000/03/11 01:16:21  leigh
   Now using NSSound to replace Snd
 
@@ -71,32 +74,6 @@ int activeSoundCount = 0;
   return self;
 }
 
-- initPerformers
-{
-#if 0 // nothing of consequence
-  int i;
-  NSSound *sound;
-
-  for (i = 0; i < MAX_PERFORMERS; i++) {
-    sound = [soundTable objectForKey: [NSNumber numberWithInt: keyMap[i]]];
-    if (sound) {
-//      if (!playingSamples[i]) {
-//	playingSamples[i] = [[PlayingSound alloc] init];
-//	[playingSamples[i] setDelegate:self];
-//	[playingSamples[i] enablePreloading:preloadingEnabled];
-//      }
-//      [playingSamples[i] setSound:sound];
-    }
-    else {
-//      if (playingSamples[i])
-//	[playingSamples[i] release];
-//      playingSamples[i] = nil;
-    }
-  }
-#endif
-  return self;
-}
-
 // Initialize the sound objects.
 - init
 {
@@ -112,27 +89,13 @@ int activeSoundCount = 0;
   conductor = [MKConductor defaultConductor];
 
   [self reset];
-  [self initPerformers];
   return self;
 }
 
 - releaseSounds
   /* Free all the sound structs */
 {
-//  NXHashState state;
-//  void *sound;
-//  const void *keyNum;
-  int i;
-
   [MKConductor lockPerformance];
-  for (i=0; i<MAX_PERFORMERS; i++) {
-//    [playingSamples[i] abort];
-//    [playingSamples[i] release];
-//    playingSamples[i] = nil;
-  }
-
-  //	state = [soundTable initState];
-
   [soundTable removeAllObjects];
   [MKConductor unlockPerformance];
   return self;
@@ -144,12 +107,8 @@ int activeSoundCount = 0;
   * window.
   */
 {
-  //[super release];
   [self releaseSounds];
   [soundTable release];
-  //	NX_FREE(directory);
-  //	[keyInterface free];
-//  [recordModeInterface free];
 }
 
 - clearAll:sender
@@ -191,25 +150,13 @@ int activeSoundCount = 0;
         return nil;
     }
     [newSound setName: filePath];
-    // [soundTable setObject: newSound forKey: [NSNumber numberWithInt: noteTag]];
 
     NSLog(@"Preparing for keyNum %d %@\n", key, [newSound description]);
 
     velocity = [aNote parAsInt: MK_velocity];
-    //  [playingSample setDuration: MK_ENDOFTIME]; // [aNote dur];
-    //  [playingSample setNoteTag: noteTag];
-    if (velocity != MAXINT) {
-    //    float v = (float) velocity / 127.0;
-    //    [playingSample setVelocity: 1.0 - (1.0 - (v * v)) * velocitySensitivity];
-    }
-    //  [playingSample setAmp: linearAmp volume: volume bearing: bearing / 45.0];
-    //  [playingSample enableResampling: (pitchbendSensitivity || (key != baseKey))];
-    //  [playingSample setTransposition: (key != baseKey) ? pow(2.0, (double) (key - baseKey) / 12.0) : 1.0];
-    //  [playingSample setPitchBend: pitchBend];
 
     //  [MKConductor unlockPerformance];
 
-    //  return playingSample;
     return self;
 }
 
@@ -281,7 +228,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 }
 
 // set the limit of voices to simultaneously play
-// TODO needs a value to prevent limiting.
+// FIXME needs a value to prevent limiting.
 - (void) setVoiceCount:(int) newVoiceCount
 {
  voiceCount = newVoiceCount;
@@ -416,8 +363,8 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
     else objc_msgSend(receiver,selector,arg); \
   }
 
-// The problem is we can't commit a NSSound instance to playing at some future moment in time wrt to the
-// playback clock like we can with the MIDI driver used within MKMidi.
+// The problem is currently we can't request a NSSound instance to play at some future moment in time
+// with respect to the playback clock like we can with the MIDI driver used within MKMidi.
 // Therefore we use the conductor to time sending a message in the future to play the sound file at the
 // deltaT offset and pray there isn't too much overhead playing the sound.
 // Future playback methods should be introduced into NSSound to take advantage of any 
@@ -432,8 +379,9 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
   if ((type == MK_noteOn) || (type == MK_noteDur)) {
     [self prepareSound: aNote];
     TIMEDSENDTO(self, @selector(playSampleNote:), deltaT, aNote);
-    if (type == MK_noteDur)
-      TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote); // noteTag
+    if (type == MK_noteDur) {
+        TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote); // noteTag
+    }
   }
   else if ((type == MK_noteOff) && !damperOn)
     TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);  // noteTag
