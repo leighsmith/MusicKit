@@ -2,7 +2,7 @@
 <chapter id="MIDITimeCode">
 <title>MIDI Time Code in the Music Kit</title>
 
-    <sect1 id="Introduction">
+    <sect1 id="MTCIntroduction">
       <title>Introduction</title>
 
 <para>MIDI Time Code is a synchronization technique widely used in the
