@@ -13,33 +13,9 @@
   Portions Copyright (c) 1994 Stanford University
 */
 /* 
-Modification history:
+Modification history prior to CVS commit:
 
-  $Log$
-  Revision 1.8  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.7  2002/04/01 12:00:31  sbrandon
-  fixed bug leading to double-dealloc of notes used in MIDI. _MKMidiToMusicKit
-  now returns a retained/autoreleased MKNote instead of just an autoreleased one.
-
-  Revision 1.6  2002/01/23 15:33:02  sbrandon
-  The start of a major cleanup of memory management within the MK. This set of
-  changes revolves around MKNote allocation/retain/release/autorelease.
-
-  Revision 1.5  2000/04/16 04:05:57  leigh
-  improved typing
-
-  Revision 1.4  2000/04/07 18:33:34  leigh
-  Unified tracing to the function for data hiding
-
-  Revision 1.3  2000/04/07 18:23:28  leigh
-  Upgraded logging to NSLog
-
-  Revision 1.2  1999/07/29 01:26:14  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-  09/15/89/daj - Changed to use cached Note class. (_MKClassNote())
+  09/15/89/daj - Changed to use cached MKNote class. (_MKClassNote())
   01/02/90/daj - Added setting of noteType for noteUpdates (needed because
                  I flushed possiblyUpdateNoteType()). Flushed out-dated comment
 		 Changed comments.
@@ -71,24 +47,23 @@ BOOL MKGetInclusiveMidiTranslation(void)
     return inclusiveMidi;
 }
 
-_MKMidiInStruct *
-  _MKInitMidiIn()
+_MKMidiInStruct *_MKInitMidiIn()
 /*
   Makes a new _MKMidiInStruct for specified file. Assumes file is open.
   */
 {
     int i;
     _MKMidiInStruct *rtn;
+    
     _MK_CALLOC(rtn,_MKMidiInStruct,1);
     rtn->_noteTags[0] = MKNoteTags(MIDI_NUMKEYS * MIDI_NUMCHANS);
-    for (i=1; i<MIDI_NUMCHANS; i++)
-      rtn->_noteTags[i] = rtn->_noteTags[i-1] + MIDI_NUMKEYS;
+    for (i = 1; i < MIDI_NUMCHANS; i++)
+      rtn->_noteTags[i] = rtn->_noteTags[i - 1] + MIDI_NUMKEYS;
     /* CALLOC above insures all fields are cleared. */
     return rtn;
 }
 
-_MKMidiInStruct *
-  _MKFinishMidiIn(_MKMidiInStruct *ptr)
+_MKMidiInStruct *_MKFinishMidiIn(_MKMidiInStruct *ptr)
 {
     /*
       Deletes data structure pointed to by ptr. Returns NULL. 
@@ -99,11 +74,10 @@ _MKMidiInStruct *
     return NULL;
 }
 
-static int
-  cv14(unsigned char byte2, unsigned char byte3)
+static int cv14(unsigned char byte2, unsigned char byte3)
 {
     /* Convert 2 byte quantity to 14 bit int. */
-    return (((unsigned int)byte3) << 7) | ((unsigned int) byte2);
+    return (((unsigned int) byte3) << 7) | ((unsigned int) byte2);
 }
 
 /* All of the following is needed because... the MIDI spec leaves it up to 
@@ -153,8 +127,8 @@ static midiInList *findList(short keyNum,_MKMidiInStruct *ptr)
     return l;
 }
 
-/* List of one element is represented by head==tail!=NULL. 
-   List of zero elements is represented by head==tail==NULL. */
+/* List of one element is represented by head == tail != NULL. 
+   List of zero elements is represented by head == tail == NULL. */
 
 static void addToTailList(midiInNode *n,midiInList *l,int tag)
     /* Add to tail of list. */
@@ -172,7 +146,7 @@ static void addToTailList(midiInNode *n,midiInList *l,int tag)
     n->tag = tag;
 }
 
-static midiInList *newList(_MKMidiInStruct *ptr,short keyNum)
+static midiInList *newList(_MKMidiInStruct *ptr, short keyNum)
     /* Create a new list */
 {
     midiInList *l = (midiInList *)ptr->_tagLists[ptr->chan];
@@ -186,7 +160,7 @@ static midiInList *newList(_MKMidiInStruct *ptr,short keyNum)
     return nl;
 }
 
-static int removeHeadOfList(midiInList *l,_MKMidiInStruct *ptr,short keyNum)
+static int removeHeadOfList(midiInList *l, _MKMidiInStruct *ptr, short keyNum)
     /* Remove head of list */
 {
     midiInNode *n = l->head;
@@ -204,31 +178,30 @@ static int removeHeadOfList(midiInList *l,_MKMidiInStruct *ptr,short keyNum)
 
 #endif
 
-id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte) 
-    /* You call this with the _dataByte fields set appropriately. 
-       Returns a note or nil.  The note which is
-       returned is autoreleased - just retain it is you want to keep it.
+/* You call this with the _dataByte fields set appropriately. 
+   Returns a note or nil.  The note which is
+   returned is autoreleased - just retain it is you want to keep it.
 
-       ptr->chan is set as follows: If the note represents a
-       midi 'channel voice message', ptr->chan is the channel.
-       Otherwise, if the note represents a midi 'system
-       message' or 'channel mode message', ptr->chan is set to _MK_MIDISYS.
-       In the case of 'channel mode messages', the basic channel is represented
-       by a parameter in the note.
-       
-       The conversion from MIDI to musickit semantics is performed as
-       follows: Notetags are generated for all notes with key numbers (i.e.
-       noteOn, noteOff, and key pressure). Multiple noteOns on the same key 
-       number/chan (without intervening noteOffs) are assigned different 
-       noteTags. Poly key pressure always goes to the most recently sounding 
-       note on a given keyNum/chan. 
+   ptr->chan is set as follows: If the note represents a
+   midi 'channel voice message', ptr->chan is the channel.
+   Otherwise, if the note represents a midi 'system
+   message' or 'channel mode message', ptr->chan is set to _MK_MIDISYS.
+   In the case of 'channel mode messages', the basic channel is represented
+   by a parameter in the note.
+   
+   The conversion from MIDI to musickit semantics is performed as
+   follows: Notetags are generated for all notes with key numbers (i.e.
+   noteOn, noteOff, and key pressure). Multiple noteOns on the same key 
+   number/chan (without intervening noteOffs) are assigned different 
+   noteTags. Poly key pressure always goes to the most recently sounding 
+   note on a given keyNum/chan. 
 
-       Extraneous noteOffs are filtered out. */
-{
-
-    
-#   define KITCHAN(_x) ((MIDI_MAXCHAN & _x)+1)
-#   define NOTETAG(_chan,_keyNum) (ptr->_noteTags[_chan-1] + _keyNum)
+   Extraneous noteOffs are filtered out. 
+ */
+MKNote *_MKMidiToMusicKit(_MKMidiInStruct *ptr, unsigned statusByte)
+{    
+#define KITCHAN(_x) ((MIDI_MAXCHAN & _x)+1)
+#define NOTETAG(_chan,_keyNum) (ptr->_noteTags[_chan-1] + _keyNum)
       
     MKNote *aNote;                   /* The note. */
     int keyNum = 0; /* Init to shut up compiler warning */
@@ -245,39 +218,35 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	ptr->chan = _MK_MIDISYS; 	
 	switch (statusByte) { 	 
 	  case MIDI_SONGPOS: 	 
-	    [aNote setPar:MK_songPosition toInt: 	 
-	     cv14(ptr->_dataByte1, ptr->_dataByte2)];
+	    [aNote setPar: MK_songPosition toInt: cv14(ptr->_dataByte1, ptr->_dataByte2)];
 	    break; 	 
 	  case MIDI_TIMECODEQUARTER:
-	    [aNote setPar:MK_timeCodeQ toInt:ptr->_dataByte1]; 	 
+	    [aNote setPar: MK_timeCodeQ toInt: ptr->_dataByte1]; 	 
 	    break; 	 
 	  case MIDI_SONGSEL: 	 
-	    [aNote setPar:MK_songSelect toInt:ptr->_dataByte1]; 	 
+	    [aNote setPar: MK_songSelect toInt: ptr->_dataByte1]; 	 
 	    break; 	 
 	  case MIDI_TUNEREQ:
-	    [aNote setPar:MK_tuneRequest toInt:1];
+	    [aNote setPar: MK_tuneRequest toInt: 1];
 	    break; 	 
 	  default: 	 /* It's a system real time message */
-	    [aNote setPar:MK_sysRealTime toInt:
-	     (INT(MK_sysClock) + statusByte -  MIDI_CLOCK)];
+	    [aNote setPar: MK_sysRealTime toInt: (INT(MK_sysClock) + statusByte -  MIDI_CLOCK)];
 	    break; 	
 	} 
 	break;
       case MIDI_CHANMODE: /* Can be a controller change as well. */ 	
 	switch (MIDI_DATA(ptr->_dataByte1)) { 	  
 	  case MIDI_LOCALCONTROL: 	    
-	    [aNote setPar:MK_chanMode toInt:
- 	     ((ptr->_dataByte2) ? MK_localControlModeOn : 
-	      MK_localControlModeOff)]; 	    
-	    [aNote setPar:MK_basicChan toInt:KITCHAN(statusByte)];
+	    [aNote setPar: MK_chanMode toInt: ((ptr->_dataByte2) ? MK_localControlModeOn : MK_localControlModeOff)]; 	    
+	    [aNote setPar: MK_basicChan toInt: KITCHAN(statusByte)];
  	    ptr->chan = _MK_MIDISYS; 	    
 	    break; 	  
 	  case MIDI_RESETCONTROLLERS:
 	    ptr->chan = _MK_MIDISYS; 	    
-	    [aNote setPar:MK_chanMode toInt:MK_resetControllers];
+	    [aNote setPar: MK_chanMode toInt: MK_resetControllers];
 	    break;
 	  case MIDI_MONO: 	  
-	    [aNote setPar:MK_monoChans toInt:ptr->_dataByte2]; 
+	    [aNote setPar: MK_monoChans toInt: ptr->_dataByte2]; 
 	    /* No break */
 	  case MIDI_OMNION: 	  
 	  case MIDI_ALLNOTESOFF: 	  
