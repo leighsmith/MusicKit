@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.40  2001/08/07 16:20:05  leighsmith
+  Added first draft of encode/decode methods, typed _pIn/_pOut
+
   Revision 1.39  2001/07/05 22:59:04  leighsmith
   commented out debugging, corrected typing of return parameters
 
@@ -262,8 +265,8 @@ Modification history:
 
 @implementation MKMidi
 
-#define MIDIINPTR(midiobj) ((_MKMidiInStruct *)((MKMidi *)(midiobj))->_pIn)
-#define MIDIOUTPTR(midiobj) ((_MKMidiOutStruct *)(midiobj)->_pOut)
+#define MIDIINPTR(midiobj) (((MKMidi *)(midiobj))->_pIn)
+#define MIDIOUTPTR(midiobj) ((midiobj)->_pOut)
 
 #define INPUTENABLED(_x) ((_x) != MKMidiOutputOnly)
 #define OUTPUTENABLED(_x) ((_x) != MKMidiInputOnly)
@@ -309,6 +312,8 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 
 #define NO_UNIT (-1)
 
+#define VERSION1 1
+
 // class variables
 static int addedPortsCount = 0;
 static NSMutableDictionary *portTable = nil;
@@ -322,6 +327,65 @@ static double mtcTimeOffset = 0;
 static BOOL tearDownMTC(MKMidi *self);
 static BOOL setUpMTC(MKMidi *self);
 void handleCallBack(void *midiObj);
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+  /* TYPE: Archiving; Writes object.
+     You never send this message directly.  
+     Archives the note senders and receivers, device and host names, the ports used as handles
+     for communication to the performance framework, conductors, timing, I/O mode, queue sizes, status etc.
+     */
+{
+    [aCoder encodeObject: midiDevName];
+    [aCoder encodeObject: hostname];
+    [aCoder encodeObject: noteSenders];
+    [aCoder encodeObject: noteReceivers];
+
+    [aCoder encodeConditionalObject: devicePort];
+    [aCoder encodeConditionalObject: ownerPort];
+    [aCoder encodeConditionalObject: recvPort];
+    [aCoder encodeConditionalObject: queuePort];
+    [aCoder encodeConditionalObject: conductor];
+    [aCoder encodeConditionalObject: synchConductor];
+    [aCoder encodeConditionalObject: exceptionPort];
+    [aCoder encodeConditionalObject: alarmPort];
+    [aCoder encodeConditionalObject: mtcMidiObj];
+
+    [aCoder encodeValuesOfObjCTypes: "ddcccccc", &localDeltaT, &_timeOffset, &useInputTimeStamps,
+        &outputIsTimed, &ioMode, &deviceStatus, &isOwner, &mergeInput];
+    [aCoder encodeValuesOfObjCTypes: "iidiccI", &unit, &queueSize, &alarmTime,
+        &intAlarmTime, &alarmTimeValid, &alarmPending, &_ignoreBits];
+    NSLog(@"encodeWithCoder: queueSize = %d\n", queueSize);
+
+    //_MKMidiInStruct *_pIn;                  // TODO perhaps we can get away without archiving
+    //_MKMidiOutStruct *_pOut;                // TODO perhaps we can get away without archiving
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if ([aDecoder versionForClassName: @"MKMidi"] == VERSION1) {
+        midiDevName = [[aDecoder decodeObject] retain];
+        hostname = [[aDecoder decodeObject] retain];
+        noteSenders = [[aDecoder decodeObject] retain];
+        noteReceivers = [[aDecoder decodeObject] retain];
+        
+        devicePort = [[aDecoder decodeObject] retain];
+        ownerPort = [[aDecoder decodeObject] retain];
+        recvPort = [[aDecoder decodeObject] retain];
+        queuePort = [[aDecoder decodeObject] retain];
+        conductor = [[aDecoder decodeObject] retain];
+        synchConductor = [[aDecoder decodeObject] retain];
+        exceptionPort = [[aDecoder decodeObject] retain];
+        alarmPort = [[aDecoder decodeObject] retain];
+        mtcMidiObj = [[aDecoder decodeObject] retain];
+
+	[aDecoder decodeValuesOfObjCTypes:"ddcccccc", &localDeltaT, &_timeOffset, &useInputTimeStamps,
+            &outputIsTimed, &ioMode, &deviceStatus, &isOwner, &mergeInput];
+	[aDecoder decodeValuesOfObjCTypes:"iidiccI", &unit, &queueSize, &alarmTime,
+            &intAlarmTime, &alarmTimeValid, &alarmPending, &_ignoreBits];
+        NSLog(@"initWithCoder: queueSize = %d\n", queueSize);
+    }
+    return self;
+}
 
 NSString *midiDriverErrorString(int errorCode)
 {
@@ -1260,6 +1324,10 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 + (void) initialize
 {
     NSDictionary *MKMIDIDefaults;
+
+    if (self != [MKMidi class])
+        return;
+    [MKMidi setVersion: VERSION1]; //sb: suggested by Stone conversion guide
 
     portTable = [NSMutableDictionary dictionary];
     [portTable retain];
