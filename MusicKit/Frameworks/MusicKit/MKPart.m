@@ -956,8 +956,12 @@ static void removeNote(MKPart *self, MKNote *aNote)
 // Return the time of the first note.
 - (double) earliestNoteTime
 {
-    MKNote *earliestNote = [self->notes objectAtIndex: 0];
-    return [earliestNote timeTag];
+    if([notes count] > 0) {
+	MKNote *earliestNote = [notes objectAtIndex: 0];
+	return [earliestNote timeTag];	
+    }
+    else
+	return 0.0;
 }
 
 /* Querying --------------------------------------------------- */
