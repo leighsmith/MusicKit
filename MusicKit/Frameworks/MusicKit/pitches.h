@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 17:52:23  sbrandon
+  - commented out cruft after endif
+
   Revision 1.2  1999/07/29 01:26:16  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -257,7 +260,7 @@ Modification history:
 #define gf9 MKKeyNumToFreq(fs9k)
 #define g9 MKKeyNumToFreq(g9k)
 
-#endif PITCHES_H
+#endif /* PITCHES_H */
 
 
 
