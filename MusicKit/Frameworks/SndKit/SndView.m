@@ -507,8 +507,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     graphicsContext = [NSGraphicsContext currentContext];
     ctx = [graphicsContext graphicsPort];
-    CGSetRGBStrokeColor(ctx, 1,0,0,1);
-    CGSetLineWidth(ctx, 2.0);
+    CGContextSetRGBStrokeColor(ctx, 1,0,0,1);
+    CGContextSetLineWidth(ctx, 2.0);
 
     
 #endif
@@ -584,7 +584,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     PSsetlinewidth(0.0);//:ps:
 #else
     {
-        CGSetLineWidth(ctx, 1);
+        CGContextSetLineWidth(ctx, 1);
     }
 #endif
 
@@ -815,7 +815,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
   #endif
 #else
 //QUARTZ_RENDERING
-    CGNewPath(ctx);
+    CGContextBeginPath(ctx);
     if (displayMode == NX_SOUNDVIEW_WAVE) {
         float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
         float min1 = cacheMinArray[0] * ampScaler + halfHeight;
@@ -823,8 +823,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         for (i = startX;i<endX;i++) {
             float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
             float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
-            CGMoveTo(ctx,i+0.5, max1);
-            CGLineTo(ctx,i+0.5, min1);
+            CGContextMoveToPoint(ctx, i+0.5, max1);
+            CGContextAddLineToPoint(ctx, i+0.5, min1);
             if (i < endX) {/* still one more cached point */
                 if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
                     || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
@@ -833,28 +833,29 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                     continue;
                 }
                 /* so we draw line from appropriate end, to start of next line */
-                if (min2 > max1 && max1 != min1) CGMoveTo(ctx,i+0.5, max1); /*reverse to top if necessary */
-                CGLineTo(ctx,i+1+0.5, (min2 > max1) ? min2 : max2);
+                if (min2 > max1 && max1 != min1)
+                    CGContextMoveToPoint(ctx, i+0.5, max1); /*reverse to top if necessary */
+                CGContextAddLineToPoint(ctx, i+1+0.5, (min2 > max1) ? min2 : max2);
                 max1 = max2; min1 = min2;
             }
         }
     }
     else {
-        CGMoveTo(ctx,startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
+        CGContextMoveToPoint(ctx, startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
         for (i = startX;i<endX;i++) {
-            CGLineTo(ctx,i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
+            CGContextAddLineToPoint(ctx, i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
         }
-        CGMoveTo(ctx,startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
+        CGContextMoveToPoint(ctx, startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
         for (i = startX;i<endX;i++) {
-            CGLineTo(ctx,i+0.5, cacheMinArray[i - startX]* ampScaler + halfHeight);
+            CGContextAddLineToPoint(ctx, i+0.5, cacheMinArray[i - startX]* ampScaler + halfHeight);
         }
-}
-[[NSColor redColor] set];
-CGStroke(ctx);
+    }
+    [[NSColor redColor] set];
+    CGContextStrokePath(ctx);
 
 #endif
 #ifdef DO_TIMING
-[t4 leave];
+            [t4 leave];
         }
         printf("Timing: walltime %g apptime %g PStime %g\n",[t4 cumWallTime],[t4 cumAppTime],[t4 cumPSTime]);
 #endif
@@ -881,7 +882,7 @@ CGStroke(ctx);
 #ifndef QUARTZ_RENDERING
         PSmoveto((int)j + 0.5, theValue);
 #else
-        CGMoveTo(ctx, (int)j + 0.5, theValue);
+        CGContextMoveToPoint(ctx, (int) j + 0.5, theValue);
 #endif
         while (i <= myLast) {
             if (c1 >= m1) theData = getDataAddresses(i,
@@ -899,11 +900,11 @@ CGStroke(ctx);
                 PSrmoveto(0,3);
             }
 #else
-            CGLineTo(ctx,(int)j+0.5, theValue);
+            CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue);
             if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
-                CGRMoveTo(ctx,0,3);
-                CGRLineTo(ctx,0,-6);
-                CGRMoveTo(ctx,0,3);
+                CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
+                CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue-3);
+                CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
             }
 
 #endif
@@ -914,7 +915,7 @@ CGStroke(ctx);
 #ifndef QUARTZ_RENDERING
         PSstroke();
 #else
-        CGStroke(ctx);
+        CGContextStrokePath(ctx);
 #endif
     }
     free(cacheMaxArray);
@@ -1672,7 +1673,7 @@ char *SndSoundError(int err);
                 graphicsContext = [NSGraphicsContext currentContext];
                 ctx = [graphicsContext graphicsPort];
 
-                CGSetGrayFillColor(ctx, 0.1, 1.0);
+                CGContextSetGrayFillColor(ctx, 0.1, 1.0);
             }
 #endif
             NSRectFill(zapRect);

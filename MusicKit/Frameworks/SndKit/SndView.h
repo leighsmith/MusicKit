@@ -22,9 +22,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #endif
 
 #ifdef QUARTZ_RENDERING
-  #import <CoreGraphics/CGContext.h>
-//  #import <CoreGraphics/CGTypes.h>
-//  #import <CoreGraphics/CGGraphics.h>
+#import <CoreGraphics/CoreGraphics.h>
 #endif
 
 //#import <SndKit/Timing.h>
