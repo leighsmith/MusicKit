@@ -89,19 +89,11 @@
 		};
 		014B4C26FED5DBD9CFED3B93 = {
 			children = (
-				014B4C27FED5DBD9CFED3B93,
-				014B4C28FED5DBD9CFED3B93,
 				014B4C29FED5DBD9CFED3B93,
-				014B4C2AFED5DBD9CFED3B93,
+				014B4C28FED5DBD9CFED3B93,
 			);
 			isa = PBXVariantGroup;
 			name = MultipleSoundPlayer.nib;
-			refType = 4;
-		};
-		014B4C27FED5DBD9CFED3B93 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/MultipleSoundPlayer.nib;
 			refType = 4;
 		};
 		014B4C28FED5DBD9CFED3B93 = {
@@ -114,12 +106,6 @@
 			isa = PBXFileReference;
 			name = "English - macos";
 			path = "English.lproj/MultipleSoundPlayer-macos.nib";
-			refType = 4;
-		};
-		014B4C2AFED5DBD9CFED3B93 = {
-			isa = PBXFileReference;
-			name = "English - macintosh";
-			path = "English.lproj/MultipleSoundPlayer-macintosh.nib";
 			refType = 4;
 		};
 		014B4C2BFED5DBD9CFED3B93 = {
@@ -231,11 +217,11 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>org.musickit.MultipleSoundPlayer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>Multiple Sound Player</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -247,7 +233,7 @@
 	<key>NSExtensions</key>
 	<dict/>
 	<key>NSMainNibFile</key>
-	<string>MultipleSoundPlayer</string>
+	<string>MultipleSoundPlayer-macos</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
