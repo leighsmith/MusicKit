@@ -17,7 +17,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkvertuple "5.5.0">
+<!entity mkvertuple "5.5.1">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
 <!entity mkcvsweb "http://sourceforge.net/cvs/?group_id=9881">
@@ -30,11 +30,11 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity gsbasevertuple "1.8.1">
 <!entity gsguivertuple "0.8.5">
 <!-- Libraries used -->
-<!entity libsndfileweb "http://www.mega-nerd.com/libsndfile/">
-<!entity libsndfilevertuple "1.0.10">
-<!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile/">
-<!entity hipvertuple "1.0">
-<!entity hipdownload "http://icepick.info/projects/libmp3hip/libmp3hip-0.4pre1.tar.gz">
+<!entity libsndfileweb "http://www.mega-nerd.com/libsndfile">
+<!entity libsndfilevertuple "1.0.11">
+<!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile">
+<!entity hipvertuple "0.4pre1">
+<!entity hipdownload "http://icepick.info/projects/libmp3hip">
 <!entity lameweb "http://www.sourceforge.net/projects/lame">
 <!entity lamevertuple "3.93.1">
 <!entity lamedownload "http://prdownloads.sourceforge.net/lame">
@@ -1476,7 +1476,7 @@ server.
 Install the library using:
                 <informalexample>
                   <screen>
-tar xzvf libshout-&libshoutvertuple;
+tar xzvf libshout-&libshoutvertuple;.tar.gz
 cd libshout-&libshoutvertuple;
 sh ./configure --without-python --disable-dependency-tracking
 make
@@ -1537,7 +1537,7 @@ sudo make install
 	</varlistentry>
 	<varlistentry id=libmp3hip>
 	  <term>
-            <ulink url="&hipdownload;/hip-&hipvertuple;.tar.gz">hip-&hipvertuple;.tar.gz</ulink>. Status:
+            <ulink url="&hipdownload;/libmp3hip-&hipvertuple;.tar.gz">libmp3hip-&hipvertuple;.tar.gz</ulink>. Status:
             optional - disables
             <classname>SndMP3</classname> if omitted.
             </term>
@@ -1550,8 +1550,8 @@ project provides the <acronym>MP3</acronym> decoding
 Install the library using:
                 <informalexample>
                   <screen>
-tar xzvf hip-&hipvertuple;
-cd hip-&hipvertuple;
+tar xzvf libmp3hip-&hipvertuple;.tar.gz
+cd libmp3hip-&hipvertuple;
 sh ./configure --without-python --disable-dependency-tracking
 make
 sudo make install
@@ -1811,8 +1811,8 @@ sudo make install
 
       <para>
 There are a couple of subtle variations to this. On GNUstep systems,
-<command>make</command> will build the MusicKit sources as expected. On
-<productname>MacOS X</productname>, to benefit from the
+<command>make</command> will build the MusicKit sources as
+expected. On <productname>MacOS X</productname>, to benefit from the
 <productname>Xcode</productname> <acronym>IDE</acronym> (the
 <acronym>IDE</acronym>, plus zero-linking), <command>make</command>
 will just run the <command>xcodebuild</command> command line tool
@@ -1821,8 +1821,8 @@ which does the actual building using the
 <command>configure</command> determined some libraries were
 unavailable, they will be omitted when <command>xcodebuild</command>
 is run. Since <command>xcodebuild install</command> builds and then
-installs, the <command>sudo make install</command> suffices, a preceding
-<command>make</command> is unnecessary.
+installs, the <command>sudo make install</command> suffices, typing a
+preceding <command>make</command> is not actually necessary.
 </para>
 
       <para>
@@ -2183,17 +2183,25 @@ Interactively adjust the frequency of a sine wave.
   <sect1 id="works">
     <title>What works?</title>
     <para>
-The frameworks have been exercised fairly extensively and seem quite
-stable. <acronym>MIDI</acronym> recording and playback of scores and
-computed parts works on all supported platforms. The application
-<application>ScorePlayer</application>, the examples
-<application>MidiFilePlayback</application> and
+The frameworks (SndKit, MusicKit) have been exercised fairly
+extensively and are quite stable.
+</para>
+    <para>
+<acronym>MIDI</acronym> recording
+and playback of scores and computed parts works on all supported
+platforms. The application <application>ScorePlayer</application>, the
+examples <application>MidiFilePlayback</application> and
 <command>playscorefilemidi</command>, and the utility
 <command>playscore</command> demonstrate these capabilities.
 </para>
 
-
-
+    <para>
+Sound recording and playback is also
+stable. The applications <application>Spectro</application> and 
+<application>TwoWaves</application>, and the commands
+<command>playsnd</command>, <command>recsnd</command> demonstrate
+Sound recording/performance.
+</para>
 
   </sect1>
 
