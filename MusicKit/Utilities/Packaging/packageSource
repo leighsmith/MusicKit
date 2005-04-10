@@ -11,11 +11,25 @@
 DISTNAME=MusicKit
 DISTCHECKEDOUTSRCLOC=/tmp/MKSRC
 # This allows us to have a different default CVSROOT
-MKCVSROOT=:ext:leighsmith@cvs.musickit.sourceforge.net:/cvsroot/musickit
+MKCVSROOT=:ext:leighsmith@cvs.sourceforge.net:/cvsroot/musickit
 # Salt to taste:
 TAR=gnutar
 CHGLOGGEN=cvs2cl
 TARLOC=/tmp
+
+# We can't generate the MusicKit_README.pdf from the Makefile in the checkout
+# source directory, since we don't actually run configure. This is
+# problematic however, since that then requires us to use another
+# version in a different location which may have different source.
+# So we compromise and make the creation and installation of
+# documentation files a necessary prerequisite for the build process, rather
+# than triggering it.
+# We set where the Documentation makefile build will put the README
+# in order to copy it from there into the source distribution directory.
+COPYREADMEFROM=/tmp/mkpdf/MusicKit_README.pdf
+
+echo "Make sure you've already done this:"
+echo "make $COPYREADMEFROM"
 
 if [ x_$1 = x_ ]; then
     echo "source shipping script for the ${DISTNAME} projects"
@@ -33,12 +47,6 @@ if [ $DISTNAME = MusicKit ]; then
 fi
 
 CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
-
-# This is a kludge, we need to return back to where we started
-# packageSources from since packageDocumentation expects the SndKit to
-# be sitting next to the MusicKit directory. Once SndKit is integrated
-# within the MusicKit, we should remove this and just operate from
-STARTDIR=$DISTCHECKOUTSRCLOC/$DISTNAME
 
 # Checkout the source tree
 echo Checking out $CVSTAG to $DISTCHECKEDOUTSRCLOC
@@ -61,6 +69,10 @@ if [ -f $symlinks ]; then
     rm $symlinks
 fi
 
+# Run autoconf to generate configure
+cd $DISTCHECKEDOUTSRCLOC/$DISTNAME
+autoconf
+
 # build a ChangeLog with spaces between filenames and comments, 
 # collected to half-day window, incorporating tags.
 cd $DISTCHECKEDOUTSRCLOC/$DISTNAME
@@ -70,7 +82,7 @@ cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
 
 # This is a representative file, it should change more or less at the
 # end of a project.
-LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
+LASTFILETOCHANGE=$DISTNAME.xcode/project.pbxproj
 # LASTFILETOCHANGE=Documentation/MusicKit_README.sgml
 
 # If a previous release was not supplied on the command line determine
@@ -92,14 +104,13 @@ echo Logging changes after $PREVCVSTAG to $CVSTAG, from $PREVRELEASEDATE to now.
 # This is the means to generate what we've done since last release.
 $CHGLOGGEN --no-wrap --separate-header --window 86400 --file $TARLOC/${DISTNAME}_ChangeLog_${RELEASE} --log-opts "-d\>$PREVRELEASEDATE"
 
-# Create a readily readable PDF version of the MusicKit_README.sgml file.
-# Return to where we started, expecting SndKit source to be
-# sitting next to the MusicKit, for headerdoc.
-pushd $STARTDIR
-Utilities/Packaging/packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
-popd
+# Copy in a readable PDF version of the MusicKit_README.sgml file.
+if [ ${COPYREADMEFROM}_x != _x ]; then
+    cp ${COPYREADMEFROM} $DISTCHECKEDOUTSRCLOC/$DISTNAME
+fi
 
-# remove CVS directories (they will be different for each user if checking out direct from the repository).
+# remove CVS directories since they will be different for each user
+# if checking out direct from the repository.
 find $DISTCHECKEDOUTSRCLOC -name CVS -type d -exec rm -r {} \; -prune
 
 cd $DISTCHECKEDOUTSRCLOC
@@ -112,6 +123,13 @@ $TAR czf $PACKAGEFILE ${DISTNAME}-${RELEASE}
 echo Archive generated at $PACKAGEFILE
 echo ChangeLog generated at $TARLOC/${DISTNAME}_ChangeLog
 echo ChangeLog since $PREVCVSTAG generated at $TARLOC/${DISTNAME}_ChangeLog_${RELEASE}
+
+# This is what we need to do for building doco
+# so we should just preserve the changelog.
+# echo cd to working copy Documentation
+# echo make CHANGELOG=$TARLOC/${DISTNAME}_ChangeLog
+#
+
 
 # blow away the checked out source.
 rm -r $DISTCHECKEDOUTSRCLOC
