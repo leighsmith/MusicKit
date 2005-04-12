@@ -103,7 +103,7 @@ SndSwappedDouble SndSwapHostToSwappedDouble(double aDouble)
     return mySwappedDouble.theSwappedDouble;
 }
 
-char* SndSwap_Convert16BitNative2LittleEndian(unsigned short si)
+unsigned char *SndSwap_Convert16BitNative2LittleEndian(unsigned short si)
 {
     static unsigned char pch[2];
     
@@ -112,7 +112,7 @@ char* SndSwap_Convert16BitNative2LittleEndian(unsigned short si)
     return pch;
 }
 
-char* SndSwap_Convert32BitNative2LittleEndian(unsigned long li)
+unsigned char *SndSwap_Convert32BitNative2LittleEndian(unsigned long li)
 {
     static unsigned char pch[4];
     
