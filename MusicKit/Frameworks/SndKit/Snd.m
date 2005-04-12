@@ -79,7 +79,7 @@
   return [[SndTable defaultSndTable] findSoundFor: aName];
 }
 
-+ addName: (NSString *) aname sound: aSnd
++ addName: (NSString *) aname sound: (Snd *) aSnd
 {
   return [[SndTable defaultSndTable] addName: aname sound:aSnd];
 }
@@ -970,7 +970,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 }
 
 /* default implementation. Provided for subclassing */
-- soundBeingProcessed
+- (Snd *) soundBeingProcessed
 {
     return self;
 }
