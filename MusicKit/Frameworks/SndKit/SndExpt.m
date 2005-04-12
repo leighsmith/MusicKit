@@ -50,14 +50,14 @@
 
 - (void) dealloc
 {
-    if (cachedBuffer)
 	[cachedBuffer release];
-    if (cacheLock)
+	cachedBuffer = nil;
 	[cacheLock release];
-    if (readAheadBuffer)
+	cacheLock = nil;
 	[readAheadBuffer release];
-    if (readAheadLock)
+	readAheadBuffer = nil;
 	[readAheadLock release];
+	readAheadLock = nil;
     [super dealloc];
 }
 
@@ -353,44 +353,44 @@ static SndExptAudioBufferServer *defaultServer = nil;
 {
     Snd *soundChunk = [[Snd alloc] init];
     int err = [soundChunk readSoundfile: theFileName 
-			     startFrame: range.location
-			     frameCount: range.length];
+							 startFrame: range.location
+			                 frameCount: range.length];
     
     if (err == SND_ERR_NONE) {
-	NSRange wholeSound = { 0, range.length };
-	SndAudioBuffer *aBuffer = [SndAudioBuffer audioBufferWithSnd: soundChunk inRange: wholeSound];
+		NSRange wholeSound = { 0, range.length };
+		SndAudioBuffer *aBuffer = [SndAudioBuffer audioBufferWithSnd: soundChunk inRange: wholeSound];
 
-	[aBuffer convertToSampleFormat: SND_FORMAT_FLOAT];
-	return aBuffer;
+		[aBuffer convertToSampleFormat: SND_FORMAT_FLOAT];
+		return aBuffer;
     }
     else
-	return nil;
+		return nil;
 }
 
 - init
 {
     self = [super init];
     if (self) {
-	bGo = TRUE;
-	pendingJobsArrayLock = [NSConditionLock new];
-	pendingJobsArray     = [NSMutableArray  new];
-	[NSThread detachNewThreadSelector: @selector(serverThread)
-				 toTarget: self
-			       withObject: nil];
+		bGo = TRUE;
+		pendingJobsArrayLock = [NSConditionLock new];
+		pendingJobsArray     = [NSMutableArray  new];
+		[NSThread detachNewThreadSelector: @selector(serverThread)
+					             toTarget: self
+					           withObject: nil];
     }
     return self;
 }
 
 - (void) dealloc
 {
-    if (pendingJobsArrayLock != nil)
 	[pendingJobsArrayLock release];
-    if (pendingJobsArray != nil)
+	pendingJobsArrayLock = nil;
 	[pendingJobsArray release];
+	pendingJobsArray = nil;
+	[super dealloc];
 }
 
-
-- addJob: (SndExptAudioBufferServerJob*) aJob
+- addJob: (SndExptAudioBufferServerJob *) aJob
 {
     [pendingJobsArrayLock lock];
     [pendingJobsArray addObject: aJob];
@@ -401,7 +401,7 @@ static SndExptAudioBufferServer *defaultServer = nil;
     return self;
 }
 
-- (void) doJob: (SndExptAudioBufferServerJob*) aJob
+- (void) doJob: (SndExptAudioBufferServerJob *) aJob
 {
     SndExpt *snd = [aJob snd];
     NSRange r = [aJob range];
@@ -410,13 +410,13 @@ static SndExptAudioBufferServer *defaultServer = nil;
     SndAudioBuffer *aBuffer = nil;
     
     if (r.location + r.length > [snd lengthInSampleFrames])
-	r.length = lengthInSampleFrames - r.location;
+		r.length = lengthInSampleFrames - r.location;
     
     aBuffer = [SndExptAudioBufferServer readRange: [aJob range]
-				      ofSoundFile: [snd filename]];
+									  ofSoundFile: [snd filename]];
     
     if ([aBuffer lengthInSampleFrames] < requestedLength)
-	[aBuffer setLengthInSampleFrames: requestedLength];
+		[aBuffer setLengthInSampleFrames: requestedLength];
     
     [snd receiveRequestedBuffer: aBuffer];
     [aJob release];
@@ -428,26 +428,26 @@ static SndExptAudioBufferServer *defaultServer = nil;
 - (void) serverThread
 {
     while (bGo) {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	NSDate *date = [NSDate dateWithTimeIntervalSinceNow: 1.0];
-	
-	if (![pendingJobsArrayLock lockWhenCondition: SERVER_HAS_JOBS beforeDate: date])
-	    continue;
-	
-	if ([pendingJobsArray count] == 0)
-	    continue;
-	
-	activeJob = [[pendingJobsArray objectAtIndex: 0] retain];
-	[pendingJobsArray removeObject: activeJob];
-	
-	if ([pendingJobsArray count] > 0)
-	    [pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
-	else
-	    [pendingJobsArrayLock unlockWithCondition: SERVER_NO_JOBS];
-	
-	if (activeJob != nil)
-	    [self doJob: activeJob];
-	[pool release];
+		NSAutoreleasePool *pool = [NSAutoreleasePool new];
+		NSDate *date = [NSDate dateWithTimeIntervalSinceNow: 1.0];
+		
+		if (![pendingJobsArrayLock lockWhenCondition: SERVER_HAS_JOBS beforeDate: date])
+			continue;
+		
+		if ([pendingJobsArray count] == 0)
+			continue;
+		
+		activeJob = [[pendingJobsArray objectAtIndex: 0] retain];
+		[pendingJobsArray removeObject: activeJob];
+		
+		if ([pendingJobsArray count] > 0)
+			[pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
+		else
+			[pendingJobsArrayLock unlockWithCondition: SERVER_NO_JOBS];
+		
+		if (activeJob != nil)
+			[self doJob: activeJob];
+		[pool release];
     }
     [NSThread exit];
 }
@@ -464,9 +464,9 @@ static SndExptAudioBufferServer *defaultServer = nil;
 {
     self = [super init];
     if (self) {
-	clientSndExpt    = [sndExpt retain];
-	audioBufferRange = range;
-	audioBuffer      = nil;
+		clientSndExpt    = [sndExpt retain];
+		audioBufferRange = range;
+		audioBuffer      = nil;
     }
     return self;
 }
@@ -474,9 +474,10 @@ static SndExptAudioBufferServer *defaultServer = nil;
 - (void) dealloc
 {
     if (clientSndExpt)
-	[clientSndExpt release];
+		[clientSndExpt release];
     if (audioBuffer)
-	[audioBuffer release];
+		[audioBuffer release];
+	[super dealloc];
 }
 
 - (SndExpt*) snd            {  return [[clientSndExpt retain] autorelease];    }
