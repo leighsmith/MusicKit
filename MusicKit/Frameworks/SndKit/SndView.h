@@ -914,8 +914,14 @@ enum SndViewStereoMode {
 */
 - (void) willRecord: (id) sender;
 
+/*!
+  @method writeSelectionToPasteboard:types:
+  @abstract write the selected region of sound to the pasteboard.
+  @param thePasteboard The pasteboard to receive the sound region.
+  @param pboardTypes An array of ? sound formats?
+ */
 - (BOOL) writeSelectionToPasteboard: (NSPasteboard *) thePasteboard types: (NSArray *) pboardTypes;
-- (BOOL) writeSelectionToPasteboardNoProvide: thePasteboard types: (NSArray *) pboardTypes;
+- (BOOL) writeSelectionToPasteboardNoProvide: (NSPasteboard *) thePasteboard types: (NSArray *) pboardTypes;
 
 - (id) initWithCoder: (NSCoder *) aDecoder;
 - (void) encodeWithCoder: (NSCoder *) aCoder;
