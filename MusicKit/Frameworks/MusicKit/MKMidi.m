@@ -1454,11 +1454,24 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
     if ([self unitHasMTC]) 
         [synchConductor _setMTCSynch: nil];
     [self _setSynchConductor: nil];
+    // Debugging:
+#if 0
+    NSLog(@"disconnecting noteReceivers %@\n", noteReceivers);
+    id firstNoteReceiver = [noteReceivers objectAtIndex: 0];
+    NSLog(@"retain count of first noteReceiver %p is %d\n", firstNoteReceiver, [firstNoteReceiver retainCount]);
+#endif
     [noteReceivers makeObjectsPerformSelector: @selector(disconnect)];
-    // NSLog(@"noteSenders remaining after disconnecting noteReceivers %@\n", noteSenders);
+    
+#if 0
+    NSLog(@"noteSenders remaining after disconnecting noteReceivers %@\n", noteSenders);
+    MKNoteSender *firstNoteSender = [noteSenders objectAtIndex: 0];
+    id firstNoteSendersReceiver = [firstNoteSender->noteReceivers objectAtIndex: 0];
+    NSLog(@"retain count of first firstNoteSendersReceiver %@ is %d\n", firstNoteSendersReceiver, [firstNoteSendersReceiver retainCount]);
+#endif
     [noteSenders makeObjectsPerformSelector: @selector(disconnectAllReceivers)];
-
+    
     // Now we can release in the usual fashion.
+    // NSLog(@"releasing noteReceivers and noteSenders\n");
     [noteReceivers release];
     noteReceivers = nil;
     [noteSenders release];
@@ -1467,8 +1480,8 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 }
 /* Control of device */
 
+/* Returns MKDeviceStatus of receiver. */
 - (MKDeviceStatus) deviceStatus
-  /* Returns MKDeviceStatus of receiver. */
 {
     return deviceStatus;
 }
