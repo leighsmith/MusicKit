@@ -296,14 +296,13 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
   @method sendNote:atTime:
   @param  aNote is an MKNote instance.
   @param  beatsSinceStart is a double.
-  @result Returns <b>self</b>.
   @discussion Enqueues, with the MKConductor object described below, a request for
               <b>sendNote:</b><i>aNote</i> to be sent to <b>self</b> at time
               <i>beatsSinceStart</i>, measured in beats from the beginning of the
               MKConductor's performance.  If <i>beatsSinceStart</i> has already
               passed, the enqueued message is sent immediately.
               
-              The request is enqueued with<i></i> the object that's returned by
+              The request is enqueued with the object that's returned by
               <b>[</b><i>aNote</i> <b>conductor]</b>.  Normally - if the owner is a MKPerformer
               - this is the owner's MKConductor.  However, if the owner is a MKNoteFilter,
               the request is enqueued with the MKConductor of the MKPerformer (or MKMidi) that
@@ -312,26 +311,25 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
               
               See also: -<b>sendNote:</b>, -<b>sendNote:withDelay:</b>
 */
-- sendNote: (MKNote *) aNote atTime: (double) time; 
+- (void) sendNote: (MKNote *) aNote atTime: (double) time; 
 
 /*!
   @method sendNote:withDelay:
   @param  aNote is an MKNote instance.
-  @param  delayBeats is a double.
-  @result Returns <b>self</b>.
-  @discussion Enqueues, with the appropriate MKConductor, a request for
+  @param  delayBeats is a double, measuring beats from the time this message is received.
+  @discussion Enqueues with <i>aNote</i>'s MKConductor, a request for
               <b>sendNote:</b><i>aNote</i> to be sent to <b>self</b> after
               <i>delayBeats</i>.  See <b>sendNote:atTime:</b> for a description of
               the MKConductor that's used.  
               
               See also: -<b>sendNote:</b>, -<b>sendNote:atTime:</b>
 */
-- sendNote: (MKNote *) aNote withDelay: (double) delayTime; 
+- (void) sendNote: (MKNote *) aNote withDelay: (double) delayTime; 
 
 /*!
   @method sendNote:
   @param  aNote is an MKNote instance.
-  @result Returns <b>self</b>.
+  @result Returns self if successfully sent, nil if squelched.
   @discussion Sends the message <b>receiveNote:</b><i>aNote</i> to the
               MKNoteReceivers that are connected to the MKNoteSender.  If the
               MKNoteSender is squelched, the messages aren't sent.  Normally, this
