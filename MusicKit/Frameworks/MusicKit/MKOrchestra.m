@@ -131,8 +131,6 @@
 #import "_time.h"
 #import "PatchTemplatePrivate.h"
 #import "ConductorPrivate.h"
-#import "DSPSerialPortDevice.h"
-#import <stdio.h>               /* Contains FILE, etc. */
 
 /* FIXME Consider changing patch List and unitGeneratorStack to non-objc linked lists. */
 
@@ -745,10 +743,6 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc);
         name = [NSString stringWithFormat: @"MKDSPSerialPortDevice%d",orchIndex];
         s = [[NSUserDefaults standardUserDefaults] objectForKey: name];
     }
-    if (s)
-        if ([s length])
-            serialPortDevice = [[NSClassFromString(s) alloc] init];
-    /*sb: do I expect the device class, eg SSAD64x, to have been already loaded in? Hmmm. tests show it probably is */
     s = [[NSUserDefaults standardUserDefaults] objectForKey: @"MKOrchestraSoundOut"];
     if ([s isEqualToString: @"Host"] && ([self capabilities] & MK_hostSoundOut))
 	[self setHostSoundOut: YES];
@@ -1304,7 +1298,7 @@ associated with it exists.
 
 - (BOOL) isRealTime
 {
-    return serialSoundOut || hostSoundOut || soundIn;
+    return hostSoundOut || soundIn;
 }
 
 - setOutputSoundfile: (NSString *) file
@@ -1329,7 +1323,6 @@ associated with it exists.
 	return self;
     outputSoundfile = [file copy];
     hostSoundOut = NO;
-    serialSoundOut = NO;
     [self useDSP: YES];
     return self;
 }
@@ -1351,7 +1344,6 @@ associated with it exists.
     if (!aDelegate)
 	return self;
     hostSoundOut = NO;
-    serialSoundOut = NO;
     [self useDSP: YES];
     return self;
 }
@@ -1439,13 +1431,13 @@ associated with it exists.
     return [self setHostSoundOut: yesOrNo];
 }
 
+/* Controls whether sound is sent to the DACs. The default is YES. 
+It is not permissable to have an output soundfile and do sound-out at the
+ same time. Thus, sending sethostSoundOut: YES also sends 
+ setOutputSoundfile: NULL. 
+If the receiver is not closed, this message has no effect.
+*/
 - setHostSoundOut: (BOOL) yesOrNo
-    /* Controls whether sound is sent to the DACs. The default is YES. 
-    It is not permissable to have an output soundfile and do sound-out at the
-     same time. Thus, sending sethostSoundOut: YES also sends 
-     setOutputSoundfile: NULL and sets serialSoundOut to NO. 
-    If the receiver is not closed, this message has no effect.
-    */
 {
     if (deviceStatus != MK_devClosed)
 	return nil;
@@ -1453,7 +1445,6 @@ associated with it exists.
     if (hostSoundOut) {
 	[self setOutputSoundfile: nil];
 	[self setOutputSoundDelegate: nil];
-	serialSoundOut = NO;
     }
     [self useDSP: YES];
     return self;
@@ -1466,44 +1457,36 @@ associated with it exists.
 }
 
 - setSerialPortDevice: obj 
-    /* obj should follow serialPortDevice informal protocol */
 {
     if (!_nextCompatibleSerialPort)
 	return nil;
-    serialPortDevice = obj;
     return self;
 }
 
 - serialPortDevice
 {
-    return serialPortDevice;
+    return nil;
 }
 
+/* Controls whether sound is sent to the SSI port. The default is NO. 
+If the receiver is not closed, this message has no effect.
+Now disabled.
+*/
 - setSerialSoundOut: (BOOL) yesOrNo
-    /* Controls whether sound is sent to the SSI port. The default is NO. 
-    If the receiver is not closed, this message has no effect. Sending
- setSerialSoundOut: YES also sets hostSoundOut to NO.
-    */
 {
     if (deviceStatus != MK_devClosed)
 	return nil;
-    serialSoundOut = yesOrNo;
-    if (serialSoundOut) {
-	hostSoundOut = NO;
-	[self setOutputSoundfile: nil];
-	[self setOutputSoundDelegate: nil];
-    }
     [self useDSP: YES];
     return self;
 }
 
+/* Returns whether or not sound is being sent to the SSI port. Now always NO. */
 - (BOOL) serialSoundOut
-    /* Returns whether or not sound is being sent to the SSI port. */
 {
-    return serialSoundOut;
+    return NO;
 }
 
-- setSoundIn: (BOOL)yesOrNo
+- setSoundIn: (BOOL) yesOrNo
     /* Controls whether sound is sent to the SSI port. The default is NO. 
     If the receiver is not closed, this message has no effect.
     */
@@ -3602,8 +3585,6 @@ id factObj,beforeObj,afterObj;
 
 - (int) hardwareSupportedSamplingRates: (double **) arr 
 {
-    if (serialPortDevice && serialSoundOut)
-	return [serialPortDevice hardwareSupportedSamplingRates: arr];
     *arr = (double *) _MKMalloc(sizeof(double) * 1);
     (*arr)[0] = 44100;
     return 1;
@@ -3611,16 +3592,12 @@ id factObj,beforeObj,afterObj;
 
 - (BOOL) supportsSamplingRate: (double) rate
 {
-    if (serialPortDevice && serialSoundOut)
-	return [serialPortDevice supportsSamplingRate: rate];
-    else return EQU(rate, 44100.0) || EQU(rate, 22050.0);
+    return EQU(rate, 44100.0) || EQU(rate, 22050.0);
 }
 
 - (double) defaultSamplingRate
 {
-    if (serialPortDevice && serialSoundOut)
-	return [serialPortDevice defaultSamplingRate];
-    else return DEFAULTSRATE;
+    return DEFAULTSRATE;
 }
 
 - (unsigned) capabilities

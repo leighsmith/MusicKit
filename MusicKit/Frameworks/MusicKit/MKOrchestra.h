@@ -389,8 +389,7 @@ extern void MKSetPreemptDuration(double seconds);
     unsigned short orchIndex;
     char isTimed;    /* Determines whether DSP commands go out timed or not. */
     BOOL useDSP;     /* YES if running on an actual DSP (Default is YES) */
-    BOOL hostSoundOut;   /* YES if sound it going to the DACs. */
-    BOOL serialSoundOut;
+    BOOL hostSoundOut;   /* YES if sound is going to the DACs. */
     /*! @var soundIn Indicates if this orchestra will process incoming sound. */
     BOOL soundIn;
     BOOL isLoopOffChip; /* YES if loop has overflowed off chip. */
@@ -398,7 +397,6 @@ extern void MKSetPreemptDuration(double seconds);
     double localDeltaT; /* positive offset in seconds added to out-going
                            time-stamps */
     short onChipPatchPoints;
-    id serialPortDevice;
     int release;
     char version;
     NSString *monitorFileName;   /* NULL uses default monitor */
