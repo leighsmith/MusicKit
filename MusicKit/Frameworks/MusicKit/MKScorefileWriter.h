@@ -31,6 +31,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/04/15 04:18:25  leighsmith
+  Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
   Revision 1.5  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -137,12 +140,12 @@ or NoteReceiver) during a performance involving a MKScorefileWriter.
 
 /*!
   @method infoNoteForNoteReceiver:
-  @param  aNoteReceiver is an id.
-  @result Returns an id.
+  @param  aNoteReceiver is an MKNoteReceiver instance.
+  @result Returns an MKNote instance.
   @discussion Returns the info MKNote that's associated with an MKNoteReceiver
-              (as set through <b>setInfo:forNoteReceiver:</b>).
+              (as set through -<b>setInfo:forNoteReceiver:</b>).
 */
-- infoNoteForNoteReceiver:aNoteReceiver;
+- (MKNote *) infoNoteForNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
   @method initializeFile

@@ -480,7 +480,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
               
               See also: -<b>  isEmpty</b>,<b></b>-<b> noteCount</b>
 */
-- (BOOL) containsNote: aNote; 
+- (BOOL) containsNote: (MKNote *) aNote; 
 
 /*!
   @method hasSoundingNotes:

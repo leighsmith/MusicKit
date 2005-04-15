@@ -656,11 +656,11 @@ static void condInit()
 }
 
 - (void) dealloc
-  /* Freeing a conductor is not permitted. This message overrides the free 
-     capability. */
 {
+    /* LMS: In the past, freeing a conductor was not permitted. I'm keeping this error only so 
+    long as there hasn't been research to allow MKConductor instances to dealloc themselves. */
     [self doesNotRecognizeSelector:_cmd];
-    //return nil;
+    [super dealloc];
 }
 
 - _initialize

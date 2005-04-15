@@ -63,7 +63,7 @@ id MKGetPartClass(void)
     return [[MKGetPartClass() alloc] init];
 }
 
-+ part
++ (MKPart *) part
 {
     return [[[MKGetPartClass() alloc] init] autorelease]; 
 }

@@ -781,6 +781,7 @@ Returns self. */
     NSArray *orchestrasAllocatedOnDSPs = [dspNumToOrch allValues];
 
     [orchestrasAllocatedOnDSPs makeObjectsPerformSelector: @selector(release)];
+    [super dealloc];
 }
 
 /* Sends open to each orchestra object. Returns nil if one of the

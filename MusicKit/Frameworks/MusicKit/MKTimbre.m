@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2005/04/15 04:18:25  leighsmith
+  Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
   Revision 1.9  2004/12/06 18:27:37  leighsmith
   Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
 
@@ -442,10 +445,10 @@ description:"d"];
      any */
 {    return waveTableForFreq(self,freq);  }
 
--(MKWaveTable *)waveTableAt:(int)index
+- (MKWaveTable *) waveTableAt: (int) index
   /* Returns the MKWaveTable object corresponding to the specified freq, if 
      any */
-{    return waveTableForIndex(self,index); }
+{    return waveTableForIndex(self, index); }
 
 -(double)freqForWaveTable:(MKWaveTable *)obj
   /* Returns the MKWaveTable object corresponding to the specified freq, if 

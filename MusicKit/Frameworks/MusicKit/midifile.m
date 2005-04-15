@@ -22,6 +22,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2005/04/15 04:18:25  leighsmith
+  Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
   Revision 1.6  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -161,7 +164,7 @@ void *MKMIDIFileEndReading(void *p)
     free(IP->data);
     IP->data = NULL;
     free(IP);
-    IP = NULL; 
+    p = NULL; 
     return NULL;
 }
 

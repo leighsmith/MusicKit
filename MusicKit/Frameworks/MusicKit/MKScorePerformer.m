@@ -25,6 +25,9 @@
 /* Modification history:
 
    $Log$
+   Revision 1.11  2005/04/15 04:18:25  leighsmith
+   Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
    Revision 1.10  2002/01/29 16:33:16  sbrandon
    don't retain conductor in new copies of object (would create retain
    loop)
@@ -83,25 +86,25 @@
 #import "PartPerformerPrivate.h"
 #import "ScorePerformerPrivate.h"
 
-@implementation MKScorePerformer:NSObject
+@implementation MKScorePerformer
 
-+scorePerformer
++ (MKScorePerformer *) scorePerformer
 {
-    self = [MKScorePerformer allocWithZone:NSDefaultMallocZone()];
-    [self init];
-    return [self autorelease];
+    return [[[MKScorePerformer alloc] init] autorelease];
 }
 
--init
+- init
 {
-    [super init];
-    partPerformers = [[NSMutableArray alloc] init];
-    partPerformerClass = [MKPartPerformer class];
-    _deactivateMsgPtr = NULL;
-    duration = MK_ENDOFTIME;
-    lastTimeTag = MK_ENDOFTIME;
-    status = MK_inactive;
-    conductor = [MKConductor defaultConductor];
+    self = [super init];
+    if(self != nil) {
+	partPerformers = [[NSMutableArray alloc] init];
+	partPerformerClass = [MKPartPerformer class];
+	_deactivateMsgPtr = NULL;
+	duration = MK_ENDOFTIME;
+	lastTimeTag = MK_ENDOFTIME;
+	status = MK_inactive;
+	conductor = [MKConductor defaultConductor];
+    }
     return self;
 }
 
@@ -363,19 +366,22 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }		
 
-
--setDuration:(double) aDuration
-  /* Broadcast setDuration: to contained PartPerformers. */
+/* Broadcast setDuration: to contained MKPartPerformers. */
+- setDuration: (double) aDuration
 {
-    unsigned n = [partPerformers count], i;
-    for (i = 0; i < n; i++)
-        [[partPerformers objectAtIndex:i] setDuration:aDuration];
+    unsigned n = [partPerformers count];
+    unsigned int partPerformersIndex;
+    
+    for (partPerformersIndex = 0; partPerformersIndex < n; partPerformersIndex++) {
+	MKPartPerformer *performer = [partPerformers objectAtIndex: partPerformersIndex];
+        [performer setDuration: aDuration];
+    }
     duration = aDuration;
     return self;
 }		
 
 
--(double)timeShift 
+- (double) timeShift 
   /* TYPE: Accessing time
    * Returns the value of the receiver's timeShift variable.
    */
@@ -444,15 +450,16 @@ static void unsetPartPerformers(MKScorePerformer *self)
     [super dealloc];
 }
 
--setConductor:aConductor
-  /* Broadcasts setConductor: to contained PartPerformers. */
+/* Broadcasts setConductor: to contained MKPartPerformers. */
+- setConductor: (MKConductor *) aConductor
 {
-    if ( (conductor=aConductor) ==nil) 
-      aConductor=[MKConductor defaultConductor];
+    if ( (conductor=aConductor) == nil) 
+	aConductor=[MKConductor defaultConductor];
     if (status == MK_inactive)
-      conductor = aConductor;
-    else return nil;
-    [partPerformers makeObjectsPerformSelector:@selector(setConductor:) withObject:aConductor];
+	conductor = aConductor;
+    else
+	return nil;
+    [partPerformers makeObjectsPerformSelector: @selector(setConductor:) withObject: aConductor];
     return self;
 }
 

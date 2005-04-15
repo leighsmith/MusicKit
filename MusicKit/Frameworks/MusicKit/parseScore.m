@@ -2479,11 +2479,12 @@ static id getBinaryEnvelopeDecl(BOOL inHeader)
 static id getBinaryObjectDecl(BOOL inHeader)
 {
 #   define WILD 0    
-    id rtn;
+    id rtn = nil;
     id aClass;
     register int c;
+    
     if (!(aClass = _MK_FINDCLASS(getBinaryString(NO, inHeader))))
-      errorMsg(MK_sfCantFindClass,tokenBuf);
+	errorMsg(MK_sfCantFindClass, tokenBuf);
     /* The following cases are in case the guy wrote an env or wave out
        as a normal object. SPECIAL-WAVE-ENV-CASE. */
     /*
@@ -2491,37 +2492,37 @@ static id getBinaryObjectDecl(BOOL inHeader)
       Also, it is forbidden to write a MKNote, MKScore or MKPart as a parameter value
       since these may use ']' in their description.
       */
-    if (!strcmp("Envelope",tokenBuf)) {
+    if (!strcmp("Envelope", tokenBuf)) {
         return getBinaryEnvelopeDecl(inHeader);
     }
-    if ((!strcmp("MKPartials",tokenBuf)) ||
-        (!strcmp("Samples",tokenBuf))) {
+    if ((!strcmp("MKPartials", tokenBuf)) ||
+        (!strcmp("Samples", tokenBuf))) {
         return getBinaryWaveTableDecl(inHeader);
     }
     if (aClass) {
         rtn = [aClass new];
     }
-    if (!aClass || ![rtn respondsToSelector:@selector(readASCIIStream:)]) {
+    if (!aClass || ![rtn respondsToSelector: @selector(readASCIIStream:)]) {
         do {
             if (inHeader) {
-                c = (int)PPSTREAMGETC_INHEADER();
+                c = (int) PPSTREAMGETC_INHEADER();
                 CHECKEOS_INHEADER();
             }
             else {
-                c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+                c = (int) PPSTREAMGETC(); // sb: was NXGetc(parsePtr->_stream);
                 CHECKEOS();
             }
             if (lookahead == ']')
               break;
         } while (lookahead != ']');
-        errorMsg(MK_notScorefileObjectTypeErr,tokenBuf);
+        errorMsg(MK_notScorefileObjectTypeErr, tokenBuf);
         return getNullObject();
     }
-    [rtn readASCIIStream:scoreStream];
-    c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+    [rtn readASCIIStream: scoreStream];
+    c = (int) PPSTREAMGETC(); // sb: was NXGetc(parsePtr->_stream);
     CHECKEOS();
     if (c != ']')
-      error(MK_sfMissingStringErr,"]"); /* Fatal error */
+      error(MK_sfMissingStringErr, "]"); /* Fatal error */
     return rtn;
 }
 

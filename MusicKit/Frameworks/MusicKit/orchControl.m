@@ -529,14 +529,15 @@ to send open to an already opened, running or stopped MKOrchestra.
 		BOOL downSampleInput;
 		int inputSampleFrameW,inputSampleFrameR,inputChannelCount,inputChanOffset;
 		int inputInitialSkip;
-		int sbufs; /* "start buffs" -- number of buffs SSI input waits before
+		 /* "start buffs" -- number of buffs SSI input waits before
 		    * starting.  This is needed so that the driver doesn't 
 		    * underrun a lot on start-up. 
 		    */
-		inputSampleFrameW = ((inputChanOffset * inputChannelCount) + 
-				     [self inputPadding]);
-		inputChannelCount = inputSampleFrameW = 2;
+		int sbufs;
+
 		inputChanOffset = 1;
+		inputChannelCount = inputSampleFrameW = 2;
+		inputSampleFrameW = ((inputChanOffset * inputChannelCount) + [self inputPadding]);
 		downSampleInput = EQU(samplingRate,[self defaultSamplingRate]); 
 		inputInitialSkip = 0;
 		inputSampleFrameR = inputSampleFrameW;

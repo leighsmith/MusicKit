@@ -369,7 +369,7 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
               <i>aUnitGenerator</i>.  Execution order is determined by comparing
               the objects' pLoop addresses.
 */
-- (BOOL) runsAfter:aUnitGenerator; 
+- (BOOL) runsAfter: (MKUnitGenerator *) aUnitGenerator; 
 
 /*!
   @method argCount

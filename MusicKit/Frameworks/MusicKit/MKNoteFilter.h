@@ -95,23 +95,23 @@
 /*!
   @method addNoteSender:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns an id.
+  @result Returns an MKNoteSender instance.
   @discussion Removes <i>aNoteSender</i> from its present owner (if any) and adds
               it to the receiver.  Returns <i>aNoteSender</i>.  If the receiver is
               in performance, or if <i>aNoteSender</i> is already a member of the
               receiver, does nothing and returns <b>nil</b>.
 */
-- addNoteSender: (MKNoteSender *) aNoteSender; 
+- (MKNoteSender *) addNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method removeNoteSender:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns an id.
+  @result Returns an MKNoteSender instance.
   @discussion Removes aNoteSender from the receiver's NSArray of MKNoteSenders. 
               Returns <i>aNoteSender</i>.  If the receiver is in a performance,
               does nothing and returns <b>nil</b>.
 */
-- removeNoteSender: (MKNoteSender *) aNoteSender; 
+- (MKNoteSender *) removeNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method dealloc

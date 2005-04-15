@@ -335,13 +335,13 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 }
 
 
--(BOOL)runsAfter:(MKUnitGenerator *)aUnitGenerator
+- (BOOL) runsAfter: (MKUnitGenerator *) aUnitGenerator
   /* Returns YES if aUnitGenerator executes on the DSP after the receiver. 
      aUnitGenerator is assumed to be executing in the same MKOrchestra as
      the receiver. */
 {
-    if (![aUnitGenerator isKindOfClass:[MKUnitGenerator class]]) 
-      return NO;
+    if (![aUnitGenerator isKindOfClass: [MKUnitGenerator class]]) 
+	return NO;
     return relocation.pLoop > aUnitGenerator->relocation.pLoop;
 }
 
@@ -1105,7 +1105,7 @@ extern int _MKOrchestraGetNoops(void);
 
 #define PLOOP(_obj) (((MKUnitGenerator *)_obj)->relocation.pLoop)
 
-+_allocFirstAfter:(MKUnitGenerator *)anObj list:(unsigned short)index
++ _allocFirstAfter: (MKUnitGenerator *) anObj list: (unsigned short) index
     /* Find, remove from availList and return the first instance with
        relocation constant after anObj. */
 {
@@ -1133,7 +1133,7 @@ extern int _MKOrchestraGetNoops(void);
     return nil;
 }
 
-+_allocFirstBefore:(MKUnitGenerator *)anObj list:(unsigned short)index 
++ _allocFirstBefore: (MKUnitGenerator *) anObj list: (unsigned short) index 
     /* Find, remove from availList and return the first instance with
        relocation constant before anObj. */
 {

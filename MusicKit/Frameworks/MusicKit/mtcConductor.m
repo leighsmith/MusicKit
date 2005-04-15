@@ -235,33 +235,35 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
     return self;
 }
 
--_setMTCSynch:aMidiObj
+- _setMTCSynch: (MKMidi *) aMidiObj
 {
     /* Sets up alarm and exception port, etc. 
     * This must be sent to when the performance is not in progress yet.
     * The MIDI object may be in any state (open, closed, etc.)
     *
     * Another restriction implied here is that only one conductor can use a 
-    * particular midi object.  Hence if aMidiObj is already in use by a Conductor 
-    * (and that Conductor is not the receiver), setMTCSynch: steals the synch
-    * function from that Conductor.
+    * particular MKMidi object.  Hence if aMidiObj is already in use by a MKConductor 
+    * (and that MKConductor is not the receiver), setMTCSynch: steals the synch
+    * function from that MKConductor.
     *
     */
     if (MTCSynch == aMidiObj) /* Already synched */
 	return self;
     else if (theMTCCond != self)    
-	[theMTCCond _setMTCSynch:nil];
+	[theMTCCond _setMTCSynch: nil];
     if (aMidiObj)
 	theMTCCond = self;
-    else theMTCCond = nil;
-    [MTCSynch _setSynchConductor:nil];
-    [aMidiObj _setSynchConductor:theMTCCond];
+    else 
+	theMTCCond = nil;
+    [MTCSynch _setSynchConductor: nil];
+    [aMidiObj _setSynchConductor: theMTCCond];
     MTCSynch = aMidiObj;
-    [self setTimeOffset:timeOffset]; /* Resets it appropriately */
+    [self setTimeOffset: timeOffset]; /* Resets it appropriately */
     if (MTCSynch) {
 	if (!mtcHelper) 
 	    mtcHelper = [[_MTCHelper alloc] init];
-    } else {
+    } 
+    else {
         [mtcHelper release];
         mtcHelper = nil;
     }
@@ -341,7 +343,7 @@ static double slipThreshold = .01;
 
 @implementation MKConductor(MTC)
 
--setMTCSynch:aMidiObj
+- setMTCSynch: (MKMidi *) aMidiObj
 {
     /* Sets up alarm and exception port, etc. 
      * This must be sent to when the performance is not in progress yet.
@@ -355,12 +357,12 @@ static double slipThreshold = .01;
      * Also sets clocked to YES.
      */
     if ([MKConductor inPerformance] || self == [MKConductor clockConductor])
-      return nil;
-    [MKConductor setClocked:YES];
-    return [self _setMTCSynch:aMidiObj];
+	return nil;
+    [MKConductor setClocked: YES];
+    return [self _setMTCSynch: aMidiObj];
 }
 
--MTCSynch
+- (MKMidi *) MTCSynch
 {
     return MTCSynch;
 }

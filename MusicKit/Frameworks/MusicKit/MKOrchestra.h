@@ -588,7 +588,7 @@ extern void MKSetPreemptDuration(double seconds);
               is out of bounds, or if an MKOrchestra hasn't been created for the
               specified DSP, <b>nil</b> is returned.
 */
-+ nthOrchestra: (unsigned short) index; 
++ (MKOrchestra *) nthOrchestra: (unsigned short) index; 
 
 /*!
   @method init

@@ -547,17 +547,13 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @method midiPart:
   @param  aChan is an int.
   @result Returns an MKPart instance.
-  @discussion Returns the MKPart object that represents MIDI Channel <i>aChan.</i>
-              There are 17 MIDI Channels:  0 represents the channel for MIDI
+  @discussion Returns the first MKPart object that represents MIDI Channel <i>aChan</i>
+              by checking the MK_midiChan info parameter.
+              There are 17 MIDI Channels: 0 represents the channel for MIDI
               System and Channel Mode messages and 1 through 16 represent the
               Voice Channels.
 */
 - (MKPart *) midiPart: (int) aChan; 
-  /* 
-     Returns the first MKPart with a MK_midiChan info parameter equal to
-     aChan, if any. aChan equal to 0 corresponds to the MKPart representing
-     MIDI system and channel mode messages. */
-
 
 /*!
   @method partCount

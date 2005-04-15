@@ -1,26 +1,15 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1999-2005 The MusicKit Project.
 */
-/* 
-Modification history:
 
-  $Log$
-  Revision 1.3  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.2  1999/07/29 01:25:58  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-  1/24/90/daj - Flushed _preempted and _noteDurOff instance variables. 
-  03/13/90/daj - Added private category.
-*/
 #ifndef __MK__SynthPatch_H___
 #define __MK__SynthPatch_H___
-
-#ifndef __SYNTHPATCH_H
-#define __SYNTHPATCH_H
 
 #import "MKSynthPatch.h"
 
@@ -44,26 +33,22 @@ extern id _MKSynthPatchCmp();
 
 @interface MKSynthPatch(Private)
 
-+_newWithTemplate:(id)aTemplate
- inOrch:(id)anOrch index:(int)whichDSP;
--_free;
--_preemptNoteOn:aNote controllers:controllers;
--_remove:aUG;
--_add:aUG;
--_prepareToFree:(id *)headP :(id *)tailP;
--_freeList:head;
--(void)_freeList2;
--(void)_setShared:aSharedKey;
--(void)_addSharedSynthClaim;
--_connectContents;
--(void)_allocate;
--_deallocate;
--(BOOL)_usesEMem:(MKOrchMemSegment) segment;
++ _newWithTemplate: (id) aTemplate
+ inOrch: (id) anOrch index: (int) whichDSP;
+- _free;
+- _preemptNoteOn: aNote controllers: controllers;
+- _remove: aUG;
+- _add: aUG;
+- _prepareToFree: (MKSynthPatch **) headP : (MKSynthPatch **) tailP;
+- _freeList: (MKSynthPatch *) head;
+- (void) _freeList2;
+- (void) _setShared: aSharedKey;
+- (void) _addSharedSynthClaim;
+- _connectContents;
+- (void) _allocate;
+- _deallocate;
+- (BOOL) _usesEMem: (MKOrchMemSegment) segment;
 
 @end
-
-#endif
-
-
 
 #endif

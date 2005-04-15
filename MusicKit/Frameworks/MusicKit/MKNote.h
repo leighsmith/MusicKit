@@ -520,28 +520,28 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 
 /*!
   @method performer
-  @result Returns an id.
+  @result Returns an MKPerformer instance.
   @discussion Returns the MKPerformer that most recently performed the MKNote. 
               This is provided, primarily, as part of the implementation of the
               <b>conductor</b> method. 
               
-              See also:  -<b>conductor</b>
+              See also: -<b>conductor</b>
 */
-- performer; 
+- (MKPerformer *) performer; 
 
 /*!
   @method part
-  @result Returns an id.
+  @result Returns an MKPart instance.
   @discussion Returns the MKPart that contains the MKNote, or <b>nil</b> if none. 
               By default, a MKNote isn't contained in a MKPart.
               
-              See also:  -<b>addToPart:</b>, -<b>removeFromPart</b>
+              See also: -<b>addToPart:</b>, -<b>removeFromPart</b>
 */
-- part; 
+- (MKPart *) part; 
 
 /*!
   @method conductor
-  @result Returns an id.
+  @result Returns an MKConductor instance.
   @discussion If the MKNote is being sent by a MKPerformer (or MKMidi), returns the
               MKPerformer's MKConductor. Otherwise, if conductor was set with
               <b>setConductor:</b>, returns the <i>conductor</i> instance
@@ -552,36 +552,32 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
               
               See also: -<b>performer</b>
 */
-- conductor; 
+- (MKConductor *) conductor; 
 
 /*!
   @method setConductor:
-  @param  newConductor is an id.
-  @result Returns an id.
-  @discussion Sets <i>conductor</i> instance variable.  Note that <i>conductor</i>
+  @param  newConductor is an MKConductor instance.
+  @discussion Sets <i>conductor</i> instance variable.  Note that <i>newConductor</i>
               is not archived, nor is it saved when a MKNote is added to a MKPart
-              - it is used only in performance.   Note that <b>-setConductor</b>
+              - it is used only in performance.   Note that -<b>setConductor:</b>
               is called implicitly when a MKNote is copied with the <b>copy</b>
-              method.   Be careful not to free a MKConductor while leaving a
+              method. Be careful not to release a MKConductor while leaving a
               dangling reference to it in a MKNote!
               
               See also:  -<b>conductor</b>
 */
-- setConductor: (MKConductor *) aConductor; 
+- (void) setConductor: (MKConductor *) newConductor; 
 
 /*!
   @method addToPart:
   @param  aPart is an id.
-  @result Returns an id.
-  @discussion Removes the MKNote from the MKPart that it's currently a member of
-              and adds it to <i>aPart</i>.  Returns the MKNote's old MKPart, if
-              any. 
-              
-              This method is equivalent to MKPart's <b>addNote:</b> method.
+  @result Returns the receiver's old MKPart, if any.
+  @discussion Removes the MKNote from the MKPart that it's currently a member of and adds it to
+              <i>aPart</i>. This method is equivalent to MKPart's <b>addNote:</b> method.
               
               See also: -<b>part</b>, -<b>removeFromPart</b>
 */
-- addToPart: (MKPart *) aPart; 
+- (MKPart *) addToPart: (MKPart *) aPart; 
 
 /*!
   @method timeTag
@@ -605,7 +601,7 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
               MKPart; if you change the time tag of a MKNote that's been added to
               a MKPart, the MKNote is automatically resorted.
               
-              See also:   -<b>timeTag</b>, -<b>addToPart:</b>, -<b>sort </b>(MKPart)
+              See also: -<b>timeTag</b>, -<b>addToPart:</b>, -<b>sort</b> (MKPart)
 */
 - (double) setTimeTag: (double) newTimeTag; 
  /* 
@@ -618,31 +614,31 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   * ensures that the receiver's position within its MKPart is correct.  
   */
 
-- (double) setTimeTagPreserveEndTime: (double) newTimeTag;
-/*
- * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
- * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
- * 0.0. If newTimeTag is greater than the endTime, it is clipped to endTime.
- *
- * If the receiver is a member of a MKPart, it's first removed from the
- * MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
- * ensures that the receiver's position within its MKPart is correct.
- *
- * Duration is changed to preserve the endTime of the note
- *
- * Note: ONLY works for MK_noteDur type notes! MK_NODVAL returned otherwise.
- */
+/*!
+  @method setTimeTagPreserveEndTime:
+  @param newTimeTag
+  @abstract Sets the receiver's timeTag to newTimeTag and returns the old timeTag, or MK_ENDOFTIME if none.
+  @discussion If newTimeTag is negative, it's clipped to 0.0. If newTimeTag is greater than the endTime,
+              it is clipped to endTime.
 
+  If the receiver is a member of a MKPart, it's first removed from the
+  MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
+  ensures that the receiver's position within its MKPart is correct.
+
+  Duration is changed to preserve the endTime of the note
+
+  Note: ONLY works for MK_noteDur type notes! MK_NODVAL returned otherwise.
+ */
+- (double) setTimeTagPreserveEndTime: (double) newTimeTag;
 
 /*!
   @method removeFromPart
-  @result Returns an id.
-  @discussion Removes the MKNote from its MKPart.  Returns the MKPart, or
-              <b>nil</b> if none.
+  @result Returns the MKPart, or <b>nil</b> if none.
+  @discussion Removes the MKNote from its MKPart.  
               
               See also:  -<b>addToPart:</b>, -<b>part</b>
 */
-- removeFromPart; 
+- (MKPart *) removeFromPart; 
 
 /*!
   @method compare:

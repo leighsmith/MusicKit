@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2005/04/15 04:18:25  leighsmith
+  Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
   Revision 1.18  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -969,23 +972,24 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     return self;
 }
 
-  /* Same as above but removes patch from deallocated list. Used by MKOrchestra.
-     Must be method to avoid required load of MKSynthPatch by MKOrchestra. */
-- _prepareToFree: (MKSynthPatch**) headP: (MKSynthPatch**) tailP 
+/* Same as above but removes patch from deallocated list. Used by MKOrchestra.
+ Must be method to avoid required load of MKSynthPatch by MKOrchestra. */
+- _prepareToFree: (MKSynthPatch **) headP : (MKSynthPatch **) tailP 
 {
     int ix;
     id theArray;
+    
     if (_whichList == _MK_ORCHTMPLIST) 
-      return *headP;        /* Don't add it twice. */
-    theArray = _MKDeallocatedSynthPatches(patchTemplate,_orchIndex);
-    ix = [theArray indexOfObject:self];
+	return *headP;        /* Don't add it twice. */
+    theArray = _MKDeallocatedSynthPatches(patchTemplate, _orchIndex);
+    ix = [theArray indexOfObject: self];
     if (ix != NSNotFound) { /*sb: this ensures that only 1 instance is removed from the array, not
         all instances of the object, if they are there multiple times. Should this be so? If not, we
         may need to add the number of instances as retains, and remove them all. Hmmm. I am not
         sure what the original List behaviour was.
         */
         [self retain]; /* transfers ownership from the list below, to the headP list */
-        [theArray removeObjectAtIndex:ix];
+        [theArray removeObjectAtIndex: ix];
     }
     /* sb: the following should probably NOT happen if the object was not in the array, but
         I am assuming that if we got this far it must have been there anyway.
@@ -993,7 +997,8 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     _whichList = _MK_ORCHTMPLIST;
     if (!*tailP) 
         *tailP = self;
-    else (*headP)->_next = self;
+    else 
+	(*headP)->_next = self;
     return *headP = self;
 }
 
@@ -1011,7 +1016,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
    undesired loading of the MKSynthPatch class when no MKSynthPatches are being
    used. */
 //////////////////////////////////////////////////////////////////////////////*/
-- _freeList: (MKSynthPatch*) head
+- _freeList: (MKSynthPatch *) head
   // Frees list of ugs. Used by orch only. 
 {
     register MKSynthPatch *tmp;

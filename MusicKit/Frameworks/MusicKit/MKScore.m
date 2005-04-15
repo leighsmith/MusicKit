@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.40  2005/04/15 04:18:25  leighsmith
+ Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
  Revision 1.39  2004/12/06 18:27:36  leighsmith
  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
 
@@ -731,91 +734,90 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 #define WRITETEXT(_meta,_par) MKMIDIFileWriteText(fileStructP,T,(_meta),STRPAR(curNote,(_par)))
 
 /* Write a single MKNote to the MIDI file, tagged appropriately */
-static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *curNote, double timeShift,
-                                int defaultChan)
+static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *curNote, double timeShift, int defaultChan)
 {
-  int chan;
-  unsigned parBits;
-  double t;
-
-  /* First handle normal midi */
-  chan = INTPAR(curNote,MK_midiChan);
-  t = [curNote timeTag];
-  _MKWriteMidiOut(curNote, t+timeShift, ((chan == MAXINT) ? defaultChan : chan), p, nil);
-  /* Now check for meta-events. */
-  parBits= [curNote parVector:4];
-  if (parBits) {
-    if (PRESENT(MK_text))
-      WRITETEXT(MKMIDI_text,MK_text);
-    if (PRESENT(MK_title))
-      WRITETEXT(MKMIDI_sequenceOrTrackName,MK_title);
-    if (PRESENT(MK_instrumentName))
-      WRITETEXT(MKMIDI_instrumentName,MK_instrumentName);
-    if (PRESENT(MK_lyric))
-      WRITETEXT(MKMIDI_lyric,MK_lyric);
-    if (PRESENT(MK_cuePoint))
-      WRITETEXT(MKMIDI_cuePoint,MK_cuePoint);
-    if (PRESENT(MK_marker))
-      WRITETEXT(MKMIDI_marker,MK_marker);
-    if (PRESENT(MK_timeSignature)) {
-      unsigned int nn, dd, cc, bb, allData;
-      NSString *timeSigString = STRPAR(curNote, MK_timeSignature);
-      NSScanner *timeSigScan;
-      if(timeSigString == nil) {
-        allData = 0;
-      }
-      else {
-
-/*  From the Standard MIDI File Spec:
- The time signature defined with 4 bytes, a numerator, a denominator, a
- metronome pulse and number of 32nd notes per MIDI quarter-note. The
- numerator is specified as a literal value, but the denominator is
- specified as (get ready) the value to which the power of 2 must be
- raised to equal the number of subdivisions per whole note. For example,
- a value of 0 means a whole note because 2 to the power of 0 is 1 (whole
- note), a value of 1 means a half-note because 2 to the power of 1 is 2
- (half-note), and so on. The metronome pulse specifies how often the
- metronome should click in terms of the number of clock signals per click,
- which come at a rate of 24 per quarter-note. For example, a value of 24
- would mean to click once every quarter-note (beat) and a value of 48
- would mean to click once every half-note (2 beats). And finally, the
- fourth byte specifies the number of 32nd notes per 24 MIDI clock signals.
- This value is usually 8 because there are usually 8 32nd notes in a
- quarter-note. At least one Time Signature Event should appear in the
- first track chunk (or all track chunks in a Type 2 file) before any
- non-zero delta time events. If one is not specified 4/4, 24, 8 should
- be assumed.
- */
-        timeSigScan = [NSScanner scannerWithString: timeSigString];
-        [timeSigScan scanInt: &nn];  // numerator
-        [timeSigScan scanInt: &dd];  // denominator
-                                     // 0 is whole note, 1 is 1/2, 2 is 1/4,
-                                     // 3 is 1/8, 4 is 1/16 (semiquaver)
-        [timeSigScan scanInt: &cc];  // clock sigs per metronome click
-                                     // 24 = quarter note, 48 = half note etc
-        [timeSigScan scanInt: &bb];  // 
-        allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
-      }
-      MKMIDIFileWriteSig(fileStructP,T,MKMIDI_timeSig, allData);
+    int chan;
+    unsigned parBits;
+    double t;
+    
+    /* First handle normal midi */
+    chan = INTPAR(curNote,MK_midiChan);
+    t = [curNote timeTag];
+    _MKWriteMidiOut(curNote, t + timeShift, ((chan == MAXINT) ? defaultChan : chan), p, nil);
+    /* Now check for meta-events. */
+    parBits= [curNote parVector: 4];
+    if (parBits) {
+	if (PRESENT(MK_text))
+	    WRITETEXT(MKMIDI_text,MK_text);
+	if (PRESENT(MK_title))
+	    WRITETEXT(MKMIDI_sequenceOrTrackName,MK_title);
+	if (PRESENT(MK_instrumentName))
+	    WRITETEXT(MKMIDI_instrumentName,MK_instrumentName);
+	if (PRESENT(MK_lyric))
+	    WRITETEXT(MKMIDI_lyric,MK_lyric);
+	if (PRESENT(MK_cuePoint))
+	    WRITETEXT(MKMIDI_cuePoint,MK_cuePoint);
+	if (PRESENT(MK_marker))
+	    WRITETEXT(MKMIDI_marker,MK_marker);
+	if (PRESENT(MK_timeSignature)) {
+	    unsigned int nn, dd, cc, bb, allData;
+	    NSString *timeSigString = STRPAR(curNote, MK_timeSignature);
+	    NSScanner *timeSigScan;
+	    if(timeSigString == nil) {
+		allData = 0;
+	    }
+	    else {
+		
+		/*  From the Standard MIDI File Spec:
+		The time signature defined with 4 bytes, a numerator, a denominator, a
+		metronome pulse and number of 32nd notes per MIDI quarter-note. The
+		numerator is specified as a literal value, but the denominator is
+		specified as (get ready) the value to which the power of 2 must be
+		raised to equal the number of subdivisions per whole note. For example,
+		a value of 0 means a whole note because 2 to the power of 0 is 1 (whole
+										  note), a value of 1 means a half-note because 2 to the power of 1 is 2
+		(half-note), and so on. The metronome pulse specifies how often the
+		metronome should click in terms of the number of clock signals per click,
+		which come at a rate of 24 per quarter-note. For example, a value of 24
+		would mean to click once every quarter-note (beat) and a value of 48
+		would mean to click once every half-note (2 beats). And finally, the
+		fourth byte specifies the number of 32nd notes per 24 MIDI clock signals.
+		This value is usually 8 because there are usually 8 32nd notes in a
+		quarter-note. At least one Time Signature Event should appear in the
+		first track chunk (or all track chunks in a Type 2 file) before any
+		non-zero delta time events. If one is not specified 4/4, 24, 8 should
+		be assumed.
+		*/
+		timeSigScan = [NSScanner scannerWithString: timeSigString];
+		[timeSigScan scanInt: &nn];  // numerator
+		[timeSigScan scanInt: &dd];  // denominator
+					     // 0 is whole note, 1 is 1/2, 2 is 1/4,
+					     // 3 is 1/8, 4 is 1/16 (semiquaver)
+		[timeSigScan scanInt: &cc];  // clock sigs per metronome click
+					     // 24 = quarter note, 48 = half note etc
+		[timeSigScan scanInt: &bb];  // 
+		allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
+	    }
+	    MKMIDIFileWriteSig(fileStructP, T, MKMIDI_timeSig, allData);
+	}
+	if (PRESENT(MK_keySignature)) {
+	    NSString *keySigString = STRPAR(curNote,MK_keySignature);
+	    NSScanner *keySigScan;
+	    unsigned int sf, mi, allData;
+	    if(keySigString == nil) {
+		allData = 0;
+	    }
+	    else {
+		keySigScan = [NSScanner scannerWithString: keySigString];
+		[keySigScan scanInt: &sf];  // ??
+		[keySigScan scanInt: &mi];  // ??
+		allData = (sf << 8) | mi;
+	    }
+	    MKMIDIFileWriteSig(fileStructP, T, MKMIDI_keySig, allData);
+	}
+	if (PRESENT(MK_tempo))
+	    MKMIDIFileWriteTempo(fileStructP,T, DOUBLEPAR(curNote,MK_tempo));
     }
-    if (PRESENT(MK_keySignature)) {
-      NSString *keySigString = STRPAR(curNote,MK_keySignature);
-      NSScanner *keySigScan;
-      unsigned int sf, mi, allData;
-      if(keySigString == nil) {
-        allData = 0;
-      }
-      else {
-        keySigScan = [NSScanner scannerWithString: keySigString];
-        [keySigScan scanInt: &sf];  // ??
-        [keySigScan scanInt: &mi];  // ??
-        allData = (sf << 8) | mi;
-      }
-      MKMIDIFileWriteSig(fileStructP, T, MKMIDI_keySig, allData);
-    }
-    if (PRESENT(MK_tempo))
-      MKMIDIFileWriteTempo(fileStructP,T, DOUBLEPAR(curNote,MK_tempo));
-  }
 }
 
 
@@ -1440,13 +1442,13 @@ outOfLoop:
 
 /* Finding a Part ----------------------------------------------- */
 
--(BOOL)isPartPresent:aPart
+- (BOOL) isPartPresent: (MKPart *) aPart
   /* Returns whether MKPart is a member of the receiver. */
 {
-  return ([parts indexOfObjectIdenticalTo:aPart] == NSNotFound) ? NO : YES;
+    return ([parts indexOfObjectIdenticalTo: aPart] == NSNotFound) ? NO : YES;
 }
 
--midiPart:(int)aChan
+- (MKPart *) midiPart: (int) aChan
   /* Returns the first MKPart with a MK_midiChan info parameter equal to
   aChan, if any. aChan equal to 0 corresponds to the MKPart representing
   MIDI system and channel mode messages. */

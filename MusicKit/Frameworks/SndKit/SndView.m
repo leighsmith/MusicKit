@@ -381,42 +381,36 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 /* draw selection rect */
 - (void) drawSelectionRectangleWithin: (NSRect) rects
 {
-    NSRect scaledSelRect;
+    NSRange scaledSelectionRange;
     
-    scaledSelRect.origin.x = (int) ((float) selectedFrames.location / (float) reductionFactor);
-    scaledSelRect.size.width = (int) ((NSMaxRange(selectedFrames) - 1) / reductionFactor) - NSMinX(scaledSelRect) + 1;
+    scaledSelectionRange.location = (int) ((float) selectedFrames.location / (float) reductionFactor);
+    scaledSelectionRange.length = (int) ((NSMaxRange(selectedFrames) - 1) / reductionFactor) - scaledSelectionRange.location + 1;
     
-    if (!((NSMinX(scaledSelRect) >= NSMinX(rects) &&
-	   NSMinX(scaledSelRect) <= NSMaxX(rects)) ||
-	  (NSMaxX(scaledSelRect) >= NSMinX(rects) && 
-	   NSMaxX(scaledSelRect) <= NSMaxX(rects)) ||
-	  (NSMinX(scaledSelRect) <= NSMinX(rects) &&
-	   NSMaxX(scaledSelRect) >= NSMaxX(rects)) ) || noSelectionDraw) {
+    if (!((scaledSelectionRange.location >= NSMinX(rects) &&
+	   scaledSelectionRange.location <= NSMaxX(rects)) ||
+	  (NSMaxRange(scaledSelectionRange) >= NSMinX(rects) && 
+	   NSMaxRange(scaledSelectionRange) <= NSMaxX(rects)) ||
+	  (scaledSelectionRange.location <= NSMinX(rects) &&
+	   NSMaxRange(scaledSelectionRange) >= NSMaxX(rects)) ) || noSelectionDraw) {
 	return;	
     }
     else {
 	NSRect highlightRect = [self bounds];
 	
-	/*
-	 NSLog(@"HIGHLIGHTing scaled sel rect... %g to %g\n",
-		 NSMinX(scaledSelRect),NSMaxX(scaledSelRect));
-	 
-	 NSLog(@"HIGHLIGHTing rects... %g to %g\n",
-		 NSMinX(rects),NX_MAXX(rects));
-	 */
+	// NSLog(@"HIGHLIGHTing scaled sel range... %g to %g\n", scaledSelectionRange.location, NSMaxRange(scaledSelectionRange));	 
+	// NSLog(@"HIGHLIGHTing rects... %g to %g\n", NSMinX(rects), NSMaxX(rects));
 	
-	highlightRect.origin.x = (int) ((NSMinX(scaledSelRect) >= NSMinX(rects)) ?
-					NSMinX(scaledSelRect) : NSMinX(rects));
+	highlightRect.origin.x = (int) ((scaledSelectionRange.location >= NSMinX(rects)) ? scaledSelectionRange.location : NSMinX(rects));
 	
-	highlightRect.size.width = (int) (((NSMaxX(scaledSelRect) <= NSMaxX(rects)) ?
-					   NSMaxX(scaledSelRect) : NSMaxX(rects) )   - NSMinX(highlightRect) + 0.1);
+	highlightRect.size.width = (int) (((NSMaxRange(scaledSelectionRange) <= NSMaxX(rects)) ?
+					   NSMaxRange(scaledSelectionRange) : NSMaxX(rects)) - NSMinX(highlightRect) + 0.1);
 	
 	[selectionColour set];
 	
 	NSRectFillUsingOperation(highlightRect, SELECTION_DRAWING_COMPOSITE);
 	
 	// NSHighlightRect(highlightRect);
-	// NSLog(@"HIGHLIGHT %g to %g\n",NSMinX(highlightRect), NSMaxX(highlightRect));
+	// NSLog(@"HIGHLIGHT %g to %g\n", NSMinX(highlightRect), NSMaxX(highlightRect));
     }    
 }
 
@@ -1513,7 +1507,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
 - (void) mouseDown: (NSEvent *) theEvent 
 {
-    NSPoint timerMouseLocation;
+    NSPoint timerMouseLocation = { 0, 0 }; // keeps the compiler happy.
     BOOL useTimerLocation = NO;
     BOOL scrolled = NO;
     BOOL timer = NO;

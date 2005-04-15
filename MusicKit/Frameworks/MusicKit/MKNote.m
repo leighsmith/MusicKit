@@ -454,14 +454,12 @@ static unsigned int nAppBitVects(MKNote *self)
 /* Perfomers, Conductors, MKParts */
 
 
--performer      
-  /* TYPE: Perf; Returns the MKPerformer that's sending the MKNote.
-   */
+- (MKPerformer *) performer      
 {
-        return performer;
+    return performer;
 }
 
--part     
+- (MKPart *) part     
   /* TYPE: Acc; Return the receiver's MKPart.
    * Returns the MKPart that the receiver is a member of, or nil if none.
    */
@@ -469,34 +467,27 @@ static unsigned int nAppBitVects(MKNote *self)
     return part;
 }
 
--setConductor:aConductor
+- (void) setConductor: (MKConductor *) aConductor
 {
     conductor = aConductor;
-    return self;
+    // We don't retain because conductor is a weakly referenced instance variable to avoid retain cycles.
 }
 
--conductor
-  /* If note is being sent by a MKPerformer, returns the Performer's 
-   * Conductor. Otherwise, if conductor was set, returns conductor.
-   * Otherwise returns the default Conductor.
-   */
+- (MKConductor *) conductor
 {
-    id aCond;
+    MKConductor *aCond;
+    
     if ((!performer) && conductor)
     	return conductor;
     aCond = [performer conductor];
     return aCond ? aCond : [_MKClassConductor() defaultConductor];
 }
 
-- addToPart:aPart
-  /* TYPE: Acc; Adds the receiver to aPart.
-   * Removes the receiver from the MKPart that it's currently 
-   * a member of and adds it to aPart.
-   * Returns the receiver's old MKPart, if any. 
-   */
+- (MKPart *) addToPart: (MKPart *) aPart
 {
-    id oldPart = part;
-    [aPart addNote:self];
+    MKPart *oldPart = part;
+    
+    [aPart addNote: self];
     return oldPart;
 }
 
@@ -570,18 +561,19 @@ static unsigned int nAppBitVects(MKNote *self)
 }
 
 
-- removeFromPart
-  /* TYPE: Acc; Removes the receiver from its MKPart.
+- (MKPart *) removeFromPart
+  /* TYPE: Acc; Removes the receiver from its .
    * Removes the receiver from its MKPart, if any.
    * Returns the old MKPart, or nil if none. 
    */
 {
-    id tmp = part;
+    MKPart *oldPart = part;
+    
     if (part) {
-        [part removeNote:self];
+        [part removeNote: self];
         part = nil;
     }
-    return tmp;
+    return oldPart;
 }
 
 void _MKMakePlaceHolder(MKNote *aNote)
@@ -618,7 +610,7 @@ int _MKNoteCompare(const void *el1,const void *el2)
     return (t1 < t2) ? NSOrderedAscending : NSOrderedDescending;
 }
 
-- (int)compare:aNote  
+- (int) compare: (MKNote *) aNote  
   /* TYPE: Copying; Compares the receiver with aNote.
    * Compares the receiver with aNote and returns a value as follows:
    *
@@ -633,7 +625,7 @@ int _MKNoteCompare(const void *el1,const void *el2)
    */
 { 
     if (![aNote isKindOfClass: noteClass])
-      return NSOrderedAscending;
+	return NSOrderedAscending;
     return _MKNoteCompare(&self, &aNote);
 }
 

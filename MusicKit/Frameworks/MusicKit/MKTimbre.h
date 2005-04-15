@@ -50,6 +50,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2005/04/15 04:18:25  leighsmith
+  Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
   Revision 1.7  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -172,11 +175,11 @@ See also:  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
 /*!
   @method waveTableForFreq:
   @param  freq is a double.
-  @result Returns an id.
+  @result Returns an MKWaveTable instance.
   @discussion Returns the MKWaveTable object corresponding to the
               specified freq, if any.
 */
--waveTableForFreq:(double)freq;
+- (MKWaveTable *) waveTableForFreq: (double) freq;
 
 /*!
   @method freqForWaveTable:
@@ -190,11 +193,11 @@ See also:  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
 /*!
   @method waveTableAt:
   @param  index is an int.
-  @result Returns an id.
+  @result Returns an MKWaveTable instance.
   @discussion Returns the MKWaveTable object corresponding to the specified index,
               if any.  Index is zero-based.  
 */
--waveTableAt:(int)index;
+- (MKWaveTable *) waveTableAt: (int) index;
 
 /*!
   @method freqAt:

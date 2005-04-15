@@ -10,8 +10,7 @@
 
 #include "dsp.h"
 
-// #include <sys/time.h> // LMS do we really need this?
-
+#if 0
 extern const char LITERAL_N[];
 extern const char LITERAL_X[];
 extern const char LITERAL_XL[];
@@ -28,36 +27,6 @@ extern const char LITERAL_PH[];
 extern const char LITERAL_GLOBAL[];
 extern const char LITERAL_SYSTEM[];
 extern const char LITERAL_USER[];
-
-/**** Global const data ****/
-
-/* global arrays declared in dspstructs.h */
-
-const char * const  DSPSectionNames[DSP_N_SECTIONS] =
-	{ LITERAL_GLOBAL, LITERAL_SYSTEM, LITERAL_USER};
-
-/* DSP Location Counter names */
-const char * const DSPLCNames[DSP_LC_NUM] = { LITERAL_N,
-			       LITERAL_X, LITERAL_XL, LITERAL_XH, 
-			       LITERAL_Y, LITERAL_YL, LITERAL_YH, 
-			       LITERAL_L, LITERAL_LL, LITERAL_LH, 
-			       LITERAL_P, LITERAL_PL, LITERAL_PH};
-
-// LMS: changed this from an array of strings to get around link problems with MS Win32 DLLs.
-#if 0
-const char * const DSPMemoryNames[(int)DSP_MS_Num] = {
-		LITERAL_N, LITERAL_X, LITERAL_Y, LITERAL_L, LITERAL_P};
-#else
-const char * DSPMemoryNames(int memorySpaceNum)
-{
-    static const char *memNames[] = { LITERAL_N, LITERAL_X, LITERAL_Y, LITERAL_L, LITERAL_P };
-
-    return memNames[memorySpaceNum];
-}
-#endif
-
-#ifdef SHLIB
-static const char _libdsp_constdata_pad1[172] = { 0 };
 #endif
 
 /**** Literal const data ****/
@@ -78,9 +47,27 @@ static const char LITERAL_GLOBAL[] = "GLOBAL";
 static const char LITERAL_SYSTEM[] = "SYSTEM";
 static const char LITERAL_USER[] = "USER";
 
-#ifdef SHLIB
-static const char _libdsp_constdata_pad2[203] = { 0 };
-#endif
+/**** Global const data ****/
+
+/* global arrays declared in dspstructs.h */
+
+const char * const  DSPSectionNames[DSP_N_SECTIONS] =
+	{ LITERAL_GLOBAL, LITERAL_SYSTEM, LITERAL_USER};
+
+/* DSP Location Counter names */
+const char * const DSPLCNames[DSP_LC_NUM] = { LITERAL_N,
+			       LITERAL_X, LITERAL_XL, LITERAL_XH, 
+			       LITERAL_Y, LITERAL_YL, LITERAL_YH, 
+			       LITERAL_L, LITERAL_LL, LITERAL_LH, 
+			       LITERAL_P, LITERAL_PL, LITERAL_PH};
+
+// LMS: changed this from an array of strings to get around link problems with MS Win32 DLLs.
+const char * DSPMemoryNames(int memorySpaceNum)
+{
+    static const char *memNames[] = { LITERAL_N, LITERAL_X, LITERAL_Y, LITERAL_L, LITERAL_P };
+
+    return memNames[memorySpaceNum];
+}
 
 /**** Global data ****/
 
