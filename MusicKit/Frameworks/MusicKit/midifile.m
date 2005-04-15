@@ -22,6 +22,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2005/04/15 04:35:06  leighsmith
+  Cleaned up for gcc 4.0's more stringent checking of ObjC types
+
   Revision 1.7  2005/04/15 04:18:25  leighsmith
   Cleaned up for gcc 4.0's more stringent checking of ObjC types
 
@@ -710,7 +713,7 @@ int MKMIDIFileBeginWritingTrack(void *p, NSString *trackName)
 	if (i) {
 	    if (!writeByte(p,0) || !writeByte(p,0xff) || !writeByte(p,0x03) || 
 		!writeVariableQuantity(p,i) ||
-		!writeBytes(p,(const char *)[trackName cString],i))  
+		!writeBytes(p, (const unsigned char *)[trackName cString], i))  
 	      return endOfStream;
 	}
     }
