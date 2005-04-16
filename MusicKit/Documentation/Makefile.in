@@ -67,6 +67,10 @@ FRAMEWORKS_TO_HEADERDOC=MusicKit \
 URLDECL=<A HREF=$(FRAMEWORK_NAME)>$(FRAMEWORK_NAME)</A><P>
 FRAMEWORKURLS=$(foreach FRAMEWORK_NAME, $(FRAMEWORKS_TO_HEADERDOC), $(URLDECL))
 
+HEADERDOC_FW_DIRS=$(addprefix $(HTML_TMPDIR)/Frameworks/, $(FRAMEWORKS_TO_HEADERDOC))
+
+# index.html: ../Frameworks/%/%.h
+
 #
 # This is where the standard admonition images reside. This is set for
 # where fink installs Norman Walsh's images as part of his DocBook
@@ -85,10 +89,12 @@ clean:
 	-rm -r $(PDF_TMPDIR) 
 
 install:: $(DOC_TARBALL) $(INSTALL_DIR)
-	mkdir -p $(INSTALL_DIR)
 	(cd $(INSTALL_DIR); tar xjfp $(DOC_TARBALL); mv htdocs MusicKit )
 	-chmod -R go-w $(INSTALL_DIR)
 	-chmod -R ugo+r $(INSTALL_DIR)
+
+$(INSTALL_DIR):
+	mkdir -p $(INSTALL_DIR)
 
 #
 # Create HTML from the supplied DocBook SGML file.
@@ -183,17 +189,16 @@ $(PDF_TMPDIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.sgml
 # Gatherheaderdoc generates a file MasterTOC.html, that we name the
 # default file.
 #
-# $(HTML_TMPDIR)/Frameworks/%/index.html: ../Frameworks/%/%.h
-$(FRAMEWORKS_TO_HEADERDOC):
-	mkdir -p $(HTML_TMPDIR)/Frameworks/$@
-	root=`pwd`; cd HeaderDoc; headerdoc2html -o $(HTML_TMPDIR)/Frameworks/$@ $(addprefix $$root/../Frameworks/, $@)
-	gatherheaderdoc $(HTML_TMPDIR)/Frameworks/$@ index.html
+$(HEADERDOC_FW_DIRS):
+	mkdir -p $@
+	root=`pwd`; cd HeaderDoc; headerdoc2html -o $@ $(addprefix $$root/../Frameworks/, $(basename $@))
+	gatherheaderdoc $@ index.html
 
 #
 # Generate the Framework index file and other supporting files into
 # the HTML_TMPDIR.
 #
-$(HTML_TMPDIR)/Frameworks/index.html: $(FRAMEWORKS_TO_HEADERDOC) $(CSS) 
+$(HTML_TMPDIR)/Frameworks/index.html: $(HEADERDOC_FW_DIRS) $(CSS) 
 	mkdir -p $(HTML_TMPDIR)/Frameworks/MKSynthPatches/Images
 	sed -e "s@FRAMEWORKS_TO_HEADERDOC@$(FRAMEWORKURLS)@" < Frameworks.html.in > $(HTML_TMPDIR)/Frameworks/index.html
 	cp $(CSS) $(HTML_TMPDIR)/Frameworks
