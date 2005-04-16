@@ -169,8 +169,7 @@ char *_MKRealloc(ptr,size)
 // Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
 // [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation, creating
 // a new NSMutableArray, but populating it with the old array's elements, rather than duplicates.
-// Being a "copy" method, we return a fully allocated, retained, non-
-// auto-released object.
+// Being a "copy" method, we return a fully allocated, retained, non-auto-released object.
 NSMutableArray *_MKLightweightArrayCopy(NSMutableArray *oldArray)
 {
     NSMutableArray *newArray = [[NSMutableArray alloc] init];
@@ -179,7 +178,7 @@ NSMutableArray *_MKLightweightArrayCopy(NSMutableArray *oldArray)
     return newArray;
 }
 
-// Allegedly, MacOSX 10.x does a deep copy of NSArrays with -mutableArray,
+// Allegedly, MacOS 10.x does a deep copy of NSArrays with -mutableArray,
 // but this behaviour is not shared by GNUstep. Hence we make explicit
 // which behaviour we are requesting.
 // Being a "copy" method, we return a fully allocated, retained, non-

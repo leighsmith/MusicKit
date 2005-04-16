@@ -482,7 +482,7 @@ extern void MKFinishPerformance(void);
   @discussion Returns <b>YES</b> if the performance is paused, otherwise returns
               <b>NO</b>.
 */
-+(BOOL) isPaused; 
++ (BOOL) isPaused; 
 
 /*!
   @method resumePerformance
@@ -900,10 +900,13 @@ argCount: (int) argCount
               enqueued.  Returns a pointer to a <i>message request structure that
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
-+ (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector  to: (id) toObject 
-                 argCount: (int) argCount
-                 arg1: (id) arg1 retain: (BOOL) retainArg1
-                 arg2: (id) arg2 retain: (BOOL) retainArg2;
++ (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector
+				    to: (id) toObject 
+			      argCount: (int) argCount
+				  arg1: (id) arg1
+				retain: (BOOL) retainArg1
+				  arg2: (id) arg2
+				retain: (BOOL) retainArg2;
 
 /*!
   @method setDelegate:

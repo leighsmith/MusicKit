@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.41  2005/04/16 00:04:04  leighsmith
+ Doco & formatting cleanup
+
  Revision 1.40  2005/04/15 04:18:25  leighsmith
  Cleaned up for gcc 4.0's more stringent checking of ObjC types
 
@@ -1684,15 +1687,15 @@ readScorefile(MKScore *self,
 }
 
 - (NSMutableArray *) parts;
-    /* Returns a copy of the List of MKParts in the receiver. The MKParts themselves are not copied.
+    /* Returns a copy of the Array of MKParts in the receiver. The MKParts themselves are not copied.
     Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
     [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  */
 {
     return _MKLightweightArrayCopy(parts);
 }
 
-- copyWithZone: (NSZone *)zone
-    /* Copies receiver, including its MKParts, MKNotes and info. */
+/* Copies receiver, including its MKParts, MKNotes and info. */
+- copyWithZone: (NSZone *) zone
 {
     unsigned numOfParts = [parts count], partIndex;
     MKScore *newScore = [MKScore allocWithZone:zone];

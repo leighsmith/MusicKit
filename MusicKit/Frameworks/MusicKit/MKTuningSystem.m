@@ -128,8 +128,6 @@ double MKTranspose(double freq, double semiTonesUp)
 }
 
 double MKAdjustFreqWithPitchBend(double freq, int pitchBend, double sensitivity)
-/* Return the result of adjusting freq by the amount specified in
-pitchBend. Sensitivity is in semitones. */
 {
     double bendAmount;
     

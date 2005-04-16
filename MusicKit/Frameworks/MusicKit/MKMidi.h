@@ -248,7 +248,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
               ports.  
               
               &lt;&lt;On Non-NeXT hardware, <i>hostName</i> is currently ignored - thus,
-              you may not open a Midi device on a network-based device when running on white hardware.&gt;&gt;
+              you may not open a MIDI device on a network-based device when running on white hardware.&gt;&gt;
 */
 + midiOnDevice: (NSString *) devName host: (NSString *) hostName;
 
