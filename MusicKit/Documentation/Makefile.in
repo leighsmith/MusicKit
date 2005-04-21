@@ -191,7 +191,7 @@ $(PDF_TMPDIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.sgml
 #
 $(HEADERDOC_FW_DIRS):
 	mkdir -p $@
-	root=`pwd`; cd HeaderDoc; headerdoc2html -o $@ $(addprefix $$root/../Frameworks/, $(basename $@))
+	root=`pwd`; cd HeaderDoc; headerdoc2html -o $@ $(addprefix $$root/../Frameworks/, $(notdir $@))
 	gatherheaderdoc $@ index.html
 
 #
