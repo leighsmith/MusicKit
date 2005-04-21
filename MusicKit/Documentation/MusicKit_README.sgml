@@ -1488,7 +1488,8 @@ sudo make install
 	</varlistentry>
 	<varlistentry id=portaudio>
 	  <term>
-            <ulink url="&portaudiodownload;/portaudio_v&portaudiovertuple;.zip">portaudio_v&portaudiovertuple;.zip</ulink>. 
+<ulink
+url="&portaudiodownload;/pa_snapshot_v&portaudiovertuple;.tar.gz">pa_snapshot_v&portaudiovertuple;.tar.gz</ulink>.
 Status: Needs to be installed on <productname>Windows</productname>,
 <productname>Linux</productname> and other Unixen except for
 <productname>MacOS X</productname>,
@@ -1500,7 +1501,8 @@ systems.
 At the moment, the portaudio <acronym>CVS</acronym> repository version is the
 only version that works on <productname>MinGW</productname> and so
 <filename>MKPerformSndMIDI_portaudio</filename> uses the upcoming
-V&portaudiovertuple; release.  Using <acronym>CVS</acronym>, checkout
+V&portaudiovertuple; release.  Either fetch the <acronym>CVS</acronym>
+snapshot, or using <acronym>CVS</acronym>, checkout
 the portaudio version &portaudiovertuple; development branch. On
 <productname>Linux</productname>/<productname><acronym>BSD</acronym></productname>/<productname><acronym>SGI</acronym></productname>
 etc do:
