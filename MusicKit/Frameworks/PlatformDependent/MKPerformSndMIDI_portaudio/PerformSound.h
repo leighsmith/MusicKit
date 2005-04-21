@@ -145,9 +145,11 @@ PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
     @function       SNDStreamNativeFormat
     @abstract       Return in the SNDStreamBuffer, the format of the sound data preferred by the operating system.
     @param          streamFormat Pointer to an allocated block of memory into which to put the SNDStreamBuffer format parameters.
+    @param          isOutputStream YES if the stream is for output, i.e. playback, NO if the stream is for input, i.e. recording.
     @discussion     Does not set streamData field of SNDStreamBuffer structure.
  */
-PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat);
+PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat,
+				       BOOL isOutputStream);
 
 /*!
     @function       SNDStreamStart

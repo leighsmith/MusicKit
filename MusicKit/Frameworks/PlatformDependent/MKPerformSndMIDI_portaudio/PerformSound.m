@@ -151,8 +151,8 @@ static int vendBuffersToStreamManagerIOProc(const void *inputBuffer,
 
     // to tell the client the format it should send.
         
-    SNDStreamNativeFormat(&outStream);   
-    SNDStreamNativeFormat(&inStream);    
+    SNDStreamNativeFormat(&outStream, YES);
+    SNDStreamNativeFormat(&inStream, NO);
 
     inStream.streamData  = lastRecvdInputBuffer;
     outStream.streamData = outputBuffer;
@@ -366,7 +366,7 @@ PERFORM_API BOOL SNDStreamStop(void)
 
 // Return in the stream buffer the format of the sound data preferred by
 // the operating system.
-PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat)
+PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat, BOOL isOutputStream)
 {
     if (!initialised)
 	SNDInit(TRUE);
@@ -375,7 +375,7 @@ PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat)
     streamFormat->frameCount   = bufferSizeInFrames;
     streamFormat->dataFormat   = DEFAULT_DATA_FORMAT;
     streamFormat->sampleRate   = DEFAULT_SAMPLE_RATE;
-    streamFormat->channelCount = DEFAULT_OUT_CHANNELS;
+    streamFormat->channelCount = isOutputStream ? DEFAULT_OUT_CHANNELS : DEFAULT_IN_CHANNELS;
 }
 
 PERFORM_API BOOL SNDTerminate(void)
