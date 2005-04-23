@@ -26,10 +26,7 @@ TARLOC=/tmp
 # than triggering it.
 # We set where the Documentation makefile build will put the README
 # in order to copy it from there into the source distribution directory.
-COPYREADMEFROM=/tmp/mkpdf/MusicKit_README.pdf
-
-echo "Make sure you've already done this:"
-echo "make $COPYREADMEFROM"
+COPYREADMEFROM=/tmp/mkpdf/${DISNAME}_README.pdf
 
 if [ x_$1 = x_ ]; then
     echo "source shipping script for the ${DISTNAME} projects"
@@ -41,6 +38,9 @@ else
     RELEASE=$1
     PREVRELEASE=$2
 fi
+
+echo "Make sure you've already done this:"
+echo "make $COPYREADMEFROM"
 
 if [ $DISTNAME = MusicKit ]; then
     PACKAGENAME=MK
@@ -125,11 +125,8 @@ echo ChangeLog generated at $TARLOC/${DISTNAME}_ChangeLog
 echo ChangeLog since $PREVCVSTAG generated at $TARLOC/${DISTNAME}_ChangeLog_${RELEASE}
 
 # This is what we need to do for building doco
-# so we should just preserve the changelog.
-# echo cd to working copy Documentation
-# echo make CHANGELOG=$TARLOC/${DISTNAME}_ChangeLog
-#
-
+echo cd to working copy Documentation
+echo make CHANGELOG=$TARLOC/${DISTNAME}_ChangeLog
 
 # blow away the checked out source.
 rm -r $DISTCHECKEDOUTSRCLOC
