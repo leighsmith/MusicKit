@@ -30,21 +30,6 @@
   Portions Copyright (c) 1994 Stanford University.  
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.5  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.4  2000/11/25 22:56:48  leigh
-  Enforced ivar privacy
-
-  Revision 1.3  2000/03/29 02:57:04  leigh
-  Cleaned up doco and ivar declarations
-
-  Revision 1.2  1999/07/29 01:25:48  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKPartRecorder
   @discussion
@@ -80,9 +65,12 @@ See also:  MKScoreRecorder, MKPart
 
 @interface MKPartRecorder : MKInstrument
 {
-    MKTimeUnit timeUnit;                /* How time is interpreted. */
-    MKNoteReceiver *noteReceiver;       /* The object's single NoteReceiver. */
-    MKPart *part;                       /* The object's MKPart. */
+    /*! @var timeUnit Enumerates possible methods of how time is interpreted. */
+    MKTimeUnit timeUnit;                
+    /*! @var noteReceiver The object's single NoteReceiver. */
+    MKNoteReceiver *noteReceiver;
+    /*! @var part The MKPartRecorder instance's MKPart. */
+    MKPart *part; 
     BOOL compensatesDeltaT;
 
 @private
@@ -103,42 +91,43 @@ See also:  MKScoreRecorder, MKPart
   @method setTimeUnit:
   @param  aTimeUnit is a MKTimeUnit.
   @result Returns an id.
-  @discussion Sets the receiver's <b>timeUnit</b>instance variable to
-              <i>aTimeUnit, </i> one of MK_second, MK_beat or MK_timeTag.  The
-              default is MK_second.
-*/
--setTimeUnit:(MKTimeUnit) aTimeUnit;
- /* See timeunits.h */
+  @discussion Sets the receiver's <b>timeUnit</b> instance variable to
+              <i>aTimeUnit</i>, one of <b>MK_second</b>, <b>MK_beat</b> or <b>MK_timeTag</b>.  The
+              default is <b>MK_second</b>.
+
+	      See timeunits.h
+ */
+- setTimeUnit: (MKTimeUnit) aTimeUnit;
 
 /*!
   @method timeUnit
   @result Returns a MKTimeUnit.
   @discussion Returns the receiver's <b>timeUnit</b>, either MK_second,
               MK_timeTag, or MK_beat.
-*/
--(MKTimeUnit)timeUnit;
- /* See timeunits.h */
+
+              See timeunits.h
+ */
+- (MKTimeUnit) timeUnit;
 
 /*!
   @method setPart:
-  @param  aPart is an id.
-  @result Returns an id.
+  @param  aPart is an MKPart instance.
   @discussion Sets <i>aPart</i> as the receiver's MKPart.  Returns the
               receiver.
 */
-- setPart:aPart; 
+- (void) setPart: (MKPart *) aPart; 
 
 /*!
   @method part
-  @result Returns an id.
+  @result Returns an MKPart instance.
   @discussion Returns the receiver's MKPart object.
 */
-- part; 
+- (MKPart *) part; 
 
 /*!
   @method realizeNote:fromNoteReceiver:
-  @param  aNote is an id.
-  @param  aNoteReceiver is an id.
+  @param  aNote is an MKNote instance.
+  @param  aNoteReceiver is an MKNoteReceiver instance.
   @result Returns an id.
   @discussion Copies <i>aNote</i>, computes and sets the new MKNote's timeTag (and
               duration if it's a noteDur), and then adds the new MKNote to the
@@ -146,7 +135,7 @@ See also:  MKScoreRecorder, MKPart
               and duration computations use the <tt>makeTimeTag:</tt> and <tt>makeDur:</tt>
               methods defined in NoteRecorder. Returns the receiver.
 */
-- realizeNote:aNote fromNoteReceiver:aNoteReceiver; 
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
 
 /*!
   @method copyWithZone:
@@ -156,28 +145,38 @@ See also:  MKScoreRecorder, MKPart
               receiver.  The new object has its own MKNoteReceiver object but adds
               MKNotes to the same MKPart as the receiver.
 */
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone: (NSZone *) zone; 
 
-  /* 
-     You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write: then archives timeUnit. 
-     Optionally archives part using NXWriteObjectReference().
-     */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+/* 
+  You never send this message directly.  
+  Should be invoked with NXWriteRootObject(). 
+  Invokes superclass write: then archives timeUnit. 
+  Optionally archives part using NXWriteObjectReference().
+ */
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
-  /* 
-     You never send this message directly.  
-     Should be invoked via NXReadObject(). 
-     Note that -init is not sent to newly unarchived objects.
-     See write:. */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+/* 
+ You never send this message directly.  
+ Note that -init is not sent to newly unarchived objects.
+ See write:. 
+*/
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
-- setDeltaTCompensation:(BOOL)yesOrNo; /* default is NO */
-- (BOOL)compensatesDeltaT;
+/*!
+  @method setDeltaTCompensation:
+  @abstract Assigns whether to use time compensation.
+  @param yesOrNo
+  @discussion Default is NO. 
+ */
+- setDeltaTCompensation: (BOOL) yesOrNo;
+
+/*!
+  @method compensatesDeltaT
+  @abstract Returns whether to use time compensation.
+  @discussion Default is NO. 
+ */
+- (BOOL) compensatesDeltaT;
 
 @end
-
-
 
 #endif
