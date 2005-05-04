@@ -381,7 +381,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramObjectForIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (id) paramObjectForIndex: (const int) i
+- (NSNumber *) paramObjectForIndex: (const int) i
 {
     float f = [self paramValue: i];
   // return [NSValue value: &f withObjCType: @encode(float)];
