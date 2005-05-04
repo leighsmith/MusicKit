@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.42  2005/05/04 11:51:15  leighsmith
+ Cleaned up typing
+
  Revision 1.41  2005/04/16 00:04:04  leighsmith
  Doco & formatting cleanup
 
@@ -390,12 +393,14 @@ static id readScorefile(MKScore *self, NSData *stream,
                  lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
--readScorefileStream:(NSData *)stream
-        firstTimeTag:(double)firstTimeTag
-         lastTimeTag:(double)lastTimeTag
+- readScorefileStream: (NSMutableData *) stream
+         firstTimeTag: (double) firstTimeTag
+          lastTimeTag: (double) lastTimeTag
 {
-  return [self readScorefileStream:stream firstTimeTag:firstTimeTag
-                       lastTimeTag:lastTimeTag timeShift:0.0];
+    return [self readScorefileStream: stream 
+			firstTimeTag: firstTimeTag
+			 lastTimeTag: lastTimeTag
+			   timeShift: 0.0];
 }
 
 -readScorefile:(NSString *)fileName

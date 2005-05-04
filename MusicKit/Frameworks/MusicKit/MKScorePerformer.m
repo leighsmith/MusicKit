@@ -20,41 +20,9 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2000 The MusicKit Project.
+  Portions Copyright (c) 1999-2005 The MusicKit Project.
 */
-/* Modification history:
-
-   $Log$
-   Revision 1.11  2005/04/15 04:18:25  leighsmith
-   Cleaned up for gcc 4.0's more stringent checking of ObjC types
-
-   Revision 1.10  2002/01/29 16:33:16  sbrandon
-   don't retain conductor in new copies of object (would create retain
-   loop)
-
-   Revision 1.9  2001/09/06 21:27:48  leighsmith
-   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-   Revision 1.8  2001/08/07 16:16:11  leighsmith
-   Corrected class name during decode to match latest MK prefixed name
-
-   Revision 1.7  2001/07/09 22:58:59  leighsmith
-   Corrected partPerformerForPart: to return a MKPartPerformer, not a MKPart
-
-   Revision 1.6  2000/10/01 06:31:12  leigh
-   Statically typed noteSenders
-
-   Revision 1.5  2000/04/25 02:08:40  leigh
-   Renamed free methods to release methods to reflect OpenStep behaviour
-
-   Revision 1.4  2000/02/24 22:55:21  leigh
-   Clean up of comments, parameter typing
-
-   Revision 1.3  1999/09/04 22:42:22  leigh
-   extra doco from implementation ivar descriptions
-
-   Revision 1.2  1999/07/29 01:16:42  leigh
-   Added Win32 compatibility, CVS logs, SBs changes
+/* Modification history prior to commit to CVS repository:
 
    03/17/90/daj - Added delegate mechanism. Added settable PartPerformerClass
    04/21/90/daj - Small mods to get rid of -W compiler warnings.
@@ -110,15 +78,15 @@
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKScorePerformer class])
-      return;
-    [MKScorePerformer setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
+	return;
+    [MKScorePerformer setVersion: VERSION2];//sb: suggested by Stone conversion guide (replaced self)
     return;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* TYPE: Archiving; Writes object.
      You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
@@ -136,7 +104,7 @@
     [aCoder encodeConditionalObject:delegate];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
   /* TYPE: Archiving; Reads object.
      You never send this message directly.  
      Should be invoked with NXReadObject(). 
@@ -160,25 +128,24 @@
 static void unsetPartPerformers(MKScorePerformer *self)
 {
     unsigned n = [self->partPerformers count], i;
+    
     for (i = 0; i < n; i++)
-        _MKSetScorePerformerOfPartPerformer([self->partPerformers objectAtIndex:i], nil);
+        _MKSetScorePerformerOfPartPerformer([self->partPerformers objectAtIndex: i], nil);
     [self->score release];
     self->score = nil;
 }
 
--releasePartPerformers
-  /* Frees all PartPerformers. Returns self. */
+- releasePartPerformers
+    /* Frees all PartPerformers. Returns self. */
 {
     if (status != MK_inactive)
-      return nil;
+	return nil;
     unsetPartPerformers(self);
     [partPerformers removeAllObjects];
     return self;
 }
 
-//#define FOREACH() for (el = NX_ADDRESS(partPerformers), n = [partPerformers count]; n--; el++)
-
--removePartPerformers
+- removePartPerformers
   /* Sets score to nil and removes all PartPerformers, but doesn't free them.
      Returns self.
      */
@@ -194,31 +161,31 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return score;
 }
 
--activate
-  /* If score is not set or MKScore contains no parts, returns nil. Otherwise, 
-     sends activateSelf, broadcasts activate message to contents, and 
-     returns self and sets status to MK_active if any one of the
-     MKPartPerformers returns self.
-     */ 
+- activate
+    /* If score is not set or MKScore contains no parts, returns nil. Otherwise, 
+    sends activateSelf, broadcasts activate message to contents, and 
+    returns self and sets status to MK_active if any one of the
+    MKPartPerformers returns self.
+    */ 
 {
     unsigned n = [partPerformers count], i;
     if (!score || (![score partCount]) || (![self activateSelf]))
-      return nil;
+	return nil;
     for (i = 0; i < n; i++)
         if ([(MKPerformer *)[partPerformers objectAtIndex:i] activate])
             status = MK_active;
     if (status != MK_active)
-      return nil;
+	return nil;
     _deactivateMsgPtr = MKCancelMsgRequest(_deactivateMsgPtr);
     // LMS - why shouldn't this be a deactivate rather than _deactivate?
     _deactivateMsgPtr = [MKConductor _afterPerformanceSel:
-			 @selector(_deactivate) to:self argCount:0];
+				@selector(_deactivate) to:self argCount:0];
     if ([delegate respondsToSelector:@selector(performerDidActivate:)])
-      [delegate performerDidActivate:self];
+	[delegate performerDidActivate:self];
     return self;
 }
 
--activateSelf
+- activateSelf
   /* TYPE: Performing; Does nothing; subclass may override for special behavior.
    * Invoked from the activate method,
    * a subclass can implement
@@ -231,62 +198,62 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
--setScore: (MKScore *) aScore
-  /* Snapshots the score over which we will sequence and creates
-     MKPartPerformers for each MKPart in the MKScore in the same order as the
-     corresponding MKParts. Note that any MKParts added to 
-     aScore after -setScore: is sent will not appear in the performance. In
-     order to get such MKParts to appear, you must send setScore: again. 
-     If aScore is not the same as the previously specified score,
-     frees all contained MKPartPerformers.  The MKPartPerformers are added
-     in the order the corresponding MKParts appear in the MKScore. */
+/* Snapshots the score over which we will sequence and creates
+   MKPartPerformers for each MKPart in the MKScore in the same order as the
+   corresponding MKParts. Note that any MKParts added to 
+   aScore after -setScore: is sent will not appear in the performance. In
+   order to get such MKParts to appear, you must send setScore: again. 
+   If aScore is not the same as the previously specified score,
+   frees all contained MKPartPerformers.  The MKPartPerformers are added
+   in the order the corresponding MKParts appear in the MKScore. 
+*/
+- setScore: (MKScore *) aScore
 {
     if (aScore == score)
-      return self;
+	return self;
     if (status != MK_inactive)
-      return nil;
+	return nil;
     [self releasePartPerformers]; // also releases score
     score = [aScore retain];
-    if (!score)
-      return self;
-    {
-	id aList = [aScore parts];
-	id newEl;
-        unsigned n = [aList count], i;
+    if (score != nil) {
+	NSArray *partsList = [aScore parts];
+        unsigned numberOfParts = [partsList count], partIndex;
 
-        for (i = 0; i < n; i++) {
-	    [partPerformers addObject:newEl = [partPerformerClass new]];
-            [newEl setPart:[aList objectAtIndex:i]];
-	    _MKSetScorePerformerOfPartPerformer(newEl,self);
-            [newEl release];/*sb: prevent leak. retain is held by partPerformers */
+        for (partIndex = 0; partIndex < numberOfParts; partIndex++) {
+	    MKPartPerformer *newEl = [partPerformerClass new];
+	    
+	    [partPerformers addObject: newEl];
+            [newEl setPart: [partsList objectAtIndex: partIndex]];
+	    _MKSetScorePerformerOfPartPerformer(newEl, self);
+            [newEl release]; /* Prevent leak. Retained by partPerformers */
 	}
+	/* Broadcast current state. */ 
+	[self setFirstTimeTag: firstTimeTag];
+	[self setLastTimeTag: lastTimeTag];
+	[self setDuration: duration];
+	[self setTimeShift: timeShift];
+	[self setConductor: conductor];
     }
-    /* Broadcast current state. */ 
-    [self setFirstTimeTag:firstTimeTag];
-    [self setLastTimeTag:lastTimeTag];
-    [self setDuration:duration];
-    [self setTimeShift:timeShift];
-    [self setConductor:conductor];
     return self;
 }
 
--pause
-  /* Broadcasts activate message to contained PartPerformers. */
+- pause
+  /* Broadcasts activate message to contained MKPartPerformers. */
 {
-    [partPerformers makeObjectsPerformSelector:@selector(pause)];
+    [partPerformers makeObjectsPerformSelector: @selector(pause)];
     status = MK_paused;
-    if ([delegate respondsToSelector:@selector(performerDidPause:)])
-      [delegate performerDidPause:self];
+    if ([delegate respondsToSelector: @selector(performerDidPause:)])
+	[delegate performerDidPause: self];
     return self;
 }
 
--resume
+- resume
   /* Broadcasts activate message to contained PartPerformers. */
 {
-    [partPerformers makeObjectsPerformSelector:@selector(resume)];
+    [partPerformers makeObjectsPerformSelector: @selector(resume)];
     status = MK_active;
-    if ([delegate respondsToSelector:@selector(performerDidResume:)])
-      [delegate performerDidResume:self];
+    if ([delegate respondsToSelector: @selector(performerDidResume:)])
+	[delegate performerDidResume: self];
     return self;
 }
 
@@ -311,25 +278,26 @@ static void unsetPartPerformers(MKScorePerformer *self)
 		guarantee that the delegate message isn't sent twice. Get it?
 */
     
-- (void)deactivate
+- (void) deactivate
   /* Sends [self _deactivate], broadcasts deactivate message to 
      contained PartPerformers and sets status to MK_inactive. */
 {
     [self _deactivate];
-    [partPerformers makeObjectsPerformSelector:@selector(deactivate)];
+    [partPerformers makeObjectsPerformSelector: @selector(deactivate)];
 }
 
--setFirstTimeTag:(double) aTimeTag
+- setFirstTimeTag: (double) aTimeTag
   /* Broadcast setFirstTimeTag: to contained PartPerformers. */
 { 
     unsigned n = [partPerformers count], i;
+    
     firstTimeTag = aTimeTag;
     for (i = 0; i < n; i++)
-        [[partPerformers objectAtIndex:i] setFirstTimeTag:aTimeTag];
+        [[partPerformers objectAtIndex: i] setFirstTimeTag: aTimeTag];
     return self;
 }		
 
--setLastTimeTag:(double) aTimeTag
+- setLastTimeTag: (double) aTimeTag
   /* Broadcast setLastTimeTag: to contained PartPerformers. */
 {
     unsigned n = [partPerformers count], i;
@@ -339,7 +307,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }		
 
--(double)firstTimeTag  
+- (double) firstTimeTag  
   /* TYPE: Accessing time
    * Returns the value of the receiver's firstTimeTag variable.
    */
@@ -347,7 +315,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return firstTimeTag;
 }
 
--(double)lastTimeTag 
+- (double) lastTimeTag 
   /* TYPE: Accessing time
    * Returns the value of the receiver's lastTimeTag variable.
    */
@@ -355,8 +323,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return lastTimeTag;
 }
 
-
--setTimeShift:(double) aTimeShift
+- setTimeShift: (double) aTimeShift
   /* Broadcast setTimeShift: to contained PartPerformers. */
 {
     unsigned n = [partPerformers count], i;
@@ -386,18 +353,18 @@ static void unsetPartPerformers(MKScorePerformer *self)
    * Returns the value of the receiver's timeShift variable.
    */
 {
-	return timeShift;
+    return timeShift;
 }
 
--(double)duration 
+- (double) duration 
   /* TYPE: Accessing time
    * Returns the value of the receiver's duration variable.
    */
 {
-	return duration;
+    return duration;
 }
 
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* Copies object. This involves copying firstTimeTag and lastTimeTag. 
      The score of the new object is set with setScore:, creating a new set 
      of partPerformers. */
@@ -433,12 +400,12 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return newObj;
 }
 
--copy
+- copy
 {
     return [self copyWithZone:[self zone]];
 }
 
-- (void)dealloc
+- (void) dealloc
   /* Frees contained PartPerformers and self. */
 {
     /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
@@ -453,8 +420,8 @@ static void unsetPartPerformers(MKScorePerformer *self)
 /* Broadcasts setConductor: to contained MKPartPerformers. */
 - setConductor: (MKConductor *) aConductor
 {
-    if ( (conductor=aConductor) == nil) 
-	aConductor=[MKConductor defaultConductor];
+    if ((conductor = aConductor) == nil) 
+	aConductor = [MKConductor defaultConductor];
     if (status == MK_inactive)
 	conductor = aConductor;
     else
@@ -463,18 +430,19 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
--partPerformerForPart: (MKPart *) aPart
+- partPerformerForPart: (MKPart *) aPart
   /* Returns the MKPartPerformer for aPart, if found. */
 {
     MKPartPerformer *partPerformer;
     unsigned n = [partPerformers count], i;
+    
     for (i = 0; i < n; i++)
         if ([(partPerformer = [partPerformers objectAtIndex: i]) part] == aPart)
             return partPerformer;
     return nil;
 }
 
--partPerformers
+- partPerformers
   /* TYPE: Processing
    * Returns a copy of the Array of the receiver's MKPartPerformer collection.
    * The PartPerformers themselves are not copied. It is the sender's
@@ -492,13 +460,14 @@ static void unsetPartPerformers(MKScorePerformer *self)
 {
     unsigned n = [partPerformers count], i;
     id anArray = [[NSMutableArray alloc] init];
-    IMP addImp = [anArray methodForSelector:@selector(addObject:)];
+    IMP addImp = [anArray methodForSelector: @selector(addObject:)];
+    
     for (i = 0; i < n; i++)
-        (*addImp)(anArray,@selector(addObject:),[[partPerformers objectAtIndex:i] noteSender]);
+        (*addImp)(anArray, @selector(addObject:), [[partPerformers objectAtIndex: i] noteSender]);
     return [anArray autorelease];
 }
 
--(int) status
+- (int) status
   /* TYPE: Querying; Returns the receiver's status.
    * Returns the receiver's status as one of the
    * following values:
@@ -515,25 +484,25 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return (int) status;
 }
 
--setPartPerformerClass:aPartPerformerSubclass
+- setPartPerformerClass: aPartPerformerSubclass
 {
-    if (!_MKInheritsFrom(aPartPerformerSubclass,[MKPartPerformer class]))
-      return nil;
+    if (!_MKInheritsFrom(aPartPerformerSubclass, [MKPartPerformer class]))
+	return nil;
     partPerformerClass = aPartPerformerSubclass;
     return self;
 }
 
--partPerformerClass
+- partPerformerClass
 {
     return partPerformerClass;
 }
 
-- (void)setDelegate:(id)object
+- (void) setDelegate: (id) object
 {
     delegate = object;
 }
 
--delegate
+- delegate
 {
     return delegate;
 }
@@ -546,7 +515,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     archiveScore = yesOrNo;
 }
 
--(BOOL)archiveScore
+-(BOOL) archiveScore
   /* Returns whether MKScore is archived when the receiver or any object 
    pointing to the receiver is archived. */
 {
@@ -558,33 +527,33 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 @implementation MKScorePerformer(Private)
 
--_partPerformerDidDeactivate:sender
+- _partPerformerDidDeactivate: sender
 {  
     MKPartPerformer *obj;
     int n, i;
+    
     if (status == MK_inactive) /* No need to bother in this case. */
        	return self;
     n = [partPerformers count];
-    for (i = 0; i<n; i++) {
-        obj = [partPerformers objectAtIndex:i];
+    for (i = 0; i < n; i++) {
+        obj = [partPerformers objectAtIndex: i];
         if ((sender != obj) && ([obj status] != MK_inactive))
-                return nil;/* One still active. */
+                return nil; /* One still active. */
     }
     [self _deactivate];
     return self;
 }
 
--_deactivate
+- _deactivate
 {
-     if (status == MK_inactive) /* This is needed to prevent deactivate being
-    				   called twice as explained above. */
+    /* This is needed to prevent deactivate being called twice as explained above. */
+    if (status == MK_inactive)
     	return self;
     status = MK_inactive;
     _deactivateMsgPtr = MKCancelMsgRequest(_deactivateMsgPtr);
-    if ([delegate respondsToSelector:@selector(performerDidDeactivate:)])
-      [delegate performerDidDeactivate:self];
+    if ([delegate respondsToSelector: @selector(performerDidDeactivate:)])
+	[delegate performerDidDeactivate: self];
     return self;
 }
   
 @end
-
