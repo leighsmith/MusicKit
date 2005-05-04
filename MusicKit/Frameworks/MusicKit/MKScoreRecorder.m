@@ -16,6 +16,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.8  2005/05/04 11:49:14  leighsmith
+   Corrected typing
+
    Revision 1.7  2001/09/06 21:27:48  leighsmith
    Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -74,21 +77,14 @@
 
 @implementation MKScoreRecorder
 
-#if 0 // LMS redundant
-+new
+- init
 {
-    self = [super allocWithZone:NSDefaultMallocZone()];
-    [self init];
-    return self;
-}
-#endif
-
--init
-{
-    [super init];
-    timeUnit = MK_second;
-    partRecorders = [[NSMutableArray array] retain];
-    partRecorderClass = [MKPartRecorder class];
+    self = [super init];
+    if(self != nil) {
+	timeUnit = MK_second;
+	partRecorders = [[NSMutableArray array] retain];
+	partRecorderClass = [MKPartRecorder class];	
+    }
     return self;
 }
 
@@ -157,8 +153,9 @@ static void unsetPartRecorders(MKScoreRecorder *self)
 {
     NSMutableArray *aListOfParts;
     MKPart *part;
-    id newPartRecorder;
-    unsigned n,i;
+    MKPartRecorder *newPartRecorder;
+    unsigned n, i;
+    
     if (aScore == score)
         return self;
     if ([self inPerformance])
