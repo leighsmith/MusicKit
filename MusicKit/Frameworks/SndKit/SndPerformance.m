@@ -315,12 +315,11 @@ startPosition: (double) startPosition
     return [[audioProcessorChain retain] autorelease];
 }
 
-- setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain
 {
     if (audioProcessorChain)
 	[audioProcessorChain release];
     audioProcessorChain = [anAudioProcessorChain retain];
-    return self;
 }
 
 // Fills the given buffer with sound data, reading from the playIndex up until endAtIndex

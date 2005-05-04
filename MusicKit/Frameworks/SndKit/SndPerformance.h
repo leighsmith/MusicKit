@@ -323,7 +323,7 @@ startPosition: (double) startPosition
   @method setAudioProcessorChain:
   @param anAudioProcessorChain
 */
-- setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain;
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain;
 
 /*!
   @method retrievePerformBuffer:ofLength:
