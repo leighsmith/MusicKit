@@ -110,44 +110,43 @@
     @method     processorAtIndex:
     @abstract   Get the processor at a certain index
     @discussion
-    @param      index
-    @result     Reference to an SndAudioProcessor
+    @param      index Base zero reference to the SndAudioProcessor required.
+    @result     Returns an autoreleased SndAudioProcessor.
 */
-- (SndAudioProcessor*) processorAtIndex: (int) index;
+- (SndAudioProcessor *) processorAtIndex: (int) index;
 
 /*!
     @method     removeAllProcessors
     @abstract   Removes all processors from the processor chain.
-    @result     self
+    @result     Returns self.
 */
 - removeAllProcessors;
 
 /*!
     @method     processBuffer:
-    @abstract
+    @abstract   Process the provided audio buffer with the chain of SndAudioProcessors
     @discussion The t parameter tells the processor chain at what time
                 the buffer is destined to start to be played. This
                 matches up with the time the SndStreamClients were given
                 for generating this same buffer.
-    @param      buff A SndAudioBuffer instance.
+    @param      buff A SndAudioBuffer instance of valid sound data.
     @param      t The time in seconds the buffer is intended to be played.
-    @result     self.
+    @result     Returns self.
 */
 - processBuffer: (SndAudioBuffer *) buff forTime: (double) t;
 
 /*!
     @method     processorCount
-    @abstract
-    @discussion
+    @abstract   Returns the number of processors in the audio processor chain.
     @result     number of processors in the processor chain.
 */
 - (int) processorCount; 
 
 /*!
     @method     processorArray
-    @abstract   Accessor to the internal processor array
-    @discussion Provided for speed
-    @result     NSArray containing the processors (in order)
+    @abstract   Returns an array of SndAudioProcessors in this chain.
+    @discussion Provided for speed, so it returns a shallow copy of the SndAudioProcessor instances.
+    @result     NSArray containing the processors (in processing order).
 */
 - (NSArray *) processorArray;
 
