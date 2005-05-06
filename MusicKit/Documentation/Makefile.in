@@ -4,7 +4,7 @@
 #
 # Documentation Makefile -- Just installs documentation
 #
-# Usage: make CHANGELOG=[ChangeLog]
+# Usage: make CHANGELOG=[ChangeLog] OBJDIR=[ObjectDirectory]
 #
 # Create a set of HTML pages and PDFs from the SGML documentation suitable for
 # distribution on the musickit.org web-site. We do this with a
@@ -27,7 +27,11 @@
 
 SGMLTRANS=@SGMLTRANS@
 
-DOC_TARBALL=/tmp/MusicKitREADME.tar.bz2
+# Default to storing all the temporary files in volatile /tmp.
+OBJDIR=/tmp
+
+BUILDDIR=$(OBJDIR)/MKDocumentation.build
+DOC_TARBALL=$(BUILDDIR)/MusicKitREADME.tar.bz2
 
 # We allow the path to the ChangeLog to be passed in on the command
 # line since it is generated in the source packaging process.
@@ -35,8 +39,8 @@ CHANGELOG=
 
 # HTML_DISTRIB_DIR makes it easier to install into SourceForge.
 HTML_DISTRIB_DIR=htdocs
-HTML_TMPDIR=/tmp/$(HTML_DISTRIB_DIR)
-PDF_TMPDIR=/tmp/mkpdf
+HTML_TMPDIR=$(BUILDDIR)/$(HTML_DISTRIB_DIR)
+PDF_OUTPUT_DIR=$(BUILDDIR)/PDF
 
 MK_STYLEDIR=SGML
 MK_STYLESHEET=$(MK_STYLEDIR)/MusicKit_README.dsssl
@@ -44,7 +48,7 @@ CSS=MusicKit_README.css
 
 README=MusicKit_README
 
-PDFS=$(addprefix $(PDF_TMPDIR)/, $(README).pdf \
+PDFS=$(addprefix $(PDF_OUTPUT_DIR)/, $(README).pdf \
 	MusicKitTutorials.pdf \
 	MusicKitConcepts.pdf)
 
@@ -86,7 +90,7 @@ all: $(DOC_TARBALL)
 
 clean:
 	-rm -r $(HTML_TMPDIR)
-	-rm -r $(PDF_TMPDIR) 
+	-rm -r $(PDF_OUTPUT_DIR) 
 
 install:: $(DOC_TARBALL) $(INSTALL_DIR)
 	(cd $(INSTALL_DIR); tar xjfp $(DOC_TARBALL); mv htdocs MusicKit )
@@ -137,9 +141,9 @@ endef
 #
 define create-pdf
 	mkdir -p $(dir $@)/Images
-	$(SGMLTRANS) -t tex -d $(MK_STYLESHEET)\#print -o /tmp/epsversion.tex $<
+	$(SGMLTRANS) -t tex -d $(MK_STYLESHEET)\#print -o $(BUILDDIR)/epsversion.tex $<
 	# ugly hack to swap .eps files for .pdfs for pdfjadetex to work
-	sed -e "s/\.eps/\.pdf/g" < /tmp/epsversion.tex > $(basename $@).tex
+	sed -e "s/\.eps/\.pdf/g" < $(BUILDDIR)/epsversion.tex > $(basename $@).tex
 	cp $(MK_STYLEDIR)/Images/*.pdf $(dir $@)/Images
 	-cp -r $(dir $<)/Images/*.pdf $(dir $@)/Images
 	cp $(ADMONIMAGESDIR)/*.pdf $(dir $@)/Images
@@ -172,13 +176,13 @@ $(HTML_TMPDIR)/TutorialClasses/index.html: TutorialClasses/MusicKitTutorials.sgm
 #
 # Generate the MusicKit_README PDF.
 #
-$(PDF_TMPDIR)/$(README).pdf: $(README).sgml
+$(PDF_OUTPUT_DIR)/$(README).pdf: $(README).sgml
 	$(create-pdf)
 
-$(PDF_TMPDIR)/MusicKitTutorials.pdf: TutorialClasses/MusicKitTutorials.sgml
+$(PDF_OUTPUT_DIR)/MusicKitTutorials.pdf: TutorialClasses/MusicKitTutorials.sgml
 	$(create-pdf)
 
-$(PDF_TMPDIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.sgml
+$(PDF_OUTPUT_DIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.sgml
 	$(create-pdf)
 
 #
