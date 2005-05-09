@@ -18,11 +18,13 @@
 /*!
   @class SndAudioUnitController
   @description Responsible for receiving user interface messages from the Cocoa or Carbon Audio Unit views
-    and passing them down to the Audio Unit (which is wrapped within the SndAudioUnitProcessor).
-    Receives buttons for bypassing an effect.
+  and passing them down to the Audio Unit (which is wrapped within the SndAudioUnitProcessor).
+  Receives buttons for bypassing an effect.
 
-  @discussion Does this model one connection of a AudioUnitCarbonView instance to a SndAudioUnitProcessor instance? Several?
+  @brief Does this model one connection of a AudioUnitCarbonView instance to a SndAudioUnitProcessor instance? Several?
 // Controls the display of an Audio Unit view.
+
+  
 // If it's a Cocoa view, load it from it's bundle and return it. If it's a Carbon View,  start it up in a separate window.
 // Probably rename SndAudioUnitController, and normally create or be assigned a Cocoa window or a Carbon window.
 */
@@ -41,23 +43,21 @@
 }
 
 /*!
-  @method initWithAudioProcessor:
-  @abstract Initialises a view instance with a given AudioUnit Processor. 
-  @discussion Responsible for loading the user interface and displaying it either in a separate window (Carbon)
-              or initialising it ready for incorporation within another view (Cocoa).
+  @brief Initialises a view instance with a given AudioUnit Processor. 
+  
+  Responsible for loading the user interface and displaying it either in a separate window (Carbon)
+  or initialising it ready for incorporation within another view (Cocoa).
  */
 - initWithAudioProcessor: (SndAudioUnitProcessor *) processor;
 
 /*!
-  @method audioUnitProcessor
-  @abstract Returns the audio unit processor this SndAudioUnitController is controlling.
-  @result Returns an autoreleased SndAudioUnitProcessor instance.
+  @brief Returns the audio unit processor this SndAudioUnitController is controlling.
+  @return Returns an autoreleased SndAudioUnitProcessor instance.
  */
 - (SndAudioUnitProcessor *) audioUnitProcessor;
 
 /*!
-  @method window
-  @abstract Returns the window displaying and managing the window.
+  @brief Returns the window displaying and managing the window.
  */
  - (NSWindow *) window;
 

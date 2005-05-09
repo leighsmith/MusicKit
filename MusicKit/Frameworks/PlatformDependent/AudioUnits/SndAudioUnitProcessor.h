@@ -20,10 +20,12 @@
 
 /*!
   @class SndAudioUnitProcessor
-  @discussion Wraps an audio unit and it's signal processing behaviour. 
-              There is one AudioUnit per SndAudioUnitProcessor instance.
-              In this context it forms the Model in an MVC triumvariate with SndAudioUnitController managing
-              the display of the Audio Units GUI and the management of parameter changes.
+  @brief Wraps an audio unit and it's signal processing behaviour.
+
+  
+  There is one AudioUnit per SndAudioUnitProcessor instance.
+  In this context it forms the Model in an MVC triumvariate with SndAudioUnitController managing
+  the display of the Audio Units GUI and the management of parameter changes.
 */
 
 @interface SndAudioUnitProcessor : SndAudioProcessor
@@ -49,44 +51,41 @@
 }
 
 /*!
-  @method availableAudioProcessors
-  @abstract Returns an array of names of available audio units (on MacOS X).
-  @discussion The names returned can be assumed to be human readable and reasonably formatted. They can also
-              be assumed to be unique and therefore can be used to create an instance using +processorNamed:.
-	      For the SndAudioUnitProcessor class, these names are those returned by those Apple AudioUnits available
-              for loading.
-  @result Returns an autoreleased NSArray of NSStrings of audio processors.
+  @brief Returns an array of names of available audio units (on MacOS X).
+  
+  The names returned can be assumed to be human readable and reasonably formatted. They can also
+  be assumed to be unique and therefore can be used to create an instance using +processorNamed:.
+	  For the SndAudioUnitProcessor class, these names are those returned by those Apple AudioUnits available
+  for loading.
+  @return Returns an autoreleased NSArray of NSStrings of audio processors.
  */
 + (NSArray *) availableAudioProcessors;
 
 /*!
-  @method audioProcessorNamed:
-  @abstract Returns an autoreleased instance of a SndAudioProcessor subclass named <I>processorName</I>.
+  @brief Returns an autoreleased instance of a SndAudioProcessor subclass named <I>processorName</I>.
   @param processorName An NSString with one of the names returned by <B>+availableAudioProcessors</B>.
  */
 + (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName;
 
 /*!
-  @method audioUnit
-  @abstract Returns the C++ AudioUnit handle.
+  @brief Returns the C++ AudioUnit handle.
  */
 - (AudioUnit) audioUnit;
 
 // TODO perhaps rename superclass and this to method initWithAudioUnitNamed: and remove paramCount parameter.
 
 /*
- @method initWithAudioUnitNamed:
- @abstract Given a name previously returned by availableAudioUnits, a SndAudioUnitProcessor instance is created.
+ @brief Given a name previously returned by availableAudioUnits, a SndAudioUnitProcessor instance is created.
  @param audioUnitName The name of a unit as returned by <B>+availableAudioProcessors</B>.
- @discussion A SndAudioUnitProcessor instance is created for each AudioUnit. SndAudioUnitProcessor factory methods
+ 
+   A SndAudioUnitProcessor instance is created for each AudioUnit. SndAudioUnitProcessor factory methods
              are the overseer of multiple available AudioUnits, each one is loaded and instantiated as a
              SndAudioUnitProcessor instance.
  */
 - initWithParamCount: (const int) count name: (NSString *) audioUnitName;
 
 /*!
-  @method processReplacingInputBuffer:outputBuffer:
-  @abstract Process the given audio buffer through the AudioUnit.
+  @brief Process the given audio buffer through the AudioUnit.
  */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
                         outputBuffer: (SndAudioBuffer *) outB;
