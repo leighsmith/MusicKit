@@ -44,8 +44,8 @@
 /*!
   @header SndFormats
  
-  @abstract Enumerates and describes the various sound sample data formats which can processed
-            by the MusicKit and SndKit.
+  @brief Enumerates and describes the various sound sample data formats which can processed
+  by the MusicKit and SndKit.
  */
 
 #ifndef __SNDFORMATS__
@@ -53,7 +53,7 @@
 
 /*!
   @enum       SndSampleFormat
-  @abstract   Various sound sample data formats
+  @brief   Various sound sample data formats
   @constant   SND_FORMAT_UNSPECIFIED
   @constant   SND_FORMAT_MULAW_8  u-law encoding.
   @constant   SND_FORMAT_LINEAR_8  Linear 8 bits.
