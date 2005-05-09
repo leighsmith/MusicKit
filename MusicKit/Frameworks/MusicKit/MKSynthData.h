@@ -54,7 +54,7 @@
 */
 /*!
   @class MKSynthData
-  @discussion
+  @brief
 
 MKSynthData objects represent DSP memory that's used in music synthesis.  For
 example, you can use a MKSynthData object to load predefined data for wavetable
@@ -93,7 +93,7 @@ DSPMemorySpace, are described in MKOrchestra.  In general, the design of the
 MKOrchestra makes intimate knowledge of the details of the DSP
 unnecessary.
 
-See also:  MKSynthPatch, MKOrchestra, MKUnitGenerator
+  @see  MKSynthPatch, MKOrchestra, MKUnitGenerator
 */
 #ifndef __MK_SynthData_H___
 #define __MK_SynthData_H___
@@ -137,41 +137,46 @@ See also:  MKSynthPatch, MKOrchestra, MKUnitGenerator
 
 
 /*!
-  @method clear
-  @result Returns an id.
-  @discussion Clears the receiver's memory but doesn't deallocate
-              it.
+  @return Returns an id.
+  @brief Clears the receiver's memory but doesn't deallocate
+  it.
+
+  
 */
 - clear; 
 
 /*!
-  @method length
-  @result Returns an unsigned int.
-  @discussion Returns the size (in words) of the receiver's memory
-              block.
+  @return Returns an unsigned int.
+  @brief Returns the size (in words) of the receiver's memory
+  block.
+
+  
 */
 -(unsigned int ) length; 
 
 /*!
-  @method address
-  @result Returns a DSPAddress.
-  @discussion Returns the DSP address of the receiver's memory
-              block.
+  @return Returns a DSPAddress.
+  @brief Returns the DSP address of the receiver's memory
+  block.
+
+  
 */
 -(DSPAddress ) address; 
 
 /*!
-  @method memorySpace
-  @result Returns a DSPMemorySpace.
-  @discussion Returns the DSP space in which the receiver's memory block is
-              allocated.
+  @return Returns a DSPMemorySpace.
+  @brief Returns the DSP space in which the receiver's memory block is
+  allocated.
+
+  
 */
 -(DSPMemorySpace ) memorySpace; 
 
 /*!
-  @method orchAddrPtr
-  @result Returns a MKOrchAddrStruct *.
-  @discussion Returns a pointer to the receiver's address structure.
+  @return Returns a MKOrchAddrStruct *.
+  @brief Returns a pointer to the receiver's address structure.
+
+  
 */
 -(MKOrchAddrStruct *) orchAddrPtr; 
 
@@ -179,136 +184,147 @@ See also:  MKSynthPatch, MKOrchestra, MKUnitGenerator
 
 
 /*!
-  @method setData:length:offset:
   @param  dataArray is a DSPDatum *.
   @param  len is an int.
   @param  off is an int.
-  @result Returns an id.
-  @discussion Loads (at most) <i>len</i> words of data from <i>dataArray</i> into
-              the receiver's memory, starting at location <i>off</i> words from
-              the beginning of the receiver's memory block.  If <i>off</i> +
-              <i>len</i> is greater than the receiver's length (as returned by the
-              <b>length</b> method), or if the data couldn't otherwise be loaded,
-              the error MK_synthDataLoadErr is generated and <b>nil</b> is
-              returned.  Otherwise returns the receiver.
+  @return Returns an id.
+  @brief Loads (at most) <i>len</i> words of data from <i>dataArray</i> into
+  the receiver's memory, starting at location <i>off</i> words from
+  the beginning of the receiver's memory block.
+
+  If <i>off</i> +
+  <i>len</i> is greater than the receiver's length (as returned by the
+  <b>length</b> method), or if the data couldn't otherwise be loaded,
+  the error MK_synthDataLoadErr is generated and <b>nil</b> is
+  returned.  Otherwise returns the receiver.
 */
 - setData:(DSPDatum *)dataArray length:(unsigned int )len offset:(int )off; 
 
 /*!
-  @method setShortData:length:offset:
   @param  dataArray is a short *.
   @param  len is an int.
   @param  off is an int.
-  @result Returns an id.
-  @discussion Loads (at most) len words of data from <i>dataArray</i> into the
-              receiver's memory, right justified, starting at location <i>off</i>
-              words from the beginning of the receiver's memory block.  If
-              <i>off</i> + <i>len</i> is greater than the receiver's length (as
-              returned by the <b>length</b> method), or if the data couldn't
-              otherwise be loaded, the error MK_synthDataLoadErr is generated and
-              <b>nil</b> is returned. Otherwise returns the receiver.
+  @return Returns an id.
+  @brief Loads (at most) len words of data from <i>dataArray</i> into the
+  receiver's memory, right justified, starting at location <i>off</i>
+  words from the beginning of the receiver's memory block.
+
+  If
+  <i>off</i> + <i>len</i> is greater than the receiver's length (as
+  returned by the <b>length</b> method), or if the data couldn't
+  otherwise be loaded, the error MK_synthDataLoadErr is generated and
+  <b>nil</b> is returned. Otherwise returns the receiver.
 */
 -setShortData:(short *)dataArray length:(unsigned int )len offset:(int)off;
 
 /*!
-  @method setData:
   @param  dataArray is a DSPDatum *.
-  @result Returns an id.
-  @discussion Loads <i>dataArray</i> into the receiver's memory.  Implemented as
-              (and returns the value of):
-              
-              <tt>[self setData:dataArray length:length offset:0];</tt>
-              
-              where the second argument is the instance variable <b>length</b>.
-              This assumes that <i>dataArray</i> is the same length as the receiver.
+  @return Returns an id.
+  @brief Loads <i>dataArray</i> into the receiver's memory.
+
+  Implemented as
+  (and returns the value of):
+  
+  <tt>[self setData:dataArray length:length offset:0];</tt>
+  
+  where the second argument is the instance variable <b>length</b>.
+  This assumes that <i>dataArray</i> is the same length as the receiver.
 */
 - setData:(DSPDatum *)dataArray; 
 
 /*!
-  @method setShortData:
   @param  dataArray is a short *.
-  @result Returns an id.
-  @discussion Loads <i>dataArray</i> into the receiver's memory, right justified. 
-              Implemented as (and returns the value of)
+  @return Returns an id.
+  @brief Loads <i>dataArray</i> into the receiver's memory, right justified.
 
-              <tt>[self setShortData:dataArray length:length offset:0];</tt>
+  
+  Implemented as (and returns the value of)
+
+  <tt>[self setShortData:dataArray length:length offset:0];</tt>
  
-              where the second argument is the instance variable length.
-              This assumes that dataArray is the same length as the receiver.
+  where the second argument is the instance variable length.
+  This assumes that dataArray is the same length as the receiver.
 */
 - setShortData:(short *)dataArray;
 
 /*!
-  @method setToConstant:length:offset:
   @param  value is a DSPDatum.
   @param  len is an int.
   @param  off is an int.
-  @result Returns an id.
-  @discussion Similar to <b>setData:length:offset:</b>, but loads the constant
-              <i>value</i> rather than an array; see <b>setData:length:offset:</b>
-              for details.
+  @return Returns an id.
+  @brief Similar to <b>setData:length:offset:</b>, but loads the constant
+  <i>value</i> rather than an array; see <b>setData:length:offset:</b>
+  for details.
+
+  
 */
 - setToConstant:(DSPDatum )value length:(unsigned int )len offset:(int )off; 
 
 /*!
-  @method setToConstant:
   @param  value is a DSPDatum.
-  @result Returns an id.
-  @discussion Fills the receiver's memory with the constant <i>value</i>. 
-              Implemented as (and returns the value of)
-              
-              <tt>[self setToConstant:value length:length offset:0];</tt>
-              
-              where the second argument is the instance variable <b>length</b>.
+  @return Returns an id.
+  @brief Fills the receiver's memory with the constant <i>value</i>.
+
+  
+  Implemented as (and returns the value of)
+  
+  <tt>[self setToConstant:value length:length offset:0];</tt>
+  
+  where the second argument is the instance variable <b>length</b>.
 */
 - setToConstant:(DSPDatum )value;    
 
 /*!
-  @method run
-  @result Returns an id.
-  @discussion This does nothing and returns the receiver.  It's provided for
-              compatibility with MKUnitGenerator; specifically, it allows a
-              MKSynthPatch to send <b>run</b> to all its MKSynthElement objects
-              without regard for their class.
+  @return Returns an id.
+  @brief This does nothing and returns the receiver.
+
+  It's provided for
+  compatibility with MKUnitGenerator; specifically, it allows a
+  MKSynthPatch to send <b>run</b> to all its MKSynthElement objects
+  without regard for their class.
 */
 - run;
 
 /*!
-  @method idle
-  @result Returns an id.
-  @discussion This does nothing and returns the receiver.  It's provided for
-              compatibility with MKUnitGenerator; specifically, it allows a
-              MKSynthPatch to send <b>idle</b> to all its MKSynthElement objects
-              without regard for their class.
+  @return Returns an id.
+  @brief This does nothing and returns the receiver.
+
+  It's provided for
+  compatibility with MKUnitGenerator; specifically, it allows a
+  MKSynthPatch to send <b>idle</b> to all its MKSynthElement objects
+  without regard for their class.
 */
 - idle;
 
 /*!
-  @method finish
-  @result Returns a double.
-  @discussion This does nothing and returns 0.0.  It's provided for compatibility
-              with MKUnitGenerator; specifically, it allows a MKSynthPatch to send
-              <b>finish</b> to all its SynthElement objects without regard for
-              their class.
+  @return Returns a double.
+  @brief This does nothing and returns 0.0.
+
+  It's provided for compatibility
+  with MKUnitGenerator; specifically, it allows a MKSynthPatch to send
+  <b>finish</b> to all its SynthElement objects without regard for
+  their class.
 */
 - (double)finish;
 
 /*!
-  @method orchestraClass
-  @result Returns an id.
-  @discussion This method always returns the <b>id</b> of the MKOrchestra class. 
-              It's provided for applications that extend the MusicKit to use
-              other synthesis hardware.  If you're using more than one type of
-              hardware, you should create a subclass of MKSynthData and/or
-              MKUnitGenerator for each.  The default hardware is that represented
-              by MKOrchestra, the DSP56001.
+  @return Returns an id.
+  @brief This method always returns the <b>id</b> of the MKOrchestra class.
+
+  
+  It's provided for applications that extend the MusicKit to use
+  other synthesis hardware.  If you're using more than one type of
+  hardware, you should create a subclass of MKSynthData and/or
+  MKUnitGenerator for each.  The default hardware is that represented
+  by MKOrchestra, the DSP56001.
 */
 + orchestraClass;
 
 /*!
-  @method orchestra
-  @result Returns an id.
-  @discussion Returns the receiver's MKOrchestra object.
+  @return Returns an id.
+  @brief Returns the receiver's MKOrchestra object.
+
+  
 */
 - orchestra; 
 
@@ -323,56 +339,62 @@ See also:  MKSynthPatch, MKOrchestra, MKUnitGenerator
 
 
 /*!
-  @method isAllocated
-  @result Returns a BOOL.
-  @discussion Provided for compatability with MKUnitGenerator. Always returns YES,
-              since deallocated SynthDatas are freed immediately.
+  @return Returns a BOOL.
+  @brief Provided for compatability with MKUnitGenerator.
+
+  Always returns YES,
+  since deallocated SynthDatas are freed immediately.
 */
 -(BOOL) isAllocated;
 
 /*!
-  @method isFreeable
-  @result Returns a BOOL.
-  @discussion Invoked by the MKOrchestra to determine whether the receiver may be
-              freed.  Returns YES if it can, NO if it can't.  (A MKSynthData can be
-              freed if its a member of a MKSynthPatch that can be
-              freed.)
+  @return Returns a BOOL.
+  @brief Invoked by the MKOrchestra to determine whether the receiver may be
+  freed.
+
+  Returns YES if it can, NO if it can't.  (A MKSynthData can be
+  freed if its a member of a MKSynthPatch that can be
+  freed.)
 */
 -(BOOL ) isFreeable; 
 
 /*!
-  @method synthPatch
-  @result Returns an id.
-  @discussion Returns the MKSynthPatch that the receiver is part of, if
-              any.
+  @return Returns an id.
+  @brief Returns the MKSynthPatch that the receiver is part of, if
+  any.
+
+  
 */
 - synthPatch; 
 
 /*!
-  @method setReadOnly:
   @param  readOnlyFlag is a BOOL.
-  @result Returns an id.
-  @discussion Sets the receiver to read-only if <i>readOnlyFlag</i> is YES and
-              read-write if it's NO.  The default access for a MKSynthData object is
-              read-write.  Returns the receiver.  The MKOrchestra automatically
-              creates some read-only MKSynthData objects (SineROM, MuLawROM, and the
-              zero and sink patchpoints) that ignore this method.
+  @return Returns an id.
+  @brief Sets the receiver to read-only if <i>readOnlyFlag</i> is YES and
+  read-write if it's NO.
+
+  The default access for a MKSynthData object is
+  read-write.  Returns the receiver.  The MKOrchestra automatically
+  creates some read-only MKSynthData objects (SineROM, MuLawROM, and the
+  zero and sink patchpoints) that ignore this method.
 */
 - setReadOnly:(BOOL)readOnlyFlag;
 
 /*!
-  @method readOnly
-  @result Returns a BOOL.
-  @discussion Returns YES if the receiver is read-only.
+  @return Returns a BOOL.
+  @brief Returns YES if the receiver is read-only.
+
+  
 */
 - (BOOL)readOnly;
 
 /*!
-  @method referenceCount
-  @result Returns an int.
-  @discussion If the receiver is installed in its MKOrchestra's shared object table,
-              this returns the number of objects that have allocated it. Otherwise
-              returns 1.
+  @return Returns an int.
+  @brief If the receiver is installed in its MKOrchestra's shared object table,
+  this returns the number of objects that have allocated it.
+
+  Otherwise
+  returns 1.
 */
 -(int)referenceCount;
 
@@ -384,30 +406,32 @@ See also:  MKSynthPatch, MKOrchestra, MKUnitGenerator
 
 
 /*!
-  @method readDataUntimed:length:offset:
   @param  dataArray is a DSPDatum *.
   @param  len is an int .
   @param  off is an int .
-  @result Returns an id.
-  @discussion Queries the DSP for the value of the given DSP memory.
-              
-              This returns a valid value by reference only when one of the following is true:
-               &#183;   the data was allocated before the MKOrchestra started running
-               &#183;   the data was allocated more than deltaT in the past
-               &#183;   delta-t is 0
-               &#183;   there is no Conductor performing
+  @return Returns an id.
+  @brief Queries the DSP for the value of the given DSP memory.
+
+  
+  
+  This returns a valid value by reference only when one of the following is true:
+  &#183;   the data was allocated before the MKOrchestra started running
+  &#183;   the data was allocated more than deltaT in the past
+  &#183;   delta-t is 0
+  &#183;   there is no Conductor performing
 */
 -readDataUntimed:(DSPDatum *)dataArray length:(unsigned int )len offset:(int )off;
 
 /*!
-  @method readShortDataUntimed:length:offset:
   @param  dataArray is a short *.
   @param  len is an int.
   @param  off is an int.
-  @result Returns an id.
-  @discussion Queries the DSP for the value of the given DSP memory.  Same as
-              readDataUntimed:length:offset: for 16-bit arrays of data.
-              
+  @return Returns an id.
+  @brief Queries the DSP for the value of the given DSP memory.
+
+  Same as
+  readDataUntimed:length:offset: for 16-bit arrays of data.
+  
 */
 -readShortDataUntimed:(short *)dataArray length:(unsigned int )len offset:(int)off;
 

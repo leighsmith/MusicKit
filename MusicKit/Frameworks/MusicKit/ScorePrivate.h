@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:52:55  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2002/05/01 14:27:54  sbrandon
   Defines the (private) PluginSupport category that contains addPlugin:
 
@@ -26,9 +29,8 @@
 
 @interface MKScore (PluginSupport)
 /*!
- @method addPlugin:
  @param  a plugin object that has been loaded into the MusicKit
- @result void.
+ @return void.
 */
 + (void) addPlugin: (id) plugin;
 @end

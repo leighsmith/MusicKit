@@ -39,7 +39,7 @@
 */
 /*!
   @class MKInstrument
-  @discussion
+  @brief
 
 MKInstrument is an abstract class that defines the general mechanism for
 receiving and realizing MKNotes during a MusicKit performance.  An MKInstrument
@@ -102,197 +102,213 @@ realize MKNotes on an external MIDI synthesizer.
 
 
 /*!
-  @method init
-  @result Returns <b>self</b>.
-  @discussion Initializes an MKInstrument that was created through
-              <b>allocFromZone:</b>.  You never invoke this method directly.  A
-              subclass implementation should send [super init] before
-              performing its own initialization.  The return value is ignored.
+  @return Returns <b>self</b>.
+  @brief Initializes an MKInstrument that was created through
+  <b>allocFromZone:</b>.
+
+  You never invoke this method directly.  A
+  subclass implementation should send [super init] before
+  performing its own initialization.  The return value is ignored.
 */
 - init; 
 
 /*!
-  @method realizeNote:fromNoteReceiver:
   @param  aNote is an id.
   @param  aNoteReceiver is an id.
-  @result Returns an id.
-  @discussion You implement this method in a subclass to define the manner in
-              which the subclass realizes MKNotes.  <i>aNote</i> is the MKNote
-              that's to be realized; <i>aNoteReceiver</i> is the MKNoteReceiver
-              that received it.  The default implementation does nothing; the
-              return value is ignored. Keep in mind that notes must be copied on write or store.
-              
-              You never invoke this method from your application; it should only
-              be invoked by the MKInstrument's MKNoteReceivers as they are sent
-              <b>receiveNote:</b> messages.  Keep in mind that you can send
-              <b>receiveNote:</b> directly to a MKNoteReceiver for diagnostic
-              or other untimed reception purposes. 
+  @return Returns an id.
+  @brief You implement this method in a subclass to define the manner in
+  which the subclass realizes MKNotes.
+
+  <i>aNote</i> is the MKNote
+  that's to be realized; <i>aNoteReceiver</i> is the MKNoteReceiver
+  that received it.  The default implementation does nothing; the
+  return value is ignored. Keep in mind that notes must be copied on write or store.
+  
+  You never invoke this method from your application; it should only
+  be invoked by the MKInstrument's MKNoteReceivers as they are sent
+  <b>receiveNote:</b> messages.  Keep in mind that you can send
+  <b>receiveNote:</b> directly to a MKNoteReceiver for diagnostic
+  or other untimed reception purposes. 
 */
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
-  @method firstNote:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion You never invoke this method; it's invoked just before the
-              MKInstrument realizes its first MKNote.  A subclass can implement
-              this method to perform pre-realization initialization.  The argument
-              is the MKNote that the MKInstrument is about to realize; it's
-              provided as a convenience and can be ignored in a subclass
-              implementation.  The MKInstrument is considered to be in performance
-              after this method returns.  The return value is ignored.
-              
-              See also: - <b>afterPerformance</b>, - <b>inPerformance</b>
+  @return Returns an id.
+  @brief You never invoke this method; it's invoked just before the
+  MKInstrument realizes its first MKNote.
+
+  A subclass can implement
+  this method to perform pre-realization initialization.  The argument
+  is the MKNote that the MKInstrument is about to realize; it's
+  provided as a convenience and can be ignored in a subclass
+  implementation.  The MKInstrument is considered to be in performance
+  after this method returns.  The return value is ignored.
+  
+  @see - <b>afterPerformance</b>, - <b>inPerformance</b>
 */
 - firstNote: (MKNote *) aNote;
 
 /*!
-  @method noteReceivers
-  @result Returns an NSArray.
-  @discussion Creates and returns an NSArray that contains the MKInstrument's
-              MKNoteReceivers. The MKNoteReceivers themselves aren't copied.
-              
-              See also: - <b>addNoteReceiver</b>, -
-              <b>noteReceiver</b>,<b></b> - <b>isNoteReceiverPresent</b>
+  @return Returns an NSArray.
+  @brief Creates and returns an NSArray that contains the MKInstrument's
+  MKNoteReceivers.
+
+  The MKNoteReceivers themselves aren't copied.
+  
+  @see - <b>addNoteReceiver</b>, -
+  <b>noteReceiver</b>,<b></b> - <b>isNoteReceiverPresent</b>
 */
 - (NSArray *) noteReceivers;
 
 /*!
-  @method indexOfNoteReceiver:
   @param  aNoteReceiver is an id.
-  @result Returns an int.
-  @discussion Returns the ordinal index of <i>aNoteReceiver</i> in the
-              MKInstrument's MKNoteReceiver NSArray.  Returns -1 if
-              <i>aNoteReceiver</i>is not in the NSArray.
+  @return Returns an int.
+  @brief Returns the ordinal index of <i>aNoteReceiver</i> in the
+  MKInstrument's MKNoteReceiver NSArray.
+
+  Returns -1 if
+  <i>aNoteReceiver</i>is not in the NSArray.
 */
 - (int) indexOfNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
-  @method isNoteReceiverPresent:
   @param  aNoteReceiver is an MKNoteReceiver.
-  @result Returns a BOOL.
-  @discussion Returns YES if <i>aNoteReceiver</i> is in the MKInstrument's
-              MKNoteReceiver NSArray.  Otherwise returns NO.
-              
-              See also: - <b>noteReceiver</b>, - <b>noteReceivers</b>
+  @return Returns a BOOL.
+  @brief Returns YES if <i>aNoteReceiver</i> is in the MKInstrument's
+  MKNoteReceiver NSArray.
+
+  Otherwise returns NO.
+  
+  @see - <b>noteReceiver</b>, - <b>noteReceivers</b>
 */
 - (BOOL) isNoteReceiverPresent: (MKNoteReceiver *) aNoteReceiver; 
 
 /*!
-  @method addNoteReceiver:
   @param  aNoteReceiver is an id.
-  @result Returns an id.
-  @discussion Adds <i>aNoteReceiver</i> to the MKInstrument, first removing it
-              from its current MKInstrument, if any.  If the receiving
-              MKInstrument is in performance, this does nothing and returns
-              <b>nil</b>, otherwise returns <i>aNoteReceiver</i>.
-              
-              See also: - <b>removeNoteReceiver:</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent:</b>
+  @return Returns an id.
+  @brief Adds <i>aNoteReceiver</i> to the MKInstrument, first removing it
+  from its current MKInstrument, if any.
+
+  If the receiving
+  MKInstrument is in performance, this does nothing and returns
+  <b>nil</b>, otherwise returns <i>aNoteReceiver</i>.
+  
+  @see - <b>removeNoteReceiver:</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent:</b>
 */
 - addNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
-  @method removeNoteReceiver:
   @param  aNoteReceiver is an id.
-  @result Returns an id.
-  @discussion Removes <i>aNoteReceiver</i> from the MKInstrument's MKNoteReceiver
-              NSArray, but neither disconnects the MKNoteReceiver from its
-              connected MKNoteSenders, nor does it free the MKNoteReceiver.  If
-              the MKInstrument is in performance, this does nothing and returns
-              <b>nil</b>, otherwise returns <i>aNoteReceiver</i>.
-              
-              See also: - <b>removeNoteReceivers</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
+  @return Returns an id.
+  @brief Removes <i>aNoteReceiver</i> from the MKInstrument's MKNoteReceiver
+  NSArray, but neither disconnects the MKNoteReceiver from its
+  connected MKNoteSenders, nor does it free the MKNoteReceiver.
+
+  If
+  the MKInstrument is in performance, this does nothing and returns
+  <b>nil</b>, otherwise returns <i>aNoteReceiver</i>.
+  
+  @see - <b>removeNoteReceivers</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
 */
 - removeNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
 
 /*!
-  @method dealloc
-  @discussion Disconnects, removes, and releases ivars. If the receiver is in performance, does not release the MKInstrument's MKNoteReceivers. 
+  @brief Disconnects, removes, and releases ivars.
+
+  If the receiver is in performance, does not release the MKInstrument's MKNoteReceivers. 
  
-   See also: - <b>removeNoteReceivers:</b>
+  @see - <b>removeNoteReceivers:</b>
  */
 - (void) dealloc; 
 
 /*!
-  @method disconnectNoteReceivers
-  @result Returns an id.
-  @discussion Disconnects the object's MKNoteReceivers.
+  @return Returns an id.
+  @brief Disconnects the object's MKNoteReceivers.
+
+  
 */
 - disconnectNoteReceivers;
 
 /*!
-  @method removeFromPerformance
-  @result Returns an id.
-  @discussion Removes the object from the performance by disconnecting its
-              MKNoteReceivers and invokes the <b>-afterPerformance</b> method. 
-              This method is needed in order to be able to free a MKNoteFilter or
-              MKInstrument during a performance. If the receiver is not in performance,
-              does nothing and returns <b>nil</b>.
+  @return Returns an id.
+  @brief Removes the object from the performance by disconnecting its
+  MKNoteReceivers and invokes the <b>-afterPerformance</b> method.
+
+  
+  This method is needed in order to be able to free a MKNoteFilter or
+  MKInstrument during a performance. If the receiver is not in performance,
+  does nothing and returns <b>nil</b>.
 */
 - removeFromPerformance;
 
 /*!
-  @method removeNoteReceivers
-  @result Returns <b>self</b>.
-  @discussion Removes all the MKInstrument's MKNoteReceivers but neither
-              disconnects nor frees them. 
-              
-              See also: - <b>removeNoteReceiver</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
+  @return Returns <b>self</b>.
+  @brief Removes all the MKInstrument's MKNoteReceivers but neither
+  disconnects nor frees them.
+
+  
+  
+  @see - <b>removeNoteReceiver</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
 */
 - removeNoteReceivers; 
 
 /*!
-  @method inPerformance
-  @result Returns a BOOL.
-  @discussion Returns YES if the MKInstrument is in performance.  Otherwise
-              returns NO.  An MKInstrument is considered to be in performance from
-              the time that one of its MKNoteReceivers invokes
-              <b>realizNote:fromNoteReceiver:</b>, until the time that the
-              MKConductor class receives <b>finishPerformance.</b>
-                            
-              See also: - <b>firstNote:</b>, - <b>afterPerformance</b>
+  @return Returns a BOOL.
+  @brief Returns YES if the MKInstrument is in performance.
+
+  Otherwise
+  returns NO.  An MKInstrument is considered to be in performance from
+  the time that one of its MKNoteReceivers invokes
+  <b>realizNote:fromNoteReceiver:</b>, until the time that the
+  MKConductor class receives <b>finishPerformance.</b>
+  
+  @see - <b>firstNote:</b>, - <b>afterPerformance</b>
 */
 - (BOOL) inPerformance;
 
 /*!
-  @method afterPerformance
-  @result Returns an id.
-  @discussion You never invoke this method; it's automatically invoked when the
-              performance is finished.  A subclass can implement this method to do
-              post-performance cleanup.  The default implementation does nothing;
-              the return value is ignored.
-              
-              See also: - <b>firstNote:</b>, - <b>inPerformance</b>
+  @return Returns an id.
+  @brief You never invoke this method; it's automatically invoked when the
+  performance is finished.
+
+  A subclass can implement this method to do
+  post-performance cleanup.  The default implementation does nothing;
+  the return value is ignored.
+  
+  @see - <b>firstNote:</b>, - <b>inPerformance</b>
 */
 - afterPerformance; 
 
 /*!
-  @method copyWithZone:
   @param  zone is a NSZone.
-  @result Returns an id.
-  @discussion Creates and returns a new MKInstrument as a copy of the receiving
-              MKInstrument allocated from <i>zone</i>.  The new object has its own
-              MKNoteReceiver collection that contains copies of the MKInstrument's
-              MKNoteReceivers. The new MKNoteReceivers' connections (see the 
-	      MKNoteReceiver class) are copied from the MKNoteReceivers in the receiving
-              MKInstrument.
+  @return Returns an id.
+  @brief Creates and returns a new MKInstrument as a copy of the receiving
+  MKInstrument allocated from <i>zone</i>.
+
+  The new object has its own
+  MKNoteReceiver collection that contains copies of the MKInstrument's
+  MKNoteReceivers. The new MKNoteReceivers' connections (see the 
+	  MKNoteReceiver class) are copied from the MKNoteReceivers in the receiving
+  MKInstrument.
 */
 - copyWithZone: (NSZone *) zone; 
 
 /*!
-  @method noteReceiver
-  @result Returns an MKNoteReceiver.
-  @discussion Returns the first MKNoteReceiver in the MKInstrument's
-              MKNoteReceiver NSArray.  This is useful if you want to send a MKNote
-              directly to an MKInstrument, but you don't care which MKNoteReceiver
-              does the receiving:
-              	
-              <tt>[[anInstrument noteReceiver] receiveNote: aNote]</tt>
-              
-              If there are currently no MKNoteReceivers, this method
-              creates and adds a MKNoteReceiver.
-              
-              See also: - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
+  @return Returns an MKNoteReceiver.
+  @brief Returns the first MKNoteReceiver in the MKInstrument's
+  MKNoteReceiver NSArray.
+
+  This is useful if you want to send a MKNote
+  directly to an MKInstrument, but you don't care which MKNoteReceiver
+  does the receiving:
+  	
+  <tt>[[anInstrument noteReceiver] receiveNote: aNote]</tt>
+  
+  If there are currently no MKNoteReceivers, this method
+  creates and adds a MKNoteReceiver.
+  
+  @see - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
 */
 - (MKNoteReceiver *) noteReceiver; 
 
@@ -309,10 +325,11 @@ realize MKNotes on an external MIDI synthesizer.
 - (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
-    @method allNotesOff
-    @discussion Immediately stops playing any sounding notes. The default
-                behaviour is to do nothing.
-                Subclasses may implement specific behaviour appropriate to the synthesis method.
+  @brief Immediately stops playing any sounding notes.
+
+  The default
+  behaviour is to do nothing.
+  Subclasses may implement specific behaviour appropriate to the synthesis method.
 */
 - allNotesOff;
 

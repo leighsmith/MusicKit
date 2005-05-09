@@ -24,7 +24,7 @@
 */
 /*!
   @class MKPartials
-  @discussion
+  @brief
 
 The MKPartials class lets you define a sound waveform by adding together a number
 of sine wave components.  MKPartials are used to provide musical timbres in DSP
@@ -63,15 +63,15 @@ following example demonstrates how to create a simple, three component MKPartial
 object.
 
 <tt>
-double freqs    = {1.0, 2.0, 3.0 };
+double freqs  = {1.0, 2.0, 3.0 };
 double amps  = {1.0, 0.5, 0.25 };
-id aPartials    = [MKPartials new];
+id aPartials  = [MKPartials new];
 
 [aPartials setPartialCount: 3
-                freqRatios: freqs
-                 ampRatios: amps
-                    phases: NULL
-            orDefaultPhase: 0.0];
+  freqRatios: freqs
+  ampRatios: amps
+  phases: NULL
+  orDefaultPhase: 0.0];
 </tt>
 
 The elements in the arrays are matched by index order:  The first sine wave is
@@ -110,21 +110,21 @@ that refers to it.
 MKPartials objects are automatically created by the Music Kit in a number of
 circumstances, such as when reading a Scorefile.  The function
 <b>MKSetPartialsClass()</b> allows you to specify that your own subclass of
-MKPartials be used when Partialss are automatically created.   You retrieve the
+MKPartials be used when Partialss are automatically created.  You retrieve the
 MKPartials class with <b>MKGetPartialsClass()</b>.  
 
 MKPartials can be used in two contexts - to provide wavetables for oscillators and
-to provide lookup tables for waveshaping synthesis.   The access methods
+to provide lookup tables for waveshaping synthesis.  The access methods
 inherited from the MKWaveTable class (such as <b>-dataDSP</b>) provide the data in
 oscillator table format.  In this case the MKPartials <i>tableType</i>internal<i>
-</i> instance varaible is set to <b>MK_oscTable</b>.   Alternatively, you can
+</i> instance varaible is set to <b>MK_oscTable</b>.  Alternatively, you can
 retrieve the data in waveshaping format.  To do this, use one of the methods of
-the form <i>accessMethod</i>AsWaveshapingTable<i>arguments</i>.   For example,
+the form <i>accessMethod</i>AsWaveshapingTable<i>arguments</i>.  For example,
 to get the data for the DSP with the default table length and scaling, use
 -<b>dataDSPAsWaveshapingTable</b>.  In this case the MKPartials <i>tableType
-</i>instance varaible is set to <b>MK_waveshapingTable</b>.   For symmetry, a
+</i>instance varaible is set to <b>MK_waveshapingTable</b>.  For symmetry, a
 set of methods of the form <b>dataDSPAsOscTable</b> is provided.  These methods
-are synonyms for the inherited methods.   
+are synonyms for the inherited methods.  
 
 For more information on waveshaping synthesis, see the <b>Shape</b>and
 <b>Shapev</b>  MKSynthPatches and their documentation.   
@@ -156,11 +156,12 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
  
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes the receiver.  A subclass implementation should send
-              <b>[super init]</b> before performing its own initialization. 
-              
+  @return Returns an id.
+  @brief Initializes the receiver.
+
+  A subclass implementation should send
+  <b>[super init]</b> before performing its own initialization. 
+  
 */
 - init; 
 
@@ -176,40 +177,42 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
 - (NSString*) description;
 
 /*!
-  @method highestFreqRatio
-  @result Returns a double.
-  @discussion Returns the highest (i.e., largest absolute value) frequency ratio
-              in the receiver. This can be
-              useful for optimizing lookup table sizes in determining if the receiver
-              will generate a waveform that will fold over.
+  @return Returns a double.
+  @brief Returns the highest (i.e., largest absolute value) frequency ratio
+  in the receiver.
+
+  This can be
+  useful for optimizing lookup table sizes in determining if the receiver
+  will generate a waveform that will fold over.
 */
 -(double)highestFreqRatio;
 
 /*!
-  @method setPartialCount:freqRatios:ampRatios:phases:orDefaultPhase:
   @param  count is an int.
   @param  freqRats is a double *.
   @param  ampRats is a double *.
   @param  phases is a double *.
   @param  defaultPhase is a double.
-  @result Returns an id.
-  @discussion Defines the receiver's sine wave components.  <i>count</i> is the
-              number of sine waves components; freqRats<i>,</i>ampRats, and
-              <b>phases</b>  are pointers to arrays that define the frequency
-              ratios, amplitude ratios, and initial phases, respectively, of the
-              sine wave components (the arrays are copied into the receiver).  The
-              elements of the arrays are matched by index order: The nth sine wave
-              is configured from the nth element in each array.
-              
-              If <i>phases</i> is NULL, the value of <i>defaultPhase</i> is used as
-              the initial phase for all the components.  If <i>freqRats</i> or <i>ampRats</i>
-              is NULL, the corresponding extant array, if any, is unchanged.
-              
-              Note that this method sets the <b>length</b> instance variable to 0, forcing
-              a recompute in a subsequent data array retrieval (through the <b>dataDSP:...</b>
-              and <b>dataDouble:...</b> methods) as explained in the MKWaveTable class.
-              
-              Returns the receiver.
+  @return Returns an id.
+  @brief Defines the receiver's sine wave components.
+
+  <i>count</i> is the
+  number of sine waves components; freqRats<i>,</i>ampRats, and
+  <b>phases</b>  are pointers to arrays that define the frequency
+  ratios, amplitude ratios, and initial phases, respectively, of the
+  sine wave components (the arrays are copied into the receiver).  The
+  elements of the arrays are matched by index order: The nth sine wave
+  is configured from the nth element in each array.
+  
+  If <i>phases</i> is NULL, the value of <i>defaultPhase</i> is used as
+  the initial phase for all the components.  If <i>freqRats</i> or <i>ampRats</i>
+  is NULL, the corresponding extant array, if any, is unchanged.
+  
+  Note that this method sets the <b>length</b> instance variable to 0, forcing
+  a recompute in a subsequent data array retrieval (through the <b>dataDSP:...</b>
+  and <b>dataDouble:...</b> methods) as explained in the MKWaveTable class.
+  
+  Returns the receiver.
 */
 - setPartialCount: (int) count
        freqRatios: (double *) fRatios
@@ -230,76 +233,80 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
 
 
 /*!
-  @method setFromSamples:
   @param  samplesObject is an id.
-  @result Returns an id.
-  @discussion Sets <i>freqRatios</i>, <i>ampRatios</i>, and <i>phases</i> based on
-              the data in the samplesObject.  This is done by taking an FFT of the
-              data.
+  @return Returns an id.
+  @brief Sets <i>freqRatios</i>, <i>ampRatios</i>, and <i>phases</i> based on
+  the data in the samplesObject.
+
+  This is done by taking an FFT of the
+  data.
 */
 - setFromSamples:(MKSamples *)samplesObject;
     
 /*!
-  @method prunePartials:
   @param  amplitudeThreshold is a double.
-  @discussion Change contents to remove any partials with amplitudes below 
-              specified threshold. 
+  @brief Change contents to remove any partials with amplitudes below 
+  specified threshold.
+
+  
 */
 -prunePartials:(double)amplitudeThreshold;
 
 /*!
-  @method partialCount
-  @result Returns an int.
-  @discussion Returns the number of sine wave components
+  @return Returns an int.
+  @brief Returns the number of sine wave components
 */
 - (int)partialCount;
 
 /*!
-  @method freqRatios
-  @result Returns a double *.
-  @discussion Returns a pointer to the receiver's frequency ratios array.  You
-              should neither free nor alter the array.
+  @return Returns a double *.
+  @brief Returns a pointer to the receiver's frequency ratios array.
+
+  You
+  should neither free nor alter the array.
 */
 - (double *)freqRatios; 
 
 /*!
-  @method ampRatios
-  @result Returns a double *.
-  @discussion Returns a pointer to the receiver's amplitude ratios array.  You
-              should neither free nor alter the array.
+  @return Returns a double *.
+  @brief Returns a pointer to the receiver's amplitude ratios array.
+
+  You
+  should neither free nor alter the array.
 */
 - (double *)ampRatios; 
 
 /*!
-  @method defaultPhase
-  @result Returns a double.
-  @discussion Returns the receiver's default phase
+  @return Returns a double.
+  @brief Returns the receiver's default phase
 */
 - (double)defaultPhase;
 
 /*!
-  @method phases
-  @result Returns a double *.
-  @discussion Returns a pointer to the receiver's phase array or NULL if none.
-              You should neither free nor alter the array.
+  @return Returns a double *.
+  @brief Returns a pointer to the receiver's phase array or NULL if none.
+
+  
+  You should neither free nor alter the array.
 */
 - (double *)phases; 
 
 /*!
-  @method getPartial:freqRatio:ampRatio:phase:
   @param  n is an int.
   @param  fRatio is a double *.
   @param  aRatio is a double *.
   @param  phase is a double *.
-  @result Returns an int.
-  @discussion Returns, by reference, the frequency ratio, amplitude ratio, and
-              initial phase of the <i>n</i>th sine wave component (counting from
-              0).  The amplitude ratio value is scaled by the current value of the
-              <b>scaling</b> instance variable inherited from MKWaveTable.
-                            
-              If the <i>n</i>th sine wave is the last in the
-              receiver, the method returns MK_lastValue.  If <i>n</i> is out of
-              bounds, - is returned.  Otherwise 0 is returned.
+  @return Returns an int.
+  @brief Returns, by reference, the frequency ratio, amplitude ratio, and
+  initial phase of the <i>n</i>th sine wave component (counting from
+  0).
+
+  The amplitude ratio value is scaled by the current value of the
+  <b>scaling</b> instance variable inherited from MKWaveTable.
+  
+  If the <i>n</i>th sine wave is the last in the
+  receiver, the method returns MK_lastValue.  If <i>n</i> is out of
+  bounds, - is returned.  Otherwise 0 is returned.
 */
 - (int) getPartial: (int) n
          freqRatio: (double *) fRatio
@@ -315,12 +322,13 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
 
 
 /*!
-  @method writeScorefileStream:
   @param  aStream is a NSMutableData.
-  @result Returns an id.
-  @discussion Writes the receiver in scorefile format on the specified stream. 
-              Returns <b>nil</b> if ampRatios or freqRatios is NULL, otherwise
-              returns the receiver.
+  @return Returns an id.
+  @brief Writes the receiver in scorefile format on the specified stream.
+
+  
+  Returns <b>nil</b> if ampRatios or freqRatios is NULL, otherwise
+  returns the receiver.
 */
 -writeScorefileStream:(NSMutableData *)aStream;
 
@@ -342,11 +350,12 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
 
 
 /*!
-  @method tableType
-  @result Returns an int.
-  @discussion Returns the tableType of the currently-cached data, if any. 
-              Either MK_oscTable or MK_waveshapingTable.
-              If none, returns the default, MK_oscTable.
+  @return Returns an int.
+  @brief Returns the tableType of the currently-cached data, if any.
+
+  
+  Either MK_oscTable or MK_waveshapingTable.
+  If none, returns the default, MK_oscTable.
 */
 -(int)tableType;
 
@@ -363,92 +372,98 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
 */
     
 /*!
-  @method dataDSPAsOscTable
-  @result Returns a DSPDatum *.
-  @discussion These methods provide data in <b>MK_oscTable</b> format.   They are
-              identical to the superclass versions (without the "OscTable" in
-              their name).  For example, <b>dataDSPAsOscTable</b>is the same as
-              WaveTable's <b>dataDSP</b> .   
+  @return Returns a DSPDatum *.
+  @brief These methods provide data in <b>MK_oscTable</b> format.
+
+  They are
+  identical to the superclass versions (without the "OscTable" in
+  their name).  For example, <b>dataDSPAsOscTable</b>is the same as
+  WaveTable's <b>dataDSP</b> .   
 */
 - (DSPDatum *) dataDSPAsOscTable;
 
 /*!
-  @method dataDSPAsOscTableLength:
   @param  aLength is an int.
-  @result Returns a DSPDatum *.
-  @discussion These methods provide data in <b>MK_oscTable</b> format.   They are
-              identical to the superclass versions (without the "OscTable" in
-              their name).  For example, <b>dataDSPAsOscTable</b>is the same as
-              WaveTable's <b>dataDSP</b> .   
+  @return Returns a DSPDatum *.
+  @brief These methods provide data in <b>MK_oscTable</b> format.
 
-              Returns a waveshaping table as an array of DSPDatums, recomputing 
-              the data if necessary at the requested scaling and length. If the 
-              subclass has no data, returns NULL. The data should neither be modified
-              nor freed by the sender. 
+  They are
+  identical to the superclass versions (without the "OscTable" in
+  their name).  For example, <b>dataDSPAsOscTable</b>is the same as
+  WaveTable's <b>dataDSP</b> .   
 
-              Same as dataDSPLength:
+  Returns a waveshaping table as an array of DSPDatums, recomputing 
+  the data if necessary at the requested scaling and length. If the 
+  subclass has no data, returns NULL. The data should neither be modified
+  nor freed by the sender. 
+
+  Same as dataDSPLength:
 */
 - (DSPDatum *) dataDSPAsOscTableLength:(int)aLength;
 
 /*!
-  @method dataDoubleAsOscTable
-  @result Returns a double *.
-  @discussion These methods provide data in <b>MK_oscTable</b> format.   They are
-              identical to the superclass versions (without the "OscTable" in
-              their name).  For example, <b>dataDSPAsOscTable</b>is the same as
-              WaveTable's <b>dataDSP</b> .   
+  @return Returns a double *.
+  @brief These methods provide data in <b>MK_oscTable</b> format.
+
+  They are
+  identical to the superclass versions (without the "OscTable" in
+  their name).  For example, <b>dataDSPAsOscTable</b>is the same as
+  WaveTable's <b>dataDSP</b> .   
 */
 - (double *)   dataDoubleAsOscTable;
 
 /*!
-  @method dataDoubleAsOscTableLength:
   @param  aLength is an int.
-  @result Returns a double *.
-  @discussion These methods provide data in <b>MK_oscTable</b> format.   They are
-              identical to the superclass versions (without the "OscTable" in
-              their name).  For example, <b>dataDSPAsOscTable</b>is the same as
-              WaveTable's <b>dataDSP</b> .   
+  @return Returns a double *.
+  @brief These methods provide data in <b>MK_oscTable</b> format.
 
-              Returns a waveshaping table as an array of doubles, recomputing 
-              the data if necessary at the requested scaling and length. If the 
-              subclass has no data, returns NULL. The data should neither be modified
-              nor freed by the sender. 
+  They are
+  identical to the superclass versions (without the "OscTable" in
+  their name).  For example, <b>dataDSPAsOscTable</b>is the same as
+  WaveTable's <b>dataDSP</b> .   
 
-              Same as dataDoubleLength:
+  Returns a waveshaping table as an array of doubles, recomputing 
+  the data if necessary at the requested scaling and length. If the 
+  subclass has no data, returns NULL. The data should neither be modified
+  nor freed by the sender. 
+
+  Same as dataDoubleLength:
 */
 - (double *)   dataDoubleAsOscTableLength:(int)aLength;
 
 /*!
-  @method fillOscTableLength:scale:
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns an id.
-  @discussion Same as <b>fillTableLength:scale:</b>.   Provided for
-              symmetry. Computes the wavetable by taking the inverse FFT
-              of the freq/amp/phase arrays. Returns self, or nil if an error is found. If 
-              scaling is 0.0, the waveform is normalized. This method is sent
-              automatically if necessary by the various data-retreival methods 
-              (inherited from the MKWaveTable class).
-              The resulting waveform is guaranteed to begin and end 
-              at or near the same point only if the partial ratios are integers.
-              Currently, only lengths that are a power of 2 are allowed.  
+  @return Returns an id.
+  @brief Same as <b>fillTableLength:scale:</b>.
+
+  Provided for
+  symmetry. Computes the wavetable by taking the inverse FFT
+  of the freq/amp/phase arrays. Returns self, or nil if an error is found. If 
+  scaling is 0.0, the waveform is normalized. This method is sent
+  automatically if necessary by the various data-retreival methods 
+  (inherited from the MKWaveTable class).
+  The resulting waveform is guaranteed to begin and end 
+  at or near the same point only if the partial ratios are integers.
+  Currently, only lengths that are a power of 2 are allowed.  
 */
 - fillOscTableLength:(int)aLength scale:(double)aScaling ;
 
 /*!
-  @method fillTableLength:scale:
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns an id.
-  @discussion Computes the sampled waveform from the sine wave components in
-              <b>MK_oscTable</b> format, by doing an inverse FFT.
-              
-              This method is invoked automatically by the data retrieval methods
-              inherited from the MKWaveTable class - you needn't invoke this method
-              yourself.  Returns the receiver, or <b>nil</b> if an error occurs.
-              Also sets the <i>tableType</i> internal instance variable to <b>MK_oscTable</b>.
-              
-              <i>Note that currently, only power-of-2 lengths are supported for oscTable format.</i>
+  @return Returns an id.
+  @brief Computes the sampled waveform from the sine wave components in
+  <b>MK_oscTable</b> format, by doing an inverse FFT.
+
+  
+  
+  This method is invoked automatically by the data retrieval methods
+  inherited from the MKWaveTable class - you needn't invoke this method
+  yourself.  Returns the receiver, or <b>nil</b> if an error occurs.
+  Also sets the <i>tableType</i> internal instance variable to <b>MK_oscTable</b>.
+  
+  <i>Note that currently, only power-of-2 lengths are supported for oscTable format.</i>
 */
 - fillTableLength: (unsigned int) aLength scale: (double) aScaling;
 
@@ -462,143 +477,151 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
     of them. They use default or previously specified length, scaling or both. 
     */
 /*!
-  @method dataDSPAsWaveshapingTable
-  @result Returns a DSPDatum *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.   
+  @return Returns a DSPDatum *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.   
 */
 - (DSPDatum *) dataDSPAsWaveshapingTable;
 /*!
-  @method dataDSPAsWaveshapingTable
   @param  aLength is an int.
-  @result Returns a DSPDatum *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.   
+  @return Returns a DSPDatum *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.   
 */
 - (DSPDatum *) dataDSPAsWaveshapingTableLength:(int)aLength;
 /*!
-  @method dataDSPAsWaveshapingTable
   @param  aScaling is a double.
-  @result Returns a DSPDatum *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.   
+  @return Returns a DSPDatum *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.   
 */
 - (DSPDatum *) dataDSPAsWaveshapingTableScale:(double)aScaling;
 
 /*!
-  @method dataDSPAsWaveshapingTable
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns a DSPDatum *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.
-              
-              Returns a waveshaping table as an array of DSPDatums, recomputing 
-              the data if necessary at the requested scaling and length. If the 
-              subclass has no data, returns NULL. The data should neither be modified
-              nor freed by the sender.
+  @return Returns a DSPDatum *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.
+  
+  Returns a waveshaping table as an array of DSPDatums, recomputing 
+  the data if necessary at the requested scaling and length. If the 
+  subclass has no data, returns NULL. The data should neither be modified
+  nor freed by the sender.
 */
 - (DSPDatum *) dataDSPAsWaveshapingTableLength: (unsigned int) aLength scale: (double) aScaling;
  
 /*!
-  @method dataDoubleAsWaveshapingTable
-  @result Returns a double *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.   
+  @return Returns a double *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.   
 */
 - (double *)   dataDoubleAsWaveshapingTable;
 
 /*!
-  @method dataDoubleAsWaveshapingTable
   @param  aLength is an int.
-  @result Returns a double *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.   
+  @return Returns a double *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.   
 */
 - (double *)   dataDoubleAsWaveshapingTableLength:(int)aLength;
 
 /*!
-  @method dataDoubleAsWaveshapingTable
   @param  aScaling is a double.
-  @result Returns a double *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.   
+  @return Returns a double *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.   
 */
 - (double *)   dataDoubleAsWaveshapingTableScale:(double)aScaling;
 
 /*!
-  @method dataDoubleAsWaveshapingTable
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns a double *.
-  @discussion These methods are similar to the superclass versions (without the
-              "WaveshapingTable" in their name), except that they specify that the
-              table to be computed should be in <b>MK_waveshapingTable</b> format.
-              For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
-              currently-cached data is of the type <b>MK_waveshapingTable</b> and
-              is of the default length and scaling.  If so, that data is returned.
-              If not, it is recomputed.
-              
-              Returns a waveshaping table as an array of doubles, recomputing 
-              the data if necessary at the requested scaling and length. If the 
-              subclass has no data, returns NULL. The data should neither be modified
-              nor freed by the sender.
+  @return Returns a double *.
+  @brief These methods are similar to the superclass versions (without the
+  "WaveshapingTable" in their name), except that they specify that the
+  table to be computed should be in <b>MK_waveshapingTable</b> format.
+
+  
+  For example, <b>dataDSPAsWaveshapingTable</b> looks to see if the
+  currently-cached data is of the type <b>MK_waveshapingTable</b> and
+  is of the default length and scaling.  If so, that data is returned.
+  If not, it is recomputed.
+  
+  Returns a waveshaping table as an array of doubles, recomputing 
+  the data if necessary at the requested scaling and length. If the 
+  subclass has no data, returns NULL. The data should neither be modified
+  nor freed by the sender.
 */
 - (double *) dataDoubleAsWaveshapingTableLength: (unsigned int) aLength scale: (double) aScaling; 
 
 /*!
-  @method fillWaveshapingTableLength:scale:
-  @abstract Computes the waveshaping table from the current freq/amp/phase arrays.
-            Does the LeBrun "signification" algorithm on the result.
+  @brief Computes the waveshaping table from the current freq/amp/phase arrays.
+  Does the LeBrun "signification" algorithm on the result.
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns an id.
-  @discussion Computes the sampled waveform from the sine wave components in
-              <b>MK_waveshapingTable</b> format, by doing a recursive Chebychev
-              polynomial expansion.
-              
-              If scaling is 0.0, the 
-              table is normalized. This method is invoked automatically by the
-              data retrieval methods such as <b>dataDSPAsWaveshapingTable</b> -
-              you needn't invoke this method yourself.
-              Returns the receiver, or <b>nil</b> if an error occurs.   Also sets the
-              <i>tableType</i> internal instance variable to <b>MK_waveshapingTable</b>.
-              For best results, use an odd length.
+  @return Returns an id.
+  
+  Computes the sampled waveform from the sine wave components in
+  <b>MK_waveshapingTable</b> format, by doing a recursive Chebychev
+  polynomial expansion.
+  
+  If scaling is 0.0, the 
+  table is normalized. This method is invoked automatically by the
+  data retrieval methods such as <b>dataDSPAsWaveshapingTable</b> -
+  you needn't invoke this method yourself.
+  Returns the receiver, or <b>nil</b> if an error occurs.   Also sets the
+  <i>tableType</i> internal instance variable to <b>MK_waveshapingTable</b>.
+  For best results, use an odd length.
 */
 - fillWaveshapingTableLength: (unsigned int) aLength scale: (double) aScaling;
 

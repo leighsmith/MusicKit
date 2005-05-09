@@ -20,7 +20,7 @@
 
 /*!
   @class MKConductor
-  @discussion
+  @brief
 
 The MKConductor class defines the mechanism that controls the timing
 of a MusicKit performance.  A MKConductor's most important tasks are
@@ -263,7 +263,7 @@ MKConductors can synchronize to incoming MIDI time code. This functionality is d
 <a href=http://www.musickit.org/MusicKitConcepts/miditimecode.html>
 Appendix B. entitled MIDI Time Code in the MusicKit</a>.
 
-See also: MKPerformer, MKOrchestra, MKMidi
+  @see MKPerformer, MKOrchestra, MKMidi
 */
 #ifndef __MK_Conductor_H___
 #define __MK_Conductor_H___
@@ -385,326 +385,353 @@ extern void MKFinishPerformance(void);
 + allocWithZone: (NSZone *) zone;
 
 /*!
-  @method alloc
-  @result Returns an id.
-  @discussion Creates and returns a new MKConductor object with a tempo of 60.0
-              beats per minute, allocated from the default zone.  You must send
-              <b>init </b>to the new instance.  If a performance is currently in
-              progress, this does nothing and returns <b>nil</b>.
+  @return Returns an id.
+  @brief Creates and returns a new MKConductor object with a tempo of 60.0
+  beats per minute, allocated from the default zone.
+
+  You must send
+  <b>init </b>to the new instance.  If a performance is currently in
+  progress, this does nothing and returns <b>nil</b>.
 */
 + alloc;
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes a new MKConductor.  You must send this message after
-              using <b>alloc</b> or <b>allocFromZone:</b> to create a
-              MKConductor.
+  @return Returns an id.
+  @brief Initializes a new MKConductor.
+
+  You must send this message after
+  using <b>alloc</b> or <b>allocFromZone:</b> to create a
+  MKConductor.
 */
 - init;
 
 /*!
-  @method adjustTime
-  @result Returns an id.
-  @discussion <i>This method is superceded by <b>+lockPerformance </b>and
-              <b>+unlockPerformance</b>.</i>  
-              
-              Updates every MKConductor's notion of time.  This method
-              may be invoked just before you send a message or call a
-              C function that affects the performance.  Typical
-              examples include methods that are in response to the
-              user's actions, methods that send MKNotes directly to
-              MKInstruments, and methods, such as <b>pause</b> and
-              <b>resume</b>, that are sent to a MKConductor object or
-              to the MKConductor class.  You do not need to send this
-              message if you are invoked in response to MKConductor or
-              MKMidi messages.  Returns the receiver.
+  @return Returns an id.
+  @brief <i>This method is superceded by <b>+lockPerformance </b>and
+  <b>+unlockPerformance</b>.</i>  
+  
+  Updates every MKConductor's notion of time.
+
+  This method
+  may be invoked just before you send a message or call a
+  C function that affects the performance.  Typical
+  examples include methods that are in response to the
+  user's actions, methods that send MKNotes directly to
+  MKInstruments, and methods, such as <b>pause</b> and
+  <b>resume</b>, that are sent to a MKConductor object or
+  to the MKConductor class.  You do not need to send this
+  message if you are invoked in response to MKConductor or
+  MKMidi messages.  Returns the receiver.
 */
 + adjustTime; 
 
 /*!
-  @method startPerformance
-  @abstract Starts a performance.
-  @result Returns an id.
-  @discussion All MKConductor objects begin at the same
-              time.  If the performance is clocked and you don't have a running
-              NSRunLoop, this does nothing and returns <b>nil</b>.
+  @brief Starts a performance.
+  @return Returns an id.
+  
+  All MKConductor objects begin at the same
+  time.  If the performance is clocked and you don't have a running
+  NSRunLoop, this does nothing and returns <b>nil</b>.
 			  In all other cases, the receiver is returned; however,
-              if the performance is unclocked, this method doesn't return until
-              the performance is over.
+  if the performance is unclocked, this method doesn't return until
+  the performance is over.
 */
 + startPerformance;
 
 /*!
-  @method defaultConductor
-  @result Returns an MKConductor.
-  @discussion Returns the defaultConductor.
+  @return Returns an MKConductor.
+  @brief Returns the defaultConductor.
+
+  
 */
 + (MKConductor *) defaultConductor; 
 
 /*!
-  @method inPerformance
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if a performance is currently taking place (even
-              if it's paused), otherwise returns <b>NO</b>.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if a performance is currently taking place (even
+  if it's paused), otherwise returns <b>NO</b>.
+
+  
 */
 +(BOOL) inPerformance; 
 
 /*!
-  @method finishPerformance
-  @result Returns an id.
-  @discussion Ends the performance.  All enqueued messages are removed (from
-              MKConductor instances' message queues - not from the before- and
-              after-performance queues) and the <b>after-performance</b> messages
-              are sent<b>. </b>If<b> finishWhenEmpty</b> is <b>YES</b>, this
-              message is automatically sent when all message queues are exhausted.
-               Returns <b>nil</b>.
+  @return Returns an id.
+  @brief Ends the performance.
+
+  All enqueued messages are removed (from
+  MKConductor instances' message queues - not from the before- and
+  after-performance queues) and the <b>after-performance</b> messages
+  are sent<b>. </b>If<b> finishWhenEmpty</b> is <b>YES</b>, this
+  message is automatically sent when all message queues are exhausted.
+  Returns <b>nil</b>.
 */
 + finishPerformance; 
 
 /*!
-  @method pausePerformance
-  @result Returns an id.
-  @discussion Pauses the performance.  The performance is suspended until the
-              MKConductor class receives the <b>resumePerformance</b> message. 
-              You can't pause an unclocked performance; returns <b>nil</b> if the
-              performance is unclocked.  Otherwise returns the receiver.  This
-              message is ignore and the receiver is returned if a performance
-              isn't in progress.  You cannot pause a performance in which a
-              MKConductor is synchronizing to MIDI time code.   An attempt to do
-              so will be ignored.     
+  @return Returns an id.
+  @brief Pauses the performance.
+
+  The performance is suspended until the
+  MKConductor class receives the <b>resumePerformance</b> message. 
+  You can't pause an unclocked performance; returns <b>nil</b> if the
+  performance is unclocked.  Otherwise returns the receiver.  This
+  message is ignore and the receiver is returned if a performance
+  isn't in progress.  You cannot pause a performance in which a
+  MKConductor is synchronizing to MIDI time code.   An attempt to do
+  so will be ignored.     
 */
 + pausePerformance; 
 
 /*!
-  @method isPaused
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the performance is paused, otherwise returns
-              <b>NO</b>.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the performance is paused, otherwise returns
+  <b>NO</b>.
+
+  
 */
 + (BOOL) isPaused; 
 
 /*!
-  @method resumePerformance
-  @result Returns an id.
-  @discussion Resumes a  performance, allowing it to continue from where it was
-              paused.  If the performance is unclocked, return <b>nil</b>,
-              otherwise returns the receiver.
+  @return Returns an id.
+  @brief Resumes a  performance, allowing it to continue from where it was
+  paused.
+
+  If the performance is unclocked, return <b>nil</b>,
+  otherwise returns the receiver.
 */
 + resumePerformance; 
 
 /*!
-  @method currentConductor
-  @result Returns an id.
-  @discussion Returns the MKConductor instance that's currently sending a message,
-              or <b>nil</b> if no message is being sent.
+  @return Returns an id.
+  @brief Returns the MKConductor instance that's currently sending a message,
+  or <b>nil</b> if no message is being sent.
+
+  
 */
 + currentConductor; 
 
 /*!
-  @method clockConductor
-  @result Returns an id.
-  @discussion Returns the clockConductor.
+  @return Returns an id.
+  @brief Returns the clockConductor.
+
+  
 */
 + clockConductor;
 
 /*!
-  @method setClocked:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If <i>yesOrNo</i> is <b>YES</b> (the default), the MKConductors
-              dispatches each message at the specified time, waiting if necessary.
-               If <b>NO</b>, messages are sent as quickly as possible.  In an
-              unclocked performance, a subsequent startPerformance message doesn't
-              return until the performance is over, thus effectively disabling the
-              user interface.  Does nothing and returns <b><i>nil</i></b><i></i>
-              if a performance is in progress, otherwise returns the
-              receiver.<i></i>   Unclocked performances involving MIDI time code
-              conductors are not supported.   
+  @return Returns an id.
+  @brief If <i>yesOrNo</i> is <b>YES</b> (the default), the MKConductors
+  dispatches each message at the specified time, waiting if necessary.
+
+  
+  If <b>NO</b>, messages are sent as quickly as possible.  In an
+  unclocked performance, a subsequent startPerformance message doesn't
+  return until the performance is over, thus effectively disabling the
+  user interface.  Does nothing and returns <b><i>nil</i></b><i></i>
+  if a performance is in progress, otherwise returns the
+  receiver.<i></i>   Unclocked performances involving MIDI time code
+  conductors are not supported.   
 */
 + setClocked: (BOOL) yesOrNo; 
 
 /*!
-  @method isClocked
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the performance is clocked, <b>NO</b> if it
-              isn't.  By default, a performance is clocked.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the performance is clocked, <b>NO</b> if it
+  isn't.
+
+  By default, a performance is clocked.
 */
 + (BOOL) isClocked; 
 
 /*!
-  @method setFinishWhenEmpty:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If <i>yesOrNo</i> is <b>YES</b> (the default), the performance is
-              terminated when all the MKConductors' message queues are empty.  If
-              <b>NO</b>, the performance continues until the
-	      <b>finishPerformance</b> message is sent to the MKConductor class.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i> is <b>YES</b> (the default), the performance is
+  terminated when all the MKConductors' message queues are empty.
+
+  If
+  <b>NO</b>, the performance continues until the
+	  <b>finishPerformance</b> message is sent to the MKConductor class.
 */
 + setFinishWhenEmpty: (BOOL) yesOrNo; 
 
 /*!
-  @method isEmpty
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if a performance is in progress and all the
-              MKConductor instances' message request queues are are empty,
-              otherwise returns <b>NO.</b>
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if a performance is in progress and all the
+  MKConductor instances' message request queues are are empty,
+  otherwise returns <b>NO.</b>
 */
 + (BOOL) isEmpty;
 
 /*!
-  @method finishWhenEmpty
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the performance will finish when all
-              MKConductors' message queues are empty, <b>otherwise returns
-              NO</b>.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the performance will finish when all
+  MKConductors' message queues are empty, <b>otherwise returns
+  NO</b>.
+
+  
 */
 + (BOOL) finishWhenEmpty;
 
 /*!
-  @method setDeltaT:
   @param  newDeltaT is a double.
-  @discussion Set the delta time in seconds.
-              See also: <b>MKSetDeltaT()</b>
+  @brief Set the delta time in seconds.
+
+  
+  @see <b>MKSetDeltaT()</b>
 */
 + (void) setDeltaT: (double) newDeltaT;
 
 /*!
-  @method deltaT
-  @result Returns a double.
-  @discussion Returns the delta time in seconds.
+  @return Returns a double.
+  @brief Returns the delta time in seconds.
+
+  
 */
 + (double) deltaT;
 
 /*!
-  @method copyWithZone
-  @result Returns an id.
-  @discussion Returns a new MKConductor created through <b>[MKConductor new]</b>.
+  @return Returns an id.
+  @brief Returns a new MKConductor created through <b>[MKConductor new]</b>.
+
+  
 */
 - copyWithZone: (NSZone *) zone;
 
 /*!
-  @method isPaused
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the receiver is paused.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the receiver is paused.
+
+  
 */
 - (BOOL) isPaused; 
 
 /*!
-  @method pause
-  @result Returns an id.
-  @discussion Pauses the performance of the receiver and sends <b>hasPaused:</b>
-              to its delegate.  The effect is restricted to the present
-              performance.  Invoke <b>resume</b> to unpause a MKConductor.  You
-              can't pause the clockConductor; returns <b>nil</b> in this case (and
-              the delegate message isn't sent).  Otherwise returns the receiver. 
-              Note that you can pause a MKConductor object before a performance
-              begins.  You cannot pause a MKConductor that is synchronizing to
-              MIDI time code.  An attempt to do so is ignored.
+  @return Returns an id.
+  @brief Pauses the performance of the receiver and sends <b>hasPaused:</b>
+  to its delegate.
+
+  The effect is restricted to the present
+  performance.  Invoke <b>resume</b> to unpause a MKConductor.  You
+  can't pause the clockConductor; returns <b>nil</b> in this case (and
+  the delegate message isn't sent).  Otherwise returns the receiver. 
+  Note that you can pause a MKConductor object before a performance
+  begins.  You cannot pause a MKConductor that is synchronizing to
+  MIDI time code.  An attempt to do so is ignored.
 */
 - pause; 
 
 /*!
-  @method pauseFor:
   @param  seconds is a double.
-  @result Returns an id.
-  @discussion A convenience method.  Pauses the performance of the receiver, sends
-              <b>hasPaused:</b> to its delegate, and schedules a request for
-              <b>resume</b> to be sent to the receiver in <i>seconds</i> seconds. 
-              If the receiver is currently paused through a previous invocation of
-              this method, the current <b>resume</b> request supercedes the
-              previous one.  The effect is restricted to the present performance. 
-              You can't pause the clockConductor; returns <b>nil</b> in this case
-              (and the delegate message isn't sent).  Otherwise returns the
-              receiver.  Note that you can invoke this method before a performance
-              begins; the <b>resume</b> message is enqueued to be sent
-              <i>seconds</i> seconds after the performance starts.
+  @return Returns an id.
+  @brief A convenience method.
+
+  Pauses the performance of the receiver, sends
+  <b>hasPaused:</b> to its delegate, and schedules a request for
+  <b>resume</b> to be sent to the receiver in <i>seconds</i> seconds. 
+  If the receiver is currently paused through a previous invocation of
+  this method, the current <b>resume</b> request supercedes the
+  previous one.  The effect is restricted to the present performance. 
+  You can't pause the clockConductor; returns <b>nil</b> in this case
+  (and the delegate message isn't sent).  Otherwise returns the
+  receiver.  Note that you can invoke this method before a performance
+  begins; the <b>resume</b> message is enqueued to be sent
+  <i>seconds</i> seconds after the performance starts.
 */
 - pauseFor: (double) seconds;
 
 /*!
-  @method resume
-  @result Returns an id.
-  @discussion Resumes the receiver's performance and returns the receiver.  If the
-              receiver isn't currently paused, this has no effect.
+  @return Returns an id.
+  @brief Resumes the receiver's performance and returns the receiver.
+
+  If the
+  receiver isn't currently paused, this has no effect.
 */
 - resume; 
 
 /*!
-  @method setBeatSize:
   @param  newBeatSize is a double.
-  @result Returns a double.
-  @discussion Sets the tempo by changing the size of a beat to <i>newBeatSize</i>,
-              measured in seconds.  The default beat size is 1.0 (one second). 
-              Attempts to set the tempo of the clockConductor are ignored. 
-              Returns the previous beat size.
+  @return Returns a double.
+  @brief Sets the tempo by changing the size of a beat to <i>newBeatSize</i>,
+  measured in seconds.
+
+  The default beat size is 1.0 (one second). 
+  Attempts to set the tempo of the clockConductor are ignored. 
+  Returns the previous beat size.
 */
 - (double) setBeatSize: (double) newBeatSize; 
 
 /*!
-  @method beatSize
-  @result Returns a double.
-  @discussion Returns the size of the receiver's beat in seconds.
+  @return Returns a double.
+  @brief Returns the size of the receiver's beat in seconds.
+
+  
 */
 - (double) beatSize; 
 
 /*!
-  @method setTempo:
   @param  newTempo is a double.
-  @result Returns a double.
-  @discussion Sets the receiver's tempo to <i>newTempo</i>, measured in beats per
-              minute.  Attempts to set the tempo of the clockConductor are
-              ignored.  Returns the previous tempo.
+  @return Returns a double.
+  @brief Sets the receiver's tempo to <i>newTempo</i>, measured in beats per
+  minute.
+
+  Attempts to set the tempo of the clockConductor are
+  ignored.  Returns the previous tempo.
 */
 -(double) setTempo: (double) newTempo; 
 
 /*!
-  @method tempo
-  @result Returns a double.
-  @discussion Returns the receiver's tempo in beats per minute.
+  @return Returns a double.
+  @brief Returns the receiver's tempo in beats per minute.
+
+  
 */
 - (double) tempo; 
 
 /*!
-  @method setTimeOffset:
   @param  newTimeOffset is a double.
-  @result Returns a double.
-  @discussion Sets the receiver's performance time offset to <i>newTimeOffset</i>
-              seconds.  Keep in mind that since the offset is measured in seconds,
-              it's not affected by the receiver's tempo.  Attempts to set the
-              offset of the clockConductor are ignored. Returns the previous time
-              offset.
+  @return Returns a double.
+  @brief Sets the receiver's performance time offset to <i>newTimeOffset</i>
+  seconds.
+
+  Keep in mind that since the offset is measured in seconds,
+  it's not affected by the receiver's tempo.  Attempts to set the
+  offset of the clockConductor are ignored. Returns the previous time
+  offset.
 */
 - (double) setTimeOffset: (double) newTimeOffset; 
 
 /*!
-  @method timeOffset
-  @result Returns a double.
-  @discussion Returns the receiver's performance time offset in seconds.
+  @return Returns a double.
+  @brief Returns the receiver's performance time offset in seconds.
+
+  
 */
 - (double) timeOffset; 
 
 /*!
-  @method sel:to:withDelay:argCount:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  beats is a double.
   @param  argCount,... is an int counting variable arguments.
-  @result Returns an id.
-  @discussion Places, in the receiver's message request queue, a request for
-              <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
-              beats from the receiver's notion of the current time.  To ensure
-              that the receiver's notion of time is up to date, you should send
-              <b>lockPerformance</b> before invoking this method and
-              <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
-              number of four-byte arguments to <i>aSelector</i> followed by the
-              arguments themselves, seperated by commas (two arguments,
-              maximum).
+  @return Returns an id.
+  @brief Places, in the receiver's message request queue, a request for
+  <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
+  beats from the receiver's notion of the current time.
+
+  To ensure
+  that the receiver's notion of time is up to date, you should send
+  <b>lockPerformance</b> before invoking this method and
+  <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
+  number of four-byte arguments to <i>aSelector</i> followed by the
+  arguments themselves, seperated by commas (two arguments,
+  maximum).
 */
 - sel: (SEL) aSelector to: toObject withDelay: (double) beats argCount: (int) argCount, ...;
 
 /*!
-  @method sel:to:withDelay:argCount:arg1:retain:arg2:retain:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  beats is a double.
@@ -713,17 +740,19 @@ extern void MKFinishPerformance(void);
   @param  retain is a BOOL
   @param  arg2 is an id or any 4-byte data type
   @param  retain is a BOOL
-  @result Returns an id.
-  @discussion Places, in the receiver's message request queue, a request for
-              <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
-              beats from the receiver's notion of the current time.  To ensure
-              that the receiver's notion of time is up to date, you should send
-              <b>lockPerformance</b> before invoking this method and
-              <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
-              number of four-byte arguments to <i>aSelector</i>. If arg1 or arg2 are
-	      objects, set the retain: argument following them to TRUE to prevent
-	      the object from any chance of deallocation between this method being
-	      called, and the message being dispatched.
+  @return Returns an id.
+  @brief Places, in the receiver's message request queue, a request for
+  <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
+  beats from the receiver's notion of the current time.
+
+  To ensure
+  that the receiver's notion of time is up to date, you should send
+  <b>lockPerformance</b> before invoking this method and
+  <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
+  number of four-byte arguments to <i>aSelector</i>. If arg1 or arg2 are
+	  objects, set the retain: argument following them to TRUE to prevent
+	  the object from any chance of deallocation between this method being
+	  called, and the message being dispatched.
 */
 - (id) sel: (SEL) aSelector
 	to: (id) toObject
@@ -735,23 +764,23 @@ extern void MKFinishPerformance(void);
     retain: (BOOL) retainArg2;
 
 /*!
-  @method sel:to:atTime:argCount:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  time is a double.
   @param  argCount,... is an int counting variable arguments.
-  @result Returns an id.
-  @discussion Places, in the receiver's message request queue, a request for
-              <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
-              beats from the beginning of the receiver's performance. 
-              <i>argCount</i> specifies the number of four-byte arguments to
-              <i>aSelector</i> followed by the arguments themselves, seperated by
-              commas (two arguments, maximum). 
+  @return Returns an id.
+  @brief Places, in the receiver's message request queue, a request for
+  <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
+  beats from the beginning of the receiver's performance.
+
+  
+  <i>argCount</i> specifies the number of four-byte arguments to
+  <i>aSelector</i> followed by the arguments themselves, seperated by
+  commas (two arguments, maximum). 
 */
 - sel: (SEL) aSelector to: toObject atTime: (double) time argCount: (int) argCount, ...;
 
 /*!
-  @method sel:to:atTime:argCount:arg1:retain:arg2:retain:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  time is a double.
@@ -760,15 +789,17 @@ extern void MKFinishPerformance(void);
   @param  retain is a BOOL
   @param  arg2 is an object or any 4-byte type
   @param  retain is a BOOL
-  @result Returns an id.
-  @discussion Places, in the receiver's message request queue, a request for
-              <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
-              beats from the beginning of the receiver's performance. 
-              <i>argCount</i> specifies the number of four-byte arguments to
-              <i>aSelector</i>. If arg1 or arg2 are
-	      objects, set the retain: argument following them to TRUE to prevent
-	      the object from any chance of deallocation between this method being
-	      called, and the message being dispatched.
+  @return Returns an id.
+  @brief Places, in the receiver's message request queue, a request for
+  <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
+  beats from the beginning of the receiver's performance.
+
+  
+  <i>argCount</i> specifies the number of four-byte arguments to
+  <i>aSelector</i>. If arg1 or arg2 are
+	  objects, set the retain: argument following them to TRUE to prevent
+	  the object from any chance of deallocation between this method being
+	  called, and the message being dispatched.
 */
 -    sel: (SEL) aSelector 
       to: (id) toObject 
@@ -777,63 +808,67 @@ argCount: (int) argCount
     arg1: (id) arg1 retain: (BOOL) retainArg1
     arg2: (id) arg2 retain: (BOOL) retainArg2;
 /*!
-  @method timeInSeconds
-  @result Returns a double.
-  @discussion Same as <tt>[[MKConductor clockConductor] time]</tt>.
-              Returns the current performance time, in seconds.  This doesn't
-              include time that the performance has been paused, nor does it
-              include the performance's delta time.  If a performance isn't in
-              progress, MK_NODVAL is returned .  Use <b>MKIsNoDVal()</b> to check
-              for this return value.
+  @return Returns a double.
+  @brief Same as <tt>[[MKConductor clockConductor] time]</tt>.
+
+  
+  Returns the current performance time, in seconds.  This doesn't
+  include time that the performance has been paused, nor does it
+  include the performance's delta time.  If a performance isn't in
+  progress, MK_NODVAL is returned .  Use <b>MKIsNoDVal()</b> to check
+  for this return value.
 */
 + (double) timeInSeconds; 
 
 /*!
-  @method time
-  @result Returns a double.
-  @discussion Returns the receiver's notion of the current time in
-              beats.
+  @return Returns a double.
+  @brief Returns the receiver's notion of the current time in
+  beats.
+
+  
 */
 - (double) timeInBeats; 
 
 /*!
-  @method emptyQueue
-  @result Returns an id.
-  @discussion Removes all message requests from the receiver's message request
-              queue and returns the receiver.    Doesn't send any of the
-              messages.
+  @return Returns an id.
+  @brief Removes all message requests from the receiver's message request
+  queue and returns the receiver.
+
+  Doesn't send any of the
+  messages.
 */
 - emptyQueue; 
 
 /*!
-  @method isCurrentConductor
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the receiver is currently sending a message
-              from its message request queue.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the receiver is currently sending a message
+  from its message request queue.
+
+  
 */
 - (BOOL) isCurrentConductor;
 
 /*!
-  @method afterPerformanceSel:to:argCount:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  argCount,... is an int.
-  @result Returns a MKMsgStruct *.
-  @discussion Enqueues a request for <i>aSelector</i> to be sent to
-              <i>toObject</i> immediately after the current (or next) performance
-              ends.  <i>argCount</i> specifies the number of four-byte arguments
-              to <i>aSelector</i> followed by the arguments themselves, separated
-              by commas (two arguments, maximum).  You can enqueue as many of
-              these requests as you want; they're sent in the order that they were
-              enqueued.  Returns a pointer to a <i>message request structure that
-              can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
+  @return Returns a MKMsgStruct *.
+  @brief Enqueues a request for <i>aSelector</i> to be sent to
+  <i>toObject</i> immediately after the current (or next) performance
+  ends.
+
+  <i>argCount</i> specifies the number of four-byte arguments
+  to <i>aSelector</i> followed by the arguments themselves, separated
+  by commas (two arguments, maximum).  You can enqueue as many of
+  these requests as you want; they're sent in the order that they were
+  enqueued.  Returns a pointer to a <i>message request structure that
+  can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
 + (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector
 				   to: (id) toObject
 			     argCount: (int) argCount, ...; 
 
 /*!
-  @method afterPerformanceSel:to:argCount:arg1:retain:arg2:retain:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  argCount is an int.
@@ -841,19 +876,21 @@ argCount: (int) argCount
   @param  retain is a BOOL.
   @param  arg2 is an id or any 4-byte type.
   @param  retain is a BOOL.
-  @result Returns a MKMsgStruct *.
-  @discussion Enqueues a request for <i>aSelector</i> to be sent to
-              <i>toObject</i> immediately after the current (or next) performance
-              ends.  <i>argCount</i> specifies the number of four-byte arguments
-              to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
-	      object types (eg int). If either is an object, specify retain:TRUE
-	      for that object, and it will receive retain and release messages, meaning
-	      that they should not become accidentally deallocated before the message
-	      containing them as arguments is dispatched.
-	      You can enqueue as many of
-              these requests as you want; they're sent in the order that they were
-              enqueued.  Returns a pointer to a <i>message request structure that
-              can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
+  @return Returns a MKMsgStruct *.
+  @brief Enqueues a request for <i>aSelector</i> to be sent to
+  <i>toObject</i> immediately after the current (or next) performance
+  ends.
+
+  <i>argCount</i> specifies the number of four-byte arguments
+  to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
+	  object types (eg int). If either is an object, specify retain:TRUE
+	  for that object, and it will receive retain and release messages, meaning
+	  that they should not become accidentally deallocated before the message
+	  containing them as arguments is dispatched.
+	  You can enqueue as many of
+  these requests as you want; they're sent in the order that they were
+  enqueued.  Returns a pointer to a <i>message request structure that
+  can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
 + (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector to: (id) toObject 
                  argCount: (int) argCount
@@ -861,24 +898,24 @@ argCount: (int) argCount
                  arg2: (id) arg2 retain: (BOOL) retainArg2;
 
 /*!
-  @method beforePerformanceSel:to:argCount:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  argCount,... is an int.
-  @result Returns a MKMsgStruct *.
-  @discussion Enqueues a request for <i>aSelector</i> to be sent to
-              <i>toObject</i> at the beginning of the next performance. 
-              <i>argCount</i> specifies the number of four-byte arguments to
-              <i>aSelector</i> followed by the arguments themselves, separated by
-              commas (two arguments, maximum).  You can enqueue as many of these
-              requests as you want; they're sent in the order that they were
-              enqueued.  Returns a pointer to a <i>message request structure that
-              can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
+  @return Returns a MKMsgStruct *.
+  @brief Enqueues a request for <i>aSelector</i> to be sent to
+  <i>toObject</i> at the beginning of the next performance.
+
+  
+  <i>argCount</i> specifies the number of four-byte arguments to
+  <i>aSelector</i> followed by the arguments themselves, separated by
+  commas (two arguments, maximum).  You can enqueue as many of these
+  requests as you want; they're sent in the order that they were
+  enqueued.  Returns a pointer to a <i>message request structure that
+  can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
 + (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector to: toObject argCount: (int) argCount, ...; 
 
 /*!
-  @method beforePerformanceSel:to:argCount:arg1:retain:arg2:retain:
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  argCount is an int.
@@ -886,19 +923,21 @@ argCount: (int) argCount
   @param  retain is a BOOL.
   @param  arg2 is an id or any 4-byte type.
   @param  retain is a BOOL.
-  @result Returns a MKMsgStruct *.
-  @discussion Enqueues a request for <i>aSelector</i> to be sent to
-              <i>toObject</i> at the beginning of the next performance. 
-              <i>argCount</i> specifies the number of four-byte arguments
-              to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
-	      object types (eg int). If either is an object, specify retain:TRUE
-	      for that object, and it will receive retain and release messages, meaning
-	      that they should not become accidentally deallocated before the message
-	      containing them as arguments is dispatched.
-	      You can enqueue as many of these
-              requests as you want; they're sent in the order that they were
-              enqueued.  Returns a pointer to a <i>message request structure that
-              can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
+  @return Returns a MKMsgStruct *.
+  @brief Enqueues a request for <i>aSelector</i> to be sent to
+  <i>toObject</i> at the beginning of the next performance.
+
+  
+  <i>argCount</i> specifies the number of four-byte arguments
+  to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
+	  object types (eg int). If either is an object, specify retain:TRUE
+	  for that object, and it will receive retain and release messages, meaning
+	  that they should not become accidentally deallocated before the message
+	  containing them as arguments is dispatched.
+	  You can enqueue as many of these
+  requests as you want; they're sent in the order that they were
+  enqueued.  Returns a pointer to a <i>message request structure that
+  can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
 + (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector
 				    to: (id) toObject 
@@ -909,49 +948,54 @@ argCount: (int) argCount
 				retain: (BOOL) retainArg2;
 
 /*!
-  @method setDelegate:
   @param  delegate is an id.
-  @result Returns an id.
-  @discussion Sets the receiver's delegate object to <i>delegate</i> and returns
-              the receiver.  The delegate is sent <b>hasPaused:</b> and
-              <b>hasResumed:</b> as the receiver is paused and resumed,
-              respectively. 
+  @return Returns an id.
+  @brief Sets the receiver's delegate object to <i>delegate</i> and returns
+  the receiver.
+
+  The delegate is sent <b>hasPaused:</b> and
+  <b>hasResumed:</b> as the receiver is paused and resumed,
+  respectively. 
 */
 - (void) setDelegate: (id) object;
 
 /*!
-  @method delegate
-  @result Returns an id.
-  @discussion Returns the receiver's delegate object, as set through the
-              <b>setDelegate:</b> method.
+  @return Returns an id.
+  @brief Returns the receiver's delegate object, as set through the
+  <b>setDelegate:</b> method.
+
+  
 */
 - delegate;
 
 /*!
-  @method setDelegate:
   @param  delegate is an id.
-  @result Returns an id.
-  @discussion Sets the receiver's delegate object to <i>delegate</i> and returns
-              the receiver.  The delegate is sent <b>hasPaused:</b> and
-              <b>hasResumed:</b> as the receiver is paused and resumed,
-              respectively. 
+  @return Returns an id.
+  @brief Sets the receiver's delegate object to <i>delegate</i> and returns
+  the receiver.
+
+  The delegate is sent <b>hasPaused:</b> and
+  <b>hasResumed:</b> as the receiver is paused and resumed,
+  respectively. 
 */
 + (void) setDelegate: object;
 
 /*!
-  @method delegate
-  @result Returns an id.
-  @discussion Returns the receiver's delegate object, as set through the
-              <b>setDelegate:</b> method.
+  @return Returns an id.
+  @brief Returns the receiver's delegate object, as set through the
+  <b>setDelegate:</b> method.
+
+  
 */
 + delegate;
 
 /*!
-  @method activePerformers
-  @result Returns an id.
-  @discussion Returns a List of currently active Performers that are assigned to
-              this MKConductor.  The NSMutableArray is <i>not</i> copied and
-              should not be freed or altered.
+  @return Returns an id.
+  @brief Returns a List of currently active Performers that are assigned to
+  this MKConductor.
+
+  The NSMutableArray is <i>not</i> copied and
+  should not be freed or altered.
 */
 - activePerformers;
 
@@ -967,16 +1011,17 @@ argCount: (int) argCount
 @interface MKConductor(MTC)
 
 /*!
-  @method setMTCSynch:
   @param  aMidiObj is an id.
-  @result Returns an id.
-  @discussion Sets the MKConductor to synchronize to MIDI time code coming in on
-              the specified MIDI object.  Keep in mind that only one MKConductor
-              at a time may have an MTCSynch object.   Unclocked performances
-              involving MIDI time code conductors are not
-	      supported. Hence, <b>setMTCSynch:</b> sends
-	      <tt>[MKConductor setClocked:YES];</tt>.  For
-              details, see 
+  @return Returns an id.
+  @brief Sets the MKConductor to synchronize to MIDI time code coming in on
+  the specified MIDI object.
+
+  Keep in mind that only one MKConductor
+  at a time may have an MTCSynch object.   Unclocked performances
+  involving MIDI time code conductors are not
+	  supported. Hence, <b>setMTCSynch:</b> sends
+	  <tt>[MKConductor setClocked:YES];</tt>.  For
+  details, see 
 <a href=http://www.musickit.org/MusicKitConcepts/miditimecode.html>
 Appendix entitled MIDI Time Code in the MusicKit
 </a> mentioned above.
@@ -984,23 +1029,25 @@ Appendix entitled MIDI Time Code in the MusicKit
 - setMTCSynch: (MKMidi *) aMidiObj;
 
 /*!
-  @method MTCSynch
-  @result Returns an id.
-  @discussion Returns the MKMidi object previously set with <b>setMTCSynch:</b>, or
-              <b>nil</b> if none.  Keep in mind that only one MKConductor at a
-              time may have an MTCSynch object.
+  @return Returns an id.
+  @brief Returns the MKMidi object previously set with <b>setMTCSynch:</b>, or
+  <b>nil</b> if none.
+
+  Keep in mind that only one MKConductor at a
+  time may have an MTCSynch object.
 */
 - (MKMidi *) MTCSynch;
 
 /*!
-  @method clockTime
-  @result Returns a double.
-  @discussion A convenience method.  Returns the current clock time for the
-              object.  If the object is synchronizing to MIDI time code, the value
-              returned is the current MIDI time code time, the same value returned
-              by MKMidi's <b>time</b> method.   If the object is not synchronizing
-              to MIDI time code, the value returend is the same value as the value
-              returned by  <tt>[[MKConductor clockConductor] time]</tt>.
+  @return Returns a double.
+  @brief A convenience method.
+
+  Returns the current clock time for the
+  object.  If the object is synchronizing to MIDI time code, the value
+  returned is the current MIDI time code time, the same value returned
+  by MKMidi's <b>time</b> method.   If the object is not synchronizing
+  to MIDI time code, the value returend is the same value as the value
+  returned by  <tt>[[MKConductor clockConductor] time]</tt>.
 */
 - (double) clockTime;
 
@@ -1009,153 +1056,165 @@ Appendix entitled MIDI Time Code in the MusicKit
 @interface MKConductor(SeparateThread)  <SndDelegateMessagePassing>
 
 /*!
-  @method useSeparateThread:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If invoked with an argument of YES, all following performances will
-              be run in a separate Mach thread.  Some restrictions apply to
-              separate-threaded performances as follows:  You may not do any
-              drawing or appkit calls from the separate thread.  If you need to
-              send a message to the appkit, use <b>+sendMsgToApplicationThreadSel:
-               to:argCount:</b>.  
-              
-              Default is NO.  You should not send this message if any MKMidi objects are open (or running or stopped. ) 
-               
+  @return Returns an id.
+  @brief If invoked with an argument of YES, all following performances will
+  be run in a separate Mach thread.
+
+  Some restrictions apply to
+  separate-threaded performances as follows:  You may not do any
+  drawing or appkit calls from the separate thread.  If you need to
+  send a message to the appkit, use <b>+sendMsgToApplicationThreadSel:
+  to:argCount:</b>.  
+  
+  Default is NO.  You should not send this message if any MKMidi objects are open (or running or stopped. ) 
+  
 */
 + useSeparateThread: (BOOL) yesOrNo;
 
 /*!
-    @function separateThreaded
-    @discussion Returns YES if the MKConductor is separate threaded, NO if it runs in the application thread.
+  @function separateThreaded
+  @brief Returns YES if the MKConductor is separate threaded, NO if it runs in the application thread.
+
+  
 */
 + (BOOL) separateThreaded;
 
 /*!
-    @method separateThreadedAndInMusicKitThread
-    @discussion Returns YES if the MKConductor is separate threaded and the calling code is running
-        in the separate thread, NO if the code is running in the application thread.
+  @brief Returns YES if the MKConductor is separate threaded and the calling code is running
+  in the separate thread, NO if the code is running in the application thread.
+
+  
 */
 + (BOOL) separateThreadedAndInMusicKitThread;
 
 /*!
-  @method lockPerformance
-  @result Returns an id.
-  @discussion In a separate-threaded performance, this method gets the MusicKit
-              lock, then sends <b>[MKConductor adjustTime]</b>.
-              <b>lockPerformance</b> may be called multiple times -- e.g. if you
-              lock twice you must unlock twice to give up the lock.  In a
-              performance that is not separate-threaded, this method is the same
-              as <b>+adjustTime</b>. 
-               
-              <b>lockPerformanceNoBlock</b>
-              <b>+ </b>(BOOL)<b>lockPerformanceNoBlock</b>
-              
-              Same as lockPerformance but does not wait and returns NO if the lock is  unavailable.  If the lock is successful, sends <b>[MKConductor adjustTime]</b> and returns YES. You rarely use this method.  It is provided for cases where you would prefer to give up than to wait (e.g. when simultaneously doing graphic animation.)
+  @return Returns an id.
+  @brief In a separate-threaded performance, this method gets the MusicKit
+  lock, then sends <b>[MKConductor adjustTime]</b>.
+
+  
+  <b>lockPerformance</b> may be called multiple times -- e.g. if you
+  lock twice you must unlock twice to give up the lock.  In a
+  performance that is not separate-threaded, this method is the same
+  as <b>+adjustTime</b>. 
+  
+  <b>lockPerformanceNoBlock</b>
+  <b>+ </b>(BOOL)<b>lockPerformanceNoBlock</b>
+  
+  Same as lockPerformance but does not wait and returns NO if the lock is  unavailable.  If the lock is successful, sends <b>[MKConductor adjustTime]</b> and returns YES. You rarely use this method.  It is provided for cases where you would prefer to give up than to wait (e.g. when simultaneously doing graphic animation.)
 */
 + lockPerformance;
 
 /*!
-  @method unlockPerformance
-  @result Returns an id.
-  @discussion Undoes lockPerformance.  In a separate-threaded performace, sends
-              <b>[MKOrchestra flushTimedMessages]</b> and then gives up the
-              MusicKit lock.  In a performance that is not separate-threaded, this
-              method is the same as MKOrchestra's <b>flushTimedMessages</b>,
-              except that the flush is done only when the last recursive lock is
-              given up (See MKOrchestra.h.)
+  @return Returns an id.
+  @brief Undoes lockPerformance.
+
+  In a separate-threaded performace, sends
+  <b>[MKOrchestra flushTimedMessages]</b> and then gives up the
+  MusicKit lock.  In a performance that is not separate-threaded, this
+  method is the same as MKOrchestra's <b>flushTimedMessages</b>,
+  except that the flush is done only when the last recursive lock is
+  given up (See MKOrchestra.h.)
 */
 + unlockPerformance;
 
 /*!
-  @method lockPerformanceNoBlock
-  @result Returns a BOOL.
-  @discussion Same as lockPerformance but does not wait and returns NO if the lock
-              is  unavailable.  If the lock is successful, sends <b>[MKConductor
-              adjustTime]</b> and returns YES. You rarely use this method.  It is
-              provided for cases where you would prefer to give up than to wait
-              (e.g. when simultaneously doing graphic animation.)
+  @return Returns a BOOL.
+  @brief Same as lockPerformance but does not wait and returns NO if the lock
+  is  unavailable.
+
+  If the lock is successful, sends <b>[MKConductor
+  adjustTime]</b> and returns YES. You rarely use this method.  It is
+  provided for cases where you would prefer to give up than to wait
+  (e.g. when simultaneously doing graphic animation.)
 */
 + (BOOL) lockPerformanceNoBlock;
 
 /*!
-  @method setThreadPriority:
   @param  priorityFactor is a float.
-  @result Returns an id.
-  @discussion This method sets the thread priority of the following and all
-              subsequent performances.  The priority change takes effect when the
-              <b>startPerformance</b> method is invoked and is set back to its
-              original value in the <b>finishPerformance</b> method.  In a
-              separate-threaded performance, the thread that is affected is the
-              performance thread.  In the case of a performance that is not
-              separate-threaded, the thread affected is the one that invoked the
-              <b>startPerformance</b> method.
-              
-              Priority is specified as a "priorityFactor" between
-              0.0 and 1.0.  1.0 corresponds to the maximum priority of a user
-              process, 0.0 corresponds to the base priority. The default value is
-              0.0.
-               
-              In addition, if priorityFactor is greater than 0, the
-              MusicKit uses Mach's "fixed priority thread scheduling policy". 
-              (See the Mach documentation for details on thread scheduling
-              policies. )  This scheduling policy is more advantageous for
-              real-time processes than  the ordinary time sharing policy.
-              
+  @return Returns an id.
+  @brief This method sets the thread priority of the following and all
+  subsequent performances.
+
+  The priority change takes effect when the
+  <b>startPerformance</b> method is invoked and is set back to its
+  original value in the <b>finishPerformance</b> method.  In a
+  separate-threaded performance, the thread that is affected is the
+  performance thread.  In the case of a performance that is not
+  separate-threaded, the thread affected is the one that invoked the
+  <b>startPerformance</b> method.
+  
+  Priority is specified as a "priorityFactor" between
+  0.0 and 1.0.  1.0 corresponds to the maximum priority of a user
+  process, 0.0 corresponds to the base priority. The default value is
+  0.0.
+  
+  In addition, if priorityFactor is greater than 0, the
+  MusicKit uses Mach's "fixed priority thread scheduling policy". 
+  (See the Mach documentation for details on thread scheduling
+  policies. )  This scheduling policy is more advantageous for
+  real-time processes than  the ordinary time sharing policy.
+  
 */
 + setThreadPriority: (float) priorityFactor;
 
 /*!
-  @method performanceThread
-  @result Returns an NSThread..
-  @discussion In a separate-threaded MusicKit performance, returns the NSThread
-              used in that performance.  When the thread has exited, returns
-              nil. 
+  @return Returns an NSThread..
+  @brief In a separate-threaded MusicKit performance, returns the NSThread
+  used in that performance.
+
+  When the thread has exited, returns
+  nil. 
 */
 + (NSThread *) performanceThread;
 
-/*!              
-  @method sendMsgToApplicationThreadSel:to:argCount:
-  @result returns an id.
+/*!  
+  @return returns an id.
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  argCount is an integer.
   @param  variable arguments.
-  @discussion If called from the MusicKit thread, sends an Objective-C
-              message from the MusicKit thread to the Application's
-              main thread.  This is the only safe way to invoke the
-              Application Kit from within the MusicKit's thread.  The
-              message will be run in the application as soon as the
-              Application event loop threshold is NX_BASETHRESHOLD. To
-              increase the priority of MusicKit-sent messages, use
-              <b>+setInterThreadThreshold:</b>.  If called from the
-              Application Kit thread, or there is no separate-threaded
-              performance going on, this is the same as sending
-              aSelector directly to toObject.
+  @brief If called from the MusicKit thread, sends an Objective-C
+  message from the MusicKit thread to the Application's
+  main thread.
+
+  This is the only safe way to invoke the
+  Application Kit from within the MusicKit's thread.  The
+  message will be run in the application as soon as the
+  Application event loop threshold is NX_BASETHRESHOLD. To
+  increase the priority of MusicKit-sent messages, use
+  <b>+setInterThreadThreshold:</b>.  If called from the
+  Application Kit thread, or there is no separate-threaded
+  performance going on, this is the same as sending
+  aSelector directly to toObject.
 */
 + sendMsgToApplicationThreadSel: (SEL) aSelector to: (id) toObject argCount: (int) argCount, ...;
 
 /*!
-  @method detachDelegateMessageThread
-  @result
-  @discussion Called by +initialize to detach a thread to handle messaging between
-              any background thread and the application thread. It is imperative that
-              +initialize is called from the application thread. In effect, this means
-              that the very first use of [MKConductor ...] must be done in the
-              application thread.
+  @return
+  @brief Called by +initialize to detach a thread to handle messaging between
+  any background thread and the application thread.
+
+  It is imperative that
+  +initialize is called from the application thread. In effect, this means
+  that the very first use of [MKConductor ...] must be done in the
+  application thread.
 */
 + (void) detachDelegateMessageThread;
 
-/*!              
-  @method sendMessageInMainThreadToTarget:sel:arg1:arg2:count:
-  @result none
+/*!  
+  @return none
   @param  target is an id.
   @param  aSelector is a SEL.
   @param  arg1 is any 4-byte argument.
   @param  arg2 is any 4-byte argument.
   @param  count is an integer.
-  @discussion This is the back end to sendMsgToApplicationThreadSel, above.
-              It relies on the delegate message thread having been set up
-              which is done from +initialize.
+  @brief This is the back end to sendMsgToApplicationThreadSel, above.
+
+  
+  It relies on the delegate message thread having been set up
+  which is done from +initialize.
 */
 + (void) sendMessageInMainThreadToTarget: (id) target 
                                      sel: (SEL) aSelector
@@ -1164,24 +1223,26 @@ Appendix entitled MIDI Time Code in the MusicKit
                                    count: (int) count;
 
 /*!
-  @method setInterThreadThreshold:
   @param  newThreshold is an NSString.
-  @result Returns an id.
-  @discussion Resets the threshold used for interthread
-              communication.  This message may only be sent from the Application
-              thread.  Otherwise, it is ignored.
+  @return Returns an id.
+  @brief Resets the threshold used for interthread
+  communication.
+
+  This message may only be sent from the Application
+  thread.  Otherwise, it is ignored.
 */
 + setInterThreadThreshold: (NSString *) newThreshold;
 
 /*!
-  @method _sendDelegateInvocation:
   @param  mesg is an NSInvocation, but cast as an unsigned long so the runtime does
-          not interpret it as an object, and mangle it (yes the casting has an
-          effect at runtime in this situation!).
-  @result void.
-  @discussion This is the method called in the application thread to actually deliver
-              the message sent through form the background thread (eg background
-              MKConductor thread).
+  not interpret it as an object, and mangle it (yes the casting has an
+  effect at runtime in this situation!).
+  @return void.
+  @brief This is the method called in the application thread to actually deliver
+  the message sent through form the background thread (eg background
+  MKConductor thread).
+
+  
 */
 + (void) _sendDelegateInvocation: (in unsigned long) mesg;
 

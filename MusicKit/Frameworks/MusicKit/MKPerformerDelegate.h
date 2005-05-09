@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:52:52  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -23,9 +26,9 @@
 */
 /*!
   @class MKPerformerDelegate
-  @abstract The following methods may be implemented by the delegate. The
-            messages get sent, if the delegate responds to them, after the
-            MKPerformer's status has changed.
+  @brief The following methods may be implemented by the delegate. The
+  messages get sent, if the delegate responds to them, after the
+  MKPerformer's status has changed.
 */
 
 #ifndef __MK_PerformerDelegate_H___
@@ -35,38 +38,42 @@
 @interface MKPerformerDelegate : NSObject
 
 /*!
-  @method performerDidActivate:
   @param  sender is an id.
-  @result Returns an id.
-  @discussion Delegate receives this message, if it responds to it, after the
-              performer is activated.
+  @return Returns an id.
+  @brief Delegate receives this message, if it responds to it, after the
+  performer is activated.
+
+  
 */
 - performerDidActivate:sender;
 
 /*!
-  @method performerDidPause:
   @param  sender is an id.
-  @result Returns an id.
-  @discussion Delegate receives this message, if it responds to it,  after the
-              performer is paused.
+  @return Returns an id.
+  @brief Delegate receives this message, if it responds to it,  after the
+  performer is paused.
+
+  
 */
 - performerDidPause:sender;
 
 /*!
-  @method performerDidResume:
   @param  sender is an id.
-  @result Returns an id.
-  @discussion Delegate receives this message, if it responds to it,  after the
-              performer is resumed.
+  @return Returns an id.
+  @brief Delegate receives this message, if it responds to it,  after the
+  performer is resumed.
+
+  
 */
 - performerDidResume:sender;
 
 /*!
-  @method performerDidDeactivate:
   @param  sender is an id.
-  @result Returns an id.
-  @discussion Delegate receives this message, if it responds to it,  after the
-              performer is deactivated.
+  @return Returns an id.
+  @brief Delegate receives this message, if it responds to it,  after the
+  performer is deactivated.
+
+  
 */
 - performerDidDeactivate:sender;
 

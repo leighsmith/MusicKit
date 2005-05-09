@@ -14,7 +14,7 @@
 */
 /*!
   @class MKPerformer
-  @discussion
+  @brief
 
 MKPerformer is an abstract class that defines a mechanism for
 performing MKNotes during a MusicKit performance.  Each subclass of
@@ -108,12 +108,12 @@ informal protocol called <b>MKPerformer Time Code Protocol</b>, which
 is described in the next section.
 
 <h2>MKPerformer Time Code Protocol</h2>
-              
+  
 This is an informal protocol, required if a
 MKPerformer subclass is to synchronize correctly with incoming MIDI
 time code.
 
-There are three parts to this protocol.   	
+There are three parts to this protocol.  	
 
 <UL>
 <LI>
@@ -142,7 +142,7 @@ MKNotes to send after the specified time,  it returns <b>nil</b>.
 The first invocation of a Time Code-conforming
 MKPerformer's <b>perform</b> method should send the selected MKNote,
 then choose the next MKNote and set <i>nextPerform</i> to the time
-until that MKNote, as usual.   You can identify the first invocation
+until that MKNote, as usual.  You can identify the first invocation
 because the instance variable <i>performCount</i> will be set to 1. 
 In the first invocation of <b>perform</b>, you may also want to send
 any <b>noteUpdates</b> that preceed <i>firstTimeTag</i>.  This makes
@@ -160,13 +160,13 @@ the MusicKit MKPartPerformer:
 #import "MyPartPerformer.h"<br>
 &#64;implementation MyPartPerformer:MKPerformer<br>
 {<br>
-    id part;             // MKPart over which we're sequencing.<br>
-    double firstTimeTag; // Required by Time Code Protocol.<br>
-    int currentIndex;    // Index of nextNote<br>
+  id part;             // MKPart over which we're sequencing.<br>
+  double firstTimeTag; // Required by Time Code Protocol.<br>
+  int currentIndex;    // Index of nextNote<br>
 }<br>
 </tt>
 
-See also: MKConductor, MKNoteSender 
+  @see MKConductor, MKNoteSender 
 */
 #ifndef __MK_Performer_H___
 #define __MK_Performer_H___
@@ -212,338 +212,366 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 }
 
 /*!
-  @method noteSenders
-  @result Returns an NSArray.
-  @discussion Creates and returns a NSArray containing the receiver's
-              MKNoteSenders. The NSArray is autoreleased.
+  @return Returns an NSArray.
+  @brief Creates and returns a NSArray containing the receiver's
+  MKNoteSenders.
+
+  The NSArray is autoreleased.
 */
 - (NSArray *) noteSenders; 
 
 /*!
-  @method isNoteSenderPresent:
   @param  aNoteSender is an id.
-  @result Returns a BOOL.
-  @discussion Returns YES if <i>aNoteSender</i> is a member of the receiver's
-              MKNoteSender NSArray.
+  @return Returns a BOOL.
+  @brief Returns YES if <i>aNoteSender</i> is a member of the receiver's
+  MKNoteSender NSArray.
+
+  
 */
 - (BOOL) isNoteSenderPresent: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @method disconnectNoteSenders
-  @result Returns an id.
-  @discussion Sends -<b>disconnectAllReceivers</b> to each of the object's MKNoteSenders.
+  @return Returns an id.
+  @brief Sends -<b>disconnectAllReceivers</b> to each of the object's MKNoteSenders.
+
+  
 */
 - disconnectNoteSenders;
 
 /*!
-  @method releaseNoteSenders
-  @result Returns an id.
-  @discussion Disconnects and releases the receiver's MKNoteSenders.  Returns the
-              receiver.
+  @return Returns an id.
+  @brief Disconnects and releases the receiver's MKNoteSenders.
+
+  Returns the
+  receiver.
 */
 - releaseNoteSenders; 
 
 /*!
-  @method removeNoteSenders
-  @result Returns an id.
-  @discussion Removes the receiver's MKNoteSenders (but doesn't free them). 
-              Returns the receiver.
+  @return Returns an id.
+  @brief Removes the receiver's MKNoteSenders (but doesn't free them).
+
+  
+  Returns the receiver.
 */
 - removeNoteSenders; 
 
 /*!
-  @method noteSender
-  @result Returns an id.
-  @discussion Returns the first MKNoteSender in the receiver's NSArray.  This is a
-              convenience method provided for MKPerformers that create and add a
-              single MKNoteSender.  If there are currently no MKNoteSenders, this
-              method creates and adds a MKNoteSender.
+  @return Returns an id.
+  @brief Returns the first MKNoteSender in the receiver's NSArray.
+
+  This is a
+  convenience method provided for MKPerformers that create and add a
+  single MKNoteSender.  If there are currently no MKNoteSenders, this
+  method creates and adds a MKNoteSender.
 */
 - (MKNoteSender *) noteSender; 
 
 /*!
-  @method removeNoteSender:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns an id.
-  @discussion Removes <i>aNoteSender</i> from the receiver.  The receiver must be
-              inactive.  If the receiver is currently in performance, or if
-              <i>aNoteSender</i> wasn't part of its MKNoteSender NSArray, returns
-              <b>nil</b>.  Otherwise returns <i>aNoteSender</i>.
-	      For some subclasses, it is inappropriate for anyone other than the
-              subclass instance itself to send this message. It is illegal to modify
-              an active MKPerformer.
+  @return Returns an id.
+  @brief Removes <i>aNoteSender</i> from the receiver.
+
+  The receiver must be
+  inactive.  If the receiver is currently in performance, or if
+  <i>aNoteSender</i> wasn't part of its MKNoteSender NSArray, returns
+  <b>nil</b>.  Otherwise returns <i>aNoteSender</i>.
+	  For some subclasses, it is inappropriate for anyone other than the
+  subclass instance itself to send this message. It is illegal to modify
+  an active MKPerformer.
  */
 - (MKNoteSender *) removeNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @method addNoteSender:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns an id.
-  @discussion Adds <i>aNoteSender</i> to the recevier.  The receiver must be
-              inactive.  If the receiver is currently in performance, or if
-              <i>aNoteSender</i> already belongs to the receiver, returns
-              <b>nil</b>.  Otherwise returns the receiver.
+  @return Returns an id.
+  @brief Adds <i>aNoteSender</i> to the recevier.
+
+  The receiver must be
+  inactive.  If the receiver is currently in performance, or if
+  <i>aNoteSender</i> already belongs to the receiver, returns
+  <b>nil</b>.  Otherwise returns the receiver.
 */
 - (MKNoteSender *) addNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @method setConductor:
-  @abstract Sets the receiver's MKConductor to <i>aConductor</i>. 
-  @discussion The receiver must be inactive.
+  @brief Sets the receiver's MKConductor to <i>aConductor</i>. 
+  
+  The receiver must be inactive.
   @param  aConductor is an MKConductor instance.
-  @result Returns an NO if receiver is active, YES if receiver is inactive and MKConductor properly set.
+  @return Returns an NO if receiver is active, YES if receiver is inactive and MKConductor properly set.
 */
 - (BOOL) setConductor: (MKConductor *) aConductor;
 
 /*!
-  @method conductor
-  @abstract Returns the receiver's MKConductor.
-  @result Returns an MKConductor instance.
+  @brief Returns the receiver's MKConductor.
+  @return Returns an MKConductor instance.
 */
 - (MKConductor *) conductor; 
 
 /*!
-  @method activateSelf
-  @result Returns an id.
-  @discussion You never invoke this method directly; it's invoked automatically
-              from the <b>activate</b> method.  A subclass can implement this
-              method to perform pre-performance activities.  In particular, if the
-              subclass needs to alter the initial <b>nextPerform</b> value, it
-              should be done here.  If <b>activateSelf</b> returns <b>nil</b>, the
-              receiver is deactivated.  The default does nothing and returns the
-              receiver.
+  @return Returns an id.
+  @brief You never invoke this method directly; it's invoked automatically
+  from the <b>activate</b> method.
+
+  A subclass can implement this
+  method to perform pre-performance activities.  In particular, if the
+  subclass needs to alter the initial <b>nextPerform</b> value, it
+  should be done here.  If <b>activateSelf</b> returns <b>nil</b>, the
+  receiver is deactivated.  The default does nothing and returns the
+  receiver.
 */
 - activateSelf; 
 
 /*!
-  @method perform
-  @result Returns an id.
-  @discussion This is a subclass responsibility expected to send a MKNote and then
-              set the value of <b>nextPerform</b>.  The return value is
-              ignored.
+  @return Returns an id.
+  @brief This is a subclass responsibility expected to send a MKNote and then
+  set the value of <b>nextPerform</b>.
+
+  The return value is
+  ignored.
 */
 - perform; 
 
 /*!
-  @method setTimeShift:
   @param  timeShift is a double.
-  @result Returns an id.
-  @discussion Shifts the receiver's performance time by <i>timeShift</i> beats. 
-              The receiver must be inactive.  Returns <b>nil</b> if the receiver
-              is currently in performance, otherwise returns the
-              receiver.
+  @return Returns an id.
+  @brief Shifts the receiver's performance time by <i>timeShift</i> beats.
+
+  
+  The receiver must be inactive.  Returns <b>nil</b> if the receiver
+  is currently in performance, otherwise returns the
+  receiver.
 */
 - setTimeShift: (double) timeShift;
 
 /*!
-  @method setDuration:
   @param  dur is a double.
-  @result Returns an id.
-  @discussion Sets the receiver's maximum performance duration to <i>dur</i> in
-              beats.  The receiver must be inactive.  Returns <b>nil</b> if the
-              receiver is currently in performance, otherwise returns the
-              receiver.
+  @return Returns an id.
+  @brief Sets the receiver's maximum performance duration to <i>dur</i> in
+  beats.
+
+  The receiver must be inactive.  Returns <b>nil</b> if the
+  receiver is currently in performance, otherwise returns the
+  receiver.
 */
 - setDuration: (double) dur; 
 
 /*!
-  @method timeShift
-  @result Returns a double.
-  @discussion Returns the receiver's time shift value.
+  @return Returns a double.
+  @brief Returns the receiver's time shift value.
+
+  
 */
 - (double) timeShift;
 
 /*!
-  @method duration
-  @result Returns a double.
-  @discussion Returns the receiver's duration value.
+  @return Returns a double.
+  @brief Returns the receiver's duration value.
+
+  
 */
 - (double) duration; 
 
 /*!
-  @method status
-  @result Returns an int.
-  @discussion Returns the receiver's status.
+  @return Returns an int.
+  @brief Returns the receiver's status.
+
+  
 */
 - (int) status; 
 
 /*!
-  @method performCount
-  @result Returns an int.
-  @discussion Returns the number of <b>perform</b> messages the receiver has
-              recieved in the current performance.
+  @return Returns an int.
+  @brief Returns the number of <b>perform</b> messages the receiver has
+  recieved in the current performance.
+
+  
 */
 - (int) performCount; 
 
 /*!
-  @method activate
-  @result Returns an id.
-  @discussion If the receiver isn't inactive, immediately returns the receiver; if
-              its duration is less than or equal to 0.0, immediately returns
-              <b>nil</b>.  Otherwise prepares the receiver for a performance by
-              setting <b>nextPerform</b> to 0.0, <b>performCount</b> to 0,
-              invoking <b>activateSelf</b>, scheduling the first <b>perform</b>
-              message request with the MKConductor, and setting the receiver's
-              status to <b>MK_active</b>.  If a subclass needs to alter the
-              initial value of <b>nextPerform</b>, it should do so in its
-              implementation of the <b>activateSelf</b> method.  Returns the
-              receiver.
+  @return Returns an id.
+  @brief If the receiver isn't inactive, immediately returns the receiver; if
+  its duration is less than or equal to 0.0, immediately returns
+  <b>nil</b>.
+
+  Otherwise prepares the receiver for a performance by
+  setting <b>nextPerform</b> to 0.0, <b>performCount</b> to 0,
+  invoking <b>activateSelf</b>, scheduling the first <b>perform</b>
+  message request with the MKConductor, and setting the receiver's
+  status to <b>MK_active</b>.  If a subclass needs to alter the
+  initial value of <b>nextPerform</b>, it should do so in its
+  implementation of the <b>activateSelf</b> method.  Returns the
+  receiver.
 */
 - activate; 
 
 /*!
-  @method deactivate
-  @discussion If the receiver's status is inactive, this does nothing and
-              immediately returns the receiver.  Otherwise removes the receiver
-              from the performance, invokes <b>deactivateSelf</b>, and sets the
-              receiver's status to <b>MK_inactive</b>.  Also sends <tt>[delegate hasDeactivated:self];</tt>
-              Returns the receiver.
+  @brief If the receiver's status is inactive, this does nothing and
+  immediately returns the receiver.
+
+  Otherwise removes the receiver
+  from the performance, invokes <b>deactivateSelf</b>, and sets the
+  receiver's status to <b>MK_inactive</b>.  Also sends <tt>[delegate hasDeactivated:self];</tt>
+  Returns the receiver.
 */
 - (void) deactivate;
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes the receiver.  You invoke this method when creating a
-              new instance of MKPerformer.  A subclass implementation should send
-              <b>[super init]</b> before performing its own initialization. 
-              
+  @return Returns an id.
+  @brief Initializes the receiver.
+
+  You invoke this method when creating a
+  new instance of MKPerformer.  A subclass implementation should send
+  <b>[super init]</b> before performing its own initialization. 
+  
 */
 - init; 
 
 /*!
-  @method pause
-  @result Returns an id.
-  @discussion Suspends the receiver's performance and returns the receiver.  To
-              free a paused MKPerformer during a performance, you should first
-              send it the <b>deactivate</b> message.  Also sends [delegate hasPaused:self];
+  @return Returns an id.
+  @brief Suspends the receiver's performance and returns the receiver.
+
+  To
+  free a paused MKPerformer during a performance, you should first
+  send it the <b>deactivate</b> message.  Also sends [delegate hasPaused:self];
 */
 - pause; 
 
 /*!
-  @method pauseFor:
   @param  beats is a double.
-  @result Returns an id.
-  @discussion Like pause, but also enqueues a resume message to be sent the specified
-              number of beats into the future.
+  @return Returns an id.
+  @brief Like pause, but also enqueues a resume message to be sent the specified
+  number of beats into the future.
+
+  
 */
 -pauseFor: (double) beats;
 
 /*!
-  @method resume
-  @result Returns an id.
-  @discussion Resumes the receiver's performance and returns the
-              receiver. Also sends [delegate hasResumed:self];
+  @return Returns an id.
+  @brief Resumes the receiver's performance and returns the
+  receiver.
+
+  Also sends [delegate hasResumed:self];
 */
 - resume; 
 
 /*!
-  @method copyWithZone:
-  @result Returns an MKPerformer instance.
-  @discussion Creates and returns an initialised, inactive MKPerformer as a copy of the
-              receiver.  The new object has the same time shift and duration as
-              the reciever.  Its <b>time</b> and <b>nextPerform</b> variables are
-              set to 0.0.  The new object's MKNoteSenders are copied from the
-              receiver.
+  @return Returns an MKPerformer instance.
+  @brief Creates and returns an initialised, inactive MKPerformer as a copy of the
+  receiver.
+
+  The new object has the same time shift and duration as
+  the reciever.  Its <b>time</b> and <b>nextPerform</b> variables are
+  set to 0.0.  The new object's MKNoteSenders are copied from the
+  receiver.
 */
 - copyWithZone: (NSZone *) zone;
 
 /*!
-  @method time
-  @result Returns a double.
-  @discussion Returns the time, in beats, that the receiver last received the
-              <b>perform</b> message.  If the receiver is inactive, returns
-              MK_ENDOFTIME.  The return value is measured from the beginning of
-              the performance and doesn't include any time that the receiver has
-              been paused.
+  @return Returns a double.
+  @brief Returns the time, in beats, that the receiver last received the
+  <b>perform</b> message.
+
+  If the receiver is inactive, returns
+  MK_ENDOFTIME.  The return value is measured from the beginning of
+  the performance and doesn't include any time that the receiver has
+  been paused.
 */
 - (double) time; 
 
 /*!
-  @method setFirstTimeTag:
-  @abstract Implements an informal protocol for firstTimeTag/lastTimeTag.
-  @discussion Does nothing in this abstract class.
+  @brief Implements an informal protocol for firstTimeTag/lastTimeTag.
+  
+  Does nothing in this abstract class.
  */
 - setFirstTimeTag: (double) v;
 
 /*!
-  @method setFirstTimeTag:
-  @abstract Implements an informal protocol for firstTimeTag/lastTimeTag.
-  @discussion Does nothing in this abstract class.
+  @brief Implements an informal protocol for firstTimeTag/lastTimeTag.
+  
+  Does nothing in this abstract class.
  */
 - setLastTimeTag: (double) v;
 
 /*!
-  @method firstTimeTag
-  @abstract 
-  @result Returns the first time tag in beats.
-  @discussion Returns 0.
+  @brief 
+  @return Returns the first time tag in beats.
+  
+  Returns 0.
  */
 - (double) firstTimeTag;
 
 /*!
-  @method lastTimeTag
  Returns MK_ENDOFTIME 
  */
 - (double) lastTimeTag;
 
 /*!
-  @method setDelegate:
-  @abstract Assigns a delegate to receive messages described in MKPerformerDelegate.h
+  @brief Assigns a delegate to receive messages described in MKPerformerDelegate.h
   @param object The receiving delegate object.
-  @discussion object is not retained.
+  
+  object is not retained.
  */
 - (void) setDelegate: (id) object;
 
 /*!
-  @method delegate
-  @result Returns an id.
-  @discussion Returns the receiver's delegate, if any.
+  @return Returns an id.
+  @brief Returns the receiver's delegate, if any.
+
+  
 */
 - delegate;
 
 /*!
-  @method rescheduleBy:
   @param  aTimeIncrement is a double.
-  @result Returns an id.
-  @discussion Shifts the MKPerformer's next scheduled invocation of <b>perform</b>
-              by <i>aTimeIncrement</i>.  Positive values make the next invocation later,
-              negative values make it earlier.  If <i>aTimeIncrement</i> is negative and of a
-              magnitude large enough to shift the MKPerformer into the past,
-              reschedules the MKPerformer to invoke <b>perform </b>immediately.
+  @return Returns an id.
+  @brief Shifts the MKPerformer's next scheduled invocation of <b>perform</b>
+  by <i>aTimeIncrement</i>.
+
+  Positive values make the next invocation later,
+  negative values make it earlier.  If <i>aTimeIncrement</i> is negative and of a
+  magnitude large enough to shift the MKPerformer into the past,
+  reschedules the MKPerformer to invoke <b>perform </b>immediately.
 */
 - rescheduleBy: (double) aTimeIncrement;
 
 /*!
-  @method rescheduleAtTime:
   @param  aTime is a double.
-  @result Returns an id.
-  @discussion Shifts the MKPerformer's next scheduled invocation of <b>perform</b>
-              to <i>time</i>, which is in the receiver's MKConductor's time base. 
-              If <i>time</i> is in the past, reschedules the MKPerformer to invoke
-              <b>perform</b>immediately.
+  @return Returns an id.
+  @brief Shifts the MKPerformer's next scheduled invocation of <b>perform</b>
+  to <i>time</i>, which is in the receiver's MKConductor's time base.
+
+  
+  If <i>time</i> is in the past, reschedules the MKPerformer to invoke
+  <b>perform</b>immediately.
 */
 - rescheduleAtTime: (double) aTime;
 
 /*!
-  @method encodeWithCoder:
-  @discussion  You never send this message directly.  
+  @brief  You never send this message directly.
+
+  
  Archives noteSender List, timeShift, and duration. Also optionally 
  archives conductor and delegate using NXWriteObjectReference().
  */
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 
 /*! 
-  @method initWithCoder:
-  @discussion You never send this message directly.  
-     Note that the status of an unarchived MKPerformer is always MK_inactive.
+  @brief You never send this message directly.
+
+  
+  Note that the status of an unarchived MKPerformer is always MK_inactive.
  */
 - (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
-  @method inPerformance
-  @result Returns a BOOL.
-  @discussion Returns YES if receiver's status is not MK_inactive.
+  @return Returns a BOOL.
+  @brief Returns YES if receiver's status is not MK_inactive.
+
+  
 */
 - (BOOL) inPerformance;
 

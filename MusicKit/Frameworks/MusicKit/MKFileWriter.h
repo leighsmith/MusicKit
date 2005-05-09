@@ -47,6 +47,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:52:50  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2002/01/29 16:11:42  sbrandon
   removed/altered headerdoc comments about NXStreams (we use
   NSMutableData objects now)
@@ -63,7 +66,7 @@
 */
 /*!
   @class MKFileWriter
-  @discussion
+  @brief
 
 A MKFileWriter is an MKInstrument that realizes MKNotes by writing them to a file on
 the disk.  An abstract class, MKFileWriter provides common functionality for the
@@ -112,161 +115,177 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
 
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes the object by setting both <b>stream</b> and
-              <b>filename</b> to NULL.  You must invoke this method when creating
-              a new instance of MKFileWriter.  A subclass implementation should send
-              [<b>super init</b>] before performing its own initialization.  The
-              return value is ignored.
+  @return Returns an id.
+  @brief Initializes the object by setting both <b>stream</b> and
+  <b>filename</b> to NULL.
+
+  You must invoke this method when creating
+  a new instance of MKFileWriter.  A subclass implementation should send
+  [<b>super init</b>] before performing its own initialization.  The
+  return value is ignored.
 */
 - init; 
 
 /*!
-  @method setTimeUnit:
   @param  aTimeUnit is a MKTimeUnit.
-  @result Returns an id.
-  @discussion Sets the unit in which the object measures time.  <i>aTimeUnit</i>
-              can be <b>MK_second</b> for measurement in seconds,  <b>MK_beat</b>
-              for beats or <b>MK_timeTag</b> for the value in the Note's timeTag
-              field.  The default is <b>MK_second</b>.
+  @return Returns an id.
+  @brief Sets the unit in which the object measures time.
+
+  <i>aTimeUnit</i>
+  can be <b>MK_second</b> for measurement in seconds,  <b>MK_beat</b>
+  for beats or <b>MK_timeTag</b> for the value in the Note's timeTag
+  field.  The default is <b>MK_second</b>.
 */
 -setTimeUnit:(MKTimeUnit)aTimeUnit;
 
 /*!
-  @method timeUnit
-  @result Returns a MKTimeUnit.
-  @discussion Returns the unit in which the object measures time, either
-              <b>MK_second</b>, <b>MK_timeTag</b> or <b>MK_beat</b>.  The default
-              is <b>MK_second</b>.
+  @return Returns a MKTimeUnit.
+  @brief Returns the unit in which the object measures time, either
+  <b>MK_second</b>, <b>MK_timeTag</b> or <b>MK_beat</b>.
+
+  The default
+  is <b>MK_second</b>.
 */
 -(MKTimeUnit)timeUnit;
 
 /*!
-  @method fileExtension
-  @result Returns a NSString.
-  @discussion Returns the file extension used by the object.  The default
-              implementation returns the value of the <b>fileExtension</b> class
-              method.  A subclass can implement this method to allow different
-              default file extensions for different instances.
+  @return Returns a NSString.
+  @brief Returns the file extension used by the object.
+
+  The default
+  implementation returns the value of the <b>fileExtension</b> class
+  method.  A subclass can implement this method to allow different
+  default file extensions for different instances.
 */
 +(NSString *)fileExtension;
 
 /*!
-  @method fileExtension
-  @result Returns a NSString.
-  @discussion Returns the file extension used by the object.  The default
-              implementation returns the value of the <b>fileExtension</b> class
-              method.  A subclass can implement this method to allow different
-              default file extensions for different instances.
+  @return Returns a NSString.
+  @brief Returns the file extension used by the object.
+
+  The default
+  implementation returns the value of the <b>fileExtension</b> class
+  method.  A subclass can implement this method to allow different
+  default file extensions for different instances.
 */
 -(NSString *)fileExtension;
 
 /*!
-  @method setFile:
   @param  aName is a NSString.
-  @result Returns an id.
-  @discussion Associates the object with the file <i>aName</i>.  The file is
-              opened when the first MKNote is realized (written to the file) and
-              closed at the end of the performance.  If the object is already in a
-              performance, this does nothing and returns <b>nil</b>, otherwise
-              returns the object.
+  @return Returns an id.
+  @brief Associates the object with the file <i>aName</i>.
+
+  The file is
+  opened when the first MKNote is realized (written to the file) and
+  closed at the end of the performance.  If the object is already in a
+  performance, this does nothing and returns <b>nil</b>, otherwise
+  returns the object.
 */
 - setFile:(NSString *)aName; 
 
 /*!
-  @method setStream:
   @param  aStream is an NSMutableData.
-  @result Returns an id.
-  @discussion Points the object's <b>stream</b> pointer to <i>aStream</i>.  You
-              must open and close the <i>aStream</i> yourself.  If the object is
-              already in a performance, this does nothing and returns <b>nil</b>,
-              otherwise returns the object.
+  @return Returns an id.
+  @brief Points the object's <b>stream</b> pointer to <i>aStream</i>.
+
+  You
+  must open and close the <i>aStream</i> yourself.  If the object is
+  already in a performance, this does nothing and returns <b>nil</b>,
+  otherwise returns the object.
 */
 - setStream:(NSMutableData *)aStream; 
 
 /*!
-  @method stream
-  @result Returns an NSMutableData.
-  @discussion Returns the object's <b>stream</b> pointer, or NULL if it isn't set.
-               The pointer is set to NULL after each performance.
+  @return Returns an NSMutableData.
+  @brief Returns the object's <b>stream</b> pointer, or NULL if it isn't set.
+
+  
+  The pointer is set to NULL after each performance.
 */
 - (NSMutableData *) stream; 
 
 /*!
-  @method copyWithZone:
   @param  zone is an NSZone.
-  @result Returns an id.
-  @discussion Creates and returns a copy of the object.  The new object's
-              <i>filename</i> and <i>stream</i> instance variables are set to
-              NULL.
+  @return Returns an id.
+  @brief Creates and returns a copy of the object.
+
+  The new object's
+  <i>filename</i> and <i>stream</i> instance variables are set to
+  NULL.
 */
 - copyWithZone:(NSZone *)zone; 
 
 /*!
-  @method file
-  @result Returns an NSString.
-  @discussion Returns the object's file name, if any.
+  @return Returns an NSString.
+  @brief Returns the object's file name, if any.
+
+  
 */
 - (NSString *) file; 
 
 /*!
-  @method finishFile
-  @result Returns an id.
-  @discussion This can be overridden by a subclass to perform post-performance
-              activities.  You never send the <b>finishFile</b>
-              message directly to a MKFileWriter; it's invoked automatically after
-              each performance.  The return value is ignored.
+  @return Returns an id.
+  @brief This can be overridden by a subclass to perform post-performance
+  activities.
+
+  You never send the <b>finishFile</b>
+  message directly to a MKFileWriter; it's invoked automatically after
+  each performance.  The return value is ignored.
 */
 - finishFile; 
 
 /*!
-  @method initializeFile
-  @result Returns an id.
-  @discussion This can be overriden by a subclass to perform file initialization,
-              such as writing a file header.  You never send the
-              <b>initializeFile</b> message directly to a MKFileWriter; it's invoked
-              from the <b>firstNote:</b> method.  The return value is
-              ignored.
+  @return Returns an id.
+  @brief This can be overriden by a subclass to perform file initialization,
+  such as writing a file header.
+
+  You never send the
+  <b>initializeFile</b> message directly to a MKFileWriter; it's invoked
+  from the <b>firstNote:</b> method.  The return value is
+  ignored.
 */
 - initializeFile; 
 
 /*!
-  @method firstNote:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion You never invoke this method; it's invoked automatically just before
-              the object writes its first MKNote.  It opens a stream to the object's
-              <i>filename</i> (if set) and then sends <b>initializeFile</b> to the
-              object.
+  @return Returns an id.
+  @brief You never invoke this method; it's invoked automatically just before
+  the object writes its first MKNote.
+
+  It opens a stream to the object's
+  <i>filename</i> (if set) and then sends <b>initializeFile</b> to the
+  object.
 */
 - firstNote:aNote; 
 
 /*!
-  @method afterPerformance
-  @result Returns an id.
-  @discussion You never invoke this method; it's invoked automatically just after
-              a performance.  It closes the object's <i>stream</i> (if the object
-              opened it itself in the <b>firstNote:</b> method) and sets it to
-              NULL.
+  @return Returns an id.
+  @brief You never invoke this method; it's invoked automatically just after
+  a performance.
+
+  It closes the object's <i>stream</i> (if the object
+  opened it itself in the <b>firstNote:</b> method) and sets it to
+  NULL.
 */
 - afterPerformance; 
 
 /*!
-  @method timeShift
-  @result Returns a double.
-  @discussion Returns the object's performance time offset, in
-              seconds.
+  @return Returns a double.
+  @brief Returns the object's performance time offset, in
+  seconds.
+
+  
 */
 - (double)timeShift;
 
 /*!
-  @method setTimeShift:
   @param  timeShift is a double.
-  @result Returns an id.
-  @discussion Sets a constant value to be added to MKNotes' times when they are
-              written out to the file. It's up to the subclass to use this
-              value.
+  @return Returns an id.
+  @brief Sets a constant value to be added to MKNotes' times when they are
+  written out to the file.
+
+  It's up to the subclass to use this
+  value.
 */
 - setTimeShift:(double)timeShift;
 

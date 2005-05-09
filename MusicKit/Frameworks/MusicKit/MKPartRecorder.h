@@ -32,7 +32,7 @@
 */
 /*!
   @class MKPartRecorder
-  @discussion
+  @brief
 
 A MKPartRecorder is an MKInstrument that realizes MKNotes by adding copies of
 them to a MKPart.  A MKPartRecorder's MKPart is set through the <b>setPart:</b>
@@ -55,7 +55,7 @@ may want to use MK_timeTag.
 You can create MKPartRecorders yourself, or you can use a MKScoreRecorder object
 to create a group of them for you.
 
-See also:  MKScoreRecorder, MKPart
+  @see  MKScoreRecorder, MKPart
 */
 #ifndef __MK_PartRecorder_H___
 #define __MK_PartRecorder_H___
@@ -78,72 +78,79 @@ See also:  MKScoreRecorder, MKPart
 }
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes the receiver by creating and adding its single
-              MKNoteReceiver.  You must invoke this method when creating a new
-              object.  A subclass implementation should send <b>[super init]</b>
-              before performing its own initialization.  
+  @return Returns an id.
+  @brief Initializes the receiver by creating and adding its single
+  MKNoteReceiver.
+
+  You must invoke this method when creating a new
+  object.  A subclass implementation should send <b>[super init]</b>
+  before performing its own initialization.  
 */
 - init; 
 
 /*!
-  @method setTimeUnit:
   @param  aTimeUnit is a MKTimeUnit.
-  @result Returns an id.
-  @discussion Sets the receiver's <b>timeUnit</b> instance variable to
-              <i>aTimeUnit</i>, one of <b>MK_second</b>, <b>MK_beat</b> or <b>MK_timeTag</b>.  The
-              default is <b>MK_second</b>.
+  @return Returns an id.
+  @brief Sets the receiver's <b>timeUnit</b> instance variable to
+  <i>aTimeUnit</i>, one of <b>MK_second</b>, <b>MK_beat</b> or <b>MK_timeTag</b>.
 
-	      See timeunits.h
+  The
+  default is <b>MK_second</b>.
+
+	  See timeunits.h
  */
 - setTimeUnit: (MKTimeUnit) aTimeUnit;
 
 /*!
-  @method timeUnit
-  @result Returns a MKTimeUnit.
-  @discussion Returns the receiver's <b>timeUnit</b>, either MK_second,
-              MK_timeTag, or MK_beat.
+  @return Returns a MKTimeUnit.
+  @brief Returns the receiver's <b>timeUnit</b>, either MK_second,
+  MK_timeTag, or MK_beat.
 
-              See timeunits.h
+  
+
+  See timeunits.h
  */
 - (MKTimeUnit) timeUnit;
 
 /*!
-  @method setPart:
   @param  aPart is an MKPart instance.
-  @discussion Sets <i>aPart</i> as the receiver's MKPart.  Returns the
-              receiver.
+  @brief Sets <i>aPart</i> as the receiver's MKPart.
+
+  Returns the
+  receiver.
 */
 - (void) setPart: (MKPart *) aPart; 
 
 /*!
-  @method part
-  @result Returns an MKPart instance.
-  @discussion Returns the receiver's MKPart object.
+  @return Returns an MKPart instance.
+  @brief Returns the receiver's MKPart object.
+
+  
 */
 - (MKPart *) part; 
 
 /*!
-  @method realizeNote:fromNoteReceiver:
   @param  aNote is an MKNote instance.
   @param  aNoteReceiver is an MKNoteReceiver instance.
-  @result Returns an id.
-  @discussion Copies <i>aNote</i>, computes and sets the new MKNote's timeTag (and
-              duration if it's a noteDur), and then adds the new MKNote to the
-              receiver's MKPart.  <i>aNoteReceiver</i> is ignored. The timeTag
-              and duration computations use the <tt>makeTimeTag:</tt> and <tt>makeDur:</tt>
-              methods defined in NoteRecorder. Returns the receiver.
+  @return Returns an id.
+  @brief Copies <i>aNote</i>, computes and sets the new MKNote's timeTag (and
+  duration if it's a noteDur), and then adds the new MKNote to the
+  receiver's MKPart.
+
+  <i>aNoteReceiver</i> is ignored. The timeTag
+  and duration computations use the <tt>makeTimeTag:</tt> and <tt>makeDur:</tt>
+  methods defined in NoteRecorder. Returns the receiver.
 */
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
 
 /*!
-  @method copyWithZone:
   @param  zone is an NSZone.
-  @result Returns an id.
-  @discussion Creates and returns a new MKPartRecorder as a copy of the
-              receiver.  The new object has its own MKNoteReceiver object but adds
-              MKNotes to the same MKPart as the receiver.
+  @return Returns an id.
+  @brief Creates and returns a new MKPartRecorder as a copy of the
+  receiver.
+
+  The new object has its own MKNoteReceiver object but adds
+  MKNotes to the same MKPart as the receiver.
 */
 - copyWithZone: (NSZone *) zone; 
 
@@ -163,17 +170,17 @@ See also:  MKScoreRecorder, MKPart
 - (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
-  @method setDeltaTCompensation:
-  @abstract Assigns whether to use time compensation.
+  @brief Assigns whether to use time compensation.
   @param yesOrNo
-  @discussion Default is NO. 
+  
+  Default is NO. 
  */
 - setDeltaTCompensation: (BOOL) yesOrNo;
 
 /*!
-  @method compensatesDeltaT
-  @abstract Returns whether to use time compensation.
-  @discussion Default is NO. 
+  @brief Returns whether to use time compensation.
+  
+  Default is NO. 
  */
 - (BOOL) compensatesDeltaT;
 

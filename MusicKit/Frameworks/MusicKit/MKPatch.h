@@ -16,6 +16,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2005/05/09 15:52:52  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.4  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -31,9 +34,9 @@
 */
 /*!
   @class MKPatch
-  @abstract Each MKPatch is an abstracted superclass of synthesis patch descriptions independent
-    of the mechanism used to synthesize. Therefore, it holds synthesis independent patch
-    methods, such as patch loading from bundles.
+  @brief Each MKPatch is an abstracted superclass of synthesis patch descriptions independent
+  of the mechanism used to synthesize. Therefore, it holds synthesis independent patch
+  methods, such as patch loading from bundles.
 */
 #import <Foundation/Foundation.h>
 
@@ -46,25 +49,26 @@
 @interface MKPatch(PatchLoad)
 
 /*!
-  @method findPatchClass:
   @param  className is an NSString.
-  @discussion This method looks for a class with the specified name.  
-    If found, it is returned.
-    If not found, this method tries to dynamically load the class. 
-    The standard library directories are searched for a file named <name>.bundle.
-    On MacOS X these would be:
+  @brief This method looks for a class with the specified name.
 
-    1. ./
-    2. ~/Library/MusicKit/SynthPatches/
-    3. /Library/MusicKit/SynthPatches/
-    4. /Network/Library/MusicKit/SynthPatches/
-    5. /System/Library/MusicKit/SynthPatches/
+  
+  If found, it is returned.
+  If not found, this method tries to dynamically load the class. 
+  The standard library directories are searched for a file named <name>.bundle.
+  On MacOS X these would be:
 
-    If a file is found, it is dynamically loaded.  If the whole process
-    is successful, the newly loaded class is returned.  Otherwise, nil
-    is returned.  If the file is found but the link fails, an error is printed
-    to the stream returned by MKErrorStream() (this defaults to stderr). You
-    can change it to another stream with MKSetErrorStream().
+  1. ./
+  2. ~/Library/MusicKit/SynthPatches/
+  3. /Library/MusicKit/SynthPatches/
+  4. /Network/Library/MusicKit/SynthPatches/
+  5. /System/Library/MusicKit/SynthPatches/
+
+  If a file is found, it is dynamically loaded.  If the whole process
+  is successful, the newly loaded class is returned.  Otherwise, nil
+  is returned.  If the file is found but the link fails, an error is printed
+  to the stream returned by MKErrorStream() (this defaults to stderr). You
+  can change it to another stream with MKSetErrorStream().
 */
 + findPatchClass: (NSString *) className;
 

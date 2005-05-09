@@ -42,6 +42,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:52:49  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/09/07 00:12:52  leighsmith
   Corrected naming of satellite class
 
@@ -57,27 +60,27 @@
 */
 /*!
   @class ArielQP
-  @discussion
+  @brief
 
 The Ariel QuintProcessor is a board that fits into the NeXT cube.  It features
 four "satellite" ("slave") DSPs with 16 or 32K of static RAM (SRAM), a hub DSP
 with 8K of SRAM, a bank of dynamic RAM (DRAM) a set of serial ports, two per
-DSP, and a SCSI chip.   The Music Kit supports the DSPs, the DSP ports, and the
+DSP, and a SCSI chip.  The Music Kit supports the DSPs, the DSP ports, and the
 DRAM.  It does not currently support the SCSI.
 
 <b>ArielQP</b> class serves a dual purpose.  First it is a subclass of MKOrchestra
 that represnts the hub DSP.  As such, it can be sent MKOrchestra messages such as
-<b>allocUnitGenerator:</b>, <b>open</b>, <b>run</b>, etc.   Second, it
-represents the Quint Processor as a whole.   The satellite DSPs are represented
+<b>allocUnitGenerator:</b>, <b>open</b>, <b>run</b>, etc.  Second, it
+represents the Quint Processor as a whole.  The satellite DSPs are represented
 by instances of the class <b>ArielQPSat</b> (see below).  Creating an instance
 of ArielQP automatically creates the associated <b>ArielQPSat</b> objects.  
 Freeing an <b>ArielQP</b> object frees its <b>ArielQPSat</b>
 objects.
 
 The <b>ArielQP</b> (hub DSP)  may be used as just another DSP, or it may be used
-as the hub of the 5-DSP configuration.   To use it alone, send it the message
+as the hub of the 5-DSP configuration.  To use it alone, send it the message
 <b>setSatSoundIn:NO.</b>  In this mode, it sends and optionally receives sound
-from its DSP serial port.   The satellite DSPs need not be used.  If they are
+from its DSP serial port.  The satellite DSPs need not be used.  If they are
 used, each sends and optionally receives sound from its serial port. Note that
 in this mode you <i>must</i> have an Ariel ProPort plugged into any DSP that you
 intend to use.  If you leave a DSP with no ProPort, its clock will never
@@ -85,7 +88,7 @@ advance.  Thus, for example, if you plan to use only DSP 'D', you should send
 'run' to it alone, not to the MKOrchestra class.
 
 <i>Note: The Quint Processor SCI port does not function like the NeXT DSP's SCI
-port.   Therefore, when using a DSPSerialPortDevice with the QuintProcessor, you
+port.  Therefore, when using a DSPSerialPortDevice with the QuintProcessor, you
 should send setSendSettings:NO to disable sending of any commands to the SCI
 port.  This implies that the only serial port device you should use with the
 QuintProcess is the Ariel ProPort.</i>
@@ -94,19 +97,19 @@ To use the hub as part of a 5-DSP configuration, send the message
 <b>setSatSoundIn:YES</b>to the <b>ArielQP.  </b>  The model here is of four
 satellites doing synthesis or sound processing of sound received by their serial
 ports and the hub merging these sounds, possibly doing more processing, and
-sending the result out its serial port.   Since this is the most common way of
+sending the result out its serial port.  Since this is the most common way of
 using the QuintProcessor, the default value of <b>satSoundIn </b>and
 <b>hubSoundOut</b>are <b>YES</b> .  And since the hub is usually responsible for
 sending sound to its serial port, the default value of <b>serialSoundOut</b> for
-an <b>ArielQP</b> object is <b>YES.</b>    Note that in this mode you
+an <b>ArielQP</b> object is <b>YES.</b>  Note that in this mode you
 <i>must</i> have an Ariel ProPort or equivalent plugged into DSP 'E'.
 
 Note that <b>setSatSoundIn:YES</b>only <i>enables</i>  inter-DSP communication. 
 In order to actually use the sound from the satellites, you must have one or
-more instances of the unit generator <b>In1qpUG</b> running on the hub.   Each
+more instances of the unit generator <b>In1qpUG</b> running on the hub.  Each
 instance provides access to one channel of sound from one of the satellite DSPs.
 Multiple <b>In1qpUG</b> instances may be accessing the same satellite DSP
-channel.   In addition, the Music Kit provides a MKSynthPatch for the common case
+channel.  In addition, the Music Kit provides a MKSynthPatch for the common case
 of simply adding all the satellites into the output stream.  This MKSynthPatch is
 called <b>ArielQPMix</b>. Simply allocating an instance of this MKSynthPatch
 immediately starts summing the satellites' sound into the hub DSP's output
@@ -115,16 +118,16 @@ part of the Music Kit MKSynthPatch Library.
 
 The hub has another special funtion - it alone can access the bank of DRAM.  To
 access the DRAM, you need a unit generator that reads and writes the DRAM to be
-running on the hub.   The Music Kit provides one such unit generator,
+running on the hub.  The Music Kit provides one such unit generator,
 <b>DelayqpUG</b>, which implements a digital delay line using the DRAM.  To use
 it, simply allocate one from the <b>ArielQP</b> object that represents the hub. 
 <b>DelayqpUG</b> is very much like the DelayUG except that it is capable of much
-longer delays.   Note that currently, the <b>ArielQP</b> class does not support
+longer delays.  Note that currently, the <b>ArielQP</b> class does not support
 automatic allocation of DRAM - the  <b>MKSynthData</b> class is not used and the
-application has to keep track of what memory it is using.   By combining
+application has to keep track of what memory it is using.  By combining
 instances of In1qpUG and DelayqpUG, it is easy to make a MKSynthPatch that
 reverberates the sound from the other DSPs.  Note that in the current
-implemenation, the satellites do not have direct access to the DRAM.   To do
+implemenation, the satellites do not have direct access to the DRAM.  To do
 reverberation, they send their sound to the hub, either via inter-process sound
 or via the DSP serial ports.  (Chaining DSP serial ports is a practical and
 useful technique and is another approach to combining the power of the five
@@ -133,7 +136,7 @@ DSPs. )
 The Music Kit does not automatically clear DRAM, with the exception of the
 "zero" location.  If you want to clear a segment of DRAM, use a
 <b>DelayqpUG</b>, set the input location to [orchestra segmentZero:MK_xPatch]
-(or MK_yPatch), and let the <b>DelayqpUG</b> run for a while.    DRAM requires
+(or MK_yPatch), and let the <b>DelayqpUG</b> run for a while.  DRAM requires
 periodic refreshing.  You can control whether this is "implicit" (done by the
 mere accessing of the memory) or "automatic" (done by the Quint Processor
 refresh hardware.)  The <b>ArielQP</b> method <b>setDRAMAutoRefresh:
@@ -168,134 +171,146 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 }
 
 /*!
-  @method new
-  @result Returns an id.
-  @discussion If an ArielQP for slot 2 already exists, returns it.   Otherwise, if
-              an Ariel QuintProcessor board is installed in slot 2, creates and
-              returns a new instance of ArielQP and creates, if necessary, four
-              instances of ArielQPSat.  Otherwise returns nil.
+  @return Returns an id.
+  @brief If an ArielQP for slot 2 already exists, returns it.
+
+  Otherwise, if
+  an Ariel QuintProcessor board is installed in slot 2, creates and
+  returns a new instance of ArielQP and creates, if necessary, four
+  instances of ArielQPSat.  Otherwise returns nil.
 */
 +new;
 
 /*!
-  @method newInSlot:
   @param  slot is an int.
-  @result Returns an id.
-  @discussion If an ArielQP for the specified already exists, returns it.  
-              Otherwise, if an Ariel QuintProcessor board is installed in the
-              specified, creates and returns a new instance of ArielQP and
-              creates, if necessary, four instances of ArielQPSat.  Otherwise
-              returns nil.  <i>&lt;&lt;Note:  In release 4.0 of the Music Kit, the
-              first Ariel QuintProcessor must be in slot 2, the second must be in
-              slot 4 and the third must be in slot 6. &gt;&gt;</i>
+  @return Returns an id.
+  @brief If an ArielQP for the specified already exists, returns it.
+
+  
+  Otherwise, if an Ariel QuintProcessor board is installed in the
+  specified, creates and returns a new instance of ArielQP and
+  creates, if necessary, four instances of ArielQPSat.  Otherwise
+  returns nil.  <i>&lt;&lt;Note:  In release 4.0 of the Music Kit, the
+  first Ariel QuintProcessor must be in slot 2, the second must be in
+  slot 4 and the third must be in slot 6. &gt;&gt;</i>
 */
 +newInSlot:(unsigned short)slot;
 
 /*!
-  @method satellite:
   @param  satellite is a char.
-  @result Returns an id.
-  @discussion Returns the specified satellite, which should be one of 'A', 'B',
-              'C', or 'D'.
+  @return Returns an id.
+  @brief Returns the specified satellite, which should be one of 'A', 'B',
+  'C', or 'D'.
+
+  
 */
 -satellite:(char)which;
 
 /*!
-  @method setSatSoundIn:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If <i>yesOrNo</i>, enables the hub/satellite inter-process sound
-              link.  Note that if the link is enabled, all five DSPs must be sent
-              the <b>run</b> message.  Otherwise, the hub DSP will block waiting
-              for sound from the satellites that are not running.   If the link is
-              not enabled, then the hub does not block and the other DSPs need not
-              be running.  <b>setSatSoundIn:</b> must be sent when the ArielQP and
-              ArielQPSat objects are closed (i.e. before they have been sent the
-              <b>-open </b>message.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i>, enables the hub/satellite inter-process sound
+  link.
+
+  Note that if the link is enabled, all five DSPs must be sent
+  the <b>run</b> message.  Otherwise, the hub DSP will block waiting
+  for sound from the satellites that are not running.   If the link is
+  not enabled, then the hub does not block and the other DSPs need not
+  be running.  <b>setSatSoundIn:</b> must be sent when the ArielQP and
+  ArielQPSat objects are closed (i.e. before they have been sent the
+  <b>-open </b>message.
 */
 -setSatSoundIn:(BOOL)yesOrNo;
 /* Controls whether sound is obtained from the satellites. Default is YES. */
 
 
 /*!
-  @method setDRAMAutoRefresh:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If <i>yesOrNo</i>, enables the DRAM refresh.   If you use the macros
-              provided in the file <b>smsrc/qp.asm</b>, your unit generator will
-              automatically turn off refresh before accessing memory, then turn it
-              on again.  Refresh is off by default.  For very low sampling rates
-              or non-sequential DRAM accesses, it may be necessary to turn it on. 
-               You'll know if you need to turn it on because you'll hear clicks
-              and pops.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i>, enables the DRAM refresh.
+
+  If you use the macros
+  provided in the file <b>smsrc/qp.asm</b>, your unit generator will
+  automatically turn off refresh before accessing memory, then turn it
+  on again.  Refresh is off by default.  For very low sampling rates
+  or non-sequential DRAM accesses, it may be necessary to turn it on. 
+  You'll know if you need to turn it on because you'll hear clicks
+  and pops.
 */
 - setDRAMAutoRefresh:(BOOL)yesOrNo;
 /* Controls whether DRAM auto refresh is on.  Default is off. */
 
 
 /*!
-  @method DRAMAutoRefresh
-  @result Returns a BOOL.
-  @discussion Returns whether Auto Refresh is on.
+  @return Returns a BOOL.
+  @brief Returns whether Auto Refresh is on.
+
+  
 */
 -(BOOL)DRAMAutoRefresh;
 
 /*!
-  @method satSoundIn
-  @result Returns a BOOL.
-  @discussion Returns whether the hub/satellite inter-process sound link is
-              enabled.
+  @return Returns a BOOL.
+  @brief Returns whether the hub/satellite inter-process sound link is
+  enabled.
+
+  
 */
 -(BOOL)satSoundIn;
 
 /*!
-  @method makeSatellitesPerform:
   @param  selector is a SEL.
-  @result Returns an id.
-  @discussion Sends the specified selector to the four ArielQPSat objects.
+  @return Returns an id.
+  @brief Sends the specified selector to the four ArielQPSat objects.
+
+  
 */
 -makeSatellitesPerform:(SEL)selector;
 
 /*!
-  @method makeSatellitesPerform:with:
   @param  selector is a SEL.
   @param  arg is an id.
-  @result Returns an id.
-  @discussion Sends the specified selector to the four ArielQPSat objects with the
-              specified argument.
+  @return Returns an id.
+  @brief Sends the specified selector to the four ArielQPSat objects with the
+  specified argument.
+
+  
 */
 -makeSatellitesPerform:(SEL)selector with:arg;
 
 /*!
-  @method makeQPPerform:
   @param  selector is a SEL.
-  @result Returns an id.
-  @discussion Sends the specified selector to the objects representing all five
-              DSPs.
+  @return Returns an id.
+  @brief Sends the specified selector to the objects representing all five
+  DSPs.
+
+  
 */
 -makeQPPerform:(SEL)selector;
 
 /*!
-  @method makeQPPerform:with:
   @param  selector is a SEL.
   @param  arg is an id.
-  @result Returns an id.
-  @discussion Sends the specified selector to the objects representing all five
-              DSPs with the specified argument.
+  @return Returns an id.
+  @brief Sends the specified selector to the objects representing all five
+  DSPs with the specified argument.
+
+  
 */
 -makeQPPerform:(SEL)selector with:arg;
 
 /*!
-  @method setDRAMAutoRefresh:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If <i>yesOrNo</i>, enables the DRAM refresh.   If you use the macros
-              provided in the file <b>smsrc/qp.asm</b>, your unit generator will
-              automatically turn off refresh before accessing memory, then turn it
-              on again.  Refresh is off by default.  For very low sampling rates
-              or non-sequential DRAM accesses, it may be necessary to turn it on. 
-               You'll know if you need to turn it on because you'll hear clicks
-              and pops.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i>, enables the DRAM refresh.
+
+  If you use the macros
+  provided in the file <b>smsrc/qp.asm</b>, your unit generator will
+  automatically turn off refresh before accessing memory, then turn it
+  on again.  Refresh is off by default.  For very low sampling rates
+  or non-sequential DRAM accesses, it may be necessary to turn it on. 
+  You'll know if you need to turn it on because you'll hear clicks
+  and pops.
 */
 - setDRAMAutoRefresh:(BOOL)yesOrNo;
 
@@ -305,14 +320,14 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 
 /*!
   @class ArielQPSat
-  @discussion
+  @brief
 
 The ArieQPSat objects are used to represent the
 QuintProcessor's satellite DSPs, one per instance of ArielQPSat. The satellite
 DSPs can either be used individually, sending their sound out their serial port
 (by sending the message <b>setSerialSoundOut:YES</b>) or they can be used as a
 group, sending their sound to the hub DSP (by sending the message
-<b>setHubSoundOut:YES</b>.)   These two modes cannot be combined.   Sending one
+<b>setHubSoundOut:YES</b>.)  These two modes cannot be combined.   Sending one
 message, automatically disables the other.
 */
 @interface ArielQPSat:MKOrchestra
@@ -323,26 +338,28 @@ message, automatically disables the other.
 
 
 /*!
-  @method hub
-  @result Returns an id.
-  @discussion Returns the hub corresponding to this satellite.
+  @return Returns an id.
+  @brief Returns the hub corresponding to this satellite.
+
+  
 */
 -hub;
 
 /*!
-  @method setHubSoundOut:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion If <i>yesOrNo</i>, enables the hub/satellite inter-process sound
-              link.  Note that if the link is enabled, all five DSPs must be sent
-              the <b>run</b> message.  Otherwise, the hub DSP will block waiting
-              for sound from the satellites that are not running.   If the link is
-              not enabled, then the hub does not block and the other DSPs need not
-              be running.  <b>setSatSoundIn:</b> must be sent when the ArielQP and
-              ArielQPSat objects are closed (i.e. before they have been sent the
-              <b>-open</b> message.   Sending this message automatically sends
-              <b>setSerialSoundOut:NO</b> if serialSoundOut is
-              enabled.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i>, enables the hub/satellite inter-process sound
+  link.
+
+  Note that if the link is enabled, all five DSPs must be sent
+  the <b>run</b> message.  Otherwise, the hub DSP will block waiting
+  for sound from the satellites that are not running.   If the link is
+  not enabled, then the hub does not block and the other DSPs need not
+  be running.  <b>setSatSoundIn:</b> must be sent when the ArielQP and
+  ArielQPSat objects are closed (i.e. before they have been sent the
+  <b>-open</b> message.   Sending this message automatically sends
+  <b>setSerialSoundOut:NO</b> if serialSoundOut is
+  enabled.
 */
 -setHubSoundOut:(BOOL)yesOrNo;
 /* Default is YES. Setting hubSoundOut disables serialSoundOut.  
@@ -351,50 +368,56 @@ message, automatically disables the other.
 
 
 /*!
-  @method hubSoundOut
-  @result Returns a BOOL.
-  @discussion Returns whether the hub/satellite inter-process sound link is
-              enabled.
+  @return Returns a BOOL.
+  @brief Returns whether the hub/satellite inter-process sound link is
+  enabled.
+
+  
 */
 -(BOOL)hubSoundOut;
 
 /*!
-  @method outputChannelOffset
-  @result Returns an int.
-  @discussion If hub sound out, forwards this message to the hub.  Otherwise
-              invokes super's version of this method.
+  @return Returns an int.
+  @brief If hub sound out, forwards this message to the hub.
+
+  Otherwise
+  invokes super's version of this method.
 */
 -(int)outputChannelOffset;
 
 /*!
-  @method outputChannelCount
-  @result Returns an int.
-  @discussion If hub sound out, forwards this message to the hub.  Otherwise
-              invokes super's version of this method.
+  @return Returns an int.
+  @brief If hub sound out, forwards this message to the hub.
+
+  Otherwise
+  invokes super's version of this method.
 */
 -(int)outputChannelCount;
 
 /*!
-  @method outputInitialOffset
-  @result Returns an int.
-  @discussion If hub sound out, forwards this message to the hub.  Otherwise
-              invokes super's version of this method.
+  @return Returns an int.
+  @brief If hub sound out, forwards this message to the hub.
+
+  Otherwise
+  invokes super's version of this method.
 */
 -(int)outputInitialOffset;
 
 /*!
-  @method upSamplingOutput
-  @result Returns a BOOL.
-  @discussion If hub sound out, forwards this message to the hub.  Otherwise
-              invokes super's version of this method.
+  @return Returns a BOOL.
+  @brief If hub sound out, forwards this message to the hub.
+
+  Otherwise
+  invokes super's version of this method.
 */
 -(BOOL)upSamplingOutput;
 
 /*!
-  @method isRealTime
-  @result Returns a BOOL.
-  @discussion If hub sound out, forwards this message to the hub.  Otherwise
-              invokes super's version of this method.
+  @return Returns a BOOL.
+  @brief If hub sound out, forwards this message to the hub.
+
+  Otherwise
+  invokes super's version of this method.
 */
 -(BOOL)isRealTime;
 /* 
@@ -405,12 +428,13 @@ message, automatically disables the other.
 
 
 /*!
-  @method setSerialSoundOut:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion Same as superclass method except that sending this message
-              automatically sends <b>setHubSoundOut:NO</b> if hubSoundOut is
-              enabled.
+  @return Returns an id.
+  @brief Same as superclass method except that sending this message
+  automatically sends <b>setHubSoundOut:NO</b> if hubSoundOut is
+  enabled.
+
+  
 */
 -setSerialSoundOut:(BOOL)yesOrNo;
 

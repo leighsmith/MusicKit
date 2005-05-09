@@ -15,12 +15,12 @@
 */
 /*!
   @class MKMTCPerformer
-  @discussion
+  @brief
 
 MKMTCPerformer is used to generate MKNotes with MIDI time code parameters.  The main
-use of this class is to send the MKNotes to a MKMidi object.   To use an
+use of this class is to send the MKNotes to a MKMidi object.  To use an
 MKMTCPerformer, simply, instantiate the object, activate it, connect a MKMidi object
-to its one NoteSender and start the performance.    This is done with the usual
+to its one NoteSender and start the performance.  This is done with the usual
 MKPerformer methods:
 	
 <tt>
@@ -60,7 +60,7 @@ sending time code.  For example, if (before the performance) you set a
 MKPerformer's <i>firstTimeTag</i> to 10.0 seconds, then activate the MKPerformer and
 start the performance, the MKPerformer will begin sending time code at time 10.0
 seconds and the values will begin at the MTC time 0:0:10:0  (zero hours, zero
-minutes, ten seconds, zero frames).   
+minutes, ten seconds, zero frames).  
 
 You may want the time code to begin sending immediately, regardless of
 <i>firstTimeTag</i>.  To do this, use the MKPerformer method <b>setTimeShift:</b>
@@ -88,7 +88,7 @@ time of activation.
 By default, time code generation continues until you deactivate the MKPerformer or
 finish the performance.  However, you can specify that the MKPerformer
 automatically deactivate when it reaches a certain target MTC value by sending
-it the <b> setLastTimeTag:</b>message.   Normally, <i>  lastTimeTag </i>should
+it the <b> setLastTimeTag:</b>message.  Normally, <i>  lastTimeTag </i>should
 be greater than <i>firstTimeTag</i>.  However, you can tell the MKPerformer to
 send reverse time code as follows:
 	
@@ -96,14 +96,14 @@ send reverse time code as follows:
 
 Then, <i>lastTimeTag</i> should be less than <i>firstTimeTag</i>.  Time code
 values will count down from <i>firstTimeTag</i> until <i>lastTimeTag</i> is
-reached.   You cancel generation of reverse time code by sending the
+reached.  You cancel generation of reverse time code by sending the
 message:
 	
 <tt>[myMTCPerformer setDirection:MK_MTC_FORWARD];</tt>
 
 As an alternative to using<b> setFirstTimeTag:</b>, <b>setLastTimeTag:</b> and
 <b>setTimeShift:</b>, you can use methods that allow you to specify the time
-directly in MTC units.   For example, to set <i>firstTimeTag</i> to a MTC value
+directly in MTC units.  For example, to set <i>firstTimeTag</i> to a MTC value
 of 0:21:59:5, you send the following mesage:
 	
 <tt>[myMTCPerformer setFirstTimeTagMTCHours:0 minutes:21 seconds:59 frames:5];</tt>
@@ -121,9 +121,9 @@ extern double  // Returns time in seconds
 	short hours,	
 	short minutes,	
 	short seconds,
-        short frames);
+  short frames);
 
-extern void    // Returns (by reference) time in MTC units
+extern void  // Returns (by reference) time in MTC units
   MKConvertSecondsToMTC(	
 	double seconds,	
 	short format,	
@@ -137,7 +137,7 @@ These functions do straight translation.  They do not take into account any
 DeltaTime value.  
 
 You can pause time code generation using the standard MKPerformer <b>pause</b> 
-method.   A paused MKPerformer stops sending MIDI time code until it is resumed
+method.  A paused MKPerformer stops sending MIDI time code until it is resumed
 using the resume message.  When it is resumed, it sends a MTC Full Message, then
 resumes time code generation where it left off. 
 
@@ -160,7 +160,7 @@ You can ask the MKMTCPerformer the current MTC time with the <b>timeTag</b> or
 seconds and MTC units, respectively.  The time tag returned is in the clock
 Conductor's time base.  
 
-See also:  MKPerformer, MKMidi
+  @see  MKPerformer, MKMidi
 */
 #ifndef __MK_MTCPerformer_H___
 #define __MK_MTCPerformer_H___
@@ -217,200 +217,216 @@ extern void
 
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initialize the receiver.  Must be sent when a new object is
-              allocated.  If you override this method, you must first send [super
-              init] before doing your own initialization.
+  @return Returns an id.
+  @brief Initialize the receiver.
+
+  Must be sent when a new object is
+  allocated.  If you override this method, you must first send [super
+  init] before doing your own initialization.
 */
 - init;
 
 /*!
-  @method setFirstTimeTag:
   @param  firstTimeTag is a double.
-  @result Returns an id.
-  @discussion Sets <i>firstTimeTag</i> as specified.  This controls the time from
-              activation at which the MKPerformer will begin sending time code.   It
-              also controls the first time code value it will send.  You can
-              decouple the time the performer runs from the time code it outputs
-              by using Performer's <tt>setTimeShift:</tt>.  For example, to generate time
-              code, beginning with time 2, and to start sending that time code at
-              time 3, you'd send:
-              	
-              <tt>
-              [perf setFirstTimeTag:2];
-              [perf setTimeOffset:1];
-              </tt>
+  @return Returns an id.
+  @brief Sets <i>firstTimeTag</i> as specified.
+
+  This controls the time from
+  activation at which the MKPerformer will begin sending time code.   It
+  also controls the first time code value it will send.  You can
+  decouple the time the performer runs from the time code it outputs
+  by using Performer's <tt>setTimeShift:</tt>.  For example, to generate time
+  code, beginning with time 2, and to start sending that time code at
+  time 3, you'd send:
+  	
+  <tt>
+  [perf setFirstTimeTag:2];
+  [perf setTimeOffset:1];
+  </tt>
 */
 -setFirstTimeTag:(double)f;
 
 /*!
-  @method setLastTimeTag:
   @param  lastTimeTag is a double.
-  @result Returns an id.
-  @discussion Sets <i>lastTimetTag</i>, the last time code value that will be
-              sent.  The MKPerformer runs until lastTimeTag is sent.  If direction
-              is <b>MK_MTC_REVERSE</b>, <i>lastTimeTag</i> should be less than
-              <i>firstTimeTag</i>.  Otherwise, <i>lastTimeTag</i> should be
-              greater than <i>firstTimeTag</i>.
+  @return Returns an id.
+  @brief Sets <i>lastTimetTag</i>, the last time code value that will be
+  sent.
+
+  The MKPerformer runs until lastTimeTag is sent.  If direction
+  is <b>MK_MTC_REVERSE</b>, <i>lastTimeTag</i> should be less than
+  <i>firstTimeTag</i>.  Otherwise, <i>lastTimeTag</i> should be
+  greater than <i>firstTimeTag</i>.
 */
 -setLastTimeTag:(double)l;
 
 /*!
-  @method setFirstTimeTag:
   @param  firstTimeTag is a double.
-  @result Returns an id.
-  @discussion Same as <tt>setFirstTimeTag:</tt>, except that the time is specified in Midi time
-              code units.  Assumes the current format. (See <tt>setFormat:</tt>)
+  @return Returns an id.
+  @brief Same as <tt>setFirstTimeTag:</tt>, except that the time is specified in Midi time
+  code units.
+
+  Assumes the current format. (See <tt>setFormat:</tt>)
 */
 -setFirstTimeTagMTCHours:(short)h minutes:(short)m seconds:(short)s frames:(short)f;
 
 /*!
-  @method setLastTimeTagMTCHours:minutes:seconds:frames:
   @param  h is a short.
   @param  m is a short.
   @param  s is a short.
   @param  f is a short.
-  @result Returns an id.
-  @discussion Same as setLastTimeTag:, except that the time is specified in Midi time
-              code units.  Assumes the current format. (See <tt>setFormat:</tt>)
+  @return Returns an id.
+  @brief Same as setLastTimeTag:, except that the time is specified in Midi time
+  code units.
+
+  Assumes the current format. (See <tt>setFormat:</tt>)
 */
 -setLastTimeTagMTCHours:(short)h minutes:(short)m seconds:(short)s frames:(short)f;
 
 /*!
-  @method setTimeShiftMTCHours:minutes:seconds:frames:
   @param  h is a short.
   @param  m is a short.
   @param  s is a short.
   @param  f is a short.
-  @result Returns an id.
-  @discussion Same as setTimeShift:, except that the time is specified in Midi
-              time code units.  Assumes the current format. (See
-              <b>setFormat:</b>)
+  @return Returns an id.
+  @brief Same as setTimeShift:, except that the time is specified in Midi
+  time code units.
+
+  Assumes the current format. (See
+  <b>setFormat:</b>)
 */
 -setTimeShiftMTCHours:(short)h minutes:(short)m seconds:(short)s frames:(short)f;
 
 /*!
-  @method firstTimeTag
-  @result Returns a double.
-  @discussion Returns <i>firstTimeTag</i>, as previously set with
-              <b>setLastTimeTag:</b> or <b>setFirstTimeTagMTCHours:minutes:seconds:frames:</b>.
+  @return Returns a double.
+  @brief Returns <i>firstTimeTag</i>, as previously set with
+  <b>setLastTimeTag:</b> or <b>setFirstTimeTagMTCHours:minutes:seconds:frames:</b>.
+
+  
 */
 -(double)firstTimeTag;
 
 /*!
-  @method lastTimeTag
-  @result Returns a double.
-  @discussion Returns <i>lastTimeTag</i>, as previously set with
-              <b>setLastTimeTag:</b> or <b>setLastTimeTagMTCHours:minutes:seconds:frames:</b>.
+  @return Returns a double.
+  @brief Returns <i>lastTimeTag</i>, as previously set with
+  <b>setLastTimeTag:</b> or <b>setLastTimeTagMTCHours:minutes:seconds:frames:</b>.
+
+  
 */
 -(double)lastTimeTag;
 
 /*!
-  @method setFormat:
   @param  fmt is an int.
-  @result Returns an id.
-  @discussion Sets format of the timecode to one of the following:
-                 	
-            MK_MTC_FORMAT_24  (24 frames/second)
-            MK_MTC_FORMAT_25  (25 frames/second)
-            MK_MTC_FORMAT_DROP_30  (30 frames/second, drop-frame)
-            MK_MTC_FORMAT_30 (30 frames/second, no drop-frame)
+  @return Returns an id.
+  @brief Sets format of the timecode to one of the following:
+  	
+  MK_MTC_FORMAT_24  (24 frames/second)
+  MK_MTC_FORMAT_25  (25 frames/second)
+  MK_MTC_FORMAT_DROP_30  (30 frames/second, drop-frame)
+  MK_MTC_FORMAT_30 (30 frames/second, no drop-frame)
 */
 -setFormat:(int)fmt;
 
 /*!
-  @method timeTag
-  @result Returns a double.
-  @discussion Returns the time code value most recently sent.
+  @return Returns a double.
+  @brief Returns the time code value most recently sent.
+
+  
 */
 -(double)timeTag;
 
 /*!
-  @method getMTCHours:minutes:seconds:frames:
   @param  h is a short *.
   @param  m is a short *.
   @param  s is a short *.
   @param  f is a short *.
-  @result Returns an id.
-  @discussion Same as timeTag, except that the time is returned in MIDI time code
-              units.  Assumes the current format.
+  @return Returns an id.
+  @brief Same as timeTag, except that the time is returned in MIDI time code
+  units.
+
+  Assumes the current format.
 */
 -getMTCHours:(short *)h minutes:(short *)m seconds:(short *)s frames:(short *)f;
 
 /*!
-  @method setDirection:
   @param  newDirection is an int.
-  @result Returns an id.
-  @discussion Sets direction of time code to be generated.   If
-              <i>newDirection</i> is 1, forward time code is generated.  If
-              <i>newDirectino</i> is 0, backward time code is generated.
+  @return Returns an id.
+  @brief Sets direction of time code to be generated.
+
+  If
+  <i>newDirection</i> is 1, forward time code is generated.  If
+  <i>newDirectino</i> is 0, backward time code is generated.
 */
 -setDirection:(int)newDirection;
 
 /*!
-  @method sendUserBits:groupFlagBits:
   @param  userBits is an unsigned int.
   @param  groupFlagBits is an unsigned char.
-  @result Returns an id.
-  @discussion Sends SMPTE user bits as indicated. These are defined by the SMPTE
-              specification. The MusicKit ignores their content.
+  @return Returns an id.
+  @brief Sends SMPTE user bits as indicated.
+
+  These are defined by the SMPTE
+  specification. The MusicKit ignores their content.
 */
 -sendUserBits:(unsigned int)userBits groupFlagBits:(unsigned char)groupFlagBits;
 
 /*!
-  @method freezeTimeCode
-  @result Returns an id.
-  @discussion Stops the advance of time code, but doesn't pause performer.  Time
-              code will continue to be generated, but the same value will be sent
-              over and over.
+  @return Returns an id.
+  @brief Stops the advance of time code, but doesn't pause performer.
+
+  Time
+  code will continue to be generated, but the same value will be sent
+  over and over.
 */
 -freezeTimeCode;  
 
 /*!
-  @method thawTimeCode
-  @result Returns an id.
-  @discussion Undoes the effect of <b>freezeTimeCode</b>.
+  @return Returns an id.
+  @brief Undoes the effect of <b>freezeTimeCode</b>.
+
+  
 */
 -thawTimeCode;
 
 /*!
-  @method sendFullMTCMessage
-  @result Returns an id.
-  @discussion Sends the current time as a MIDI time code Full Message.   See the
-              MIDI Time Code Specification for details.
+  @return Returns an id.
+  @brief Sends the current time as a MIDI time code Full Message.
+
+  See the
+  MIDI Time Code Specification for details.
 */
 -sendFullMTCMessage; 
 
 /*!
-  @method activateSelf
-  @result returns <b>self</b>
-  @discussion Prepares the object for performance
+  @return returns <b>self</b>
+  @brief Prepares the object for performance
 */
 -activateSelf;    
 
 /*!
-  @method deactivate
-  @result Returns an id.
-  @discussion Sends a MIDI system exclusive "NAK" message to signal that time code
-              has stopped.   
+  @return Returns an id.
+  @brief Sends a MIDI system exclusive "NAK" message to signal that time code
+  has stopped.
+
+  
 */
 - (void)deactivate;
 
 /*!
-  @method pause
-  @result Returns an id.
-  @discussion Sends a MIDI system exclusive "NAK" message to signal that time code
-              has stopped. Then invokes superclass version of method to pause
-              the MKMTCPerformer.
+  @return Returns an id.
+  @brief Sends a MIDI system exclusive "NAK" message to signal that time code
+  has stopped.
+
+  Then invokes superclass version of method to pause
+  the MKMTCPerformer.
 */
 -pause;           /* Sends NAK SYSEX, then pauses.  */
 
 /*!
-  @method resume
-  @result Returns an id.
-  @discussion Sends a MIDI time code Full Message. Then invokes superclass
-              version of method to resume the MKMTCPerformer.
+  @return Returns an id.
+  @brief Sends a MIDI time code Full Message.
+
+  Then invokes superclass
+  version of method to resume the MKMTCPerformer.
 */
 -resume;          /* Resumes time code. Sends a Full message */
 

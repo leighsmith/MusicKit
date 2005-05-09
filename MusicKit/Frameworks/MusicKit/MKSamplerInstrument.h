@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.14  2005/05/09 15:52:52  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.13  2001/08/27 20:04:52  leighsmith
   Renamed the stop method to allNotesOff since this gives a clearer understanding of its function, better matches the behaviour of other MKInstruments and doesn't confuse against the stop method of MKMidi or MKOrchestra
 
@@ -104,9 +107,10 @@
 - init;
 - abort;
 /*!
-    @method allNotesOff
-    @result returns self
-    @discussion Stop any playing (i.e. sounding) notes.
+  @return returns self
+  @brief Stop any playing (i.e.
+
+  sounding) notes.
 */
 - allNotesOff;
 - reset;

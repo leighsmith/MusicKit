@@ -35,6 +35,9 @@
 /*
 Modification history:
   $Log$
+  Revision 1.12  2005/05/09 15:52:54  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.11  2001/09/08 21:55:34  leighsmith
   Leigh learns lesson that putting comment characters into CVS entries is not a good idea
 
@@ -70,7 +73,7 @@ Modification history:
 
 /*!
   @class MKScorePerformer
-  @discussion
+  @brief
 
 A MKScorePerformer performs a MKScore object by creating a group of
 MKPartPerformers, one for each MKPart in the MKScore, and controlling the
@@ -120,187 +123,206 @@ be seen by the MKScorePerformer.
 }
 
 /*!
-  @method scorePerformer
-  @result Returns an MKScorePerformer.
-  @discussion Allocates, initialises and returns an autoreleased instance.
+  @return Returns an MKScorePerformer.
+  @brief Allocates, initialises and returns an autoreleased instance.
+
+  
 */
 + (MKScorePerformer *) scorePerformer;
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes the receiver.  A subclass implementation should send
-              <b>[super init]</b> before performing its own initialization. 
-              
+  @return Returns an id.
+  @brief Initializes the receiver.
+
+  A subclass implementation should send
+  <b>[super init]</b> before performing its own initialization. 
+  
 */
 - init; 
 
 /*!
-  @method releasePartPerformers
-  @result Returns an id.
-  @discussion If the receiver is in performance, does nothing and returns
-              <b>nil</b>.  Otherwise, removes and frees the receiver's
-              MKPartPerformers, sets the receiver's MKScore to <b>nil</b> and
-              returns the receiver.
+  @return Returns an id.
+  @brief If the receiver is in performance, does nothing and returns
+  <b>nil</b>.
+
+  Otherwise, removes and frees the receiver's
+  MKPartPerformers, sets the receiver's MKScore to <b>nil</b> and
+  returns the receiver.
 */
 - releasePartPerformers;
 
 /*!
-  @method removePartPerformers
-  @result Returns an id.
-  @discussion Removes the receiver's MKPartPerformers (but doesn't free them) and
-              sets the receiver's MKScore to <b>nil</b>.  Returns the
-              receiver.
+  @return Returns an id.
+  @brief Removes the receiver's MKPartPerformers (but doesn't free them) and
+  sets the receiver's MKScore to <b>nil</b>.
+
+  Returns the
+  receiver.
 */
 - removePartPerformers; 
 
 /*!
-  @method setScore:
   @param  aScore is an id.
-  @result Returns an id.
-  @discussion Sets the receiver's MKScore to <i>aScore</i> and creates a
-              MKPartPerformer for each of the Score's MKParts.  Subsequent changes
-              to <i>aScore</i> (by adding or removing MKParts) won't be seen by
-              the receiver.  The MKPartPerformers from a previously set MKScore (if
-              any) are first removed and freed.  Returns the receiver.
-              
-              Note: The score can be set only when the receiver's performance status
-              is MK_inactive.  If the receiver is not inactive, the <i>setScore:</i> message
-              is ignored. Returns the receiver or nil if the score could not be set.
+  @return Returns an id.
+  @brief Sets the receiver's MKScore to <i>aScore</i> and creates a
+  MKPartPerformer for each of the Score's MKParts.
+
+  Subsequent changes
+  to <i>aScore</i> (by adding or removing MKParts) won't be seen by
+  the receiver.  The MKPartPerformers from a previously set MKScore (if
+  any) are first removed and freed.  Returns the receiver.
+  
+  Note: The score can be set only when the receiver's performance status
+  is MK_inactive.  If the receiver is not inactive, the <i>setScore:</i> message
+  is ignored. Returns the receiver or nil if the score could not be set.
 */
 - setScore: (MKScore *) aScore;
 
 /*!
-  @method score
-  @result Returns an MKScore.
-  @discussion Returns the object's MKScore.
+  @return Returns an MKScore.
+  @brief Returns the object's MKScore.
+
+  
 */
 - (MKScore *) score;    
 
 /*!
-  @method activate
-  @result Returns an id.
-  @discussion Sends <b>activateSelf</b> to the receiver and then sends the
-              <b>activate</b> message to each of the receiver's MKPartPerformers. 
-              If <b>activateSelf</b> returns <b>nil</b>, the message isn't sent
-              and <b>nil</b> is returned.  Otherwise sends
-              [delegate hasActivated:self] and returns the receiver.
+  @return Returns an id.
+  @brief Sends <b>activateSelf</b> to the receiver and then sends the
+  <b>activate</b> message to each of the receiver's MKPartPerformers.
+
+  
+  If <b>activateSelf</b> returns <b>nil</b>, the message isn't sent
+  and <b>nil</b> is returned.  Otherwise sends
+  [delegate hasActivated:self] and returns the receiver.
 */
 - activate; 
 
 /*!
-  @method activateSelf
-  @result Returns an id.
-  @discussion You never invoke this method directly; it's invoked as part of the
-              <b>activate</b> method.  A subclass implementation should send
-              <b>[super activateSelf]</b>.  If <b>activateSelf</b> returns
-              <b>nil</b>, the receiver isn't activated.  The default
-              implementation does nothing and returns the receiver.
+  @return Returns an id.
+  @brief You never invoke this method directly; it's invoked as part of the
+  <b>activate</b> method.
+
+  A subclass implementation should send
+  <b>[super activateSelf]</b>.  If <b>activateSelf</b> returns
+  <b>nil</b>, the receiver isn't activated.  The default
+  implementation does nothing and returns the receiver.
 */
 - activateSelf; 
 
 /*!
-  @method deactivate
-  @discussion Deactivates the receiver's MKPartPerformers.
-              A subclass can implement this method to perform post-performance
-              activites.  The default does nothing; the return value is ignored.
+  @brief Deactivates the receiver's MKPartPerformers.
+
+  
+  A subclass can implement this method to perform post-performance
+  activites.  The default does nothing; the return value is ignored.
 */
 - (void)deactivate; 
 
 /*!
-  @method pause
-  @result Returns an id.
-  @discussion Suspends the receiver's performance by sending the <b>pause</b>
-              message to each of its MKPartPerformers.  
-              Also sends <tt>[delegate hasPaused:self];</tt>.
-              Returns the receiver.
+  @return Returns an id.
+  @brief Suspends the receiver's performance by sending the <b>pause</b>
+  message to each of its MKPartPerformers.
+
+  
+  Also sends <tt>[delegate hasPaused:self];</tt>.
+  Returns the receiver.
 */
 - pause; 
 
 /*!
-  @method resume
-  @result Returns an id.
-  @discussion Resumes a previously paused performance by sending the <b>resume</b>
-              message to each of the receiver's MKPartPerformers.
-              Also sends <tt>[delegate hasResumed:self];</tt>.
-              Returns the receiver.
+  @return Returns an id.
+  @brief Resumes a previously paused performance by sending the <b>resume</b>
+  message to each of the receiver's MKPartPerformers.
+
+  
+  Also sends <tt>[delegate hasResumed:self];</tt>.
+  Returns the receiver.
 */
 - resume; 
 
 /*!
-  @method setFirstTimeTag:
   @param  aTimeTag is a double.
-  @result Returns an id.
-  @discussion Sets the smallest timeTag value considered for performance by
-              sending <b>setFirstTimeTag:</b><i>aTimeTag</i> to each of the
-              receiver's MKPartPerformers.  Returns the receiver.  If the receiver
-              is active, this does nothing and returns <b>nil</b>.
+  @return Returns an id.
+  @brief Sets the smallest timeTag value considered for performance by
+  sending <b>setFirstTimeTag:</b><i>aTimeTag</i> to each of the
+  receiver's MKPartPerformers.
+
+  Returns the receiver.  If the receiver
+  is active, this does nothing and returns <b>nil</b>.
 */
 - setFirstTimeTag:(double )aTimeTag; 
 
 /*!
-  @method setLastTimeTag:
   @param  aTimeTag is a double.
-  @result Returns an id.
-  @discussion Sets the greatest timeTag value considered for performance by
-              sending <b>setLastTimeTag:</b><i>aTimeTag</i> to each of the
-              receiver's MKPartPerformers.  Returns the receiver.  If the receiver
-              is active, this does nothing and returns <b>nil</b>.
+  @return Returns an id.
+  @brief Sets the greatest timeTag value considered for performance by
+  sending <b>setLastTimeTag:</b><i>aTimeTag</i> to each of the
+  receiver's MKPartPerformers.
+
+  Returns the receiver.  If the receiver
+  is active, this does nothing and returns <b>nil</b>.
 */
 - setLastTimeTag:(double) aTimeTag; 
 
 /*!
-  @method firstTimeTag
-  @result Returns a double.
-  @discussion Returns the smallest timeTag value considered for
-              performance.
+  @return Returns a double.
+  @brief Returns the smallest timeTag value considered for
+  performance.
+
+  
 */
 - (double) firstTimeTag;    
 
 /*!
-  @method lastTimeTag
-  @result Returns a double.
-  @discussion Returns the greatest timeTag value considered for
-              performance.
+  @return Returns a double.
+  @brief Returns the greatest timeTag value considered for
+  performance.
+
+  
 */
 - (double) lastTimeTag;    
 
 /*!
-  @method setTimeShift:
   @param  aTimeShift is a double.
-  @result Returns an id.
-  @discussion Sets the performance time offset by sending
-              <b>setTimeShift:</b><i>aTimeShift</i> to each of
-              the receiver's MKPartPerformers.  The offset is measured in beats.
-              Returns the receiver.  If the receiver is active, this does nothing
-              and returns <b>nil</b>.
+  @return Returns an id.
+  @brief Sets the performance time offset by sending
+  <b>setTimeShift:</b><i>aTimeShift</i> to each of
+  the receiver's MKPartPerformers.
+
+  The offset is measured in beats.
+  Returns the receiver.  If the receiver is active, this does nothing
+  and returns <b>nil</b>.
 */
 - setTimeShift:(double) aTimeShift; 
 
 /*!
-  @method setDuration:
   @param  aDuration is a double.
-  @result Returns an id.
-  @discussion Sets the maximum performance duration by sending
-              <b>setDuration:</b><i>aDuration</i> to each of the receiver's
-              MKPartPerformers.  The duration is measured in beats.  Returns the
-              receiver.  If the receiver is active, this does nothing and returns
-              <b>nil</b>.
+  @return Returns an id.
+  @brief Sets the maximum performance duration by sending
+  <b>setDuration:</b><i>aDuration</i> to each of the receiver's
+  MKPartPerformers.
+
+  The duration is measured in beats.  Returns the
+  receiver.  If the receiver is active, this does nothing and returns
+  <b>nil</b>.
 */
 - setDuration:(double) aDuration; 
 
 /*!
-  @method timeShift
-  @result Returns a double.
-  @discussion Returns the receiver's performance time offset in beats.
+  @return Returns a double.
+  @brief Returns the receiver's performance time offset in beats.
+
+  
 */
 - (double) timeShift;
 
 /*!
-  @method duration
-  @result Returns a double.
-  @discussion Returns the receiver's maximum performance duration in
-              beats.
+  @return Returns a double.
+  @brief Returns the receiver's maximum performance duration in
+  beats.
+
+  
 */
 - (double ) duration; 
 
@@ -314,14 +336,15 @@ be seen by the MKScorePerformer.
 - copyWithZone:(NSZone *) zone;
 
 /*!
-  @method copy
-  @result Returns an id.
-  @discussion Creates and returns a new, inactive MKScorePerformer that's a copy
-              of the receiver.  The new object is associated with the same MKScore
-              as the receiver, and has the same MKConductor and timing window
-              variables (<b>timeShift</b>, <b>duration</b>, <b>fromTimeTag</b>,
-              and <b>toTimeTag</b>).  New MKPartPerformers are created for the new
-              object.
+  @return Returns an id.
+  @brief Creates and returns a new, inactive MKScorePerformer that's a copy
+  of the receiver.
+
+  The new object is associated with the same MKScore
+  as the receiver, and has the same MKConductor and timing window
+  variables (<b>timeShift</b>, <b>duration</b>, <b>fromTimeTag</b>,
+  and <b>toTimeTag</b>).  New MKPartPerformers are created for the new
+  object.
 */
 - copy;
  /* Same as [self copyFromZone:[self zone]]; */
@@ -331,61 +354,67 @@ be seen by the MKScorePerformer.
    
 
 /*!
-  @method setConductor:
   @param  aConductor is an id.
-  @result Returns an id.
-  @discussion Sends the message <b>setConductor:</b><i>aConductor</i> to each of
-              the receiver's MKPartPerformers.
+  @return Returns an id.
+  @brief Sends the message <b>setConductor:</b><i>aConductor</i> to each of
+  the receiver's MKPartPerformers.
+
+  
 */
 - setConductor: (MKConductor *) aConductor; 
 
 /*!
-  @method partPerformerForPart:
   @param  aPart is an id.
-  @result Returns an id.
-  @discussion Returns the receiver's MKPartPerformer that's associated with
-              <i>aPart</i>, where <i>aPart</i> is a MKPart in the receiver's
-              MKScore.  Keep in mind that it's possible for a MKPart to have more
-              than one MKPartPerformer; this method returns only the
-              MKPartPerformer that was created by the receiver.
+  @return Returns an id.
+  @brief Returns the receiver's MKPartPerformer that's associated with
+  <i>aPart</i>, where <i>aPart</i> is a MKPart in the receiver's
+  MKScore.
+
+  Keep in mind that it's possible for a MKPart to have more
+  than one MKPartPerformer; this method returns only the
+  MKPartPerformer that was created by the receiver.
 */
 - partPerformerForPart: (MKPart *) aPart;
 
 /*!
-  @method partPerformers
-  @result Returns an id.
-  @discussion Creates and returns a NSMutableArray containing the receiver's
-              MKPartPerformers. 
+  @return Returns an id.
+  @brief Creates and returns a NSMutableArray containing the receiver's
+  MKPartPerformers.
+
+  
 */
 - partPerformers; 
    
 /*!
-  @method noteSenders
-  @result Returns an NSArray.
-  @discussion Creates and returns a NSMutableArray containing the MKNoteSender
-              objects that belong to the receiver's MKPartPerformers  (A
-              MKPartPerformer contains at most one MKNoteSender, created when the
-              MKPartPerformer is initialized). The array is autoreleased.
+  @return Returns an NSArray.
+  @brief Creates and returns a NSMutableArray containing the MKNoteSender
+  objects that belong to the receiver's MKPartPerformers  (A
+  MKPartPerformer contains at most one MKNoteSender, created when the
+  MKPartPerformer is initialized).
+
+  The array is autoreleased.
 */
 - (NSArray *) noteSenders; 
 
 /*!
-  @method status
-  @result Returns an int.
-  @discussion Returns the receiver's status.
+  @return Returns an int.
+  @brief Returns the receiver's status.
+
+  
 */
 -(int) status;
 
 /*!
-  @method setPartPerformerClass:
   @param  aPartPerformerSubclass is an id.
-  @result Returns an id.
-  @discussion Normally, MKScorePerformers create instances of the MKPartPerformer
-              class.  This method allows you to specify that instances of some
-              MKPartPerformer subclass be created instead.  If
-              <i>aPartPerformerSubclass</i> is not a subclass of MKPartPerformer
-              (or MKPartPerformer itself), this method has no effect and returns
-              nil.  Otherwise, it returns self.
+  @return Returns an id.
+  @brief Normally, MKScorePerformers create instances of the MKPartPerformer
+  class.
+
+  This method allows you to specify that instances of some
+  MKPartPerformer subclass be created instead.  If
+  <i>aPartPerformerSubclass</i> is not a subclass of MKPartPerformer
+  (or MKPartPerformer itself), this method has no effect and returns
+  nil.  Otherwise, it returns self.
 */
 -setPartPerformerClass:aPartPerformerSubclass;
   
@@ -394,20 +423,22 @@ be seen by the MKScorePerformer.
 -partPerformerClass;
 
 /*!
-  @method setDelegate:
   @param  obj is an id.
-  @discussion Sets the delegate as indicated.
+  @brief Sets the delegate as indicated.
+
   
-              See MKPerformerDelegate.h
+  
+  See MKPerformerDelegate.h
 */
 - (void)setDelegate:(id)object;
 
 /*!
-  @method delegate
-  @result Returns an id.
-  @discussion Returns the receiver's delegate object, if any.
+  @return Returns an id.
+  @brief Returns the receiver's delegate object, if any.
+
   
-              See MKPerformerDelegate.h
+  
+  See MKPerformerDelegate.h
 */
 - delegate;
 

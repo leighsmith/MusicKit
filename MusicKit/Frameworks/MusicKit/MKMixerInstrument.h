@@ -18,25 +18,26 @@
 */
 /*!
   @class MKMixerInstrument
-  @abstract MKMixerInstrument mixes soundfiles based on a score description of the mix.
-  @discussion
-    MKMixerInstrument mixes soundfiles based on a score description of the mix. 
-    It allows setting the amplitude scaling of each soundfile and to
-    change that scaling over time by applying an amplitude envelope. It
-    allows resampling (change the pitch of) a file.  It also allows
-    you to specify that only a portion of a file be used in the mix.
-    There is no limit to the number of soundfiles that may be mixed
-    together. Also, the same soundfile may be mixed several times and may
-    overlap with itself.  The soundfiles may have different sampling rates
-    and different formats.  However, the output must be 16 bit linear.
-    The more files you mix, the longer it will take the program to run.
-    Note also that if you mix many large files, you will need a fair degree of swap
-    space--keep some room free on the disk off of which you booted.
+  @brief MKMixerInstrument mixes soundfiles based on a score description of the mix.
+  
+  
+  MKMixerInstrument mixes soundfiles based on a score description of the mix. 
+  It allows setting the amplitude scaling of each soundfile and to
+  change that scaling over time by applying an amplitude envelope. It
+  allows resampling (change the pitch of) a file.  It also allows
+  you to specify that only a portion of a file be used in the mix.
+  There is no limit to the number of soundfiles that may be mixed
+  together. Also, the same soundfile may be mixed several times and may
+  overlap with itself.  The soundfiles may have different sampling rates
+  and different formats.  However, the output must be 16 bit linear.
+  The more files you mix, the longer it will take the program to run.
+  Note also that if you mix many large files, you will need a fair degree of swap
+  space--keep some room free on the disk off of which you booted.
 
-    MKMixerInstrument is also an illustration of how to make your own MusicKit
-    MKInstrument subclass to "realize MKNotes" in some novel fashion. In this
-    case, MKNotes are soundfile mix specifications. They are "realized" by
-    being mixed into the output file.
+  MKMixerInstrument is also an illustration of how to make your own MusicKit
+  MKInstrument subclass to "realize MKNotes" in some novel fashion. In this
+  case, MKNotes are soundfile mix specifications. They are "realized" by
+  being mixed into the output file.
 */
 #ifndef __MK_MixerInstrument_H___
 #define __MK_MixerInstrument_H___
@@ -74,75 +75,76 @@
 }
 
 /*!
-  @method setSamplingRate:
-  @abstract Sets the sampling rate to be used when mixing sounds.
-  @discussion This method should be invoked once before performance is started. 
+  @brief Sets the sampling rate to be used when mixing sounds.
+  
+  This method should be invoked once before performance is started. 
   @param  aSrate is a double.
  */
 - (void) setSamplingRate: (double) aSrate;
 
 /*!
-  @method setChannelCount:
-  @abstract Sets the number of audio channels to be used when mixing sounds.
-  @discussion This method should be invoked once before performance is started. 
+  @brief Sets the number of audio channels to be used when mixing sounds.
+  
+  This method should be invoked once before performance is started. 
   @param  chans is an int.
  */
 - (void) setChannelCount: (int) chans;
 
 /*!
-  @method mixedSound
-  @abstract Returns the sound that has been mixed.
-  @result Returns a Snd instance.
+  @brief Returns the sound that has been mixed.
+  @return Returns a Snd instance.
  */
 - (Snd *) mixedSound;
 
 /*!
-  @method init
-  @abstract Initializes the instance to 44.1KHz, 16 bit stereo file output.
+  @brief Initializes the instance to 44.1KHz, 16 bit stereo file output.
  */
 - init;
 
 - (void) dealloc;
 
 /*!
-  @method firstNote:
   @param  aNote is an MKNote.
-  @result Returns <b>self</b>.
-  @discussion You do not normally call this method explictly. 
-              It is invoked when first note is received during performance.
+  @return Returns <b>self</b>.
+  @brief You do not normally call this method explictly.
+
+  
+  It is invoked when first note is received during performance.
 */
 - firstNote: (MKNote *) aNote;
 
 /*!
-  @method mixNewNote:
-  @abstract Internal method to manage the reception of a new note.
-  @discussion This method is not normally called, but may be overloaded by a subclass.
+  @brief Internal method to manage the reception of a new note.
+  
+  This method is not normally called, but may be overloaded by a subclass.
   @param thisNote An MKNote instance.
  */
 - (BOOL) mixNewNote: (MKNote *) thisNote;
 
 /*!
-  @method mixNoteUpdate:
-  @abstract Internal method to manage the reception of an update MKNote.
-  @discussion This method is not normally called, but may be overloaded by a subclass.
+  @brief Internal method to manage the reception of an update MKNote.
+  
+  This method is not normally called, but may be overloaded by a subclass.
   @param thisNote An MKNote instance.
  */
 - (BOOL) mixNoteUpdate: (MKNote *) thisNote;
 
 /*!
-  @method realizeNote:fromNoteReceiver:
   @param  aNote is an MKNote.
   @param  aNoteReceiver is an MKNoteReceiver.
-  @discussion This is invoked when a new MKNote is received during performance to perform the mixing.
-              You do not normally call this method explictly. Each note is converted to a common format.
+  @brief This is invoked when a new MKNote is received during performance to perform the mixing.
+
+  
+  You do not normally call this method explictly. Each note is converted to a common format.
 */
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
-  @method afterPerformance
-  @result Returns <b>self</b>.
-  @discussion You do not normally call this method explictly. 
-              It is invoked when performance is over. 
+  @return Returns <b>self</b>.
+  @brief You do not normally call this method explictly.
+
+  
+  It is invoked when performance is over. 
 */
 - afterPerformance;
 

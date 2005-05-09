@@ -75,6 +75,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2005/05/09 15:52:52  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.7  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -96,7 +99,7 @@
 */
 /*!
   @class MKPatchTemplate
-  @discussion
+  @brief
 
 A MKPatchTemplate is a recipe for building a MKSynthPatch object. It contains
 specifications for the MKUnitGenerator and MKSynthData objects that are needed and
@@ -154,7 +157,7 @@ that takes a MKSynthData object as its only argument.  Typical selectors are
 <b>setOuput:</b> (it writes to the MKSynthData).  Notice that you can't connect a
 MKUnitGenerator directly to another MKUnitGenerator.
 
-See also:  MKUnitGenerator, MKSynthData, MKSynthPatch
+  @see  MKUnitGenerator, MKSynthData, MKSynthPatch
 */
 #ifndef __MK_PatchTemplate_H___
 #define __MK_PatchTemplate_H___
@@ -174,9 +177,10 @@ See also:  MKUnitGenerator, MKSynthData, MKSynthPatch
 
 
 /*!
-  @method init
-  @result Returns <b>self</b>.
-  @discussion Initializes a new MKPatchTemplate and returns <b>self</b>.
+  @return Returns <b>self</b>.
+  @brief Initializes a new MKPatchTemplate and returns <b>self</b>.
+
+  
 */
 - init;
 
@@ -184,85 +188,92 @@ See also:  MKUnitGenerator, MKSynthData, MKSynthPatch
 - copyWithZone:(NSZone *)zone;
 
 /*!
-  @method copy
-  @result Returns an id.
-  @discussion Creates and returns a MKPatchTemplate as a copy of the
-              receiver. Same as <tt>[self copyFromZone:[self zone]];</tt>
+  @return Returns an id.
+  @brief Creates and returns a MKPatchTemplate as a copy of the
+  receiver.
+
+  Same as <tt>[self copyFromZone:[self zone]];</tt>
 */
 -copy;   
 
 /*!
-  @method to:sel:arg:
   @param  anObjInt is an unsigned.
   @param  aSelector is a SEL.
   @param  anArgInt is an unsigned.
-  @result Returns an id.
-  @discussion Specifies a connection between the MKUnitGenerator identified by
-              <i>objInt1</i> and the MKSynthData identified by <i>objInt2</i>.  The
-              means of the connection are specified in the method
-              <i>aSelector</i>, to which the MKUnitGenerator must respond. 
-              <i>objInt1</i> and <i>objInt2</i> are identifying integers returned
-              by PatchTemplate's add methods. If either of these arguments are
-              invalid identifiers, the method returns <b>nil</b>, otherwise it
-              returns the receiver.
+  @return Returns an id.
+  @brief Specifies a connection between the MKUnitGenerator identified by
+  <i>objInt1</i> and the MKSynthData identified by <i>objInt2</i>.
+
+  The
+  means of the connection are specified in the method
+  <i>aSelector</i>, to which the MKUnitGenerator must respond. 
+  <i>objInt1</i> and <i>objInt2</i> are identifying integers returned
+  by PatchTemplate's add methods. If either of these arguments are
+  invalid identifiers, the method returns <b>nil</b>, otherwise it
+  returns the receiver.
 */
 - to:(unsigned )anObjInt sel:(SEL )aSelector arg:(unsigned )anArgInt; 
 
 /*!
-  @method addUnitGenerator:ordered:
   @param  aUGClass is an id.
   @param  isOrdered is a BOOL.
-  @result Returns an unsigned.
-  @discussion Adds a MKUnitGenerator specification to the receiver.  The
-              MKUnitGenerator is an instance of <i>aUGClass</i>, a MKUnitGenerator
-              leaf class.  If <i>isOrdered</i> is YES, then the order in which the
-              specification is added (in relation to the receiver's other
-              MKUnitGenerators) is the order in which the MKUnitGenerator, once
-              created, is executed on the DSP.
+  @return Returns an unsigned.
+  @brief Adds a MKUnitGenerator specification to the receiver.
+
+  The
+  MKUnitGenerator is an instance of <i>aUGClass</i>, a MKUnitGenerator
+  leaf class.  If <i>isOrdered</i> is YES, then the order in which the
+  specification is added (in relation to the receiver's other
+  MKUnitGenerators) is the order in which the MKUnitGenerator, once
+  created, is executed on the DSP.
 */
 -(unsigned ) addUnitGenerator:aUGClass ordered:(BOOL )isOrdered; 
 
 /*!
-  @method addUnitGenerator:
   @param  aUGClass is an id.
-  @result Returns an unsigned.
-  @discussion Adds an ordered MKUnitGenerator specification to the receiver. 
-              Implemented as <b>[self addUnitGenerator:</b><i>aUGClass</i>
-              ordered:YES]. Returns an integer that identifies the MKUnitGenerator
-              specification.
+  @return Returns an unsigned.
+  @brief Adds an ordered MKUnitGenerator specification to the receiver.
+
+  
+  Implemented as <b>[self addUnitGenerator:</b><i>aUGClass</i>
+  ordered:YES]. Returns an integer that identifies the MKUnitGenerator
+  specification.
 */
 -(unsigned ) addUnitGenerator:aUGClass; 
 
 /*!
-  @method addSynthData:length:
   @param  segment is a MKOrchMemSegment.
   @param  len is an unsigned.
-  @result Returns an unsigned.
-  @discussion Adds a MKSynthData specification to the receiver.  The MKSynthData has a
-              length of <i>len</i> DSPDatum words and is allocated from the DSP
-              segment <i>segment</i>, which should be either MK_xData or MK_yData.
-              Returns an integer that identifies the MKSynthData
-              specification.
+  @return Returns an unsigned.
+  @brief Adds a MKSynthData specification to the receiver.
+
+  The MKSynthData has a
+  length of <i>len</i> DSPDatum words and is allocated from the DSP
+  segment <i>segment</i>, which should be either MK_xData or MK_yData.
+  Returns an integer that identifies the MKSynthData
+  specification.
 */
 -(unsigned ) addSynthData:(MKOrchMemSegment )segment length:(unsigned )len; 
 
 /*!
-  @method addPatchpoint:
   @param  segment is a MKOrchMemSegment.
-  @result Returns an unsigned.
-  @discussion Adds a patchpoint (MKSynthData) specification to the receiver. 
-              <i>segment</i> is the DSP memory segment from which the patchpoint
-              is allocated.  It can be either MK_xPatch or MK_yPatch.  Returns an
-              integer that identifies the patchpoint specification.
+  @return Returns an unsigned.
+  @brief Adds a patchpoint (MKSynthData) specification to the receiver.
+
+  
+  <i>segment</i> is the DSP memory segment from which the patchpoint
+  is allocated.  It can be either MK_xPatch or MK_yPatch.  Returns an
+  integer that identifies the patchpoint specification.
 */
 -(unsigned)addPatchpoint:(MKOrchMemSegment)segment;
 
 /*!
-  @method synthElementCount
-  @result Returns an unsigned.
-  @discussion Returns the number of MKUnitGenerator and MKSynthData specifications
-              (including patchpoints) that have been added to the
-              receiver.
+  @return Returns an unsigned.
+  @brief Returns the number of MKUnitGenerator and MKSynthData specifications
+  (including patchpoints) that have been added to the
+  receiver.
+
+  
 */
 -(unsigned)synthElementCount;
 

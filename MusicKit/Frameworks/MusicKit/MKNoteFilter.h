@@ -14,16 +14,18 @@
 */
 /*!
   @class MKNoteFilter
-  @abstract MKNoteFilter is an abstract class that combines the functionality it inherits
-            from MKInstrument with the protocol defined in the MKPerformer class. 
+  @brief MKNoteFilter is an abstract class that combines the functionality it inherits
+  from MKInstrument with the protocol defined in the MKPerformer class. 
 
-  @discussion
-    MKNoteFilter is an abstract class that combines the functionality it inherits
-    from MKInstrument with the protocol defined in the MKPerformer class. 
-    MKNoteFilter objects can both receive and send MKNotes; they're interposed
-    between MKPerformers and MKInstruments to create a MKNote processing pipeline. 
-    The subclass responsibility <b>realizeNote:fromNoteReceiver:</b> is passed on to
-    MKNoteFilter subclasses. Keep in mind that notes must be copied on write or store.
+  @brief
+  MKNoteFilter is an abstract class that combines the functionality it inherits
+  from MKInstrument with the protocol defined in the MKPerformer class.
+
+  
+  MKNoteFilter objects can both receive and send MKNotes; they're interposed
+  between MKPerformers and MKInstruments to create a MKNote processing pipeline. 
+  The subclass responsibility <b>realizeNote:fromNoteReceiver:</b> is passed on to
+  MKNoteFilter subclasses. Keep in mind that notes must be copied on write or store.
 */
 #ifndef __MK_NoteFilter_H___
 #define __MK_NoteFilter_H___
@@ -36,86 +38,96 @@
 }
 
 /*!
-  @method init
-  @result Returns a newly initialized MKNoteFilter.
-  @discussion Creates MKNoteSenders and sends [super init].
+  @return Returns a newly initialized MKNoteFilter.
+  @brief Creates MKNoteSenders and sends [super init].
+
+  
 */
 - init;
 
 /*!
-  @method noteSenders
-  @result Returns an NSArray instance.
-  @discussion Returns a copy of the receiver's NSArray of MKNoteSenders.
+  @return Returns an NSArray instance.
+  @brief Returns a copy of the receiver's NSArray of MKNoteSenders.
+
+  
 */
 - (NSArray *) noteSenders;
 
 /*!
-  @method isNoteSenderPresent:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns a BOOL.
-  @discussion Returns YES if <i>aNoteSender</i> is one of the receiver's
-              MKNoteSenders.  Otherwise returns NO.
+  @return Returns a BOOL.
+  @brief Returns YES if <i>aNoteSender</i> is one of the receiver's
+  MKNoteSenders.
+
+  Otherwise returns NO.
 */
 - (BOOL) isNoteSenderPresent: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @method copyWithZone:
   @param  zone is a NSZone.
-  @result Returns an id.
-  @discussion Creates and returns a MKNoteFilter as a copy of the receiver.  The
-              new object contains copies of the receiver's MKNoteSenders and
-              MKNoteReceivers.
+  @return Returns an id.
+  @brief Creates and returns a MKNoteFilter as a copy of the receiver.
+
+  The
+  new object contains copies of the receiver's MKNoteSenders and
+  MKNoteReceivers.
 */
 - copyWithZone: (NSZone *) zone;
 
 /*!
-  @method releaseNoteSenders
-  @result Returns an id.
-  @discussion Removes and frees the receiver's MKNoteSenders. Returns the receiver.
+  @return Returns an id.
+  @brief Removes and frees the receiver's MKNoteSenders.
+
+  Returns the receiver.
 */
 - releaseNoteSenders;
 
 /*!
-  @method removeNoteSenders
-  @result Returns an id.
-  @discussion Removes all the receiver's MKNoteSenders. Returns the receiver.
+  @return Returns an id.
+  @brief Removes all the receiver's MKNoteSenders.
+
+  Returns the receiver.
 */
 - removeNoteSenders;
 
 /*!
-  @method noteSender
-  @result Returns an MKNoteSender instance.
-  @discussion Returns the receiver's first MKNoteSender.  This is method should
-              only by invoked if the receiver only contains one MKNoteSender or if
-              you don't care which MKNoteSender you get.  If there are currently
-              no MKNoteSenders, this method creates and adds a MKNoteSender.
+  @return Returns an MKNoteSender instance.
+  @brief Returns the receiver's first MKNoteSender.
+
+  This is method should
+  only by invoked if the receiver only contains one MKNoteSender or if
+  you don't care which MKNoteSender you get.  If there are currently
+  no MKNoteSenders, this method creates and adds a MKNoteSender.
 */
 - (MKNoteSender *) noteSender;
 
 /*!
-  @method addNoteSender:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns an MKNoteSender instance.
-  @discussion Removes <i>aNoteSender</i> from its present owner (if any) and adds
-              it to the receiver.  Returns <i>aNoteSender</i>.  If the receiver is
-              in performance, or if <i>aNoteSender</i> is already a member of the
-              receiver, does nothing and returns <b>nil</b>.
+  @return Returns an MKNoteSender instance.
+  @brief Removes <i>aNoteSender</i> from its present owner (if any) and adds
+  it to the receiver.
+
+  Returns <i>aNoteSender</i>.  If the receiver is
+  in performance, or if <i>aNoteSender</i> is already a member of the
+  receiver, does nothing and returns <b>nil</b>.
 */
 - (MKNoteSender *) addNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @method removeNoteSender:
   @param  aNoteSender is an MKNoteSender instance.
-  @result Returns an MKNoteSender instance.
-  @discussion Removes aNoteSender from the receiver's NSArray of MKNoteSenders. 
-              Returns <i>aNoteSender</i>.  If the receiver is in a performance,
-              does nothing and returns <b>nil</b>.
+  @return Returns an MKNoteSender instance.
+  @brief Removes aNoteSender from the receiver's NSArray of MKNoteSenders.
+
+  
+  Returns <i>aNoteSender</i>.  If the receiver is in a performance,
+  does nothing and returns <b>nil</b>.
 */
 - (MKNoteSender *) removeNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @method dealloc
-  @discussion Sends releaseNoteSenders to the receiver then releases the receivers ivars.
+  @brief Sends releaseNoteSenders to the receiver then releases the receivers ivars.
+
+  
  */
 - (void) dealloc; 
 

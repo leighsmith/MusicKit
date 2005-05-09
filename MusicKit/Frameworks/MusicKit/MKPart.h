@@ -22,7 +22,7 @@
 /*!
   @class MKPart
   @brief A MKPart is a timeTag-ordered collection of MKNotes that can be edited
-            performed, and realized.  MKParts are typically grouped together in an MKScore.
+  performed, and realized.  MKParts are typically grouped together in an MKScore.
 
 A MKPart is a timeTag-ordered collection of MKNotes that can be edited
 performed, and realized.  MKParts are typically grouped together in a MKScore.
@@ -59,12 +59,12 @@ an associated MKPartPerformer is active, you can add MKNotes to and
 remove MKNotes from the MKPart at any time without affecting the
 MKPartPerformer's performance.
 
-    A MKPart can be performed using a MKPartPerformer and can 'record' notes
-    by using a MKPartRecorder. You must not free a MKPart or any of the MKNotes
-    in a MKPart while there are any MKPartPerformers using the MKPart. It is ok
-    to record to a part and perform that part at the same time because the
-    MKPartPerformer takes a snap-shot of the MKPart when the MKPartPerformer
-    is activated.
+  A MKPart can be performed using a MKPartPerformer and can 'record' notes
+  by using a MKPartRecorder. You must not free a MKPart or any of the MKNotes
+  in a MKPart while there are any MKPartPerformers using the MKPart. It is ok
+  to record to a part and perform that part at the same time because the
+  MKPartPerformer takes a snap-shot of the MKPart when the MKPartPerformer
+  is activated.
 
 A MKPartPerformer creates its own NSMutableArray of the MKPart's
 MKNotes when it receives the setPart: message (but keep in mind that
@@ -116,40 +116,40 @@ and then adds it back to its MKPart.
 The MKNotes in a MKPart are stored in a NSArray object. The NSArray is only sorted
 when necessary. In particular, the NSArray is sorted, if necessary, when an
 access method is invoked. The access methods are:
-   
+  
 <ul>
-      <li><tt>firstTimeTag: (double) firstTimeTag lastTimeTag: (double) lastTimeTag;</tt></li>
-      <li><tt>atTime: (double) timeTag;</tt></li>
-      <li><tt>atOrAfterTime: (double) timeTag;</tt></li>
-      <li><tt>nth: (unsigned) n;</tt></li>
-      <li><tt>atOrAfterTime: (double) timeTag nth: (unsigned) n;</tt></li>
-      <li><tt>atTime: (double) timeTag nth: (unsigned) n;</tt></li>
-      <li><tt>next: (MKNote *) aNote;</tt></li>
-      <li><tt>notes;</tt></li>
+  <li><tt>firstTimeTag: (double) firstTimeTag lastTimeTag: (double) lastTimeTag;</tt></li>
+  <li><tt>atTime: (double) timeTag;</tt></li>
+  <li><tt>atOrAfterTime: (double) timeTag;</tt></li>
+  <li><tt>nth: (unsigned) n;</tt></li>
+  <li><tt>atOrAfterTime: (double) timeTag nth: (unsigned) n;</tt></li>
+  <li><tt>atTime: (double) timeTag nth: (unsigned) n;</tt></li>
+  <li><tt>next: (MKNote *) aNote;</tt></li>
+  <li><tt>notes;</tt></li>
 </ul>
 
-    Other methods that cause a sort, if necessary, are:
-   
+  Other methods that cause a sort, if necessary, are:
+  
 <ul>
-      <li><tt>combineNotes;</tt></li>
-      <li><tt>removeNotes: (NSArray *) aList;</tt></li>
-      <li><tt>removeNote: (MKNote *) aNote;</tt></li>
+  <li><tt>combineNotes;</tt></li>
+  <li><tt>removeNotes: (NSArray *) aList;</tt></li>
+  <li><tt>removeNote: (MKNote *) aNote;</tt></li>
 </ul>
 
-    Methods that may alter the NSArray such that its MKNotes are no longer sorted are
-    the following:
+  Methods that may alter the NSArray such that its MKNotes are no longer sorted are
+  the following:
 
 <ul>
-      <li><tt>addNoteCopies: (NSArray *) aList timeShift: (double) shift;</tt></li>
-      <li><tt>addNotes: (NSArray *) aList timeShift: (double) shift;</tt></li>
-      <li><tt>addNote: (MKNote *) aNote;</tt></li>
-      <li><tt>addNoteCopy: (MKNote *) aNote;</tt></li>
-      <li><tt>splitNotes;</tt></li>
+  <li><tt>addNoteCopies: (NSArray *) aList timeShift: (double) shift;</tt></li>
+  <li><tt>addNotes: (NSArray *) aList timeShift: (double) shift;</tt></li>
+  <li><tt>addNote: (MKNote *) aNote;</tt></li>
+  <li><tt>addNoteCopy: (MKNote *) aNote;</tt></li>
+  <li><tt>splitNotes;</tt></li>
 </ul>
-   
+  
 This scheme works well for most cases. However, there are situations where
 it can be problematic. For example:
-   
+  
 <tt>
   for (i = 0; i < 100; i++) {<br>
   &nbsp;&nbsp;[aPart addNote: anArray[i]];<br>
@@ -219,7 +219,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @brief Causes the MKPart to sort itself if it's currently unsorted.
  
   Normally, a MKPart sorts itself only when MKNotes are accessed, moved, or removed.
-              
+  
   @see -<b>isSorted</b>
 */
 - sort;
@@ -227,8 +227,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @return Returns a BOOL.
   @brief Returns YES if the MKPart's MKNotes are currently guaranteed to be
-              in time tag order, otherwise returns NO.   
-              
+  in time tag order, otherwise returns NO.   
+  
   @see -<b>sort</b>
 */
 - (BOOL) isSorted;
@@ -258,7 +258,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   added) to complement it.  The original parameters and note tag are
   divided between the two MKNotes as described in MKNote's
   <b>split::</b> method.  Returns <b>self</b>.
-              
+  
   @see -<b>combineNotes:</b>, -<b>split::</b> (MKNote)
 */
 - splitNotes; 
@@ -269,7 +269,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @brief Moves the MKPart from its present MKScore, if any, to <i>aScore</i>.
  
   Implemented in terms of MKScore's <b>addPart:</b> method.  
-              
+  
   @see  -<b>removeFromScore:</b>, -<b>score</b>
 */
 - addToScore: (MKScore *) newScore; 
@@ -279,7 +279,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @brief Removes the MKPart from its present MKScore.
  
   This is implemented in terms of MKScore's <b>removePart:</b> method.  
-              
+  
   @see -<b>addToScore:</b>, -<b>score</b>
 */
 - removeFromScore; 
@@ -287,7 +287,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @return Returns an id.
   @brief Initializes the object.  This should be invoked when alloc'ing a new
-              MKPart. 
+  MKPart. 
 */
 - init;
 
@@ -303,7 +303,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   Removes the receiver's name from the name table.  If the MKPart has an
   active MKPartPerformer associated with it, this does nothing.  
   Returns <b>nil</b>.
-              
+  
   @see -<b>empty</b>, -<b>removeNotes:</b>
 */
 - releaseNotes;
@@ -316,7 +316,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   its MKScore, if any.  You <i>can</i> free a MKPart while its being
   performed by a MKPartPerformer - it's the MKPart's MKNotes, not the
   MKPart itself, that's performed.
-              
+  
   @see -<b>empty</b>, -<b>removeNotes:</b>
 */
 - releaseSelfOnly; 
@@ -326,8 +326,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  lastTimeTag is a double.
   @return Returns an id.
   @brief Creates and returns a NSMutableArray of the MKPart's MKNotes that
-              have time tag values between <i>firstTimeTag</i> and
-              <i>lastTimeTag</i>, inclusive.
+  have time tag values between <i>firstTimeTag</i> and
+  <i>lastTimeTag</i>, inclusive.
  
   The MKNotes themselves are not copied.  The sender is responsible for freeing the NSMutableArray. 
   The object returned by this method is useful as the NSMutableArray
@@ -340,7 +340,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  aNote is an MKNote.
   @return Returns <i>aNote</i>'s old MKPart, or <b>nil</b> if none.
   @brief Moves <i>aNote</i> from its present MKPart to the receiving MKPart. 
-	    
+	  
   @see -<b>addNoteCopy:</b>, -<b>addNotes:timeShift:</b>, -<b>removeNote:</b>
 */
 - (MKPart *) addNote: (MKNote *) aNote;
@@ -351,7 +351,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @brief Adds a copy of <i>aNote</i> to the MKPart.
  
   Implemented in terms of <b>addNote:</b>.  
-              
+  
   @see -<b>addNote:</b>, -<b>addNoteCopies:timeShift:</b>, -<b>removeNote:</b>
 */
 - (MKNote *) addNoteCopy: (MKNote *) aNote;
@@ -362,7 +362,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @brief Removes <i>aNote</i> from the MKPart. 
  
   You shouldn't invoke this method if the MKPart has an active MKPartPerformer associated with it. 
-              
+  
   @see -<b>removeNotes:</b>, -<b>empty</b>, -<b>addNote</b>
 */
 - (MKNote *) removeNote: (MKNote *) aNote; 
@@ -385,9 +385,9 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  shift is a double.
   @return  Returns <b>self</b>, or <b>nil</b> if <i>aNoteList</i> is <b>nil</b>.
   @brief Copies each MKNote in <i>aNoteList</i> (which should be a
-              NSMutableArray object) adds <i>shift</i> to each new MKNote's time
-              tag, then adds the new MKNotes to the MKPart by repeatedly invoking
-              <b>addNote:</b>.
+  NSMutableArray object) adds <i>shift</i> to each new MKNote's time
+  tag, then adds the new MKNotes to the MKPart by repeatedly invoking
+  <b>addNote:</b>.
  
   The MKNotes in <i>aNoteList</i>  are unaffected. 
   <i>aNoteList</i> is typically generated through MKPart's
@@ -419,7 +419,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  shift is a double.
   @return Returns <b>self</b>.
   @brief Shifts the MKPart's contents by adding <i>shift</i> to each of the
-              MKNotes' time tags.
+  MKNotes' time tags.
  
   Implemented in terms of <b>addNotes:timeShift:</b>.  Notice that this means the MKNotes are
   removed and then readded to the MKPart.  Returns the
@@ -437,7 +437,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @brief Returns the number of MKNotes in the MKPart (not counting the info MKNote).
   @return Returns an unsigned.
-              
+  
   @see -<b>notes</b>, -<b>isEmpty</b>
 */
 - (unsigned) noteCount;
@@ -459,7 +459,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @return Returns a BOOL.
   @brief Returns YES if the MKPart contains no MKNotes (not including the info MKNote), otherwise returns NO.
-              
+  
   @see -<b>noteCount</b>
 */
 - (BOOL) isEmpty; 
@@ -468,10 +468,10 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  timeTag is a double.
   @return Returns an MKNote instance.
   @brief Returns the (first) MKNote in the MKPart that has a time tag of
-              <i>timeTag</i>, or <b>nil</b> if none.
+  <i>timeTag</i>, or <b>nil</b> if none.
  
   Invokes MKNote's <b>compareNotes:</b> method if the MKPart contains more than one such MKNote.
-              
+  
   @see -<b>atOrAfterTime:</b>, -<b>atTime:nth:</b>, -<b>next</b>
 */
 - (MKNote *) atTime: (double) timeTag; 
@@ -480,8 +480,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  timeTag is a double.
   @return Returns an MKNote instance.
   @brief Returns the first MKNote with a time tag equal to or greater than
-              <i>timeTag</i>, or <b>nil</b> if none.
-              
+  <i>timeTag</i>, or <b>nil</b> if none.
+  
   @see -<b>atTime:</b>, -<b>atOrAfterTime:nth:</b>, -<b>next</b>
 */
 - (MKNote *) atOrAfterTime: (double) timeTag;
@@ -497,9 +497,9 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  n is an unsigned.
   @return Returns an MKNote instance.
   @brief Returns the <i>n</i>th MKNote (0-based), or <b>nil</b> if <i>n</i>
-              is out of bounds (negative or greater than the MKPart's MKNote
-              count).
-              
+  is out of bounds (negative or greater than the MKPart's MKNote
+  count).
+  
   @see -<b>notes</b>, -<b>noteCount</b>, -<b>atTime:</b>
 */
 - (MKNote *) nth: (unsigned) n; 
@@ -509,8 +509,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  n is an unsigned.
   @return Returns an MKNote instance.
   @brief Returns the <i>n</i>th MKNote (zero-based) in the MKPart that has a
-         time tag equal to or greater than <i>timeTag</i>, or <b>nil</b> if none.
-              
+  time tag equal to or greater than <i>timeTag</i>, or <b>nil</b> if none.
+  
   @see  -<b>atTime:</b>, -<b>atOrAfterTime:</b>, -<b>next</b>
 */
 - (MKNote *) atOrAfterTime: (double) timeTag nth: (unsigned) n; 
@@ -520,8 +520,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  n is an unsigned.
   @return Returns an MKNote instance.
   @brief Returns the <i>n</i>th MKNote (zero-based) in the MKPart that has a
-              time tag of <i>timeTag</i>, or <b>nil </b>if none.
-              
+  time tag of <i>timeTag</i>, or <b>nil </b>if none.
+  
   @see -<b>atTime:</b>, -<b>atOrAfterTime:</b>, -<b>next</b>
 */
 - (MKNote *) atTime: (double) timeTag nth: (unsigned) n;
@@ -530,12 +530,12 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  aNote is an MKNote instance.
   @return Returns an MKNote instance.
   @brief Returns the MKNote immediately following <i>aNote</i>, or <b>nil</b>
-              if <i>aNote</i> isn't a member of the MKPart, or if it's the last
-              MKNote in the MKPart.
+  if <i>aNote</i> isn't a member of the MKPart, or if it's the last
+  MKNote in the MKPart.
  
   For greater efficiency, you should create a NSMutableArray from the <b>notes</b> method
   and then iterate over the array.
-              
+  
   @see -<b>nth:</b>, -<b>atTime:</b>, -<b>atOrAfterTime:</b>
 */
 - (MKNote *) next: (MKNote *) aNote; 
@@ -552,7 +552,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  zone is a NSZone instance.
   @return Returns an id.
   @brief This is the same as <b>copy</b>, but the new MKNote is allocated in <i>aZone</i>.
-              
+  
   @see -<b>copy</b>
 */
 - copyWithZone: (NSZone *) zone; 
@@ -565,7 +565,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   The new MKPart contains copies of receiving MKPart's MKNotes
   (including the info MKNote).   The new MKPart is added to the same
   MKScore as the receiving MKPart, but is left unnamed.
-              
+  
   @see -<b>copyFromZone:</b>
 */
 - copy;
@@ -595,8 +595,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @return Returns an MKScore.
   @brief Returns the MKScore the MKPart is a member of, or <b>nil</b> if
-              none.
-              
+  none.
+  
   @see -<b>addToScore:</b>, -<b>removeFromScore</b>
 */
 - (MKScore *) score; 
@@ -604,7 +604,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @return Returns an MKNote.
   @brief Returns the MKPart's info MKNote.
-              
+  
   @see -<b>setInfoNote:</b>
 */
 - (MKNote *) infoNote; 
@@ -613,7 +613,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   @param  aNote is an MKNote.
   @return Returns an id.
   @brief Sets the MKPart's info MKNote to a copy of <i>aNote</i> and returns
-              <b>self</b>.
+  <b>self</b>.
  
   The info MKNote can be given information (as
   parameters) that helps define how the MKPart should be interpreted;
@@ -660,7 +660,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 
   The info MKNote is stored separately from the MKPart's main body of MKNotes; 
   methods such as <b>empty</b> don't affect it.  
-              
+  
   @see -<b>infoNote</b>
 */
 - setInfoNote: (MKNote *) aNote;

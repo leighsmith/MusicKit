@@ -50,6 +50,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2005/05/09 15:52:54  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.8  2005/04/15 04:18:25  leighsmith
   Cleaned up for gcc 4.0's more stringent checking of ObjC types
 
@@ -74,7 +77,7 @@
 */
 /*!
   @class MKTimbre
-  @discussion
+  @brief
 
 The Music Kit supports a Timbre Data Base.  Each element in the data base is a
 MKTimbre.  Each MKTimbre maps a timbre name to a NSArray of MKWaveTable objects and a
@@ -84,11 +87,11 @@ additional timbres may be added, etc.
 
 The <i>waveTables</i> List is a List object of WaveTables sorted according to
 frequency.  The table that corresponds to the lowest frequency is first in the
-List.   <i>freqs</i> is a Storage object containing the frequencies
+List.  <i>freqs</i> is a Storage object containing the frequencies
 corresponding to each MKWaveTable.  The<i> timbreName</i> may be any string, but
 should not have a number in it and should not be longer than
 MK_MAXTIMBRENAMELEN, which is defined in <b>MKTimbre.h.</b>
-   
+  
 You normally create or retrieve an MKTimbre with<b> +newTimbre:</b>, passing the
 name of the timbre you want.  If that timbre exists, it is retrieved, otherwise
 it is created and installed in the Data Base.  Alternatively, you can create a
@@ -99,12 +102,12 @@ name of a  timbre that is already in the Data Base.  <b>timbreName</b> may be
 used to retrieve the name of an MKTimbre.  An anonymous timbre has a name field of
 NULL.
 
-The Music Kit MKSynthPatches use the Data Base by passing it a "timbre key".   A
+The Music Kit MKSynthPatches use the Data Base by passing it a "timbre key".  A
 timbre key is a timbre name with an optional integer appended to it and an
-optional 0 or 1 prepended to it.   The trailing number in a timbre key specifies
+optional 0 or 1 prepended to it.  The trailing number in a timbre key specifies
 a particular table (1-based).  A leading 0 or 1 specifies use of  the
 <b>freq0</b> or <b>freq1</b> parameter, respectively, to determine the
-appropriate MKWaveTable.   For convenience in supporting this functionality in
+appropriate MKWaveTable.  For convenience in supporting this functionality in
 your own MKSynthPatch  subclasses, we provide the function<b> MKWaveTableForTimbreKey()</b>. 
 
 The Data Base is stored in a HashTable object that maps names to MKTimbre objects.
@@ -116,7 +119,7 @@ An individual timbre can be written to an archive file.  Alternatively, the
 entire Data Base can be saved to an archive file using the <b>+timbres</b>
 method  to retrieve the Data Base and then archiving that object.
 
-See also:  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
+  @see  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
 */
 #ifndef __MK_Timbre_H___
 #define __MK_Timbre_H___
@@ -133,18 +136,20 @@ See also:  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
 #define MK_MAXTIMBRENAMELEN 64
 
 /*!
-  @method newTimbre:
   @param  name is an NSString.
-  @result Returns an id.
-  @discussion Retrieve timbre if it exists, otherwise create it and install it in
-              Data Base.
+  @return Returns an id.
+  @brief Retrieve timbre if it exists, otherwise create it and install it in
+  Data Base.
+
+  
 */
 +newTimbre:(NSString *)name;
 
 /*!
-  @method newTimbre:
-  @result Returns an id.
-  @discussion Initialize timbre to be a new anonymous timbre. 
+  @return Returns an id.
+  @brief Initialize timbre to be a new anonymous timbre.
+
+  
 */
 -init;
 
@@ -153,77 +158,85 @@ See also:  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
     it's name is NULL. */
 
 /*!
-  @method addWaveTable:forFreq:
   @param  obj is a MKWaveTable *.
   @param  freq is a double.
-  @result Returns an id.
-  @discussion Add the specified MKWaveTable/frequency pair. Returns self.  For
-              speed, no check is made as to whether the given MKWaveTable is already
-              present.   If you're not sure, send <b>removeWaveTable: </b>first. 
+  @return Returns an id.
+  @brief Add the specified MKWaveTable/frequency pair.
+
+  Returns self.  For
+  speed, no check is made as to whether the given MKWaveTable is already
+  present.   If you're not sure, send <b>removeWaveTable: </b>first. 
 */
 -addWaveTable:(MKWaveTable *)obj forFreq:(double)freq;
 
 /*!
-  @method removeWaveTable:
   @param  obj is a MKWaveTable *.
-  @result Returns <b>self</b>.
-  @discussion Removes the given MKWaveTable and its corresponding frequency.  
-              Returns <b>nil</b> if the <i>obj</i> is not found, otherwise self. 
-*/                            
+  @return Returns <b>self</b>.
+  @brief Removes the given MKWaveTable and its corresponding frequency.
+
+  
+  Returns <b>nil</b> if the <i>obj</i> is not found, otherwise self. 
+*/  
 -removeWaveTable:(MKWaveTable *)obj;
 
 /*!
-  @method waveTableForFreq:
   @param  freq is a double.
-  @result Returns an MKWaveTable instance.
-  @discussion Returns the MKWaveTable object corresponding to the
-              specified freq, if any.
+  @return Returns an MKWaveTable instance.
+  @brief Returns the MKWaveTable object corresponding to the
+  specified freq, if any.
+
+  
 */
 - (MKWaveTable *) waveTableForFreq: (double) freq;
 
 /*!
-  @method freqForWaveTable:
   @param  obj is a MKWaveTable *.
-  @result Returns a double.
-  @discussion Returns the freq corresponding to the specified freq, if any. 
-              Returns MK_NODVAL if none.  
+  @return Returns a double.
+  @brief Returns the freq corresponding to the specified freq, if any.
+
+  
+  Returns MK_NODVAL if none.  
 */
 -(double)freqForWaveTable:(MKWaveTable *)obj;
 
 /*!
-  @method waveTableAt:
   @param  index is an int.
-  @result Returns an MKWaveTable instance.
-  @discussion Returns the MKWaveTable object corresponding to the specified index,
-              if any.  Index is zero-based.  
+  @return Returns an MKWaveTable instance.
+  @brief Returns the MKWaveTable object corresponding to the specified index,
+  if any.
+
+  Index is zero-based.  
 */
 - (MKWaveTable *) waveTableAt: (int) index;
 
 /*!
-  @method freqAt:
   @param  index is an int.
-  @result Returns a double.
-  @discussion Returns the freq corresponding to the specified index, if any. 
-              Otherwise, returns MK_NODVAL. Index is zero-based.
-              
+  @return Returns a double.
+  @brief Returns the freq corresponding to the specified index, if any.
+
+  
+  Otherwise, returns MK_NODVAL. Index is zero-based.
+  
 */
 -(double)freqAt:(int)index;
 
 /*!
-  @method timbres
-  @result Returns an NSDictionary.
-  @discussion Returns the timbre data base, a NSDictionary mapping names to MKTimbres. 
-              The table is not copied.  You should not free it or alter it.  To
-              delete a MKTimbre, first find the MKTimbre and then send it the
-              <b>free</b> or <b>freeSelfOnly</b> message.
+  @return Returns an NSDictionary.
+  @brief Returns the timbre data base, a NSDictionary mapping names to MKTimbres.
+
+  
+  The table is not copied.  You should not free it or alter it.  To
+  delete a MKTimbre, first find the MKTimbre and then send it the
+  <b>free</b> or <b>freeSelfOnly</b> message.
 */
 +(NSDictionary *)timbres;
 
 /*!
-  @method setTimbreName:
   @param  newName is a char *.
-  @result Returns <b>self</b>.
-  @discussion if successful or <b>nil</b> if <i>newName</i> is already in use.
+  @return Returns <b>self</b>.
+  @brief if successful or <b>nil</b> if <i>newName</i> is already in use.
+
+  
 */
 -setTimbreName:(NSString *)newName;
 
@@ -231,31 +244,35 @@ See also:  MKWaveTable, MKPartials, MKSamples, SynthPatchLibrary.rtf
   /* Frees receiver and removes it from Data Base.  Frees WaveTables. */
 
 /*!
-  @method removeAllObjects
-  @discussion Empties the MKWaveTable Lits and freqs NSArray.
+  @brief Empties the MKWaveTable Lits and freqs NSArray.
+
+  
 */
 - (void)removeAllObjects;
 
 /*!
-  @method timbreName
-  @result Returns an NSString.
-  @discussion Returns <i>timbreName<b>.</b></i>  The string is not copied and
-              should not be altered or freed.
+  @return Returns an NSString.
+  @brief Returns <i>timbreName<b>.</b></i>  The string is not copied and
+  should not be altered or freed.
+
+  
 */
 -(NSString *)timbreName;  /* String is not copied */
 
 /*!
-  @method waveTables
-  @result Returns an NSMutableArray.
-  @discussion Returns <i>waveTables</i> object.  The NSMutableArray is not copied and should
-              not be altered.
+  @return Returns an NSMutableArray.
+  @brief Returns <i>waveTables</i> object.
+
+  The NSMutableArray is not copied and should
+  not be altered.
 */
 -(NSMutableArray *)waveTables; /* MKWaveTable List is not copied */
 
 /*!
-  @method freqs
-  @result Returns an NSMutableArray.
-  @discussion Returns <i>freqs</i>.<i>freqs</i> NSMutableArray is not copied.              
+  @return Returns an NSMutableArray.
+  @brief Returns <i>freqs</i>.<i>freqs</i> NSMutableArray is not copied.
+
+  
 */
 -(NSMutableArray *)freqs;  /* freqs NSArray is not copied. */
 

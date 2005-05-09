@@ -35,7 +35,7 @@
 @class MKScore
 
 @brief A MKScore is a collection of MKPart objects.  MKScores can be read from and
-          written to a scorefile or midifile, performed with a MKScorePerformer,
+  written to a scorefile or midifile, performed with a MKScorePerformer,
 	  and can be used to record MKNotes from a MKScoreRecorder.
 
 A MKScore is a collection of MKPart objects.  MKScores can be read from
@@ -74,7 +74,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @constant   MK_UNRECOGNIZEDFORMAT
   @constant   MK_MIDIFILE  MIDI Manufacturers Association Standard MIDI File V1.0.
   @constant   MK_SCOREFILE Text format version of Scorefile format, described in
-              <A href=http://www.musickit.org/MusicKitConcepts/scorefilesummary.html>this syntax description</A>.
+  <A href=http://www.musickit.org/MusicKitConcepts/scorefilesummary.html>this syntax description</A>.
   @constant   MK_PLAYSCORE Binary format version of Scorefile format.
   @constant   MK_MUSICXML  XML based MusicXML format.
  */
@@ -107,7 +107,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 - init;
 
 /*! 
-   @brief Releases the receiver and its contents.
+  @brief Releases the receiver and its contents.
  */
 - (void) dealloc;
 
@@ -126,7 +126,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  fileName is an NSString instance.
   @return Returns an id.
   @brief Opens the scorefile named <i>fileName</i> and merges its contents
-              with the receiver.  
+  with the receiver.  
  
   The file is automatically closed. Returns the receiver or <b>nil</b> if the file couldn't be read.
 */
@@ -149,10 +149,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be read.
   @brief The same as <b>readScorefile:</b>, but only those
-              MKNotes with timeTags in the specified range are added
-              to the receiver.
+  MKNotes with timeTags in the specified range are added
+  to the receiver.
  
- The added MKNotes' timeTags are shifted by <i>timeShift</i> beats.    
+ The added MKNotes' timeTags are shifted by <i>timeShift</i> beats.  
 */
 - readScorefile: (NSString *) fileName 
    firstTimeTag: (double) firstTimeTag
@@ -166,8 +166,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be read.
   @brief The same as <b>readScorefileStream:</b>, but only those
-              MKNotes with timeTags in the specified range are added
-	      to the receiver.
+  MKNotes with timeTags in the specified range are added
+	  to the receiver.
  
  The added MKNotes' timeTags are shifted by <i>timeShift</i> beats.  
 */
@@ -180,7 +180,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  aFileName is a NSString instance.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief Opens the scorefile named <b>aFileName</b> and writes the receiver to
-              it (the file is overwritten).
+  it (the file is overwritten).
  
  The file is automatically closed.
 */
@@ -204,8 +204,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeScorefile:</b>, but only those
-              MKNotes with timeTags in the specified range are written
-              to the file.
+  MKNotes with timeTags in the specified range are written
+  to the file.
  
  The written MKNotes' timeTags are shifted by <i>timeShift</i> beats.  
 */
@@ -221,8 +221,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeScorefileStream:</b>, but only those
-	      MKNotes with timeTags in the specified range are written
-	      to the file.
+	  MKNotes with timeTags in the specified range are written
+	  to the file.
  
  The written MKNotes' timeTags are shifted by <i>timeShift</i> beats.  
 */
@@ -235,7 +235,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  aFileName is a NSString instance.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief Opens the OptimizedScorefile named <b>fileName</b> and writes the
-              receiver to it (the file is overwritten).
+  receiver to it (the file is overwritten).
  
  The file is automatically closed.  
 */
@@ -257,8 +257,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeOptimizedScorefile:</b>, but only
-              those MKNotes with timeTags in the specified range are
-	      written to the file.
+  those MKNotes with timeTags in the specified range are
+	  written to the file.
  
  The written MKNotes' timeTags are shifted by <i>timeShift</i> beats.  
  */
@@ -273,8 +273,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeOptimizedScorefileStream:</b>, but
-              only those MKNotes with timeTags in the specified range are written
-              to the file. 
+  only those MKNotes with timeTags in the specified range are written
+  to the file. 
 */
 - writeOptimizedScorefileStream: (NSMutableData *) aStream 
                    firstTimeTag: (double) firstTimeTag 
@@ -287,10 +287,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns an id.
   @brief The same as <b>writeOptimizedScorefileStream:</b>, but
-              only those MKNotes with timeTags in the specified range
-	      are written to the file. The written MKNotes' timeTags
-	      are shifted by <i>timeShift</i> beats.  Returns the
-	      receiver or <b>nil</b> if the file couldn't be written.
+  only those MKNotes with timeTags in the specified range
+	  are written to the file. The written MKNotes' timeTags
+	  are shifted by <i>timeShift</i> beats.  Returns the
+	  receiver or <b>nil</b> if the file couldn't be written.
 */
 - writeOptimizedScorefileStream: (NSMutableData *) aStream 
                    firstTimeTag: (double) firstTimeTag 
@@ -338,8 +338,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  fileName is a NSString instance.
   @return Returns an id.
   @brief Reads the midifile <i>fileName</i> into the receiver, creating
-              MKParts for each MIDI Channel represented in the file and MKNotes
-              for each MIDI message.
+  MKParts for each MIDI Channel represented in the file and MKNotes
+  for each MIDI message.
  
   @see -<b>readMidifileStream</b>: for a discussion of MIDI to MKNote conversion.
 */
@@ -394,7 +394,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  timeShift is a double.
   @return Returns an id.
   @brief Writes the receiver's MKNotes, within the given
-              timeTag range,  as a midifile named <i>aFileName</i>.  
+  timeTag range,  as a midifile named <i>aFileName</i>.  
  
   <i>timeShift</i> is added to each MKNote's timeTag.
 
@@ -434,7 +434,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @brief The receiver is written as a format 1 midifile.
  
   The MKScore instance is written as follows:
-              
+  
   The MKParts are written in the order they appear in the
   MKScore as separate tracks.  The track number encoded in
   the MKPart's info MKNote is ignored.  MKNoteDurs are
@@ -516,7 +516,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  aChan is an int.
   @return Returns an MKPart instance.
   @brief Returns the first MKPart object that represents MIDI Channel <i>aChan</i>
-              by checking the MK_midiChan info parameter.
+  by checking the MK_midiChan info parameter.
  
   There are 17 MIDI Channels: 0 represents the channel for MIDI
   System and Channel Mode messages and 1 through 16 represent the
@@ -553,8 +553,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 /*!
   @return Returns an id.
   @brief Creates and returns a new MKScore as a copy of the receiver.  The
-              receiver's MKPart, MKNotes, and info MKNote are all
-              copied.
+  receiver's MKPart, MKNotes, and info MKNote are all
+  copied.
 */
 - copy;
 
@@ -608,11 +608,11 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  yesOrNo is a BOOL.
   @return Returns an id.
   @brief Sets the class variable <i>midifilesEvaluateTempo</i>, which
-              specifies how tempo is interpreted when reading or writing MIDI
-              files.
+  specifies how tempo is interpreted when reading or writing MIDI
+  files.
  
   Tempo is interepreted as follows:
-              
+  
   If <i>midifilesEvaluateTempo</i> is YES, the MKNotes'
   timeTags and durations are modified according to the tempo.  For
   example, if the tempo is 120 and a MIDI note begins at time 1.0 in
@@ -650,29 +650,29 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 /*!
   @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions used in writing and
-              reading MIDI files appropriate for the native operating system.
+  reading MIDI files appropriate for the native operating system.
 */
 + (NSArray *) midifileExtensions;
 
 /*!
   @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions used in writing and
-              reading scorefiles files appropriate for the native operating system.
+  reading scorefiles files appropriate for the native operating system.
 */
 + (NSArray *) scorefileExtensions;
 
 /*!
   @return Returns an NSArray of NSStrings.
   @brief This method allows overriding the file extensions used in writing and
-     reading scorefiles files returned by <i>scorefileExtensions</i>.
+  reading scorefiles files returned by <i>scorefileExtensions</i>.
  */
 + (void) setAlternativeScorefileExtensions: (NSArray *) otherScoreFileExtensions;
 
 /*!
   @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions used in writing and
-              reading scorefiles and MIDI files appropriate for the
-              native operating system.
+  reading scorefiles and MIDI files appropriate for the
+  native operating system.
 */
 + (NSArray *) fileExtensions;
 
@@ -711,8 +711,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeScorefile:</b>, but only those
-              MKNotes with timeTags in the specified range are written
-              to the file.  
+  MKNotes with timeTags in the specified range are written
+  to the file.  
 */
 - writeScorefile: (NSString *) aFileName 
     firstTimeTag: (double) firstTimeTag 
@@ -724,8 +724,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeScorefileStream:</b>, but only those
-	      MKNotes with timeTags in the specified range are written
-	      to the file. 
+	  MKNotes with timeTags in the specified range are written
+	  to the file. 
 */
 - writeScorefileStream: (NSMutableData *) aStream 
           firstTimeTag: (double) firstTimeTag 
@@ -737,8 +737,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be read.
   @brief The same as <b>readScorefile:</b>, but only those
-	      MKNotes with timeTags in the specified range are added
-	      to the receiver.
+	  MKNotes with timeTags in the specified range are added
+	  to the receiver.
 */
 - readScorefile: (NSString *) fileName 
    firstTimeTag: (double) firstTimeTag 
@@ -750,8 +750,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be read.
   @brief The same as <b>readScorefileStream:</b>, but only those
-	      MKNotes with timeTags in the specified range are added
-	      to the receiver.
+	  MKNotes with timeTags in the specified range are added
+	  to the receiver.
 */
 - readScorefileStream: (NSMutableData *) stream 
          firstTimeTag: (double) firstTimeTag 
@@ -763,8 +763,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
   @brief The same as <b>writeOptimizedScorefile:</b>, but only
-	      those MKNotes with timeTags in the specified range are
-	      written to the file. 
+	  those MKNotes with timeTags in the specified range are
+	  written to the file. 
 */
 - writeOptimizedScorefile: (NSString *) aFileName 
              firstTimeTag: (double) firstTimeTag 
@@ -780,7 +780,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   The MKNotes that are created are retained in the
   receiver only if their timeTags are within the given
   boundaries.
-              
+  
   @see  -<b>readMidiFileStream:</b> for a discussion of MIDI to MKNote conversion.  
 */
 - readMidifile: (NSString *) aFileName 
@@ -807,7 +807,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @param  lastTimeTag is a double.
   @return Returns an id.
   @brief Writes the receiver's MKNotes, within the given
-              timeTag range, as a midifile named <i>aFileName</i>.
+  timeTag range, as a midifile named <i>aFileName</i>.
  
   @see -<b>writeMidifile:</b> for conversion details.
 */
@@ -831,7 +831,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 /*!
   @param  partTitleToFind
   @brief Returns the MKPart whose info note has an MK_title parameter
-              equal to partTitleToFind, nil if it couldn't be found.
+  equal to partTitleToFind, nil if it couldn't be found.
   @return Returns the MKPart, nil if it couldn't be found.
 */
 - (MKPart *) partTitled: (NSString *) partTitleToFind;
