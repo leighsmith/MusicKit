@@ -22,11 +22,12 @@
 #import "SndAudioProcessorChain.h"
 
 /*!
-@class SndStreamMixer
-@abstract Stream mixer and effects processor
-@discussion The SndStreamMixer class is responsible for managing the mixing of SndAudioBuffers from all
-            current SndStreamClients. After mixing all buffers, it can apply any signal processing to the mixed
-	    result by modifying it's SndAudioProcessorChain retrieved using audioProcessorChain.
+  @class SndStreamMixer
+  @brief Stream mixer and effects processor
+
+  The SndStreamMixer class is responsible for managing the mixing of SndAudioBuffers from all
+  current SndStreamClients. After mixing all buffers, it can apply any signal processing to the mixed
+  result by modifying it's SndAudioProcessorChain retrieved using audioProcessorChain.
 */
 @interface SndStreamMixer : NSObject
 {
@@ -43,16 +44,14 @@
 }
 
 /*!
-  @method     mixer
-  @abstract   Factory method returning an initialized and autoreleased SndStreamMixer instance.
-  @result     Returns an initialized and autoreleased SndStreamMixer instance.
+  @brief   Factory method returning an initialized and autoreleased SndStreamMixer instance.
+  @return     Returns an initialized and autoreleased SndStreamMixer instance.
 */
 + mixer;
 
 /*!
-  @method     init
-  @abstract   Initializer method.
-  @result     Returns self.
+  @brief   Initializer method.
+  @return     Returns self.
 */
 - init;
 
@@ -61,69 +60,64 @@
 - (NSString *) description;
 
 /*!
-  @method     processInBuffer:outBuffer:nowTime:
-  @abstract   Mixes together all clients currently exposed output buffers.
-  @discussion After mixing all client exposed output buffers, processInBuffer:outBuffer:nowTime
-              then applies any audio processing to the mix. Each client then receives the message
-              startProcessingNextBufferWithInput:nowTime:, passing the input buffer, to generate
-              the next buffer.
+  @brief   Mixes together all clients currently exposed output buffers.
+  
+  After mixing all client exposed output buffers, processInBuffer:outBuffer:nowTime
+  then applies any audio processing to the mix. Each client then receives the message
+  startProcessingNextBufferWithInput:nowTime:, passing the input buffer, to generate
+  the next buffer.
   @param      inB The input buffer filled with recorded audio.
   @param      outB The output buffer to fill for playback.
   @param      t The current now time.
-  @result     Returns self.
+  @return     Returns self.
 */
 - processInBuffer: (SndAudioBuffer *) inB
         outBuffer: (SndAudioBuffer *) outB
           nowTime: (double) t;
 
 /*!
-  @method     removeClient:
-  @abstract   Removes the given SndStreamClient from mixing.
+  @brief   Removes the given SndStreamClient from mixing.
   @param      client The SndStreamClient instance to remove.
-  @result     Returns YES if client was successfully removed, NO if it was not being mixed.
+  @return     Returns YES if client was successfully removed, NO if it was not being mixed.
 */
 - (BOOL) removeClient: (SndStreamClient *) client;
 
 /*!
-  @method     addClient:
-  @abstract   Add a SndStreamClient to the mix.
-  @discussion If the client is already being mixed, it will not be added again.
+  @brief   Add a SndStreamClient to the mix.
+  
+  If the client is already being mixed, it will not be added again.
   @param      client A SndStreamClient instance.
-  @result     Returns the new number of clients.
+  @return     Returns the new number of clients.
 */
 - (int) addClient: (SndStreamClient *) client;
 
 /*!
-  @method finishMixing
-  @abstract Informs the receiver that all mixing is to be completed, that mixing clients and buffers are to be updated.
-  @discussion This should be sent when the manager is shutting down.
+  @brief Informs the receiver that all mixing is to be completed, that mixing clients and buffers are to be updated.
+  
+  This should be sent when the manager is shutting down.
 */
 - (void) finishMixing;
 
 /*!
-  @method     clientCount
-  @abstract   Returns the number of stream clients currently connected to the mixer.
-  @result     Returns the number of stream clients currently connected to the mixer.
+  @brief   Returns the number of stream clients currently connected to the mixer.
+  @return     Returns the number of stream clients currently connected to the mixer.
 */
 - (int) clientCount;
 
 /*!
-  @method     audioProcessorChain
-  @abstract   Returns the SndAudioProcessorChain applied after mixing SndStreamClients.
-  @result     Returns a reference to the audio processor chain.
+  @brief   Returns the SndAudioProcessorChain applied after mixing SndStreamClients.
+  @return     Returns a reference to the audio processor chain.
 */
 - (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
-  @method     resetTime:
-  @abstract   Resets the mixer's sense of time, and pro
+  @brief   Resets the mixer's sense of time, and pro
   @param      originTimeInSeconds
 */
 - (void) resetTime: (double) originTimeInSeconds;
 
 /*!
-  @method     clientAtIndex:
-  @abstract   Returns a given SndStreamClient being mixed, indexed by a numeric identifier.
+  @brief   Returns a given SndStreamClient being mixed, indexed by a numeric identifier.
   @param      clientIndex
 */
 - (SndStreamClient *) clientAtIndex: (int) clientIndex;

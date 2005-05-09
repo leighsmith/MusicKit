@@ -14,8 +14,8 @@
 
 /*!
   @class SndStretchableScroller
-  @abstract A subclass of NSScroller that adds two handles that allows stretching the scroller, signalling that
-            the enclosed scrollable object should be resized, typically changing magnification.
+  @brief A subclass of NSScroller that adds two handles that allows stretching the scroller, signalling that
+  the enclosed scrollable object should be resized, typically changing magnification.
  */
 @interface SndStretchableScroller: NSScroller {
   /*! stretchingLeftKnob YES when the left knob is being stretched. */
@@ -25,14 +25,12 @@
 }
 
 /*!
-  @method drawKnob
-  @abstract The new drawing method which draws the stretch icons.
+  @brief The new drawing method which draws the stretch icons.
  */
 - (void) drawKnob;
 
 /*!
-  @method mouseDown:
-  @abstract The new mouse event method that detects and updates the scroller.
+  @brief The new mouse event method that detects and updates the scroller.
   @param theEvent An NSEvent
  */ 
 - (void) mouseDown: (NSEvent *) theEvent;
