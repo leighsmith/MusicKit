@@ -29,14 +29,15 @@
 
 /*!
 @class SndStreamArchitectureView
-@abstract View showing the current layout of Snd streaming components
-          (rudimentary)
-@discussion Shows the manager, mixer, clients and processors attached to each.
-            User may click on any object to see their current description
-            (updated every second). Object then becomes the currentObject,
-            which triggers a message to an interested delegate which, for
-            example, may wish to activate an editor for that object. An example
-            of this behaviour may be found in <b>SndAudioProcessorInspector</b>.
+@brief View showing the current layout of Snd streaming components
+  (rudimentary)
+
+  Shows the manager, mixer, clients and processors attached to each.
+  User may click on any object to see their current description
+  (updated every second). Object then becomes the currentObject,
+  which triggers a message to an interested delegate which, for
+  example, may wish to activate an editor for that object. An example
+  of this behaviour may be found in <b>SndAudioProcessorInspector</b>.
 */
 @interface SndStreamArchitectureView : NSView {
 /*! @var timer */ 
@@ -54,91 +55,91 @@
 }
 
 /*!
-  @method     update:
-  @abstract   NSTimer callback that forces a fresh of the view.
-  @discussion To come
+  @brief   NSTimer callback that forces a fresh of the view.
+  
+  To come
   @param      timer
-  @result     self
+  @return     self
 */
 - update: (NSTimer*) timer;
 /*!
-  @method     drawStreamClient:inRect:
-  @abstract   To come
-  @discussion For internal use only
+  @brief   To come
+  
+  For internal use only
   @param      client
   @param      rect
-  @result     self
+  @return     self
 */
 - drawStreamClient: (SndStreamClient*) client inRect: (NSRect) rect;
 /*!
-  @method     drawMixerInRect:
-  @abstract   To come
-  @discussion For internal use only
+  @brief   To come
+  
+  For internal use only
   @param      rect
-  @result     self
+  @return     self
 */
 - drawMixerInRect: (NSRect) rect;
 /*!
-  @method     drawStreamManagerInRect:
-  @abstract   To come
-  @discussion For internal use only
+  @brief   To come
+  
+  For internal use only
   @param      rect
-  @result     self
+  @return     self
 */
 - drawStreamManagerInRect: (NSRect) rect;
 /*!
-  @method     drawAudioProcessorChain:inRect:
-  @abstract   To come
-  @discussion For internal use only
+  @brief   To come
+  
+  For internal use only
   @param      apc
   @param      rect
-  @result     self
+  @return     self
 */
 - drawAudioProcessorChain: (SndAudioProcessorChain*) apc inRect: (NSRect) rect;
 /*!
-  @method     drawRect:withColor:
-  @abstract   To come
-  @discussion To come
+  @brief   To come
+  
+  To come
   @param      aRect
   @param      aColor
-  @result     self
+  @return     self
 */
 - drawRect: (NSRect) aRect withColor: (NSColor*) aColor;
 /*!
-  @method     mouseUp:
-  @abstract   To come
-  @discussion To come
+  @brief   To come
+  
+  To come
   @param      theEvent
 */
 - (void) mouseUp: (NSEvent*) theEvent;
 /*!
-  @method     setDelegate:
-  @abstract   To come
-  @discussion To come
+  @brief   To come
+  
+  To come
   @param      delegate
-  @result     self
+  @return     self
 */
 - (void) setDelegate: (id) delegate;
 /*!
-  @method     delegate
-  @abstract   To come
-  @discussion To come
-  @result     A delegate id.
+  @brief   To come
+  
+  To come
+  @return     A delegate id.
 */
 - (id) delegate;
 /*!
-  @method     currentlySelectedAudioArchObject
-  @abstract   To come
-  @discussion To come
+  @brief   To come
+  
+  To come
   @param      delegate
-  @result     Returns the id of the current, user selected audio architecture object.
+  @return     Returns the id of the current, user selected audio architecture object.
 */
 - (id) currentlySelectedAudioArchObject;
 /*!
-  @method     clearCurrentlySelectedAudioArchObject
-  @abstract   Clears the currently selected audio architecture object to nil.
-  @discussion To come
-  @result     self.
+  @brief   Clears the currently selected audio architecture object to nil.
+  
+  To come
+  @return     self.
 */
 - clearCurrentlySelectedAudioArchObject;
 
@@ -152,12 +153,12 @@
 */
 @protocol SndStreamArchitectureViewDelegateProtocol
 /*!
-  @method     didSelectObject:
-  @abstract   sent to delegate when an on-screen audio object (mixer, processor
-              manager, client) is clicked by the user.
-  @discussion
+  @brief   sent to delegate when an on-screen audio object (mixer, processor
+  manager, client) is clicked by the user.
+  
+  
   @param      sndAudioArchDisplayObject
-  @result
+  @return
 */
 - didSelectObject: (id) sndAudioArchDisplayObject;
 
