@@ -29,8 +29,9 @@
 
 /*!
   @typedef SndFormat
-  @abstract Defines a structure for holding sound describing parameters, but no sample data itself.
-  @discussion This is the replacement for SndSoundStruct which is now deprecated.
+  @brief Defines a structure for holding sound describing parameters, but no sample data itself.
+  
+  This is the replacement for SndSoundStruct which is now deprecated.
   @field dataFormat The data format code of enumerated type SndSampleFormat.
   @field frameCount The number of multichannel samples in the sound. Total data size = frameCount * channelCount * SndSampleWidth(dataFormat).
   @field channelCount The number of channels.

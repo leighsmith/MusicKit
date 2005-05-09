@@ -53,17 +53,17 @@ extern unsigned char ulaw_comp_table[16384];
 
 /*!
   @function SndLinearToMuLaw
-  @abstract Converts a linear value to a uLaw compressed signal.
+  @brief Converts a linear value to a uLaw compressed signal.
   @param linearValue
-  @result
+  @return
  */
 SNDKIT_API unsigned char SndLinearToMuLaw(short linearValue);
 
 /*!
   @function SndMuLawToLinear
-  @abstract Converts a uLaw compressed signal to a linear value.
+  @brief Converts a uLaw compressed signal to a linear value.
   @param mulawValue
-  @result
+  @return
  */
 SNDKIT_API short SndMuLawToLinear(unsigned char mulawValue);
 
@@ -78,17 +78,17 @@ extern unsigned char Alaw_comp_table[16384];
 
 /*!
   @function SndLinearToALaw
-  @abstract Converts a linear value to an ALaw compressed signal.
+  @brief Converts a linear value to an ALaw compressed signal.
   @param linearValue
-  @result
+  @return
  */
 SNDKIT_API unsigned char SndLinearToALaw(short linearValue);
 
 /*!
   @function SndALawToLinear
-  @abstract Converts an ALaw compressed signal to a linear value.
+  @brief Converts an ALaw compressed signal to a linear value.
   @param alawbyte
-  @result
+  @return
  */
 SNDKIT_API short SndALawToLinear(unsigned char alawbyte);
 

@@ -27,8 +27,9 @@
 
 /*!
   @class SndAudioProcessor
-  @abstract A VST-like audio FX processing module base class.
-  @discussion To come
+  @brief A VST-like audio FX processing module base class.
+  
+  To come
 */
 @interface SndAudioProcessor : NSObject {
     /*! @var numParams Number of parameters in the audio processor */
@@ -44,253 +45,245 @@
 }
 
 /*!
-  @method registerAudioProcessorClass:
-  @abstract Registers an SndAudioProcessor class
-  @discussion Automatically called by the SndAudioProcessor init method,
+  @brief Registers an SndAudioProcessor class
+  
+  Automatically called by the SndAudioProcessor init method,
   so any subclasses will automatically register themselves once instantiated.
   @param fxclass The class of an SndAudioProcessor
 */
 + (void) registerAudioProcessorClass: (id) fxclass;
 
 /*!
- @method fxClasses
- @discussion Use this to get a list of all the available FX processors.
- @result An NSArray of SndAudioProcessor sub-classed Class object ids
+ @brief Use this to get a list of all the available FX processors.
+
+  
+ @return An NSArray of SndAudioProcessor sub-classed Class object ids
 */
 + (NSArray*) fxClasses;
 
 /*!
-  @method availableAudioProcessors
-  @abstract Returns an array of names of available audio units (on MacOS X).
-  @discussion The names returned can be assumed to be human readable and reasonably formatted. They can also
-     be assumed to be unique and therefore can be used to create an instance using +processorNamed:.
-  @result Returns an autoreleased NSArray of NSStrings of audio processors.
+  @brief Returns an array of names of available audio units (on MacOS X).
+  
+  The names returned can be assumed to be human readable and reasonably formatted. They can also
+  be assumed to be unique and therefore can be used to create an instance using +processorNamed:.
+  @return Returns an autoreleased NSArray of NSStrings of audio processors.
  */
 + (NSArray *) availableAudioProcessors;
 
 /*!
- @method     audioProcessor
- @abstract   Factory method
- @discussion To come
- @result     Returns a freshly initialized, autoreleased SndAudioProcessor
+ @brief  Factory method
+ 
+  To come
+ @return  Returns a freshly initialized, autoreleased SndAudioProcessor
 */
 + audioProcessor;
 
 /*!
-  @method audioProcessorNamed:
-  @abstract Returns an autoreleased instance of a SndProcessor subclass named <I>processorName</I>.
+  @brief Returns an autoreleased instance of a SndProcessor subclass named <I>processorName</I>.
   @param processorName The name of a SndAudioProcessor as returned previously by <B>availableAudioProcessors</B>.
-  @discussion Factory method.
+  
+  Factory method.
  */
 + (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName;
 
 /*!
-  @method     init
-  @abstract   Initialization method
-  @result     Returns <B>self</B>.
+  @brief   Initialization method
+  @return     Returns <B>self</B>.
  */
 - init;
 
 /*!
-  @method     initWithParamCount:name:
-  @abstract   Initialization method
+  @brief   Initialization method
   @param      count
   @param      name
-  @result     Returns <B>self</B>.
+  @return     Returns <B>self</B>.
 */
 - initWithParamCount: (const int) count name: (NSString *) name;
 
 /*!
-  @method     initWithParameterDictionary:name:
-  @abstract   Initialization using a dictionary of parameters.
+  @brief   Initialization using a dictionary of parameters.
   @param      paramDictionary NSDictionary of parameters and values to initialise SndAudioProcessor instance with.
   @param      name Name of the SndAudioProcessor to initialise.
-  @result     Returns <B>self</B>.
+  @return     Returns <B>self</B>.
  */
 - initWithParameterDictionary: (NSDictionary *) paramDictionary name: (NSString *) name;
 
 /*!
-  @method      reset
-  @abstract    Message sent when host determines the SndAudioProcessor should reinitialize
-               its processing state. Eg, a delay processor would zero its z-buffers.
-  @result      self
+  @brief    Message sent when host determines the SndAudioProcessor should reinitialize
+  its processing state. Eg, a delay processor would zero its z-buffers.
+  @return      self
 */
 - reset;
 
 - (void) setNumParams: (const int) c;
 
 /*!
-  @method     paramCount
-  @abstract   Gets the number of parameters
-  @result     number of parameters
+  @brief   Gets the number of parameters
+  @return     number of parameters
 */
 - (int) paramCount;
 
 /*!
-  @method     paramValue:
-  @abstract   Gets the value of the indexed parameter. 
-  @discussion Following the VST convention, this should be in the range [0,1]. No enforcement at the present time.
+  @brief   Gets the value of the indexed parameter. 
+  
+  Following the VST convention, this should be in the range [0,1]. No enforcement at the present time.
   @param      index Index of the parameter
-  @result     parameter value
+  @return     parameter value
 */
 - (float) paramValue: (const int) index;
 
 /*!
- @method   paramName:
- @abstract   Gets the name of indexed parameter.
- @param      index Parameter index
- @result     NSString with parameter name
+ @brief  Gets the name of indexed parameter.
+ @param  index Parameter index
+ @return  NSString with parameter name
 */
 - (NSString *) paramName: (const int) index;
 
 /*!
- @method     paramLabel:
- @abstract   Returns a label or extra text describing the parameters units of measurement.
- @param      index Parameter index
- @discussion Example: if the parameter is in deciBels, an appropriate result might be to return "dB"
- @result     Returns the label for the parameter.
+ @brief  Returns a label or extra text describing the parameters units of measurement.
+ @param  index Parameter index
+ 
+  Example: if the parameter is in deciBels, an appropriate result might be to return "dB"
+ @return  Returns the label for the parameter.
 */
 - (NSString *) paramLabel: (const int) index;
 
 /*!
-  @method     paramDisplay:
-  @abstract   Converts an object-internal value into a more user-friendly representation.
+  @brief   Converts an object-internal value into a more user-friendly representation.
   @param      index Parameter index
-  @discussion Example: An instance variable may have a floating point range [0,1], but it
-              represents a deciBel amount for user purposes. This method is an opportunity for the
-              object to provide a more meaningful description of the parameter.
-  @result     Returns an NSString containing the alternative string representation of the parameter
+  
+  Example: An instance variable may have a floating point range [0,1], but it
+  represents a deciBel amount for user purposes. This method is an opportunity for the
+  object to provide a more meaningful description of the parameter.
+  @return     Returns an NSString containing the alternative string representation of the parameter
 */
 - (NSString *) paramDisplay: (const int) index;
 
 /*!
- @method     setParam:toValue:
- @abstract   Sets the indexed parameter to the value v.
- @discussion By VST convention, the argument v should be in the range [0,1]. If the
-             internal parameter has a different range, this should be mapped internally.
- @param      index Index of the parameter to be set 
- @param      v Floating point value in the range [0,1]
+ @brief  Sets the indexed parameter to the value v.
+ 
+  By VST convention, the argument v should be in the range [0,1]. If the
+  internal parameter has a different range, this should be mapped internally.
+ @param  index Index of the parameter to be set 
+ @param  v Floating point value in the range [0,1]
 */
 - (void) setParam: (const int) index toValue: (const float) v;
 
 /*!
- @method     processReplacingInputBuffer:outputBuffer:
- @abstract   Process the inputBuffer, and replace the results in the output buffer
- @discussion Overide this method with your own FX processing routines.
-             There is nothing to stop inB and outB referring to the same buffer -  
-             be warned that replacing the output values in outB may change inB in 
-             these cases.
- @param      inB The input buffer
- @param      outB The output buffer
- @result     BOOL indicates whether the output is held in outB (YES), or inB (NO). 
-             Means that processors that decide not to touch their data at all don't 
-             need to spend time copying between buffers.
+ @brief  Process the inputBuffer, and replace the results in the output buffer
+ 
+  Overide this method with your own FX processing routines.
+  There is nothing to stop inB and outB referring to the same buffer -  
+  be warned that replacing the output values in outB may change inB in 
+  these cases.
+ @param  inB The input buffer
+ @param  outB The output buffer
+ @return  BOOL indicates whether the output is held in outB (YES), or inB (NO). 
+  Means that processors that decide not to touch their data at all don't 
+  need to spend time copying between buffers.
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
                         outputBuffer: (SndAudioBuffer *) outB;
 
 /*!
- @method    setAudioProcessorChain:
- @abstract
- @discussion (Internal SndKit use only) Individual processors may want
-             to query their enclosing processor chain, for example to
-             get the time at the start of the buffer (nowTime). This
-             method gets called when a processor gets added to the chain,
-             with the id of the chain.
- @param      inChain
+ @brief
+ 
+  (Internal SndKit use only) Individual processors may want
+  to query their enclosing processor chain, for example to
+  get the time at the start of the buffer (nowTime). This
+  method gets called when a processor gets added to the chain,
+  with the id of the chain.
+ @param  inChain
 */
 - (void) setAudioProcessorChain: (SndAudioProcessorChain *) inChain;
 
 /*!
-  @method     audioProcessorChain
-  @abstract   Returns the SndAudioProcessorChain to which the processor is
-              attached
-  @discussion
-  @result     Returns a SndAudioProcessorChain instance.
+  @brief   Returns the SndAudioProcessorChain to which the processor is
+  attached
+  
+  
+  @return     Returns a SndAudioProcessorChain instance.
 */
 - (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
-  @method     isActive
-  @abstract   Processor activity status query method
-  @result     Returns TRUE if the processor is active, ie whether the host processor 
-              chain should pass the audio stream through this processor.
+  @brief   Processor activity status query method
+  @return     Returns TRUE if the processor is active, ie whether the host processor 
+  chain should pass the audio stream through this processor.
 */
 - (BOOL) isActive;
 
 /*!
-  @method     setActive
-  @abstract   Sets the active status of the processor.
+  @brief   Sets the active status of the processor.
   @param      b TRUE if the processor is to be made active.
-  @result     self
+  @return     self
 */
 - setActive: (const BOOL) b;
 
 /*!
-  @method     setName:
-  @abstract   Assigns the SndAudioProcessor instance a new name.
-  @result     Returns self.
-  @discussion
+  @brief   Assigns the SndAudioProcessor instance a new name.
+  @return     Returns self.
+  
+  
 */
 - setName: (NSString *) aName;
 
 /*!
-  @method     name
-  @abstract   Returns the name of the audio processor.
-  @result     Returns an NSString instance.
-  @discussion The name may or may not be unique to each instance of a SndAudioProcessor.
+  @brief   Returns the name of the audio processor.
+  @return     Returns an NSString instance.
+  
+  The name may or may not be unique to each instance of a SndAudioProcessor.
 */
 - (NSString *) name;
 
 /*!
-  @method     paramDictionary
-  @abstract   Returns an NSDictionary holding all parameters of a SndAudioProcessor instance.
-  @result     An autoreleased NSDictionary.
-  @discussion Each element in the dictionary has a key with an NSString of the parameter name and an 
-              object which is an NSValue of the floating point parameter value.
+  @brief   Returns an NSDictionary holding all parameters of a SndAudioProcessor instance.
+  @return     An autoreleased NSDictionary.
+  
+  Each element in the dictionary has a key with an NSString of the parameter name and an 
+  object which is an NSValue of the floating point parameter value.
 */
 - (NSDictionary *) paramDictionary;
 
 /*!
-  @method     setParamsWithDictionary:
-  @abstract   Sets parameters with names and values provided by the given NSDictionary.
+  @brief   Sets parameters with names and values provided by the given NSDictionary.
   @param      paramDictionary an NSDictionary holding NSString keys and NSValue float encoded objects.
-  @discussion Each element in the dictionary has a key with an NSString of the parameter name and an
-              object which is an NSValue of the floating point parameter value.
+  
+  Each element in the dictionary has a key with an NSString of the parameter name and an
+  object which is an NSValue of the floating point parameter value.
  */
 - (void) setParamsWithDictionary: (NSDictionary *) paramDictionary;
 
 /*!
-  @method     setParamWithKey:toValue:
-  @abstract   Assigns the parameter named keyName to the passed value.
+  @brief   Assigns the parameter named keyName to the passed value.
   @param      keyName An NSString case-sensitively matching a parameter name.
   @param      value An NSValue holding an encoded float value between 0.0 and 1.0.
-  @discussion
+  
+  
 */
 - (void) setParamWithKey: (NSString *) keyName toValue: (NSNumber *) value;
 // TODO - (void) setParamWithKey: (NSString *) keyName toValue: (NSValue *) value;
 
 
 /*!
-  @method     paramObjectForIndex:
-  @abstract   Returns the parameter value as an NSNumber given an index.
-  @result     Returns an NSNumber instance.
-  @discussion
+  @brief   Returns the parameter value as an NSNumber given an index.
+  @return     Returns an NSNumber instance.
+  
+  
 */
 - (NSNumber *) paramObjectForIndex: (const int) i;
 // TODO - (id) paramObjectForIndex: (const int) i;
 
 /*!
-  @method setParameterDelegate:
-  @abstract Assigns the current parameter delegate.
-  @discussion The message -parameter:ofAudioProcessor:didChangeTo: is sent to the delegate when a parameter changes.
+  @brief Assigns the current parameter delegate.
+  
+  The message -parameter:ofAudioProcessor:didChangeTo: is sent to the delegate when a parameter changes.
   @param delegate An object to receive notification that a parameter changed value.
  */
 - (void) setParameterDelegate: (id) delegate;
 
 /*!
- @method parameterDelegate
- @result Returns the current parameter delegate. 
+ @return Returns the current parameter delegate. 
  */
 - (id) parameterDelegate;
 

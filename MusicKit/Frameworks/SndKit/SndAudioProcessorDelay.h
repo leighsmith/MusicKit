@@ -22,7 +22,7 @@
 
 /*!
   @enum SndDelayParam
-  @abstract Parameter keys
+  @brief Parameter keys
   @constant dlyLength Length
   @constant dlyFeedback Feedback amount 
   @constant dlyNumParams Number of parameters
@@ -37,8 +37,9 @@ enum SndDelayParam {
 
 /*!
   @class SndAudioProcessorDelay
-  @abstract A delay processor
-  @discussion To come - see base class.
+  @brief A delay processor
+  
+  To come - see base class.
 */
 @interface SndAudioProcessorDelay : SndAudioProcessor {
 /*! @var  chanL temporary delay buffer (left channel) */
@@ -58,32 +59,32 @@ enum SndDelayParam {
 }
 
 /*!
-    @method   delayWithLength:feedback:
-    @abstract   Factory method
-    @param      nSams
-    @param      fFB
-    @result     A Freshly initialized, autoreleased  delay processor.
-    @discussion
+  @brief   Factory method
+  @param      nSams
+  @param      fFB
+  @return     A Freshly initialized, autoreleased  delay processor.
+  
+  
 */
 + delayWithLength: (const long) nSams feedback: (const float) fFB;
 
 /*!
-    @method setLength:feedback:
-    @abstract 
-    @param nSams
-    @param fFB
-    @result 
-    @discussion
+  @brief 
+  @param nSams
+  @param fFB
+  @return 
+  
+  
 */
 - setLength: (const long) nSams andFeedback: (const float) fFB;
 
 /*!
-    @method     freemem
-    @abstract 
-    @param      nSams
-    @param      fFB
-    @result self
-    @discussion
+  @brief 
+  @param      nSams
+  @param      fFB
+  @return self
+  
+  
 */
 - freemem;
 
