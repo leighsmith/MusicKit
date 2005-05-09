@@ -46,9 +46,10 @@
 /*!
  @class SndView
 
- @abstract SndView is responsible for displaying a amplitude/time plot of Snd data.
+ @brief SndView is responsible for displaying a amplitude/time plot of Snd data.
  
- @discussion 
+ 
+   
 
 A SndView object provides a graphical representation of sound
 data. This data is taken from an associated Snd object. In addition
@@ -320,222 +321,208 @@ enum SndViewStereoMode {
 }
 
 /*!
-  @method hideCursor
-  @abstract Hides the SndView's cursor.
+  @brief Hides the SndView's cursor.
 */
 - hideCursor;
 
 /*!
-  @method showCursor
-  @abstract Displays the SndView's cursor.
+  @brief Displays the SndView's cursor.
 */
 - showCursor;
 
 /*!
-  @method resignFirstResponder
-  @result Returns a BOOL.
-  @abstract Resigns the position of first responder. 
-  @discussion Returns YES.
+  @return Returns a BOOL.
+  @brief Resigns the position of first responder. 
+  
+   Returns YES.
 */
 - (BOOL) resignFirstResponder;
 
 /*!
-  @method becomeFirstResponder
-  @result Returns a BOOL.
-  @abstract Promotes the SndView to first responder, and returns YES. 
-  @discussion You never invoke this method directly.
+  @return Returns a BOOL.
+  @brief Promotes the SndView to first responder, and returns YES. 
+  
+   You never invoke this method directly.
 */
 - (BOOL) becomeFirstResponder;
 
 /*!
-  @method copy:
   @param  sender is an id.
-  @discussion Copies the current selection to the pasteboard.
+  @brief Copies the current selection to the pasteboard.
 */
 - (void) copy: (id) sender;
 
 /*!
-  @method cut:
   @param  sender is an id.
-  @discussion Deletes the current selection from the SndView, copies it to the
+  @brief Deletes the current selection from the SndView, copies it to the
               pasteboard, and sends a <b>soundDidChange:</b> message to the
-              delegate. The insertion point is positioned to where the selection
-              used to start.
+              delegate.
+
+  The insertion point is positioned to where the selection used to start.
 */
 - (void) cut: (id) sender;
 
 /*!
-  @method delete:
   @param  sender is an id.
-  @discussion Deletes the current selection from the SndView's Snd and sends
-              the <b>soundDidChange:</b> message to the delegate. The deletion
-              isn't placed on the pasteboard.
+  @brief Deletes the current selection from the SndView's Snd and sends
+              the <b>soundDidChange:</b> message to the delegate.
+
+  The deletion isn't placed on the pasteboard.
 */
 - (void) delete: (id) sender;
 
 /*!
-  @method paste:
   @param  sender is an id.
-  @abstract Replaces the current selection with a copy of the sound data
+  @brief Replaces the current selection with a copy of the sound data
             currently on the pasteboard. 
-  @discussion If there is no selection the pasteboard data is inserted at the cursor position. 
-              The pasteboard data must be compatible with the SndView's data, as determined by the Snd
-              method <b>compatibleWithSound:</b>. If the paste is successful, the
-              <b>soundDidChange:</b> message is sent to the delegate.
+  
+   If there is no selection the pasteboard data is inserted at the cursor position. 
+  The pasteboard data must be compatible with the SndView's data, as determined by the Snd
+  method <b>compatibleWithSound:</b>. If the paste is successful, the
+  <b>soundDidChange:</b> message is sent to the delegate.
 */
 - (void) paste: (id) sender;
 
 /*!
-  @method selectAll:
   @param  sender is an id.
-  @abstract Creates a selection over the SndView's entire Snd.
+  @brief Creates a selection over the SndView's entire Snd.
 */
 - (void) selectAll: (id) sender;
 
 /*!
-  @method delegate
-  @result Returns an id.
-  @abstract Returns the SndView's delegate object.
+  @return Returns an id.
+  @brief Returns the SndView's delegate object.
 */
 - delegate;
 
 /*!
-  @method didPlay:duringPerformance:
-  @abstract Sent to the delegate just after the SndView's sound is played.
-  @param  sender is an id.
-  @param  performance is a SndPerformance.
-  @discussion Method implemented by the delegate.
-              Used to redirect delegate messages from the SndView's Snd
-              object; you never invoke this method directly.
+  @brief Sent to the delegate just after the SndView's sound is played.
+  
+   Method implemented by the delegate.
+  Used to redirect delegate messages from the SndView's Snd
+  object; you never invoke this method directly.
+ @param  sender is an id.
+ @param  performance is a SndPerformance.
 */
 - didPlay: (id) sender duringPerformance: (SndPerformance *) performance;
 
 /*!
-  @method didRecord:
-  @abstract Sent to the delegate just after the SndView's sound is recorded into.
-  @param  sender is an id.
-  @discussion Method implemented by the delegate.
-              Used to redirect delegate messages from the SndView's Snd
-              object; you never invoke this method directly.
+  @brief Sent to the delegate just after the SndView's sound is recorded into.
+  
+   Method implemented by the delegate.
+  Used to redirect delegate messages from the SndView's Snd
+  object; you never invoke this method directly.
+ @param  sender is an id.
 */
 - didRecord: (id) sender;
 
 /*!
-  @method displayMode
-  @result Returns an int.
-  @discussion Returns the SndView's display mode, one of SND_SOUNDVIEW_WAVE
+  @return Returns an int.
+  @brief Returns the SndView's display mode, one of SND_SOUNDVIEW_WAVE
               (oscilloscopic display) or SND_SOUNDVIEW_MINMAX (minimum/maximum
               display; this is the default).
 */
 - (int) displayMode;
 
 /*!
-  @method drawRect:
   @param  rects is a NSRect.
-  @discussion Displays the SndView's sound data. The selection is highlighted
-              and the cursor is drawn (if it isn't currently hidden).
+  @brief Displays the SndView's sound data.
+
+  The selection is highlighted and the cursor is drawn (if it isn't currently hidden).
                             
-              You never send the <b>drawRect:</b> message directly
-              to a SndView object. To cause a SndView to draw itself, send it
-              one of the display messages defined by the NSView
-              class.
+  You never send the <b>drawRect:</b> message directly
+  to a SndView object. To cause a SndView to draw itself, send it
+  one of the display messages defined by the NSView
+  class.
 */
 - (void) drawRect: (NSRect) rects;
 
 /*!
-  @method getSelection:size:
   @param  firstSample is an unsigned int *.
   @param  sampleCount is an unsigned int *.
-  @discussion Returns the selection by reference. The index of the selection's
-              first sample (counting from 0) is returned in <i>firstSample</i>.
-              The size of the selection in samples is returned in
-              <i>sampleCount</i>. 
+  @brief Returns the selection by reference.
+
+  The index of the selection's first sample (counting from 0) is returned in <i>firstSample</i>.
+  The size of the selection in samples is returned in <i>sampleCount</i>. 
 */
 - (void) getSelection: (unsigned int *) firstSample size: (unsigned int *) sampleCount;
 
 /*!
-  @method setSelection:size:
   @param  firstSample is an int.
   @param  sampleCount is an int.
-  @discussion Sets the selection to be <i>sampleCount</i> samples wide, starting
+  @brief Sets the selection to be <i>sampleCount</i> samples wide, starting
               with sample <i>firstSample</i> (samples are counted from 0).
 */
 - (void) setSelection: (int) firstSample size: (int) sampleCount;
 
 /*!
-  @method hadError:
-  @abstract Sent to the delegate if an error is encountered during recording or playback of the SndView's sound.
+  @brief Sent to the delegate if an error is encountered during recording or playback of the SndView's sound.
+  
+   Used to redirect delegate messages from the SndView's Snd object; you never invoke this method directly.
   @param  sender is an id.
-  @discussion Used to redirect delegate messages from the SndView's Snd
-              object; you never invoke this method directly.
 */
 - hadError: sender;
 
 /*!
-  @method initWithFrame:
+  @brief Initializes the SndView, fitting the object within the rectangle given by <i>frameRect</i>. 
+  
+   The initialized SndView doesn't contain any sound data.   
   @param  frameRect is a NSRect.
-  @result Returns <b>self</b>.
-  @abstract Initializes the SndView, fitting the object within the rectangle given by <i>frameRect</i>. 
-  @discussion The initialized SndView doesn't contain any sound data.   
+  @return Returns <b>self</b>.
 */
 - initWithFrame: (NSRect) frameRect;
 
 /*!
-  @method isAutoScale
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView is in autoscaling mode, otherwise returns NO.
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView is in autoscaling mode, otherwise returns NO.
 */
 - (BOOL) isAutoScale;
 
 /*!
-  @method isBezeled
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView has a bezeled border, otherwise returns NO (the default).
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView has a bezeled border, otherwise returns NO (the default).
 */
 - (BOOL) isBezeled;
 
 /*!
-  @method isContinuousSelectionUpdates
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView responds to mouse-dragged events (as set through <b>setContinuousSelectionUpdates:</b>). 
-  @discussion The default is NO.
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView responds to mouse-dragged events (as set through <b>setContinuousSelectionUpdates:</b>). 
+  
+   The default is NO.
 */
 - (BOOL) isContinuousSelectionUpdates;
 
 /*!
-  @method isEditable
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView's sound data can be edited.
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView's sound data can be edited.
 */
 - (BOOL) isEditable;
 
 /*!
-  @method isEnabled
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView is enabled, otherwise returns NO.
-  @discussion The mouse has no effect in a disabled SndView. By default, a SndView is enabled.
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView is enabled, otherwise returns NO.
+  
+   The mouse has no effect in a disabled SndView. By default, a SndView is enabled.
 */
 - (BOOL) isEnabled;
 
 /*!
-  @method isOptimizedForSpeed
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView is optimized for speedy display.
-  @discussion SndViews are optimized by default.
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView is optimized for speedy display.
+  
+   SndViews are optimized by default.
 */
 - (BOOL) isOptimizedForSpeed;
 
 /*!
-  @method isPlayable
-  @result Returns a BOOL.
-  @abstract Returns YES if the SndView's sound data can be played without first being converted.
+  @return Returns a BOOL.
+  @brief Returns YES if the SndView's sound data can be played without first being converted.
 */
 - (BOOL) isPlayable;
 
 /*!
-  @method isEntireSoundVisible
-  @result Returns a BOOL
-  @abstract Returns YES if the receiver is displaying the entire sound within the visible rectangle of it's enclosing scrollview.
+  @return Returns a BOOL
+  @brief Returns YES if the receiver is displaying the entire sound within the visible rectangle of it's enclosing scrollview.
  */
 - (BOOL) isEntireSoundVisible;
 
@@ -543,380 +530,369 @@ enum SndViewStereoMode {
 - (void) setDefaultRecordTime: (float) seconds;
 
 /*!
-  @method selectionChanged
-  @discussion Not normally messaged directly by a client class, it's default operation is to inform the delegate
-              that the selection changed if setContinuousSelectionUpdates was set to YES.
-              This allows subclasses to know when selections change and override default behaviour.
+  @brief Not normally messaged directly by a client class, it's default operation is to inform the delegate
+  that the selection changed if setContinuousSelectionUpdates was set to YES.
+
+  This allows subclasses to know when selections change and override default behaviour.
  */
 - (void) selectionChanged;
 
 /*!
-  @method mouseDown:
-  @param  theEvent is a NSEvent *.
-  @discussion Allows a selection to be defined by clicking and dragging the mouse.
-              This method takes control until a mouse-up occurs. While dragging,
-              the selected region is highlighted. On mouse up, the delegate is
-              sent the <b>selectionChanged:</b> message. If <b>isContinuous</b> is
-              YES, <b>selectionChanged:</b> messages are also sent while the mouse
-              is being dragged. You never invoke this method; it's invoked
-              automatically in response to the user's actions.
+  @param  theEvent is an NSEvent instance.
+  @brief Allows a selection to be defined by clicking and dragging the mouse.
+
+  This method takes control until a mouse-up occurs. While dragging,
+  the selected region is highlighted. On mouse up, the delegate is
+  sent the <b>selectionChanged:</b> message. If <b>isContinuous</b> is
+  YES, <b>selectionChanged:</b> messages are also sent while the mouse
+  is being dragged. You never invoke this method; it's invoked
+  automatically in response to the user's actions.
 */
 - (void) mouseDown: (NSEvent *) theEvent;
 
 /*!
-  @method pasteboard:provideData:
-  @param  thePasteboard is a NSPasteboard *.
-  @param  type is a NSString *.
-  @discussion Places the SndView's entire sound on the given pasteboard.
-              Currently, the <i>type</i> argument must be &#ldquo;SndPasteboardType&#rdquo;,
-              the pasteboard type that represents sound data.
+  @param  thePasteboard is a NSPasteboard instance.
+  @param  type is a NSString instance.
+  @brief Places the SndView's entire sound on the given pasteboard.
+  
+  Currently, the <i>type</i> argument must be &#ldquo;SndPasteboardType&#rdquo;,
+  the pasteboard type that represents sound data.
 */
 - (void) pasteboard: (NSPasteboard *) thePasteboard provideDataForType: (NSString *) pboardType;
 
 /*!
-  @method pause:
   @param  sender is an id.
-  @discussion Pauses the current playback or recording session by invoking Snd's
-              <b>pause:</b> method.
+  @brief Pauses the current playback or recording session by invoking Snd's <b>pause:</b> method.
 */
 - (void) pause: sender;
 
 /*!
-  @method play:
   @param  sender is an id.
-  @discussion Play the current selection by invoking Snd's <b>play:</b> method.
-              If there is no selection, the SndView's entire Snd is played.
-              The <b>willPlay:</b> message is sent to the delegate before the
-              selection is played; <b>didPlay:</b> is sent when the selection is
-              done playing.
+  @brief Play the current selection by invoking Snd's <b>play:</b> method.
+  
+  If there is no selection, the SndView's entire Snd is played.
+  The <b>willPlay:</b> message is sent to the delegate before the
+  selection is played; <b>didPlay:</b> is sent when the selection is
+  done playing.
 */
 - (void) play: sender;
 
 /*!
-  @method resume:
   @param  sender is an id.
-  @discussion Resumes the current playback or recording session by invoking
+  @brief Resumes the current playback or recording session by invoking
               Snd's <b>resume:</b> method.
 */
 - (void) resume: sender;
 
 /*!
-  @method record:
   @param  sender is an id.
-  @discussion Replaces the SndView's current selection with newly recorded
-              material. If there is no selection, the recording is inserted at the
-              cursor. The <b>willRecord:</b> message is sent to the delegate
-              before the recording is started; <b>didRecord:</b> is sent after the
-              recording has completed. Recorded data is always taken from the
-              CODEC microphone input.
+  @brief Replaces the SndView's current selection with newly recorded material.
+
+  If there is no selection, the recording is inserted at the
+  cursor. The <b>willRecord:</b> message is sent to the delegate
+  before the recording is started; <b>didRecord:</b> is sent after the
+  recording has completed. Recorded data is always taken from the
+  CODEC microphone input.
 */
 - (void) record: sender;
 
 /*!
-  @method stop:
   @param  sender is an id.
-  @abstract Stops the SndView's current recording or playback.
+  @brief Stops the SndView's current recording or playback.
 */
 - (void) stop: (id) sender;
 
 /*!
-  @method readSelectionFromPasteboard:
-  @param  thePasteboard is a NSPasteboard *.
-  @result Returns a BOOL.
-  @discussion Replaces the SndView's current selection with the sound data on
-              the given pasteboard. The pasteboard data is converted to the format
-              of the data in the SndView (if possible). If the SndView has no
-              selection, the pasteboard data is inserted at the cursor position.
-              Sets the current error code for the SndView's Snd object (which
-              you can retrieve by sending <b>processingError</b> to the Snd) and
-              returns YES.
+  @param  thePasteboard is a NSPasteboard instance.
+  @return Returns a BOOL.
+  @brief Replaces the SndView's current selection with the sound data on
+              the given pasteboard.
+
+  The pasteboard data is converted to the format
+  of the data in the SndView (if possible). If the SndView has no
+  selection, the pasteboard data is inserted at the cursor position.
+  Sets the current error code for the SndView's Snd object (which
+  you can retrieve by sending <b>processingError</b> to the Snd) and
+  returns YES.
 */
 - (BOOL) readSelectionFromPasteboard: (NSPasteboard *) thePasteboard;
 
 /*!
-  @method setAmplitudeZoom:
   @param newAmplitudeZoom The new amplitude zoom factor.
-  @abstract Sets the current vertical amplitude axis zoom factor. 
-  @discussion If 1.0, this displays a full amplitude signal in the maximum vertical view width. 
-              If greater than 1.0 a signal will be zoomed and clipped against the view. 
-              If less than 1.0 the signal will be reduced within the view. 
-              Values less than or equal to zero are not set.
+  @brief Sets the current vertical amplitude axis zoom factor. 
+  
+   If 1.0, this displays a full amplitude signal in the maximum vertical view width. 
+  If greater than 1.0 a signal will be zoomed and clipped against the view. 
+  If less than 1.0 the signal will be reduced within the view. 
+  Values less than or equal to zero are not set.
  */
 - (void) setAmplitudeZoom: (float) newAmplitudeZoom;
 
 /*!
-  @method amplitudeZoom
-  @result Returns a float.
-  @abstract Returns the current vertical amplitude axis zoom factor.
+  @return Returns a float.
+  @brief Returns the current vertical amplitude axis zoom factor.
  */
 - (float) amplitudeZoom;
 
 /*!
-  @method reductionFactor
-  @result Returns a float.
-  @abstract Returns the SndView's reduction factor in the horizontal time axis.
-  @discussion Computed as follows: <tt>reductionFactor = sampleCount / displayUnits</tt>
+  @return Returns a float.
+  @brief Returns the SndView's reduction factor in the horizontal time axis.
+  
+   Computed as follows: <tt>reductionFactor = sampleCount / displayUnits</tt>
 */
 - (float) reductionFactor;
 
 /*!
-  @method setReductionFactor:
   @param  reductionFactor is a float.
-  @result Returns a BOOL.
-  @abstract Assigns the reduction factor in the horizontal time axis. 
-  @discussion Recomputes the size of the SndView's frame, if autoscaling is disabled.
-	      The frame's size (in display units) is set according to
-              the following formula:
-              
-              <tt>displayUnits = sampleCount / reductionFactor</tt>
-              
-              Increasing the reduction factor zooms out,
-              decreasing zooms in on the data. If autodisplaying is enabled, the
-              Snd is automatically redisplayed.
-              
-              If the SndView is in autoscaling mode, or
-              <i>reductionFactor</i> is less than 1.0, the method avoids computing
-              the frame size and returns NO. (In autoscaling mode, the reduction
-              factor is automatically recomputed when the sound data changes - see
-              <b>scaleToFit:</b>.) Otherwise, the method returns YES. If
-              <i>reductionFactor</i> is the same as the current reduction factor,
-              the method returns immediately without recomputing the frame
-              size.
+  @return Returns a BOOL.
+  @brief Assigns the reduction factor in the horizontal time axis. 
+  
+   Recomputes the size of the SndView's frame, if autoscaling is disabled.
+  The frame's size (in display units) is set according to
+  the following formula:
+  
+  <tt>displayUnits = sampleCount / reductionFactor</tt>
+  
+  Increasing the reduction factor zooms out,
+  decreasing zooms in on the data. If autodisplaying is enabled, the
+  Snd is automatically redisplayed.
+  
+  If the SndView is in autoscaling mode, or
+  <i>reductionFactor</i> is less than 1.0, the method avoids computing
+  the frame size and returns NO. (In autoscaling mode, the reduction
+  factor is automatically recomputed when the sound data changes - see
+  <b>scaleToFit:</b>.) Otherwise, the method returns YES. If
+  <i>reductionFactor</i> is the same as the current reduction factor,
+  the method returns immediately without recomputing the frame
+  size.
 */
 - (BOOL) setReductionFactor: (float) redFactor;
 
 /*!
-  @method scaleTo:
-  @abstract Sets the proportion of the sound displayed within the SndView frame.
-  @discussion Recomputes the SndViews reduction factor to fit a portion of the sound data (horizontally) within the views frame.
+  @brief Sets the proportion of the sound displayed within the SndView frame.
+  
+   Recomputes the SndViews reduction factor to fit a portion of the sound data (horizontally) within the views frame.
   @param scaleRatio The ratio of displayed content within the frame 1.0 = entire sound, 0.5 = half the sound etc.
  */
 - (void) scaleTo: (float) scaleRatio;
 
 /*!
-  @method scaleToFit
-  @abstract Recomputes the SndView's reduction factor to fit the sound data
+  @brief Recomputes the SndView's reduction factor to fit the sound data
             (horizontally) within the current frame.
-  @discussion Invoked automatically when the SndView's data changes and the SndView is in autoscale mode.
-              If the SndView isn't in autoscale mode, <b>resizeToFit</b> is
-              invoked when the data changes. You never invoke this method
-              directly; a subclass can reimplement this method to provide
-              specialized behavior.
+  
+   Invoked automatically when the SndView's data changes and the SndView is in autoscale mode.
+  If the SndView isn't in autoscale mode, <b>resizeToFit</b> is
+  invoked when the data changes. You never invoke this method
+  directly; a subclass can reimplement this method to provide
+  specialized behavior.
 */
 - (void) scaleToFit;
 
 /*!
-  @method resizeToFit
-  @abstract Resizes the SndView's frame (horizontally) to maintain a constant reduction factor. 
-  @discussion This method is invoked automatically when the
-              SndView's data changes and the SndView isn't in autoscale mode.
-              If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
-              when the data changes. You never invoke this method directly; a
-              subclass can reimplement this method to provide specialized
-              behavior.
+  @brief Resizes the SndView's frame (horizontally) to maintain a constant reduction factor. 
+  
+   This method is invoked automatically when the
+  SndView's data changes and the SndView isn't in autoscale mode.
+  If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
+  when the data changes. You never invoke this method directly; a
+  subclass can reimplement this method to provide specialized
+  behavior.
 */
 - (void) resizeToFit;
 
 /*!
-  @method resizeToFit:
   @param  withAutoscaling is a BOOL.
-  @abstract Resizes the SndView's frame (horizontally) to maintain a constant reduction factor.
-  @discussion This method is invoked automatically when the
-              SndView's data changes and the SndView isn't in autoscale mode.
-              If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
-              when the data changes. You never invoke this method directly; a
-              subclass can reimplement this method to provide specialized
-              behavior.
+  @brief Resizes the SndView's frame (horizontally) to maintain a constant reduction factor.
+  
+   This method is invoked automatically when the
+  SndView's data changes and the SndView isn't in autoscale mode.
+  If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
+  when the data changes. You never invoke this method directly; a
+  subclass can reimplement this method to provide specialized
+  behavior.
 */
 - (void) resizeToFit: (BOOL) withAutoscaling;
 
 /*!
-  @method resizeToScale:
   @param scaleRatio Scaling of the sound within the frame:  0 > scaleRatio <= 1.0 
-  @abstract Resizes the sound within the frame to a normalized scale.
-  @discussion 
+  @brief Resizes the sound within the frame to a normalized scale.
  */
 - (void) resizeToScale: (float) scaleRatio;
 
 /*!
-  @method setAutoscale:
   @param  aFlag is a BOOL.
-  @abstract Sets the SndView's automatic scaling mode, used to determine how the SndView is
+  @brief Sets the SndView's automatic scaling mode, used to determine how the SndView is
             redisplayed when its data changes.
-  @discussion With autoscaling enabled (<i>aFlag</i> is YES), the SndView's reduction factor is
-              recomputed so the sound data fits within the view frame. If it's
-              disabled (<i>aFlag</i> is NO), the frame is resized and the
-              reduction factor is unchanged. If the SndView is in an
-              NSScrollView, autoscaling should be disabled (autoscaling is
-              disabled by default).
+  
+   With autoscaling enabled (<i>aFlag</i> is YES), the SndView's reduction factor is
+  recomputed so the sound data fits within the view frame. If it's
+  disabled (<i>aFlag</i> is NO), the frame is resized and the
+  reduction factor is unchanged. If the SndView is in an
+  NSScrollView, autoscaling should be disabled (autoscaling is
+  disabled by default).
 */
 - setAutoscale: (BOOL) aFlag;
 
 /*!
-  @method setBezeled:
   @param  aFlag is a BOOL.
-  @discussion If <i>aFlag</i> is YES, the display is given a bezeled border. By
-              default, the border of a SndView display isn't bezeled. If
-              autodisplay is enabled, the Snd is automatically
-              redisplayed.
+  @brief If <i>aFlag</i> is YES, the display is given a bezeled border.
+
+  By default, the border of a SndView display isn't bezeled. If
+  autodisplay is enabled, the Snd is automatically
+  redisplayed.
 */
 - (void) setBezeled: (BOOL) aFlag;
 
 /*!
-  @method setContinuousSelectionUpdates:
   @param  aFlag is a BOOL.
-  @abstract Sets the state of continuous action messages.
-  @discussion If <i>aFlag</i> is YES, <b>selectionChanged:</b> messages are sent to the delegate as
-              the mouse is being dragged. If NO, the message is sent only on mouse
-              up. The default is NO. 
+  @brief Sets the state of continuous action messages.
+  
+   If <i>aFlag</i> is YES, <b>selectionChanged:</b> messages are sent to the delegate as
+  the mouse is being dragged. If NO, the message is sent only on mouse up. The default is NO. 
 */
 - (void) setContinuousSelectionUpdates: (BOOL) aFlag;
 
 /*!
-  @method setDelegate:
   @param  anObject is an id.
-  @abstract Sets the SndView's delegate to <i>anObject</i>.
-  @discussion The delegate is sent messages when the user changes or acts on the
-              selection.
+  @brief Sets the SndView's delegate to <i>anObject</i>.
+  
+   The delegate is sent messages when the user changes or acts on the selection.
 */
 - (void) setDelegate: (id) anObject;
 
-
 /*!
-  @method setDisplayMode:
   @param  aMode is an int.
-  @abstract Sets the SndView's display mode, either SND_SOUNDVIEW_WAVE or SND_SOUNDVIEW_MINMAX (the default).
-  @discussion If autodisplaying is enabled, the Snd is automatically redisplayed.
+  @brief Sets the SndView's display mode, either SND_SOUNDVIEW_WAVE or SND_SOUNDVIEW_MINMAX (the default).
+  
+   If autodisplaying is enabled, the Snd is automatically redisplayed.
 */
 - (void) setDisplayMode: (int) aMode;
 
 /*!
-  @method setEditable:
   @param  aFlag is a BOOL.
-  @discussion Enables or disables editing in the SndView as <i>aFlag</i> is YES
-              or NO. By default, a SndView is editable.
+  @brief Enables or disables editing in the SndView as <i>aFlag</i> is YES or NO.
+
+  By default, a SndView is editable.
 */
 - (void) setEditable: (BOOL) aFlag;
 
 /*!
-  @method setEnabled:
   @param  aFlag is a BOOL.
-  @discussion Enables or disables the SndView as <i>aFlag</i> is YES or NO. The
-              mouse has no effect in a disabled SndView. By default, a SndView
-              is enabled.
+  @brief Enables or disables the SndView as <i>aFlag</i> is YES or NO.
+
+  The mouse has no effect in a disabled SndView. By default, a SndView is enabled.
 */
 - (void) setEnabled: (BOOL) aFlag;
 
 /*!
-  @method setOptimizedForSpeed:
   @param  flag is a BOOL.
-  @discussion Sets the SndView to optimize its display mechanism. Optimization
-              greatly increases the speed with which data can be drawn,
-              particularly for large sounds. It does so at the loss of some
-              precision in representing the sound data; however, these
-              inaccuracies are corrected as you zoom in on the data. All
-              SndView's are optimized by default.
+  @brief Sets the SndView to optimize its display mechanism.
+
+  Optimization greatly increases the speed with which data can be drawn,
+  particularly for large sounds. It does so at the loss of some
+  precision in representing the sound data; however, these
+  inaccuracies are corrected as you zoom in on the data. All
+  SndView's are optimized by default.
 */
 - (void) setOptimizedForSpeed: (BOOL) flag;
 
 /*!
-  @method setSound:
-  @param  aSound is a Snd *.
-  @abstract Sets the SndView's Snd object to <i>aSound</i>.
-  @discussion If autoscaling is enabled, the drawing coordinate system is adjusted so
-              <i>aSound</i>'s data fits within the current frame. Otherwise, the
-              frame is resized to accommodate the length of the data. If
-              autodisplaying is enabled, the SndView is automatically
-              redisplayed.
+  @param  aSound is a Snd instance.
+  @brief Sets the SndView's Snd object to <i>aSound</i>.
+  
+   If autoscaling is enabled, the drawing coordinate system is adjusted so
+  <i>aSound</i>'s data fits within the current frame. Otherwise, the
+  frame is resized to accommodate the length of the data. If
+  autodisplaying is enabled, the SndView is automatically
+  redisplayed.
 */
 - (void) setSound: (Snd *) aSound;
 
 /*!
-  @method sound
-  @result Returns a Snd instance.
-  @abstract Returns the SndView's Snd object being displayed.
+  @return Returns a Snd instance.
+  @brief Returns the SndView's Snd object being displayed.
 */
 - (Snd *) sound;
 
 /*!
-  @method setFrameSize:
   @param  newSize is a NSSize.
-  @abstract Sets the width and height of the SndView's frame.
-  @discussion If autodisplaying is enabled, the SndView is automatically redisplayed.
+  @brief Sets the width and height of the SndView's frame.
+  
+   If autodisplaying is enabled, the SndView is automatically redisplayed.
 */
 - (void) setFrameSize: (NSSize) _newSize;
 
 /*!
-  @method soundBeingProcessed
-  @result Returns an Snd.
-  @discussion Returns the Snd object that's currently being played or recorded
-              into. Note that the actual Snd object that's being performed isn't
-              necessarily the object returned by SndView's <b>sound</b> method;
-              for efficiency, SndView creates a private performance Snd
-              object. While this is generally an implementation detail, this
-              method is supplied in case the SndView's delegate needs to know
-              exactly which object will be (or was) performed.
+  @return Returns an Snd.
+  @brief Returns the Snd object that's currently being played or recorded into.
+
+  Note that the actual Snd object that's being performed isn't
+  necessarily the object returned by SndView's <b>sound</b> method;
+  for efficiency, SndView creates a private performance Snd
+  object. While this is generally an implementation detail, this
+  method is supplied in case the SndView's delegate needs to know
+  exactly which object will be (or was) performed.
 */
 - (Snd *) soundBeingProcessed;
 
 /*!
-  @method tellDelegate:
   @param  theMessage is a SEL.
-  @discussion Sends <i>theMessage</i> to the SndView's delegate with the
-              SndView as the argument. If the delegate doesn't respond to the
-              message, then it isn't sent. You normally never invoke this method;
-              it's invoked automatically when an action, such as playing or
-              editing, is performed. However, you can invoke it in the design of a
-              SndView subclass.
+  @brief Sends <i>theMessage</i> to the SndView's delegate with the
+              SndView as the argument.
+
+  If the delegate doesn't respond to the
+  message, then it isn't sent. You normally never invoke this method;
+  it's invoked automatically when an action, such as playing or
+  editing, is performed. However, you can invoke it in the design of a
+  SndView subclass.
 */
 - (void) tellDelegate: (SEL) theMessage;
 
 /*!
-  @method tellDelegate:duringPerformance:
   @param  theMessage is a SEL.
-  @discussion Sends <i>theMessage</i> to the SndView's delegate with the
-              SndView as the argument. If the delegate doesn't respond to the
-              message, then it isn't sent. You normally never invoke this method;
-              it's invoked automatically when an action, such as playing or
-              editing, is performed. However, you can invoke it in the design of a
-              SndView subclass.
+  @brief Sends <i>theMessage</i> to the SndView's delegate with the
+              SndView as the argument.
+
+  If the delegate doesn't respond to the
+  message, then it isn't sent. You normally never invoke this method;
+  it's invoked automatically when an action, such as playing or
+  editing, is performed. However, you can invoke it in the design of a
+  SndView subclass.
 */
 - (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance;
 
 /*!
-  @method validRequestorForSendType:returnType:
-  @param  sendType is a NSString *.
-  @param  returnType is a NSString *.
-  @result Returns an id.
-  @discussion You never invoke this method; it's implemented to support services
+  @param  sendType is a NSString instance.
+  @param  returnType is a NSString instance.
+  @return Returns an id.
+  @brief You never invoke this method; it's implemented to support services
               that act on sound data.
 */
 - validRequestorForSendType: (NSString *) sendType returnType: (NSString *) returnType;
 
 /*!
-  @method willPlay:duringPerformance:
-  @abstract Sent to the delegate just before the SndView's sound is played.
+  @brief Sent to the delegate just before the SndView's sound is played.
   @param  sender is an id.
   @param performance A SndPerformance instance indicating which performance is about to play.
-  @discussion Method implemented by the delegate.
-              Used to redirect delegate messages from the SndView's Snd
-              object; you never invoke this method directly.
+  
+   Method implemented by the delegate.
+  Used to redirect delegate messages from the SndView's Snd
+  object; you never invoke this method directly.
 */
 - (void) willPlay: sender duringPerformance: (SndPerformance *) performance;
 
 /*!
-  @method willRecord:
-  @abstract Sent to the delegate just before the SndView's sound is recorded into.
+  @brief Sent to the delegate just before the SndView's sound is recorded into.
   @param  sender is an id.
-  @discussion Method implemented by the delegate.
-              Used to redirect delegate messages from the SndView's Snd
-              object; you never invoke this method directly.
+  
+   Method implemented by the delegate.
+  Used to redirect delegate messages from the SndView's Snd
+  object; you never invoke this method directly.
 */
 - (void) willRecord: (id) sender;
 
 /*!
-  @method writeSelectionToPasteboard:types:
-  @abstract write the selected region of sound to the pasteboard.
+  @brief write the selected region of sound to the pasteboard.
   @param thePasteboard The pasteboard to receive the sound region.
   @param pboardTypes An array of ? sound formats?
  */
@@ -937,27 +913,26 @@ enum SndViewStereoMode {
 	/* start and end are samples. Must be exact. */
 
 /*!
-  @method invalidateCache
-  @abstract Used if you change the data of a sound which is being used
+  @brief Used if you change the data of a sound which is being used
             in a SndView in any way, to inform the SndView.
-  @discussion The easiest message to use is -invalidateCache, but you can be more specific and tell it the
+  
+   The easiest message to use is -invalidateCache, but you can be more specific and tell it the
     exact sample number with -invalidateCacheStartSample:end:
  */
 - (void) invalidateCache;
 
 /*!
-  @method setDrawsCrosses:
-  @abstract Determines whether individual samples should be drawn as crosses when displaying sounds at extreme
+  @brief Determines whether individual samples should be drawn as crosses when displaying sounds at extreme
 	    magnification.
+ 
+  Defaults to YES.
   @param aFlag YES to draw crosses linked by line segments, NO to draw samples as points linked by line segments.
-  @discussion defaults to YES.
  */
 - (void) setDrawsCrosses: (BOOL) aFlag;
 
 /*!
-  @method drawsCrosses
-  @abstract Returns whether individual samples are drawn as crosses at extreme magnification.
-  @result Returns YES if samples are drawn with a cross, NO if they are drawn as points.
+  @brief Returns whether individual samples are drawn as crosses at extreme magnification.
+  @return Returns YES if samples are drawn with a cross, NO if they are drawn as points.
  */
 - (BOOL) drawsCrosses;
 
@@ -970,76 +945,68 @@ enum SndViewStereoMode {
 - (float) getPeakFraction;
 
 /*!
-  @method setStereoMode:
-  @abstract Determines how to draw multichannel sounds.
+  @brief Determines how to draw multichannel sounds.
   @param stereoMode one of the values SV_LEFTONLY, SV_RIGHTONLY, SV_STEREOMODE
  */
 - (BOOL) setStereoMode: (enum SndViewStereoMode) stereoMode;
 
 /*!
-  @method getStereoMode
-  @abstract Returns the mode of drawing multichannel sounds.
-  @result Returns 
+  @brief Returns the mode of drawing multichannel sounds.
+  @return Returns 
  */
 - (enum SndViewStereoMode) getStereoMode;
 
 /*!
-  @method setSelectionColor:
-  @abstract Sets the selection colour.
+  @brief Sets the selection colour.
   @param color An NSColor.
  */
 - (void) setSelectionColor: (NSColor *) color;
 
 /*!
-  @method selectionColor
-  @abstract Returns the current selection colour.
-  @result Returns an NSColor.
+  @brief Returns the current selection colour.
+  @return Returns an NSColor.
  */
 - (NSColor *) selectionColor;
 
 /*!
-  @method setBackgroundColor:
-  @abstract Sets the background colour.
+  @brief Sets the background colour.
   @param color An NSColor.
  */
 - (void) setBackgroundColor: (NSColor *) color;
 
 /*!
-  @method backgroundColor
-  @abstract Returns the current background colour.
-  @result Returns an NSColor.
+  @brief Returns the current background colour.
+  @return Returns an NSColor.
  */
 - (NSColor *) backgroundColor;
 
 /*!
-  @method setForegroundColor:
-  @abstract Sets the foreground colour.
+  @brief Sets the foreground colour.
   @param color An NSColor instance.
  */
 - (void) setForegroundColor: (NSColor *) color;
 
 /*!
-  @method foregroundColor
-  @abstract Returns the current foreground colour.
-  @result Returns an NSColor instance.
+  @brief Returns the current foreground colour.
+  @return Returns an NSColor instance.
  */
 - (NSColor *) foregroundColor;
 
 /*!
-  @method setDragIcon:
-  @abstract Sets the icon used when dragging selections from the SndView.
-  @param newDragIcon An NSImage instance to be used as the drag image. 
-         If nil, the icon to appear will be the visible region of the selected SndView.
-  @discussion If the default workspace image icon is desired, use:
+  @brief Sets the icon used when dragging selections from the SndView.
+  
+   If the default workspace image icon is desired, use:
     [sndView setDragIcon: [[NSWorkspace sharedWorkspace] iconForFileType: [Snd defaultFileExtension]]];
+ @param newDragIcon An NSImage instance to be used as the drag image. 
+ If nil, the icon to appear will be the visible region of the selected SndView.
  */
 - (void) setDragIcon: (NSImage *) newDragIcon;
 
 /*!
-  @method dragIcon
-  @abstract Returns the current NSImage instance used when dragging a selection from the receiver.
-  @result Returns an NSImage instance.
-  @discussion If nil, the icon to appear will be the visible region of the selected SndView.
+  @brief Returns the current NSImage instance used when dragging a selection from the receiver.
+  
+   If nil, the icon to appear will be the visible region of the selected SndView.
+ @return Returns an NSImage instance.
  */
 - (NSImage *) dragIcon;
 
