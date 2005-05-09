@@ -23,13 +23,13 @@
 
 /*!
  @enum SndFlangerParam
- @abstract Parameter keys
- @constant flanger_kRate       Sweep rate
- @constant flanger_kMin        Minimum z buffer extent
- @constant flanger_kMax        Maximum z buffer extent
- @constant flanger_kSwap       Swap the z buffer feedback between left and right channels
- @constant flanger_kPhase      Phase difference between left and right channels
- @constant flanger_kFeedback   Feedback
+ @brief Parameter keys
+ @constant flanger_kRate  Sweep rate
+ @constant flanger_kMin  Minimum z buffer extent
+ @constant flanger_kMax  Maximum z buffer extent
+ @constant flanger_kSwap  Swap the z buffer feedback between left and right channels
+ @constant flanger_kPhase  Phase difference between left and right channels
+ @constant flanger_kFeedback  Feedback
  @constant flanger_kNumParams  Number of parameters
  */
 enum
@@ -47,8 +47,9 @@ enum
 
 /*!
 @class SndAudioProcessorFlanger
-@abstract A flanger/dual choruser processor
-@discussion To come
+@brief A flanger/dual choruser processor
+
+  To come
 */
 @interface SndAudioProcessorFlanger : SndAudioProcessor {
 /*! @var fRate */  
@@ -86,101 +87,100 @@ enum
 }
 
 /*!
-  @method     processReplacing_core_inL:inR:outL:outR:sampleCount:step:
-  @abstract   private method called internally to do the Flanging
+  @brief   private method called internally to do the Flanging
 */
 - (void) processReplacing_core_inL: (float*) inL   inR: (float*) inR
                               outL: (float*) outL outR: (float*) outR
                        sampleCount: (long) sampleCount step: (int) step;
 /*!
-  @method     setToDefault
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setToDefault;
 /*!
-  @method     setRate:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setRate: (const float) f;
 /*!
-  @method     setMin:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setMin: (const float) f;
 /*!
-  @method     setMax:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setMax: (const float) f;
 /*!
-  @method     setSwap:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setSwap: (const float) f;
 /*!
-  @method     setPhase:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setPhase: (const float) f;
 /*!
-  @method     setFeedback:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void) setFeedback: (const float) f;
 /*!
-  @method     rate
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) rate;
 /*!
-  @method     min
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) min;
 /*!
-  @method     max
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) max;
 /*!
-  @method     swap
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) swap;
 /*!
-  @method     phase
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) phase;
 /*!
-  @method     feedback
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) feedback;
 

@@ -27,13 +27,13 @@
 
 /*!
  @enum SndReverbParam
- @abstract Parameter keys
- @constant rvrbRoomSize   Room size
- @constant rvrbDamp       Damping amount
- @constant rvrbWet        Wet level
- @constant rvrbDry        Dry level
- @constant rvrbWidth      Width
- @constant rvrbMode       Mode [1 = hold]
+ @brief Parameter keys
+ @constant rvrbRoomSize  Room size
+ @constant rvrbDamp  Damping amount
+ @constant rvrbWet  Wet level
+ @constant rvrbDry  Dry level
+ @constant rvrbWidth  Width
+ @constant rvrbMode  Mode [1 = hold]
  @constant rvrbNumParams  Number of parameters
 */
 enum {
@@ -50,8 +50,9 @@ enum {
 
 /*!
 @class SndAudioProcessorReverb
-@abstract A reverb processor
-@discussion To come.
+@brief A reverb processor
+
+  To come.
 */
 @interface SndAudioProcessorReverb : SndAudioProcessor {
 @private  

@@ -22,12 +22,12 @@
 
 /*!
  @enum SndDistortionParam
- @abstract Parameter keys
+ @brief Parameter keys
  @constant distort_kBoostAmount Pre amp boost amount
- @constant distort_kKnee        Knee level in range [0,1]
- @constant distort_kHardness    Degree of hard clipping
+ @constant distort_kKnee  Knee level in range [0,1]
+ @constant distort_kHardness  Degree of hard clipping
  @constant distort_kBoostRange  Pre amp boost range
- @constant distort_kNumParams   Number of parameters
+ @constant distort_kNumParams  Number of parameters
  */
 
 enum {
@@ -42,8 +42,9 @@ enum {
 
 /*!
 @class SndAudioProcessorDistortion
-@abstract A distortion/limiter processor
-@discussion To come
+@brief A distortion/limiter processor
+
+  To come
 */
 @interface SndAudioProcessorDistortion : SndAudioProcessor {
 /*! @var  m_fBoostRange */
@@ -58,66 +59,66 @@ enum {
   float   m_fHardness;
 }
 /*!
-  @method     setToDefault
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void)  setToDefault;
 /*!
-  @method     setBoostRange:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void)  setBoostRange: (const float) fBoostRange;
 /*!
-  @method     setBoostAmount:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void)  setBoostAmount: (const float) fBoostAmount;
 /*!
-  @method     setKnee:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void)  setKnee: (const float) fKnee;
 /*!
-  @method     setHardness:
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (void)  setHardness: (const float) fHard;
 /*!
-  @method     boostAmount
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) boostAmount;
 /*!
-  @method     boostRange
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) boostRange;
 /*!
-  @method     knee
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) knee;
 /*!
-  @method     hardness
-  @abstract
-  @discussion
-  @result
+  @brief
+  
+  
+  @return
 */
 - (float) hardness;
 

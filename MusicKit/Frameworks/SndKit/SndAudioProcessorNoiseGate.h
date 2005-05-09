@@ -24,7 +24,7 @@
 
 /*!
   @enum noisegate_eKeys
-  @abstract Parameter keys
+  @brief Parameter keys
   @constant noisegate_kThreshold  Threshold
   @constant noisegate_kHoldTime   Hold time    
   @constant noisegate_kAttackTime Attack time
@@ -44,7 +44,7 @@ enum noisegate_eKeys
 
 /*!
   @enum  noisegate_eMode
-  @abstract Gate modes
+  @brief Gate modes
   @constant noisegate_modeGate    Simple gate
   @constant noisegate_modeHold    Gate-n-hold
   @constant noisegate_modeAttack  Attack mode
@@ -60,10 +60,10 @@ enum noisegate_eMode
 
 /*!
 @enum  noisegate_eChanMode
- @abstract Channel modes
+ @brief Channel modes
  @constant noisegate_cmodeLinked  Linked gating (Either channel can trigger a dual gate)
- @constant noisegate_cmodeIndep   Independant channel gating 
- @constant noisegate_cmodeCross   Cross-linked independant gating (Left gates right, etc)
+ @constant noisegate_cmodeIndep  Independant channel gating 
+ @constant noisegate_cmodeCross  Cross-linked independant gating (Left gates right, etc)
 */
 enum noisegate_eChanMode
 {
@@ -76,19 +76,20 @@ enum noisegate_eChanMode
 
 /*!
 @class SndAudioProcessorNoiseGate
-@abstract A Noisegate processor
-@discussion To come 
+@brief A Noisegate processor
+
+  To come 
 */
 @interface SndAudioProcessorNoiseGate : SndAudioProcessor {
 /*! @var fThreshold  */
   float fThreshold;
-/*! @var fHoldTime   */
+/*! @var fHoldTime  */
   float fHoldTime;
 /*! @var fAttackTime */
   float fAttackTime;
 /*! @var fDecayTime  */
   float fDecayTime;
-/*! @var iChanMode   */
+/*! @var iChanMode  */
   int   iChanMode;
 @private
 /*! @var m_g */

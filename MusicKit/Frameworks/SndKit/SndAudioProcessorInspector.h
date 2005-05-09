@@ -31,103 +31,104 @@
 
 /*!
 @class SndAudioProcessorInspector
-@abstract An inspector window for SndAudioProcessors
-@discussion SndAudioProcessorInspector has an SndAudioArchitectureView allowing user to select
-            the SndAudioProcessor of interest, whose parameters are then displayed
-            in the tableview. A slider allows the user to change the "VST
-            styled" float params in the range [0, 1]. This will change to utilize
-            the newer NSValue styled parameter API shortly.
+@brief An inspector window for SndAudioProcessors
+
+  SndAudioProcessorInspector has an SndAudioArchitectureView allowing user to select
+  the SndAudioProcessor of interest, whose parameters are then displayed
+  in the tableview. A slider allows the user to change the "VST
+  styled" float params in the range [0, 1]. This will change to utilize
+  the newer NSValue styled parameter API shortly.
 */
 @interface SndAudioProcessorInspector : NSObject {
-/*! @var parameterTableView */   
+/*! @var parameterTableView */  
   IBOutlet NSTableView *parameterTableView;
-/*! @var parameterValueSilder */   
+/*! @var parameterValueSilder */  
   IBOutlet NSSlider *parameterValueSilder;
-/*! @var processorActive Checkbox */   
+/*! @var processorActive Checkbox */  
   IBOutlet NSButton *processorActive;
-/*! @var processorName */   
+/*! @var processorName */  
   IBOutlet NSTextField *processorName;
-/*! @var sndArchView */   
+/*! @var sndArchView */  
   IBOutlet SndStreamArchitectureView *sndArchView;
-/*! @var theAudProc The current target for inspection */   
+/*! @var theAudProc The current target for inspection */  
   SndAudioProcessor *theAudProc;
 
-/*! @var addFxButton */   
+/*! @var addFxButton */  
   IBOutlet NSButton *addFxButton;
-/*! @var delFxButton */   
+/*! @var delFxButton */  
   IBOutlet NSButton *delFxButton;
-/*! @var fxChooser */   
+/*! @var fxChooser */  
   IBOutlet NSComboBox *fxChooser;
-/*! @var window */   
+/*! @var window */  
   IBOutlet NSPanel *window;
 }
 
 /*!
-  @method     defaultAudioProcessorInspector
-  @abstract   To come
-  @discussion To come
-  @result     id to the default SndAudioProcessorInspector.
+  @brief   To come
+  
+  To come
+  @return     id to the default SndAudioProcessorInspector.
 */
 + defaultAudioProcessorInspector;
 
 /*!
-  @method     initWithAudioProcessor:
-  @abstract
-  @discussion
+  @brief
+  
+  
   @param      anAudProc
-  @result     self
+  @return     self
 */
 - initWithAudioProcessor: (SndAudioProcessor*) anAudProc;
 /*!
-  @method     setAudioProcessor:
-  @abstract
-  @discussion
+  @brief
+  
+  
   @param      anAudProc
-  @result
+  @return
 */
 - setAudioProcessor: (SndAudioProcessor*) anAudProc;
 /*!
-  @method     onProcessorActive:
-  @abstract
-  @discussion
+  @brief
+  
+  
   @param      sender
-  @result
+  @return
 */
 - onProcessorActive: (id) sender;
 /*!
-  @method     onParameterValueSlider:
-  @abstract
-  @discussion
+  @brief
+  
+  
   @param      sender
-  @result
+  @return
 */
 - onParameterValueSlider: (id) sender;
 /*!
-  @method     parameterTableAction:
-  @abstract
-  @discussion
+  @brief
+  
+  
   @param      sender
-  @result
+  @return
 */
 - parameterTableAction: (id) sender;
 /*!
-  @method     onAddFxButton:
-  @abstract   Adds an SndAudioProcessor of the Chooser's  currently selected type
-              to the currently selected object in the SndStreamArchitectureView,
-              which must be of type SndStreamClient or SndStreamMixer.
-  @discussion To come
+  @brief   Adds an SndAudioProcessor of the Chooser's  currently selected type
+  to the currently selected object in the SndStreamArchitectureView,
+  which must be of type SndStreamClient or SndStreamMixer.
+  
+  To come
   @param      sender sender's id.
-  @result     self
+  @return     self
 */
 - onAddFxButton: (id) sender;
 /*!
-  @method     onDelFxButton:
-  @abstract   Respose method for the Del button.
-  @discussion Removes the currently selected SndAudioProcessor from the host
-              object's SndAudioProcessorChain. If the currently selected object
-              is not an SndAudioProcessor, this method does nothing.
+  @brief   Respose method for the Del button.
+  
+  Removes the currently selected SndAudioProcessor from the host
+  object's SndAudioProcessorChain. If the currently selected object
+  is not an SndAudioProcessor, this method does nothing.
   @param      sender sender's id.
-  @result     self
+  @return     self
 */
 - onDelFxButton: (id) sender;
 

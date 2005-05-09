@@ -129,9 +129,9 @@ typedef enum {
 
 /*!
   @function SndSoundError
-  @abstract This routine returns a NSString that describes the given error code.
+  @brief This routine returns a NSString that describes the given error code.
   @param err The reported error number
-  @result An NSString that describes the given error code.
+  @return An NSString that describes the given error code.
  */
 NSString *SndSoundError(int err);
 

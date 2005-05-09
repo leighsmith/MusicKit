@@ -44,11 +44,11 @@
 
 /*!
  @enum SndMP3EncoderParam
- @abstract Parameter keys
- @constant mp3enc_kServerAddress   Server address (as ip or url)
- @constant mp3enc_kServerPort      Server port
+ @brief Parameter keys
+ @constant mp3enc_kServerAddress  Server address (as ip or url)
+ @constant mp3enc_kServerPort  Server port
  @constant mp3enc_kServerPassword  Server password
- @constant mp3enc_kNumParams       Number of parameters 
+ @constant mp3enc_kNumParams  Number of parameters 
  */
 
 enum {
@@ -62,8 +62,9 @@ enum {
 
 /*!
 @class SndAudioProcessorMP3Encoder
-@abstract An MP3 encoding/streaming processor
-@discussion To come.
+@brief An MP3 encoding/streaming processor
+
+  To come.
 */
 @interface SndAudioProcessorMP3Encoder : SndAudioProcessor {
   /*! @var buffer_l Left audio channel data (pre-encoding)                      */
@@ -84,64 +85,56 @@ enum {
   shout_t           *conn;
 }
 /*!
- @method     defaultServerAddress
- @abstract   Returns the default IP/URL address of the icecast server.
- @result     NSString with the default IP/URL address for the icecast server.
+ @brief  Returns the default IP/URL address of the icecast server.
+ @return  NSString with the default IP/URL address for the icecast server.
  */
 + (NSString*) defaultServerAddress;
 /*!
- @method     defaultSourcePort
- @abstract   Returns icecast's default source/encoder connection port id.
- @result     An int which is the default mp3 source/encoder port id on the server.
+ @brief  Returns icecast's default source/encoder connection port id.
+ @return  An int which is the default mp3 source/encoder port id on the server.
  */
 + (int) defaultSourcePort;
 /*!
- @method     defaultSourcePassword
- @abstract   Returns the default password used to connect to the icecast server
- @result     An NSString with the default password for the icecast server.
+ @brief  Returns the default password used to connect to the icecast server
+ @return  An NSString with the default password for the icecast server.
  */
 + (NSString*) defaultSourcePassword;
 /*!
- @method     serverAddress
- @abstract   Returns the current IP/URL of the icecast server
- @result     NSString with the current IP/URL address of the icecast server.
- @discussion
+ @brief  Returns the current IP/URL of the icecast server
+ @return  NSString with the current IP/URL address of the icecast server.
+ 
+  
  */
 - (NSString*) serverAddress;
 /*!
- @method     serverPassword
- @abstract   Returns the current password being used to connect to the icecast
+ @brief  Returns the current password being used to connect to the icecast
  server's MP3 source port.
- @result     NSString with the current MP3 source port password.
+ @return  NSString with the current MP3 source port password.
  */
 - (NSString*) serverPassword;
 /*!
- @method     serverPort
- @abstract   Returns the current MP3 source port being used to connect to the
+ @brief  Returns the current MP3 source port being used to connect to the
  icecast server
- @result     The current MP3 source port number.
+ @return  The current MP3 source port number.
  */
 - (int) serverPort;
 /*!
- @method     setShoutcastServerAddress:port:password:
- @abstract   Sets the icecast server connection parameters.
- @param      address IP/URL address of icecast server.
- @param      port MP3 stream source connection port on the icecast server
- @param      password Password controlling access to MP3-source port on server
- @result     self
+ @brief  Sets the icecast server connection parameters.
+ @param  address IP/URL address of icecast server.
+ @param  port MP3 stream source connection port on the icecast server
+ @param  password Password controlling access to MP3-source port on server
+ @return  self
  */
 - setShoutcastServerAddress: (NSString*) address
                        port: (int) port
                    password: (NSString*) password;
 /*!
- @method     connectToShoutcastServer
- @abstract   Attempts to connect to the MP3 source port of an icecast server.
- @result     TRUE if a connection was established.
+ @brief  Attempts to connect to the MP3 source port of an icecast server.
+ @return  TRUE if a connection was established.
  */
 - (BOOL) connectToShoutcastServer;
 /*!
- @method     disconnectFromShoutcastServer
- @abstract   Disconnects from the icecast server's MP3 source port.
+ @brief  Disconnects from the icecast server's MP3 source port.
  */
 - disconnectFromShoutcastServer;
 

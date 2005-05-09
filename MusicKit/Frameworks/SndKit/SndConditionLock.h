@@ -54,11 +54,12 @@ typedef HANDLE pthread_mutex_t;
 
 
 /*!
-    @class      SndConditionLock 
-    @abstract   Condition Lock implementation for Win32
-    @discussion The libobjc implementation of threads for Win32 does not
-                implement conditions. The class should replace NSConditionLock
-                at runtime via "poseAs" in order for the audio I/O to work.
+  @class      SndConditionLock 
+  @brief   Condition Lock implementation for Win32
+  
+  The libobjc implementation of threads for Win32 does not
+  implement conditions. The class should replace NSConditionLock
+  at runtime via "poseAs" in order for the audio I/O to work.
 */
 
 @interface SndConditionLock : NSObject <NSLocking, GCFinalization>

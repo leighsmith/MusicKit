@@ -33,13 +33,14 @@ CONDITIONS OF THIS AGREEMENT.
 
 /*!
 @class SndDisplayDataList
-@abstract Maintain a sorted list of cached display data for SndViews
-@discussion If it was easy to subclass NSMutableArray this would be one. However
-            it was easier to simply hold an instance variable of a NSMutableArray
-            and send it all messages which we outselves do not recognise. The
-            special things we want to add to NSMutableArray are a specialised
-            sort routine, and a method to return the underlying data object
-            holding the data for a given pixel.
+@brief Maintain a sorted list of cached display data for SndViews
+
+  If it was easy to subclass NSMutableArray this would be one. However
+  it was easier to simply hold an instance variable of a NSMutableArray
+  and send it all messages which we outselves do not recognise. The
+  special things we want to add to NSMutableArray are a specialised
+  sort routine, and a method to return the underlying data object
+  holding the data for a given pixel.
 */
 
 @interface SndDisplayDataList: NSObject
@@ -49,24 +50,26 @@ CONDITIONS OF THIS AGREEMENT.
 }
 
 /*!
-  @method sort
-  @result Returns self.
-  @discussion Sorts the underlying list of display data for the current display
-              resolution into chronological order. Elements may be discontiguous.
-              INTERNAL USE ONLY.
+  @return Returns self.
+  @brief Sorts the underlying list of display data for the current display
+  resolution into chronological order.
+
+  Elements may be discontiguous.
+  INTERNAL USE ONLY.
 */
 - sort;
 
 /*!
-  @method findObjectContaining:next:leadsOnFrom:
-  @result Returns the index of the object containing the given pixel, or -1 if the
-          pixel is before the start of the cached data. On return, next is filled
-          with the index of the following data segment (if it exists), and
-          leadsOnFrom is filled with the index of the preceding data segment, if
-          it exits AND if the data in the two segments is continuous.
-  @discussion Sorts the underlying list of display data for the current display
-              resolution into chronological order. Elements may be discontiguous.
-              INTERNAL USE ONLY.
+  @return Returns the index of the object containing the given pixel, or -1 if the
+  pixel is before the start of the cached data. On return, next is filled
+  with the index of the following data segment (if it exists), and
+  leadsOnFrom is filled with the index of the preceding data segment, if
+  it exits AND if the data in the two segments is continuous.
+  @brief Sorts the underlying list of display data for the current display
+  resolution into chronological order.
+
+  Elements may be discontiguous.
+  INTERNAL USE ONLY.
 */
 - (int) findObjectContaining: (int)   pixel 
 	                next: (int *) next 

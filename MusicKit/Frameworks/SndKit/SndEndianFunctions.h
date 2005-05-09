@@ -45,38 +45,38 @@ typedef union _SndSwappedDoubleUnion {
 } SndSwappedDoubleUnion;
 
 /*! @function SndSwapSwappedFloatToHost
-    @param aSwappedFloat
-    @result 
+  @param aSwappedFloat
+  @return 
 */
 float SndSwapSwappedFloatToHost(SndSwappedFloat aSwappedFloat);
 
 /*! @function SndSwapHostToSwappedFloat
-    @param aFloat
-    @result
+  @param aFloat
+  @return
 */
 SndSwappedFloat SndSwapHostToSwappedFloat(float aFloat);
 
 /*! @function SndSwapSwappedDoubleToHost
-    @param aSwappedDouble
-    @result
+  @param aSwappedDouble
+  @return
 */
 double SndSwapSwappedDoubleToHost(SndSwappedDouble aSwappedDouble);
 
 /*! @function SndSwapHostToSwappedDouble
-    @param aDouble
-    @result
+  @param aDouble
+  @return
 */
 SndSwappedDouble SndSwapHostToSwappedDouble(double aDouble);
 
 /*! @function SndSwap_Convert16BitNative2LittleEndian
-    @param si 2 byte native word to be byte swapped (if needed) to Little Endian
-    @result Pointer to the byte swapped value. Do NOT store this!  
+  @param si 2 byte native word to be byte swapped (if needed) to Little Endian
+  @return Pointer to the byte swapped value. Do NOT store this!  
 */
 unsigned char *SndSwap_Convert16BitNative2LittleEndian(unsigned short si);
 
 /*! @function SndSwap_Convert32BitNative2LittleEndian
-    @param li 4 byte native word to be byte swapped (if needed) to Little Endian
-    @result Pointer to the byte swapped value. Do NOT store this!  
+  @param li 4 byte native word to be byte swapped (if needed) to Little Endian
+  @return Pointer to the byte swapped value. Do NOT store this!  
 */
 unsigned char *SndSwap_Convert32BitNative2LittleEndian(unsigned long li);
 

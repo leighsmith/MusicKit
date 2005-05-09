@@ -18,15 +18,16 @@
 
 /*!
 @class SndBreakpoint
-@abstract   A simple storage class allowing SndEnvelope breakpoint information to
-            be stored in NSArrays
-@discussion This class is used primarily by SndEnvelope, the default envelope class
-            utilised by SndAudioFader. It is unlikely that this class should need to
-            be subclassed.<BR>
-            The contents of the "flags" iVar are defined in SndAudioFader.h
-            (see SND_FADER_ATTACH_RAMP_RIGHT etc.). Although SndBreakpoint objects
-            are not accessed directly by SndAudioFader, the information they hold
-            is intrinsic to the SndEnveloping protocol (see SndEnvelope.h).
+@brief  A simple storage class allowing SndEnvelope breakpoint information to
+  be stored in NSArrays
+
+  This class is used primarily by SndEnvelope, the default envelope class
+  utilised by SndAudioFader. It is unlikely that this class should need to
+  be subclassed.<BR>
+  The contents of the "flags" iVar are defined in SndAudioFader.h
+  (see SND_FADER_ATTACH_RAMP_RIGHT etc.). Although SndBreakpoint objects
+  are not accessed directly by SndAudioFader, the information they hold
+  is intrinsic to the SndEnveloping protocol (see SndEnvelope.h).
 */
 
 @interface SndBreakpoint : NSObject
@@ -40,64 +41,57 @@
 }
 
 /*!
-    @method     initWithX:y:flags
-    @abstract   Convenience method for creating breakpoints.
-    @param      x The x value of the breakpoint
-    @param      y The y value of the breakpoint
-    @param      f The flags to be associated with the breakpoint
-    @result     self, a newly initialised SndBreakpoint
+  @brief   Convenience method for creating breakpoints.
+  @param      x The x value of the breakpoint
+  @param      y The y value of the breakpoint
+  @param      f The flags to be associated with the breakpoint
+  @return     self, a newly initialised SndBreakpoint
 */
 - initWithX:(double)x y:(float)y flags:(int)f;
 
 
 /*!
-    @method     getFlags
-    @abstract   Returns the flags associated with the breakpoint
-    @result     int representing the flags associated with the breakpoint
+  @brief   Returns the flags associated with the breakpoint
+  @return     int representing the flags associated with the breakpoint
 */
 - (int)    getFlags;
 
 /*!
-    @method     getYVal
-    @abstract   Returns the y value of the breakpoint
-    @result     float
+  @brief   Returns the y value of the breakpoint
+  @return     float
 */
 - (float)  getYVal;
 
 /*!
-    @method     getXVal
-    @abstract   Returns the x value of the breakpoint
-    @result     double
+  @brief   Returns the x value of the breakpoint
+  @return     double
 */
 - (double) getXVal;
 
 /*!
-    @method     setFlags:
-    @abstract   Sets new flags for the breakpoint
-    @param      f The flags to be associated with the breakpoint
+  @brief   Sets new flags for the breakpoint
+  @param      f The flags to be associated with the breakpoint
 */
 - (void) setFlags: (int) f;
 
 /*!
-    @method     setYVal:
-    @abstract   Sets new y value for the breakpoint
-    @param      yVal
+  @brief   Sets new y value for the breakpoint
+  @param      yVal
 */
 - (void) setYVal: (float) yVal;
 
 /*!
-    @method     setXVal:
-    @abstract   Sets x value for the breakpoint
-    @param      xVal
+  @brief   Sets x value for the breakpoint
+  @param      xVal
 */
 - (void) setXVal: (double) xVal;
 
 /*!
-    @method     compare:
-    @abstract   Allows easy array sorting according to x (time) value
-    @discussion Example of use: [arrayOfBreakpoints sortUsingSelector:&#64;selector(compare:)]
-    @param      other another SndBreakpoint
-    @result     NSComparisonResult
+  @brief   Allows easy array sorting according to x (time) value
+  
+  Example of use: [arrayOfBreakpoints sortUsingSelector:&#64;selector(compare:)]
+  @param      other another SndBreakpoint
+  @return     NSComparisonResult
 */
 - (NSComparisonResult) compare:(SndBreakpoint *)other;
 
