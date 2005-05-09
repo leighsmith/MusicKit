@@ -46,7 +46,7 @@ typedef struct _UEE {
 
 /*!
  @enum SndFaderParam
- @abstract Parameter keys
+ @brief Parameter keys
  @constant faderAmp Amplitude
  @constant faderBalance Stereo balance
  @constant faderNumParams Number of parameters
@@ -74,26 +74,24 @@ typedef float (*XForBpIMP)(id, SEL, int);
 
 /*!
 @class SndAudioFader
-@abstract An object providing basic amplitude and balance controls on
+@brief An object providing basic amplitude and balance controls on
                 incoming audio buffers. "Fader" movements can be scheduled
                 for arbitrary times in the future.
-    @discussion
 
-<P>
 SndAudioFader objects can be inserted into SndAudioProcessorChains at arbitrary
 points. In addition, all SndAudioProcessorChains have a SndAudioFader which is run
-after any other user defined processors.</P>
-<P>
+after any other user defined processors.
+
 Because both SndStreamMixer and SndStreamClient have processor chains, both the
-overall output and the individual clients (respectively) can have faders.</P>
-<P>
+overall output and the individual clients (respectively) can have faders.
+
 SndAudioFader is built to be as efficient as possible. If it does not have to do
-any processing on the incoming stream, it does not.</P>
-<P>
+any processing on the incoming stream, it does not.
+
 SndAudioFader keeps track of amplitude and/or balance settings in two ways: via a
 static setting, and via an envelope system for scheduling future movements. This
-process is largely transparent to the user.</P>
-<P>
+process is largely transparent to the user.
+
 For computational ease, interpolation between breakpoints in the scheduled amplitude
 fader movements is linear. For stereo balance, the situation is similar, as the
 balance calculations are <b>not</b> adjusted for equal power. This is because balance
@@ -104,13 +102,13 @@ left channel is on full power, and the right channel loses power linearly, propo
 to the distance left of centre. The same applies to positions right of centre (the
 right channel is on full power, and the left channel drops off). One advantage of
 doing it this way is that at the centre position, both channels are at full power.
-Most panning implementations scale to root 2 (0.707) at the centre position.</P>
-<P>
+Most panning implementations scale to root 2 (0.707) at the centre position.
+
 One limitation of the faders is that the "postfader" copies (in SndStreamMixer and
 SndStreamClient) are only created once the audio streams have started to play. Thus
 the user cannot pre-load the faders with future movements. To pre-load faders before
 a stream starts to play, create a SndAudioFader programmatically, send it the fader
-movements, then insert it into the SndAudioProcessorChain later.</P>
+movements, then insert it into the SndAudioProcessorChain later.
 */
 
 @interface SndAudioFader : SndAudioProcessor
@@ -152,57 +150,55 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
 }
 
 /*!
-    @method setEnvelopeClass:
-    @abstract Sets the class object used for the internal amplitude and balance envelopes.
-    @discussion If you wish to develop your own high performance envelopes, perhaps with improved
+    @brief Sets the class object used for the internal amplitude and balance envelopes.
+ 
+    If you wish to develop your own high performance envelopes, perhaps with improved
     interpolation, ensure that they conform to the SndEnveloping protocol, then call this
     method with [MyNewEnvelopeClass class] before doing any audio output for the first time.
     All future envelope objects created by SndAudioFader will use the new class.
     @param aClass The alternative class to set.
-    @result void
 */
-+ (void)setEnvelopeClass:(id)aClass;
++ (void) setEnvelopeClass: (id) aClass;
 
 /*!
-    @method envelopeClass
-    @abstract Returns the class of the internal envelope objects.
-    @discussion Defaults to SndEnvelope. Note that this method does not check the class of its
-    envelopes directly, but returns the stored class object used for creating future envelopes.
-    @result <SndEnveloping> (a class conforming to the SndEnveloping protocol)
+  @brief Returns the class of the internal envelope objects.
+ 
+  Defaults to SndEnvelope. Note that this method does not check the class of its
+  envelopes directly, but returns the stored class object used for creating future envelopes.
+  @return <SndEnveloping> (a class conforming to the SndEnveloping protocol)
 */
-+ (id)envelopeClass;
++ (id) envelopeClass;
 
 /*!
-    @method setEnvelopeClass:
-    @abstract Sets the class object used for the internal amplitude and balance envelopes.
-    @discussion If you wish to develop your own high performance envelopes, perhaps with improved
+    @brief Sets the class object used for the internal amplitude and balance envelopes.
+ 
+    If you wish to develop your own high performance envelopes, perhaps with improved
     interpolation, ensure that they conform to the SndEnveloping protocol, then call this
     method with [MyNewEnvelopeClass class] before doing any audio output for the first time.
     Note that sending this message to an instance of SndAudioFader will affect ONLY this instance.
-    See also +(void)setEnvelopeClass:(id)aClass
+    @see +(void)setEnvelopeClass:(id)aClass
     @param aClass The alternative class to set.
-    @result void
+    @return void
 */
-- (void)setEnvelopeClass:(id)aClass;
+- (void) setEnvelopeClass: (id) aClass;
 
 /*!
-    @method envelopeClass
-    @abstract Returns the class of the internal envelope objects.
-    @discussion Defaults to SndEnvelope. Note that this method does not check the class of its
-    envelopes directly, but returns the stored class object used for creating future envelopes.
-    @result <SndEnveloping> (a class conforming to the SndEnveloping protocol)
+  @brief Returns the class of the internal envelope objects.
+ 
+  Defaults to SndEnvelope. Note that this method does not check the class of its
+  envelopes directly, but returns the stored class object used for creating future envelopes.
+  @return <SndEnveloping> (a class conforming to the SndEnveloping protocol)
 */
-- (id)envelopeClass;
+- (id) envelopeClass;
 
 /*
  * "instantaneous" getting and setting; applies from start of buffer
  */
 
 /*!
-    @method setBalance:clearingEnvelope:
-    @abstract Sets the instantaneous balance value between stereo (2) channels, optionally clearing future scheduled events
-    @discussion The balance value takes effect from the next buffer to pass through the processor
-    chain.
+    @brief Sets the instantaneous balance value between stereo (2) channels, optionally clearing future scheduled events.
+ 
+    The balance value takes effect from the next buffer to pass through the processor chain.
     The parameter <i>newBalance</i> must be a floating-point number between -1.0 (left) 0.0 (centre) and 1.0 (right).
     If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
     For greater than 2 channel sound, balance must be defined as between
@@ -213,36 +209,33 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
     odd is right.
     @param balance is a float (-1.0 to +1.0)
     @param clear If TRUE, discard any future scheduled balance events.
-    @result Returns self.
+    @return Returns self.
 */
 - setBalance: (float) newBalance clearingEnvelope: (BOOL) clear;
 
 /*!
-    @method getBalance
-    @abstract Returns the balance value as of the start of the currently running, or next buffer.
-    @discussion Returns the position between stereo channels as a floating-point
-                number between -1.0 (left) and 1.0 (right).
-    @result float (usually -1.0 to +1.0)
+    @brief Returns the balance value as of the start of the currently running, or next buffer.
+ 
+    Returns the position between stereo channels as a floating-point number between -1.0 (left) and 1.0 (right).
+    @return float (usually -1.0 to +1.0).
 */
 - (float) getBalance;
 
 /*!
-    @method setAmp:clearingEnvelope:
-    @abstract Sets the instantaneous amplitude value, optionally clearing future scheduled events
-    @discussion The amplitude value takes effect from the next buffer to pass through the processor
-    chain.
+    @brief Sets the instantaneous amplitude value, optionally clearing future scheduled events.
+ 
+    The amplitude value takes effect from the next buffer to pass through the processor chain.
     @param amp A floating point value normally between 0.0 (minimum, silence) and +1.0 (maximum, full volume) inclusive.
                This parameter is the scaling factor for all channels. Negative values will invert the audio stream.
                There is no checking done for overload.
     @param clear If TRUE, discard any future scheduled amp events.
-    @result self
+    @return self
 */
 - setAmp: (float) amp clearingEnvelope:(BOOL)clear;
 
 /*!
-    @method getAmp
-    @abstract Returns the amplitude value of all channels as of the start of the currently running, or next buffer.
-    @result float (usually 0.0 to +1.0)
+    @brief Returns the amplitude value of all channels as of the start of the currently running, or next buffer.
+    @return float (usually 0.0 to +1.0)
 */
 - (float) getAmp;
 
@@ -251,61 +244,62 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
  * from/to the envelope object(s)
  */
 /*!
-    @method setBalance:atTime:
-    @abstract Sets the balance value at the given future time
-    @discussion The balance value is scheduled for the given time. If the specified time bisects
-    an already scheduled ramp, the first part of the old ramp is maintained at its existing
-    trajectory until the time of the new point, then the new balance point is inserted.
-    Subsequent ramps are unaffected.
-    @param balance (-1.0 to +1.0)
-    @param atTime (double) the time at which to insert the new balance value
-    @result self
+  @brief Sets the balance value at the given future time.
+ 
+  The balance value is scheduled for the given time. If the specified time bisects
+  an already scheduled ramp, the first part of the old ramp is maintained at its existing
+  trajectory until the time of the new point, then the new balance point is inserted.
+  Subsequent ramps are unaffected.
+  @param balance (-1.0 to +1.0)
+  @param atTime (double) the time at which to insert the new balance value
+  @return self
 */
 - setBalance:(float)balance atTime:(double)atTime;
 
 /*!
-    @method getBalanceAtTime:
-    @abstract Returns the scheduled balance value for the given time
-    @discussion If the time given bisects a scheduled ramp, the value is linearly interpolated.
+    @brief Returns the scheduled balance value for the given time.
+
+    If the time given bisects a scheduled ramp, the value is linearly interpolated.
     @param atTime (double) the time for which to return the balance value
-    @result float (usually -1.0 to +1.0)
+    @return float (usually -1.0 to +1.0)
 */
 - (float)getBalanceAtTime:(double)atTime;
 
 /*!
-    @method setAmp:atTime:
-    @abstract Sets the amp value at the given future time
-    @discussion The amp value is scheduled for the given time. If the specified time bisects
-    an already scheduled ramp, the first part of the old ramp is maintained at its existing
-    trajectory until the time of the new point, then the new amp point is inserted.
-    Subsequent ramps are unaffected.
-    @param amp any valid amplitude multiplier (usually 0.0 to 1.0)
-    @param atTime (double) the time at which to insert the new amp value
-    @result self
+  @brief Sets the amp value at the given future time.
+
+  The amp value is scheduled for the given time.
+  If the specified time bisects an already scheduled ramp, the first part of the old
+  ramp is maintained at its existing trajectory until the time of the new point, then 
+  the new amp point is inserted.
+  Subsequent ramps are unaffected.
+  @param amp any valid amplitude multiplier (usually 0.0 to 1.0)
+  @param atTime (double) the time at which to insert the new amp value
+  @return self
 */
-- setAmp:(float)amp atTime:(double)atTime;
+- setAmp: (float) amp atTime: (double) atTime;
 
 /*!
-    @method getAmpAtTime:
-    @abstract Returns the scheduled amp value for the given time
-    @discussion If the given time bisects a scheduled ramp, the value is linearly interpolated.
+    @brief Returns the scheduled amp value for the given time.
+ 
+    If the given time bisects a scheduled ramp, the value is linearly interpolated.
     @param atTime (double) the time for which to return the amp value
-    @result float any valid amplitude multiplier (usually 0.0 to 1.0)
+    @return float any valid amplitude multiplier (usually 0.0 to 1.0)
 */
-- (float)getAmpAtTime:(double)atTime;
+- (float) getAmpAtTime: (double) atTime;
 
 /*!
-    @method rampAmpFrom:to:startTime:endTime:
-    @abstract Creates an amplitude ramp for a given time in the future
-    @discussion The amp value is scheduled for the given time. If the start time
+  @brief Creates an amplitude ramp for a given time in the future.
+ 
+  The amp value is scheduled for the given time. If the start time
     of the new ramp bisects an already scheduled ramp, the first part of the old
     ramp is maintained at its existing trajectory until the time of the onset of
     the new ramp, then the new ramp is inserted. Subsequent ramps are unaffected.
-    @param startRampLevel the level at the start of the ramp
-    @param endRampLevel the level at the end of the ramp
-    @param startRampTime (double) the time at which to start the new ramp
-    @param endRampTime (double) the time at which to end the new ramp
-    @result self
+  @param startRampLevel the level at the start of the ramp
+  @param endRampLevel the level at the end of the ramp
+  @param startRampTime (double) the time at which to start the new ramp
+  @param endRampTime (double) the time at which to end the new ramp
+  @return self
 */
 - (BOOL) rampAmpFrom:(float)startRampLevel
                   to:(float)endRampLevel
@@ -313,10 +307,11 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
              endTime:(double)endRampTime;
 
 /*!
-    @method rampBalanceFrom:to:startTime:endTime:
-    @abstract Creates a balance ramp for a given time in the future
-    @discussion The balance value is scheduled for the given time. If the start
-    time of the new ramp bisects an already scheduled ramp, the first part of
+    @brief Creates a balance ramp for a given time in the future.
+ 
+  The balance value is scheduled for the given time.
+
+  If the start time of the new ramp bisects an already scheduled ramp, the first part of
     the old ramp is maintained at its existing trajectory until the time of the
     onset of the new ramp, then the new ramp is inserted. Subsequent ramps are
     unaffected.
@@ -324,7 +319,7 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
     @param endRampLevel the balance at the end of the ramp
     @param startRampTime (double) the time at which to start the new ramp
     @param endRampTime (double) the time at which to end the new ramp
-    @result self
+    @return self
 */
 - (BOOL) rampBalanceFrom:(float)startRampLevel
                       to:(float)endRampLevel
@@ -332,38 +327,38 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
                  endTime:(double)endRampTime;
 
 /*!
-  @method paramValue:
-  @abstract Retrieve the value of the indexed parameter.
+  @brief Retrieve the value of the indexed parameter.
+
+  This is just the standardised SndAudioProcessor protocol for retrieving the amplitude and balance.
   @param index enumerated index for parameters.
-  @result Returns a floating point value.
-  @discussion This is just the standardised SndAudioProcessor protocol for retrieving the amplitude and balance.
+  @return Returns a floating point value.
  */
 - (float) paramValue: (const int) index;
 
 /*!
-  @method paramName:
-  @abstract Retrieve the name of the indexed parameter.
+  @brief Retrieve the name of the indexed parameter.
   @param index enumerated index for parameters.
-  @result Returns an NSString instance.
+  @return Returns an NSString instance.
  */
 - (NSString *) paramName: (const int) index;
 
 /*!
-  @method setParam:toValue:
-  @abstract Assigns the indexed parameter a value.
+  @brief Assigns the indexed parameter a value.
+
+  This is just the standardised SndAudioProcessor protocol for assigning the amplitude and balance.
   @param index enumerated index for parameters.
-  @discussion This is just the standardised SndAudioProcessor protocol for assigning the amplitude and balance.
   */
 - (void) setParam: (const int) index toValue: (const float) v;
 
 /*!
-    @method processReplacingInputBuffer:outputBuffer:
-    @abstract Processes the input buffer according to the amplitude and balance settings. 
-    @discussion This method currently only works with stereo float buffers. Not to be called directly. This method is called by
-    SndAudioProcessorChain with buffers destined for audio output.
-    @param inB the audio buffer with input to the processor
-    @param endB unused
-    @result Always returns NO since SndAudioFader processes audio in place, in inB.
+  @brief Processes the input buffer according to the amplitude and balance settings. 
+ 
+  This method currently only works with stereo float buffers.
+  Not to be called directly. This method is called by
+  SndAudioProcessorChain with buffers destined for audio output.
+  @param inB the audio buffer with input to the processor
+  @param endB unused
+  @return Always returns NO since SndAudioFader processes audio in place, in inB.
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
                         outputBuffer: (SndAudioBuffer *) outB;

@@ -57,7 +57,7 @@
 
 /*!
   @enum       SndConversionQuality
-  @abstract   Sound conversion quality codes
+  @brief   Sound conversion quality codes
   @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
   @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
               using a small filter. Relatively fast.
@@ -72,13 +72,11 @@ typedef enum {
 
 /*!
 @class Snd
-@abstract The Snd object encapsulates a sounds format parameters and it's sample data.
+@brief The Snd object encapsulates a sounds format parameters and it's sample data.
           It supports reading and writing to a soundfile, playback of sound,
           recording of sampled sound, conversion among various sampled formats, 
           basic editing of the sound, and name and storage
-          management for sounds. It holds parameters that prime it's performance at the start of play.
-
-@discussion 
+          management for sounds.
 
 Snd objects represent and manage sounds. A Snd object's sound can be
 recorded from a microphone, read from a sound file or NSBundle
@@ -91,7 +89,9 @@ Playback and recording are performed by background threads, allowing
 your application to proceed in parallel. By using preemption of queueing,
 the latency between sending a <b>play:</b> or <b>record:</b> message and
 the start of the playback or recording, is no more than the duration of
-one hardware buffer.
+one hardware buffer. A Snd holds parameters that prime it's performance
+at the start of play including a SndAudioProcessor for effects processing,
+volume and panning.
 
 You can also edit a Snd object by adding and removing samples. To
 minimize data movement (and thus save time), an edited Snd may become
@@ -113,6 +113,7 @@ the pasteboard sound type. Most of the methods defined in the Snd
 class are implemented so that you needn't be aware of this
 structure.
 
+
 <H3>Sound Conversion Features</H3>
 
 The sample rate conversion routines (in particular) come from Julius Smith
@@ -124,7 +125,7 @@ stage for the rate conversion. Sorry.
 
 There are 3 different qualities of sample rate conversion, described by SndConversionQuality.
 The fastest conversion is of the lowest quality. The Snd object uses the fastest one by default, but you
-can set the quality to be used with the -setConversionQuality method.
+can set the quality to be used with the -setConversionQuality: method.
 
 The sound conversion routines (in general) basically convert from any
 sampling rate, any number of channels (<= 16), 8, 16 bit, float and double
@@ -210,10 +211,11 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 + soundNamed: (NSString *) aName;
 
 /*!
-  @method findSoundFor:
   @param  aName is a NSString instance.
-  @result Returns an id.
-  @discussion Finds and returns the named Snd object. First the named Snd
+  @return Returns an id.
+  @brief Finds and returns the named Snd object.
+
+  First the named Snd
               table is searched; if the sound isn't found, then the method looks
               for <i>&#ldquo;aName</i>.snd&#rdquo; in the sound segment of the
               application's executable file. Finally, <i>the file</i> is searched
@@ -231,54 +233,45 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 + findSoundFor: (NSString *) aName;
 
 /*!
-  @method     addName:sound:
-  @abstract
+  @brief
   @param  	  name
   @param  	  aSnd
-  @result
-  @discussion
+  @return
 */
 + addName: (NSString *) name sound: (Snd *) aSnd;
+
 /*!
-  @method     addName:fromSoundfile:
-  @abstract
+  @brief
   @param      name
   @param      filename
-  @result
-  @discussion
+  @return
 */
 + addName: (NSString *) name fromSoundfile: (NSString *) filename;
+
 /*!
-  @method     addName:fromSection:
-  @abstract
+  @brief
   @param      name
   @param  	  sectionName
-  @result
-  @discussion
+  @return
 */
 + addName: (NSString *) name fromSection: (NSString *) sectionName;
 /*!
-  @method     addName:fromBundle:
-  @abstract
+  @brief
   @param      aName
   @param  	  aBundle
-  @result
-  @discussion
+  @return
 */
 + addName: (NSString *) aName fromBundle: (NSBundle *) aBundle;
 
 /*!
-  @method     removeSoundForName: 
-  @abstract
+  @brief
   @param      name
-  @result
-  @discussion
+  @return
 */
 + (void) removeSoundForName: (NSString *) name;
 
 /*!
-    @method removeAllSounds
-    @abstract Remove all named sounds in the name table.
+    @brief Remove all named sounds in the name table.
 */
 + (void) removeAllSounds;
 
@@ -286,38 +279,35 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (NSString *) description;
 
 /*!
-  @method initFromSoundfile:
   @param  filename is a NSString instance.
-  @result Returns an id.
-  @discussion Initializes the Snd instance, which must be newly allocated, from
-              the sound file <i>filename</i>.   Returns <b>self</b> (an unnamed
-              Snd) if the file was successfully read; otherwise, frees the newly
-              allocated Snd and returns <b>nil</b>.
-              
-              See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
+  @return Returns <b>self</b> (an unnamed Snd) if the file was successfully read;
+   otherwise, frees the newly allocated Snd and returns <b>nil</b>.
+  @brief Initializes the Snd instance, which must be newly allocated, from
+              the sound file <i>filename</i>.
+  @see	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
 */
 - initFromSoundfile: (NSString *) filename;
 
 /*!
-  @method initFromSoundURL:
   @param  url is a NSURL instance.
-  @result Returns an id.
-  @discussion Initializes the Snd instance, which must be newly allocated, by
+  @return Returns an id.
+  @brief Initializes the Snd instance, which must be newly allocated, by
               copying the sound data from the possibly remote sound file located using
-              <i>url</i>. Returns <b>self</b> (an unnamed Snd) if <i>url</i> can retrieve
+              <i>url</i>.
+
+  Returns <b>self</b> (an unnamed Snd) if <i>url</i> can retrieve
               a sound file; otherwise, frees the newly allocated Snd and returns <b>nil</b>.
 
-     See also:	<b>initFromSoundfile:</b>, +<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
+  @see	<b>initFromSoundfile:</b>, +<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
   */
 - initFromSoundURL: (NSURL *) url;
 
 /*!
-  @method initWithFormat:channelCount:frames:samplingRate:
   @param  format
   @param  channels
   @param  frames
   @param  samplingRate
-  @result Returns self
+  @return Returns self
 */
 - initWithFormat: (SndSampleFormat) format
     channelCount: (int) channels
@@ -325,56 +315,54 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
     samplingRate: (float) samplingRate;
 
 /*!
-  @method initWithData:
-  @abstract Initialise a Snd instance using a NSData instance which holds audio data in Sun/NeXT .au format.
-  @discussion The data is held with format preceding the PCM audio data.
+  @brief Initialise a Snd instance using a NSData instance which holds audio data in Sun/NeXT .au format.
+  @brief The data is held with format preceding the PCM audio data.
   @param soundData An NSData instance containing preceding sound format data followed by PCM audio data, in Sun/NeXT .au format.
-  @result Returns self
+  @return Returns self
  */
 - initWithData: (NSData *) soundData;
 
 - (void) dealloc;
 
 /*!
-  @method readSoundFromData:
   @param  stream is a NSData instance.
-  @result Returns a BOOL.  Returns YES if the sound was read successfully, NO otherwise.
-  @discussion Replaces the Snd's contents with those of the sound in the
-              NSData instance <i>stream</i>. If the sound in the NSData is named,
+  @return Returns a BOOL.  Returns YES if the sound was read successfully, NO otherwise.
+  @brief Replaces the Snd's contents with those of the sound in the
+              NSData instance <i>stream</i>.
+
+  If the sound in the NSData is named,
               the Snd gets the new name.
 	      <B>Currently only reads Sun/NeXT .au format files</B>.
 */
 - (BOOL) readSoundFromData: (NSData *) stream;
 
 /*!
-  @method      swapBigEndianToHostFormat
-  @discussion  The swapBigEndianToHostFormat method swaps the byte order of the receiver if it
-               is running on a little-endian (e.g Intel) architecture, and has no effect on a big-endian
-               (e.g Motorola 68k, PPC) architecture.
-               Note that no checks are done as to whether or not the receiver was
-               already byte-swapped, so you have to keep track of the status of
-               Snd objects yourself.<br>
-               Always use the appropriate method to convert your Snd objects; either
-               swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
-               or swapHostToBigEndianFormat to prepare a Snd which was in host order to be saved
-               or put onto the pasteboard.
-  @result      void
+  @brief  The swapBigEndianToHostFormat method swaps the byte order of the receiver if it
+	   is running on a little-endian (e.g Intel) architecture, and has no effect on a big-endian
+	   (e.g Motorola 68k, PPC) architecture.
+ 
+   Note that no checks are done as to whether or not the receiver was
+   already byte-swapped, so you have to keep track of the status of
+   Snd objects yourself.<br>
+   Always use the appropriate method to convert your Snd objects; either
+   swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
+   or swapHostToBigEndianFormat to prepare a Snd which was in host order to be saved
+   or put onto the pasteboard.
  */
 - (void) swapBigEndianToHostFormat;
 
 /*!
-  @method      swapHostToBigEndianFormat
-  @discussion  The swapHostToBigEndianFormat method swaps the byte order of the receiver if it
+  @brief  The swapHostToBigEndianFormat method swaps the byte order of the receiver if it
                is running on a little-endian (e.g Intel) architecture, and has no effect on a big-endian
                (e.g Motorola 68k, PPC) architecture.
-               Note that no checks are done as to whether or not the receiver was
-               already byte-swapped, so you have to keep track of the status of
-               Snd objects yourself.<br>
-               Always use the appropriate method to convert your Snd objects; either
-               swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
-               or swapHostToBigEndianFormat to prepare a Snd which was in host order to be saved
-               or put onto the pasteboard.
-  @result      void
+ 
+   Note that no checks are done as to whether or not the receiver was
+   already byte-swapped, so you have to keep track of the status of
+   Snd objects yourself.<br>
+   Always use the appropriate method to convert your Snd objects; either
+   swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
+   or swapHostToBigEndianFormat to prepare a Snd which was in host order to be saved
+   or put onto the pasteboard.
  */
 - (void) swapHostToBigEndianFormat;
 
@@ -383,369 +371,356 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - awakeAfterUsingCoder: (NSCoder *) aDecoder;
 
 /*!
-  @method name
-  @result Returns a NSString instance.
-  @discussion Returns the Snd's name.
+  @return Returns a NSString instance.
+  @brief Returns the Snd's name.
 */
 - (NSString *) name;
 
 /*!
-  @method setName:
   @param  aName is a NSString instance.
-  @result Returns a BOOL.
-  @discussion Sets the Snd's name to <i>aName</i>. If <i>aName</i> is already
-              being used, then the Snd's name isn't set and NO is returned;
-              otherwise returns YES.
+  @return Returns a BOOL.
+  @brief Sets the Snd's name to <i>aName</i>.
+
+  If <i>aName</i> is already being used, then the Snd's name
+  isn't set and NO is returned; otherwise returns YES.
 */
 - setName: (NSString *) theName;
 
 /*!
-  @method delegate
-  @result Returns an id.
-  @discussion Returns the Snd's delegate.
+  @return Returns an id.
+  @brief Returns the Snd's delegate.
 */
 - delegate;
 
 /*!
-  @method setDelegate:
   @param  anObject is an id.
-  @discussion Sets the Snd's delegate to <i>anObject</i>.
+  @brief Sets the Snd's delegate to <i>anObject</i>.
 */
 - (void) setDelegate: (id) anObject;
 
 /*!
-  @method samplingRate
-  @result Returns a double.
-  @discussion Returns the Snd's sampling rate.
+  @return Returns a double.
+  @brief Returns the Snd's sampling rate.
 */
 - (double) samplingRate;
 
 /*!
-  @method lengthInSampleFrames
-  @result Returns an int.
-  @discussion Returns the number of sample frames, or channel count-independent
+  @return Returns an int.
+  @brief Returns the number of sample frames, or channel count-independent
               samples, in the Snd.
 */
 - (unsigned long) lengthInSampleFrames;
 
 /*!
-  @method duration
-  @result Returns a double.
-  @discussion Returns the Snd's length in seconds.
+  @return Returns a double.
+  @brief Returns the Snd's length in seconds.
 */
 - (double) duration;
 
 /*!
-  @method channelCount
-  @result Returns an int.
-  @discussion Returns the number of channels in the Snd.
+  @return Returns an int.
+  @brief Returns the number of channels in the Snd.
 */
 - (int) channelCount;
 
 /*!
-  @method info
-  @abstract Returns the Snd's info string.
-  @discussion The Snd's info string is any text description the user of the object wishes to assign to it.
-              It will however, endeavour to be written in an appropriate field to any sound file written from this Snd instance.
-			  It will be retrieved from an appropriate field when reading a sound file.
-  @result Returns an NSString.
+  @brief Returns the Snd's info string.
+ 
+  The Snd's info string is any text description the user of the object wishes to assign to it.
+  It will however, endeavour to be written in an appropriate field to any sound file written from this Snd instance.
+  It will be retrieved from an appropriate field when reading a sound file.
+  @return Returns an NSString.
 */
 - (NSString *) info;
 
 /*!
-  @method setInfo:
-  @abstract Assigns the Snd's info string.
-  @discussion The Snd's info string is any text description the user of the object wishes to assign to it.
-              It will however, endeavour to be written in an appropriate field to any sound file written from this Snd instance.
+  @brief Assigns the Snd's info string.
+
+  The Snd's info string is any text description the user of the object wishes to assign to it.
+  It will however, endeavour to be written in an appropriate field to any sound file written from this Snd instance.
   @param newInfoString An NSString containing the new text.
  */
 - (void) setInfo: (NSString *) newInfoString;
 
-
 /*!
-  @method status
-  @result Returns an int.
-  @discussion Return the Snd's current status, one of the following integer
-              constants:
-              <UL>
-              <LI>	SND_SoundStopped</LI>
-              <LI>	SND_SoundRecording</LI>
-              <LI>	SND_SoundPlaying</LI>
-              <LI>	SND_SoundInitialized</LI>
-              <LI>	SND_SoundRecordingPaused</LI>
-              <LI>	SND_SoundPlayingPaused</LI>
-              <LI>	SND_SoundRecordingPending</LI>
-              <LI>	SND_SoundPlayingPending</LI>
-              <LI>	SND_SoundFreed</LI>
-              </UL>
+  @return Returns an int.
+  @brief Return the Snd's current status.
+ 
+  The current status is one of the following integer constants:
+  <UL>
+  <LI>	SND_SoundStopped</LI>
+  <LI>	SND_SoundRecording</LI>
+  <LI>	SND_SoundPlaying</LI>
+  <LI>	SND_SoundInitialized</LI>
+  <LI>	SND_SoundRecordingPaused</LI>
+  <LI>	SND_SoundPlayingPaused</LI>
+  <LI>	SND_SoundRecordingPending</LI>
+  <LI>	SND_SoundPlayingPending</LI>
+  <LI>	SND_SoundFreed</LI>
+  </UL>
 */
 - (int) status;
 
 /*!
-  @method isEmpty
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the Snd doesn't contain any sound data,
-              otherwise returns <b>NO</b>. This always returns <b>NO</b> if the
-              Snd isn't editable (as determined by sending it the
-              <b>isEditable</b> message).
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the Snd doesn't contain any sound data,
+              otherwise returns <b>NO</b>.
+
+  This always returns <b>NO</b> if the
+  Snd isn't editable (as determined by sending it the
+  <b>isEditable</b> message).
 */
 - (BOOL) isEmpty;
 
 /*!
-  @method isEditable
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the Snd's format indicates that it can be
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the Snd's format indicates that it can be
               edited, otherwise returns <b>NO</b>.
 */
 - (BOOL) isEditable;
 
 /*!
-  @method compatibleWithSound:
   @param  aSound is an id.
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the format, sampling rate, and channel count
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the format, sampling rate, and channel count
               of <i>aSound</i>'s sound data is the same as that of the Snd
-              receiving this message. If one (or both) of the Snds doesn't
-              contain a sound (its <b>soundStruct</b> is <b>nil</b>) then the
-              objects are declared compatible and <b>YES</b> is returned.
-              
+              receiving this message.
+
+  If one (or both) of the Snds doesn't
+  contain a sound (its <b>soundStruct</b> is <b>nil</b>) then the
+  objects are declared compatible and <b>YES</b> is returned.              
 */
 - (BOOL) compatibleWithSound: (Snd *) aSound;
 
 /*!
-  @method convertToSampleFormat:samplingRate:channelCount:
   @param  newFormat is an SndSampleFormat.
   @param  newRate is a double.
   @param  newChannelCount is an int.
-  @result Returns an error code or SND_ERR_NONE if the conversion was performed correctly.
-  @discussion Convert the Snd's data to the given format,
-              sampling rate, and number of channels. The following conversions are
-              possible:
-	      <UL>
-              <LI>Arbitrary sampling rate conversion.</LI>
-              <LI>Compression and decompression.</LI>
-              <LI>Floating-point formats (including double-precision) to and from linear formats.</LI>
-              <LI>Mono to stereo.</LI>
-              <LI>CODEC mu-law to and from linear formats.</LI>
-	      </UL>
+  @return Returns an error code or SND_ERR_NONE if the conversion was performed correctly.
+  @brief Convert the Snd's data to the given format, sampling rate, and number of channels.
+
+  The following conversions are possible:
+  <UL>
+  <LI>Arbitrary sampling rate conversion.</LI>
+  <LI>Compression and decompression.</LI>
+  <LI>Floating-point formats (including double-precision) to and from linear formats.</LI>
+  <LI>Mono to stereo.</LI>
+  <LI>CODEC mu-law to and from linear formats.</LI>
+  </UL>
  */
 - (int) convertToSampleFormat: (SndSampleFormat) newFormat
 	   samplingRate: (double) newRate
 	   channelCount: (int) newChannelCount;
 
 /*!
-  @method convertToSampleFormat:
   @param  newFormat is an SndSampleFormat.
-  @result Returns an integer indicating any error or SND_ERR_NONE if the conversion worked.
-  @discussion This is the same as
-              <b>convertToSampleFormat:samplingRate:channelCount:</b>,
-              except that only the format is changed. An error code is
-              returned.  
+  @return Returns an integer indicating any error or SND_ERR_NONE if the conversion worked.
+  @brief This is the same as <b>convertToSampleFormat:samplingRate:channelCount:</b>,
+              except that only the format is changed.
+
+  An error code is returned.  
 */
 - (int) convertToSampleFormat: (SndSampleFormat) newFormat;
 
 /*!
-  @method nativeFormat
-  @abstract Returns the native format (sampling rate, resolution and channels) used by the sound
+  @brief Returns the native format (sampling rate, resolution and channels) used by the sound
             playback hardware in streaming audio.
-  @discussion The native format is the format sounds loaded and audio buffers created in which
-              will incur the least processing overhead in order to play. Recording could be in a different format.
-  @result Returns a SndFormat structure.
+ 
+  The native format is the format sounds loaded and audio buffers created in which will incur
+  the least processing overhead in order to play. Recording could be in a different format.
+  @return Returns a SndFormat structure.
  */
 + (SndFormat) nativeFormat;
 
 /*!
-  @method convertToNativeFormat:
-  @result Returns an int.
-  @discussion The Snd is converted to the format (sampling rate, resolution and channels) that
-              the hardware natively uses. This should result in the fastest playback, avoiding any
-	      on the fly conversions. An error code is returned.
+  @return Returns an error code.
+  @brief The Snd is converted to the format (sampling rate, resolution and channels) that
+              the hardware natively uses.
+
+  This should result in the fastest playback, avoiding any on the fly conversions. 
  */
 - (int) convertToNativeFormat;
 
 /*!
-  @method copyWithZone:
   @param  zone is an NSZone.
-  @result Returns a new retained instance with duplicated data, or nil if unable to copy.
+  @return Returns a new retained instance with duplicated data, or nil if unable to copy.
 */
 - (id) copyWithZone: (NSZone *) zone;
 
 /*!
-  @method dataEncodedAsFormat:
-  @abstract Creates an NSData instance holding the Snd's name (if any), sample format, and sound data (if any).
   @param  dataFormat is an NSString describing the data format.
-  @result Returns an autoreleased NSData instance, or nil if unable to encode.
-  @discussion The dataFormat parameter matches sound file extensions. Currently however,
-	      all data is encoded as .au format, dataFormat is ignored.
+  @return Returns an autoreleased NSData instance, or nil if unable to encode.
+  @brief Creates an NSData instance holding the Snd's name (if any), sample format, and sound data (if any).
+ 
+  The dataFormat parameter matches sound file extensions. Currently however,
+  all data is encoded as .au format, dataFormat is ignored.
  */
 - (NSData *) dataEncodedAsFormat: (NSString *) dataFormat;
 
 /*!
-  @method data
-  @result Returns a void pointer.
-  @discussion Returns a pointer to the Snd's sampled data. You can use the
-              pointer to examine, create, and modify the sound data. To
-              intelligently manipulate the data, you need to be aware of its size,
-              format, sampling rate, and the number of channels that it contains
-              (a query method for each of these attributes is provided by the
-              Snd class). The size of the data, in particular, must be
-              respected; it's set when the Snd is created or given a new sound
-              (through <b>readSoundfile:</b>, for example) and can't be changed
-              directly. To resize the data, you should invoke one of the editing
-              methods such as <b>insertSamples:at:</b> or
-	      <b>deleteSamplesInRange:</b>.
+  @return Returns a void pointer.
+  @brief Returns a pointer to the Snd's sampled data.
 
-              To start with a new, unfragmented sound with a
-              determinate length, invoke the
-              <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>
-              method. Keep in mind that the sound data in a fragmented
-              sound is a pointer to a <b>NULL</b>-terminated list of
-              pointers to SndSoundStructs, one for each fragment. To
-              examine or manipulate the samples in a fragmented sound,
-              you must understand the SndSoundStruct structure.
- 
-              TODO This should probably be renamed to "bytes" matching NSData's naming scheme.
+    You can use the
+    pointer to examine, create, and modify the sound data. To
+    intelligently manipulate the data, you need to be aware of its size,
+    format, sampling rate, and the number of channels that it contains
+    (a query method for each of these attributes is provided by the
+    Snd class). The size of the data, in particular, must be
+    respected; it's set when the Snd is created or given a new sound
+    (through <b>readSoundfile:</b>, for example) and can't be changed
+    directly. To resize the data, you should invoke one of the editing
+    methods such as <b>insertSamples:at:</b> or
+    <b>deleteSamplesInRange:</b>.
+
+    To start with a new, unfragmented sound with a
+    determinate length, invoke the
+    <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>
+    method. Keep in mind that the sound data in a fragmented
+    sound is a pointer to a <b>NULL</b>-terminated list of
+    pointers to SndSoundStructs, one for each fragment. To
+    examine or manipulate the samples in a fragmented sound,
+    you must understand the SndSoundStruct structure.
+
+    TODO This should probably be renamed to "bytes" matching NSData's naming scheme.
 */
 - (void *) data;
 
 /*!
-  @method dataSize
-  @result Returns an int.
-  @discussion Return the size (in bytes) of the Snd's data. If you modify the
-              data (through the pointer returned by the <b>data</b> method) you
-              must be careful not to exceed its length. If the sound is
-              fragmented, the value returned by this method is the size of the
-              Snd's <b>soundStruct</b> and doesn't include the actual data
-              itself.
+  @return Returns an int.
+  @brief Return the size (in bytes) of the Snd's data.
+
+  If you modify the
+  data (through the pointer returned by the <b>data</b> method) you
+  must be careful not to exceed its length. If the sound is
+  fragmented, the value returned by this method is the size of the
+  Snd's <b>soundStruct</b> and doesn't include the actual data
+  itself.
 */
 - (int) dataSize;
 
 /*!
-  @method dataFormat
-  @result Returns an SndSampleFormat.
-  @discussion Returns the format of the Snd's data. If the data is fragmented,
-              the format of the samples is returned (in other words,
-              SND_FORMAT_INDIRECT is never returned by this method).
+  @return Returns an SndSampleFormat.
+  @brief Returns the format of the Snd's data.
+
+  If the data is fragmented,
+  the format of the samples is returned (in other words,
+  SND_FORMAT_INDIRECT is never returned by this method).
 */
 - (SndSampleFormat) dataFormat;
 
 /*!
-  @method hasSameFormatAsBuffer:
   @param buff The SndAudioBuffer instance to compare.
-  @result Returns a BOOL.
-  @discussion Returns YES if the Snd's dataFormat, channelCount and sampling rate match the given SndAudioBuffer instance.
-              The number of frames are <B>not</B> compared.
+  @return Returns a BOOL.
+  @brief Returns YES if the Snd's dataFormat, channelCount and sampling rate match the given SndAudioBuffer instance.
+ 
+  The number of frames are <B>not</B> compared.
  */
 - (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff;
 
 /*!
-  @method     format
-  @abstract   Returns the format (number of frames, channels, dataFormat) of the audio buffer as a SndFormat structure.
-  @discussion
-  @result     Returns a SndFormat.
+  @brief  Returns the format (number of frames, channels, dataFormat) of the audio buffer as a SndFormat structure.
+  @return Returns a SndFormat.
  */
 - (SndFormat) format;
 
 /*!
-  @method soundStruct
-  @result Returns a SndSoundStruct *.
-  @discussion Returns a pointer to the Snd's SndSoundStruct structure that holds
+  @return Returns a SndSoundStruct *.
+  @brief Returns a pointer to the Snd's SndSoundStruct structure that holds
               the object's sound data.
-              TODO This will be changed to soundData and return an NSData instance.
+ 
+  TODO This will be changed to soundData and return an NSData instance.
 */
 - (SndSoundStruct *) soundStruct;
 
 /*!
-  @method processingError
-  @result Returns an int.
-  @discussion Returns a constant that represents the last error that was
-              generated. The sound error codes are listed in &#ldquo;Types and
-              Constants.&#rdquo;
+  @return Returns an int.
+  @brief Returns a constant that represents the last error that was generated.
+
+  The sound error codes are listed in &#ldquo;Types and Constants.&#rdquo;
 */
 - (int) processingError;
 
 /*!
-  @method soundBeingProcessed
-  @result Returns an id.
-  @discussion Returns the Snd object that's being performed. The default
-              implementation always returns <b>self</b>.
+  @return Returns an id.
+  @brief Returns the Snd object that's being performed.
+
+  The default implementation always returns <b>self</b>.
 */
 - (Snd *) soundBeingProcessed;
 
 // delegations which are not nominated per performance.
 
 /*!
-  @method tellDelegate:
   @param  theMessage is a SEL.
-  @discussion Sends <i>theMessage</i> to the Snd's delegate (only sent if the
-              delegate implements <i>theMessage</i>). You never invoke this method
-              directly; it's invoked automatically as the result of activities
-              such as recording and playing. However, you can use it in designing
-              a subclass of Snd.
+  @brief Sends <i>theMessage</i> to the Snd's delegate (only sent if the
+              delegate implements <i>theMessage</i>).
+
+  You never invoke this method
+  directly; it's invoked automatically as the result of activities
+  such as recording and playing. However, you can use it in designing
+  a subclass of Snd.
 */
 - (void) tellDelegate: (SEL) theMessage;
 
 // delegations which are nominated per performance.
 
 /*!
-  @method tellDelegate:
   @param  theMessage is a SEL.
-  @discussion Sends <i>theMessage</i> to the Snd's delegate (only sent if the
-              delegate implements <i>theMessage</i>). You never invoke this method
-              directly; it's invoked automatically as the result of activities
-              such as recording and playing. However, you can use it in designing
-              a subclass of Snd.
+  @brief Sends <i>theMessage</i> to the Snd's delegate (only sent if the
+              delegate implements <i>theMessage</i>).
+
+  You never invoke this method
+  directly; it's invoked automatically as the result of activities
+  such as recording and playing. However, you can use it in designing
+  a subclass of Snd.
 */
 - (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance;
 
 /*!
-  @method tellDelegateString:
   @param  theMessage is an NSString, which will be converted to a SEL.
-  @discussion Sends <i>theMessage</i> to the Snd's delegate (only sent if the
-              delegate implements <i>theMessage</i>). You never invoke this method
-              directly; it's invoked automatically as the result of activities
-              such as recording and playing. However, you can use it in designing
-              a subclass of Snd.
+  @brief Sends <i>theMessage</i> to the Snd's delegate (only sent if the
+              delegate implements <i>theMessage</i>).
+
+  You never invoke this method
+  directly; it's invoked automatically as the result of activities
+  such as recording and playing. However, you can use it in designing
+  a subclass of Snd.
 */
 - (void) tellDelegateString: (NSString *) theMessage duringPerformance: (SndPerformance *) performance;
 
-
 /*!
-  @method setConversionQuality:
-  @abstract Sets the conversion quality performed by convertToSampleFormat:
+  @brief Sets the conversion quality performed by convertToSampleFormat:
+
+  Default is SndConvertLowQuality.
   @param quality Sets the conversion quality to a SndConversionQuality enumerated type.
-  @discussion Default is SndConvertLowQuality.
  */
 - (void) setConversionQuality: (SndConversionQuality) quality;
 
 /*!
-  @method conversionQuality
-  @abstract Returns the current conversion quality performed by convertToSampleFormat:
-  @result Returns a SndConversionQuality enumerated type.
+  @brief Returns the current conversion quality performed by convertToSampleFormat:
+  @return Returns a SndConversionQuality enumerated type.
 */
 - (SndConversionQuality) conversionQuality;
 
 - (void) _setStatus: (int) newStatus; /* Private! not for general use. */
 
 /*!
-  @method initWithAudioBuffer:
-  @abstract Initialises a Snd instance from the provided SndAudioBuffer.
+  @brief Initialises a Snd instance from the provided SndAudioBuffer.
   @param aBuffer the SndAudioBuffer object from which to copy the data
-  @result self
+  @return self
  */
 - initWithAudioBuffer: (SndAudioBuffer *) aBuffer;
 
 /*!
-  @method normalise
-  @abstract Normalises the amplitude of the entire sound.
-  @discussion The highest amplitude sample in the sound is scaled to be the maximum resolution.
+  @brief Normalises the amplitude of the entire sound.
+  @brief The highest amplitude sample in the sound is scaled to be the maximum resolution.
  */
 - (void) normalise;
 
 /*!
-  @method maximumAmplitude
-  @abstract Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
-  @result Returns the maximum value of a sample.
+  @brief Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
+  @return Returns the maximum value of a sample.
  */
 - (double) maximumAmplitude;
 
@@ -757,87 +732,85 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 		   dataFormat: (SndSampleFormat) sndFormatCode;
 
 /*!
-  @method soundFileExtensions
-  @abstract Returns an array of valid file extensions available for reading and writing.
-  @result Returns an NSArray of NSStrings of file extensions.
-  @discussion Returns an array of file extensions indicating the file format (and file extension)
-              that audio files may be read from or written to. This list may be used for limiting NSOpenPanel
-              to those formats supported. The list can be expected to vary between platforms, but is ultimately
-              derived from those formats supported by the underlying libsndfile library.
+  @brief Returns an array of valid file extensions available for reading and writing.
+
+  Returns an array of file extensions indicating the file format (and file extension)
+  that audio files may be read from or written to. This list may be used for limiting NSOpenPanel
+  to those formats supported. The list can be expected to vary between platforms, but is ultimately
+  derived from those formats supported by the underlying libsndfile library.
+ @return Returns an NSArray of NSStrings of file extensions.
  */
 + (NSArray *) soundFileExtensions;
 
 /*!
-  @method isPathForSoundFile:
   @param path A file path
-  @result TRUE if the file at path is a sound file.
+  @return TRUE if the file at path is a sound file.
  */
 + (BOOL) isPathForSoundFile: (NSString*) path;
 
 /*!
-  @method defaultFileExtension
-  @abstract Returns the extension of the standard file format. This may differ between platforms.
+  @brief Returns the extension of the standard file format. This may differ between platforms.
  */
 + (NSString *) defaultFileExtension;
 
 /*!
-  @method soundFormatOfFilename:
   @param  filename is a NSString instance.
-  @result Returns a SndFormat structure.
-  @discussion Returns the format of the data in the named sound file. If the file is unable to be opened
-          a dataFormat of SND_FORMAT_UNSPECIFIED is returned in the SndFormat.
+  @return Returns a SndFormat structure.
+  @brief Returns the format of the data in the named sound file.
+
+  If the file is unable to be opened a dataFormat of SND_FORMAT_UNSPECIFIED is returned in the SndFormat.
  */
 - (SndFormat) soundFormatOfFilename: (NSString *) filename;
 
 /*!
-  @method readSoundfile:startFrame:frameCount:
   @param  filename is a NSString instance.
   @param  startFrame The frame in the file to read from.
   @param  frameCount Number of frames to read, -1 = read to EOF marker.
-  @result Returns an int.
-  @discussion Replaces the Snd's contents with a nominated subrange of those of the sound file
-              <i>filename</i>. The Snd loses its current name, if any. An error code is returned.
-              TODO it would be preferable to have readSoundfile: (NSString *) fromRange: (NSRange). 
-              However we need a mechanism to indicate infinity for the length in order to signal to read to EOF.
+  @return Returns an int.
+  @brief Replaces the Snd's contents with a nominated subrange of those of the sound file
+              <i>filename</i>.
+
+  The Snd loses its current name, if any. An error code is returned.
+  TODO it would be preferable to have readSoundfile: (NSString *) fromRange: (NSRange). 
+  However we need a mechanism to indicate infinity for the length in order to signal to read to EOF.
  */
 - (int) readSoundfile: (NSString *) filename
 	   startFrame: (unsigned long) startFrame
 	   frameCount: (long) frameCount;
 
 /*!
-  @method readSoundfile:
   @param  filename is a NSString instance.
-  @result Returns an int.
-  @discussion Replaces the Snd's contents with those of the sound file
-              <i>filename</i>. The Snd loses its current name, if any. An error
-              code is returned.
+  @return Returns an integer error code.
+  @brief Replaces the Snd's contents with those of the sound file <i>filename</i>.
+
+  The Snd loses its current name, if any. 
  */
 - (int) readSoundfile: (NSString *) filename;
 
 /*!
-  @method writeSoundfile:fileFormat:dataFormat:
-  @abstract Writes the Snd's contents (its sample format and sound data) to the sound file <i>filename</i> in
+  @brief Writes the Snd's contents (its sample format and sound data) to the sound file <i>filename</i> in
             the given file format and data encoding.
+
+  Expects the sound to not be fragmented, and to be in host endian order.
   @param filename is a NSString instance.
   @param fileFormat An NSString giving the extension format name (.au, .wav, .aiff etc) to write out the sound
          which matches one of the encodings returned by +soundFileExtensions.
   @param fileDataFormat a SndSampleFormat allowing the sound to be written out in a different format (e.g SND_FORMAT_LINEAR_16)
          than it is held in (e.g SND_FORMAT_FLOAT).
-  @discussion Expects the sound to not be fragmented, and to be in host endian order.
-  @result Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
+  @return Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
  */
 - (int) writeSoundfile: (NSString *) filename
 	    fileFormat: (NSString *) fileFormat
 	    dataFormat: (SndSampleFormat) fileDataFormat;
 
 /*!
-  @method writeSoundfile:
   @param  filename is a NSString instance.
-  @result Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
-  @abstract Writes the Snd's contents (its sample format and sound data) to the sound file <i>filename</i>. 
-  @discussion The filename is expected to have an extension which indicates the format to write and which matches
-              one of the encodings returned by +soundFileExtensions. Use writeSoundfile:fileFormat:dataFormat: to
-              write a filename without an extension. An error code is returned.
+  @return Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
+  @brief Writes the Snd's contents (its sample format and sound data) to the sound file <i>filename</i>. 
+
+  The filename is expected to have an extension which indicates the format to write and which matches
+  one of the encodings returned by +soundFileExtensions. Use writeSoundfile:fileFormat:dataFormat: to
+  write a filename without an extension. An error code is returned.
  */
 - (int) writeSoundfile: (NSString *) filename;
 
@@ -846,321 +819,301 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 @interface Snd(Playing)
 
 /*!
-  @method isMuted
-  @result Returns a BOOL.
-  @abstract Returns YES if the sound output of all playing sounds is currently muted.
+  @return Returns a BOOL.
+  @brief Returns YES if the sound output of all playing sounds is currently muted.
 */
 + (BOOL) isMuted;
 
 /*!
-  @method setMute:
   @param  aFlag is a BOOL.
-  @result If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
-  @discussion Mutes and unmutes the sound output level of all playing sounds if <i>aFlag</i> is YES or
-              NO, respectively. 
+  @return If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
+  @brief Mutes and unmutes the sound output level of all playing sounds if <i>aFlag</i> is YES or
+              NO, respectively.  
  */
 + setMute: (BOOL) aFlag;
 
 /*!
-  @method waitUntilStopped
-  @result Returns an int.
-  @discussion If the Snd is currently playing or recording, waits until the
+  @return Returns an int.
+  @brief If the Snd is currently playing or recording, waits until the
               sound has finished playing or recording, at which time it returns
-              the result of the <b>SNDWait() </b>function. If the Snd is not
-              playing or recording when <b>waitUntilStopped</b> is invoked, it
-              returns SND_ERROR_NONE.
+              the result of the <b>SNDWait() </b>function.
+
+  If the Snd is not
+  playing or recording when <b>waitUntilStopped</b> is invoked, it
+  returns SND_ERROR_NONE.
  */
 - (int) waitUntilStopped;
 
 /*!
-  @method stopPerformance:inFuture:
-  @abstract Stop the given playback of the sound at some future time, specified in seconds.
+  @brief Stop the given playback of the sound at some future time, specified in seconds.
   @param inSeconds The number of seconds beyond the current time point to begin playback.
   @param performance The performance that represents the sound playing. 
  */
 + (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds;
 
 /*!
-  @method stop:
   @param  sender is an id.
-  @discussion Action method that stops the Snd's playback or recording. Other
-              than the argument and the return type, this is the same as the
-              <b>stop</b> method.
+  @brief Action method that stops the Snd's playback or recording.
+
+  Other than the argument and the return type, this is the same as the <b>stop</b> method.
  */
 - (void) stop: (id) sender;
 
 /*!
-  @method stop
-  @result Returns an int.
-  @discussion Terminates the Snd's playback or recording. If the Snd was
-              recording, the <b>didRecord:</b> message is sent to the delegate; if
-              playing, <b>didPlay:duringPerformance:</b> is sent. An error code is
-              returned.
+  @return Returns an int.
+  @brief Terminates the Snd's playback or recording.
+
+  If the Snd was recording, the <b>didRecord:</b> message is sent to the delegate; if
+  playing, <b>didPlay:duringPerformance:</b> is sent. An error code is returned.
  */
 - (int) stop;
 
 /*!
-  @method pause:
   @param  sender is an id.
-  @discussion Action method that pauses the Snd. Other than the argument and the
-              return type, this is the same as the <b>pause</b>
-  method.
+  @brief Action method that pauses the Snd.
+
+  Other than the argument and the return type, 
+  this is the same as the <b>pause</b> method.
  */
 - pause: (id) sender;
 
 /*!
-  @method pause
-  @result Returns an int.
-  @discussion Pauses the Snd during recording or playback. An error code is
-              returned.
+  @return Returns an integer error code.
+  @brief Pauses the Snd during recording or playback.
  */
 - (int) pause;
 
 /*!
-  @method resume:
   @param  sender is an id.
-  @discussion Action method that resumes the paused Snd.
+  @brief Action method that resumes the paused Snd.
  */
 - resume: (id) sender;
 
 /*!
-  @method resume
-  @result Returns an int.
-  @discussion Resumes the paused Snd's activity. An error code is
-              returned.
+  @return Returns an integer error code.
+  @brief Resumes the paused Snd's activity.
  */
 - (int) resume;
 
 /*!
-  @method isPlayable
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the Snd can be played, otherwise returns
-              <b>NO</b>. Some unplayable Snds just need to be converted to
-              another format, sampling rate, or number of channels; others are
-              inherently unplayable, such as those whose format is
-              SND_FORMAT_DISPLAY. To play a Snd that's just been recorded from
-              the DSP, you must change its format from SND_FORMAT_DSP_DATA_16 to
-              SND_FORMAT_LINEAR_16. 
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the Snd can be played, otherwise returns <b>NO</b>.
+
+  Some unplayable Snds just need to be converted to
+  another format, sampling rate, or number of channels; others are
+  inherently unplayable, such as those whose format is
+  SND_FORMAT_DISPLAY. To play a Snd that's just been recorded from
+  the DSP, you must change its format from SND_FORMAT_DSP_DATA_16 to
+  SND_FORMAT_LINEAR_16. 
 */
 - (BOOL) isPlayable;
 
 /*!
-  @method isPlaying
-  @result Returns a BOOL, YES if a sound has playing performances, NO if not.
-  @discussion Returns <b>YES</b> if the Snd is currently playing one or more performances,
+  @return Returns a BOOL, YES if a sound has playing performances, NO if not.
+  @brief Returns <b>YES</b> if the Snd is currently playing one or more performances,
               otherwise returns <b>NO</b>.
  */
 - (BOOL) isPlaying;
 
 /*!
-  @method play
-  @abstract Play the entire sound now.
-  @result Returns SND_ERR_NONE if the sound played correctly.
-  @discussion Initiates playback of the Snd. The method returns immediately
-              while the playback continues asynchronously in the background. The
-              playback ends when the Snd receives the <b>stop</b> message, or
-              when its data is exhausted.
+  @brief Play the entire sound now.
+  @return Returns SND_ERR_NONE if the sound played correctly.
+  @brief Initiates playback of the Snd.
 
-              When playback starts, <b>willPlay:</b> is sent to
-              the Snd's delegate; when it stops, <b>didPlay:</b> is sent. An
-              error code is returned.
+  The method returns immediately
+  while the playback continues asynchronously in the background. The
+  playback ends when the Snd receives the <b>stop</b> message, or
+  when its data is exhausted.
 
-              <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
+  When playback starts, <b>willPlay:</b> is sent to
+  the Snd's delegate; when it stops, <b>didPlay:</b> is sent. An
+  error code is returned.
+
+  <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
 */
 - (int) play;
 
 /*!
-  @method play:
-  @abstract Play the entire sound now, for use as an action method.
+  @brief Play the entire sound now, for use as an action method.
   @param sender The sending object.
-  @result Returns self if play occured correctly, nil if there was an error.
+  @return Returns self if play occured correctly, nil if there was an error.
  */
 - play: (id) sender;
 
 /*!
-  @method playInFuture:beginSample:sampleCount:
-  @abstract Begin playback at some time in the future, over a region of the sound.
+  @brief Begin playback at some time in the future, over a region of the sound.
   @param inSeconds The number of seconds beyond the current time point to begin playback.
   @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
   @param count The number of samples to play. Use sampleCount to play the entire sound.
-  @result Returns the performance that represents the sound playing.
+  @return Returns the performance that represents the sound playing.
  */
 - (SndPerformance *) playInFuture: (double) inSeconds
 		      beginSample: (unsigned long) begin
 		      sampleCount: (unsigned long) count;
 
 /*!
-  @method playInFuture:startPositionInSeconds:durationInSeconds:
-  @abstract Begin playback at some time in the future, over a region of the sound.
+  @brief Begin playback at some time in the future, over a region of the sound.
   @param inSeconds The number of seconds beyond the current time point to begin playback.
   @param startPosition The time in seconds in the Snd to begin playing from.
     Use 0.0 to play from the start of the sound.
   @param duration The duration of the Snd to play in seconds. Use -[Snd duration] to play the entire sound.
-  @result Returns the performance that represents the sound playing.
+  @return Returns the performance that represents the sound playing.
  */
 - (SndPerformance *) playInFuture: (double) inSeconds
            startPositionInSeconds: (double) startPosition
                 durationInSeconds: (double) duration;
 /*!
-  @method   playAtTimeInSeconds:withDurationInSeconds:
-  @abstract Begin playback at a certain absolute stream time, for a certain duration.
+  @brief Begin playback at a certain absolute stream time, for a certain duration.
   @param    t Start time in seconds
   @param    d Duration in seconds
-  @result   Returns the performance that represents the sound playing.
+  @return   Returns the performance that represents the sound playing.
  */
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d;
 
 /*!
-  @method play:beginSample:sampleCount:
-  @abstract Begin playback now, over a region of the sound.
-  @discussion This is a deprecated method for SoundKit compatability.
-              You should use playInFuture:beginSample:sampleCount: instead.
+  @brief Begin playback now, over a region of the sound.
+ 
+  This is a deprecated method for SoundKit compatability.
+  You should use playInFuture:beginSample:sampleCount: instead.
   @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
   @param count The number of samples to play. Use sampleCount to play the entire sound.
-  @result Returns self
+  @return Returns self.
  */
 - play: (id) sender beginSample: (int) begin sampleCount: (int) count;
 
 /*!
-  @method playInFuture:
-  @abstract Begin the playback of the sound at some future time, specified in seconds.
+  @brief Begin the playback of the sound at some future time, specified in seconds.
   @param inSeconds The number of seconds beyond the current time point to begin playback.
-  @result Returns the performance that represents the sound playing.
+  @return Returns the performance that represents the sound playing.
  */
 - (SndPerformance *) playInFuture: (double) inSeconds;
 
 /*!
-  @method playAtDate:
-  @abstract Begin the playback of the sound at a specified date.
+  @brief Begin the playback of the sound at a specified date.
   @param date The date to begin playback.
-  @result Returns the performance that represents the sound playing.
+  @return Returns the performance that represents the sound playing.
  */
 - (SndPerformance *) playAtDate: (NSDate *) date;
 
 /*!
-  @method record:
   @param sender
  */
 - record: (id) sender;
 
 /*!
-  @method record
-  @result An error code is returned.
-  @discussion Initiate recording into the Snd. To record from the CODEC
-              microphone, the Snd's format, sampling rate, and channel count
-              must be SND_FORMAT_MULAW_8, SND_RATE_CODEC, and 1, respectively. If
-              this information isn't set (if the Snd is a newly created object,
-	      for example), it defaults to accommodate a CODEC recording. If the
-              Snd's format is SND_FORMAT_DSP_DATA_16, the recording is from the DSP.
- 
-              The method returns immediately while the recording
-              continues asynchronously in the background. The recording stops when
-              the Snd receives the <b>stop</b> message or when the recording has
-              gone on for the duration of the original sound data. The default
-              CODEC recording lasts precisely ten minutes if not stopped. To
-              record for a longer time, first increase the size of the sound data
-              with <b>setSoundStruct:soundStructSize:</b> or 
-              <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
- 
-              When the recording begins, <b>willRecord:</b> is
-              sent to the Snd's delegate; when the recording stops,
-              <b>didRecord:</b> is sent.
+  @return An error code is returned.
+  @brief Initiate recording into the Snd.
 
-              <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
+  To record from the CODEC
+  microphone, the Snd's format, sampling rate, and channel count
+  must be SND_FORMAT_MULAW_8, SND_RATE_CODEC, and 1, respectively. If
+  this information isn't set (if the Snd is a newly created object,
+  for example), it defaults to accommodate a CODEC recording. If the
+  Snd's format is SND_FORMAT_DSP_DATA_16, the recording is from the DSP.
+
+  The method returns immediately while the recording
+  continues asynchronously in the background. The recording stops when
+  the Snd receives the <b>stop</b> message or when the recording has
+  gone on for the duration of the original sound data. The default
+  CODEC recording lasts precisely ten minutes if not stopped. To
+  record for a longer time, first increase the size of the sound data
+  with <b>setSoundStruct:soundStructSize:</b> or 
+  <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
+
+  When the recording begins, <b>willRecord:</b> is
+  sent to the Snd's delegate; when the recording stops,
+  <b>didRecord:</b> is sent.
+
+  <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
  */
 - (int) record;
 
 /*!
-  @method samplesPerformedOfPerformance:
   @param performance The SndPerformance of which to enquire.
-  @result Returns an int.
-  @discussion If the Snd is currently playing or recording, this returns the
+  @return Returns an int.
+  @brief If the Snd is currently playing or recording, this returns the
               number of sample frames that have been played or recorded so far.
-              Otherwise, the number of sample frames in the Snd is returned. If
-              the sample frame count can't be determined, -1 is
-              returned.
+ 
+  If not currently playing or recording, the number of sample frames in the Snd is returned.
+  If the sample frame count can't be determined, -1 is returned.
  */
 - (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
 
 /*!
-  @method     performances
-  @abstract   Performance array accessor.
-  @result     NSArray of performances.
-  @discussion Mainly for use by SndPlayer
+  @brief   Performance array accessor.
+
+  Mainly for use by SndPlayer.
+  @return     NSArray of performances.
 */
 - (NSArray*) performances;
 
 /*!
-  @method     addPerformance:
-  @abstract   Adds a performance to the pwerformance array.
+  @brief   Adds a performance to the performance array.
+ 
+  Mainly for use by SndPlayer.
   @param      p A performance
-  @result     self
-  @discussion Mainly for use by SndPlayer
+  @return     self.
 */
 - addPerformance: (SndPerformance *) p;
 
 /*!
-  @method     removePerformance:
-  @abstract   Removes a performance from the performance array.
+  @brief   Removes a performance from the performance array.
+
+  Mainly for use by SndPlayer.
   @param      p A performance to be removed.
-  @result     self
-  @discussion Mainly for use by SndPlayer
+  @return     self.
 */
 - removePerformance: (SndPerformance *) p;
 
 /*!
-  @method     performanceCount
-  @abstract   returns the number of active AND pending performances 
-  @result     self
-  @discussion Mainly for use by SndPlayer
+  @brief Returns the number of active AND pending performances 
+ 
+  Mainly for use by SndPlayer.
+  @return     self.
 */
 - (int) performanceCount;
 
 /*!
-  @method     setLoopWhenPlaying:
-  @abstract   Sets the default behaviour whether to loop during play.
+  @brief   Sets the default behaviour whether to loop during play.
   @param      yesOrNo Sets the default behaviour whether to loop during play.
  */
 - (void) setLoopWhenPlaying: (BOOL) yesOrNo;
 
 /*!
-  @method     loopWhenPlaying
-  @abstract   Returns whether the default behaviour is to loop during play.
-  @result     Returns whether the default behaviour is to loop during play.
+  @brief   Returns whether the default behaviour is to loop during play.
+  @return     Returns whether the default behaviour is to loop during play.
  */
 - (BOOL) loopWhenPlaying;
 
 /*!
-  @method     setLoopStartIndex:
-  @abstract   Sets the sample to stop playing at.
+  @brief   Sets the sample to stop playing at.
+
+  The loop start index may be changed while the sound is being performed and regardless of
+  whether the performance is looping.
   @param      newEndAtIndex The sample index that playing should stop after.
-  @discussion The loop start index may be changed while the sound is being performed and regardless of
-              whether the performance is looping.
  */
 - (void) setLoopStartIndex: (long) loopStartIndex;
 
 /*!
-  @method     loopStartIndex
-  @abstract   Returns the sample to start playing at.
-  @result     Returns the sample index to start playing at.
+  @brief   Returns the sample to start playing at.
+  @return     Returns the sample index to start playing at.
  */
 - (long) loopStartIndex;
 
 /*!
-  @method     setLoopEndIndex:
-  @abstract   Sets the sample at which the performance loops back to the start index (set using setLoopStartIndex:).
+  @brief   Sets the sample at which the performance loops back to the start index (set using setLoopStartIndex:).
+
+  This sample index is the last sample of the loop, i.e. it is the last sample heard before
+  the performance loops, the next sample heard will be that returned by -<B>loopStartIndex</B>.
+  The loop end index may be changed while the sound is being performed and regardless of whether
+  the performance is looping.
   @param      newLoopEndIndex The sample index at the end of the loop.
-  @discussion This sample index is the last sample of the loop, i.e. it is the last sample heard before
-              the performance loops, the next sample heard will be that returned by -<B>loopStartIndex</B>.
-              The loop end index may be changed while the sound is being performed and regardless of whether
-              the performance is looping.
  */
 - (void) setLoopEndIndex: (long) newLoopEndIndex;
 
 /*!
-  @method     loopEndIndex
-  @abstract   Returns the sample index at the end of the loop.
-  @result     Returns the sample index ending the loop.
+  @brief   Returns the sample index at the end of the loop.
+  @return     Returns the sample index ending the loop.
  */
 - (long) loopEndIndex;
 
@@ -1170,18 +1123,18 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 		     startingAt: (long) startSample;
 
 /*!
-  @method     setAudioProcessorChain:
-  @abstract   Assigns the audioProcessorChain to this Snd instance. 
-  @discussion This is typically used during playback of the Snd, but could be used for any other (i.e offline processing of the Snd).
+  @brief   Assigns the audioProcessorChain to this Snd instance.
+ 
+  This is typically used during playback of the Snd, but could be used for any other (i.e offline processing of the Snd).
   @param newAudioProcessorChain A SndAudioProcessorChain instance.
  */
 - (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain;
 
 /*!
-  @method     audioProcessorChain
-  @abstract   Returns the audioProcessorChain associated with this Snd instance. 
-  @discussion This is typically used during playback of the Snd, but could be used for any other (i.e offline processing of the Snd).
-  @result     Returns a SndAudioProcessorChain instance.
+  @brief   Returns the audioProcessorChain associated with this Snd instance.
+ 
+  This is typically used during playback of the Snd, but could be used for any other (i.e offline processing of the Snd).
+  @return     Returns a SndAudioProcessorChain instance.
  */
 - (SndAudioProcessorChain *) audioProcessorChain;
 
@@ -1190,100 +1143,100 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 @interface Snd(Editing)
 
 /*!
-  @method lockEditing
-  @abstract Used to lock Snd instance against editing.
-  @discussion See also -<i>unlockEditing</i> for the complementary method to match with.
+  @brief Used to lock Snd instance against editing.
+  @brief See also -<i>unlockEditing</i> for the complementary method to match with.
  */
 - (void) lockEditing;
 
 /*!
-  @method unlockEditing
-  @abstract Used to unlock Snd instance for editing.
-  @discussion See also -<i>lockEditing</i> for the complementary method to match with.
+  @brief Used to unlock Snd instance for editing.
+  @brief See also -<i>lockEditing</i> for the complementary method to match with.
  */
 - (void) unlockEditing;
 
 /*!
-  @method deleteSamples
-  @result Returns an int.
-  @discussion Deletes all the samples in the Snd's data. The Snd must be
-              editable. An error code is returned.
+  @return Returns an int.
+  @brief Deletes all the samples in the Snd's data.
+
+  The Snd must be editable. An error code is returned.
  */
 - (int) deleteSamples;
 
 /*!
-  @method deleteSamplesInRange:
   @param  frameRange is an NSRange giving the range of frames to delete.
-  @result Returns an integer error code.
-  @discussion Deletes a range of samples from the sound: the length of <i>frameRange</i>
-              sample frames are deleted starting with the location of the <i>frameRange</i>
-              (zero-based). The Snd must be editable and may become fragmented.
+  @return Returns an integer error code.
+  @brief Deletes a range of samples from the sound: the length of <i>frameRange</i>
+      sample frames are deleted starting with the location of the <i>frameRange</i>
+      (zero-based).
+
+  The Snd must be editable and may become fragmented.
  */
 - (int) deleteSamplesInRange: (NSRange) frameRange;
 
 /*!
-  @method insertSamples:at:
   @param  aSound is an id.
   @param  startSample is an int.
-  @result Returns an int.
-  @discussion Pastes the sound data in <i>aSound</i> into the Snd receiving
-              this message, starting at the receiving Snd's <i>startSample</i>'th sample (zero-based).
-              The receiving Snd doesn't lose any of its original sound data - the samples greater than
-              or equal to <i>startSample</i> are moved to accommodate the inserted sound data. The receiving
-              Snd must be editable and the two Snds must be compatible (as determined by <b>isCompatible:</b>).
-              If the method is successful, the receiving Snd is fragmented. An error code is returned.
+  @return Returns an int.
+  @brief Pastes the sound data in <i>aSound</i> into the Snd receiving
+	  this message, starting at the receiving Snd's <i>startSample</i>'th sample (zero-based).
+ 
+  The receiving Snd doesn't lose any of its original sound data - the samples greater than
+  or equal to <i>startSample</i> are moved to accommodate the inserted sound data. The receiving
+  Snd must be editable and the two Snds must be compatible (as determined by <b>isCompatible:</b>).
+  If the method is successful, the receiving Snd is fragmented. An error code is returned.
  */
 - (int) insertSamples: (Snd *) aSnd at: (int) startSample;
 
 /*!
-  @method soundFromSamplesInRange:
   @param frameRange is an NSRange of sample frames.
-  @result Returns an autoreleased Snd instance.
-  @discussion Returns a new Snd instance of the same format with a copy of a
-              portion of receivers sound data. The copied portion is given by 
-              <i>frameRange</i> frames (zero-based). If
-              the specified portion of the Snd receiving this message is fragmented,
-	      the Snd returned will also be fragmented.
+  @return Returns an autoreleased Snd instance.
+  @brief Returns a new Snd instance of the same format with a copy of a
+              portion of receivers sound data.
+
+  The copied portion is given by 
+  <i>frameRange</i> frames (zero-based). If
+  the specified portion of the Snd receiving this message is fragmented,
+  the Snd returned will also be fragmented.
  */
 - (Snd *) soundFromSamplesInRange: (NSRange) frameRange;
 
 /*!
-  @method compactSamples
-  @result Returns an int.
-  @discussion The Snd's sampled data is compacted into a contiguous block,
-              undoing the fragmentation that can occur during editing. If the
-              Snd's data isn't fragmented (its format isn't SND_FORMAT_INDIRECT), then this method does
-              nothing. Compacting a large sound can take a long time;
-              keep in mind that when you copy a Snd to a pasteboard,
-              the object is automatically compacted before it's
-              copied. Also, the sound file representation of a Snd
-              contains contiguous data so there's no need to compact a
-              Snd before writing it to a sound file simply to ensure
-              that the file representation will be compact. An error
-              code is returned.  
+  @return Returns an int.
+  @brief The Snd's sampled data is compacted into a contiguous block,
+              undoing the fragmentation that can occur during editing.
+
+  If the Snd's data isn't fragmented (its format isn't SND_FORMAT_INDIRECT), then this method does
+  nothing. Compacting a large sound can take a long time;
+  keep in mind that when you copy a Snd to a pasteboard,
+  the object is automatically compacted before it's
+  copied. Also, the sound file representation of a Snd
+  contains contiguous data so there's no need to compact a
+  Snd before writing it to a sound file simply to ensure
+  that the file representation will be compact. An error
+  code is returned.  
  */
 - (int) compactSamples;
 
 /*!
-  @method needsCompacting
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the Snd's data is fragmented. Otherwise returns <b>NO</b>.
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the Snd's data is fragmented. Otherwise returns <b>NO</b>.
  */
 - (BOOL) needsCompacting;
 
 /*!
   @function fragmentOfFrame:indexInFragment:fragmentLength:dataFormat:
-  @abstract Get data address and statistics for fragmented or non-fragmented Snds
-  @discussion For fragmented sounds, you often need to be able to find the
-              block of data that a certain frame resides in. You then often
-              need to know which is the last frame in that fragment (block),
-              indexed from the start of the block.
+  @brief Get data address and statistics for fragmented or non-fragmented Snds.
+ 
+  For fragmented sounds, you often need to be able to find the
+  block of data that a certain frame resides in. You then often
+  need to know which is the last frame in that fragment (block),
+  indexed from the start of the block.
   @param frame            The index of the sample you wish to find the block for, indexed from the beginning of the sound
   @param currentFrame     Returns by reference the index of the frame supplied, indexed from the start of the block
   @param fragmentLength   Returns by reference the length the block, indexed from the start of the block
   @param dataFormat       Returns by reference the format of the data. This will normally be the same as the Snd's dataFormat,
                           but can differ if the format is encoded with compression.
-  @result the memory address of the first sample in the block.
+  @return the memory address of the first sample in the block.
  */
 - (void *) fragmentOfFrame: (unsigned long) frame 
 	   indexInFragment: (unsigned long *) currentFrame 
@@ -1291,14 +1244,14 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 		dataFormat: (SndSampleFormat *) dataFormat;
 
 /*!
-  @method fillAudioBuffer:toLength:samplesStartingFrom:
-  @abstract Copies samples from self into the provided SndAudioBuffer
-  @discussion The SndAudioBuffer's data object's size is decreased if less than fillLength number
-              of samples can be read. The buffer is not expanded.
+  @brief Copies samples from self into the provided SndAudioBuffer.
+ 
+  The SndAudioBuffer's data object's size is decreased if less than fillLength number of samples can be read.
+  The buffer is not expanded.
   @param buff The SndAudioBuffer object into which to copy the data.
   @param fillLength The number of sample frames in the buffer to copy into.
   @param sndReadingRange The sample frame in the Snd to start reading from and maximum length of samples readable.
-  @result Returns the number of sample frames read from the Snd instance in filling the audio buffer.
+  @return Returns the number of sample frames read from the Snd instance in filling the audio buffer.
           This can be more or less than the number requested, if resampling occurs.
  */
 - (long) fillAudioBuffer: (SndAudioBuffer *) buff
@@ -1306,21 +1259,23 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
           samplesInRange: (NSRange) sndReadingRange;
 
 /*!
-  @method insertIntoAudioBuffer:intoFrameRange:samplesInRange:
-  @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
-  @discussion If the buffer and the Snd instance have different formats, a format
-              conversion will be performed to the buffers format, including resampling
-              if necessary. The Snd audio data will be read enough to fill the range of samples
-              specified according to the sample rate of the buffer compared to the sample rate
-              of the Snd instance. In the case where there are less than the needed number of
-              samples left in the sndFrameRange to completely insert into the specified buffer region, the
-              number of samples inserted will be returned less than bufferRange.length.
+  @brief Copies samples from self into a sub region of the provided SndAudioBuffer.
+ 
+  If the buffer and the Snd instance have different formats, a format
+  conversion will be performed to the buffers format, including resampling
+  if necessary.
+
+  The Snd audio data will be read enough to fill the range of samples
+  specified according to the sample rate of the buffer compared to the sample rate
+  of the Snd instance. In the case where there are less than the needed number of
+  samples left in the sndFrameRange to completely insert into the specified buffer region, the
+  number of samples inserted will be returned less than bufferRange.length.
  @param buff The SndAudioBuffer object into which to copy the data.
  @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
               in the buffer to copy into.
  @param sndFrameRange An NSRange of sample frames (i.e channel independent time position specified in samples)
               within the Snd to start reading data from and the last permissible index to read from.
- @result Returns the number of samples actually inserted. This may be less than the length specified
+ @return Returns the number of samples actually inserted. This may be less than the length specified
               in the bufferRange if sndStartIndex is less than the number samples needed to convert to
               insert in the specified buffer region.
  */
@@ -1329,41 +1284,37 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 		samplesInRange: (NSRange) sndFrameRange;
 
 /*!
- @method insertAudioBuffer:intoFrameRange:
- @abstract Copies in the given SndAudioBuffer into the Snd instance.
+ @brief Copies in the given SndAudioBuffer into the Snd instance.
  @param buffer The SndAudioBuffer to copy sound from.
  @param writeIntoSndFrameRange The range of frames to copy. Can not be longer than the buffer.
- @result Returns the new size of the buffer.
+ @return Returns the new size of the buffer.
  */
 - (long) insertAudioBuffer: (SndAudioBuffer *) buffer
 	    intoFrameRange: (NSRange) writeIntoSndFrameRange;
 
 /*!
-  @method appendAudioBuffer:
-  @abstract Appends the given SndAudioBuffer to the end of the Snd instance.
+  @brief Appends the given SndAudioBuffer to the end of the Snd instance.
   @param buffer The SndAudioBuffer to copy sound from.
-  @result Returns the new size of the Snd.
+  @return Returns the new size of the Snd.
  */
 - (long) appendAudioBuffer: (SndAudioBuffer *) buffer;
 
 /*!
-  @method audioBufferForSamplesInRange:looping:
-  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
+  @brief Returns a SndAudioBuffer containing a range of samples in the Snd.
   @param  sndFrameRange Range of sample <I>frames</I> (as opposed to individual single
 		        channel samples) to stick into the audioBuffer.
   @param isLooping Indicates whether to read from the loop start if the length of the sndFrameRange exceeds
                    the length of the Snd instance.
-  @result An SndAudioBuffer containing the samples in the range r.
+  @return An SndAudioBuffer containing the samples in the range r.
  */
 - (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
 					  looping: (BOOL) isLooping;
 
 /*!
-  @method audioBufferForSamplesInRange:
-  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
+  @brief Returns a SndAudioBuffer containing a range of samples in the Snd.
   @param  r Range of sample <I>frames</I> (as opposed to individual single
  	    channel samples) to stick into the audioBuffer
-  @result An SndAudioBuffer containing the samples in the range r.
+  @return An SndAudioBuffer containing the samples in the range r.
  */
 - (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r;
 
@@ -1376,40 +1327,35 @@ SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
 @interface SndDelegate : NSObject
 
 /*!
-  @method willRecord:
   @param  sender is an id.
-  @discussion Sent to the delegate when the Snd begins to record.
+  @brief Sent to the delegate when the Snd begins to record.
 */
 - willRecord: sender;
 
 /*!
-  @method didRecord:
   @param  sender is an id.
-  @discussion Sent to the delegate when the Snd stops recording.
+  @brief Sent to the delegate when the Snd stops recording.
 */
 - didRecord:  sender;
 
 /*!
-  @method hadError:
   @param  sender is an id.
-  @discussion Sent to the delegate if an error occurs during recording or
+  @brief Sent to the delegate if an error occurs during recording or
               playback.
 */
 - hadError:   sender;
 
 /*!
-  @method willPlay:duringPerformance:
   @param  sender is an id.
   @param  performance is a SndPerformance instance.
-  @discussion Sent to the delegate when the Snd begins to play.
+  @brief Sent to the delegate when the Snd begins to play.
 */
 - willPlay:   sender duringPerformance: (SndPerformance *) performance;
 
 /*!
-  @method didPlay:duringPerformance:
   @param  sender is an id.
   @param  performance is a SndPerformance instance.
-  @discussion Sent to the delegate when the Snd stops playing.
+  @brief Sent to the delegate when the Snd stops playing.
 */
 - didPlay:    sender duringPerformance: (SndPerformance *) performance;
 
@@ -1417,8 +1363,8 @@ SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
 
 /*!
   @enum       SNDSoundStatus
-  @abstract   Status Codes
-  @discussion Categorizes beverages, err sounds into groups of similar types.
+  @brief   Status Codes
+  @brief Categorizes beverages, err sounds into groups of similar types.
   @constant   SND_SoundStopped
   @constant   SND_SoundRecording
   @constant   SND_SoundPlaying
