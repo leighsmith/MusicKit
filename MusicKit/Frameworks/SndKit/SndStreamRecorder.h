@@ -22,9 +22,8 @@
 @class SndAudioProcessorRecorder;
 
 /*!
-@class SndStreamRecorder
-@abstract
-@discussion
+  @class SndStreamRecorder
+  @brief Records incoming audio to a sound file.
     
     ATTENTION!!!
       Presumptions made to get this class off the ground quickly: The incoming
@@ -64,96 +63,85 @@
 }
 
 /*! 
-    @method     init
-    @abstract   Initializor
-    @discussion 
-    @result     self
+  @brief   Initialiser
+  @return     self
 */
 - init;
 
 /*! 
-    @method     description
-    @abstract   
-    @result     NSString with description
+  @return     NSString with description
 */
 - (NSString*) description;
 
 /*! 
-    @method     startRecording 
-    @abstract 
-    @discussion 
-    @param      time
-    @result     Boolean indicating success
+  @param      time
+  @return     Boolean indicating success
 */
 - (BOOL) startRecording;
 
 /*! 
-    @method     startRecordingToFile:
-    @abstract   Starts the record-to-disk routines.
-    @discussion 
-    @param      filename
-    @result     Boolean indicating success
+  @brief   Starts the record-to-disk routines.
+  @param      filename
+  @return     Boolean indicating success
 */
-- (BOOL) startRecordingToFile: (NSString*) filename;
+- (BOOL) startRecordingToFile: (NSString *) filename;
 
 /*! 
-    @method     stopRecording
-    @abstract   Sets up the record file amd 
-    @discussion For internal use - you shouldn't have to call this.
-    @result     Boolean indicating success
+  @brief   Sets up the record file. 
+
+  For internal use - you shouldn't have to call this.
+  @return     Boolean indicating success
 */
 - stopRecording;
 
 /*! 
-    @method     stopRecordingWait:disconnectFromStream:
-    @abstract   Sets up the record file amd 
-    @discussion For internal use - you shouldn't have to call this.
-    @param      bWait TRUE if the recorder should wait for intermediate buffers to 
-                      be flushed to disk. FALSE if you want immediate cessation of 
-                      recording.
-    @param      bDisconnectFromStream TRUE if you want the client to disconnect
-                      from the stream manager, FALSE otherwise. Leaving the client
-                      connected ensures the audio streams stay open, and minimizes
-                      start-recording set-up time. Downside is a slight CPU hit
-                      from the background streaming going on. 
-    @result     Boolean indicating success
+  @brief   Sets up the record file.
+
+  For internal use - you shouldn't have to call this.
+  @param      bWait TRUE if the recorder should wait for intermediate buffers to 
+  be flushed to disk. FALSE if you want immediate cessation of 
+  recording.
+  @param      bDisconnectFromStream TRUE if you want the client to disconnect
+  from the stream manager, FALSE otherwise. Leaving the client
+  connected ensures the audio streams stay open, and minimizes
+  start-recording set-up time. Downside is a slight CPU hit
+  from the background streaming going on. 
+  @return     Boolean indicating success
 */
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream;
 
 @end
 
 /*! 
- @protocol SndStreamRecorderDelegate
- @abstract Protocol for an SndStreamRecorder delegate
- @discussion To come.
+ @brief Protocol for an SndStreamRecorder delegate.
 */
 @protocol SndStreamRecorderDelegate <SndStreamClientDelegate>
 
 /*! 
-    @method   didStartRecording:sender
-    @abstract   Message sent to delegate just before the recording thread enters
-                its processBuffers loop, indicating it is waiting for the first 
-                buffer to arrive.
-    @discussion Protocol method for SndStreamRecorderDelegate
-    @result     self.
+  @brief   Message sent to delegate just before the recording thread enters
+  its processBuffers loop, indicating it is waiting for the first 
+  buffer to arrive.
+    
+  Protocol method for SndStreamRecorderDelegate
+  @return     self.
 */
 - didStartRecording: sender;
 
 /*! 
-    @method     didFinishRecording:sender
-    @abstract   Message sent to delegate when recording has completed. This is 
-                caused by either a user event stopping streaming to disk, or the 
-                recording thread reaching the limit of a record-to-memory buffer, 
-                and is sent after the final bytes have been delivered to their 
-                destination.
-    @discussion Protocol method for SndStreamRecorderDelegate
-    @result     self
+  @brief   Message sent to delegate when recording has completed. 
+    
+  This is caused by either a user event stopping streaming to disk, or the 
+  recording thread reaching the limit of a record-to-memory buffer, 
+  and is sent after the final bytes have been delivered to their 
+  destination.
+    
+  Protocol method for SndStreamRecorderDelegate
+  @return     self
 */
 - didFinishRecording: sender;
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
-
 
 #endif
