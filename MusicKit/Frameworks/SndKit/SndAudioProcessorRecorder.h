@@ -27,10 +27,10 @@
 
 /*!
  @enum SndRecorderParam
- @abstract Parameter keys
+ @brief Parameter keys
  @constant recorder_StartTriggerThreshold  Start trigger threshold
- @constant recorder_RecordFile             Record filename
- @constant recorder_NumParams              Number of parameters
+ @constant recorder_RecordFile  Record filename
+ @constant recorder_NumParams  Number of parameters
 */
 enum SndRecorderParam {
     recorder_StartTriggerThreshold = 0,
@@ -42,9 +42,10 @@ enum SndRecorderParam {
 
 /*!
   @class SndAudioProcessorRecorder
-  @abstract Records the FX audio stream to disk.
-  @discussion A threshold can be set to prevent silence being recorded prior to the sound. An automatic shutoff
-              after a specifiable period of silence is also possible.
+  @brief Records the FX audio stream to disk.
+  
+  A threshold can be set to prevent silence being recorded prior to the sound. An automatic shutoff
+  after a specifiable period of silence is also possible.
 */
 @interface SndAudioProcessorRecorder : SndAudioProcessor {
 
@@ -70,43 +71,42 @@ enum SndRecorderParam {
 }
 
 /*!
-    @method     isRecording    
-    @abstract   Returns whether the receiver is currently recording.
-    @discussion 
-    @result     TRUE if currently recording
+  @brief   Returns whether the receiver is currently recording.
+  
+  
+  @return     TRUE if currently recording
 */
 - (BOOL) isRecording;
 
 /*!
-  @method prepareToRecordForDuration:
-  @abstract Sets the buffer used for recording.
+  @brief Sets the buffer used for recording.
  */
 - (BOOL) prepareToRecordForDuration: (double) recordDuration;
 
 /*!
-    @method     startRecording
-    @abstract 
-    @discussion 
-    @result     TRUE if recording started ok
+  @brief 
+  
+  
+  @return     TRUE if recording started ok
 */
 - (BOOL) startRecording;
 
 /*!
-  @method setUpRecordFile:withFormat:
-  @abstract Sets up recording of the file in the given format.
-  @discussion This method is not normally called, use startRecordingToFile:withDataFormat:channelCount:samplingRate:
-	      instead. This method, setUpRecordFile:withFormat: is defined here in order to facilitate overriding
-              in subclasses.
-  @result     Returns YES if able to open the file for writing, NO if there is an error.
+  @brief Sets up recording of the file in the given format.
+  
+  This method is not normally called, use startRecordingToFile:withDataFormat:channelCount:samplingRate:
+	  instead. This method, setUpRecordFile:withFormat: is defined here in order to facilitate overriding
+  in subclasses.
+  @return     Returns YES if able to open the file for writing, NO if there is an error.
  */
 - (BOOL) setUpRecordFile: (NSString *) filename
 	      withFormat: (SndFormat) format;
 
 /*!
-    @method     startRecordingToFile:withDataFormat:channelCount:samplingRate:
-    @abstract   Begins recording to the given format in the given format.
-    @discussion 
-    @result     Returns YES if able to open the file for writing, NO if there is an error.
+  @brief   Begins recording to the given format in the given format.
+  
+  
+  @return     Returns YES if able to open the file for writing, NO if there is an error.
 */
 - (BOOL) startRecordingToFile: (NSString*) filename
                withDataFormat: (SndSampleFormat) dataFormat
@@ -114,33 +114,33 @@ enum SndRecorderParam {
                  samplingRate: (int) samRate;
 
 /*!
-    @method     stopRecording
-    @abstract 
-    @discussion 
-    @result     self
+  @brief 
+  
+  
+  @return     self
 */
 - stopRecording;
 
 /*!
-    @method     stopRecordingWait:
-    @abstract 
-    @discussion TODO remove this, redundant, always wait until the queue clears.
-    @result     
+  @brief 
+  
+  TODO remove this, redundant, always wait until the queue clears.
+  @return     
 */
 - stopRecordingWait: (BOOL) wait;
 
 /*!
-    @method     framesRecorded
-    @abstract Returns the number of frames recorded.
-    @discussion 
-    @result     
+  @brief Returns the number of frames recorded.
+  
+  
+  @return     
 */
 - (long) framesRecorded;
 
 /*!
-    @method     setStartTriggerThreshold:
-    @abstract 
-    @discussion 
+  @brief 
+  
+  
 */
 - (void) setStartTriggerThreshold: (float) f;
 

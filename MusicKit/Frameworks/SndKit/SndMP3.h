@@ -25,16 +25,17 @@
 
 /*!
   @class SndMP3
-  @abstract SndMP3 is a subclass of Snd for reading MP3 files.
-  @discussion Decoding of MP3 sound files can be done in a background thread during reading (predecoding),
-              or on-the-fly during playback, allowing selection of memory consumption versus processor load.
-              Decoding on the fly has the advantage of memory conservation, but is more processor intensive.
-              The factory methods +preDecode and +setPreDecode: are used to control the use of on-the-fly MP3
-              sound file decoding or to use the pre-decoding approach.
-
-              The current on-the-fly version has the limitation that it only works with CBR (constant bit rate) MP3 streams.
+  @brief SndMP3 is a subclass of Snd for reading MP3 files.
   
-              Support is only for 44.1KHz stereo MP3s at the moment.
+  Decoding of MP3 sound files can be done in a background thread during reading (predecoding),
+  or on-the-fly during playback, allowing selection of memory consumption versus processor load.
+  Decoding on the fly has the advantage of memory conservation, but is more processor intensive.
+  The factory methods +preDecode and +setPreDecode: are used to control the use of on-the-fly MP3
+  sound file decoding or to use the pre-decoding approach.
+
+  The current on-the-fly version has the limitation that it only works with CBR (constant bit rate) MP3 streams.
+  
+  Support is only for 44.1KHz stereo MP3s at the moment.
  */
  
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,25 +77,24 @@
 }
 
 /*!
-  @method setPreDecode:
-  @abstract Sets whether to do background predecoding when reading an MP3 file or whether decoding is done on the fly.
-  @discussion When an MP3 file is read, <i>predecoding</i> of the MP3 bitstream to linear PCM can be done in the background.
-              This is significantly more memory hungry than decoding the MP3 stream on the fly, but less processor intensive,
-              moving the decoding processing before playback or other signal processing.
-              
-              Decoding on the fly currently has the limitation that only one MP3 stream can play at any time. This limitation
-              is being worked on.
-              
-              The default is to decode on the fly.
-              
+  @brief Sets whether to do background predecoding when reading an MP3 file or whether decoding is done on the fly.
+  
+  When an MP3 file is read, <i>predecoding</i> of the MP3 bitstream to linear PCM can be done in the background.
+  This is significantly more memory hungry than decoding the MP3 stream on the fly, but less processor intensive,
+  moving the decoding processing before playback or other signal processing.
+  
+  Decoding on the fly currently has the limitation that only one MP3 stream can play at any time. This limitation
+  is being worked on.
+  
+  The default is to decode on the fly.
+  
   @param yesOrNo YES to enable background predecoding, NO to decode on the fly.
  */
 + (void) setPreDecode: (BOOL) yesOrNo;
 
 /*!
-  @method preDecode
-  @abstract Returns the current state of background predecoding.
-  @result Returns YES if background predecoding will occur on reading an MP3 file, NO if decoding will be done on the fly. 
+  @brief Returns the current state of background predecoding.
+  @return Returns YES if background predecoding will occur on reading an MP3 file, NO if decoding will be done on the fly. 
  */
 + (BOOL) preDecode;
 
@@ -108,67 +108,67 @@
 - (SndSampleFormat) dataFormat;
 
 /*!
-  @method convertToSampleFormat:samplingRate:channelCount:
-  @discussion Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
+  @brief Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
+
+  
  */
 - (int) convertToSampleFormat: (SndSampleFormat) toFormat
 	   samplingRate: (double) toRate
 	   channelCount: (int) toChannelCount;
 
 /*!
-  @method convertToNativeFormat
-  @discussion Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
+  @brief Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
+
+  
  */
 - (int) convertToNativeFormat;
 
 /*!
-  @method insertIntoAudioBuffer:intoFrameRange:samplesInRange:
-  @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
-  @discussion If the buffer and the SndMP3 instance have different formats (after decoding the MP3 bitstream),
-              a format conversion will be performed to the buffers format, including resampling
-              if necessary. The SndMP3 audio data will be read enough to fill the range of samples
-              specified according to the sample rate of the buffer compared to the sample rate
-              of the SndMP3 instance. In the case where there are less than the needed number of
-              samples left in the sndFrameRange to completely insert into the specified buffer region, the
-              number of samples inserted will be returned less than bufferRange.length. 
+  @brief Copies samples from self into a sub region of the provided SndAudioBuffer.
+  
+  If the buffer and the SndMP3 instance have different formats (after decoding the MP3 bitstream),
+  a format conversion will be performed to the buffers format, including resampling
+  if necessary. The SndMP3 audio data will be read enough to fill the range of samples
+  specified according to the sample rate of the buffer compared to the sample rate
+  of the SndMP3 instance. In the case where there are less than the needed number of
+  samples left in the sndFrameRange to completely insert into the specified buffer region, the
+  number of samples inserted will be returned less than bufferRange.length. 
  
-              Caching is performed so repeatedly retrieving the same frame successively incurs no decoding overhead.
+  Caching is performed so repeatedly retrieving the same frame successively incurs no decoding overhead.
 			
   @param buff The SndAudioBuffer object into which to copy the data.
   @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
-		     in the buffer to copy into.
+		  in the buffer to copy into.
   @param sndFrameRange An NSRange of sample frames (i.e channel independent time position specified in samples)
-                       within the Snd to start reading data from and the last permissible index to read from.
-  @result Returns the number of samples actually inserted. This may be less than the length specified
-          in the bufferRange if sndStartIndex is less than the number samples needed to convert to
-          insert in the specified buffer region.
+  within the Snd to start reading data from and the last permissible index to read from.
+  @return Returns the number of samples actually inserted. This may be less than the length specified
+  in the bufferRange if sndStartIndex is less than the number samples needed to convert to
+  insert in the specified buffer region.
  */
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
 	        intoFrameRange: (NSRange) bufferRange
 	        samplesInRange: (NSRange) sndReadingRange;
 
 /*!
-  @method readSoundfile:
  */
 - (int) readSoundfile: (NSString*) filename;
 
 /*!
-  @method readSoundURL:startTimePosition:duration:
  */
 - (int) readSoundURL: (NSURL*) soundURL
    startTimePosition: (double) segmentStartTime
             duration: (double) segmentDuration;
 
 /*!
-  @method soundFileExtensions
-  @result Returns an array of file extensions available for reading and writing.
-  @discussion Returns an array of file extensions indicating the file format (and file extension)
-  that audio files may be read from or written to. Includes all of Snd's formats and "mp3".
+  @return Returns an array of file extensions available for reading and writing.
+  @brief Returns an array of file extensions indicating the file format (and file extension)
+  that audio files may be read from or written to.
+
+  Includes all of Snd's formats and "mp3".
  */
 + (NSArray *) soundFileExtensions;
 
 /*!
-  @method fragmentOfFrame:indexInFragment:fragmentLength:dataFormat:
  */
 - (void *) fragmentOfFrame: (int) frame 
 	   indexInFragment: (unsigned int *) currentFrame 
@@ -176,11 +176,10 @@
 		dataFormat: (SndSampleFormat *) dataFormat;
 
 /*!
-  @method soundFromSamplesInRange:
-  @abstract Return an uncompressed Snd instance of a range of frames.
+  @brief Return an uncompressed Snd instance of a range of frames.
   @param frameRange The specifies the uncompressed frames to return in a new Snd instance. 
-                    The frameRange must be within 0 - [self lengthInSampleFrames].
-  @result Returns an autoreleased Snd instance.
+  The frameRange must be within 0 - [self lengthInSampleFrames].
+  @return Returns an autoreleased Snd instance.
  */
 - (Snd *) soundFromSamplesInRange: (NSRange) frameRange;
 

@@ -29,9 +29,10 @@
 
 /*!
 @class SndExpt
-@abstract Experimental Snd class. USE WITH EXTREME CAUTION.
+@brief Experimental Snd class. USE WITH EXTREME CAUTION.
  _ONLY_ use SndExpt for solo playback at present.
-@discussion Experimental testing and development ground for disk-based Snds.
+
+  Experimental testing and development ground for disk-based Snds.
 */
 
 @interface SndExpt : Snd {
