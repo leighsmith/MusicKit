@@ -15,10 +15,9 @@
 */
 /*!
   @class MKTuningSystem
-  @brief
-
-A MKTuningSystem object represents a musical tuning system by mapping key numbers
-to frequencies.  The method -<b>setFreq:forKeyNum:</b> establishes a
+  @brief A MKTuningSystem object represents a musical tuning system by mapping key numbers to frequencies.
+ 
+The method -<b>setFreq:forKeyNum:</b> establishes a
 frequency/key number correspondence, defining the frequency value (in Hertz) for a
 specified key number.  To tune a key number and its octaves at
 the same time, invoke the method <b>setFreq:forKeyNumAndOctaves:</b>.  The
@@ -73,26 +72,22 @@ configure the MIDI instrument).
 }
 
 /*!
-  @return Returns an autoreleased MKTuningSystem instance.
   @brief Creates a MKTuningSystem object and tunes it to the installed tuning system.
   
   Tuning the returned object won't affect the installed MKTuningSystem.
+  @return Returns an autoreleased MKTuningSystem instance.
  */
 + (MKTuningSystem *) tuningSystem; 
 
 /*!
-  @return Returns an initialized MKTuningSystem instance.
   @brief Initializes receiver to 12-tone equal tempered tuning.
-
-  
+  @return Returns an initialized MKTuningSystem instance.
  */
 - init;
 
 /*!
-  @return Returns an id.
   @brief Creates and returns a new MKTuningSystem as a copy of the receiver.
-
-  
+  @return Returns an id.
 */
 - copyWithZone: (NSZone *) zone;
 
@@ -102,14 +97,12 @@ configure the MIDI instrument).
 - (void) setTo12ToneTempered; 
 
 /*!
-  @return Returns an id.
   @brief Installs the receiver's tuning as the current tuning system.
 
-  The
-  receiver itself isn't installed, only its tuning system; subsequent
+  The receiver itself isn't installed, only its tuning system; subsequent
   changes to the receiver won't affect the installed system unless you
-  resend the <b>install</b> message to the receiver.  Returns the
-  receiver.
+  resend the <b>install</b> message to the receiver. 
+  @return Returns the receiver.
 */
 - install; 
 
@@ -124,61 +117,56 @@ configure the MIDI instrument).
 + (NSString *) pitchNameForKeyNum: (int) keyNum;
 
 /*!
-  @param  aKeyNum is a MKKeyNum.
-  @return Returns a double.
   @brief Returns the installed frequency for the key number <i>aKeyNum</i>.
-
   
   If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
   to check for MK_NODVAL).  The value returned by this method is the same
   value as <i>aKeyNum</i>'s analogous pitch variable.
+ @param  aKeyNum is a MKKeyNum.
+ @return Returns a double.
 */
 + (double) freqForKeyNum: (MKKeyNum) aKeyNum; 
 
 /*!
-  @param  aKeyNum is a MKKeyNum.
-  @return Returns a double.
   @brief Returns the receiver's frequency for the key number <i>aKeyNum</i>.
-
   
   If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
   to check for MK_NODVAL).
+ @param  aKeyNum is a MKKeyNum.
+ @return Returns a double.
 */
 - (double) freqForKeyNum: (MKKeyNum) aKeyNum; 
 
 /*!
   @brief Returns keyNum (pitch index) of closest pitch variable to the specified frequency.
-  @param freq The frequency in Hz.
-  @param bendPtr If bendPtr is not NULL, *bendPtr is set to the bend needed to 
-  get <i>freq</i> in the context of the specified pitch bend sensitivity.
-  @param sensitivity The pitch bend sensitivity.
   
   Sensitivity is interpreted such that with a sensitivity of 1.0, 
   a pitch bend of 0 gives a maximum negative displacement of a semitone
   and a bend of 0x3fff gives a maximum positive displacement of a semitone.
   Similarly, a value of 2.0 give a whole tone displacement in either
   direction. MIDI_ZEROBEND gives no displacement. 
+  @param freq The frequency in Hz.
+  @param bendPtr If bendPtr is not NULL, *bendPtr is set to the bend needed to 
+   get <i>freq</i> in the context of the specified pitch bend sensitivity.
+  @param sensitivity The pitch bend sensitivity.
  */
 + (MKKeyNum) keyNumForFreq: (double) freq
 	       pitchBentBy: (int *) bendPtr
 	   bendSensitivity: (double) sensitivity;
 
 /*!
-  @param  aKeyNum is a MKKeyNum.
-  @param  freq is a double.
-  @return Returns an id.
   @brief Tunes the receiver's <i>aKeyNum</i> key number to <i>freq</i> and
   returns the receiver.
 
   If <i>aKeyNum</i> is out of bounds, returns
   MK_NODVAL (Use MKIsNoDVal() to check for MK_NODVAL).
-*/
+ @param  aKeyNum is a MKKeyNum.
+ @param  freq is a double.
+ @return Returns an id.
+ */
 - setKeyNum: (MKKeyNum) aKeyNum toFreq: (double) freq;
 
 /*!
-  @param  aKeyNum is a MKKeyNum.
-  @param  freq is a double.
-  @return Returns an id.
   @brief Tunes the installed tuning system's <i>aKeyNum</i> key number to
   <i>freq</i> and returns the receiver.
 
@@ -189,26 +177,25 @@ configure the MIDI instrument).
   tuning system, it's more efficient to make the changes in an MKTuningSystem
   instance and then send it the install message than it is to repeatedly
   invoke this method.
-*/
+ @param  aKeyNum is a MKKeyNum.
+ @param  freq is a double.
+ @return Returns an id.
+ */
 + setKeyNum: (MKKeyNum) aKeyNum toFreq: (double) freq; 
 
 /*!
-  @param  aKeyNum is a MKKeyNum.
-  @param  freq is a double.
-  @return Returns an id.
   @brief Tunes all the receiver's key numbers with the same pitch class as
   <i>aKeyNum</i> to octaves of <i>freq</i> such that <i>aKeyNum</i> is
   tuned to <i>freq</i>.
 
-  Returns the receiver or <b>nil</b> if aKeyNum
-  is out of bounds.
-*/
+  Returns the receiver or <b>nil</b> if aKeyNum is out of bounds.
+ @param  aKeyNum is a MKKeyNum.
+ @param  freq is a double.
+ @return Returns an id.
+ */
 - setKeyNumAndOctaves: (MKKeyNum) aKeyNum toFreq: (double) freq;
 
 /*!
-  @param  aKeyNum is a MKKeyNum.
-  @param  freq is a double.
-  @return Returns an id.
   @brief Tunes the key numbers in the installed tuning system that are the
   same pitch class as <i>aKeyNum</i> to octaves of <i>freq</i> such
   that <i>aKeyNum</i> is tuned to <i>freq</i>.
@@ -220,11 +207,13 @@ configure the MIDI instrument).
   tuning system, it's more efficient to make the changes in a MKTuningSystem
   instance and then send it the install message than it is to repeatedly
   invoke this method.
-*/
+ @param  aKeyNum is a MKKeyNum.
+ @param  freq is a double.
+ @return Returns an id.
+ */
 + setKeyNumAndOctaves: (MKKeyNum) aKeyNum toFreq: (double) freq;
 
 /*!
-  @param  semitones is a double.
   @brief Transposes the installed tuning system by <i>semitones</i>
   half-steps.
 
@@ -233,6 +222,7 @@ configure the MIDI instrument).
   negative, the transposition is down.  <i>semitones</i> can be any
   <b>double</b> value, thus you can transpose the tuning system by
   increments smaller than a half-step.
+ @param  semitones is a double.
  */
 + (void) transpose: (double) semitones; 
 
@@ -245,7 +235,6 @@ configure the MIDI instrument).
 #endif
 
 /*!
-  @param  semitones is a double.
   @brief Transposes the receiver by <i>semitones</i> half-steps (the
   half-step used here is 12-tone equal-tempered).
 
@@ -254,6 +243,7 @@ configure the MIDI instrument).
   transposition is down.  <i>semitones</i> can be any <b>double</b>
   value, thus you can transpose the receiver by increments smaller
   than a half-step.  
+ @param  semitones is a double.
 */
 - (void) transpose: (double) semitones; 
 
@@ -267,7 +257,6 @@ configure the MIDI instrument).
 /* Functions for tuning and frequency conversion */
 
 /*!
-  @function MKTranspose
   @brief Transpose a frequency up by the specified number of semitones. 
   @param freq Starting frequency in Hz.
   @param semiTonesUp The number of 12 tone equal tempered semitones to transpose freq upwards.
@@ -276,7 +265,6 @@ configure the MIDI instrument).
 double MKTranspose(double freq, double semiTonesUp);
 
 /*!
-  @function MKAdjustFreqWithPitchBend
   @brief Return the result of adjusting freq by the amount specified in pitchBend. 
   
   PitchBend is interpreted in the context of the current value of sensitivity. 
