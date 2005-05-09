@@ -23,8 +23,9 @@
 // classgroup Filters
 /*!
   @class OnezeroUG
-  @abstract <b>OnezeroUG</b> is a one-zero (FIR) fiter useful for mild low and high-pass filtering.
-  @discussion
+  @brief <b>OnezeroUG</b> is a one-zero (FIR) fiter useful for mild low and high-pass filtering.
+  
+  
 
 OnezeroUG is a one-zero filter that's implemented by adding the previous input
 sample (initialized as 0.0) to the current input sample:
@@ -68,67 +69,73 @@ the sign of the coefficent is switched in the OnepoleUG.
 @interface OnezeroUG: MKUnitGenerator
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>. Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns <b>nil</b>
+  if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput:aPatchPoint;
 /* Sets filter input. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets filter output. */
 
 
 /*!
-  @method setB0:
   @param  value is a double.
-  @result Returns <b>self</b>.
-  @discussion Sets the filter's gain. Effective gain values are between 0.0 and
-              1.0 (a negative gain is the same as its absolute value, but with a
-              180 degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the filter's gain.
+
+  Effective gain values are between 0.0 and
+  1.0 (a negative gain is the same as its absolute value, but with a
+  180 degree phase shift).  
 */
 -setB0:(double)value;
 /* Sets gain of filter. */
 
 
 /*!
-  @method setB1:
   @param  value is a double.
-  @result Returns <b>self</b>.
-  @discussion Sets the filter's coefficient. If <i>value</i> is less than 0.0,
-              the OnezeroUG is a high-pass filter; if it's greater than 0.0, the
-              object is a low-pass filter. For stability, the <i>value</i> should
-              be between -1.0 and 1.0.  
+  @return Returns <b>self</b>.
+  @brief Sets the filter's coefficient.
+
+  If <i>value</i> is less than 0.0,
+  the OnezeroUG is a high-pass filter; if it's greater than 0.0, the
+  object is a low-pass filter. For stability, the <i>value</i> should
+  be between -1.0 and 1.0.  
 */
 -setB1:(double)value;
 /* Sets coefficient of once-delayed input sample. */
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible
-              except the filter state.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible
+  except the filter state.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method clear
-  @result Returns <b>self</b>.
-  @discussion Clears the filter by setting the delayed sample (the previous input
-              sample) to 0.0.  
+  @return Returns <b>self</b>.
+  @brief Clears the filter by setting the delayed sample (the previous input
+  sample) to 0.0.
+
+  
 */
 -clear;
 /* Clears filter's state variable. */

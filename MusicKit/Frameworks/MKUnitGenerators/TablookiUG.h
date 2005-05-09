@@ -16,10 +16,11 @@
 // classgroup Table Lookup
 /*!
   @class TablookiUG
-  @abstract <b>TablookiUG</b> does interpolated table lookup, using its input as an index into the table.
-  @discussion
+  @brief <b>TablookiUG</b> does interpolated table lookup, using its input as an index into the table.
+  
+  
 
-TablookiUG does interpolated table-lookup.   It takes its input, which is
+TablookiUG does interpolated table-lookup.  It takes its input, which is
 assumed to be between -1 and 1, scales it so that -1.0 maps onto the start of
 the table and 1.0 maps onto the end of the table, then does a lookup and returns
 the corresponding table value.  If the computed address is not an integer,
@@ -53,53 +54,58 @@ corresponding to positive input (51-100, inclusive).
 }
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns <b>nil</b>
+  if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 - setInput:(id)aPatchPoint;
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.   Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 - setOutput:(id)aPatchPoint;
 
 /*!
-  @method setLookupTable:
   @param  aSynthData is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the SynthData object used as the lookup table to
-              <i>aSynthData</i>.   The table size must be odd.   If
-              <i>aSynthData</i> has an even length, the top-most point is not
-              used.  
+  @return Returns <b>self</b>.
+  @brief Sets the SynthData object used as the lookup table to
+  <i>aSynthData</i>.
+
+  The table size must be odd.   If
+  <i>aSynthData</i> has an even length, the top-most point is not
+  used.  
 */
 - setLookupTable:(id)aSynthData;
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b> message to the object.  
-              Sets the output patchpoint, as well as the delay memory, to 
-              <i>sink</i>, thus ensuring that the object does not produce
-              any output.  Note that you must send <b>setOutput:</b> and
-              <b>run </b>again to use the MKUnitGenerator after sending <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b> message to the object.  
+  Sets the output patchpoint, as well as the delay memory, to 
+  <i>sink</i>, thus ensuring that the object does not produce
+  any output.  Note that you must send <b>setOutput:</b> and
+  <b>run </b>again to use the MKUnitGenerator after sending <b>idle</b>.
 */
 - idleSelf;
 

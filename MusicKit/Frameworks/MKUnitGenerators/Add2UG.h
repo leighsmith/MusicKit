@@ -16,16 +16,17 @@
 // classgroup Delays and Time-Modification Units
 /*!
   @class Add2UG
-  @abstract <b>Add2UG</b> adds two patchpoints.
-  @discussion
+  @brief <b>Add2UG</b> adds two patchpoints.
+  
+  
 
 Add2UG produces the sum of two input signals:
 	
 <i>output</i> = <i>input1</i> + <i>input2</i>
 
-   You allocate one of the subclasses Add2UG<i>a</i><i>b</i><i>c</i>, where <i>a</i> is the output 
-   space, <i>b</i> is the space of the first input and <i>c</i> is the space of the
-   second input.   This unit generator is faster if <i>b</i> is x and <i>c</i> is y.
+  You allocate one of the subclasses Add2UG<i>a</i><i>b</i><i>c</i>, where <i>a</i> is the output 
+  space, <i>b</i> is the space of the first input and <i>c</i> is the space of the
+  second input.   This unit generator is faster if <i>b</i> is x and <i>c</i> is y.
 
 <h2>Memory Spaces</h2>
 
@@ -46,36 +47,39 @@ Add2UG produces the sum of two input signals:
 /* Specifies that all arguments are to be optimized if possible */
 
 /*!
-  @method setInput1:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 1 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>self</b> or <b>nil</b> if the argument isn't a
-              patchpoint.
+  @return Returns an id.
+  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>self</b> or <b>nil</b> if the argument isn't a
+  patchpoint.
 */
 -setInput1:aPatchPoint;
 /* Sets input1 of adder. */
 
 
 /*!
-  @method setInput2:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 2 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>self</b> or <b>nil</b> if the argument isn't a
-              patchpoint.
+  @return Returns an id.
+  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>self</b> or <b>nil</b> if the argument isn't a
+  patchpoint.
 */
 -setInput2:aPatchPoint;
 /* Sets input2 of adder. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>self</b> or <b>nil</b> if the argument isn't a
-              patchpoint.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>self</b> or <b>nil</b> if the argument isn't a
+  patchpoint.
 */
 -setOutput:aPatchPoint;
 /* Sets output of adder. */

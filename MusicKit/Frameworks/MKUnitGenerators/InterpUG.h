@@ -25,9 +25,10 @@
 // classgroup Table Lookup
 /*!
   @class InterpUG
-  @abstract <b>InterpUG</b> does linear interpolation between two patchpoints, based on the value
-            of a third patchpoint.
-  @discussion
+  @brief <b>InterpUG</b> does linear interpolation between two patchpoints, based on the value
+  of a third patchpoint.
+  
+  
 
 InterpUG provides dynamic linear interpolation between two input signals, where
 the interpolation is controlled by a third input signal:
@@ -54,57 +55,62 @@ exactly<i> input2.</i>  An AsympUG is often used to produce the control signal.
 @interface InterpUG:MKUnitGenerator
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setInput1:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 1 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput1:aPatchPoint;
 /* Sets input1 of interpolator. */
 
 
 /*!
-  @method setInput2:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 2 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput2:aPatchPoint;
 /* Sets input2 of interpolator. */
 
 
 /*!
-  @method setInterpInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the interp input patchpoint to <i>aPatchpoint</i>.  The signal
-              from this input controls the interpolation between the other two
-              input signals.  Returns <b>nil</b> if the argument isn't a
-              patchpoint; otherwise returns <b>self</b>.
+  @return Returns an id.
+  @brief Sets the interp input patchpoint to <i>aPatchpoint</i>.
+
+  The signal
+  from this input controls the interpolation between the other two
+  input signals.  Returns <b>nil</b> if the argument isn't a
+  patchpoint; otherwise returns <b>self</b>.
 */
 -setInterpInput:aPatchPoint;
 /* Sets interpolation signal of interpolator. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets output of adder. */

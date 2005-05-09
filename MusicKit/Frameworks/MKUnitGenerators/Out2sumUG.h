@@ -25,9 +25,10 @@
 // classgroup Sound Inputs and Outputs
 /*!
   @class Out2sumUG
-  @abstract <b>Out2sumUG</b> sends its monaural input patchpoint to a stereo output stream,
-            panning the sound as indicated by its memory arguments.
-  @discussion
+  @brief <b>Out2sumUG</b> sends its monaural input patchpoint to a stereo output stream,
+  panning the sound as indicated by its memory arguments.
+  
+  
 
 Out2sumUG adds its input signal to the DSP's stereo output stream.  The signal
 is placed (or &ldquo;imaged&rdquo;) between the two channels according to the
@@ -66,51 +67,55 @@ stream.
 }
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setLeftScale:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the factor by which the signal that's written to the left
-              output channel is scaled.  By default, the scaler is set to a value
-              that's just a tad less than 1.0.  Effective values are between 0.0
-              and 1.0 (a negative <i>value</i> is the same as its absolute value,
-              but with a 180 degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the factor by which the signal that's written to the left
+  output channel is scaled.
+
+  By default, the scaler is set to a value
+  that's just a tad less than 1.0.  Effective values are between 0.0
+  and 1.0 (a negative <i>value</i> is the same as its absolute value,
+  but with a 180 degree phase shift).  
 */
 -setLeftScale:(double)val;
 /* Sets scaling for left channel. */ 
 
 
 /*!
-  @method setRightScale:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the factor by which the signal that's written to the right
-              output channel is scaled.  By default, the scaler is set to a value
-              that lacks 1.0 by a speck.    Effective values are between 0.0 and
-              1.0 (a negative <i>value</i> is the same as its absolute value, but
-              with a 180 degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the factor by which the signal that's written to the right
+  output channel is scaled.
+
+  By default, the scaler is set to a value
+  that lacks 1.0 by a speck.    Effective values are between 0.0 and
+  1.0 (a negative <i>value</i> is the same as its absolute value, but
+  with a 180 degree phase shift).  
 */
 -setRightScale:(double)val;
 /* Sets scaling for right channel. */ 
 
 
 /*!
-  @method setBearing:
   @param  (double)degrees is an id.
-  @result Returns <b>self</b>.
-  @discussion Distributes the input signal between the two output channels
-              according to the value of <i>degrees</i>:  0.0 degrees is center,
-              -45.0 is hard left, 45.0 is hard right.  Bearing is reflected as
-              <i>degrees</i> exceeds the boundaries; thus, for example, 50.0
-              degrees is the same as 40.0, 60.0 is 30.0, 90.0 is 0.0, and so on. 
-              
+  @return Returns <b>self</b>.
+  @brief Distributes the input signal between the two output channels
+  according to the value of <i>degrees</i>:  0.0 degrees is center,
+  -45.0 is hard left, 45.0 is hard right.
+
+  Bearing is reflected as
+  <i>degrees</i> exceeds the boundaries; thus, for example, 50.0
+  degrees is the same as 40.0, 60.0 is 30.0, 90.0 is 0.0, and so on. 
+  
 */
 -setBearing:(double)val;
 /* As a convenience, you can set both scaleA and scaleB with a single 
@@ -122,13 +127,14 @@ stream.
 
 
 /*!
-  @method setBearing:scale:
   @param  (double)degrees is an id.
   @param  value is a double.
-  @result Returns <b>self</b>.
-  @discussion This is the same as <b>setBearing:</b>, but the input signal is
-              scaled by <i>value</i>, which should be between 0.0 and 1.0, before
-              being distributed.  
+  @return Returns <b>self</b>.
+  @brief This is the same as <b>setBearing:</b>, but the input signal is
+  scaled by <i>value</i>, which should be between 0.0 and 1.0, before
+  being distributed.
+
+  
 */
 -setBearing:(double)val scale:(double)aScale;
 /* Same as setBearing:, but including an overall amp scaling factor independent
@@ -136,24 +142,26 @@ stream.
 
 
 /*!
-  @method runSelf
-  @result Returns an id.
-  @discussion If bearing has not been set, sets it to 0.0.  This method is invoked
-              when you send the <b>run</b> message to the object.
+  @return Returns an id.
+  @brief If bearing has not been set, sets it to 0.0.
+
+  This method is invoked
+  when you send the <b>run</b> message to the object.
 */
 -runSelf;
 /* If bearing has not been set, sets it to 0. */
 
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b> message to the object.   Since Out2sum has no outputs,
-              it idles itself by patching its inputs to <i>zero</i>. Thus, an idle
-              Out2sum makes no sound.   Note that you must send <b>setInput:</b>
-              and <b>run</b> again to use the MKUnitGenerator after sending
-              <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b> message to the object.   Since Out2sum has no outputs,
+  it idles itself by patching its inputs to <i>zero</i>. Thus, an idle
+  Out2sum makes no sound.   Note that you must send <b>setInput:</b>
+  and <b>run</b> again to use the MKUnitGenerator after sending
+  <b>idle</b>.
 */
 -idleSelf;
 /* Since Out2sum has no outputs, it idles itself by patching its inputs
@@ -161,12 +169,13 @@ stream.
 
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns <b>nil</b>
+  if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput:aPatchPoint;
 /* Sets input patch point. */

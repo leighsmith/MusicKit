@@ -30,8 +30,9 @@
 // classgroup Patchpoint Arithmetic
 /*!
   @class Mul1add2UG
-  @abstract <b>Mul1add2UG</b> adds two patchpoints and multiplies the result by a third.  
-  @discussion
+  @brief <b>Mul1add2UG</b> adds two patchpoints and multiplies the result by a third.  
+  
+  
 
 Mul1add2UG adds one signal to the product of two others:
 	
@@ -53,56 +54,61 @@ Mul1add2UG adds one signal to the product of two others:
 @interface Mul1add2UG: MKUnitGenerator
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setInput1:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 1 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput1:aPatchPoint;
 /* Sets input1 of adder. */
 
 
 /*!
-  @method setInput2:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 2 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput2:aPatchPoint;
 /* Sets input2 of adder. */
 
 
 /*!
-  @method setInput3:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 3 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 3 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput3:aPatchPoint;
 /* Sets input3 of adder. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets output of adder. */

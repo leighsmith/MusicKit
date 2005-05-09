@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:27:43  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -24,8 +27,9 @@
 //  classgroup WaveTable Synthesis
 /*!
   @class DBWave1vi
-  @abstract Like <b>Wave1vi</b>, but with access to the Timbre Data Base.
-  @discussion
+  @brief Like <b>Wave1vi</b>, but with access to the Timbre Data Base.
+  
+  
 
 <b>DBWave1vi</b> is like <b>Wave1vi</b>, but it includes support for the Music
 Kit Timbre Data Base. <b>DBWave1v</b> is like <b>DBWave1vi</b>, but it uses a

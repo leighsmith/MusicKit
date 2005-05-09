@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -27,8 +30,9 @@
 //  classgroup WaveTable Synthesis
 /*!
   @class Wave1vi
-  @abstract Wavetable synthesis with 1 interpolating osc. and random and periodic vibrato.
-  @discussion
+  @brief Wavetable synthesis with 1 interpolating osc. and random and periodic vibrato.
+  
+  
 
 <b>Wave1vi</b> is like <b>Wave1i</b>, but it includes periodic and random vibrato.
 <b>Wave1v</b>(a subclass of <b>Wave1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.). See Wave1i.h for a description of the non-vibrato parameters.

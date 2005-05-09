@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -24,14 +27,15 @@
 //  classgroup WaveTable Synthesis
 /*!
   @class Simp
-  @abstract Single-oscillator wavetable producing periodic waveforms using a non-interpolating
-            oscillator.   
-  @discussion
+  @brief Single-oscillator wavetable producing periodic waveforms using a non-interpolating
+  oscillator.   
+  
+  
 
 <b>Simp</b> is a single-oscillator wavetable MKSynthPatch, capable of producing
-any periodic waveform.   It is the simplest of the Music Kit MKSynthPatches.    It
+any periodic waveform.  It is the simplest of the Music Kit MKSynthPatches.    It
 uses a non-interpolating oscillator, which means it is not particularly high
-quality.   
+quality.  
 
 For most musical applications, it is preferable to use <b>Wave1</b> or
 <b>Wave1i</b>, both of which feature amplitude and frequency
@@ -105,46 +109,51 @@ velocitySensitivity is 0, velocity has no effect.
 }
 
 /*!
-  @method patchTemplateFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Returns a default template. <i>aNote</i> is ignored.
+  @return Returns an id.
+  @brief Returns a default template.
+
+  <i>aNote</i> is ignored.
 */
 +patchTemplateFor:aNote;
  
 /*!
-  @method noteOnSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  If this is a new
-              phrase, all instance variables are set to default values, then the
-              values are read from the MKNote.  
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  If this is a new
+  phrase, all instance variables are set to default values, then the
+  values are read from the MKNote.  
 */
 -noteOnSelf:aNote;
  
 /*!
-  @method noteUpdateSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is
-              assumed to be currently playing a MKNote.  Sets parameters as
-              specified in <i>aNote</i>.
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is
+  assumed to be currently playing a MKNote.
+
+  Sets parameters as
+  specified in <i>aNote</i>.
 */
 -noteUpdateSelf:aNote;
  
 /*!
-  @method noteOffSelf:
   @param  aNote is an id.
-  @result Returns a double.
-  @discussion <i>aNote</i> is assumed to be a noteOff.  Finishes the note
-              immediately.
+  @return Returns a double.
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  Finishes the note
+  immediately.
 */
 -(double)noteOffSelf:aNote;
  
 /*!
-  @method noteEndSelf
-  @result Returns an id.
-  @discussion Resest instance variables to default values.
+  @return Returns an id.
+  @brief Resest instance variables to default values.
+
+  
 */
 -noteEndSelf;
  

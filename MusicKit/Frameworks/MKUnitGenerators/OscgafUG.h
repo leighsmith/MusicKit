@@ -16,9 +16,10 @@
 // classgroup Oscillators and Waveform Generators
 /*!
   @class OscgafUG
-  @abstract <b>OscgafUG</b> is similar to <b>OscgUG</b>, but supports patchpoints
-            for frequency and amplitude.
-  @discussion
+  @brief <b>OscgafUG</b> is similar to <b>OscgUG</b>, but supports patchpoints
+  for frequency and amplitude.
+  
+  
 
 <b>OscgafUGs</b> is the superclass for <b>OscgafUG</b> (non-interpolating or
 "drop-sample") and <b>OscgafiUG</b> (interpolating or "high-quality")
@@ -43,7 +44,7 @@ control.  That is, those parameters are intended to be determined by the output
 of some other unit generator, such as AsympUG.  See the example synthpatch
 <b>/LocalDeveloper/Examples/MusicKit/exampsynthpatch/FM.m</b> for an example of
 its use.
-    
+  
 Amplitude control is straightforward.  The output of <b>OscgafUGs</b> is simply
 the value of the lookup table times whatever comes in via the <i>ampEnvInput</i>
 patchpoint.  Frequency control is more complicated. The signal needed for
@@ -56,7 +57,7 @@ is a power of two which represents the maximum possible increment.  Input to
 remains in the 24-bit signal  range.  The signal is then scaled back up by this
 number within OscgafUGs, with a possible additional scaling by the incRatio (see
 below).
-    
+  
 A method called <b>incAtFreq:</b> has been provided which takes all the above
 factors into account and returns the increment for a given frequency.  The
 lookup table must be set first, via the <b>-setTable:</b>  method, since the
@@ -66,7 +67,7 @@ length of the table must be known to perform the  calculation.  If more than one
 the <b>-setIncRatio: </b>method.  Since  the input increment signal is scaled by
 MK_OSCFREQSCALE*incRatio within <b>OscgafUGs</b>, the resulting frequency will
 be correspondingly changed.  The incRatio defaults to 1.0.
-    
+  
 Alternatively, the increment scaler can be set directly with
 <b>-setIncScaler:</b>. This simply sets the increment scaler to the value you
 provide, ignoring MK_OSCFREQSCALE, incRatio, etc.

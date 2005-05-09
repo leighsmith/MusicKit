@@ -22,8 +22,9 @@
 // classgroup Oscillators and Waveform Generators
 /*!
   @class UnoiseUG
-  @abstract <b>UnoiseUG</b> produces white noise at the sampling rate.
-  @discussion
+  @brief <b>UnoiseUG</b> produces white noise at the sampling rate.
+  
+  
 
 UnoiseUG produces a series of random values within the range
 	
@@ -45,33 +46,36 @@ produce a new random value every tick.
 @interface UnoiseUG: MKUnitGenerator
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b> message to the object.  
-              Sets the output patchpoint to <i>sink</i>, thus ensuring that
-              the object does not produce any output.  Note that you must send
-              <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator
-              after sending <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b> message to the object.  
+  Sets the output patchpoint to <i>sink</i>, thus ensuring that
+  the object does not produce any output.  Note that you must send
+  <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator
+  after sending <b>idle</b>.
 */
 -idleSelf;
 /* Sets output to sink. */
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible except seed.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible except seed.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setSeed:
   @param  (DSPDatum)seed is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the seed that's used to prime the random number generator.  To
-              create a unique series of random numbers, you should set the seed
-              itself to a randomly generated number.  
+  @return Returns <b>self</b>.
+  @brief Sets the seed that's used to prime the random number generator.
+
+  To
+  create a unique series of random numbers, you should set the seed
+  itself to a randomly generated number.  
 */
 -setSeed:(DSPDatum)seedVal;
 /* Sets seed of random sequence. This is the current value and thus is changed
@@ -79,12 +83,13 @@ produce a new random value every tick.
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets output as specified. */

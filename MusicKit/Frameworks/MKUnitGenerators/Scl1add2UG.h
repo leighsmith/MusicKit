@@ -25,9 +25,10 @@
 // classgroup Patchpoint Arithmetic
 /*!
   @class Scl1add2UG
-  @abstract <b>Scl1add2UG</b> multiplies the first input by a scale factor, and adds
-            it to the second input patchpoint to produce a third.
-  @discussion
+  @brief <b>Scl1add2UG</b> multiplies the first input by a scale factor, and adds
+  it to the second input patchpoint to produce a third.
+  
+  
 
 Scl1add2UG adds two input signals, the first of which is scaled:
 	
@@ -47,68 +48,74 @@ Scl1add2UG adds two input signals, the first of which is scaled:
 @interface Scl1add2UG:MKUnitGenerator
 
 /*!
-  @method setInput1:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 1 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput1:aPatchPoint;
 /* Sets input1. This is the input that is scaled. */
 
 
 /*!
-  @method setInput2:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input 2 patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput2:aPatchPoint;
 /* Sets input2. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets output. */
 
 
 /*!
-  @method setScale:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the constant scaler.  Effective values are between 0.0 and 1.0
-              (a negative scaler is the same as its absolute value, but with a 180
-              degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the constant scaler.
+
+  Effective values are between 0.0 and 1.0
+  (a negative scaler is the same as its absolute value, but with a 180
+  degree phase shift).  
 */
 -setScale:(double)val;
 /* Sets scaling on input1. */
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b> message to the object.  
-              Sets the output patchpoint to <i>sink</i>,<i></i> thus ensuring that
-              the object does not produce any output.  Note that you must send
-              <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator after sending <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b> message to the object.  
+  Sets the output patchpoint to <i>sink</i>,<i></i> thus ensuring that
+  the object does not produce any output.  Note that you must send
+  <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator after sending <b>idle</b>.
 */
 -idleSelf;
   /* Sets output to write to sink. */

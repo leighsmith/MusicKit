@@ -29,27 +29,25 @@
 // classgroup Filters
 /*!
   @class Allpass1UG
-  @abstract <b>Allpass1UG</b> is a first-order all-pass filter, useful for phase
-            modifications.
-  @discussion
+  @brief <b>Allpass1UG</b> is a first-order all-pass filter, useful for phase modifications.
 
 Allpass1UG is a one-pole, one-zero filter.  The value of the filter coefficient
 is set directly.  The filter's transfer function is given as
-	
-                      bb0 + 1/z	
-	      H(z) =  ---------	
-	              1 + bb0/z
 
-where bb0 is the filter coefficient.   Thus, the pole is at -bb0 and the zero is
+  bb0 + 1/z	
+H(z) =  ---------	
+  1 + bb0/z
+
+where bb0 is the filter coefficient.  Thus, the pole is at -bb0 and the zero is
 at -1/bb0.  The difference equation used to implement the filter in the DSP
 is
-	
-		y(n) = bb0 * x(n) + x(n-1) - bb0 * y(n-1); 
+
+y(n) = bb0 * x(n) + x(n-1) - bb0 * y(n-1); 
 
 where x(n) denotes the input signal at time n, and y(n) is the output signal. 
 This is the so-called &ldquo;direct-form-1&rdquo; digital filter structure.  It
-has the property that the filter can only overflow if the output overflows.  (In
-other words, <i>internal</i> overflow is not possible.)  For stability, bb0 must
+has the property that the filter can only overflow if the output overflows. 
+(In other words, <i>internal</i> overflow is not possible.)  For stability, bb0 must
 lie between -1.0 and 1.0.
 
 <h2>Optimization</h2>
@@ -68,65 +66,72 @@ are used.
 #define __MK_Allpass1UG_H___
 
 #import <MusicKit/MKUnitGenerator.h>
+
 @interface Allpass1UG: MKUnitGenerator
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible except the
-              state variable.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible except the
+  state variable.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>self</b>, or <b>nil</b> if the argument isn't a
-              patchpoint.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>self</b>, or <b>nil</b> if the argument isn't a
+  patchpoint.
 */
 -setInput:aPatchPoint;
 /* Sets input of filter. */
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>self</b>, or <b>nil</b> if the argument isn't a
-              patchpoint.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>self</b>, or <b>nil</b> if the argument isn't a
+  patchpoint.
 */
 -setOutput:aPatchPoint;
 /* Sets output of filter. */
 
 /*!
-  @method setBB0:
   @param  (double)bb0 is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the filter coefficient to <i>bb0</i>.  For stability, the
-              coefficient should be within the bounds
-              	
-              -1.0 &lt; <i>bb0</i> &lt; 1.0
+  @return Returns <b>self</b>.
+  @brief Sets the filter coefficient to <i>bb0</i>.
+
+  For stability, the
+  coefficient should be within the bounds
+  	
+  -1.0 &lt; <i>bb0</i> &lt; 1.0
 */
 -setBB0:(double)val;
 /* Sets BB0 coefficient in equation above. */
 
 /*!
-  @method clear
-  @result Returns <b>self</b>.
-  @discussion Clears filter memory, i.e., sets the value of the two state
-              variables (used for x(n-1) and y(n-1)) to 0.0.  
+  @return Returns <b>self</b>.
+  @brief Clears filter memory, i.e., sets the value of the two state
+  variables (used for x(n-1) and y(n-1)) to 0.0.
+
+  
 */
 -clear;
 /* Clears filter state variable. */
 
 /*!
-  @method delayAtFreq:
   @param  hzVal is a double.
-  @result Returns a double.
-  @discussion Returns filter delay at given frequency.
+  @return Returns a double.
+  @brief Returns filter delay at given frequency.
+
+  
 */
 -(double)delayAtFreq:(double)hzVal;
 

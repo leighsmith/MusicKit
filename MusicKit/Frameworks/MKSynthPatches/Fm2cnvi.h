@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -27,8 +30,9 @@
 //  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm2cnvi
-  @abstract Like <b>Fm2cvi</b>, but with an additional noise modulator.
-  @discussion
+  @brief Like <b>Fm2cvi</b>, but with an additional noise modulator.
+  
+  
 
 <b>Fm2cnvi</b> is a cascade-modulator frequency modulation MKSynthPatch, with an interpolating-oscillator as a carrier and a noise source modulating the frequency of the two wavetable modulators.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index, as well as an envvelope on the noise source.  It also supports vibrato.   Although it does not inherit from <b>Fm2cvi</b>, it implements the same parameters, plus some of its own. 
 
@@ -78,41 +82,46 @@ In addition to the parameters described in <b>Fm2cvi.rtfd</b>, the following par
 }
 
 /*!
-  @method patchTemplateFor:
   @param aNote is a (id)
-  @result A (id)
-  @discussion Returns a template. A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines whether vibrato resources are allocated. 
+  @return A (id)
+  @brief Returns a template.
+
+  A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines whether vibrato resources are allocated. 
 */
 +patchTemplateFor:aNote;
 
 /*!
-  @method noteOnSelf:
   @param aNote is a (id)
-  @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
+  @return A (id)
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
 -noteOnSelf:aNote;
 
 /*!
-  @method noteUpdateSelf:
   @param aNote is a (id)
-  @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
+  @return A (id)
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.
+
+  Sets parameters as specified in <i>aNote.</i>
 */
 -noteUpdateSelf:aNote;
 
 /*!
-  @method noteOffSelf:
   @param aNote is a (id)
-  @result A (double)
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @return A (double)
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 -(double)noteOffSelf:aNote;
 
 /*!
-  @method noteEndSelf
-  @result A (id)
-  @discussion Resest instance variables to default values.
+  @return A (id)
+  @brief Resest instance variables to default values.
+
+  
 */
 -noteEndSelf;
 

@@ -47,8 +47,9 @@
 // classgroup Filters
 /*!
   @class BiquadUG
-  @abstract <b>BiquadUG</b> is a two-pole, two-zero filter useful for adding resonances. 
-  @discussion
+  @brief <b>BiquadUG</b> is a two-pole, two-zero filter useful for adding resonances. 
+  
+  
 
 The <b>BiquadUG</b> unit-generator implements a two-pole, two-zero filter
 section in direct form.  The output space can only be <i>y</i> DSP memory.   
@@ -58,18 +59,18 @@ corresponding to the two possible input spaces.
 The biquad transfer function is
 
 <pre>
-<tab>                       -1         -2
-<tab>           1  +  b1 * z   + b2 * z
+<tab>  -1         -2
+<tab>  1  +  b1 * z   + b2 * z
 <tab>H(z) = g * -------------------------
-<tab>                       -1         -2
-<tab>           1  +  a1 * z   + a2 * z
+<tab>  -1         -2
+<tab>  1  +  a1 * z   + a2 * z
 </pre>
 
 The biquad difference equation which implements H(z) is
 
 <pre>
 v(n) = g * x(n) - a1 * v(n-1) - a2 * v(n-2);
-y(n) =     v(n) + b1 * v(n-1) + b2 * v(n-2);
+y(n) =  v(n) + b1 * v(n-1) + b2 * v(n-2);
 </pre>
 
 where n denotes the current sample time, x(n) is the input signal at time n,
@@ -96,48 +97,53 @@ p. 155) for further discussion.
 
 
 /*!
-  @method setInput:
   @param  aPatchPoint is an id.
-  @result Returns an id.
-  @discussion Sets filter input. 
+  @return Returns an id.
+  @brief Sets filter input.
+
+  
 */
 - setInput:(id)aPatchPoint;
  /* Sets filter input. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchPoint is an id.
-  @result Returns an id.
-  @discussion Sets filter output. 
+  @return Returns an id.
+  @brief Sets filter output.
+
+  
 */
 - setOutput:(id)aPatchPoint;
  /* Sets filter output. */
 
 
 /*!
-  @method clear
-  @result Returns an id.
-  @discussion Clear internal filter state. 
+  @return Returns an id.
+  @brief Clear internal filter state.
+
+  
 */
 - clear;
  /* Clear internal filter state. */
 
 /*!
-  @method setFirstDelayedSample:
   @param  d1 is a double.
-  @result Returns an id.
-  @discussion Sets the internal filter state of the first delayed
-              sample.
+  @return Returns an id.
+  @brief Sets the internal filter state of the first delayed
+  sample.
+
+  
 */
 - setFirstDelayedSample:(double)d1;
 
 /*!
-  @method setSecondDelayedSample:
   @param  d2 is a double.
-  @result Returns an id.
-  @discussion Sets the internal filter state of the second delayed
-              sample.
+  @return Returns an id.
+  @brief Sets the internal filter state of the second delayed
+  sample.
+
+  
 */
 - setSecondDelayedSample:(double)d2;
 
@@ -146,53 +152,59 @@ p. 155) for further discussion.
   */
 
 /*!
-  @method setA1:
   @param  a1 is a double.
-  @result Returns an id.
-  @discussion Sets the A1 filter coefficient.
+  @return Returns an id.
+  @brief Sets the A1 filter coefficient.
+
+  
 */
 - setA1:(double)a1;
 
 /*!
-  @method setA2:
   @param  a2 is a double.
-  @result Returns an id.
-  @discussion Sets the A2 filter coefficient..
+  @return Returns an id.
+  @brief Sets the A2 filter coefficient..
+
+  
 */
 - setA2:(double)a2;
 
 /*!
-  @method setB1:
   @param  b1 is a double.
-  @result Returns an id.
-  @discussion Sets the B1 filter coefficient..
+  @return Returns an id.
+  @brief Sets the B1 filter coefficient..
+
+  
 */
 - setB1:(double)b1;
 
 /*!
-  @method setB2:
   @param  b2 is a double.
-  @result Returns an id.
-  @discussion Sets the B2 filter coefficient..
+  @return Returns an id.
+  @brief Sets the B2 filter coefficient..
+
+  
 */
 - setB2:(double)b2;
 
 
 /*!
-  @method setGain:
   @param  g is a double.
-  @result Returns an id.
-  @discussion Sets gain of filter. 
+  @return Returns an id.
+  @brief Sets gain of filter.
+
+  
 */
 - setGain:(double)g;
  /* Sets gain of filter. */
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible except the
-              state variable.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible except the
+  state variable.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
  /* Specifies that all arguments are to be optimized if possible except the
@@ -201,14 +213,15 @@ p. 155) for further discussion.
  /* The following provide more convenient ways to talk to the filters. */
 
 /*!
-  @method setComplexPolesRadius:angle:
   @param  r is a double.
   @param  t is a double.
-  @result Returns an id.
-  @discussion This method provides a convenient way to set the filter feedback
-              coefficients.    Sets the coefficients such as to provide the
-              specified pole radius and angle.  The angle is in radians.
-              
+  @return Returns an id.
+  @brief This method provides a convenient way to set the filter feedback
+  coefficients.
+
+  Sets the coefficients such as to provide the
+  specified pole radius and angle.  The angle is in radians.
+  
 */
 - setComplexPolesRadius:(double)r angle:(double)t;
  /* Sets the coefficients such as to provide the specified pole radius and
@@ -216,14 +229,15 @@ p. 155) for further discussion.
 
 
 /*!
-  @method setComplexZerosRadius:angle:
   @param  r is a double.
   @param  t is a double.
-  @result Returns an id.
-  @discussion This method provides a convenient way to set the filter feedforward
-              coefficients.    Sets the coefficients such as to provide the
-              specified zero radius and angle.  The angle is in radians.
-              
+  @return Returns an id.
+  @brief This method provides a convenient way to set the filter feedforward
+  coefficients.
+
+  Sets the coefficients such as to provide the
+  specified zero radius and angle.  The angle is in radians.
+  
 */
 - setComplexZerosRadius:(double)r angle:(double)t;
  /* Sets the coefficients such as to provide the specified zero radius and
@@ -231,14 +245,15 @@ p. 155) for further discussion.
 
 
 /*!
-  @method setComplexPolesFrequency:bandwidth:
   @param  f is a double.
   @param  b is a double.
-  @result Returns an id.
-  @discussion This method provides a convenient way to set the filter feedback
-              coefficients.    Sets the coefficients such as to provide the
-              specified center frequency and bandwidth.  The angle is in radians.
-              
+  @return Returns an id.
+  @brief This method provides a convenient way to set the filter feedback
+  coefficients.
+
+  Sets the coefficients such as to provide the
+  specified center frequency and bandwidth.  The angle is in radians.
+  
 */
 - setComplexPolesFrequency:(double)f bandwidth:(double)b;
  /* Sets the coefficients such as to place the poles at the specified freq
@@ -246,27 +261,29 @@ p. 155) for further discussion.
 
 
 /*!
-  @method setComplexZerosFrequency:bandwidth:
   @param  f is a double.
   @param  b is a double.
-  @result Returns an id.
-  @discussion This method provides a convenient way to set the filter feedforward
-              coefficients.    Sets the coefficients such as to provide the
-              specified center frequency and bandwidth.  The angle is in radians.
-              
+  @return Returns an id.
+  @brief This method provides a convenient way to set the filter feedforward
+  coefficients.
+
+  Sets the coefficients such as to provide the
+  specified center frequency and bandwidth.  The angle is in radians.
+  
 */
 - setComplexZerosFrequency:(double)f bandwidth:(double)b;
  /* Sets the coefficients such as to place the zeros at the specified freq
   * and bandwidth. */
 
 /*!
-  @method setComplexPolesFrequency:t60:
   @param  f is a double.
   @param  t60 is a double.
-  @result Returns an id.
-  @discussion Sets the coefficients such as to place the poles at the specified freq
-              with the given t60 value.  t60 is the time, in seconds, to decay to 
-              -60 dB.              
+  @return Returns an id.
+  @brief Sets the coefficients such as to place the poles at the specified freq
+  with the given t60 value.
+
+  t60 is the time, in seconds, to decay to 
+  -60 dB.              
 */
 - setComplexPolesFrequency:(double)f t60:(double)t60;
 

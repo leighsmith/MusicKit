@@ -30,8 +30,9 @@
 // classgroup Table Lookup
 /*!
   @class ConstantUG
-  @abstract <b>ConstantUG </b>simply writes a constant to its output patchpoint. 
-  @discussion
+  @brief <b>ConstantUG </b>simply writes a constant to its output patchpoint. 
+  
+  
 
 ConstantUG produces a constant value.  Since you can set the value of a
 patchpoint directly through the MKSynthData method <b>setToConstant:</b>, you
@@ -55,10 +56,11 @@ a ConstantUG to clear the patchpoint before the first oscillator reads it.
 @interface ConstantUG:MKUnitGenerator
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
@@ -67,33 +69,34 @@ a ConstantUG to clear the patchpoint before the first oscillator reads it.
 
 
 /*!
-  @method setConstantDSPDatum:
   @param  (DSPDatum)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the constant value to <i>value.</i>  
+  @return Returns <b>self</b>.
+  @brief Sets the constant value to <i>value.</i>  
 */
 -setConstantDSPDatum:(DSPDatum)value;
 /* Sets constant value as int. */
 
 
 /*!
-  @method setConstant:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the constant value to a DSPDatum converted from <i>value</i>. 
-              
+  @return Returns <b>self</b>.
+  @brief Sets the constant value to a DSPDatum converted from <i>value</i>.
+
+  
+  
 */
 -setConstant:(double)value;
 /* Sets constant value as double. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets output location. */ 

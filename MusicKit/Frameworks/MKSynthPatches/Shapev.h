@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -24,8 +27,9 @@
 //  classgroup Waveshaping (a.k.a. Nonlinear Distortion) Synthesis
 /*!
   @class Shapev
-  @abstract Same as <b>Shape</b> but with periodic and random vibrato.
-  @discussion
+  @brief Same as <b>Shape</b> but with periodic and random vibrato.
+  
+  
 
 <b>Shapev</b> is like <b>Shape</b>, but it includes periodic and random
 vibrato.
@@ -82,11 +86,12 @@ fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.
 }
 
 /*!
-  @method patchTemplateFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Returns a template. A non-zero for <b>svibAmp</b>and <b>rvibAmp </b>
-              determines whether vibrato resources are allocated.
+  @return Returns an id.
+  @brief Returns a template.
+
+  A non-zero for <b>svibAmp</b>and <b>rvibAmp </b>
+  determines whether vibrato resources are allocated.
 */
 + patchTemplateFor:aNote;
 

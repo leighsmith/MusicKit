@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -27,8 +30,9 @@
 //  classgroup Virtual Acoustics (a.k.a. Physical Modeling or Waveguide) Synthesis
 /*!
   @class Pluck
-  @abstract Plucked string synthesis.
-  @discussion
+  @brief Plucked string synthesis.
+  
+  
 
 Pluck implements a Plucked string with fine-tuning of pitch and dynamics, as described in Jaffe/Smith, and Karplus/Strong, "The Music Machine", MIT Press, 1989.  This is a type of "virtual acoustic" synthesis (also called "physical modeling" or "waveguide synthesis".)
 
@@ -101,50 +105,56 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 
 
 /*!
-  @method patchTemplateFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Returns a default template. <i>aNote </i>is ignored.
+  @return Returns an id.
+  @brief Returns a default template.
+
+  <i>aNote </i>is ignored.
 */
 +patchTemplateFor:currentNote;
 -init;
 
 /*!
-  @method noteOnSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
 -noteOnSelf:aNote;
 
 /*!
-  @method noteUpdateSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.
+
+  Sets parameters as specified in <i>aNote.</i>
 */
 -noteUpdateSelf:aNote;
 
 /*!
-  @method noteOffSelf:
   @param  aNote is an id.
-  @result Returns a double.
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @return Returns a double.
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 -(double)noteOffSelf:aNote;
 
 /*!
-  @method noteEndSelf
-  @result Returns an id.
-  @discussion Resest instance variables to default values.
+  @return Returns an id.
+  @brief Resest instance variables to default values.
+
+  
 */
 -noteEndSelf;
 
 /*!
-  @method preemptFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Preempts envelope, if any.
+  @return Returns an id.
+  @brief Preempts envelope, if any.
+
+  
 */
 -preemptFor:aNote;
 

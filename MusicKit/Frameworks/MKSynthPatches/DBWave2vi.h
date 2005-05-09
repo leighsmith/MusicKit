@@ -15,8 +15,9 @@
 */
 /*!
   @class DBWave2vi
-  @abstract Like <b>Wave1vi</b>, but with two wavetables and interpolation between them.
-  @discussion
+  @brief Like <b>Wave1vi</b>, but with two wavetables and interpolation between them.
+  
+  
 
 <b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis MKSynthPatch
 with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.
@@ -105,42 +106,47 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
 }
 
 /*!
-  @method patchTemplateFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Returns a template. A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines
-              whether vibrato resources are allocated. 
+  @return Returns an id.
+  @brief Returns a template.
+
+  A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines
+  whether vibrato resources are allocated. 
 */
 + patchTemplateFor: aNote;
    
 /*!
-  @method noteOnSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
 */
 - noteOnSelf: aNote;
 
 /*!
-  @method noteUpdateSelf:
   @param  aNote is an id.
-  @result Returns a id.
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.  Sets parameters as specified in <i>aNote.</i>
+  @return Returns a id.
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.
+
+  Sets parameters as specified in <i>aNote.</i>
 */
 - noteUpdateSelf: aNote;
 
 /*!
-  @method noteOffSelf:
   @param aNote is an id.
-  @result Returns a double.
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @return Returns a double.
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 - (double) noteOffSelf: aNote;
 
 /*!
-  @method noteEndSelf
-  @result Returns an id.
-  @discussion Resest instance variables to default values.
+  @return Returns an id.
+  @brief Resest instance variables to default values.
+
+  
 */
 - noteEndSelf;
  

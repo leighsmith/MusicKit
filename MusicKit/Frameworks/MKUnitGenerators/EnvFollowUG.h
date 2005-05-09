@@ -22,8 +22,9 @@
 // classgroup Envelope Handlers and Followers
 /*!
   @class EnvFollowUG
-  @abstract <b>EnvFollowUG</b> derives an amplitude envelope from an input signal.
-  @discussion
+  @brief <b>EnvFollowUG</b> derives an amplitude envelope from an input signal.
+  
+  
 
 EnvFollowUG is an envelope follower, that tracks the peaks of a signal.  It
 converts an arbitrary signal to an envelope-like signal that is always positive
@@ -43,33 +44,36 @@ and changes relatively slowly.
 }
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns <b>nil</b>
+  if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 - setInput:(id) aPatchPoint;
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.   Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 - setOutput:(id) aPatchPoint;
 
 /*!
-  @method setRelease:
   @param  (double)val is an id.
-  @result Returns an id.
-  @discussion Release determines how quickly the object responds to amplitude
-              changes. More precisely, it is the coefficient of the one-pole
-              filter that implements the envelope decay. Typical values are
-              between 0.9 and 0.99.
+  @return Returns an id.
+  @brief Release determines how quickly the object responds to amplitude
+  changes.
+
+  More precisely, it is the coefficient of the one-pole
+  filter that implements the envelope decay. Typical values are
+  between 0.9 and 0.99.
 */
 - setRelease:(double)value;
 

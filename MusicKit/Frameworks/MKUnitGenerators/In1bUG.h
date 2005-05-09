@@ -22,9 +22,10 @@
 // classgroup Sound Inputs and Outputs
 /*!
   @class In1bUG
-  @abstract <b>In1bUG</b> reads sound from the right channel of DSP serial port and 
-            writes it to its output patchpoint.
-  @discussion
+  @brief <b>In1bUG</b> reads sound from the right channel of DSP serial port and 
+  writes it to its output patchpoint.
+  
+  
 
 In1aUG and In1bUG provide single-channel access to the DSP's stereo input
 stream, which comes from the DSP serial port; the former reads its input signal
@@ -55,41 +56,45 @@ In1bUGs.
 }
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method setScale:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the factor by which the output signal is scaled.  By default,
-              the scaler is set to 1.0.  Effective values are between 0.0 and 1.0
-              (negative values are the same as their absolute values, but with a
-              180 degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the factor by which the output signal is scaled.
+
+  By default,
+  the scaler is set to 1.0.  Effective values are between 0.0 and 1.0
+  (negative values are the same as their absolute values, but with a
+  180 degree phase shift).  
 */
 -setScale:(double)val;
 /* Sets scaling for left channel. */ 
 
 /*!
-  @method runSelf
-  @result Returns an id.
-  @discussion If scale has not been set, sets it to 1.0.  This method is invoked
-              when you send the <b>run</b> message to the object.
+  @return Returns an id.
+  @brief If scale has not been set, sets it to 1.0.
+
+  This method is invoked
+  when you send the <b>run</b> message to the object.
 */
 -runSelf;
 /* If scaling has not been set, sets it to 1-e. */
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets input patch point. */

@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -27,12 +30,13 @@
 //  classgroup Waveshaping (a.k.a. Nonlinear Distortion) Synthesis
 /*!
   @class Shape
-  @abstract Waveshaping synthesis, with index control and amplitude envelope.
-  @discussion
+  @brief Waveshaping synthesis, with index control and amplitude envelope.
+  
+  
 
 <b>Shape</b> is a single-lookup table non-linear distortion (waveshaping) SynthPatch.  It has an interpolating-oscillator for a "carrier" (oscillator driving the lookup) with an arbitrary waveform, an interpolating lookup table, and envelopes on amplitude (scaler on output), frequency, and waveshaping index (amplitude of carrier).  Additionally, 
 
-For further information, see the LeBrun article sited below.   Other documentation includes <b>WaveShaping.math.ps</b> (or the similarly-named Mathematica files) in the folder <b>/LocalLibrary/Documentation/MusicKit+DSP/Music/Concepts/SpecialTopics/</b>
+For further information, see the LeBrun article sited below.  Other documentation includes <b>WaveShaping.math.ps</b> (or the similarly-named Mathematica files) in the folder <b>/LocalLibrary/Documentation/MusicKit+DSP/Music/Concepts/SpecialTopics/</b>
 
 Note that the result of the usual envelope computation (val = m1IndEnv(time) * (m1Ind1 - m1Ind0) + m1Ind0) must be between 0.0 and 1.0, otherwise you will be reading values outside of the table.  Note also that m1IndEnv can have some small effect on amplitude, even though its primary purpose is to affect timbre.  (The smallness of the effect is achieved through the Le Brun "signification" algorithm.) 
 	
@@ -44,31 +48,31 @@ If the <b>m1Waveform</b> parameter's value is a Partials object, it gives a spec
  
 Additional features that ambitious users might want to consider adding include doing some of the other things that Arfib, LeBrun, and Beauchamp described in their articles:
 
-        1- adding a post-lookup multiplication with a sinusoid, to
-                obtain symmetric Spectra, and with proper choice of the 
-                multiplying sine's frequency, inharmonic to obtain bell-like
-                sounds. (see LeBrun; Arfib)
-        2- Double Modulation (See Arfib)
-        3- adding a filter after the table-lookup. (See Beauchamp)
+  1- adding a post-lookup multiplication with a sinusoid, to
+  obtain symmetric Spectra, and with proper choice of the 
+  multiplying sine's frequency, inharmonic to obtain bell-like
+  sounds. (see LeBrun; Arfib)
+  2- Double Modulation (See Arfib)
+  3- adding a filter after the table-lookup. (See Beauchamp)
 
 When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
 
 For more Information:
 
 Arfib, D. 1979. "Digital Waveshaping Synthesis of complex spectra by
-     means of multiplication of nonlinear distorted sine waves."
-     Journal of the Audio Engineering Society 27(10): 757-768.
+  means of multiplication of nonlinear distorted sine waves."
+  Journal of the Audio Engineering Society 27(10): 757-768.
 Beauchamp, J. 1979. "Brass Tone Synthesis by Spectrum Evolution Matching
-     with Nonlinear Functions." Computer Music Journal 3(2): 35-43.
-    (Available in: Foundations of Computer Music, Curtis Roads and John
-     Strawn, eds. The MIT Press, Cambridge, MA. 1985.)
+  with Nonlinear Functions." Computer Music Journal 3(2): 35-43.
+  (Available in: Foundations of Computer Music, Curtis Roads and John
+  Strawn, eds. The MIT Press, Cambridge, MA. 1985.)
 LeBrun, M. 1979. "Digital WaveShaping Synthesis." Journal of the Audio
-     Engineering Society 27(4): 250-266.
+  Engineering Society 27(4): 250-266.
 Moore, F. R. 1990. Elements of Computer Music. Prentice Hall, Englewood
-     Cliffs, NJ.
+  Cliffs, NJ.
 Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
-     Computer Music Journal 3(2): 29-34. (Also available in the Roads
-     and Strawn book.)
+  Computer Music Journal 3(2): 29-34. (Also available in the Roads
+  and Strawn book.)
 
 <h2>Parameter Interpretation</h2>
 
@@ -187,49 +191,55 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 
 
 /*!
-  @method patchTemplateFor:
   @param aNote is a (id)
-  @result A (id)
-  @discussion Returns a default template. <i>aNote </i>is ignored.
+  @return A (id)
+  @brief Returns a default template.
+
+  <i>aNote </i>is ignored.
 */
 + patchTemplateFor:aNote;
 
 /*!
-  @method noteOnSelf:
   @param aNote is a (id)
-  @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
+  @return A (id)
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
 - noteOnSelf:aNote;
 
 /*!
-  @method noteUpdateSelf:
   @param aNote is a (id)
-  @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
+  @return A (id)
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.
+
+  Sets parameters as specified in <i>aNote.</i>
 */
 - noteUpdateSelf:aNote;
 
 /*!
-  @method noteOffSelf:
   @param aNote is a (id)
-  @result A (double)
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @return A (double)
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 - (double)noteOffSelf:aNote;
 
 /*!
-  @method noteEndSelf
-  @result A (id)
-  @discussion Resest instance variables to default values.
+  @return A (id)
+  @brief Resest instance variables to default values.
+
+  
 */
 - noteEndSelf;
 
 /*!
-  @method preemptFor:
   @param aNote is a (id)
-  @result A (id)
-  @discussion Preempts envelope, if any.
+  @return A (id)
+  @brief Preempts envelope, if any.
+
+  
 */
 - preemptFor:aNote;
 - init;

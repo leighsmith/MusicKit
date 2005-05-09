@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -24,8 +27,9 @@
 //  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm1
-  @abstract Like <b>Fm1i</b> but with a non-interpolating (drop-sample) oscillator.
-  @discussion
+  @brief Like <b>Fm1i</b> but with a non-interpolating (drop-sample) oscillator.
+  
+  
   
   This class is just like Fm1i but overrides the interpolating osc
   with a non-interpolating osc. Thus, it is slightly less expensive than
@@ -41,10 +45,11 @@
 }
 
 /*!
-  @method patchTemplateFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion  Returns a template using the non-interpolating osc.
+  @return Returns an id.
+  @brief  Returns a template using the non-interpolating osc.
+
+  
 */
 +patchTemplateFor:aNote;
 

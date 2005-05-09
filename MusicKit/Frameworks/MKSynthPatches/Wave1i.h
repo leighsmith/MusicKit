@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -27,8 +30,9 @@
 //  classgroup WaveTable Synthesis
 /*!
   @class Wave1i
-  @abstract Wavetable synthesis with 1 interpolating (high-quality) oscillator.
-  @discussion
+  @brief Wavetable synthesis with 1 interpolating (high-quality) oscillator.
+  
+  
 
 <b>Wave1i</b> is a single-interpolating-oscillator wavetable MKSynthPatch with an amplitude and frequency envelope.  
 <b>Wave1</b> (a subclass of <b>Wave1i</b>) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.)  <b>Wave1i</b> is used as the root class for a number of wavetable MKSynthPatches.
@@ -163,57 +167,63 @@ When using this MKSynthPatch in an interactive real-time context, such as playin
 /* The methods are all explained in the class description for MKSynthPatch */
 
 /*!
-  @method patchTemplateFor:
   @param aNote is a (id)
-  @result A (id)
-  @discussion Returns a default template. <i>aNote </i>is ignored.
+  @return A (id)
+  @brief Returns a default template.
+
+  <i>aNote </i>is ignored.
 */
 +patchTemplateFor:currentNote;
 -init;
 -controllerValues:controllers;
 
 /*!
-  @method noteOnSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers
-             (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase,
-             all instance variables are set to default values, then the values are read
-             from the MKNote.  
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  This method triggers
+  (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase,
+  all instance variables are set to default values, then the values are read
+  from the MKNote.  
 */
 -noteOnSelf:aNote;
 
 /*!
-  @method preemptFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Preempts envelope, if any.
+  @return Returns an id.
+  @brief Preempts envelope, if any.
+
+  
 */
 -preemptFor:aNote;
 
 /*!
-  @method noteUpdateSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be
-              currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be
+  currently playing a MKNote.
+
+  Sets parameters as specified in <i>aNote.</i>
 */
 -noteUpdateSelf:aNote;
 
 /*!
-  @method noteOffSelf:
   @param aNote is a (id)
-  @result A (double)
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's
-              envelopes (if any) to begin its release portion and returns the time for
-              the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @return A (double)
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  This method causes the MKNote's
+  envelopes (if any) to begin its release portion and returns the time for
+  the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 -(double)noteOffSelf:aNote;
 
 /*!
-  @method noteEndSelf
-  @result A (id)
-  @discussion Resest instance variables to default values.
+  @return A (id)
+  @brief Resest instance variables to default values.
+
+  
 */
 -noteEndSelf;
 

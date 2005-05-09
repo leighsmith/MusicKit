@@ -16,6 +16,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -29,8 +32,9 @@
 //  classgroup WaveTable Synthesis
 /*!
   @class Wave1
-  @abstract Wavetable synthesis with 1 non-interpolating (drop-sample) oscillator.
-  @discussion
+  @brief Wavetable synthesis with 1 non-interpolating (drop-sample) oscillator.
+  
+  
 
 <b>Wave1i</b> is a single-interpolating-oscillator wavetable MKSynthPatch with an amplitude and frequency envelope.  
 <b>Wave1</b> (a subclass of <b>Wave1i</b>) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.)  <b>Wave1i</b> is used as the root class for a number of wavetable MKSynthPatches.
@@ -97,10 +101,11 @@ When using this MKSynthPatch in an interactive real-time context, such as playin
 }
 
 /*!
-  @method patchTemplateFor:
   @param aNote is a (id)
-  @result A (id)
-  @discussion Returns a template using the non-interpolating osc. <i>aNote </i>is ignored.
+  @return A (id)
+  @brief Returns a template using the non-interpolating osc.
+
+  <i>aNote </i>is ignored.
 */
 +patchTemplateFor:aNote;
 

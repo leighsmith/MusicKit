@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:27:43  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -24,8 +27,9 @@
 //  classgroup Frequency Modulation Synthesis
 /*!
   @class DBFm1vi
-  @abstract Like <b>Fm1vi</b>, but supports the Timbre Data Base.
-  @discussion
+  @brief Like <b>Fm1vi</b>, but supports the Timbre Data Base.
+  
+  
 
 <b>DBFm1vi</b> is like <b>Fm1vi</b>, but it includes support for the Music Kit
 Timbre Data Base. The Timbre Data Base is a set of spectra derived from recordings of
@@ -89,7 +93,7 @@ sent to the DSP, there are limitations as to how quickly and smoothly it can be
 done.  Frequent changes may disturb timing.  Setting <b>wavelen</b> to 128 or 64
 helps.  If you are doing a great deal of wave table interpolation, you should
 use <b>DBWave2vi</b>.  
-   MIDI pan (controller 10) has the same effect as <b>bearing</b>.  If the
+  MIDI pan (controller 10) has the same effect as <b>bearing</b>.  If the
 <b>panSensitivity</b> is 1.0, a MIDI pan value of  0 is full left and 127 is
 full right.  If the value of  <b>panSensitivity</b> is less than 1.0, the pan
 range is narrowed toward the center.  The value is set by the companion

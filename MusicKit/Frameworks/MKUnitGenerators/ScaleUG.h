@@ -22,8 +22,7 @@
 // classgroup Patchpoint Arithmetic
 /*!
   @class ScaleUG
-  @abstract <b>ScaleUG</b> multiplies a patchpoint by a value that is specified in its memory argument.  
-  @discussion
+  @brief <b>ScaleUG</b> multiplies a patchpoint by a value that is specified in its memory argument.  
 
 ScaleUG multiplies its input by a constant scaler:
 	
@@ -43,48 +42,38 @@ ScaleUG multiplies its input by a constant scaler:
 @interface ScaleUG: MKUnitGenerator
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
 */
--setInput:aPatchPoint;
-/* Sets input patchpoint. */
+- setInput: aPatchPoint;
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
 */
--setOutput:aPatchPoint;
-/* Sets output patchpoint. */
+- setOutput: aPatchPoint;
 
 
 /*!
-  @method setScale:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the constant scaler.  Effective values are between 0.0 and 1.0
-              (a negative scaler is the same as its absolute value, but with a 180
-              degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the constant scale factor.
+
+  Effective values are between 0.0 and 1.0
+  (a negative scaler is the same as its absolute value, but with a 180
+  degree phase shift).  
 */
--setScale:(double)val;
-/* Sets scale factor. */
+- setScale: (double) val;
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible.
 */
-+(BOOL)shouldOptimize:(unsigned) arg;
-/* Specifies that all arguments are to be optimized if possible. */
++ (BOOL) shouldOptimize: (unsigned) arg;
 
 @end
 

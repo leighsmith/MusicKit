@@ -110,9 +110,10 @@ Caveat concerning FM:
 // classgroup Envelope Handlers and Followers
 /*!
   @class AsympUG
-  @abstract <b>AsympUG</b> handles an MKEnvelope, passing it to the DSP one segment at a time
-            and implementing asymptotic envelope segments.
-  @discussion
+  @brief <b>AsympUG</b> handles an MKEnvelope, passing it to the DSP one segment at a time
+  and implementing asymptotic envelope segments.
+  
+  
 
 AsympUG is an exponential (asymptotic) MKEnvelope handler that plays a MusicKit
 MKEnvelope on the DSP. It is very similar to AsympenvUG and has almost the same
@@ -232,143 +233,152 @@ provided by AsympUG, but not by AsympenvUG.
 }
 
 /*!
-  @method (MKEnvStatus)envelopeStatus
-  @result Returns an id.
-  @discussion Returns the status of the most recently accessed MKEnvelope
-              breakpoint. Note that the DSP may not yet have reached that point.
-              For example, if the stickpoint's target was just set, envelopeStatus
-              is MK_stickPoint, even though the DSP is just beginning its
-              exponential approach to the stickpoint. The value returned by
-              <b>envelopeStatus</b> is either MK_stickPoint, MK_lastPoint, or
-              MK_noEnvError.  If the AsympUG's MKEnvelope hasn't been set,
-              MK_noMorePoints is returned.
+  @return Returns an id.
+  @brief Returns the status of the most recently accessed MKEnvelope
+  breakpoint.
+
+  Note that the DSP may not yet have reached that point.
+  For example, if the stickpoint's target was just set, envelopeStatus
+  is MK_stickPoint, even though the DSP is just beginning its
+  exponential approach to the stickpoint. The value returned by
+  <b>envelopeStatus</b> is either MK_stickPoint, MK_lastPoint, or
+  MK_noEnvError.  If the AsympUG's MKEnvelope hasn't been set,
+  MK_noMorePoints is returned.
 */
 -(MKEnvStatus)envelopeStatus;
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>self</b>, or <b>nil</b> if the argument isn't a
-              patchpoint.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>self</b>, or <b>nil</b> if the argument isn't a
+  patchpoint.
 */
 -setOutput:aPatchPoint;
 
 /*!
-  @method setTargetVal:
   @param  (double)target is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the target to <i>target</i>, which should be between 0.0 and
-              1.0.  The new target is simply inserted, overriding the current
-              target.  If the object is already  processing an envelope, that
-              envelope is not interrupted. 
+  @return Returns <b>self</b>.
+  @brief Sets the target to <i>target</i>, which should be between 0.0 and
+  1.0.
+
+  The new target is simply inserted, overriding the current
+  target.  If the object is already  processing an envelope, that
+  envelope is not interrupted. 
 */
 -setTargetVal:(double)aVal;
 
 /*!
-  @method setCurVal:
   @param  (double)value is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the current value of the AsympUG to <i>value</i>.  The new
-              value overrides the previous  sample as shown in the computation in
-              the class description above.  If the object is already  processing
-              an envelope, that envelope is not interrupted.  
+  @return Returns <b>self</b>.
+  @brief Sets the current value of the AsympUG to <i>value</i>.
+
+  The new
+  value overrides the previous  sample as shown in the computation in
+  the class description above.  If the object is already  processing
+  an envelope, that envelope is not interrupted.  
 */
 -setCurVal:(double)aVal;
 
 /*!
-  @method setRate:
   @param  (double)rate is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the rate at which the AsympUG approaches its target, where
-              <i>rate</i> is the percentage of the remaining journey that's
-              stepped off at each sample.  The value of <i>rate</i>, which should
-              be between 0.0 and 0.125.  (It should be between 0.0 and 1.0, but
-              for historical reasons the outer limit stands at 0.125.  In any
-              case, a rate of 0.125 means that the target is virtually reached in
-              less than two ticks, which is quite fast).  More precisely, this
-              method sets the rate of the exponential. (1-e^T/tau), where T is
-              sampling period and tau is the time constant.If the AsympUG is
-              already processing an MKEnvelope, the new rate is simply inserted,
-              overriding the current value, and the MKEnvelope proceeds otherwise
-              unaffected.  
-              
-              See also: <b>- setT60:</b>
+  @return Returns <b>self</b>.
+  @brief Sets the rate at which the AsympUG approaches its target, where
+  <i>rate</i> is the percentage of the remaining journey that's
+  stepped off at each sample.
+
+  The value of <i>rate</i>, which should
+  be between 0.0 and 0.125.  (It should be between 0.0 and 1.0, but
+  for historical reasons the outer limit stands at 0.125.  In any
+  case, a rate of 0.125 means that the target is virtually reached in
+  less than two ticks, which is quite fast).  More precisely, this
+  method sets the rate of the exponential. (1-e^T/tau), where T is
+  sampling period and tau is the time constant.If the AsympUG is
+  already processing an MKEnvelope, the new rate is simply inserted,
+  overriding the current value, and the MKEnvelope proceeds otherwise
+  unaffected.  
+  
+  @see <b>- setT60:</b>
 */
 -setRate:(double)aVal;
 
 /*!
-  @method setT60:
   @param  (double)seconds is an id.
-  @result Returns <b>self</b>.
-  @discussion Computes the AsynpUG's rate such that the target is perceptually
-              reached (to within -60dB of the target) in <i>seconds</i> seconds. 
-              
-              
-              See also: <b>- setRate:</b>
+  @return Returns <b>self</b>.
+  @brief Computes the AsynpUG's rate such that the target is perceptually
+  reached (to within -60dB of the target) in <i>seconds</i> seconds.
+
+  
+  
+  
+  @see <b>- setRate:</b>
 */
 -setT60:(double)seconds;
 
 /*!
-  @method setT48:
   @param  (double)seconds is an id.
-  @result Returns <b>self</b>.
-  @discussion Computes the AsynpUG's rate such that the target is perceptually
-              reached (to within -48dB of the target) in <i>seconds</i> seconds. 
-              Same as <tt>[self setRate:5.52/(seconds*srate)].</tt>
-              
-              
-              See also: <b>- setRate:</b>
+  @return Returns <b>self</b>.
+  @brief Computes the AsynpUG's rate such that the target is perceptually
+  reached (to within -48dB of the target) in <i>seconds</i> seconds.
+
+  
+  Same as <tt>[self setRate:5.52/(seconds*srate)].</tt>
+  
+  
+  @see <b>- setRate:</b>
 */
 -setT48:(double)seconds;
 
 /*!
-  @method preemptEnvelope
-  @result Returns an id.
-  @discussion Causes the AsympUG to head for the last breakpoint in its MKEnvelope,
-              using a rate that's computed from the value set through the
-              <b>MKSetPreemptDuration()</b> function (the default preempt duration
-              is 0.006 seconds).  This method is invoked automatically by a
-              SynthInstrument object when it preempts a MKSynthPatch that contains
-              AsympUG objects.
+  @return Returns an id.
+  @brief Causes the AsympUG to head for the last breakpoint in its MKEnvelope,
+  using a rate that's computed from the value set through the
+  <b>MKSetPreemptDuration()</b> function (the default preempt duration
+  is 0.006 seconds).
+
+  This method is invoked automatically by a
+  SynthInstrument object when it preempts a MKSynthPatch that contains
+  AsympUG objects.
 */
 -preemptEnvelope;
 
 /*!
-  @method setEnvelope:yScale:yOffset:xScale:releaseXScale:funcPtr:
   @param  anEnvelope is an id.
   @param  yScaleValue is a double.
   @param  yOffsetValue is a double.
   @param  xScaleValue is a double.
   @param  releaseXScaleValue is a double.
   @param  yScaleFunction is a pointer to a function returning a double (double(*)()).
-  @result Returns an id.
-  @discussion Associates the AsympUG with the given MKEnvelope and arguments.  When
-              the AsympUG is run, it automatically schedules the breakpoints from
-              its MKEnvelope to be fed to itself through message requests with the
-              clockConductor.  If this method is invoked while the AsympUG is
-              running, the object's current value is immediately set to the
-              (scaled and offset) y value of the first breakpoint in the new
-              MKEnvelope.   When continuity is desired with the previous invocation,
-              use the <b>resetEnvelope:...</b> method instead.
-                            
-              The <i>yScaleValue</i> and <i>yOffsetValue</i>
-              arguments scale and offset the AsympUG target values as each
-              breakpoint is reached;  <i>xScaleValue</i> and <i>releaseXScaleValue</i>
-              modify the rate before and after the Envelope's stickpoint
-              is reached, respectively.  
-              
-              The <i>yScaleFunction</i> argument is a pointer to an
-              optional function that performs additional, possibly dynamic, target
-              scaling.  The fuction takes two arguments, a <b>double</b> that
-              gives the AsympUG's current value, and the object's <b>id</b>.  The
-              function is called once for each breakpoint.  
-              
-              Typically, you call the <b>MKUpdateAsymp()</b>
-              function rather than invoking this method.  The function provides a
-              slightly easier interface to AsympUG management in the context of a
-              MKSynthPatch.  
+  @return Returns an id.
+  @brief Associates the AsympUG with the given MKEnvelope and arguments.
+
+  When
+  the AsympUG is run, it automatically schedules the breakpoints from
+  its MKEnvelope to be fed to itself through message requests with the
+  clockConductor.  If this method is invoked while the AsympUG is
+  running, the object's current value is immediately set to the
+  (scaled and offset) y value of the first breakpoint in the new
+  MKEnvelope.   When continuity is desired with the previous invocation,
+  use the <b>resetEnvelope:...</b> method instead.
+  
+  The <i>yScaleValue</i> and <i>yOffsetValue</i>
+  arguments scale and offset the AsympUG target values as each
+  breakpoint is reached;  <i>xScaleValue</i> and <i>releaseXScaleValue</i>
+  modify the rate before and after the Envelope's stickpoint
+  is reached, respectively.  
+  
+  The <i>yScaleFunction</i> argument is a pointer to an
+  optional function that performs additional, possibly dynamic, target
+  scaling.  The fuction takes two arguments, a <b>double</b> that
+  gives the AsympUG's current value, and the object's <b>id</b>.  The
+  function is called once for each breakpoint.  
+  
+  Typically, you call the <b>MKUpdateAsymp()</b>
+  function rather than invoking this method.  The function provides a
+  slightly easier interface to AsympUG management in the context of a
+  MKSynthPatch.  
 */
 - setEnvelope:anEnvelope
        yScale:(double)yScaleValue
@@ -378,7 +388,6 @@ releaseXScale:(double)releaseXScaleValue
       funcPtr:(double(*)())yScaleFunction;
       
 /*!
-  @method resetEnvelope:yScale:yOffset:xScale:releaseXScale:funcPtr:transitionTime:
   @param  anEnvelope is an id.
   @param  yScaleValue is a double.
   @param  yOffsetValue is a double.
@@ -386,18 +395,20 @@ releaseXScale:(double)releaseXScaleValue
   @param  releaseXScaleValue is a double.
   @param  yScaleFunction is a pointer to a function returning a double (double(*)()).
   @param  transitionTime is a double.
-  @result Returns an id.
-  @discussion This method is similar to the <b>setEnvelope:...</b> method but for
-              this difference:  If the AsympUG is running, its current value isn't
-              reset to the new Envelope's first y value; instead, the new
-              Envelope's first breakpoint is ignored and the Asymp's rate is reset
-              such that the second breakpoint of the new MKEnvelope is (virtually)
-              reached within <i>transitionTime</i> seconds.  This affords are more
-              graceful transition into the new MKEnvelope.  If <i>transitionTime</i> (as
-              with any of the other double values) is MK_NODVAL, it is ignored. 
-              As with the <b>setEnvelope:...</b> method, you typically call the
-              <b>MKUpdateAsymp()</b> function rather than invoke this
-              method.
+  @return Returns an id.
+  @brief This method is similar to the <b>setEnvelope:...</b> method but for
+  this difference:  If the AsympUG is running, its current value isn't
+  reset to the new Envelope's first y value; instead, the new
+  Envelope's first breakpoint is ignored and the Asymp's rate is reset
+  such that the second breakpoint of the new MKEnvelope is (virtually)
+  reached within <i>transitionTime</i> seconds.
+
+  This affords are more
+  graceful transition into the new MKEnvelope.  If <i>transitionTime</i> (as
+  with any of the other double values) is MK_NODVAL, it is ignored. 
+  As with the <b>setEnvelope:...</b> method, you typically call the
+  <b>MKUpdateAsymp()</b> function rather than invoke this
+  method.
 */
 -resetEnvelope:anEnvelope
         yScale:(double)yScaleValue
@@ -408,115 +419,125 @@ releaseXScale:(double)releaseXScaleValue
 transitionTime:(double)transitionTime;
 
 /*!
-  @method useInitialValue:
   @param  yesOrNo is a BOOL.
-  @result Returns an id.
-  @discussion Controls how the MKEnvelope is handled when it is "retriggered" (i.e.
-              <b>run</b> is invoked before the preceeding MKEnvelope has finished.)
-              If <i>yesOrNo</i>, the first value of the MKEnvelope is set as the
-              AsympUG's first output. Otherwise, the AsympUG continues from
-              whatever its current value happens to be to the second point of the
-              MKEnvelope. This method is rarely needed, since the same functionality
-              is provided by <b>resetEnvelope:yScale:yOffset:xScale:releaseXScale:funcPtr:transitionTime:</b>. It is included as an optimization, when it is known that all parameters are the same.
+  @return Returns an id.
+  @brief Controls how the MKEnvelope is handled when it is "retriggered" (i.e.
+
+  
+  <b>run</b> is invoked before the preceeding MKEnvelope has finished.)
+  If <i>yesOrNo</i>, the first value of the MKEnvelope is set as the
+  AsympUG's first output. Otherwise, the AsympUG continues from
+  whatever its current value happens to be to the second point of the
+  MKEnvelope. This method is rarely needed, since the same functionality
+  is provided by <b>resetEnvelope:yScale:yOffset:xScale:releaseXScale:funcPtr:transitionTime:</b>. It is included as an optimization, when it is known that all parameters are the same.
 */
 -useInitialValue:(BOOL)yesOrNo;
 
 /*!
-  @method setYScale:yOffset:
   @param  yScaleValue is a double.
   @param  yOffsetValue is a double.
-  @result Returns an id.
-  @discussion Resets the values by which the AsympUG scales and offsets its
-              Envelope's y values.  If the object is running, its current value is
-              appropriately modified.  Returns <b>nil</b> if the AsympUG has no
-              MKEnvelope, otherwise returns <b>self</b>.
+  @return Returns an id.
+  @brief Resets the values by which the AsympUG scales and offsets its
+  Envelope's y values.
+
+  If the object is running, its current value is
+  appropriately modified.  Returns <b>nil</b> if the AsympUG has no
+  MKEnvelope, otherwise returns <b>self</b>.
 */
 -setYScale:(double)yScaleVal yOffset:(double)yOffsetVal;
 
 /*!
-  @method setReleaseXScale:
   @param  releaseXScaleValue is a double.
-  @result Returns <b>self</b>.
-  @discussion Resets the value by which the release time of the AsympUG's MKEnvelope
-              is scaled.   This only has an affect on subsequent breakpoints - you
-              can't, for example, extend the life of an AsympUG by increasing its
-              release scale after the object has read (and is heading for) its
-              last breakpoint.  
+  @return Returns <b>self</b>.
+  @brief Resets the value by which the release time of the AsympUG's MKEnvelope
+  is scaled.
+
+  This only has an affect on subsequent breakpoints - you
+  can't, for example, extend the life of an AsympUG by increasing its
+  release scale after the object has read (and is heading for) its
+  last breakpoint.  
 */
 -setReleaseXScale:(double)rXScaleVal ;
 
 /*!
-  @method envelope
-  @result Returns an id.
-  @discussion Returns the MKEnvelope that's associated with the AsympUG, or
-              <b>nil</b> if none.
+  @return Returns an id.
+  @brief Returns the MKEnvelope that's associated with the AsympUG, or
+  <b>nil</b> if none.
+
+  
 */
 -envelope;
 
 /*!
-  @method runSelf
-  @result Returns <b>self</b>.
-  @discussion You never send this message.  It's invoked by sending the <b>run</b>
-              message to the object.  Starts the MKEnvelope, if any, on its way. 
-              
+  @return Returns <b>self</b>.
+  @brief You never send this message.
+
+  It's invoked by sending the <b>run</b>
+  message to the object.  Starts the MKEnvelope, if any, on its way. 
+  
 */
 -runSelf;
 
 -abortSelf;
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b>message to the object.  
-              Sets the output patchpoint to <i>sink</i>,<i></i> thus ensuring
-              that the object does not produce any output.  Note that you must
-              send <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator
-              after sending <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b>message to the object.  
+  Sets the output patchpoint to <i>sink</i>,<i></i> thus ensuring
+  that the object does not produce any output.  Note that you must
+  send <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator
+  after sending <b>idle</b>.
 */
 -idleSelf;
 
 /*!
-  @method finishSelf
-  @result Returns a double.
-  @discussion You never invoke this method; it's invoked automatically when the
-              AsympUG receives the <b>finish</b> message.  If the object has yet
-              to see or is waiting at its Envelope's stickpoint, this causes it to
-              head for the first breakpoint after the stickpoint, and then on the
-              end of the MKEnvelope.  If the AsympUG's MKEnvelope contains no
-              stickpoint, this method has no effect. Returns the time in seconds
-              until the MKEnvelope is expected to finish, plus a small grace time
-              given by <b>MKGetPreemptDuration()</b>. This time may be changed by
-              calling  <b>MKSetPreemptDuration()</b>.
+  @return Returns a double.
+  @brief You never invoke this method; it's invoked automatically when the
+  AsympUG receives the <b>finish</b> message.
+
+  If the object has yet
+  to see or is waiting at its Envelope's stickpoint, this causes it to
+  head for the first breakpoint after the stickpoint, and then on the
+  end of the MKEnvelope.  If the AsympUG's MKEnvelope contains no
+  stickpoint, this method has no effect. Returns the time in seconds
+  until the MKEnvelope is expected to finish, plus a small grace time
+  given by <b>MKGetPreemptDuration()</b>. This time may be changed by
+  calling  <b>MKSetPreemptDuration()</b>.
 */
 -(double)finishSelf;
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible except the
-              state variable.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible except the
+  state variable.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method abortEnvelope
-  @result Returns <b>self</b>.
-  @discussion Disassociates the AsympUG from its MKEnvelope.  If the AsympUG is
-              running, it stops reading breakpoints. It continues heading for its
-              current target.  
+  @return Returns <b>self</b>.
+  @brief Disassociates the AsympUG from its MKEnvelope.
+
+  If the AsympUG is
+  running, it stops reading breakpoints. It continues heading for its
+  current target.  
 */
 -abortEnvelope;
 
 /*!
-  @method setConstant:
   @param  val is a double.
-  @result Returns an id.
-  @discussion Aborts any running MKEnvelope and sets the AsympUG to produce
-              <i>val</i> as a constant value.  Equivalent to invoking
-              <b>abortEnvelope</b>, followed by <b>setTarget:</b><i>val</i>,
-              followed by <b>setCurVal:</b><i>val</i>.
+  @return Returns an id.
+  @brief Aborts any running MKEnvelope and sets the AsympUG to produce
+  <i>val</i> as a constant value.
+
+  Equivalent to invoking
+  <b>abortEnvelope</b>, followed by <b>setTarget:</b><i>val</i>,
+  followed by <b>setCurVal:</b><i>val</i>.
 */
 -setConstant:(double)aVal;
 

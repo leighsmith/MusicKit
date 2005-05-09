@@ -16,6 +16,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.5  2001/11/16 20:37:51  leighsmith
   Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
 
@@ -29,12 +32,13 @@
 //  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm1vi
-  @abstract FM synthesis with 1 modulator, vibrato, interpolating carrier and arbitrary waveforms
-            for carrier and modulator.
-  @discussion
+  @brief FM synthesis with 1 modulator, vibrato, interpolating carrier and arbitrary waveforms
+  for carrier and modulator.
+  
+  
 
 <b>Fm1vi</b> is like <b>Fm1i</b>, but it includes periodic and random vibrato.
-<b>Fm1v</b>(a subclass of <b>Fm1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).   
+<b>Fm1v</b>(a subclass of <b>Fm1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).  
 
 <img src="http://www.musickit.org/Frameworks/MKSynthPatches/Images/Fm1vi.png">
  

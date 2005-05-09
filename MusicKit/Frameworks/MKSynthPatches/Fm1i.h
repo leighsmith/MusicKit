@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2005/05/09 15:27:44  leighsmith
+  Converted headerdoc comments to doxygen comments
+
   Revision 1.3  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -24,9 +27,10 @@
 //  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm1i
-  @abstract FM with arbitrary waveforms for carrier and modulator and an interpolating
-            oscillator for the carrier. 
-  @discussion
+  @brief FM with arbitrary waveforms for carrier and modulator and an interpolating
+  oscillator for the carrier. 
+  
+  
 
 <b>Fm1i</b> is an FM (frequency modulation) MKSynthPatch that uses an
 arbitrary-wavetable oscillator to modulate the frequency of another
@@ -37,11 +41,11 @@ quality, but uses less DSP computation.)
 It supports a wide variety of parameters, including many MIDI parameters.
 It supports a wide variety of parameters, including many MIDI parameters.
 
-See the FM literature for details of FM synthesis.                       
+See the FM literature for details of FM synthesis.  
 (Note that the implementation here is "frequency modulation" rather than 
-"phase modulation" and that the deviation scaling does not follow the    
-frequency envelope -- it is exactly as defined in the literature only    
-when the frequency envelope is at 1.                                     
+"phase modulation" and that the deviation scaling does not follow the  
+frequency envelope -- it is exactly as defined in the literature only  
+when the frequency envelope is at 1.  
 
 When using this MKSynthPatch in an interactive real-time context, such as playing
 from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the
@@ -138,7 +142,7 @@ is m1Ratio multiplied by the freq parameter.  Default is 1.0.
 <b>m1Phase</b> - Initial phase in degrees of modulator wavetable.  Rarely
 needed.  Default is 0.0.
 
-<b>m1Waveform</b> - Modulator wave table. Default produces a sine wave.   If you
+<b>m1Waveform</b> - Modulator wave table. Default produces a sine wave.  If you
 specify a MKSamples object to an FM MKSynthPatch, the length may be any power of
 2.
 
@@ -284,59 +288,65 @@ noteTag.
 /* The methods are all explained in the class description for MKSynthPatch */
 
 /*!
-  @method patchTemplateFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Returns a default template. <i>aNote </i>is ignored.
+  @return Returns an id.
+  @brief Returns a default template.
+
+  <i>aNote </i>is ignored.
 */
 +patchTemplateFor:currentNote;
 -init;
 -controllerValues:controllers;
 
 /*!
-  @method noteOnSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method
-              triggers (or retriggers) the Note's envelopes, if any.  If this is a
-              new phrase, all instance variables are set to default values, then
-              the values are read from the Note.  
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
+
+  This method
+  triggers (or retriggers) the Note's envelopes, if any.  If this is a
+  new phrase, all instance variables are set to default values, then
+  the values are read from the Note.  
 */
 -noteOnSelf:aNote;
 
 /*!
-  @method preemptFor:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion Preempts envelope, if any.
+  @return Returns an id.
+  @brief Preempts envelope, if any.
+
+  
 */
 -preemptFor:aNote;
 
 /*!
-  @method noteUpdateSelf:
   @param  aNote is an id.
-  @result Returns an id.
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is
-              assumed to be currently playing a Note.  Sets parameters as
-              specified in <i>aNote.</i>
+  @return Returns an id.
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is
+  assumed to be currently playing a Note.
+
+  Sets parameters as
+  specified in <i>aNote.</i>
 */
 -noteUpdateSelf:aNote;
 
 /*!
-  @method noteOffSelf:
   @param  aNote is an id.
-  @result Returns a double.
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the
-              Note's envelopes (if any) to begin its release portion and returns
-              the time for the envelopes to finish.  Also sets any parameters
-              present in <i>aNote.</i>
+  @return Returns a double.
+  @brief <i>aNote</i> is assumed to be a noteOff.
+
+  This method causes the
+  Note's envelopes (if any) to begin its release portion and returns
+  the time for the envelopes to finish.  Also sets any parameters
+  present in <i>aNote.</i>
 */
 -(double)noteOffSelf:aNote;
 
 /*!
-  @method noteEndSelf
-  @result Returns an id.
-  @discussion Resest instance variables to default values.
+  @return Returns an id.
+  @brief Resest instance variables to default values.
+
+  
 */
 -noteEndSelf;
 

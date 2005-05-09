@@ -16,12 +16,13 @@
 // classgroup Sound Inputs and Outputs
 /*!
   @class In1qpUG
-  @abstract <b>In1qpUG </b>is useful when using the Ariel QuintProcessor - it provides the "hub" DSP
-            with the signals from the "satellite" DSPs.
-  @discussion
+  @brief <b>In1qpUG </b>is useful when using the Ariel QuintProcessor - it provides the "hub" DSP
+  with the signals from the "satellite" DSPs.
+  
+  
 
 The In1qpUG may only be used on the hub (master DSP) of theAriel QuintProcessor,
-which is represented by an instance of the ArielQP object.   In1qpUG reads one
+which is represented by an instance of the ArielQP object.  In1qpUG reads one
 channel of the sample stream coming from one of the QuintProcessor satellite
 DSPs. 
 
@@ -50,47 +51,51 @@ and satellite DSP setting.
 
 
 /*!
-  @method setChannel:
   @param  aChan is an int.
-  @result Returns an id.
-  @discussion Sets the input channel that this instance of In1qpUG reads.  Channel
-              0 is the first channel, channel 1 is the second channel.   For
-              quadraphonic streams, <i>aChan</i> may be larger.
+  @return Returns an id.
+  @brief Sets the input channel that this instance of In1qpUG reads.
+
+  Channel
+  0 is the first channel, channel 1 is the second channel.   For
+  quadraphonic streams, <i>aChan</i> may be larger.
 */
 - setChannel:(int)aChan;
 /* 0-based channel */
 
 
 /*!
-  @method setScale:
   @param  value is a double.
-  @result Returns an id.
-  @discussion Sets the scale as specified.  The default is 1.0. 
-              
+  @return Returns an id.
+  @brief Sets the scale as specified.
+
+  The default is 1.0. 
+  
 */
 - setScale:(double)val;
 /* Scaling */
 
 
 /*!
-  @method setSatellite:
   @param  sat is a char.
-  @result Returns an id.
-  @discussion Sets the DSP from which this instance of In1qpUG reads its input
-              sample stream.  <i>sat</i> is the DSP, one of 'A', 'B', 'C' or
-              'D'.
+  @return Returns an id.
+  @brief Sets the DSP from which this instance of In1qpUG reads its input
+  sample stream.
+
+  <i>sat</i> is the DSP, one of 'A', 'B', 'C' or
+  'D'.
 */
 - setSatellite:(char)sat;
 /* 'A','B','C' or 'D'. Default is 'A'. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 - setOutput:(id)aPatchPoint;
 /* output location */
@@ -98,23 +103,25 @@ and satellite DSP setting.
 - init;
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b> message to the object.   In1qpUG  idles itself by
-              patching its output to <i>zero</i>. Thus, an idle In1aUG makes no
-              sound.   Note that you must send <b>setOutput:</b> and <b>run
-              </b>again to use the MKUnitGenerator after sending
-              <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b> message to the object.   In1qpUG  idles itself by
+  patching its output to <i>zero</i>. Thus, an idle In1aUG makes no
+  sound.   Note that you must send <b>setOutput:</b> and <b>run
+  </b>again to use the MKUnitGenerator after sending
+  <b>idle</b>.
 */
 - idleSelf;
 
 /*!
-  @method runSelf
-  @result Returns an id.
-  @discussion If scale has not been set, sets it to 1.0.  If Satellite has not
-              been set, it is set to 'A'.  This method is invoked when you send
-              the <b>run</b> message to the object.
+  @return Returns an id.
+  @brief If scale has not been set, sets it to 1.0.
+
+  If Satellite has not
+  been set, it is set to 'A'.  This method is invoked when you send
+  the <b>run</b> message to the object.
 */
 - runSelf;
 

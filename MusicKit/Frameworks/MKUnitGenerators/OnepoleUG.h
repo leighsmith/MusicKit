@@ -21,8 +21,9 @@
 // classgroup Filters
 /*!
   @class OnepoleUG
-  @abstract <b>OnepoleUG </b>is a simple one-pole (recursive) filter, useful for low and high-pass filter.  
-  @discussion
+  @brief <b>OnepoleUG </b>is a simple one-pole (recursive) filter, useful for low and high-pass filter.  
+  
+  
 
 OnepoleUG is a one-pole filter that's implemented by subtracting the previous
 output sample (initialized as 0.0) from the current input sample:
@@ -65,94 +66,102 @@ the sign of the coefficent is switched in the OnezeroUG.
 @interface OnepoleUG : MKUnitGenerator
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns <b>nil</b>
+  if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput:aPatchPoint;
 /* Sets filter input. */
 
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.  Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets filter output. */
 
 /*!
-  @method setB0:
   @param  value is a double.
-  @result Returns <b>self</b>.
-  @discussion Sets the filter's gain.  Effective gain values are between 0.0 and
-              1.0 (a negative gain is the same as its absolute value, but with a
-              180 degree phase shift).  
+  @return Returns <b>self</b>.
+  @brief Sets the filter's gain.
+
+  Effective gain values are between 0.0 and
+  1.0 (a negative gain is the same as its absolute value, but with a
+  180 degree phase shift).  
 */
 -setB0:(double) value;
 /* Sets gain of filter. */
 
 
 /*!
-  @method setA1:
   @param  value is a double.
-  @result Returns <b>self</b>.
-  @discussion Sets the filter's coefficient.   If <i>value</i> is less than 0.0,
-              the OnepoleUG is a low-pass filter; if it's greater than 0.0, the
-              object is a high-pass filter.  For stability, the <i>value</i>
-              should be between -1.0 and 1.0.  
+  @return Returns <b>self</b>.
+  @brief Sets the filter's coefficient.
+
+  If <i>value</i> is less than 0.0,
+  the OnepoleUG is a low-pass filter; if it's greater than 0.0, the
+  object is a high-pass filter.  For stability, the <i>value</i>
+  should be between -1.0 and 1.0.  
 */
 -setA1:(double)value;
 /* Sets gain of delayed output sample. */
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible
-              except the filter state.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible
+  except the filter state.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @method clear
-  @result Returns <b>self</b>.
-  @discussion Clears the filter by setting the delayed sample (the previous output
-              sample) to 0.0.  
+  @return Returns <b>self</b>.
+  @brief Clears the filter by setting the delayed sample (the previous output
+  sample) to 0.0.
+
+  
 */
 -clear;
 /* Clears internal filter running term. */
 
 /*!
-  @method setState:
   @param  val is a double.
-  @result Returns an id.
-  @discussion Sets internal filter running term.
+  @return Returns an id.
+  @brief Sets internal filter running term.
+
+  
 */
 -setState:(double)val;
 
 /*!
-  @method setBrightness:forFreq:
   @param  brightness is a double.
   @param  frequency is a double.
-  @result Returns <b>self</b>.
-  @discussion This is a convenient method that adjusts the filter's gain and
-              coefficient such that a constant <i>brightness</i> value produces
-              the same number and relative amplitudes of a tone's harmonics
-              regardless of the value of <i>frequency</i> as described
-	      in Jaffe/Smith, Computer Music Journal Vol. 7, No. 2,
-	      Summer 1983. For example, in a
-              musical phrase during which the brightness of the synthesized notes
-              shouldn't be perceived to change, you would invoke this method once
-              per note passing a constant <i>brightness</i> value (the
-              successive <i>frequency</i> values would, of course, be determined
-              by the pitches of the notes).  
+  @return Returns <b>self</b>.
+  @brief This is a convenient method that adjusts the filter's gain and
+  coefficient such that a constant <i>brightness</i> value produces
+  the same number and relative amplitudes of a tone's harmonics
+  regardless of the value of <i>frequency</i> as described
+	  in Jaffe/Smith, Computer Music Journal Vol.
+
+  7, No. 2,
+	  Summer 1983. For example, in a
+  musical phrase during which the brightness of the synthesized notes
+  shouldn't be perceived to change, you would invoke this method once
+  per note passing a constant <i>brightness</i> value (the
+  successive <i>frequency</i> values would, of course, be determined
+  by the pitches of the notes).  
 */
 -setBrightness:(double)gain forFreq:(double)freq;
 /* You specify the gain at the specified fundamental frequency and the 

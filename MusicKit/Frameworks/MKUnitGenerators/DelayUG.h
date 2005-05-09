@@ -25,9 +25,10 @@
 // classgroup Delays and Time-Modification Units
 /*!
   @class DelayUG
-  @abstract <b>DelayUG</b> delays its input patchpoint signal by some
-            amount, then writes it to its output patchpoint.  
-  @discussion
+  @brief <b>DelayUG</b> delays its input patchpoint signal by some
+  amount, then writes it to its output patchpoint.  
+  
+  
 
 DelayUG and DelaymUG both delay their input signal by some number of samples
 before producing it at its output.  They require a SynthData object to store the
@@ -66,11 +67,12 @@ method.
 }
 
 /*!
-  @method shouldOptimize:
   @param arg is an unsigned.
-  @result Returns an BOOL.
-  @discussion Specifies that all arguments are to be optimized if possible except the
-              delay pointer.
+  @return Returns an BOOL.
+  @brief Specifies that all arguments are to be optimized if possible except the
+  delay pointer.
+
+  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
 /* Specifies that all arguments are to be optimized if possible except the
@@ -78,38 +80,41 @@ method.
 
 
 /*!
-  @method setInput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
-              if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+
+  Returns <b>nil</b>
+  if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setInput:aPatchPoint;
 /* Sets input patchpoint as specified. */
 
 /*!
-  @method setOutput:
   @param  aPatchpoint is an id.
-  @result Returns an id.
-  @discussion Sets the output patchpoint to <i>aPatchpoint</i>.   Returns
-              <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+
+  Returns
+  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
+  <b>self</b>.
 */
 -setOutput:aPatchPoint;
 /* Sets output patchpoint as specified. */
 
 
 /*!
-  @method setDelayMemory:
   @param  aSynthData is an id.
-  @result Returns <b>self</b>.
-  @discussion Sets the SynthData object used as the delay memory to
-              <i>aSynthData</i>.  The length of the SynthData must be greater than
-              or equal to the amount of delay (in samples) that's desired.  If
-              <i>aSynthData</i> is <b>nil</b>, the delay memory is set to the sink
-              location.  For DelaymUG, <i>aSynthData</i> must be allocated as
-              "modulus" memory. 
+  @return Returns <b>self</b>.
+  @brief Sets the SynthData object used as the delay memory to
+  <i>aSynthData</i>.
+
+  The length of the SynthData must be greater than
+  or equal to the amount of delay (in samples) that's desired.  If
+  <i>aSynthData</i> is <b>nil</b>, the delay memory is set to the sink
+  location.  For DelaymUG, <i>aSynthData</i> must be allocated as
+  "modulus" memory. 
 */
 -setDelayMemory:aSynthData;
 /* Sets the delay memory to aSynthData.
@@ -118,15 +123,16 @@ method.
 
 
 /*!
-  @method adjustLength:
   @param  (int)delayLength is an id.
-  @result Returns an id.
-  @discussion Sets the number of delayed samples to <i>delayLength</i>.  The
-              argument must be no greater than the length of the SynthData object
-              that's used as the delay memory.  Returns <b>nil
-              </b>if<b></b><i>delayLength</i>  is too great or if the delay memory
-              hasn't been set<b>;</b>otherwise returns<b> self</b>. 
-              
+  @return Returns an id.
+  @brief Sets the number of delayed samples to <i>delayLength</i>.
+
+  The
+  argument must be no greater than the length of the SynthData object
+  that's used as the delay memory.  Returns <b>nil
+  </b>if<b></b><i>delayLength</i>  is too great or if the delay memory
+  hasn't been set<b>;</b>otherwise returns<b> self</b>. 
+  
 */
 -adjustLength:(int)newLength;
 /* If no setDelayMemory: message has been received, returns nil.
@@ -144,13 +150,14 @@ method.
 
 
 /*!
-  @method setPointer:
   @param  (int)n is an id.
-  @result Returns an id.
-  @discussion Repositions the pointer to point to the <i>n</i>'th sample in the
-              delay memory, counting from sample 0.  Returns  <b>nil</b> if
-              <i>n</i> is greater than the current length of the delay, or if the
-              delay memory hasn't been set; otherwise returns <b>self</b>.
+  @return Returns an id.
+  @brief Repositions the pointer to point to the <i>n</i>'th sample in the
+  delay memory, counting from sample 0.
+
+  Returns  <b>nil</b> if
+  <i>n</i> is greater than the current length of the delay, or if the
+  delay memory hasn't been set; otherwise returns <b>self</b>.
 */
 -setPointer:(int)offset;
 /* If no setDelayMemory: message has been received, returns nil.
@@ -160,11 +167,12 @@ method.
 
 
 /*!
-  @method resetPointer
-  @result Returns an id.
-  @discussion Resets the pointer to the beginning of the delay memory.   Returns
-              <b>nil</b> if the SynthData hasn't been set; otherwise returns
-              <b>self</b>.
+  @return Returns an id.
+  @brief Resets the pointer to the beginning of the delay memory.
+
+  Returns
+  <b>nil</b> if the SynthData hasn't been set; otherwise returns
+  <b>self</b>.
 */
 -resetPointer;
 /* If no setDelayMemory: message has been received, returns nil.
@@ -173,12 +181,13 @@ method.
 
 
 /*!
-  @method length
-  @result Returns an int.
-  @discussion Returns the number of samples in the delay memory.  Note that this
-              is the length that's currently being used; it isn't necessarily the
-              same as the length of the SynthData that's being used as the delay
-              memory.
+  @return Returns an int.
+  @brief Returns the number of samples in the delay memory.
+
+  Note that this
+  is the length that's currently being used; it isn't necessarily the
+  same as the length of the SynthData that's being used as the delay
+  memory.
 */
 -(int)length;
 /* Returns the length of the delay currently in use. This is always <= than the
@@ -188,11 +197,12 @@ method.
 /* Does nothing. */
 
 /*!
-  @method idleSelf
-  @result Returns an id.
-  @discussion You never send this message.  It's invoked by sending the
-              <b>idle</b> message to the object.  
-              Sets the output patchpoint, as well as the delay memory, to <i>sink</i>,<i> </i>thus ensuring that the object does not produce any output.  Note that you must send <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator after sending <b>idle</b>.
+  @return Returns an id.
+  @brief You never send this message.
+
+  It's invoked by sending the
+  <b>idle</b> message to the object.  
+  Sets the output patchpoint, as well as the delay memory, to <i>sink</i>,<i> </i>thus ensuring that the object does not produce any output.  Note that you must send <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator after sending <b>idle</b>.
 */
 -idleSelf;
 /* Patches output and delay memory to sink. */
