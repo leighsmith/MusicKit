@@ -108,8 +108,7 @@
 
 /*!
   @class MKNote
-  @abstract A MKNote object represents a musical sound or event by describing its attributes. 
-  @discussion
+  @brief A MKNote object represents a musical sound or event by describing its attributes. 
 
 MKNote objects are containers of musical information.  The amount and
 type of information that a MKNote can hold is practically unlimited;
@@ -149,8 +148,9 @@ parameter consists of a tag, a name, a value, and a data type:
 parameter within the MKNote; the MusicKit defines a number of
 parameter tags such as MK_freq (for frequency) and MK_amp (for
 amplitude).
+</li>
 
-<li> The parameter's name is used primarily to identify the
+<li>The parameter's name is used primarily to identify the
 parameter in a scorefile.  The names of the MusicKit parameters are
 the same as the tag constants, but without the "MK_" prefix.
 You can also use a parameter's name to retrieve its tag, by passing
@@ -158,6 +158,7 @@ the name to MKNote's <b>parTagForName:</b> class method.  (As
 explained in its descriptions below, it's through this method that you
 create your own parameter tags.)  Similarly, you can get a name from a
 tag with MKNote's <b>parNameForTag:</b> class method.
+</li>
 
 <li> A parameter's value can be a <b>double</b>, <b>int</b>, string
 (<b>char *</b>), or an object (<b>id</b>).  The method you invoke to
@@ -189,12 +190,13 @@ well that only those objects that respond to the <b>writeASCIIStream:</b> and
 None of the MusicKit classes implement these methods and so their instances
 can't be written to a scorefile as parameter values (MKEnvelopes and
 MKWaveTables are written and read through a different mechanism).
+</li>
 
 <li> The parameter's data type is set when the parameter's value is
 set; thus the data type is either a <b>double</b>, <b>int</b>, string,
 MKEnvelope, MKWaveTable, or (other) object.  These are represented by
 constants, as given in the description of <b>parType:</b>, the method
-that retrieves a parameter's data type.
+that retrieves a parameter's data type.</li>
 </ul>
 
 A parameter is said to be present within a MKNote once its value has
@@ -202,10 +204,10 @@ been set.  You can determine whether a parameter is present in one of
 four ways:
 
 <ul>
-<li> The easiest way is to invoke the boolean<b></b>method<b>
-isParPresent:</b>, passing the parameter tag as the argument.  An
+<li> The easiest way is to invoke the boolean method <b>isParPresent:</b>,
+passing the parameter tag as the argument.  An
 equivalent C function, <b>MKIsNoteParPresent()</b> is also provided
-for greater efficiency.
+for greater efficiency.</li>
 
 <li> At a lower lever, you can invoke the <b>parVector:</b> method
 to retrieve one of a MKNote's &ldquo;parameter bit vectors,"
@@ -222,7 +224,8 @@ int parVector = [aNote parVector:(MK_amp/32)];
 // If MK_amp is present, the predicate will be true.<br>
 if (parVector &amp; (1 &lt;&lt; (MK_amp % 32)))
 </tt>
-
+</li>
+ 
 <li> If you plan on retrieving the value of the parameter after
 you've checked for the parameter's presence, then it's generally more
 efficient to go ahead and retrieve the value and <i>then</i> determine
@@ -267,19 +270,20 @@ double amp = [aNote parAsDouble:MK_amp];<br>
 	
 // Test for the parameter's existence.<br>
 if (!MKIsNoDVal(amp))<br>
-   ... // do something with the parameter<br>
+  ... // do something with the parameter<br>
 </tt>
-
+</li>
+ 
 <li> If you're looking for and processing a large number of
 parameters in one block, then you should make calls to the
 <b>MKNextParameter()</b> C function, which returns the values of a
 MKNote's extant parameters only.  See the function's description in
-Chapter 2 for more details.
+Chapter 2 for more details.</li>
 </ul>
 
 A MKNote has two special timing attributes:  A MKNote's time tag
 corresponds, conceptually, to the time during a performance that the
-MKNote is performed.   Time tags are set through the
+MKNote is performed.  Time tags are set through the
 <b>setTimeTag:</b> method.  The other timing attribute is the MKNote's
 duration, a value that indicates how long the MKNote will endure once
 it has been struck. It's set through <b>setDur:</b>. A single MKNote
@@ -297,12 +301,12 @@ types</i>, below, doesn't need and actually mustn't be given a
 duration value.
 
 During a performance, time tag and duration values are measured in
-time units called <i>beats.</i>The size of a beat<i> </i>  is
+time units called <i>beats</i>. The size of a beat is
 determined by the tempo of the MKNote's MKConductor.  You can set the
 MKNote's conductor directory with the method <b>setConductor:</b>.
 However, if  the MKNote is in the process of being sent by a
 MKPerformer (or MKMidi), the MKPerformer's MKConductor is used
-instead.   Hence, MKNote's <b>conductor</b> method returns the
+instead.  Hence, MKNote's <b>conductor</b> method returns the
 MKPerformer's MKConductor if the MKNote is in the process of being
 sent by a MKPerformer, or the MKNote's conductor otherwise.  If no
 MKConductor is set, then its MKConductor is the
@@ -424,80 +428,82 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 } 
 
 /*!
-  @method initWithTimeTag:
   @param  aTimeTag is a double in seconds.
-  @discussion Sets timeTag as specified and sets type to mute.
-              If aTimeTag is MK_ENDOFTIME, the timeTag isn't set.
-              Subclasses should send [super initWithTimeTag:aTimeTag] if it overrides 
-              this method. 
+  @brief Sets timeTag as specified and sets type to mute.
+
+  If aTimeTag is MK_ENDOFTIME, the timeTag isn't set.
+  Subclasses should send [super initWithTimeTag:aTimeTag] if it overrides 
+  this method. 
 */ 
 - initWithTimeTag:(double) aTimeTag;
 
 /*!
-  @method init
-  @result Returns an id.
-  @discussion Initializes a MKNote that was created through <b>allocFromZone:</b>.
-              For example:
-              	
-              <tt>id aNote = [MKNote allocFromZone:aZone];
-              [aNote init];</tt>
-              
-              A newly initialized MKNote's note type is mute.  Returns <b>self</b>.
+  @return Returns <b>self</b>.
+  @brief Initializes a MKNote that was created through <b>allocFromZone:</b>.
+ 
+  For example:
+  	
+  <tt>id aNote = [MKNote allocFromZone:aZone];
+  [aNote init];</tt>
+  
+  A newly initialized MKNote's note type is mute.
 
-              Same as [self initWithTimeTag:MK_ENDOFTIME].
-              See also:  -<b>init:</b>
+  Same as [self initWithTimeTag:MK_ENDOFTIME].
+  @see  -<b>init:</b>
 */
 - init;
 
 /*!
-  @method dealloc 
-  @discussion Removes the receiver from its MKPart, if any, and then frees the
-              receiver and its contents.  The contents of object-valued,
-              envelope-valued and wavetable-valued parameters aren't
-	      freed.  
+  @brief Removes the receiver from its MKPart, if any, and then frees the
+  receiver and its contents.
+
+  The contents of object-valued,
+  envelope-valued and wavetable-valued parameters aren't
+  freed.  
 */
 - (void) dealloc; 
 
 /*! 
-  @method copyWithZone:
   @param  zone is an NSZone.
-  @discussion Creates and returns a new MKNote object as a copy of the receiver.  The
-              receiver's parameters, timing information, noteType, and noteTag are
-	      copied into the new MKNote.  Object-valued parameters are shared by the
-	      two MKNotes.  The new MKNote's MKPart is set to nil.  
+  @brief Creates and returns a new MKNote object as a copy of the receiver.
+
+  The receiver's parameters, timing information, noteType, and noteTag are
+  copied into the new MKNote.  Object-valued parameters are shared by the
+  two MKNotes.  The new MKNote's MKPart is set to nil.  
 */
 - copyWithZone: (NSZone *) zone; 
 
 /*!
-  @method split::
+  @brief This method splits a noteDur into a noteOn/noteOff pair, as
+  described below.
+
+  The new MKNotes are returned by reference in the
+  arguments.  The noteDur itself is left unchanged.  If the receiving
+  MKNote isn't a noteDur, this does nothing and returns <b>nil</b>,
+  otherwise it returns <b>self</b>. 
+  
+  The receiving MKNote's MK_relVelocity parameter, if
+  present, is copied into the noteOff.  All other
+  parameters are copied into (or, in the case of
+  object-valued parameters, referenced by) the noteOn.
+  The noteOn takes the receiving MKNote's time tag value;
+  the noteOff's time tag is that of the MKNote plus its
+  duration.  If the receiving MKNote has a note tag, it's
+  copied into the noteOn and noteOff; otherwise a new note
+  tag is generated for them.  The new MKNotes are added to
+  the receiving MKNote's MKPart, if any.
+  
+  Keep in mind that if while this method replicates the
+  noteDur within the noteOn/noteOff pair, it doesn't
+  replace the former with the latter.  To do this, you
+  must free the noteDur yourself.
+
+  The new MKNotes are returned as retained objects (ie you must
+  release them yourself as they are not autoreleased). 
   @param  aNoteOn is an id *.
   @param  aNoteOff is an id *.
-  @result Returns an id.
-  @discussion This method splits a noteDur into a noteOn/noteOff pair, as
-              described below.  The new MKNotes are returned by reference in the
-              arguments.  The noteDur itself is left unchanged.  If the receiving
-              MKNote isn't a noteDur, this does nothing and returns <b>nil</b>,
-              otherwise it returns <b>self</b>. 
-              
-              The receiving MKNote's MK_relVelocity parameter, if
-              present, is copied into the noteOff.  All other
-              parameters are copied into (or, in the case of
-              object-valued parameters, referenced by) the noteOn.
-              The noteOn takes the receiving MKNote's time tag value;
-              the noteOff's time tag is that of the MKNote plus its
-              duration.  If the receiving MKNote has a note tag, it's
-              copied into the noteOn and noteOff; otherwise a new note
-              tag is generated for them.  The new MKNotes are added to
-              the receiving MKNote's MKPart, if any.
-              
-              Keep in mind that if while this method replicates the
-			  noteDur within the noteOn/noteOff pair, it doesn't
-			  replace the former with the latter.  To do this, you
-	          must free the noteDur yourself.
-		  
-		      The new MKNotes are returned as retained objects (ie you must
-		      release them yourself as they are not autoreleased). 
-*/
+  @return Returns an id.
+ */
 - split: (id *) aNoteOn : (id *) aNoteOff; 
  /* 
   * If receiver isn't a noteDur, returns nil.  Otherwise, creates a noteOn
@@ -519,89 +525,93 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 
 
 /*!
-  @method performer
-  @result Returns an MKPerformer instance.
-  @discussion Returns the MKPerformer that most recently performed the MKNote. 
-              This is provided, primarily, as part of the implementation of the
-              <b>conductor</b> method. 
-              
-              See also: -<b>conductor</b>
+  @return Returns an MKPerformer instance.
+  @brief Returns the MKPerformer that most recently performed the MKNote.
+
+  This is provided, primarily, as part of the implementation of the
+  <b>conductor</b> method. 
+  
+  @see -<b>conductor</b>
 */
 - (MKPerformer *) performer; 
 
 /*!
-  @method part
-  @result Returns an MKPart instance.
-  @discussion Returns the MKPart that contains the MKNote, or <b>nil</b> if none. 
-              By default, a MKNote isn't contained in a MKPart.
-              
-              See also: -<b>addToPart:</b>, -<b>removeFromPart</b>
+  @return Returns an MKPart instance.
+  @brief Returns the MKPart that contains the MKNote, or <b>nil</b> if none.
+
+  By default, a MKNote isn't contained in a MKPart.
+  
+  @see -<b>addToPart:</b>, -<b>removeFromPart</b>
 */
 - (MKPart *) part; 
 
 /*!
-  @method conductor
-  @result Returns an MKConductor instance.
-  @discussion If the MKNote is being sent by a MKPerformer (or MKMidi), returns the
-              MKPerformer's MKConductor. Otherwise, if conductor was set with
-              <b>setConductor:</b>, returns the <i>conductor</i> instance
-              variable.  Otherwise returns the <i>defaultConductor</i>.  A
-              MKNote's MKConductor is used, primarily, by MKInstrument objects that
-              split noteDurs into noteOn/noteOff pairs; performance of the noteOff
-              is scheduled with the MKConductor that's returned by this method.
-              
-              See also: -<b>performer</b>
+  @return Returns an MKConductor instance.
+  @brief If the MKNote is being sent by a MKPerformer (or MKMidi), returns the
+  MKPerformer's MKConductor.
+
+  Otherwise, if conductor was set with
+  <b>setConductor:</b>, returns the <i>conductor</i> instance
+  variable.  Otherwise returns the <i>defaultConductor</i>.  A
+  MKNote's MKConductor is used, primarily, by MKInstrument objects that
+  split noteDurs into noteOn/noteOff pairs; performance of the noteOff
+  is scheduled with the MKConductor that's returned by this method.
+  
+  @see -<b>performer</b>
 */
 - (MKConductor *) conductor; 
 
 /*!
-  @method setConductor:
   @param  newConductor is an MKConductor instance.
-  @discussion Sets <i>conductor</i> instance variable.  Note that <i>newConductor</i>
-              is not archived, nor is it saved when a MKNote is added to a MKPart
-              - it is used only in performance.   Note that -<b>setConductor:</b>
-              is called implicitly when a MKNote is copied with the <b>copy</b>
-              method. Be careful not to release a MKConductor while leaving a
-              dangling reference to it in a MKNote!
-              
-              See also:  -<b>conductor</b>
+  @brief Sets <i>conductor</i> instance variable.
+
+  Note that <i>newConductor</i>
+  is not archived, nor is it saved when a MKNote is added to a MKPart
+  - it is used only in performance.   Note that -<b>setConductor:</b>
+  is called implicitly when a MKNote is copied with the <b>copy</b>
+  method. Be careful not to release a MKConductor while leaving a
+  dangling reference to it in a MKNote!
+  
+  @see  -<b>conductor</b>
 */
 - (void) setConductor: (MKConductor *) newConductor; 
 
 /*!
-  @method addToPart:
   @param  aPart is an id.
-  @result Returns the receiver's old MKPart, if any.
-  @discussion Removes the MKNote from the MKPart that it's currently a member of and adds it to
-              <i>aPart</i>. This method is equivalent to MKPart's <b>addNote:</b> method.
-              
-              See also: -<b>part</b>, -<b>removeFromPart</b>
+  @return Returns the receiver's old MKPart, if any.
+  @brief Removes the MKNote from the MKPart that it's currently a member of and adds it to
+  <i>aPart</i>.
+
+  This method is equivalent to MKPart's <b>addNote:</b> method.
+  
+  @see -<b>part</b>, -<b>removeFromPart</b>
 */
 - (MKPart *) addToPart: (MKPart *) aPart; 
 
 /*!
-  @method timeTag
-  @result Returns a double.
-  @discussion Returns the MKNote's time tag.  If the time tag isn't set,
-              MK_ENDOFTIME is returned.  Time tag values are used to sort the
-              MKNotes within a MKPart.
-              
-              See also:   -<b>setTimeTag:</b>
+  @return Returns a double.
+  @brief Returns the MKNote's time tag.
+
+  If the time tag isn't set, MK_ENDOFTIME is returned.
+  Time tag values are used to sort the MKNotes within a MKPart.
+  
+  @see -<b>setTimeTag:</b>
 */
 - (double) timeTag; 
 
 /*!
-  @method setTimeTag:
   @param  newTimeTag is a double.
-  @result Returns a double.
-  @discussion Sets the MKNote's time tag to <i>newTimeTag</i> or 0.0, whichever is
-              greater (a time tag can't be negative) .  The old time tag value is
-              returned; a return value of MK_ENDOFTIME indicates that the time tag
-              hadn't been set.  Time tags are used to sort the MKNotes within a
-              MKPart; if you change the time tag of a MKNote that's been added to
-              a MKPart, the MKNote is automatically resorted.
-              
-              See also: -<b>timeTag</b>, -<b>addToPart:</b>, -<b>sort</b> (MKPart)
+  @return Returns a double.
+  @brief Sets the MKNote's time tag to <i>newTimeTag</i> or 0.0, whichever is
+  greater (a time tag can't be negative) .
+
+  The old time tag value is
+  returned; a return value of MK_ENDOFTIME indicates that the time tag
+  hadn't been set.  Time tags are used to sort the MKNotes within a
+  MKPart; if you change the time tag of a MKNote that's been added to
+  a MKPart, the MKNote is automatically resorted.
+  
+  @see -<b>timeTag</b>, -<b>addToPart:</b>, -<b>sort</b> (MKPart)
 */
 - (double) setTimeTag: (double) newTimeTag; 
  /* 
@@ -615,11 +625,11 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   */
 
 /*!
-  @method setTimeTagPreserveEndTime:
   @param newTimeTag
-  @abstract Sets the receiver's timeTag to newTimeTag and returns the old timeTag, or MK_ENDOFTIME if none.
-  @discussion If newTimeTag is negative, it's clipped to 0.0. If newTimeTag is greater than the endTime,
-              it is clipped to endTime.
+  @brief Sets the receiver's timeTag to newTimeTag and returns the old timeTag, or MK_ENDOFTIME if none.
+  
+  If newTimeTag is negative, it's clipped to 0.0. If newTimeTag is greater than the endTime,
+  it is clipped to endTime.
 
   If the receiver is a member of a MKPart, it's first removed from the
   MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
@@ -632,35 +642,34 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 - (double) setTimeTagPreserveEndTime: (double) newTimeTag;
 
 /*!
-  @method removeFromPart
-  @result Returns the MKPart, or <b>nil</b> if none.
-  @discussion Removes the MKNote from its MKPart.  
-              
-              See also:  -<b>addToPart:</b>, -<b>part</b>
+  @brief Removes the MKNote from its MKPart.
+  @return Returns the MKPart, or <b>nil</b> if none.
+  @see  -<b>addToPart:</b>, -<b>part</b>
 */
 - (MKPart *) removeFromPart; 
 
 /*!
-  @method compare:
+  @brief Returns a value that indicates which of the receiving MKNote and the
+  argument MKNote would appear first if the two MKNotes were sorted
+  into the same MKPart.
+  
+  The values returned are:
+ 
+  <ul>
+  <li>	-1 indicates that the receiving MKNote is first.</li>
+  <li>	1 means that the argument, <i>aNote</i>, is first.</li>
+  <li>	0 is returned if the receiving MKNote and <i>aNote</i> are the same object.</li>
+  </ul>
+  
+  Keep in mind that the two MKNotes needn't actually be
+  members of the same MKPart, nor must they be members of
+  MKParts at all.  Naturally, the comparison is judged
+  first on the relative values of the two MKNotes' time
+  tags; changing one or both of the MKNotes' time tags
+  invalidates the result of a previous invocation of this
+  method.
   @param  aNote is an id.
-  @result Returns an int.
-  @discussion Returns a value that indicates which of the receiving MKNote and the
-              argument MKNote would appear first if the two MKNotes were sorted
-              into the same MKPart:
-              
-              <ul>
-              <li>	-1 indicates that the receiving MKNote is first.
-              <li>	1 means that the argument, <i>aNote</i>, is first.
-              <li>	0 is returned if the receiving MKNote and <i>aNote</i> are the same object.
-              </ul>
-              
-              Keep in mind that the two MKNotes needn't actually be
-              members of the same MKPart, nor must they be members of
-              MKParts at all.  Naturally, the comparison is judged
-              first on the relative values of the two MKNotes' time
-              tags; changing one or both of the MKNotes' time tags
-              invalidates the result of a previous invocation of this
-              method.
+  @return Returns an int.
 */
 -(int) compare: (MKNote *) aNote; 
  /* 
@@ -678,266 +687,246 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 
 
 /*!
-  @method noteType
-  @result Returns a MKNoteType.
-  @discussion Returns the MKNote's note type, one of MK_noteDur, MK_noteOn,
-              MK_noteOff, MK_noteUpdate, or MK_mute.  The note type describes the
-              character of the MKNote, whether it represents an entire musical
-              note (or event), the beginning, middle, or end of a note, or no note
-              (no sound). A newly created MKNote is a mute.  A MKNote's note type
-              can be set through <b>setNoteType:</b>, although <b>setDur:</b> and
-              <b>setNoteTag:</b> may also change it as a side effect.
-              
-              See also:  -<b>setNoteType:</b>, -<b>setDur:</b>, -<b>setNoteTag:</b>
+  @return Returns a MKNoteType.
+  @brief Returns the MKNote's note type, one of MK_noteDur, MK_noteOn,
+  MK_noteOff, MK_noteUpdate, or MK_mute.
+
+  The note type describes the
+  character of the MKNote, whether it represents an entire musical
+  note (or event), the beginning, middle, or end of a note, or no note
+  (no sound). A newly created MKNote is a mute.  A MKNote's note type
+  can be set through <b>setNoteType:</b>, although <b>setDur:</b> and
+  <b>setNoteTag:</b> may also change it as a side effect.
+  
+  @see  -<b>setNoteType:</b>, -<b>setDur:</b>, -<b>setNoteTag:</b>
 */
 - (MKNoteType) noteType; 
 
 /*!
-  @method setNoteType:
   @param  newNoteType is a MKNoteType.
-  @result Returns <b>self</b>, or <b>nil</b> if <i>newNoteType</i> isn't a valid note type.
-  @discussion Sets the MKNote's note type to <i>newNoteType</i>, one
-              of:
-              
-              <ul>
-              <li>	MK_noteDur; represents an entire musical note.
-              <li>	MK_noteOn; represents the beginning of a note. 
-              <li>	MK_noteOff; represents the end of a note. 
-              <li>	MK_noteUpdate; represents the middle of a note. 
-              <li>	MK_mute; makes no sound.
-              </ul>
-              
-              You should keep in mind that the <b>setDur:</b> method
-              automatically sets a MKNote's note type to MK_noteDur;
-              <b>setNoteTag:</b> changes mutes into noteUpdates.
-              
-              See also: -<b>noteType</b>, -<b>setNoteTag:</b>, -<b>setDur:</b> 
+  @return Returns <b>self</b>, or <b>nil</b> if <i>newNoteType</i> isn't a valid note type.
+  @brief Sets the MKNote's note type to <i>newNoteType</i>.
+ 
+  The note type can be one of:
+  
+  <ul>
+  <li>	MK_noteDur; represents an entire musical note.</li>
+  <li>	MK_noteOn; represents the beginning of a note.</li> 
+  <li>	MK_noteOff; represents the end of a note.</li> 
+  <li>	MK_noteUpdate; represents the middle of a note.</li> 
+  <li>	MK_mute; makes no sound.</li>
+  </ul>
+  
+  You should keep in mind that the <b>setDur:</b> method
+  automatically sets a MKNote's note type to MK_noteDur;
+  <b>setNoteTag:</b> changes mutes into noteUpdates.
+  
+  @see -<b>noteType</b>, -<b>setNoteTag:</b>, -<b>setDur:</b> 
 */
 - setNoteType: (MKNoteType) newNoteType; 
 
 /*!
-  @method setDur:
   @param  value is a double.
-  @result Returns a double.
-  @discussion Sets the MKNote's duration to <i>value</i> beats and sets its note
-              type to MK_noteDur.  If <i>value</i> is negative the duration isn't
-              set, the note type isn't changed, and MK_NODVAL is returned (use the
-              function <b>MKIsNoDVal()</b> to check for MK_NODVAL); otherwise
-              returns <i>value</i>.
-              
-              See also:  -<b>dur</b>, -<b>conductor</b>
+  @return Returns a double.
+  @brief Sets the MKNote's duration to <i>value</i> beats and sets its note
+  type to MK_noteDur.
+
+  If <i>value</i> is negative the duration isn't
+  set, the note type isn't changed, and MK_NODVAL is returned (use the
+  function <b>MKIsNoDVal()</b> to check for MK_NODVAL); otherwise
+  returns <i>value</i>.
+  
+  @see  -<b>dur</b>, -<b>conductor</b>
 */
 - (double) setDur: (double) value;
 
 /*!
-  @method dur
-  @result Returns a double.
-  @discussion If the MKNote has a duration, returns the duration, or MK_NODVAL if
-              it isn't set (use the function <b>MKIsNoDVal()</b> to check for
-              MK_NODVAL).    This method always returns MK_NODVAL for noteOn,
-              noteOff and noteUpdate MKNotes.  It returns a valid dur (if one has
-              been set) for noteDur MKNotes.  For mute MKNotes, it returns a valid
-              value if the MKNote has an <b>MK_restDur</b> parameter, otherwise it
-              returns MK_NODVAL.  This allows you to specify rests with
-              durations.
-              
-              See also:  -<b>setDur:</b>
+  @return Returns a double.
+  @brief If the MKNote has a duration, returns the duration, or MK_NODVAL if
+  it isn't set (use the function <b>MKIsNoDVal()</b> to check for
+  MK_NODVAL).
+
+  This method always returns MK_NODVAL for noteOn,
+  noteOff and noteUpdate MKNotes.  It returns a valid dur (if one has
+  been set) for noteDur MKNotes.  For mute MKNotes, it returns a valid
+  value if the MKNote has an <b>MK_restDur</b> parameter, otherwise it
+  returns MK_NODVAL.  This allows you to specify rests with
+  durations.
+  
+  @see  -<b>setDur:</b>
 */
 - (double) dur; 
 
 /*!
-  @method setEndTime:
-  @abstract Returns the receiver's old end time (duration + timeTag) and sets duration 
-		    to newEndTime - timeTag, or MK_NODVAL if not a MK_noteDur or MK_mute.
+  @brief Returns the receiver's old end time (duration + timeTag) and sets duration 
+  to newEndTime - timeTag, or MK_NODVAL if not a MK_noteDur or MK_mute.
  */
 - (double) setEndTime: (double) newEndTime;
 
 /*!
-  @method endTime
-  @abstract Returns the receiver's end time (duration + timeTag), or MK_NODVAL if not a MK_noteDur or MK_mute. 
+  @brief Returns the receiver's end time (duration + timeTag), or MK_NODVAL if not a MK_noteDur or MK_mute. 
  */
 - (double) endTime;
 
 /*!
-  @method noteTag
-  @result Returns an int.
-  @discussion Return the MKNote's note tag, or MAXINT if it isn't
-              set.
-              
-              See also:  -<b>setNoteTag:</b>, <b>MKNoteTag()</b>
+  @brief Return the MKNote's note tag, or MAXINT if it isn't set.
+  @return Returns an int.
+  @see  -<b>setNoteTag:</b>, <b>MKNoteTag()</b>
 */
 - (int) noteTag; 
 
 /*!
-  @method setNoteTag:
   @param  newTag is an int.
-  @result Returns an id.
-  @discussion Sets the MKNote's note tag to <i>newTag</i>; if the note type is
-              <b>MK_mute it's changed to MK_noteUpdate.  Returns
-              self</b>.
-              
-              MKNote tags are used to associate different MKNotes with
-              each other, thus creating an identifiable (by the note
-              tag value) "Note stream." For example, you
-              create a noteOn/noteOff pair by giving the two MKNotes
-              identical note tag values.  Also, you can associate any
-              number of noteUpdates with a single noteDur, or with a
-              noteOn/noteOff pair, through similarly matching note
-              tags.  While note tag values are arbitrary, they should
-              be unique across an entire application; to ensure this,
-              you should never create noteTag values but through the
-              <b>MKNoteTag()</b> C function.
-              
-              See also: -<b>noteTag, MKNoteTag()</b> 
+  @return  Returns self</b>.
+  @brief Sets the MKNote's note tag to <i>newTag</i>; if the note type is
+  <b>MK_mute</b> it's changed to MK_noteUpdate.
+  
+  MKNote tags are used to associate different MKNotes with
+  each other, thus creating an identifiable (by the note
+  tag value) "Note stream." For example, you
+  create a noteOn/noteOff pair by giving the two MKNotes
+  identical note tag values.  Also, you can associate any
+  number of noteUpdates with a single noteDur, or with a
+  noteOn/noteOff pair, through similarly matching note
+  tags.  While note tag values are arbitrary, they should
+  be unique across an entire application; to ensure this,
+  you should never create noteTag values but through the
+  <b>MKNoteTag()</b> C function.
+  
+  @see -<b>noteTag</b>, <b>MKNoteTag()</b> 
 */
 - setNoteTag: (int) newTag; 
 
 /*!
-  @method removeNoteTag
-  @result Returns an id.
-  @discussion Removes the noteTag, if any. Same as [self setNoteTag:MAXINT].
+  @return Returns an id.
+  @brief Removes the noteTag, if any.
+
+  Same as [self setNoteTag:MAXINT].
 */
 - removeNoteTag;
 
 /*!
-  @method parTagForName:
   @param  aName is a NSString.
-  @result Returns an int.
-  @discussion Returns the integer that identifies the parameter named
-              <i>aName</i>.  If the named parameter doesn't have an identifier,
-              one is created and thereafter associated with the parameter.            
-              
-              See also: -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b>  
+  @return Returns an int.
+  @brief Returns the integer that identifies the parameter named <i>aName</i>.
+
+  If the named parameter doesn't have an identifier,
+  one is created and thereafter associated with the parameter.            
+  
+  @see -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b>  
 */
 + (int) parTagForName: (NSString *) aName; 
 
 /*!
-  @method parNameForTag:
-  @abstract Returns the name that identifies the parameter tagged <i>aTag</i>.
+  @brief Returns the name that identifies the parameter tagged <i>aTag</i>.
+  
+  For example [MKNote parNameForTag: MK_freq] returns "freq".
+  If the parameter number given is not a valid parameter number, returns an empty string.
+  Note that the string is not copied.
   @param  aTag is an int.
-  @result Returns a NSString.
-  @discussion For example [MKNote parNameForTag:MK_freq] returns "freq".
-              If the parameter number given is not a valid parameter number, returns an empty string.
-              Note that the string is not copied. 
-                            
-              See also: -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b> 
+  @return Returns a NSString.
+  @see -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b> 
 */
 + (NSString *) parNameForTag: (int) aPar;
 
 /*!
-  @method setPar:toDouble:
+  @brief Sets the value of the parameter identified by <i>parameterTag</i> to
+  <i>aDouble</i>, and sets its data type to MK_double.
+
+  If <i>aDouble</i> is the special value MK_NODVAL, this method is the
+  same as <b>[self removePar:</b> <i>parameterTag</i><b>]</b>.
+ 
   @param  parameterTag is an int.
   @param  aDouble is a double.
-  @result Returns self.
-  @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
-              <i>aDouble</i>, and sets its data type to MK_double.   If
-              <i>aDouble</i> is the special value MK_NODVAL, this method is the
-              same as <b>[self removePar:</b><i>parameterTag</i><b>]</b>.
- 
-              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>,
-			  -<b>isParPresent:</b>, -<b>parAsDouble:</b> 
+  @return Returns self.
+  @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsDouble:</b> 
 */
-- setPar: (int) par toDouble: (double) value; 
+- setPar: (int) parameterTag toDouble: (double) aDouble; 
 
 /*!
-  @method setPar:toInt:
+  @brief Sets the value of the parameter identified by <i>parameterTag</i> to
+  <i>anInteger</i>, and sets its data type to MK_int.
+
+  If <i>anInteger</i> is MAXINT, this method is the same as 
+  <b>[self removePar:</b> <i>parameterTag</i><b>]</b>. 
   @param  parameterTag is an int.
   @param  anInteger is an int.
-  @result Returns an id.
-  @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
-              <i>anInteger</i>, and sets its data type to MK_int.  If
-              <i>anInteger</i>is MAXINT, this method is the same as  <b>[self
-              removePar:</b><i>parameterTag</i><b>].</b>  Returns
-              <b>self</b>.
-              
-              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>,
-                        -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsInteger:</b> 
+  @return Returns <b>self</b>.
+  @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsInteger:</b> 
 */
-- setPar: (int) par toInt: (int) value; 
+- setPar: (int) parameterTag toInt: (int) anInteger; 
 
 /*!
-  @method setPar:toString:
+  @brief Sets the value of the parameter identified by <i>parameterTag</i> to
+  <i>aString</i>, and sets its data type to MK_string.
+
+  If <i>aString</i>is NULL or "", this method is the same as 
+  <b>[self removePar:</b><i>parameterTag</i><b>].</b>
   @param  parameterTag is an int.
-  @param  aString is a char *.
-  @result Returns <b>self</b>.
-  @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
-              <i>aString</i>, and sets its data type to MK_string.  If
-              <i>aString</i>is NULL or "", this method is the same as 
-              <b>[self removePar:</b><i>parameterTag</i><b>].</b>
-              
-              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>,
-                        -<b>parAsString:</b>
+  @param  aString is an NSString instance.
+  @return Returns <b>self</b>.
+  @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsString:</b>
 */
-- setPar: (int) par toString: (NSString *) value; 
+- setPar: (int) parameterTag toString: (NSString *) aString; 
 
 /*!
-  @method setPar:toEnvelope:
+  @brief Sets the value of the parameter identified by <i>parameterTag</i> to
+  <i>anEnvelope</i>, and sets its data type to MK_envelope.
+
+  If <i>anEnvelope</i>is <b>nil</b> , this method is the same as 
+  <b>[self removePar:</b> <i>parameterTag</i><b>]</b>.
   @param  parameterTag is an int.
   @param  anEnvelope is an id.
-  @result Returns an id.
-  @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
-              <i>anEnvelope</i>, and sets its data type to MK_envelope.  If
-              <i>anEnvelope</i>is <b>nil</b> , this method is the same as <b>[self
-              removePar:</b><i>parameterTag</i><b>].</b>  Returns <b>self</b>.
-              
-              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>,
-                        -<b>parAsEnvelope:</b>
+  @return Returns <b>self</b>.
+  @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsEnvelope:</b>
 */
-- setPar: (int) par toEnvelope: envObj; 
+- setPar: (int) parameterTag toEnvelope: anEnvelope; 
 
 /*!
-  @method setPar:toWaveTable:
+  @brief Sets the value of the parameter identified by <i>parameterTag</i> to
+  <i>aWaveTable</i>, and sets its data type to MK_waveTable.
+
+  If <i>aWaveTable</i>is <b>nil</b> , this method is the same as 
+  <b>[self removePar:</b> <i>parameterTag</i><b>]</b>.
   @param  parameterTag is an int.
-  @param  aWaveTable is an id.
-  @result Returns an id.
-  @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
-              <i>aWaveTable</i>, and sets its data type to MK_waveTable.  If
-              <i>aWaveTable</i>is <b>nil</b> , this method is the same as <b>[self
-              removePar:</b><i>parameterTag</i><b>].</b> Returns
-              <b>self</b>.
-              
-              See also:   +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsWaveTable:</b>
+  @param  aWaveTable is an MKWaveTable object.
+  @return Returns <b>self</b>.
+  @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsWaveTable:</b>
 */
-- setPar: (int) par toWaveTable: waveObj; 
- /* 
-  * Sets the parameter par to waveObj, a MKWaveTable object.
-  * Returns the receiver.  
-  */
+- setPar: (int) parameterTag toWaveTable: aWaveTable; 
 
 /*!
-  @method setPar:toObject:
+  @brief Sets the value of the parameter identified by <i>parameterTag</i> to
+  <i>anObject</i>, and sets its data type to MK_object.
+
+  If <i>anObject</i>is <b>nil</b>,  this method is the same as 
+  <b>[self removePar:</b> <i>parameterTag</i><b>]</b>.
+  
+  While you can use this method to set the value of a
+  parameter to any object, it's designed, principally, to
+  allow you to use an instance of one of your own classes
+  as a parameter value.  If you want the object to be
+  written to and read from a scorefile, it must respond to
+  the messages <b>writeASCIIStream:</b> and
+  <b>readASCIIStream:</b>.  While response to these
+  messages isn't a prerequisite for an object to be used
+  as the argument to this method, if you try to write a
+  MKNote that contains a parameter that doesn't respond to
+  <b>writeASCIIStream:</b>, an error is generated.
+  
+  Note that unless you really need to write your object to
+  a Scorefile, you are better off saving your object using
+  the NXTypedStream archiving mechanism.
+  
+  If you're setting the value as an MKEnvelope or MKWaveTable
+  object, you should use the <b>setPar:toEnvelope:</b> or
+  <b>setPar:toWaveTable:</b> method, respectively.
   @param  parameterTag is an int.
   @param  anObject is an id.
-  @result Returns an id.
-  @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
-              <i>anObject</i>, and sets its data type to MK_object.  If
-              <i>anObject</i>is <b>nil</b>,  this method is the same as <b>[self
-              removePar:</b><i>parameterTag</i><b>].</b>  Returns
-              <b>self</b>.
-              
-              While you can use this method to set the value of a
-              parameter to any object, it's designed, principally, to
-              allow you to use an instance of one of your own classes
-              as a parameter value.  If you want the object to be
-              written to and read from a scorefile, it must respond to
-              the messages <b>writeASCIIStream:</b> and
-              <b>readASCIIStream:</b>.  While response to these
-              messages isn't a prerequisite for an object to be used
-              as the argument to this method, if you try to write a
-              MKNote that contains a parameter that doesn't respond to
-              <b>writeASCIIStream:</b>, an error is generated.
-              
-              Note that unless you really need to write your object to
-              a Scorefile, you are better off saving your object using
-              the NXTypedStream archiving mechanism.
-              
-              If you're setting the value as an MKEnvelope or MKWaveTable
-              object, you should use the <b>setPar:toEnvelope:</b> or
-              <b>setPar:toWaveTable:</b> method, respectively.
-              
-              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsObject:</b> 
+  @return Returns <b>self</b>.
+  @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsObject:</b> 
 */
-- setPar: (int) par toObject: anObj; 
+- setPar: (int) parameterTag toObject: anObject; 
  /* 
   * Sets the parameter par to the object anObj.  The object's class must
   * implement the methods writeASCIIStream: and readASCIIStream: (in order
@@ -954,126 +943,102 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   */
 
 /*!
-  @method parAsDouble:
-  @param  parameterTag is an int.
-  @result Returns a double.
-  @discussion Returns a <b>double</b> value converted from the value of the
-              parameter <i>identified by parameterTag</i>.  If the parameter isn't
-              present or if its value is an object, returns MK_NODVAL (use the
-              function <b>MKIsNoDVal()</b> to check for MK_NODVAL). You should use
-              the <b>freq</b> method if you're want to retrieve the frequency of
-              the MKNote.
-              
-              See also: <b>MKGetNoteParAsDouble()</b>, -<b>
-              setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>
-              isParPresent:</b> 
-*/
-- (double) parAsDouble: (int) par; 
- /* 
-  * Returns a double value converted from the value of the parameter par.
-  * If the parameter isn't present, returns MK_NODVAL. 
-  * (Use MKIsNoDVal() to check for MK_NODVAL.)
-  */
+  @brief Returns a <b>double</b> value converted from the value of the
+  parameter <i>identified by parameterTag</i>.
 
+  If the parameter isn't present or if its value is an object, 
+  returns MK_NODVAL (use the function <b>MKIsNoDVal()</b> to check for MK_NODVAL).
+  You should use the <b>freq</b> method if you're want to retrieve the frequency of
+  the MKNote.
+  @param  parameterTag is an int.
+  @return Returns a double.
+  @see <b>MKGetNoteParAsDouble()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b> 
+*/
+- (double) parAsDouble: (int) parameterTag; 
 
 /*!
-  @method parAsInt:
-  @abstract Returns an <b>int</b> value converted from the value of the parameter identified by <i>parameterTag</i>.
+  @brief Returns an <b>int</b> value converted from the value of the parameter identified by <i>parameterTag</i>.
+  
+  If the parameter isn't present, or if its value is an object, returns MAXINT.
   @param  parameterTag is an int.
-  @result Returns an int.
-  @discussion If the parameter isn't present, or if its value is an object, returns MAXINT.
-              
-              See also:  <b>MKGetNoteParAsInt()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, <b>isParPresent:</b>
+  @return Returns an int.
+  @see  <b>MKGetNoteParAsInt()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, <b>isParPresent:</b>
 */
-- (int) parAsInt:(int) par; 
+- (int) parAsInt: (int) parameterTag; 
 
 /*!
-  @method parAsString:
- @abstract Returns a <b>string</b> converted from a copy of the value of the parameter identified by <i>parameterTag</i>.
+  @brief Returns a <b>string</b> converted from a copy of the value of the parameter identified by <i>parameterTag</i>.
+  
+  If the parameter isn't present, or if its value is an object, returns an empty string.
   @param  parameterTag is an int.
-  @result Returns an NSString.
-  @discussion If the parameter isn't present, or if its value is an object, returns an empty
-              string.
-              
-              See also: <b>MKGetNoteParAsString()</b>, -<b>setPar:toDouble:</b> (etc),
-                        -<b>parType:</b>, <b>isParPresent:</b>
+  @return Returns an NSString.
+  @see <b>MKGetNoteParAsString()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, <b>isParPresent:</b>
 */
-- (NSString *) parAsString: (int) par; 
+- (NSString *) parAsString: (int) parameterTag; 
 
 /*!
-  @method parAsStringNoCopy:
-  @abstract Returns a <b>string</b> converted from a the value of the parameter identified by<i> parameterTag</i>.
+  @brief Returns a <b>string</b> converted from a the value of the parameter identified by<i> parameterTag</i>.
+  
+  If the parameter was set as a string, then this returns a pointer to the actual string itself;
+  you should neither delete nor alter the value returned by this
+  method.  If the parameter isn't present, or if its value is an
+  object, returns an empty string.
+  
   @param  parameterTag is an int.
-  @result Returns an NSString.
-  @discussion If the parameter was set as a string, then this returns a pointer to the actual string itself;
-              you should neither delete nor alter the value returned by this
-              method.  If the parameter isn't present, or if its value is an
-              object, returns an empty string.
-              
-              See also:  <b>MKGetNoteParAsStringNoCopy()</b>, -<b>
-              setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>
-              isParPresent:</b>
+  @return Returns an NSString.
+  @see <b>MKGetNoteParAsStringNoCopy()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
-- (NSString *) parAsStringNoCopy: (int) par; 
+- (NSString *) parAsStringNoCopy: (int) parameterTag; 
 
 /*!
-  @method parAsEnvelope:
-  @abstract Returns the MKEnvelope value of <i>parameterTag</i>.
+  @brief Returns the MKEnvelope value of <i>parameterTag</i>.
+  
+  If the parameter isn't present or if its value isn't an MKEnvelope, returns <b>nil</b>.
   @param  parameterTag is an int.
-  @result Returns an id.
-  @discussion If the parameter isn't present or if its value isn't an MKEnvelope, returns
-              <b>nil</b>.
-              
-              See also:  <b>MKGetNoteParAsEnvelope()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
+  @return Returns an id.
+  @see  <b>MKGetNoteParAsEnvelope()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
-- parAsEnvelope: (int) par; 
+- parAsEnvelope: (int) parameterTag; 
 
 /*!
-  @method parAsWaveTable:
-  @abstract Returns the MKWaveTable value of the parameter identified by <i>parameterTag</i>.
+  @brief Returns the MKWaveTable value of the parameter identified by <i>parameterTag</i>.
+  
+  If the parameter isn't present, or if it's value isn't a MKWaveTable, returns <b>nil</b>.
   @param  parameterTag is an int.
-  @result Returns an id.
-  @discussion If the parameter isn't present, or if it's
-              value isn't a MKWaveTable, returns <b>nil</b>.
+  @return Returns an id.
 */
-- parAsWaveTable: (int) par;
+- parAsWaveTable: (int) parameterTag;
 
 /*!
-  @method parAsObject:
-  @abstract Returns the object value of the parameter identified by <i>parameterTag</i>.
+  @brief Returns the object value of the parameter identified by <i>parameterTag</i>.
+  
+  If the parameter isn't present, or if its value isn't an object, returns <b>nil</b>.
+  This method can be used to return MKEnvelope and MKWaveTable objects, in addition to non-MusicKit
+  objects.
   @param  parameterTag is an int.
-  @result Returns an id.
-  @discussion If the parameter isn't present, or if its value isn't an object, returns <b>nil</b>.
-              This method can be used to return MKEnvelope and MKWaveTable objects, in addition to non-MusicKit
-              objects.
-              
-              See also:  <b>MKGetNoteParAsObject()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
+  @return Returns an id.
+  @see  <b>MKGetNoteParAsObject()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
-- parAsObject: (int) par; 
+- parAsObject: (int) parameterTag; 
 
 /*!
-  @method isParPresent:
+  @brief Returns <b>YES</b> if the parameter <i>identified by
+  parameterTag</i> is present in the MKNote (in other words, if its
+  value has been set), and <b>NO</b> if it isn't.
+  @see -<b>parVector:</b>, <b>MKIsNoteParPresent()</b>, <b>MKNextParameter()</b>, +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>setPar:toDouble:</b> (etc), -<b>parAsDouble:</b> (etc).
   @param  parameterTag is an int.
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the parameter <i>identified by
-              parameterTag</i> is present in the MKNote (in other words, if its
-              value has been set), and <b>NO</b> if it isn't.
-              
-              See also: -<b>parVector:</b>, <b>MKIsNoteParPresent()</b>, <b>MKNextParameter()</b>, +<b>parTagForName:</b>, 
-              +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>setPar:toDouble:</b> (etc), -<b>parAsDouble:</b> (etc).
+  @return Returns a BOOL.
 */
-- (BOOL) isParPresent: (int) par;
+- (BOOL) isParPresent: (int) parameterTag;
 
 /*!
-  @method parType:
-  @param  parameterTag is an int.
-  @result Returns a MKDataType.
-  @discussion Returns the data type of <i>the value of the parameter identified by
-              parameterTag</i>.  The data type is set when the parameter's value
-              is set; the specific data type of the value, one of the MKDataType
-              constants listed below, depends on which method you used to set it:
-              
+  @brief Returns the data type of <i>the value of the parameter identified by
+  parameterTag</i>.
 
+  The data type is set when the parameter's value
+  is set; the specific data type of the value, one of the MKDataType
+  constants listed below, depends on which method you used to set it:
+  
  <table border=1 cellspacing=2 cellpadding=0 align=center>
  <thead>
  <tr>
@@ -1109,139 +1074,131 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
  </tbody>
  </table>
  
-              If the parameter's value hasn't been set, MK_noType is returned.
-              
-              See also:  <b>MKGetNoteParAsWaveTable()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
-*/
-- (MKDataType) parType: (int) par; 
-
-/*!
-  @method removePar:
+  If the parameter's value hasn't been set, MK_noType is returned.
   @param  parameterTag is an int.
-  @result Returns an id.
-  @discussion Removes the parameter identified by <i>parameterTag</i> from the
-              MKNote; in other words, this sets the parameter's value to indicate
-              that the parameter isn't set.  If the parameter was present, then
-              the MKNote is returned; if not, <b>nil</b> is returned.
-              
-              See also:  +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>isParPresent:</b>, -<b>setPar:toDouble:</b> (etc).
+  @return Returns a MKDataType.
+  @see  <b>MKGetNoteParAsWaveTable()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
-- removePar: (int) par; 
+- (MKDataType) parType: (int) parameterTag; 
 
 /*!
-  @method copyParsFrom:
-  @param  aNote is an MKNote *.
-  @result Returns <b>self</b>.
-  @discussion Copies <i>aNote</i>'s parameters into the receiving MKNote. 
-              Object-valued parameters are shared by the two MKNotes.  
-              
-              See also:  -<b>copy</b>, -<b>copyFromZone:</b>, -<b>split::</b>
+  @brief Removes the parameter identified by <i>parameterTag</i> from the
+  MKNote; in other words, this sets the parameter's value to indicate
+  that the parameter isn't set.
+
+  If the parameter was present, then the MKNote is returned; if not, <b>nil</b> is returned.
+  @param  parameterTag is an int.
+  @return Returns an id.
+  @see  +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>isParPresent:</b>, -<b>setPar:toDouble:</b> (etc).
+*/
+- removePar: (int) parameterTag; 
+
+/*!
+  @brief Copies <i>aNote</i>'s parameters into the receiving MKNote.
+
+  Object-valued parameters are shared by the two MKNotes.
+  @param  aNote is an MKNote instance.
+  @return Returns <b>self</b>.
+  @see  -<b>copy</b>, -<b>copyFromZone:</b>, -<b>split::</b>
 */
 - copyParsFrom: (MKNote *) aNote; 
 
 /*!
-  @method freq
-  @result Returns a double.
-  @discussion This method returns the MKNote's frequency, measured in Hertz or
-              cycles-per-second.  If the frequency parameter MK_freq is present,
-              its value is returned; otherwise, the frequency is converted from
-              the key number value given by the MK_keyNum parameter according to
-              the installed tuning system (see the MKTuningSystem class).  In the
-              absence of both MK_freq and MK_keyNum, MK_NODVAL is returned (use
-              the function <b>MKIsNoDVal()</b> to check for MK_NODVAL).  The
-              correspondence between key numbers and frequencies is given in
+  @brief This method returns the MKNote's frequency, measured in Hertz or
+  cycles-per-second.
+
+  If the frequency parameter MK_freq is present,
+  its value is returned; otherwise, the frequency is converted from
+  the key number value given by the MK_keyNum parameter according to
+  the installed tuning system (see the MKTuningSystem class).  In the
+  absence of both MK_freq and MK_keyNum, MK_NODVAL is returned (use
+  the function <b>MKIsNoDVal()</b> to check for MK_NODVAL).  The
+  correspondence between key numbers and frequencies is given in
 <a href=http://www.musickit.org/MusicKitConcepts/musictables.html>
 the section entitled Music Tables
 </a>.
-              
-              Frequency and key number are the only two parameters whose values are
-              retrieved through specialized methods.  All other parameter values should be
-              retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
-              
-              See also:  -<b>keyNum</b>, -<b>setPar:toDouble:</b>
+  
+  Frequency and key number are the only two parameters whose values are
+  retrieved through specialized methods.  All other parameter values should be
+  retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
+  @return Returns a double.
+  @see  -<b>keyNum</b>, -<b>setPar:toDouble:</b>
 */
 - (double) freq;
 
 /*!
-  @method keyNum
-  @abstract This method returns the key number of the MKNote.
-  @result Returns an int.
-  @discussion Key numbers are
-              integers that enumerate discrete pitches; they're provided primarily
-              to accommodate MIDI.  If the MK_keyNum parameter is present, its
-              value is returned; otherwise, the key number that corresponds to the
-              value of the MK_freq parameter, if present, is returned. This value is
-              computed according to the installed tuning system (see the MKTuningSystem class).
-              In the absence of both MK_keyNum and MK_freq, MAXINT is returned.
-              The correspondence between key numbers and frequencies is given in
+  @brief This method returns the key number of the MKNote.
+  
+  Key numbers are integers that enumerate discrete pitches; they're provided primarily
+  to accommodate MIDI.  If the MK_keyNum parameter is present, its
+  value is returned; otherwise, the key number that corresponds to the
+  value of the MK_freq parameter, if present, is returned. This value is
+  computed according to the installed tuning system (see the MKTuningSystem class).
+  In the absence of both MK_keyNum and MK_freq, MAXINT is returned.
+  The correspondence between key numbers and frequencies is given in
 <a href=http://www.musickit.org/MusicKitConcepts/musictables.html>
 the section entitled Music Tables
 </a>.
-              
-              Frequency and key number are the only two parameters whose values are retrieved through specialized methods.  All other parameter values should be retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
-              
-              See also:  -<b>freq</b>, -<b>setPar:toInt:</b>
+  
+  Frequency and key number are the only two parameters whose values are retrieved through specialized methods.  All other parameter values should be retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
+  @return Returns an int.  
+  @see  -<b>freq</b>, -<b>setPar:toInt:</b>
 */
 - (int) keyNum; 
 
 /*!
-  @method writeScorefileStream:
-  @param  aStream is a NSMutableData *.
-  @result Returns self.
-  @discussion Writes the MKNote, in scorefile format, to the stream, that is, the data object
-              <b><i>aStream</i></b>.  You rarely invoke this method yourself; it's invoked from the
-              scorefile-writing methods defined by MKScore and MKScorefileWriter.
+  @brief Writes the MKNote, in scorefile format, to the stream, that is, the data object
+  <b><i>aStream</i></b>.
+
+  You rarely invoke this method yourself; it's invoked from the
+  scorefile-writing methods defined by MKScore and MKScorefileWriter.
+  @param  aStream is a NSMutableData instance.
+  @return Returns self.
 */
 - writeScorefileStream: (NSMutableData *) aStream; 
 
+/* 
+ You never send this message directly.
+ Archives parameters, noteType, noteTag, and timeTag. Also archives
+ performer and part using MKWriteObjectReference(). 
+ */
 - (void) encodeWithCoder: (NSCoder *) aCoder;
-  /* 
-     You never send this message directly. Should be invoked via 
-     NXWriteRootObject().
-     Archives parameters, noteType, noteTag, and timeTag. Also archives
-     performer and part using MKWriteObjectReference(). */
 
+/* 
+ You never send this message directly.  
+ Reads MKNote back from archive file. Note that the noteTag is NOT mapped
+ onto a unique note tag. This is left up to the MKPart or MKScore with which
+ the MKNote is unarchived.
+ */
 - (id) initWithCoder: (NSCoder *) aDecoder;
-  /* 
-     You never send this message directly.  
-     Reads MKNote back from archive file. Note that the noteTag is NOT mapped
-     onto a unique note tag. This is left up to the MKPart or MKScore with which
-     the Note is unarchived. If the MKNote is unarchived directly with 
-     NXReadObject(), then the handling of the noteTag is left to the 
-     application.
-   */
-
 
 /*!
-  @method parVectorCount
-  @result Returns an int.
-  @discussion Returns the number of parameter bit vectors that the MKNote is using
-              to accommodate all its parameters identifiers.   Normally you only
-              need to know this if you're iterating over the parameter
-              vectors.
-              
-              See also:  -<b>parVector</b>
+  @brief Returns the number of parameter bit vectors that the MKNote is using
+  to accommodate all its parameters identifiers.
+
+  Normally you only need to know this if you're iterating over the parameter vectors.
+  @return Returns an int.
+  @see  -<b>parVector</b>
 */
 - (int) parVectorCount;
 
 /*!
-  @method parVector:
+  @brief Returns an integer bit vector that indicates the presence of the
+  <i>index</i>'th set of parameters.
+
+  Each bit vector represents 32 parameters. For example, if <i>index</i> is 1, the bits in the
+  returned value indicate the presence of parameters 0 through 31,
+  where 1 means the parameter is present and 0 means that it's absent.
+  An <i>index</i> of 2 returns a vector that represents parameters 32
+  through 63, and so on.  To query for the presence of a particular
+  parameter, use the following predicate formula:
+  	
+  <tt>[aNote parVector: (parameterTag / 32)] &amp; (1 &lt;&lt; (parameterTag % 32))</tt>
+  
+  In this formula, <i>parameterTag </i>identifies the parameter that you're interested in.<i></i>Keep in mind<i>   </i>that the parameter bit vectors only indicate the presence of a parameter, not its value.
   @param  index is an unsigned.
-  @result Returns an unsigned.
-  @discussion Returns an integer bit vector that indicates the presence of the
-              <i>index</i>'th set of parameters.  Each bit vector represents 32
-              parameters.  For example, if <i>index</i> is 1, the bits in the
-              returned value indicate the presence of parameters 0 through 31,
-              where 1 means the parameter is present and 0 means that it's absent.
-               An <i>index</i> of 2 returns a vector that represents parameters 32
-              through 63, and so on.  To query for the presence of a particular
-              parameter, use the following predicate formula:
-              	
-              <tt>[aNote parVector:(parameterTag/32)] &amp; (1&lt;&lt;(parameterTag%32))</tt>
-              
-              In this formula, <i>parameterTag </i>identifies the parameter that you're interested in.<i></i>Keep in mind<i>   </i>that the parameter bit vectors only indicate the presence of a parameter, not its value.
-              
-              See also:  -<b>parVectorCount</b>, -<b>isParPresent:</b>
+  @return Returns an unsigned.
+  @see  -<b>parVectorCount</b>, -<b>isParPresent:</b>
 */
 - (unsigned) parVector: (unsigned) index;
  /* 
@@ -1264,19 +1221,18 @@ the section entitled Music Tables
 - (NSString *) description;
 
 /*!
-  @method note
-  @result Returns a MKNote.
-  @discussion Allocates and initializes a new MKNote and returns it autoreleased.
+  @brief Allocates and initializes a new MKNote and returns it autoreleased.
+  @return Returns a MKNote.
 */
 + note;
 
 /*!
-  @method noteWithTimeTag:
+  @brief Allocates and initializes a new MKNote and returns it autoreleased.
+
+  Sets timeTag as specified and sets type to mute.
+  If aTimeTag is MK_ENDOFTIME, the timeTag isn't set.
   @param  aTimeTag is a double in seconds.
-  @result Returns a MKNote.
-  @discussion Allocates and initializes a new MKNote and returns it autoreleased. 
-              Sets timeTag as specified and sets type to mute.
-              If aTimeTag is MK_ENDOFTIME, the timeTag isn't set.
+  @return Returns a MKNote.
 */
 + noteWithTimeTag: (double) aTimeTag; 
 
@@ -1287,61 +1243,58 @@ extern unsigned MKNoteTag(void);
 extern unsigned MKNoteTags(unsigned n);
 
 /*!
- @function MKdB
- @abstract dB to amp conversion. 
- @discussion For example, MKdB(-60) returns ca. .001 and MKdB(0.0) returns 1.0. 
+  @brief dB to amp conversion. 
+ 
+  For example, MKdB(-60) returns ca. .001 and MKdB(0.0) returns 1.0. 
  */
 extern double MKdB(double dB);          
 
 /*!
- @function MKMidiToAmp
- @abstract Maps MIDI value (such as velocity) onto an amplitude scaler such that 64->1.0, 127->10.0, and 0->0. 
- @discussion This is primarily designed for scaling amplitude by a value derived from MIDI velocity. 
+  @brief Maps MIDI value (such as velocity) onto an amplitude scaler such that 64->1.0, 127->10.0, and 0->0. 
+ 
+  This is primarily designed for scaling amplitude by a value derived from MIDI velocity. 
  */
 extern double MKMidiToAmp(int midiValue);
 
 /*!
- @function MKMidiToAmpWithSensitivity
- @abstract Same as MKMidiToAmp, but uses sensitivity to control how much effect midiValue has.
+  @brief Same as MKMidiToAmp, but uses sensitivity to control how much effect midiValue has.
  */
 extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
 
 /*!
- @function MKAmpToMidi
- @abstract Maps an amplitude scaler onto velocity such that MKAmpToMidi(MKMidiToAmp(x)) == x
+  @brief Maps an amplitude scaler onto velocity such that MKAmpToMidi(MKMidiToAmp(x)) == x
  */
 extern int MKAmpToMidi(double amp);
 
 /*!
- @function MKMidiToAmpAttenuation
- @abstract Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler such that 64->0.1, 127->1.0, and 0->0. 
+  @brief Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler such that 64->0.1, 127->1.0, and 0->0. 
  */
 extern double MKMidiToAmpAttenuation(int midiValue);
 
 /*!
- @function MKMidiToAmpAttenuationWithSensitivity
- @discussion Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler
- such that 64->0.1, 127->1.0, and 0->0. Uses sensitivity to control how much effect 
- midiValue has. 
+  @brief Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler
+  such that 64->0.1, 127->1.0, and 0->0. 
+ 
+  Uses sensitivity to control how much effect midiValue has. 
  */
 extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensitivity);
 
 /*!
- @function MKAmpAttenuationToMidi
- @abstract Maps an amplitude scaler onto velocity such that MKAmpAttenuationToMidi(MKMidiToAmpAttenuation(x)) == x
+  @brief Maps an amplitude scaler onto velocity such that MKAmpAttenuationToMidi(MKMidiToAmpAttenuation(x)) == x
  */
 extern int MKAmpAttenuationToMidi(double amp);
 
 /*!
- @function MKHighestPar
- @abstract Returns the parameter tag of the highest numbered parameter.
- @discussion This can be used, for example, to print the names of all known parameters as follows:
+  @brief Returns the parameter tag of the highest numbered parameter.
  
- for (i = 0; i <= MKHighestPar(); i++) printf([MKNote parNameForTag: i]);
+  This can be used, for example, to print the names of all known parameters as follows:
+ 
+  <tt>for (i = 0; i <= MKHighestPar(); i++) printf([MKNote parNameForTag: i]);</tt>
  */
 extern int MKHighestPar(void);
 
 extern NSHashEnumerator *MKInitParameterIteration(id aNote);
+
 extern int MKNextParameter(id aNote, NSHashEnumerator *aState);
  /* These functions provide iteration over the parameters of a Note. 
  * Usage:
