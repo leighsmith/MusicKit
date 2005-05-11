@@ -3,11 +3,7 @@
   Defined In: The MusicKit
 
   Description:
-    A MKPartRecorder is an MKInstrument that realizes MKNotes by adding copies
-    of them to a MKPart.  A MKPartRecorder's MKPart is set through the setPart:
-    method.  If the MKPart already contains MKNotes, the old MKNotes aren't
-    removed or otherwise affected by recording into the MKPart -- the
-    recorded MKNotes are merged in.
+    See class description below.
   
     Each MKPartRecorder contains a single MKNoteReceiver object.  During a
     performance, a MKPartPerformer receives MKNotes from its MKNoteReceiver,
@@ -21,21 +17,19 @@
     You can create MKPartRecorders yourself, or you can use a MKScoreRecorder
     object to create a group of them for you.
   
-    CF: MKScoreRecorder, MKPart
 
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.  
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
 /*!
   @class MKPartRecorder
-  @brief
-
-A MKPartRecorder is an MKInstrument that realizes MKNotes by adding copies of
-them to a MKPart.  A MKPartRecorder's MKPart is set through the <b>setPart:</b>
+  @brief A MKPartRecorder is an MKInstrument that realizes MKNotes by adding copies of them to a MKPart.
+ 
+A MKPartRecorder's MKPart is set through the <b>setPart:</b>
 method.  If the MKPart already contains MKNotes, the old MKNotes aren't removed
 or otherwise affected by recording into the MKPart - the recorded MKNotes are
 merged in.
@@ -89,68 +83,58 @@ to create a group of them for you.
 - init; 
 
 /*!
-  @param  aTimeUnit is a MKTimeUnit.
-  @return Returns an id.
   @brief Sets the receiver's <b>timeUnit</b> instance variable to
   <i>aTimeUnit</i>, one of <b>MK_second</b>, <b>MK_beat</b> or <b>MK_timeTag</b>.
 
-  The
-  default is <b>MK_second</b>.
-
-	  See timeunits.h
+  The default is <b>MK_second</b>.
+  @param  aTimeUnit is a MKTimeUnit.
+  @return Returns an id.
+  @see timeunits.h
  */
 - setTimeUnit: (MKTimeUnit) aTimeUnit;
 
 /*!
-  @return Returns a MKTimeUnit.
   @brief Returns the receiver's <b>timeUnit</b>, either MK_second,
   MK_timeTag, or MK_beat.
-
-  
-
-  See timeunits.h
+  @return Returns a MKTimeUnit.
+  @see timeunits.h
  */
 - (MKTimeUnit) timeUnit;
 
 /*!
-  @param  aPart is an MKPart instance.
   @brief Sets <i>aPart</i> as the receiver's MKPart.
-
-  Returns the
-  receiver.
+  @param  aPart is an MKPart instance.
 */
 - (void) setPart: (MKPart *) aPart; 
 
 /*!
-  @return Returns an MKPart instance.
   @brief Returns the receiver's MKPart object.
-
-  
+  @return Returns an MKPart instance.
 */
 - (MKPart *) part; 
 
 /*!
-  @param  aNote is an MKNote instance.
-  @param  aNoteReceiver is an MKNoteReceiver instance.
-  @return Returns an id.
   @brief Copies <i>aNote</i>, computes and sets the new MKNote's timeTag (and
   duration if it's a noteDur), and then adds the new MKNote to the
   receiver's MKPart.
 
   <i>aNoteReceiver</i> is ignored. The timeTag
   and duration computations use the <tt>makeTimeTag:</tt> and <tt>makeDur:</tt>
-  methods defined in NoteRecorder. Returns the receiver.
-*/
+  methods defined in MKNoteRecorder. 
+  @param  aNote is an MKNote instance.
+  @param  aNoteReceiver is an MKNoteReceiver instance.
+  @return Returns the receiver.
+ */
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
 
 /*!
-  @param  zone is an NSZone.
-  @return Returns an id.
   @brief Creates and returns a new MKPartRecorder as a copy of the
   receiver.
 
   The new object has its own MKNoteReceiver object but adds
   MKNotes to the same MKPart as the receiver.
+  @param  zone is an NSZone.
+  @return Returns an id.
 */
 - copyWithZone: (NSZone *) zone; 
 

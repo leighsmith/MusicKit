@@ -45,33 +45,12 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project. 
 */
-/*
-  $Log$
-  Revision 1.6  2005/05/09 15:52:50  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2002/01/29 16:11:42  sbrandon
-  removed/altered headerdoc comments about NXStreams (we use
-  NSMutableData objects now)
-
-  Revision 1.4  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2000/04/16 04:16:17  leigh
-  comment cleanup
-
-  Revision 1.2  1999/07/29 01:25:45  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKFileWriter
-  @brief
-
-A MKFileWriter is an MKInstrument that realizes MKNotes by writing them to a file on
-the disk.  An abstract class, MKFileWriter provides common functionality for the
-Music Kit subclasses such as MKScorefileWriter (currently the only subclass of
-MKFileWriter).
+  @brief A MKFileWriter is an MKInstrument that realizes MKNotes by writing them to a file on
+  the disk.  An abstract class, MKFileWriter provides common functionality for the
+  MusicKit subclasses such as MKScorefileWriter (currently the only subclass of
+  MKFileWriter).
 
 A MKFileWriter is associated with a file on disk or a data object, either by the file's
 name or through an NSMutableData object.  If you associate a MKFileWriter with a file
@@ -84,7 +63,7 @@ opened.
 The <b>setStream:</b> method sets the FileWriter's <b>stream</b> instance
 variable to the given NSMutableData object.  Creating and saving the NSMutableData
 object is the responsibility of the application.  After each performance, <b>stream</b>
-is set to NULL.
+is set to nil.
 
 The subclass responsibility <b>realizeNote:fromNoteReceiver:</b>, inherited from
 MKInstrument, is passed on to the MKFileWriter subclasses.  Two other methods,
@@ -113,7 +92,6 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
     int _fd;
 }
 
-
 /*!
   @return Returns an id.
   @brief Initializes the object by setting both <b>stream</b> and
@@ -136,7 +114,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   for beats or <b>MK_timeTag</b> for the value in the Note's timeTag
   field.  The default is <b>MK_second</b>.
 */
--setTimeUnit:(MKTimeUnit)aTimeUnit;
+- setTimeUnit: (MKTimeUnit) aTimeUnit;
 
 /*!
   @return Returns a MKTimeUnit.
@@ -146,7 +124,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   The default
   is <b>MK_second</b>.
 */
--(MKTimeUnit)timeUnit;
+- (MKTimeUnit) timeUnit;
 
 /*!
   @return Returns a NSString.
@@ -157,7 +135,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   method.  A subclass can implement this method to allow different
   default file extensions for different instances.
 */
-+(NSString *)fileExtension;
++ (NSString *) fileExtension;
 
 /*!
   @return Returns a NSString.
@@ -168,7 +146,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   method.  A subclass can implement this method to allow different
   default file extensions for different instances.
 */
--(NSString *)fileExtension;
+- (NSString *) fileExtension;
 
 /*!
   @param  aName is a NSString.
@@ -181,7 +159,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   performance, this does nothing and returns <b>nil</b>, otherwise
   returns the object.
 */
-- setFile:(NSString *)aName; 
+- setFile: (NSString *) aName; 
 
 /*!
   @param  aStream is an NSMutableData.
@@ -193,13 +171,12 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   already in a performance, this does nothing and returns <b>nil</b>,
   otherwise returns the object.
 */
-- setStream:(NSMutableData *)aStream; 
+- setStream: (NSMutableData *) aStream; 
 
 /*!
   @return Returns an NSMutableData.
   @brief Returns the object's <b>stream</b> pointer, or NULL if it isn't set.
 
-  
   The pointer is set to NULL after each performance.
 */
 - (NSMutableData *) stream; 
@@ -213,13 +190,11 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   <i>filename</i> and <i>stream</i> instance variables are set to
   NULL.
 */
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone: (NSZone *) zone; 
 
 /*!
   @return Returns an NSString.
   @brief Returns the object's file name, if any.
-
-  
 */
 - (NSString *) file; 
 
@@ -247,16 +222,16 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
 - initializeFile; 
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief You never invoke this method; it's invoked automatically just before
   the object writes its first MKNote.
 
   It opens a stream to the object's
   <i>filename</i> (if set) and then sends <b>initializeFile</b> to the
   object.
+  @param  aNote is an id.
+  @return Returns an id.
 */
-- firstNote:aNote; 
+- firstNote: (MKNote *) aNote; 
 
 /*!
   @return Returns an id.
@@ -271,26 +246,22 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
 
 /*!
   @return Returns a double.
-  @brief Returns the object's performance time offset, in
-  seconds.
-
-  
+  @brief Returns the object's performance time offset, in seconds.
 */
-- (double)timeShift;
+- (double) timeShift;
 
 /*!
-  @param  timeShift is a double.
-  @return Returns an id.
   @brief Sets a constant value to be added to MKNotes' times when they are
   written out to the file.
 
-  It's up to the subclass to use this
-  value.
+  It's up to the subclass to use this value.
+  @param  timeShift is a double.
+  @return Returns an id.
 */
-- setTimeShift:(double)timeShift;
+- setTimeShift: (double) timeShift;
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 

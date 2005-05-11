@@ -38,39 +38,11 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.9  2005/05/09 15:52:52  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.8  2004/01/29 22:30:16  leighsmith
-  Corrected bug not sending out last note of part. Renamed ivars to meaningful names matching their current type and use.
-
-  Revision 1.7  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.6  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.5  2001/07/10 17:03:54  leighsmith
-  Removed subclass specific note sender ivar so the super class method noteSender works correctly
-
-  Revision 1.4  2000/11/25 22:56:48  leigh
-  Enforced ivar privacy
-
-  Revision 1.3  2000/04/25 02:09:53  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.2  1999/07/29 01:25:47  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKPartPerformer
-  @brief
-
-A MKPartPerformer object performs the MKNotes in a particular MKPart.  Every
-MKPartPerformer has exactly one MKNoteSender.  A MKPartPerformer is associated
+  @brief A MKPartPerformer object performs the MKNotes in a particular MKPart.
+ 
+Every MKPartPerformer has exactly one MKNoteSender.  A MKPartPerformer is associated
 with a MKPart through its <b>setPart:</b> method.  While a single
 MKPartPerformer can only be associated with one MKPart, any number of
 MKPartPerformers can by associated with the same MKPart.  If you're performing a
@@ -180,12 +152,10 @@ MKPartPerformer is activated at time 1, the first note will sound at time
 - setPart: (MKPart *) aPart; 
 
 /*!
-  @return Returns the MKPart instance over which we sequence.
   @brief Returns the receiver's MKPart object.
-
-  
+  @return Returns the MKPart instance over which we sequence.
 */
-- (MKPart*) part;
+- (MKPart *) part;
 
 /*!
   @return Returns an id.

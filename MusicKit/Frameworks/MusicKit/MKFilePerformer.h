@@ -79,41 +79,12 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.9  2005/05/09 15:52:50  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.8  2004/08/21 23:32:33  leighsmith
-  Improved doco
-
-  Revision 1.7  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.6  2000/11/29 00:39:52  leigh
-  Corrected comment
-
-  Revision 1.5  2000/04/22 20:16:02  leigh
-  Changed fileExtensions to less error-prone NSArray of NSStrings
-
-  Revision 1.4  2000/04/02 17:05:05  leigh
-  Cleaned up doco
-
-  Revision 1.3  1999/07/29 04:48:03  leigh
-  removed extraneous _extraVar ivar
-
-  Revision 1.2  1999/07/29 01:25:45  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKFilePerformer
-  @brief
-
-During a Music Kit performance, a MKFilePerformer reads and performs time-ordered
-music data from a file on the disk.  An abstract class, MKFilePerformer provides
-common functionality and declares subclass responsibilities for its one
-subclass, MKScorefilePerformer.
+  @brief During a Music Kit performance, a MKFilePerformer reads and performs time-ordered
+  music data from a file on the disk.  An abstract class, MKFilePerformer provides
+  common functionality and declares subclass responsibilities for its one
+  subclass, MKScorefilePerformer.
 
 A MKFilePerformer is associated with a file either by the file's name or through
 an NSMutableData instance.  If you associate a MKFilePerformer with a file name (through
@@ -121,20 +92,20 @@ the <b>setFile:</b> method) the object opens and closes the file for you:  The
 file is opened for reading when the MKFilePerformer receives the <b>activate</b>
 message and closed when it receives <b>deactivate</b>.  The <b>setFileStream:</b>
 method associates a MKFilePerformer with an NSMutableData instance.  In this case, opening
-and closing the file is the responsibility of the application.  The FilePerformer's
+and closing the file is the responsibility of the application.  The MKFilePerformer's
 stream pointer is set to NULL after each performance so you must send another
-<b>setFileStream:</b> message in order to replay the file.  Any number of FilePerformers
+<b>setFileStream:</b> message in order to replay the file.  Any number of MKFilePerformers
 can perform the same file simultaneously.
 
 The MKFilePerformer class declares two methods as subclass responsibilities: 
 <b>nextNote</b> and <b>performNote:</b>.  A subclass implementation of<b>
 nextNote</b> should be designed to read the next line of information in the file
 and from it create either a MKNote object or a timeTag value (for the following
-Note).  It returns the MKNote that it creates, or, in the case of a timeTag, it
+MKNote).  It returns the MKNote that it creates, or, in the case of a timeTag, it
 sets the instance variable <b>fileTime</b> to represent the current time in the
 file and returns <b>nil</b>.  <b>performNote:</b> should perform any desired
 manipulations on the MKNote created by <b>nextNote</b> and then pass it as the
-argument to <b>sendNote:</b> (sent to a NoteSender).  The value returned by
+argument to <b>sendNote:</b> (sent to a MKNoteSender).  The value returned by
 <b>performNote:</b> is ignored.
 
 MKFilePerformer defines two timing variables, <b>firstTimeTag</b> and
@@ -143,248 +114,223 @@ are considered for performance:  MKNotes with timeTags that are less than
 <b>firstTimeTag</b> are ignored; if <b>nextNote</b> creates a timeTag greater
 than <b>lastTimeTag</b>, the MKFilePerformer is deactivated.
 
-Creation of a FilePerformer's NoteSender(s) is a subclass responsibility.
+Creation of a MKFilePerformer's MKNoteSender(s) is a subclass responsibility.
 
   @see  MKScorefilePerformer, MKPerformer
 */
 #ifndef __MK_FilePerformer_H___
 #define __MK_FilePerformer_H___
-//sb:
+
 #import <Foundation/Foundation.h>
 
 #import "MKPerformer.h"
 
 @interface MKFilePerformer : MKPerformer
 {
-    NSString *filename;       /* File name or nil if the file pointer is specifed directly. */
-    double fileTime;          /* The current time in the file (in beats). */
-    id stream;                /* Pointer to the MKFilePerformer's file, either NSMutableData or NSData */
-    double firstTimeTag;      /* The smallest timeTag value considered for performance. */
-    double lastTimeTag;       /* The greatest timeTag value considered for performance. */
+    /*! @var filename File name or nil if the file pointer is specifed directly. */
+    NSString *filename;
+    /*! @var fileTime The current time in the file (in beats). */
+    double fileTime;
+    /*! @var stream Pointer to the MKFilePerformer's file, either NSMutableData or NSData */
+    id stream;
+    /*! @var firstTimeTag The smallest timeTag value considered for performance. */
+    double firstTimeTag;
+    /*! @var lastTimeTag The greatest timeTag value considered for performance. */
+    double lastTimeTag;
 }
  
-
 /*!
-  @return Returns an id.
-  @brief Initializes the object by setting <b>stream</b> and <b>filename</b>
-  to NULL.
+  @brief Initializes the object by setting <b>stream</b> and <b>filename</b> to NULL.
 
-  You invoke this method when creating a new instance of
-  MKFilePerformer.  A subclass implementation should send <b>[super
-  init]</b> before performing its own initialization.  The return
-  value is ignored.
+  You invoke this method when creating a new instance of MKFilePerformer.  
+  A subclass implementation should send <b>[super init]</b>
+  before performing its own initialization.  The return value is ignored.
+  @return Returns an id.
 */
 - init;
 
 - copyWithZone:(NSZone *)zone;
 
 /*!
-  @param  aName is a char *.
-  @return Returns an id.
   @brief Associates the object with the file named <i>aName</i>.
 
-  The file is
-  opened when the object is activated and closed when its deactivated.
+  The file is opened when the object is activated and closed when its deactivated.
   If the object is active, does nothing and returns <b>nil</b>,
   otherwise returns the object.
+  @param  aName is a NSString instance.
+  @return Returns an id.
 */
-- setFile:(NSString *)aName;
+- setFile: (NSString *) aName;
 
 /*!
-  @param  aStream is an id.
-  @return Returns an id.
+  @brief Returns the object's file name, if any.
+  @return Returns an NSString.
+ */
+- (NSString *) file; 
+
+/*!
   @brief Sets the object's stream to <i>aStream</i>.
 
-  The sender
-  must open and close the stream himself.  If the object is active,
+  The sender must open and close the stream himself.  If the object is active,
   this does nothing and returns <b>nil</b>, otherwise returns the
   object.
-*/
-- setStream:(id)aStream; // TODO either NSMutableData, or NSData
-
-/*!
+  @param  aStream is an id.
   @return Returns an id.
-  @brief Returns the object's encoded stream object, or NULL if it isn't
-  set.
-
-  
 */
--(id) stream; // TODO either NSMutableData, or NSData
+- setStream: (id) aStream; // TODO either NSMutableData, or NSData
 
 /*!
-  @return Returns an NSString.
-  @brief Returns the object's file name, if any.
-
-  
-*/
--(NSString *) file; 
-
-/*!
+  @brief Returns the object's encoded stream object, or NULL if it isn't set.
   @return Returns an id.
+*/
+- (id) stream; // TODO either NSMutableData, or NSData
+
+/*!
   @brief Prepares the object for a performance by opening the associated file
   (if necessary) and invoking <b>nextNote</b> until it returns an
   appropriate MKNote - one with a timeTag between <b>firstTimeTag</b>
   and <b>lastTimeTag</b>, inclusive.
 
-  If an appropriate MKNote isn't
-  found, the object is deactivated.  You never invoke this method; its
-  invoked by the <b>activate</b> method inherited from
-  MKPerformer.
+  If an appropriate MKNote isn't found, the object is deactivated.
+  You never invoke this method; its invoked by the <b>activate</b> method inherited from MKPerformer.
+  @return Returns an id.
 */
 - activateSelf;
 
 /*!
-  @return Returns an NSString.
   @brief Returns the file name extension that's recognized by the class.
 
-  The
-  default implementation returns NULL.  A subclass may override this
+  The default implementation returns nil.  A subclass may override this
   method to specify its own file extension.
+  @return Returns an NSString.
 */
-+(NSString *)fileExtension;
++ (NSString *) fileExtension;
 
 /*!
-  @return Returns an NSArray.
   @brief Returns an NSArray of NSStrings holding file extensions that
   are recognized by the class.
 
-  The default implementation returns an
-  NSArray whose single element NSString is given the value returned
-  by the <b>fileExtension</b> method.  A subclass may override this
-  method to specify its own file extensions.
+  The default implementation returns an NSArray whose single element
+  NSString is given the value returned by the <b>fileExtension</b> method.
+  A subclass may override this method to specify its own file extensions.
+  @return Returns an NSArray.
 */
-+(NSArray *)fileExtensions;
++ (NSArray *) fileExtensions;
 
 /*!
-  @return Returns an id.
   @brief Gets the next MKNote from the object's file by invoking
   <b>nextNote</b>, passes it as the argument to <b>performNote:</b>,
   then sets the value of <i>nextPerform</i>.
 
-  You never invoke this
-  method; it's invoked by the object's Conductor.  The return value is
-  ignored.
+  You never invoke this method; it's invoked by the object's MKConductor.
+  The return value is ignored.
+  @return Returns an id.
 */
 - perform; 
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief A subclass responsibility expected to manipulate and send
   <i>aNote</i>, which was presumably just read from a file.
 
-  You never
-  invoke this method; it's invoked automatically by the <b>perform</b>
+  You never invoke this method; it's invoked automatically by the <b>perform</b>
   method.  The return type is ignored.
+  @param  aNote is an MKNote instance.
+  @return Returns an id.
 */
-- performNote:aNote; 
+- performNote: (MKNote *) aNote; 
 
 /*!
-  @return Returns an id.
-  @brief A subclass responsibility expected to fashion a MKNote or timeTag from
-  the file.
+  @brief A subclass responsibility expected to fashion a MKNote or timeTag from the file.
 
   It should return the MKNote or <b>nil</b> if the next file
   entry is a timeTag.  In the latter case, <i>fileTime</i> should be
   updated.  You never invoke this method; it's invoked automatically
   by the <b>perform</b> method.
+  @return Returns an MKNote instance.
 */
-- nextNote; 
+- (MKNote *) nextNote; 
 
 /*!
-  @return Returns an id.
   @brief A subclass can implement this method to perform file initialization.
 
-  
   If <b>nil</b> is returned, the object is deactivated.  You never
   invoke this method; it's invoked automatically by
   <b>activateSelf</b>.  The default implementation does nothing and
   returns the object.
+  @return Returns an id.
 */
 - initializeFile;
 
 /*!
   @brief Invokes <b>finishFile</b>, closes the object's file (if it was set
-  through <b>setFile:</b>), and sets the <b>stream</b> instance
-  variable to NULL.
+  through <b>setFile:</b>), and sets the <b>stream</b> instance variable to nil.
 
-  You never invoke this method; its invoked
-  automatically when the object is deactivated.
+  You never invoke this method; its invoked automatically when the object is deactivated.
 */
-- (void)deactivate; 
+- (void) deactivate; 
 
 /*!
-  @return Returns an id.
   @brief A subclass can implement this method for post-performance file
   operations.
 
-  You shouldn't close the stream pointer as part of this
-  method.  You never invoke this method; it's invoked automatically by
+  You shouldn't close the stream pointer as part of this method.
+  You never invoke this method; it's invoked automatically by
   <b>deactivateSelf</b>.  The default implementation does nothing. 
   The return value is ignored.
+  @return Returns an id.
 */
 - finishFile; 
 
 /*!
-  @param  aTimeTag is a double.
-  @return Returns an id.
-  @brief Sets the smallest timeTag considered for performance to
-  <i>aTimeTag</i>.
+  @brief Sets the smallest timeTag considered for performance to <i>aTimeTag</i>.
 
   Returns the object.  If the object is active, does
   nothing and returns <b>nil</b>.
-*/
-- setFirstTimeTag:(double)aTimeTag; 
-
-/*!
   @param  aTimeTag is a double.
   @return Returns an id.
-  @brief Sets the largest timeTag considered for performance to
-  <i>aTimeTag</i>.
+*/
+- setFirstTimeTag: (double) aTimeTag;
+
+/*!
+  @brief Sets the largest timeTag considered for performance to <i>aTimeTag</i>.
 
   Returns the object.  If the object is active, does
   nothing and returns <b>nil</b>.
+  @param  aTimeTag is a double.
+  @return Returns an id.
 */
-- setLastTimeTag:(double)aTimeTag; 
+- setLastTimeTag: (double) aTimeTag; 
 
 /*!
-  @return Returns a double.
   @brief Returns the object's <b>firstTimeTag</b> value.
-
-  
+  @return Returns a double.  
 */
--(double) firstTimeTag; 
+- (double) firstTimeTag; 
 
 /*!
-  @return Returns a double.
   @brief Returns the object's <b>lastTimeTag</b> value.
-
-  
+  @return Returns a double.
 */
--(double) lastTimeTag;
+- (double) lastTimeTag;
 
 /*!
-  @param  aCoder is an NSCoder *.
   @brief You never invoke this method directly; to archive a MKFilePerformer,
   call the <b>NSArchiver</b> <b>archiveRoot</b> method.
 
-  An archived
-  MKFilePerformer maintains its <i>filename</i>, <i>firstTimeTag</i>,
+  An archived MKFilePerformer maintains its <i>filename</i>, <i>firstTimeTag</i>,
   and <i>lastTimeTag</i> instance variables (as well as the instance
   variables defined in MKPerformer).
+  @param  aCoder is an NSCoder instance.
 */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
 /*!
-  @param  aDecoder is an NSCoder *.
-  @return Returns an id.
   @brief You never invoke this method directly; to read an archived
   MKFilePerformer, call the <b>NSUnarchiver</b> methods.
-
-  
-  
+  @param  aDecoder is an NSCoder instance.
+  @return Returns an id.
 */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 

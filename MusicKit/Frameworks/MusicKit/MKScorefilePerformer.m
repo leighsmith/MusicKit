@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2005/05/11 02:13:30  leighsmith
+  Cleaned up parameter types and doxygen docs
+
   Revision 1.12  2004/12/13 02:25:44  leighsmith
   New typing for MKNoteReceiver _setData: and _getData
 
@@ -139,7 +142,7 @@ Modification history:
     return [MKScore scorefileExtensions];
 }
 
--infoNote
+- (MKNote *) infoNote
 {
     return info;
 }
@@ -196,7 +199,7 @@ Modification history:
     return scorefilePrintStream;
 }
 
--nextNote
+- (MKNote *) nextNote
   /* TYPE: Accessing N
    * Grabs the next entry in the body of the scorefile.
    * If the entry is a note statement, this fashions a MKNote
@@ -210,12 +213,12 @@ Modification history:
    * performed but you must send [super nextNote].
    */
 {
-    id aNote = _MKParseScoreNote(SCOREPTR);
+    MKNote *aNote = _MKParseScoreNote(SCOREPTR);
     fileTime = SCOREPTR->timeTag;
     return aNote;
 }
 
--infoNoteForNoteSender:(id)aNoteSender
+- (MKNote *) infoNoteForNoteSender: (MKNoteSender *) aNoteSender
   /* If aNoteSender is a member of the receiver, returns the info MKNote
      corresponding to the partName represented by that MKNoteSender. Otherwise, 
      returns nil. */
@@ -228,10 +231,10 @@ Modification history:
  a MK_midiChan info parameter equal to
  aChan, if any. aChan equal to 0 corresponds to the MKPart representing
  MIDI system and channel mode messages. */
-- midiNoteSender: (int) aChan
+- (MKNoteSender *) midiNoteSender: (int) aChan
 {
     MKNoteSender *noteSender;
-    id aInfo;
+    MKNote *aInfo;
     unsigned n,i;
     
     if (aChan == MAXINT)
@@ -246,39 +249,38 @@ Modification history:
     return nil;
 }
 
--performNote:aNote
+- performNote: (MKNote *) aNote
   /* TYPE: Accessing N
    * Sends aNote to the appropriate MKNoteSender
    * You never send performNote: directly to a MKScorefilePerformer;
    * it's invoked by the perform method.
    */
 {
-    [[SCOREPTR->part _noteSender] sendNote:aNote];    
+    [[SCOREPTR->part _noteSender] sendNote: aNote];    
     return self;
 }
 
-- (void)dealloc
+- (void) dealloc
   /* Frees receiver and its MKNoteSenders.  Also frees the info.
      If the receiver is active, does nothing and returns self. Otherwise,
      returns nil. */
 {
-    /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
-     * maybe need to put self in a global list of non-dealloced objects for later cleanup */
-    if (status != MK_inactive)
-      return;
-  if (_partStubs != nil) {
-    [_partStubs removeAllObjects];
-    [_partStubs release];
-    _partStubs = nil;
-  }
-  if (info != nil) {
-    [info release];
-    info = nil;
-  }
-  [super dealloc];
+    if (status != MK_inactive) {
+	NSLog(@"MKScorefilePerformer -dealloc: Assertion failure status not inactive\n");
+    }
+    if (_partStubs != nil) {
+	[_partStubs removeAllObjects];
+	[_partStubs release];
+	_partStubs = nil;
+    }
+    if (info != nil) {
+	[info release];
+	info = nil;
+    }
+    [super dealloc];
 }
 
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* Copies self and info. */
 {
     MKScorefilePerformer *newObj = [super copyWithZone:zone];

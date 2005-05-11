@@ -20,10 +20,9 @@
 
 /*!
   @class MKConductor
-  @brief
-
-The MKConductor class defines the mechanism that controls the timing
-of a MusicKit performance.  A MKConductor's most important tasks are
+  @brief The MKConductor class defines the mechanism that controls the timing of a MusicKit performance. 
+ 
+A MKConductor's most important tasks are
 to schedule the sending of MKNotes by MKPerformers (and MKMidi), and
 to control the timing of MKEnvelope objects during DSP synthesis.
 Even in the absence of MKPerformers and MKEnvelopes, you may want to
@@ -691,8 +690,6 @@ extern void MKFinishPerformance(void);
 - (double) tempo; 
 
 /*!
-  @param  newTimeOffset is a double.
-  @return Returns a double.
   @brief Sets the receiver's performance time offset to <i>newTimeOffset</i>
   seconds.
 
@@ -700,23 +697,18 @@ extern void MKFinishPerformance(void);
   it's not affected by the receiver's tempo.  Attempts to set the
   offset of the clockConductor are ignored. Returns the previous time
   offset.
+ @param  newTimeOffset is a double.
+ @return Returns a double.
 */
 - (double) setTimeOffset: (double) newTimeOffset; 
 
 /*!
   @return Returns a double.
   @brief Returns the receiver's performance time offset in seconds.
-
-  
 */
 - (double) timeOffset; 
 
 /*!
-  @param  aSelector is a SEL.
-  @param  toObject is an id.
-  @param  beats is a double.
-  @param  argCount,... is an int counting variable arguments.
-  @return Returns an id.
   @brief Places, in the receiver's message request queue, a request for
   <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
   beats from the receiver's notion of the current time.
@@ -728,35 +720,39 @@ extern void MKFinishPerformance(void);
   number of four-byte arguments to <i>aSelector</i> followed by the
   arguments themselves, seperated by commas (two arguments,
   maximum).
-*/
+ @param  aSelector is a SEL.
+ @param  toObject is an id.
+ @param  beats is a double.
+ @param  argCount,... is an int counting variable arguments.
+ @return Returns an id.
+ */
 - sel: (SEL) aSelector to: toObject withDelay: (double) beats argCount: (int) argCount, ...;
 
 /*!
+  @brief Places, in the receiver's message request queue, a request for
+  <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
+  beats from the receiver's notion of the current time.
+
+  To ensure that the receiver's notion of time is up to date, you should send
+  <b>lockPerformance</b> before invoking this method and
+  <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
+  number of four-byte arguments to <i>aSelector</i>. If arg1 or arg2 are
+  objects, set the retain: argument following them to TRUE to prevent
+  the object from any chance of deallocation between this method being
+  called, and the message being dispatched.
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  beats is a double.
   @param  argCount is an int
   @param  arg1 is an id or any 4-byte data type
-  @param  retain is a BOOL
+  @param  retainArg1 is a BOOL
   @param  arg2 is an id or any 4-byte data type
-  @param  retain is a BOOL
+  @param  retainArg2 is a BOOL
   @return Returns an id.
-  @brief Places, in the receiver's message request queue, a request for
-  <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
-  beats from the receiver's notion of the current time.
-
-  To ensure
-  that the receiver's notion of time is up to date, you should send
-  <b>lockPerformance</b> before invoking this method and
-  <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
-  number of four-byte arguments to <i>aSelector</i>. If arg1 or arg2 are
-	  objects, set the retain: argument following them to TRUE to prevent
-	  the object from any chance of deallocation between this method being
-	  called, and the message being dispatched.
-*/
+ */
 - (id) sel: (SEL) aSelector
 	to: (id) toObject
- withDelay: (double) deltaT
+ withDelay: (double) beats
   argCount: (int) argCount
       arg1: (id) arg1 
     retain: (BOOL) retainArg1
@@ -764,87 +760,82 @@ extern void MKFinishPerformance(void);
     retain: (BOOL) retainArg2;
 
 /*!
-  @param  aSelector is a SEL.
-  @param  toObject is an id.
-  @param  time is a double.
-  @param  argCount,... is an int counting variable arguments.
-  @return Returns an id.
   @brief Places, in the receiver's message request queue, a request for
   <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
   beats from the beginning of the receiver's performance.
 
-  
   <i>argCount</i> specifies the number of four-byte arguments to
   <i>aSelector</i> followed by the arguments themselves, seperated by
   commas (two arguments, maximum). 
-*/
+ @param  aSelector is a SEL.
+ @param  toObject is an id.
+ @param  time is a double.
+ @param  argCount,... is an int counting variable arguments.
+ @return Returns an id.
+ */
 - sel: (SEL) aSelector to: toObject atTime: (double) time argCount: (int) argCount, ...;
 
 /*!
-  @param  aSelector is a SEL.
-  @param  toObject is an id.
-  @param  time is a double.
-  @param  argCount,... is an int
-  @param  arg1 is an object or any 4-byte type
-  @param  retain is a BOOL
-  @param  arg2 is an object or any 4-byte type
-  @param  retain is a BOOL
-  @return Returns an id.
   @brief Places, in the receiver's message request queue, a request for
   <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
   beats from the beginning of the receiver's performance.
 
-  
   <i>argCount</i> specifies the number of four-byte arguments to
   <i>aSelector</i>. If arg1 or arg2 are
 	  objects, set the retain: argument following them to TRUE to prevent
 	  the object from any chance of deallocation between this method being
 	  called, and the message being dispatched.
-*/
+ @param  aSelector is a SEL.
+ @param  toObject is an id.
+ @param  time is a double.
+ @param  argCount,... is an int
+ @param  arg1 is an object or any 4-byte type
+ @param  retainArg1 is a BOOL
+ @param  arg2 is an object or any 4-byte type
+ @param  retainArg2 is a BOOL
+ @return Returns an id.
+ 
+ */
 -    sel: (SEL) aSelector 
       to: (id) toObject 
-  atTime: (double) t 
+  atTime: (double) time
 argCount: (int) argCount
-    arg1: (id) arg1 retain: (BOOL) retainArg1
-    arg2: (id) arg2 retain: (BOOL) retainArg2;
+    arg1: (id) arg1 
+  retain: (BOOL) retainArg1
+    arg2: (id) arg2 
+  retain: (BOOL) retainArg2;
 /*!
-  @return Returns a double.
   @brief Same as <tt>[[MKConductor clockConductor] time]</tt>.
-
   
   Returns the current performance time, in seconds.  This doesn't
   include time that the performance has been paused, nor does it
   include the performance's delta time.  If a performance isn't in
   progress, MK_NODVAL is returned .  Use <b>MKIsNoDVal()</b> to check
   for this return value.
+ @return Returns a double.
 */
 + (double) timeInSeconds; 
 
 /*!
-  @return Returns a double.
   @brief Returns the receiver's notion of the current time in
   beats.
-
-  
+  @return Returns a double.
 */
 - (double) timeInBeats; 
 
 /*!
-  @return Returns an id.
   @brief Removes all message requests from the receiver's message request
   queue and returns the receiver.
 
-  Doesn't send any of the
-  messages.
+  Doesn't send any of the messages.
+ @return Returns an id.
 */
 - emptyQueue; 
 
 /*!
-  @return Returns a BOOL.
   @brief Returns <b>YES</b> if the receiver is currently sending a message
   from its message request queue.
-
-  
+ @return Returns a BOOL.
 */
 - (BOOL) isCurrentConductor;
 
@@ -869,33 +860,36 @@ argCount: (int) argCount
 			     argCount: (int) argCount, ...; 
 
 /*!
-  @param  aSelector is a SEL.
-  @param  toObject is an id.
-  @param  argCount is an int.
-  @param  arg1 is an id or any 4-byte type.
-  @param  retain is a BOOL.
-  @param  arg2 is an id or any 4-byte type.
-  @param  retain is a BOOL.
-  @return Returns a MKMsgStruct *.
   @brief Enqueues a request for <i>aSelector</i> to be sent to
   <i>toObject</i> immediately after the current (or next) performance
   ends.
 
   <i>argCount</i> specifies the number of four-byte arguments
   to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
-	  object types (eg int). If either is an object, specify retain:TRUE
-	  for that object, and it will receive retain and release messages, meaning
-	  that they should not become accidentally deallocated before the message
-	  containing them as arguments is dispatched.
-	  You can enqueue as many of
+  object types (eg int). If either is an object, specify retain:TRUE
+  for that object, and it will receive retain and release messages, meaning
+  that they should not become accidentally deallocated before the message
+  containing them as arguments is dispatched.
+  You can enqueue as many of
   these requests as you want; they're sent in the order that they were
   enqueued.  Returns a pointer to a <i>message request structure that
   can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
-*/
-+ (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector to: (id) toObject 
-                 argCount: (int) argCount
-                 arg1: (id) arg1 retain: (BOOL) retainArg1
-                 arg2: (id) arg2 retain: (BOOL) retainArg2;
+ @param  aSelector is a SEL.
+ @param  toObject is an id.
+ @param  argCount is an int.
+ @param  arg1 is an id or any 4-byte type.
+ @param  retainArg1 is a BOOL.
+ @param  arg2 is an id or any 4-byte type.
+ @param  retainArg2 is a BOOL.
+ @return Returns a MKMsgStruct *.
+ */
++ (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector 
+				   to: (id) toObject 
+			     argCount: (int) argCount
+				 arg1: (id) arg1 
+			       retain: (BOOL) retainArg1
+				 arg2: (id) arg2
+			       retain: (BOOL) retainArg2;
 
 /*!
   @param  aSelector is a SEL.
@@ -916,29 +910,28 @@ argCount: (int) argCount
 + (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector to: toObject argCount: (int) argCount, ...; 
 
 /*!
+  @brief Enqueues a request for <i>aSelector</i> to be sent to
+  <i>toObject</i> at the beginning of the next performance.
+  
+  <i>argCount</i> specifies the number of four-byte arguments
+  to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
+  object types (eg int). If either is an object, specify retain:TRUE
+  for that object, and it will receive retain and release messages, meaning
+  that they should not become accidentally deallocated before the message
+  containing them as arguments is dispatched.
+  You can enqueue as many of these
+  requests as you want; they're sent in the order that they were
+  enqueued.  Returns a pointer to a <i>message request structure that
+  can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
   @param  aSelector is a SEL.
   @param  toObject is an id.
   @param  argCount is an int.
   @param  arg1 is an id or any 4-byte type.
-  @param  retain is a BOOL.
+  @param  retainArg1 is a BOOL.
   @param  arg2 is an id or any 4-byte type.
-  @param  retain is a BOOL.
+  @param  retainArg2 is a BOOL.
   @return Returns a MKMsgStruct *.
-  @brief Enqueues a request for <i>aSelector</i> to be sent to
-  <i>toObject</i> at the beginning of the next performance.
-
-  
-  <i>argCount</i> specifies the number of four-byte arguments
-  to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
-	  object types (eg int). If either is an object, specify retain:TRUE
-	  for that object, and it will receive retain and release messages, meaning
-	  that they should not become accidentally deallocated before the message
-	  containing them as arguments is dispatched.
-	  You can enqueue as many of these
-  requests as you want; they're sent in the order that they were
-  enqueued.  Returns a pointer to a <i>message request structure that
-  can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
-*/
+ */
 + (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector
 				    to: (id) toObject 
 			      argCount: (int) argCount
@@ -948,54 +941,49 @@ argCount: (int) argCount
 				retain: (BOOL) retainArg2;
 
 /*!
-  @param  delegate is an id.
-  @return Returns an id.
   @brief Sets the receiver's delegate object to <i>delegate</i> and returns
   the receiver.
 
   The delegate is sent <b>hasPaused:</b> and
   <b>hasResumed:</b> as the receiver is paused and resumed,
   respectively. 
+ @param  delegate is an id.
+ @return Returns an id.
 */
-- (void) setDelegate: (id) object;
+- (void) setDelegate: (id) delegate;
 
 /*!
+  @brief Returns the receiver's delegate object, as set through the <b>setDelegate:</b> method.
   @return Returns an id.
-  @brief Returns the receiver's delegate object, as set through the
-  <b>setDelegate:</b> method.
-
-  
 */
 - delegate;
 
 /*!
-  @param  delegate is an id.
-  @return Returns an id.
   @brief Sets the receiver's delegate object to <i>delegate</i> and returns
   the receiver.
 
   The delegate is sent <b>hasPaused:</b> and
   <b>hasResumed:</b> as the receiver is paused and resumed,
   respectively. 
+ @param  delegate is an id.
+ @return Returns an id.
 */
-+ (void) setDelegate: object;
++ (void) setDelegate: delegate;
 
 /*!
-  @return Returns an id.
   @brief Returns the receiver's delegate object, as set through the
   <b>setDelegate:</b> method.
-
-  
+ @return Returns an id.
 */
 + delegate;
 
 /*!
-  @return Returns an id.
   @brief Returns a List of currently active Performers that are assigned to
   this MKConductor.
 
   The NSMutableArray is <i>not</i> copied and
   should not be freed or altered.
+ @return Returns an id.
 */
 - activePerformers;
 

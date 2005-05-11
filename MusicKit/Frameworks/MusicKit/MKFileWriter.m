@@ -46,30 +46,7 @@
   Portions Copyright (c) 1994 Stanford University 
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.8  2004/12/06 18:27:35  leighsmith
-  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
-
-  Revision 1.7  2004/10/25 16:22:50  leighsmith
-  Updated for new ivar name
-
-  Revision 1.6  2002/01/29 16:07:54  sbrandon
-  simplified retain/autorelease usage (not bugfixes)
-
-  Revision 1.5  2002/01/15 12:17:33  sbrandon
-  Fixed up autorelease/release errors with stream and filename. Potential
-  crashers.
-
-  Revision 1.4  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2000/04/16 04:09:32  leigh
-  comment cleanup
-
-  Revision 1.2  1999/07/29 01:16:36  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to commit to CVS repository:
 
   10/26/89/daj - Added instance fileExtension method for binary scorefile
                  support.
@@ -95,15 +72,14 @@ Modification history:
 #define VERSION2 2
 #define VERSION3 3 /* Changed Nov 7, 1992 */
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKFileWriter class])
       return;
-    [MKFileWriter setVersion:VERSION3];//sb: suggested by Stone conversion guide (replaced self)
-    return;
+    [MKFileWriter setVersion: VERSION3];//sb: suggested by Stone conversion guide (replaced self)
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* TYPE: Archiving; Writes object to archive file.
      You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
@@ -111,29 +87,29 @@ Modification history:
      and timeShift. 
      */
 {
-    [super encodeWithCoder:aCoder];
+    [super encodeWithCoder: aCoder];
     NSAssert((sizeof(MKTimeUnit) == sizeof(int)), @"write: method error.");
-    [aCoder encodeValuesOfObjCTypes:"i@d",&timeUnit,&filename,&timeShift];//sb: was i*d
-    [aCoder encodeValuesOfObjCTypes:"c",&compensatesDeltaT];
+    [aCoder encodeValuesOfObjCTypes: "i@d", &timeUnit, &filename, &timeShift]; //sb: was i*d
+    [aCoder encodeValuesOfObjCTypes: "c", &compensatesDeltaT];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
   /* TYPE: Archiving; Reads object from archive file.
      You never send this message directly.  
      Should be invoked via NXReadObject(). 
      See write:. */
 {
     int version;
-    [super initWithCoder:aDecoder];
-    version = [aDecoder versionForClassName:@"MKFileWriter"];
+    [super initWithCoder: aDecoder];
+    version = [aDecoder versionForClassName: @"MKFileWriter"];
     if (version >= VERSION2)
-        [aDecoder decodeValuesOfObjCTypes:"i@d",&timeUnit,&filename,&timeShift];//sb: was i*d
+        [aDecoder decodeValuesOfObjCTypes: "i@d", &timeUnit, &filename, &timeShift];//sb: was i*d
     if (version >= VERSION3)
-      [aDecoder decodeValuesOfObjCTypes:"c",&compensatesDeltaT];
+      [aDecoder decodeValuesOfObjCTypes: "c", &compensatesDeltaT];
     return self;
 }
 
--init     
+- init     
   /* Does instance initialization. Sent by superclass on creation. 
      If subclass overrides this method, it must send [super init]
      before setting its own defaults. */
@@ -145,7 +121,7 @@ Modification history:
     return self;
 }
 
-+(NSString *)fileExtension
++ (NSString *) fileExtension
   /* Returns default file extension for files managed by the subclass. The
      default implementation returns NULL. Subclass may override this to
      specify a default file extension. */
@@ -153,7 +129,7 @@ Modification history:
     return nil;
 }
 
--(NSString *)fileExtension
+- (NSString *) fileExtension
   /* Returns default file extension for files managed by the subclass. The
      default implementation just invokes the fileExtension method.
      A subclass can override this to provide a fileExtension on an instance-
@@ -164,7 +140,7 @@ Modification history:
     return [[self class] fileExtension]; 
 }
 
-- (void)dealloc
+- (void) dealloc
 {
     [filename release];
     [super dealloc];
@@ -213,7 +189,7 @@ Modification history:
     return self;
 }
 
--(NSMutableData *)stream
+- (NSMutableData *) stream
   /* TYPE: Querying; Returns the receiver's file pointer.
    * Returns the file pointer associated with the receiver
    * or NULL if it isn't set.
@@ -226,7 +202,7 @@ Modification history:
     return [[stream retain] autorelease];
 }
 
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* The returned value is a copy of the receiver, with a copy of the filename
      and stream set to NULL. */
 {
@@ -236,7 +212,7 @@ Modification history:
     return newObj;
 }
 
--(NSString *)file
+- (NSString *) file
   /* TYPE: Querying; Returns the name set through setFile:.
    * If the file associated with the receiver was set through 
    * setFile:,
@@ -246,9 +222,7 @@ Modification history:
     return [[filename retain] autorelease];
 }
 
-
-
--(double)timeShift 
+- (double) timeShift 
   /* TYPE: Accessing time; Returns the receiver's performance begin time.
    * Returns the receiver's performance begin time, as set through
    * setTimeShift:.
@@ -257,7 +231,7 @@ Modification history:
 	return timeShift;
 }
 
--setTimeShift:(double)shift
+- setTimeShift: (double) shift
   /* TYPE: Accessing time; Delays performance for shift beats.
    * Sets the begin time of the receiver;
    * the receiver's performance is delayed by shift beats.
@@ -271,7 +245,7 @@ Modification history:
     return self;
 }		
 
--finishFile
+- finishFile
   /* TYPE: Accessing; Cleans up after a performance.
    * This can be overridden by a subclass to perform any cleanup
    * needed after a performance.  You shouldn't 
@@ -285,7 +259,7 @@ Modification history:
     return self;
 }
 
--initializeFile
+- initializeFile
   /* TYPE: Accessing; Prepares the file for writing.
    * This can be overriden by a subclass to perform
    * file initialization, such as writing a file header..
@@ -299,13 +273,13 @@ Modification history:
     return self;
 }
 
--firstNote:aNote
+- firstNote: (MKNote *) aNote
   /* You never send this message.  Overrides superclass method to initialize
      file. */
 {
     if (filename) {
         [stream autorelease]; /* get rid of old one */
-        stream = [[NSMutableData alloc] initWithCapacity:0];
+        stream = [[NSMutableData alloc] initWithCapacity: 0];
     }
 /* sb: now defers writing and opening until finished */
 /*      _MKOpenFileStream(filename,&_fd,NX_WRITEONLY,
@@ -317,7 +291,7 @@ Modification history:
     return self;
 }
 
--afterPerformance
+- afterPerformance
     /* You never send this message. Overrides superclass method to finish up */
 {
     [self finishFile];

@@ -827,7 +827,7 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   @return Returns a NSString.
   @see -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b> 
 */
-+ (NSString *) parNameForTag: (int) aPar;
++ (NSString *) parNameForTag: (int) aTag;
 
 /*!
   @brief Sets the value of the parameter identified by <i>parameterTag</i> to
@@ -876,11 +876,11 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   If <i>anEnvelope</i>is <b>nil</b> , this method is the same as 
   <b>[self removePar:</b> <i>parameterTag</i><b>]</b>.
   @param  parameterTag is an int.
-  @param  anEnvelope is an id.
+  @param  anEnvelope is an id. TODO Should be an MKEnvelope.
   @return Returns <b>self</b>.
   @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsEnvelope:</b>
 */
-- setPar: (int) parameterTag toEnvelope: anEnvelope; 
+- setPar: (int) parameterTag toEnvelope: (id) anEnvelope; 
 
 /*!
   @brief Sets the value of the parameter identified by <i>parameterTag</i> to
@@ -893,7 +893,7 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   @return Returns <b>self</b>.
   @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsWaveTable:</b>
 */
-- setPar: (int) parameterTag toWaveTable: aWaveTable; 
+- setPar: (int) parameterTag toWaveTable: (id) aWaveTable; 
 
 /*!
   @brief Sets the value of the parameter identified by <i>parameterTag</i> to
@@ -926,7 +926,7 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   @return Returns <b>self</b>.
   @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsObject:</b> 
 */
-- setPar: (int) parameterTag toObject: anObject; 
+- setPar: (int) parameterTag toObject: (id) anObject; 
  /* 
   * Sets the parameter par to the object anObj.  The object's class must
   * implement the methods writeASCIIStream: and readASCIIStream: (in order

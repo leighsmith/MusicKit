@@ -35,16 +35,11 @@
 
 /*!
   @class MKMidi
-  @brief
-
-A MKMidi object lets you communicate with a MIDI synthesizer (attached
-to a serial port at the back of a NeXT computer, to a MPU-401
-compatible card installed in a P.C., to a MIDI device defined within 
-Microsoft Windows DirectMusic or to a MIDI device defined within Apple
-MacOS CoreMIDI) by providing a simple interface
-to the MIDI device driver.  The MKMidi class also provides a mechanism
-that automatically converts MIDI messages into MKNote objects and vice
-versa, allowing you to incorporate MIDI data into a MusicKit
+  @brief A MKMidi object lets you communicate with a MIDI synthesizer by providing a
+  simple interface to the MIDI device driver.
+ 
+The MKMidi class also provides a mechanism that automatically converts MIDI messages
+into MKNote objects and vice versa, allowing you to incorporate MIDI data into a MusicKit
 application with a minimum of effort.
 
 While inheriting neither from MKPerformer nor MKInstrument, the MKMidi
@@ -63,25 +58,25 @@ an external synthesizer, it must be sent the <b>open</b> and
 <b>run</b> messages:
 
 <ul>
-<li>	<b>open</b> establishes communication between the object and the MIDI driver. 
-<li>	<b>run</b> starts the driver's clock ticking.  
+<li>	<b>open</b> establishes communication between the object and the MIDI driver.</li> 
+<li>	<b>run</b> starts the driver's clock ticking.</li>
 </ul>
 
 Balancing these two methods are <b>stop</b> and <b>close</b>:
 
 <ul>
-<li>	<b>stop</b> stops the driver's clock.
-<li>	<b>close</b> breaks communication between the object and the MIDI driver.
+<li>	<b>stop</b> stops the driver's clock.</li>
+<li>	<b>close</b> breaks communication between the object and the MIDI driver.</li>
 </ul>
 
 The state of a MKMidi object with respect to the foregoing methods is
 described in its <b>deviceStatus</b> instance variable:
 
 <ul>
-<li>	MK_devOpen.  The MKMidi object is open but not running.  
-<li>	MK_devRunning.  The object is open and running.  
-<li>	MK_devStopped.  The object has been running, but is now stopped.  
-<li>	MK_devClosed.  The object is closed.
+<li>	MK_devOpen.  The MKMidi object is open but not running.</li>
+<li>	MK_devRunning.  The object is open and running.</li>
+<li>	MK_devStopped.  The object has been running, but is now stopped.</li>
+<li>	MK_devClosed.  The object is closed.</li>
 </ul>
 
 (Note that these are the same methods and MKDeviceStatus values used
@@ -111,29 +106,29 @@ As MKMidi receives MIDI messages it creates MKNote objects following these rules
 <ul>
 <li>	For each MIDI message that has a Note Number, a MKNote object is created and
   given a noteTag that corresponds to the combination of the message's Channel 
-  Number and Note Number.
+  Number and Note Number.</li>
 
 <li>	If multiple Note Offs are received (for a particular Channel/Note number) without
   intervening Note Ons, only the first Note Off is converted into a MKNote object. 
-  The others are suppressed.
+  The others are suppressed.</li>
 
-<li>	A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.
+<li>	A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.</li>
 
 <li>	If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in
-  the corresponding MKNote object is omitted.
+  the corresponding MKNote object is omitted.</li>
 </ul>
  
 In sending messages to an external synthesizer, MKMidi converts MKNote objects to MIDI messages:
 
 <ul>
 <li>	If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off
-  is generated on the same channel and with the same Key Number as those for the Note Ons.
+  is generated on the same channel and with the same Key Number as those for the Note Ons.</li>
 
 <li>	If two successive noteOns have the same noteTag but different MK_keyNum values, the second
-  Note On message is followed by a Note Off with the Key Number of the first Note On.  
+  Note On message is followed by a Note Off with the Key Number of the first Note On.</li>  
   This is to accommodate MIDI Mono Mode.
 
-<li>	A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.
+<li>	A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.</li>
 </ul>
 
 A number of parameters are provided to accommodate MIDI messages.  These are described in
@@ -149,6 +144,10 @@ further information on MIDI time code, see
 the appendix titled MIDI Time Code in the MusicKit
 </a>.
 
+The MIDI synthesizer is attached to a serial port at the back of a NeXT computer,
+to a MPU-401 compatible card installed in a P.C., to a MIDI device defined within 
+Microsoft Windows DirectMusic or to a MIDI device defined within Apple MacOS X CoreMIDI.
+  
 USING MIDI ON NeXT HARDWARE
 
 See <b>Administration/MidiHardwareInfo.rtf</b>
@@ -438,10 +437,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 - (BOOL) outputIsTimed;
 
 /*!
-  @param  channel is an unsigned MIDI channel.
-  @return Returns an MKNoteSender instance.
-  @brief Returns the MKNoteSender corresponding to channel <i>n</i>, or
-  <b>nil</b> if none.
+  @brief Returns the MKNoteSender corresponding to channel <i>n</i>, or <b>nil</b> if none.
 
   A MKMidi object's MKNoteSenders are
   numbered such that 0 is the MKNoteSender that processes
@@ -451,9 +447,10 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   determine which midi channel to send the note on. If no MK_midiChan
   parameter is present,  the default is channel 1. This MKNoteReceiver
   is also commonly used for MIDI channel mode and system messages.
-  
+  @param  channel is an unsigned MIDI channel.
+  @return Returns an MKNoteSender instance.
 */
-- (MKNoteSender *) channelNoteSender: (unsigned) n;
+- (MKNoteSender *) channelNoteSender: (unsigned) channel;
 
 /*!
   @param  channel is an unsigned MIDI channel.

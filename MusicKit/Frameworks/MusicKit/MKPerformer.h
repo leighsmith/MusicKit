@@ -3,7 +3,7 @@
   Defined In: The MusicKit
 
   Description:
-    Full description is in the headerdoc below.  
+    Full description is in the class description below.  
 
   Original Author: David A. Jaffe
 
@@ -14,11 +14,10 @@
 */
 /*!
   @class MKPerformer
-  @brief
-
-MKPerformer is an abstract class that defines a mechanism for
-performing MKNotes during a MusicKit performance.  Each subclass of
-MKPerformer implements the <b>perform</b> method to define how it
+  @brief MKPerformer is an abstract class that defines a mechanism for
+performing MKNotes during a MusicKit performance.  
+ 
+Each subclass of MKPerformer implements the <b>perform</b> method to define how it
 obtains and performs MKNotes.
 
 During a performance, a MKPerformer receives a series of
@@ -150,6 +149,7 @@ sure that all MKSynthInstrument  and MIDI controllers are up to
 date.  (This is sometimes called "chasing controller values" in MIDI
 parlance.)	
 </LI>
+</UL>
  
 Here is an example of a simple, but complete, Time
 Code-conforming MKPerfomer.  This example is a simplified version of
@@ -221,38 +221,27 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 - (NSArray *) noteSenders; 
 
 /*!
+  @brief Returns YES if <i>aNoteSender</i> is a member of the receiver's MKNoteSender NSArray.
   @param  aNoteSender is an id.
   @return Returns a BOOL.
-  @brief Returns YES if <i>aNoteSender</i> is a member of the receiver's
-  MKNoteSender NSArray.
-
-  
 */
 - (BOOL) isNoteSenderPresent: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @return Returns an id.
   @brief Sends -<b>disconnectAllReceivers</b> to each of the object's MKNoteSenders.
-
-  
+  @return Returns an id.
 */
 - disconnectNoteSenders;
 
 /*!
-  @return Returns an id.
   @brief Disconnects and releases the receiver's MKNoteSenders.
-
-  Returns the
-  receiver.
+  @return Returns the receiver.
 */
 - releaseNoteSenders; 
 
 /*!
-  @return Returns an id.
   @brief Removes the receiver's MKNoteSenders (but doesn't free them).
-
-  
-  Returns the receiver.
+  @return Returns the receiver.
 */
 - removeNoteSenders; 
 
@@ -310,7 +299,6 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 - (MKConductor *) conductor; 
 
 /*!
-  @return Returns an id.
   @brief You never invoke this method directly; it's invoked automatically
   from the <b>activate</b> method.
 
@@ -320,6 +308,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   should be done here.  If <b>activateSelf</b> returns <b>nil</b>, the
   receiver is deactivated.  The default does nothing and returns the
   receiver.
+  @return Returns an id.
 */
 - activateSelf; 
 
@@ -328,8 +317,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @brief This is a subclass responsibility expected to send a MKNote and then
   set the value of <b>nextPerform</b>.
 
-  The return value is
-  ignored.
+  The return value is ignored.
 */
 - perform; 
 
@@ -338,7 +326,6 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @return Returns an id.
   @brief Shifts the receiver's performance time by <i>timeShift</i> beats.
 
-  
   The receiver must be inactive.  Returns <b>nil</b> if the receiver
   is currently in performance, otherwise returns the
   receiver.
@@ -359,25 +346,19 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 
 /*!
   @return Returns a double.
-  @brief Returns the receiver's time shift value.
-
-  
+  @brief Returns the receiver's time shift value.  
 */
 - (double) timeShift;
 
 /*!
   @return Returns a double.
   @brief Returns the receiver's duration value.
-
-  
 */
 - (double) duration; 
 
 /*!
   @return Returns an int.
   @brief Returns the receiver's status.
-
-  
 */
 - (int) status; 
 
@@ -385,8 +366,6 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @return Returns an int.
   @brief Returns the number of <b>perform</b> messages the receiver has
   recieved in the current performance.
-
-  
 */
 - (int) performCount; 
 
@@ -433,8 +412,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @return Returns an id.
   @brief Suspends the receiver's performance and returns the receiver.
 
-  To
-  free a paused MKPerformer during a performance, you should first
+  To free a paused MKPerformer during a performance, you should first
   send it the <b>deactivate</b> message.  Also sends [delegate hasPaused:self];
 */
 - pause; 
@@ -444,8 +422,6 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @return Returns an id.
   @brief Like pause, but also enqueues a resume message to be sent the specified
   number of beats into the future.
-
-  
 */
 -pauseFor: (double) beats;
 
@@ -510,18 +486,16 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 - (double) lastTimeTag;
 
 /*!
-  @brief Assigns a delegate to receive messages described in MKPerformerDelegate.h
-  @param object The receiving delegate object.
-  
-  object is not retained.
+  @brief Assigns a delegate to receive messages described in MKPerformerDelegate.h. 
+ 
+  The object is not retained.
+  @param object The receiving delegate object. 
  */
 - (void) setDelegate: (id) object;
 
 /*!
-  @return Returns an id.
   @brief Returns the receiver's delegate, if any.
-
-  
+  @return Returns an id.
 */
 - delegate;
 
@@ -544,7 +518,6 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @brief Shifts the MKPerformer's next scheduled invocation of <b>perform</b>
   to <i>time</i>, which is in the receiver's MKConductor's time base.
 
-  
   If <i>time</i> is in the past, reschedules the MKPerformer to invoke
   <b>perform</b>immediately.
 */
@@ -553,25 +526,21 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 /*!
   @brief  You never send this message directly.
 
-  
- Archives noteSender List, timeShift, and duration. Also optionally 
- archives conductor and delegate using NXWriteObjectReference().
+ Archives noteSender array, timeShift, and duration. Also optionally 
+ archives conductor and delegate.
  */
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 
 /*! 
   @brief You never send this message directly.
 
-  
   Note that the status of an unarchived MKPerformer is always MK_inactive.
  */
 - (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
+  @brief Returns YES if receiver's status is not MK_inactive.  
   @return Returns a BOOL.
-  @brief Returns YES if receiver's status is not MK_inactive.
-
-  
 */
 - (BOOL) inPerformance;
 

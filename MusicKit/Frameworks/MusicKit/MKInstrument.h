@@ -39,11 +39,10 @@
 */
 /*!
   @class MKInstrument
-  @brief
-
-MKInstrument is an abstract class that defines the general mechanism for
-receiving and realizing MKNotes during a MusicKit performance.  An MKInstrument
-receives MKNotes through its MKNoteReceivers, auxilliary objects that are
+  @brief MKInstrument is an abstract class that defines the general mechanism for
+  receiving and realizing MKNotes during a MusicKit performance.
+ 
+An MKInstrument receives MKNotes through its MKNoteReceivers, auxilliary objects that are
 typically connected to a MKPerformer's MKNoteSenders.  The manner in which an
 MKInstrument realizes MKNotes is defined in its implementation of
 <b>realizeNote:fromNoteReceiver:</b>.  This method is automatically invoked by
@@ -93,7 +92,8 @@ realize MKNotes on an external MIDI synthesizer.
 
 @interface MKInstrument: NSObject <NSCoding>
 {
-    NSMutableArray *noteReceivers; /* The object's array of MKNoteReceivers. */
+    /*! @var noteReceivers The object's array of MKNoteReceivers. */
+    NSMutableArray *noteReceivers;
 
 @protected
     BOOL noteSeen;
