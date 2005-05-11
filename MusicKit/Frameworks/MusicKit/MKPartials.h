@@ -24,15 +24,14 @@
 */
 /*!
   @class MKPartials
-  @brief
-
-The MKPartials class lets you define a sound waveform by adding together a number
-of sine wave components.  MKPartials are used to provide musical timbres in DSP
-synthesis, primarily by the MKSynthPatch classes that provide wave table synthesis
-- classes such as Wave1vi and DBWave1vi, as well as classes that provide
-waveshaping synthesis - class such as Shape.  MKPartials' sister class, MKSamples,
-lets you define a waveform (or waveshaping table) as a series of sound samples,
-through association with a Sound object or soundfile.
+  @brief The MKPartials class lets you define a sound waveform by adding together a number
+  of sine wave components. 
+ 
+MKPartials are used to provide musical timbres in DSP synthesis, primarily by the
+MKSynthPatch classes that provide wave table synthesis - classes such as Wave1vi and DBWave1vi,
+as well as classes that provide waveshaping synthesis - class such as Shape.
+MKPartials' sister class, MKSamples, lets you define a waveform (or waveshaping table) as a
+series of sound samples, through association with a Snd object or soundfile.
 
 Each of the sine waves in a MKPartials object is characterized by a frequency
 ratio, an amplitude ratio, and an initial phase.  The frequency ratios are taken
@@ -65,7 +64,7 @@ object.
 <tt>
 double freqs  = {1.0, 2.0, 3.0 };
 double amps  = {1.0, 0.5, 0.25 };
-id aPartials  = [MKPartials new];
+MKPartials *aPartials  = [MKPartials new];
 
 [aPartials setPartialCount: 3
   freqRatios: freqs
@@ -107,7 +106,7 @@ a <b>waveTable</b> statement and then referred to by name in subsequent MKNotes.
 Without a name, a MKPartials object is defined in-line in every MKNote statement
 that refers to it.
 
-MKPartials objects are automatically created by the Music Kit in a number of
+MKPartials objects are automatically created by the MusicKit in a number of
 circumstances, such as when reading a Scorefile.  The function
 <b>MKSetPartialsClass()</b> allows you to specify that your own subclass of
 MKPartials be used when Partialss are automatically created.  You retrieve the
@@ -126,8 +125,8 @@ to get the data for the DSP with the default table length and scaling, use
 set of methods of the form <b>dataDSPAsOscTable</b> is provided.  These methods
 are synonyms for the inherited methods.  
 
-For more information on waveshaping synthesis, see the <b>Shape</b>and
-<b>Shapev</b>  MKSynthPatches and their documentation.   
+For more information on waveshaping synthesis, see the <b>Shape</b> and
+<b>Shapev</b> MKSynthPatches and their documentation.   
 */
 #ifndef __MK_Partials_H___
 #define __MK_Partials_H___
@@ -140,13 +139,13 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
 
 @interface MKPartials : MKWaveTable 
 {
-    double *ampRatios;   /* Array of amplitudes. */
-    double *freqRatios;  /* Array of frequencies. */
-    double *phases;      /* Arrays of initial phases. */
-    int partialCount;    /* Number of points in each array */
-    double defaultPhase; /* Default phase. If no phase-array, this is phase */
-    double minFreq;      /* Obsolete. See MKTimbre. */
-    double maxFreq;      /* Obsolete. See MKTimbre. */
+    double *ampRatios;   /*! Array of amplitudes. */
+    double *freqRatios;  /*! Array of frequencies. */
+    double *phases;      /*! Arrays of initial phases. */
+    int partialCount;    /*! Number of points in each array */
+    double defaultPhase; /*! Default phase. If no phase-array, this is phase */
+    double minFreq;      /*! Obsolete. See MKTimbre. */
+    double maxFreq;      /*! Obsolete. See MKTimbre. */
 
 @private
     BOOL _ampArrayFreeable,_freqArrayFreeable,_phaseArrayFreeable;
@@ -185,38 +184,35 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
   useful for optimizing lookup table sizes in determining if the receiver
   will generate a waveform that will fold over.
 */
--(double)highestFreqRatio;
+- (double) highestFreqRatio;
 
 /*!
-  @param  count is an int.
-  @param  freqRats is a double *.
-  @param  ampRats is a double *.
-  @param  phases is a double *.
-  @param  defaultPhase is a double.
-  @return Returns an id.
   @brief Defines the receiver's sine wave components.
 
-  <i>count</i> is the
-  number of sine waves components; freqRats<i>,</i>ampRats, and
-  <b>phases</b>  are pointers to arrays that define the frequency
+  <b>freqRatios</b>, <b>ampRatios</b>, and
+  <b>phases</b> are pointers to arrays that define the frequency
   ratios, amplitude ratios, and initial phases, respectively, of the
   sine wave components (the arrays are copied into the receiver).  The
   elements of the arrays are matched by index order: The nth sine wave
   is configured from the nth element in each array.
   
   If <i>phases</i> is NULL, the value of <i>defaultPhase</i> is used as
-  the initial phase for all the components.  If <i>freqRats</i> or <i>ampRats</i>
+  the initial phase for all the components.  If <i>freqRatios</i> or <i>ampRatios</i>
   is NULL, the corresponding extant array, if any, is unchanged.
   
   Note that this method sets the <b>length</b> instance variable to 0, forcing
   a recompute in a subsequent data array retrieval (through the <b>dataDSP:...</b>
   and <b>dataDouble:...</b> methods) as explained in the MKWaveTable class.
-  
-  Returns the receiver.
-*/
+ @param  count is the number of sine wave components.
+ @param  freqRatios is a double *.
+ @param  ampRatios is a double *.
+ @param  phases is a double *.
+ @param  defaultPhase is a double.
+ @return Returns the receiver.
+ */
 - setPartialCount: (int) count
-       freqRatios: (double *) fRatios
-        ampRatios: (double *) aRatios
+       freqRatios: (double *) freqRatios
+        ampRatios: (double *) ampRatios
            phases: (double *) phases
    orDefaultPhase: (double) defaultPhase;
  /* 

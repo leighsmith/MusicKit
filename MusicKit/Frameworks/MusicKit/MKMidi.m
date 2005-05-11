@@ -993,6 +993,8 @@ static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *ev
         return;
     }
     ptr = MIDIINPTR(receivingMidi);
+    if(receivingMidi->displayReceivedMIDI)
+	NSLog(@"MKMidi received %d bytes: first is %02X\n", count, events->byte);
     for (incomingDataCount = count; incomingDataCount--; events++) {
 	if ((statusByte = parseMidiByte(events->byte, ptr))) {
 	    if (statusByte == MIDI_SYSEXCL)
@@ -1066,7 +1068,7 @@ void handleCallBack(void *midiObj)
     errorMessage = INPUT_ERROR;
 
     receivingMidi = (MKMidi *) midiObj;
-    //NSLog(@"receivingMIDI %@\n", receivingMidi);
+    // NSLog(@"receivingMIDI %@\n", receivingMidi);
     result = MKMDHandleReply(NULL, &recvStruct);        /* This gets data */
     if (result != MKMD_SUCCESS) {
 	MKErrorCode(MK_machErr, errorMessage, midiDriverErrorString(result), @"midiIn");
@@ -1405,7 +1407,8 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 	// TODO Maybe we don't want this here, in case we ever want to use MKMidi without MKNotes.
 	_MKCheckInit(); 
 	_MKClassOrchestra(); /* Force find-class here */
-	ioMode = MKMidiInputOutput;	
+	ioMode = MKMidiInputOutput;
+	displayReceivedMIDI = [[NSUserDefaults standardUserDefaults] boolForKey: @"MKDisplayReceivedMIDI"];
     }
     return self;
 }

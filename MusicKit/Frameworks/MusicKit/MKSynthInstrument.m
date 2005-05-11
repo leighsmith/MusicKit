@@ -38,59 +38,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.17  2004/12/06 18:27:37  leighsmith
-  Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
-
-  Revision 1.16  2004/10/25 16:25:12  leighsmith
-  Removed dodgy override of release and retain and replaced with dealloc and an assertion message if dealloc occurs while in performance. If so, we need to tell the wold loudly about it.
-
-  Revision 1.15  2002/02/26 13:18:39  sbrandon
-  fixed obscure bug to do with SynthPatchLists
-
-  Revision 1.14  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.13  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.12  2001/08/27 19:57:16  leighsmith
-  Comment cleanup
-
-  Revision 1.11  2001/05/14 17:26:51  leighsmith
-  Correctly typed orchestra to respond to _MKClassOrchestra()
-
-  Revision 1.10  2001/03/06 21:50:23  leigh
-  Uses new method name for loading Patches
-
-  Revision 1.9  2000/11/25 22:33:12  leigh
-  doco cleanup
-
-  Revision 1.8  2000/07/22 00:33:37  leigh
-  Minor doco and typing cleanups.
-
-  Revision 1.7  2000/05/27 19:12:56  leigh
-  Converted taggedPatches and controllerTable to NSMutableDictionary from HashTable
-
-  Revision 1.6  2000/05/24 03:46:23  leigh
-  Removed use of Storage, replacing with SynthPatchList object
-
-  Revision 1.5  2000/04/16 04:23:47  leigh
-  Comment cleanup
-
-  Revision 1.4  2000/04/07 18:45:42  leigh
-  Upgraded logging to NSLog
-
-  Revision 1.3  1999/09/10 02:46:06  leigh
-  Comments cleanup, removed warnings, disabled synthPatchClass initialize
-
-  Revision 1.2  1999/07/29 01:16:43  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to commit to CVS repository:
 
   09/19/89/daj - Changed to use MKNote C functions for efficiency.
   12/15/89/daj - Changed _noteOffAndScheduleEnd: to noteOff:.
@@ -331,12 +282,12 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     return self;
 }
 
--(BOOL)doesRetainUpdates
+- (BOOL) doesRetainUpdates
 {
     return retainUpdates;
 }
 
--preemptSynthPatchFor:aNote patches:firstPatch
+- preemptSynthPatchFor: (MKNote *) aNote patches: (MKSynthPatch *) firstPatch
   /* You never send this message. Rather, 
      this method is invoked when we are in manual allocation mode and 
      all MKSynthPatches are in use or we are in auto allocation mode
@@ -479,7 +430,7 @@ static void alternatePatchMsg(void)
     NSLog(@"(No patch of requested template was available. Using alternative template.");
 }
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* Does MKSynthPatch allocation. 
      
      The entire algorithm is given below. The new steps are so-indicated:
@@ -824,7 +775,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
     return self;
 }
 
--setSynthPatchClass:aSynthPatchClass orchestra:anOrch
+- setSynthPatchClass: (Class) aSynthPatchClass orchestra: (Class) anOrch
   /* Set synthPatchClass as specified. If aSynthPatchClass doesn't inherit 
      from MKSynthPatch, does nothing and returns nil. Otherwise, returns self.
      Note: This does NOT allow you to supply a different synthPatchClass for
@@ -833,18 +784,18 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
 {
     if (aSynthPatchClass == synthPatchClass) /* Avoid needless thrashing */
 	return self;
-    if (!_MKInheritsFrom(aSynthPatchClass,[MKSynthPatch class]))
+    if (!_MKInheritsFrom(aSynthPatchClass, [MKSynthPatch class]))
 	return nil;
     if (!anOrch)
-      anOrch = [aSynthPatchClass orchestraClass];
+	anOrch = [aSynthPatchClass orchestraClass];
     if (anOrch != orchestra)                 /* Changing orchestra? */
-	[self _disconnectOnOrch:orchestra];  /* Hard reset */
+	[self _disconnectOnOrch: orchestra];  /* Hard reset */
     else {
 	deallocIdleVoices(self,nil);    /* Release idle patches of old type. */
 	orphanRunningVoices(self);      /* Put still-running patches on orphan
 					   list. */
 	_patchLists = initPatchLists(_patchLists);
-	reinstallOrphans(self,aSynthPatchClass);
+	reinstallOrphans(self, aSynthPatchClass);
     } 
     allocMode = MK_AUTOALLOC;
     synthPatchClass = aSynthPatchClass;
@@ -856,12 +807,12 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
     return self;
 }
 
--setSynthPatchClass:aSynthPatchClass
+- setSynthPatchClass: (Class) aSynthPatchClass
 {
-    return [self setSynthPatchClass:aSynthPatchClass orchestra:nil];
+    return [self setSynthPatchClass: aSynthPatchClass orchestra: nil];
 }
 
--synthPatchClass
+- synthPatchClass
   /* Returns synthPatchClass */
 {
     return synthPatchClass;

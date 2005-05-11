@@ -42,53 +42,20 @@
   Portions Copyright (c) 1994 Stanford University  
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
- Modification history:
-
-  $Log$
-  Revision 1.11  2005/05/09 15:52:54  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.10  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.9  2001/05/14 17:26:51  leighsmith
-  Correctly typed orchestra to respond to _MKClassOrchestra()
-
-  Revision 1.8  2000/11/25 23:05:09  leigh
-  Enforced ivar privacy
-
-  Revision 1.7  2000/07/22 00:33:37  leigh
-  Minor doco and typing cleanups.
-
-  Revision 1.6  2000/05/27 19:12:56  leigh
-  Converted taggedPatches and controllerTable to NSMutableDictionary from HashTable
-
-  Revision 1.5  2000/05/24 03:46:23  leigh
-  Removed use of Storage, replacing with SynthPatchList object
-
-  Revision 1.4  1999/09/10 02:47:03  leigh
-  Comments update
-
-  Revision 1.3  1999/07/29 01:43:30  leigh
-  Added CVS logs
-
-*/
 /*!
   @class MKSynthInstrument
-  @brief
-
-A MKSynthInstrument realizes MKNotes by synthesizing them on the DSP.  It does this
-by forwarding each MKNote it receives to a MKSynthPatch object, which translates the
-parameter information in the MKNote into DSP instructions.  A MKSynthInstrument can
-manage any number of MKSynthPatch objects (limited by the speed and size of the
-DSP).  However, all of its MKSynthPatches are instances of the same MKSynthPatch
-subclass.  You assign a particular MKSynthPatch subclass to a MKSynthInstrument
-through the latter's <b>setSynthPatchClass:</b> method.  A MKSynthInstrument can
-change its MKSynthPatch at any time, even during a performance.
+  @brief An MKSynthInstrument realizes MKNotes by synthesizing them on the DSP.
+ 
+It does this by forwarding each MKNote it receives to a MKSynthPatch object, which
+translates the parameter information in the MKNote into DSP instructions.
+A MKSynthInstrument can manage any number of MKSynthPatch objects (limited by the
+speed and size of the DSP).  However, all of its MKSynthPatches are instances of the
+same MKSynthPatch subclass.  You assign a particular MKSynthPatch subclass to a
+MKSynthInstrument through the latter's <b>setSynthPatchClass:</b> method.
+A MKSynthInstrument can change its MKSynthPatch at any time, even during a performance.
 
 Each MKSynthPatch managed by the MKSynthInstrument corresponds to a particular
-noteTag.  As the MKSynthInstrument receives MKNotes, it compares the Note's noteTag
+noteTag.  As the MKSynthInstrument receives MKNotes, it compares the MKNote's noteTag
 to the noteTags of the MKSynthPatches that it's managing.  If a MKSynthPatch already
 exists for the noteTag, the MKNote is forwarded to that object; otherwise, the
 MKSynthInstrument either asks the MKOrchestra to allocate another MKSynthPatch, or it
@@ -131,6 +98,7 @@ You can examine the updates and controllerTable with the method
 
 #import "MKInstrument.h"
 #import "MKNote.h"
+#import "MKSynthPatch.h"
 
 @interface MKSynthInstrument : MKInstrument
 {
@@ -145,28 +113,22 @@ You can examine the updates and controllerTable with the method
 @private
     NSMutableArray *_patchLists;
 }
- 
 
 /*!
-  @return Returns an id.
   @brief Initializes the receiver.
 
-  You invoke this method when you careate a
-  new instance MKSynthInstrument  An overriding subclass method should
-  send <b>[super init]</b> before setting its own defaults.
+  You invoke this method when you create a new instance of MKSynthInstrument.
+  An overriding subclass method should send <b>[super init]</b> before setting its own defaults.
+  @return Returns an id.
 */
 - init;
 
 /*!
-  @param  voices is an int.
-  @param  aTemplate is an id.
-  @return Returns an int.
   @brief Immediately allocates <i>voices</i> MKSynthPatch objects using the
   patch template <i>aTemplate</i> (the MKOrchestra must be open) and
   puts the receiver in manual mode.
 
-  If <i>aTemplate</i> is
-  <b>nil</b>, the value returned by the message
+  If <i>aTemplate</i> is <b>nil</b>, the value returned by the message:
   
   <tt>[synthPatchClass defaultPatchTemplate]</tt>
   
@@ -174,99 +136,87 @@ You can examine the updates and controllerTable with the method
   If you decrease the number of manually allocated MKSynthPatches during a performance, 
   the extra MKSynthPatches aren't deallocated until they become inactive.  In other words,
   reallocating downward won't interrupt notes that are already sounding.
-*/
--(int)setSynthPatchCount:(int)voices patchTemplate:aTemplate;
+ @param  voices is an int.
+ @param  aTemplate is an id.
+ @return Returns an int.
+ */
+- (int) setSynthPatchCount: (int) voices patchTemplate: (id) aTemplate;
 
 /*!
-  @param  voices is an int.
-  @return Returns an int.
   @brief Immediately allocates <i>voices</i> MKSynthPatch objects.
 
-  Implemented
-  as:
+  Implemented as:
   
-  <tt>[self setSynthPatchCount:voices template:nil];</tt>
+  <tt>[self setSynthPatchCount: voices template: nil];</tt>
   
   Returns the number of objects that were allocated.
+ @param  voices is an int.
+ @return Returns an int.
 */
--(int)setSynthPatchCount:(int)voices;
+- (int) setSynthPatchCount: (int) voices;
 
 /*!
-  @param  aTemplate is an id.
-  @return Returns an int.
   @brief Returns the number of allocated MKSynthPatch objects created with the
   MKPatchTemplate <i>aTemplate</i>.
-
-  
+  @param  aTemplate is an id.
+  @return Returns an int.
 */
--(int)synthPatchCountForPatchTemplate:aTemplate;
+- (int) synthPatchCountForPatchTemplate: (id) aTemplate;
 
 /*!
-  @return Returns an int.
   @brief Returns the number of allocated MKSynthPatch objects created with the
   default MKPatchTemplate.
-
-  
+  @return Returns an int.
 */
--(int)synthPatchCount;
+- (int) synthPatchCount;
 
 /*!
-  @param  aNote is an id.
-  @param  aNoteReceiver is an id.
-  @return Returns an id.
   @brief Synthesizes <i>aNote</i>.
-
-  
-*/
-- realizeNote:aNote fromNoteReceiver:aNoteReceiver;   
+  @param  aNote is an MKNote instance.
+  @param  aNoteReceiver is an MKNoteReceiver instance.
+  @return Returns an id.
+ */
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;   
 
 /*!
-  @return Returns an id.
   @brief Returns the receiver's MKSynthPatch class.
-
-  
+  @return Returns an id.
 */
 - synthPatchClass;
 
 /*!
-  @param  aSynthPatchClass is an id.
-  @return Returns an id.
   @brief Sets the receiver's MKSynthPatch class to <i>aSynthPatchClass</i>.
 
-  
   Returns <b>nil</b> if the argument isn't a subclass of MKSynthPatch or 
   the receiver is in a performance (the class isn't set in this case).
   Otherwise returns the receiver.
+  @param  aSynthPatchClass is an id.
+  @return Returns an id.
 */
-- setSynthPatchClass:aSynthPatchClass; 
+- setSynthPatchClass: (Class) aSynthPatchClass; 
    
 /*!
-  @param  aSynthPatchClass is an id.
-  @param  anOrch is an MKOrchestra.
-  @return Returns an id.
   @brief Like <i>setSynthPatchClass:</i> but also specifies that 
   MKSynthPatch instances are to be allocated using the object anOrch.
 
-  This is 
-  only used when you want a particular orchestra instance to be used rather
+  This is only used when you want a particular orchestra instance to be used rather
   than allocating from the MKOrchestra class. If anOrch is nil, the orchestra 
   used is the value returned by [aSynthPatchClass orchestraClass].
-*/
-- setSynthPatchClass:aSynthPatchClass orchestra:anOrch; 
+  @param  aSynthPatchClass is an id.
+  @param  anOrch is an MKOrchestra.
+  @return Returns an id.
+ */
+- setSynthPatchClass: (Class) aSynthPatchClass orchestra: (Class) anOrch; 
 
 /*!
-  @return Returns a Class.
   @brief Returns the value set with <i>setSynthPatchClass:orchestra:</i>, if any.
 
-  
   Otherwise returns [MKOrchestra class].
+  @return Returns a Class.
 */
 - (Class) orchestra;
 
 /*!
-  @param  aNote is an id.
-  @param  firstPatch is an id.
-  @return Returns an id.
   @brief You never invoke this method.
 
   It's invoked automatically when the
@@ -280,12 +230,13 @@ You can examine the updates and controllerTable with the method
   MKSynthPatch with the oldest phrase.  A subclass can reimplement this
   method to provide a different scheme for determining which
   MKSynthPatch to preempt.
-*/
--preemptSynthPatchFor:aNote patches:firstPatch;
+ @param  aNote is an MKNote instance.
+ @param  firstPatch is an id.
+ @return Returns an id.
+ */
+- preemptSynthPatchFor: (MKNote *) aNote patches: (MKSynthPatch *) firstPatch;
 
 /*!
-  @param  aTemplate is an id.
-  @return Returns an id.
   @brief Returns the first in the sequence of MKSynthPatches with MKPatchTemplate
   <i>aTemplate</i> that are currently sounding.
 
@@ -298,12 +249,12 @@ You can examine the updates and controllerTable with the method
   default MKPatchTemplate is used. 
   If there aren't any active MKSynthPatches with the specified template,
   <b>nil</b> is returned.
+ @param  aTemplate is an id.
+ @return Returns an id.
 */
--activeSynthPatches:aTemplate;
+- activeSynthPatches: (id) aTemplate;
  
 /*!
-  @param  aMute is an id.
-  @return Returns an id.
   @brief You never invoke this method; it's invoked automatically when the
   receiver receives a mute MKNote.
 
@@ -311,80 +262,75 @@ You can examine the updates and controllerTable with the method
   MKSynthPatches since they usually don't produce sound.  The default
   implementation does nothing.  A subclass can implement this method
   to examine <i>aMute</i> and act accordingly.
+ @param  aMute is an id.
+ @return Returns an id.
 */
--mute:aMute;
+- mute: (id) aMute;
 
 /*!
-  @return Returns an id.
   @brief Sets the receiver's allocation mode to MK_AUTOALLOC and releases any
   manually allocated MKSynthPatch objects.
 
   If the receiver is in
   performance and isn't already in MK_AUTOALLOC mode, this does
   nothing and returns nil. Otherwise returns the receiver.
+ @return Returns an id.
 */
--autoAlloc;
+- autoAlloc;
 
 /*!
-  @return Returns an unsigned short.
   @brief Returns the receiver's allocation mode, one of MK_AUTOALLOC or
   MK_MANUALALLOC.
-
-  
+ @return Returns an unsigned short.
 */
--(unsigned short)allocMode;
+- (unsigned short) allocMode;
 
 /*!
   @return Returns an id.
   @brief Sends the <b>noteEnd</b> message to all running (or finishing)
   MKSynthPatches managed by the receivers MKSynthInstrument.
 
-  
   You should only invoke this method when all other attempts to halt synthesis
   fails.
 */
--abort;
+- abort;
 
 /*!
-  @param  zone is a NSZone.
-  @return Returns an id.
   @brief Creates and returns a new MKSynthInstrument as a copy of the receiver.
-
   
   The copy has the same (MKNoteReceiver) connections but has no
   MKSynthPatches allocated.
+ @param  zone is a NSZone.
+ @return Returns an id.
 */
-- copyWithZone:(NSZone *)zone;
+- copyWithZone: (NSZone *) zone;
 
 /*!
-  @return Returns an id.
   @brief Causes the MKSynthInstrument to clear any noteUpdate state it has
   accumulated as a result of receiving noteUpdates without noteTags.
 
-  
   The effect is not felt by the MKSynthPatches until the next phrase.
   Also clears controller info.
+ @return Returns an id.
 */
--clearUpdates;
+- clearUpdates;
 
 /*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
   @brief Controls whether the noteUpdate and controller state is retained
   from performance to performance.
 
   Default is NO.
+ @param  yesOrNo is a BOOL.
+ @return Returns an id.
 */
--setRetainUpdates:(BOOL)yesOrNo;
+- setRetainUpdates: (BOOL) yesOrNo;
 
 /*!
-  @return Returns a BOOL.
   @brief Returns whether the noteUpdate and controller state is retained from
   performance to performance.
-
-  
+ @return Returns a BOOL.
 */
--(BOOL)doesRetainUpdates;
+- (BOOL) doesRetainUpdates;
 
 /*!
   @param  aNoteUpdate is a MKNote **.
@@ -400,31 +346,28 @@ You can examine the updates and controllerTable with the method
   freed by the MKSynthInstrument. If clearUpdates is sent or the
   performance ends, the objects may be emptied or freed by the MKSynthInstrument.
 */
--getUpdates:(MKNote **)aNoteUpdate controllerValues:(NSMutableDictionary **) controllers;
+- getUpdates: (MKNote **) aNoteUpdate controllerValues: (NSMutableDictionary **) controllers;
 
-  /* 
+/* 
      You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
      Invokes superclass write: method. Also archives allocMode, retainUpdates 
      and, if retainUpdates is YES, the controllerTable and updates.
 */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-  /* 
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+
+/* 
      You never send this message directly.  
-     Should be invoked via NXReadObject(). 
      Note that -init is not sent to newly unarchived objects.
      See write:. 
 */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
-  @return Returns an id.
   @brief Sends a<b> noteOff:</b> message to all running MKSynthPatches managed
   by this MKSynthInstrument.
-
-  
+ @return Returns an id.
 */
--allNotesOff;
+- allNotesOff;
 
 @end
 

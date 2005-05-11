@@ -45,17 +45,14 @@
 */
 /*!
   @class MKSynthPatch
-  @brief
-
-A MKSynthPatch contains a configuration of MKUnitGenerators that work as a sound
-synthesis module.  MKSynthPatches are not created by the application; rather,
-they're created by the MKOrchestra.  The MKOrchestra is also responsible for filling
-the MKSynthPatch instance with MKUnitGenerator and MKSynthData instances.  It does
-this on the basis of a template provided by the MKSynthPatch class method
-<b>patchTemplate</b>.  You implement this method in a subclass of MKSynthPatch to
-provide a MKPatchTemplate that specifies the mix of MKUnitGenerators and MKSynthData
-objects, in what order they're allocated, and how to connect
-them.
+  @brief A MKSynthPatch contains a configuration of MKUnitGenerators that work as a sound synthesis module.
+ 
+MKSynthPatches are not created by the application; rather, they're created by the
+MKOrchestra. The MKOrchestra is also responsible for filling the MKSynthPatch instance with
+MKUnitGenerator and MKSynthData instances.  It does this on the basis of a template provided
+by the MKSynthPatch class method <b>patchTemplate</b>.  You implement this method in a subclass
+of MKSynthPatch to provide a MKPatchTemplate that specifies the mix of MKUnitGenerators 
+and MKSynthData objects, in what order they're allocated, and how to connect them.
 
 Typically, a MKSynthPatch is owned and operated by a MKSynthInstrument object.  The
 MKSynthInstrument manages the allocation of MKSynthPatches in response to incoming
@@ -76,6 +73,7 @@ stream that it's synthesizing.
 #import <Foundation/NSArray.h>
 #import "MKPatch.h"
 #import "MKConductor.h"
+#import "MKUnitGenerator.h"
 #import "orch.h"
 
 typedef enum _MKPhraseStatus {
@@ -136,9 +134,6 @@ typedef enum _MKPhraseStatus {
 /*!
   @brief Returns an appropriate MKPatchTemplate with which to create an MKSynthPatch instance
   that will adequately synthesize <i>currentNote</i>.
-  @param  currentNote is an MKNote instance. If <i>currentNote</i> is <b>nil</b>, the default template 
-  should be returned.
-  @return Returns an id.
   
   Determines an appropriate patchTemplate and returns it. In some cases, it is necessary to
   look at the current note to determine which patch to use. 
@@ -147,9 +142,11 @@ typedef enum _MKPhraseStatus {
   the second argument to MKSynthInstrument's <b>setSynthPatchCount:patchTemplate:</b> method. 
   Implementation of this method is a subclass responsibility such that when
   currentNote is nil, a default template is returned.
-*/
-// TODO + patchTemplateFor: (MKNote *) currentNote;
-+ patchTemplateFor: currentNote;
+  @param  currentNote is an MKNote instance. If <i>currentNote</i> is <b>nil</b>, the default template 
+  should be returned.
+  @return Returns an id.
+ */
++ patchTemplateFor: (MKNote *) currentNote;
 
 /*!
   @return Returns an id.
@@ -192,20 +189,17 @@ typedef enum _MKPhraseStatus {
 - init;
 
 /*!
-  @param  anIndex is an unsigned.
-  @return Returns an id.
   @brief Returns the MKUnitGenerator or MKSynthData at the specified index or
   <b>nil</b> if <i>anIndex</i> is out of bounds.
 
-  <i>anIndex</i> is
-  zero-based.
+ @param  anIndex is an unsigned int and is zero-based.
+ @return Returns an id.
 */
 - synthElementAt: (unsigned) anIndex;
 
 /*!
   @brief (sb): changed to mkdealloc to prevent conflict with OpenStep deallocation.
-
-  
+ 
  This is used to explicitly deallocate a MKSynthPatch you previously
  allocated manually from the MKOrchestra with allocSynthPatch: or 
  allocSynthPatch:patchTemplate:.
@@ -216,8 +210,6 @@ typedef enum _MKPhraseStatus {
 - (void) mkdealloc;
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief Sent when the receiver is running or finishing and is preempted by
   its MKSynthInstrument.
 
@@ -228,12 +220,12 @@ typedef enum _MKPhraseStatus {
   <b>MKPreemptDuration()</b> is allowed to elapse before the
   preempting MKNote begins. A subclass can specify that the new MKNote
   happen immediately by returning <b>nil</b>.
+  @param  aNote is an MKNote instance.
+  @return Returns an id.
 */
-- preemptFor: aNote;
+- preemptFor: (MKNote *) aNote;
 
 /*!
-  @param  aNote is an id.
-  @return Returns the receiver or <b>nil</b> if the receiver should immediately become idle.
   @brief You never invoke this method directly.
 
   The default implementation returns the receiver.
@@ -244,27 +236,25 @@ typedef enum _MKPhraseStatus {
   by examing the status instance variable. It should also check for preemption with -phraseStatus.
   
   The message <b>noteEnd</b> is sent to the receiver if this method returns <b>nil</b>.
+  @param  aNote is an MKNote instance.
+  @return Returns the receiver or <b>nil</b> if the receiver should immediately become idle.
 */
-- noteOnSelf: aNote;
+- noteOnSelf: (MKNote *) aNote;
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
-  @brief You never invoke this method, it's invoked automatically by
-  <b>noteUpdate</b>:.
+  @brief You never invoke this method, it's invoked automatically by <b>noteUpdate</b>:.
 
   A subclass can implement this method to provide
   behavior appropriate to reception of a noteUpdate. noteUpdateSelf: should send
   whatever messages are necessary to update the state of the DSP as reflected by the parameters in 
   aNote. 
+ @param  aNote is an MKNote instance.
+ @return Returns an id.
 */
-- noteUpdateSelf: aNote; 
+- noteUpdateSelf: (MKNote *) aNote; 
 
 /*!
-  @param  aNote is an id.
-  @return Returns a double.
-  @brief You never invoke this method; it's invoked automatically by
-  <b>noteOff</b>:.
+  @brief You never invoke this method; it's invoked automatically by <b>noteOff</b>:.
 
   It is sent when a noteOff or end-of-noteDur is received. However, a subclass
   may provide an implementation that describes its response to a noteOff, the beginning of the
@@ -273,8 +263,10 @@ typedef enum _MKPhraseStatus {
   can be released. For example, a MKSynthPatch that has 2 envelope handlers should implement
   this method to send finish to each envelope handler and return
   the maximum of the two. The default implementation returns 0.0.
+ @param  aNote is an MKNote instance.
+ @return Returns a double.
 */
-- (double) noteOffSelf: aNote; 
+- (double) noteOffSelf: (MKNote *) aNote; 
 
 /*!
   @return Returns an id.
@@ -291,8 +283,6 @@ typedef enum _MKPhraseStatus {
 - noteEndSelf; 
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief This starts or rearticulates a MKNote stream by sending
   <b>noteOnSelf</b>:<i>aNote</i> to the receiver.
 
@@ -302,27 +292,28 @@ typedef enum _MKPhraseStatus {
   returns <b>nil</b>, <b>noteEnd</b> is sent to the receiver and
   <b>nil</b> is returned.  Ordinarily sent only by
   MKSynthInstrument.
+ @param  aNote is an MKNote instance.
+ @return Returns an id.
 */
-- noteOn: aNote; 
+- noteOn: (MKNote *) aNote; 
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
-  @brief Sent ordinarily only by the MKSynthInstrument when a noteUpdate is
-  received.
+   @brief Sent ordinarily only by the MKSynthInstrument when a noteUpdate is received.
 
   Implemented as<b> [self noteUpdateSelf:</b><i>aNote</i>].
+ @param  aNote is an MKNote instance.
+ @return Returns an id.
 */
-- noteUpdate: aNote;
+- noteUpdate: (MKNote *) aNote;
 
 /*!
-  @brief Concludes a MKNote stream by sending <b>[self noteOffSelf:<i>aNote</i>]</b>.
-  @param aNote is an id.
-  @return Returns the release duration as returned by <b>noteOffSelf:</b>
+  @brief Concludes a MKNote stream by sending <b>[self noteOffSelf:</b> <i>aNote</i><b>]</b>.
   
   Sets the receiver's status to MK_finishing. This method is ordinarily invoked only by an MKSynthInstrument.
+ @param aNote is an MKNote.
+ @return Returns the release duration as returned by <b>noteOffSelf:</b>
 */
-- (double) noteOff: aNote; 
+- (double) noteOff: (MKNote *) aNote; 
 
 /*!
   @brief Causes the receiver to become idle.
@@ -335,16 +326,17 @@ typedef enum _MKPhraseStatus {
 - noteEnd; 
 
 /*!
-  @param  aUG is an id.
-  @return Returns an id.
   @brief Sent when the MKOrchestra moves a MKSynthPatch's MKUnitGenerator during
   DSP memory compaction.
 
   <i>aUG</i> is the unit generator that was moved.  A
   subclass can override this method to provide specialized behavior. 
-  The default implementation does nothing. See also phraseStatus.
+  The default implementation does nothing. 
+  @see phraseStatus.
+  @param  aUG is an MKUnitGenerator instance.
+  @return Returns an id.
 */
-- moved: aUG; 
+- moved: (MKUnitGenerator *) aUG; 
 
 /*!
   @brief Returns the status of the receiver.
@@ -357,21 +349,18 @@ typedef enum _MKPhraseStatus {
 - (int) status; 
 
 /*!
-  @param  anObject is an id.
-  @return Returns a BOOL.
   @brief Two MKSynthPatches are considered equal if they have the same noteTag.
 
-  
   This is used by the MKSynthInstrument to search for a MKSynthPatch
   matching a certain noteTag.
+ @param  anObject is an MKSynthPatch instance.
+ @return Returns a BOOL.
 */
-- (BOOL) isEqual: anObject; 
+- (BOOL) isEqual: (MKSynthPatch *) anObject; 
 
 /*!
-  @return Returns an unsigned.
   @brief Uses the noteTag to hash itself.
-
-  
+ @return Returns an unsigned.
 */
 - (unsigned) hash;  
 
@@ -382,11 +371,9 @@ typedef enum _MKPhraseStatus {
 - patchTemplate;
 
 /*!
-  @return Returns an int.
   @brief Returns the noteTag associated with the MKNote stream the receiver is
   currently playing.
-
-  
+ @return Returns an int.
 */
 - (int) noteTag; 
 
@@ -404,8 +391,7 @@ typedef enum _MKPhraseStatus {
   @return Returns a BOOL.
   @brief Returns YES if the receiver may be freed; otherwise returns NO.
 
-  A
-  MKSynthPatch may only be freed if it is idle and not owned by a
+  An MKSynthPatch may only be freed if it is idle and not owned by a
   manually allocated MKSynthInstrument.
 */
 -(BOOL) isFreeable; 
@@ -415,10 +401,6 @@ typedef enum _MKPhraseStatus {
 
 
 /*!
-  @param  controllers is a HashTable that describes the state of the
-  MIDI controllers by mapping integer controller numbers to integer
-  controller values.
-  @return Returns an id.
   @brief Sent by the MKSynthInstrument to a MKSynthPatch when a new tag stream
   begins, before the <b>noteOn:</b> message is sent.
 
@@ -432,8 +414,12 @@ typedef enum _MKPhraseStatus {
   HashTable. See the HashTable spec sheet for details on how to 
   access the values in controllers. The table should not be altered
   by the receiver. 
+ @param  controllers is a HashTable that describes the state of the
+ MIDI controllers by mapping integer controller numbers to integer
+ controller values.
+ @return Returns an id.
  */
-- controllerValues: controllers;
+- controllerValues: (id) controllers;
 
 /*!
   @return Returns an id.
@@ -449,23 +435,20 @@ typedef enum _MKPhraseStatus {
 - next;
 
 /*!
-  @return Returns an id.
   @brief Sent just before the receiver is free, a subclass can implement this
   method to provide specialized behavior.
-
-  
+ @return Returns an id.
 */
 - freeSelf;
 
 /*!
-  @return Returns a MKPhraseStatus.
   @brief This is a convenience method for MKSynthPatch subclass implementors.
 
-  
   The value returned takes into account whether the phrase is
   preempted, the noteType of the current MKNote and the status of the
   receiver.  If not called by a MKSynthPatch subclass, returns
-  MK_noPhraseActivity
+  MK_noPhraseActivity.
+ @return Returns a MKPhraseStatus.
 */
 - (MKPhraseStatus) phraseStatus;
 
@@ -480,8 +463,6 @@ typedef enum _MKPhraseStatus {
 @interface MKSynthPatch(PatchLoad)
 
 /*!
-  @param name Class name.
-  @return Returns an id.
   @brief This method does dynamic loading of Objective-C MKSynthPatch 
   modules.
 
@@ -527,6 +508,8 @@ typedef enum _MKPhraseStatus {
   libNeXT_s</b> or <b>-u libsys_s</b> on the link line.  
   Alternatively, you can use the <b>-all_load</b> linker option, which
   will pull in everything from all libraries.   
+  @param name Class name.
+  @return Returns an id.
 */
 + findPatchClass: (NSString *) name;
 

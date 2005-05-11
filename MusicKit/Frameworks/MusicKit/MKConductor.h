@@ -965,10 +965,10 @@ argCount: (int) argCount
   The delegate is sent <b>hasPaused:</b> and
   <b>hasResumed:</b> as the receiver is paused and resumed,
   respectively. 
- @param  delegate is an id.
- @return Returns an id.
+  @param  delegate is an id.
+  @return Returns an id.
 */
-+ (void) setDelegate: delegate;
++ (void) setDelegate: (id) delegate;
 
 /*!
   @brief Returns the receiver's delegate object, as set through the

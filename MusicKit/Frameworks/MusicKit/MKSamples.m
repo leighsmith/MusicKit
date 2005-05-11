@@ -182,21 +182,21 @@ id MKGetSamplesClass(void)
    aSoundObj must be in 16-bit linear mono format. If not, setSound: returns
    nil. aSoundObj is copied.
 */
-- (BOOL) setSound: (Snd *) aSoundObj //sb: originally returned self/nil -- now BOOL.
+- (BOOL) setSound: (Snd *) aSoundObj
 {
     if (!aSoundObj)
-	return FALSE;
+	return NO;
     if (sound)
-	[sound autorelease];/*sb: gets rid of old one*/
+	[sound autorelease]; /*sb: gets rid of old one*/
     length = 0; /* This ensures that the superclass recomputes cached buffers. */ 
     sound = [aSoundObj copy];
 #if PRECONVERT
     [sound convertToSampleFormat: SND_FORMAT_LINEAR_16
-              samplingRate: [sound samplingRate]
-              channelCount: 1];
+		    samplingRate: [sound samplingRate]
+		    channelCount: 1];
 #endif
     curLoc = 0;
-    return TRUE;
+    return YES;
 }
 
 - writeScorefileStream:(NSMutableData *)aStream binary:(BOOL)isBinary

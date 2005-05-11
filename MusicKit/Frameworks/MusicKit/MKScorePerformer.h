@@ -32,52 +32,16 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-Modification history:
-  $Log$
-  Revision 1.12  2005/05/09 15:52:54  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.11  2001/09/08 21:55:34  leighsmith
-  Leigh learns lesson that putting comment characters into CVS entries is not a good idea
-
-  Revision 1.10  2001/09/07 18:35:13  leighsmith
-  Moved @class declarations to not clash with headerdoc - really headerdoc should only be looking for @class declarations within comments
-
-  Revision 1.9  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.8  2001/07/10 17:04:48  leighsmith
-  Correctly typed partPerformerForPart:
-
-  Revision 1.7  2000/11/25 22:59:47  leigh
-  Enforced ivar privacy
-
-  Revision 1.6  2000/10/01 06:55:01  leigh
-  Typed noteSenders.
-
-  Revision 1.5  2000/04/25 02:08:40  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.4  2000/02/24 22:55:21  leigh
-  Clean up of comments, parameter typing
-
-  Revision 1.3  1999/09/04 22:44:52  leigh
-  extra doco from implementation ivar descriptions
-
-  Revision 1.2  1999/07/29 01:25:50  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 @class MKScore;
+@class MKPartPerformer;
 
 /*!
   @class MKScorePerformer
-  @brief
-
-A MKScorePerformer performs a MKScore object by creating a group of
-MKPartPerformers, one for each MKPart in the MKScore, and controlling the
-group's performance.  MKScorePerformer itself isn't a MKPerformer but it does
+  @brief A MKScorePerformer performs a MKScore object by creating a group of
+   MKPartPerformers, one for each MKPart in the MKScore, and controlling the
+   group's performance.
+ 
+MKScorePerformer itself isn't a MKPerformer but it does
 define a number of methods, such as <b>activate</b>, <b>pause</b>, and
 <b>resume</b>, that emulate MKPerformer methods.  When a MKScorePerformer
 receives such a message, it forwards the message to each of its MKPartPerformer
@@ -105,65 +69,56 @@ be seen by the MKScorePerformer.
 
 @interface MKScorePerformer : NSObject
 {
-    MKPerformerStatus status;       /* The object's status. */
-    NSMutableArray *partPerformers; /* An array of the object's MKPartPerformer instances. */
-    MKScore *score;                 /* The MKScore with which this object is associated. */     
-    double firstTimeTag;            /* The smallest timeTag value considered for
+    MKPerformerStatus status;       /*! The object's status. */
+    NSMutableArray *partPerformers; /*! An array of the object's MKPartPerformer instances. */
+    MKScore *score;                 /*! The MKScore with which this object is associated. */     
+    double firstTimeTag;            /*! The smallest timeTag value considered for
                                        performance, as last broadcast to the MKPartPerformers. */
-    double lastTimeTag;   /* The greatest timeTag value considered for
+    double lastTimeTag;   /*! The greatest timeTag value considered for
                              performance, as last broadcast to the MKPartPerformers. */
-    double timeShift;	  /* The performance offset time for the object in beats, as last broadcast to the MKPartPerformers. */
-    double duration;      /* The maximum performance duration in beats, as last broadcast to the MKPartPerformers. */
-    MKConductor *conductor; /* The object's MKConductor (its MKPartPerformers' MKConductor) as last broadcast to MKPartPerformers.*/
-    id delegate;            /* The object's delegate. */
-    id partPerformerClass;  /* The MKPartPerformer subclass used. */
+    double timeShift;	  /*! The performance offset time for the object in beats, as last broadcast to the MKPartPerformers. */
+    double duration;      /*! The maximum performance duration in beats, as last broadcast to the MKPartPerformers. */
+    MKConductor *conductor; /*! The object's MKConductor (its MKPartPerformers' MKConductor) as last broadcast to MKPartPerformers.*/
+    id delegate;            /*! The object's delegate. */
+    Class partPerformerClass;  /*! The MKPartPerformer subclass used. */
 
 @private
     MKMsgStruct * _deactivateMsgPtr;
 }
 
 /*!
-  @return Returns an MKScorePerformer.
   @brief Allocates, initialises and returns an autoreleased instance.
-
-  
+  @return Returns an MKScorePerformer.  
 */
 + (MKScorePerformer *) scorePerformer;
 
 /*!
-  @return Returns an id.
   @brief Initializes the receiver.
 
   A subclass implementation should send
   <b>[super init]</b> before performing its own initialization. 
-  
-*/
+  @return Returns an id.
+ */
 - init; 
 
 /*!
-  @return Returns an id.
-  @brief If the receiver is in performance, does nothing and returns
-  <b>nil</b>.
+  @brief If the receiver is in performance, does nothing and returns <b>nil</b>.
 
   Otherwise, removes and frees the receiver's
   MKPartPerformers, sets the receiver's MKScore to <b>nil</b> and
   returns the receiver.
+  @return Returns an id.
 */
 - releasePartPerformers;
 
 /*!
-  @return Returns an id.
   @brief Removes the receiver's MKPartPerformers (but doesn't free them) and
   sets the receiver's MKScore to <b>nil</b>.
-
-  Returns the
-  receiver.
+  @return Returns the receiver.  
 */
 - removePartPerformers; 
 
 /*!
-  @param  aScore is an id.
-  @return Returns an id.
   @brief Sets the receiver's MKScore to <i>aScore</i> and creates a
   MKPartPerformer for each of the Score's MKParts.
 
@@ -175,31 +130,29 @@ be seen by the MKScorePerformer.
   Note: The score can be set only when the receiver's performance status
   is MK_inactive.  If the receiver is not inactive, the <i>setScore:</i> message
   is ignored. Returns the receiver or nil if the score could not be set.
+  @param  aScore is an id.
+  @return Returns an id.
 */
 - setScore: (MKScore *) aScore;
 
 /*!
-  @return Returns an MKScore.
   @brief Returns the object's MKScore.
-
-  
+  @return Returns an MKScore.
 */
 - (MKScore *) score;    
 
 /*!
-  @return Returns an id.
   @brief Sends <b>activateSelf</b> to the receiver and then sends the
   <b>activate</b> message to each of the receiver's MKPartPerformers.
-
   
   If <b>activateSelf</b> returns <b>nil</b>, the message isn't sent
   and <b>nil</b> is returned.  Otherwise sends
   [delegate hasActivated:self] and returns the receiver.
+ @return Returns an id.
 */
 - activate; 
 
 /*!
-  @return Returns an id.
   @brief You never invoke this method directly; it's invoked as part of the
   <b>activate</b> method.
 
@@ -207,165 +160,128 @@ be seen by the MKScorePerformer.
   <b>[super activateSelf]</b>.  If <b>activateSelf</b> returns
   <b>nil</b>, the receiver isn't activated.  The default
   implementation does nothing and returns the receiver.
+  @return Returns an id.
 */
 - activateSelf; 
 
 /*!
   @brief Deactivates the receiver's MKPartPerformers.
 
-  
   A subclass can implement this method to perform post-performance
   activites.  The default does nothing; the return value is ignored.
 */
-- (void)deactivate; 
+- (void) deactivate; 
 
 /*!
-  @return Returns an id.
   @brief Suspends the receiver's performance by sending the <b>pause</b>
   message to each of its MKPartPerformers.
 
-  
-  Also sends <tt>[delegate hasPaused:self];</tt>.
-  Returns the receiver.
+  Also sends <tt>[delegate hasPaused: self];</tt>.
+  @return Returns the receiver.
 */
 - pause; 
 
 /*!
-  @return Returns an id.
   @brief Resumes a previously paused performance by sending the <b>resume</b>
   message to each of the receiver's MKPartPerformers.
 
-  
   Also sends <tt>[delegate hasResumed:self];</tt>.
-  Returns the receiver.
+  @return Returns the receiver.
 */
 - resume; 
 
 /*!
-  @param  aTimeTag is a double.
-  @return Returns an id.
   @brief Sets the smallest timeTag value considered for performance by
   sending <b>setFirstTimeTag:</b><i>aTimeTag</i> to each of the
   receiver's MKPartPerformers.
 
-  Returns the receiver.  If the receiver
-  is active, this does nothing and returns <b>nil</b>.
+  If the receiver is active, this does nothing and returns <b>nil</b>.
+  @param  aTimeTag is a double.
+  @return Returns the receiver.
 */
-- setFirstTimeTag:(double )aTimeTag; 
+- setFirstTimeTag: (double) aTimeTag; 
 
 /*!
-  @param  aTimeTag is a double.
-  @return Returns an id.
   @brief Sets the greatest timeTag value considered for performance by
   sending <b>setLastTimeTag:</b><i>aTimeTag</i> to each of the
   receiver's MKPartPerformers.
 
-  Returns the receiver.  If the receiver
-  is active, this does nothing and returns <b>nil</b>.
+  If the receiver is active, this does nothing and returns <b>nil</b>.
+  @param  aTimeTag is a double.
+  @return Returns the receiver.
 */
-- setLastTimeTag:(double) aTimeTag; 
+- setLastTimeTag: (double) aTimeTag; 
 
 /*!
+  @brief Returns the smallest timeTag value considered for performance.
   @return Returns a double.
-  @brief Returns the smallest timeTag value considered for
-  performance.
-
-  
 */
 - (double) firstTimeTag;    
 
 /*!
+  @brief Returns the greatest timeTag value considered for performance.
   @return Returns a double.
-  @brief Returns the greatest timeTag value considered for
-  performance.
-
-  
-*/
+ */
 - (double) lastTimeTag;    
 
 /*!
-  @param  aTimeShift is a double.
-  @return Returns an id.
   @brief Sets the performance time offset by sending
   <b>setTimeShift:</b><i>aTimeShift</i> to each of
   the receiver's MKPartPerformers.
 
-  The offset is measured in beats.
-  Returns the receiver.  If the receiver is active, this does nothing
+  The offset is measured in beats. If the receiver is active, this does nothing
   and returns <b>nil</b>.
+  @param  aTimeShift is a double.
+  @return Returns the receiver.
 */
-- setTimeShift:(double) aTimeShift; 
+- setTimeShift: (double) aTimeShift; 
 
 /*!
-  @param  aDuration is a double.
-  @return Returns an id.
   @brief Sets the maximum performance duration by sending
   <b>setDuration:</b><i>aDuration</i> to each of the receiver's
   MKPartPerformers.
 
-  The duration is measured in beats.  Returns the
-  receiver.  If the receiver is active, this does nothing and returns
-  <b>nil</b>.
-*/
-- setDuration:(double) aDuration; 
+  The duration is measured in beats. If the receiver is active, this does nothing and returns <b>nil</b>.
+  @param  aDuration is a double.
+  @return Returns the receiver.
+ */
+- setDuration: (double) aDuration; 
 
 /*!
-  @return Returns a double.
   @brief Returns the receiver's performance time offset in beats.
-
-  
+  @return Returns a double.
 */
 - (double) timeShift;
 
 /*!
+  @brief Returns the receiver's maximum performance duration in beats.
   @return Returns a double.
-  @brief Returns the receiver's maximum performance duration in
-  beats.
-
-  
 */
-- (double ) duration; 
+- (double) duration; 
 
- /* 
-  * Creates and returns a new, inactive MKScorePerformer that's a copy of
-  * the receiver.  The new object is associated with the same MKScore as the
-  * receiver, and has the same MKConductor and timing window variables
-  * (timeShift, duration, fromTimeTag, and toTimeTag).  New MKPartPerformers
-  * are created for the new object.
-  */
-- copyWithZone:(NSZone *) zone;
+/*! 
+  @brief Creates and returns a new, inactive MKScorePerformer that's a copy of the receiver.
 
-/*!
+  The new object is associated with the same MKScore as the
+  receiver, and has the same MKConductor and timing window variables
+  (<b>timeShift</b>, <b>duration</b>, <b>fromTimeTag</b>,
+  and <b>toTimeTag</b>).  New MKPartPerformers
+  are created for the new object.
   @return Returns an id.
-  @brief Creates and returns a new, inactive MKScorePerformer that's a copy
-  of the receiver.
-
-  The new object is associated with the same MKScore
-  as the receiver, and has the same MKConductor and timing window
-  variables (<b>timeShift</b>, <b>duration</b>, <b>fromTimeTag</b>,
-  and <b>toTimeTag</b>).  New MKPartPerformers are created for the new
-  object.
-*/
-- copy;
- /* Same as [self copyFromZone:[self zone]]; */
+ */
+- copyWithZone: (NSZone *) zone;
 
  /* Frees the receiver and its MKPartPerformers. */
-- (void) dealloc; 
-   
+- (void) dealloc;
 
 /*!
+  @brief Sends the message <b>setConductor:</b><i>aConductor</i> to each of the receiver's MKPartPerformers.
   @param  aConductor is an id.
   @return Returns an id.
-  @brief Sends the message <b>setConductor:</b><i>aConductor</i> to each of
-  the receiver's MKPartPerformers.
-
-  
 */
 - setConductor: (MKConductor *) aConductor; 
 
 /*!
-  @param  aPart is an id.
-  @return Returns an id.
   @brief Returns the receiver's MKPartPerformer that's associated with
   <i>aPart</i>, where <i>aPart</i> is a MKPart in the receiver's
   MKScore.
@@ -373,17 +289,16 @@ be seen by the MKScorePerformer.
   Keep in mind that it's possible for a MKPart to have more
   than one MKPartPerformer; this method returns only the
   MKPartPerformer that was created by the receiver.
+  @param  aPart is an MKPart instance.
+  @return Returns an MKPartPerformer instance.
 */
-- partPerformerForPart: (MKPart *) aPart;
+- (MKPartPerformer *) partPerformerForPart: (MKPart *) aPart;
 
 /*!
-  @return Returns an id.
-  @brief Creates and returns a NSMutableArray containing the receiver's
-  MKPartPerformers.
-
-  
+  @brief Creates and returns a NSArray containing the receiver's MKPartPerformers.
+  @return Returns an NSArray instance.
 */
-- partPerformers; 
+- (NSArray *) partPerformers; 
    
 /*!
   @return Returns an NSArray.
@@ -397,16 +312,12 @@ be seen by the MKScorePerformer.
 - (NSArray *) noteSenders; 
 
 /*!
-  @return Returns an int.
   @brief Returns the receiver's status.
-
-  
+  @return Returns an int.
 */
--(int) status;
+- (int) status;
 
 /*!
-  @param  aPartPerformerSubclass is an id.
-  @return Returns an id.
   @brief Normally, MKScorePerformers create instances of the MKPartPerformer
   class.
 
@@ -415,47 +326,49 @@ be seen by the MKScorePerformer.
   <i>aPartPerformerSubclass</i> is not a subclass of MKPartPerformer
   (or MKPartPerformer itself), this method has no effect and returns
   nil.  Otherwise, it returns self.
-*/
--setPartPerformerClass:aPartPerformerSubclass;
-  
- /* Returns the class used for PartPerformers, as set by 
-   setPartPerformerClass:. The default is MKPartPerformer itself. */
--partPerformerClass;
-
-/*!
-  @param  obj is an id.
-  @brief Sets the delegate as indicated.
-
-  
-  
-  See MKPerformerDelegate.h
-*/
-- (void)setDelegate:(id)object;
-
-/*!
+  @param  aPartPerformerSubclass is a Class.
   @return Returns an id.
-  @brief Returns the receiver's delegate object, if any.
+*/
+- setPartPerformerClass: (Class) aPartPerformerSubclass;
+  
+/*!
+  @brief Returns the class used for MKPartPerformers, as set by 
+   setPartPerformerClass:.
+ 
+  The default is MKPartPerformer itself. 
+ */
+- (Class) partPerformerClass;
 
-  
-  
-  See MKPerformerDelegate.h
+/*!
+  @brief Sets the delegate as indicated.
+  @param  object is an id.  
+  @see MKPerformerDelegate.h
+*/
+- (void) setDelegate: (id) object;
+
+/*!
+  @brief Returns the receiver's delegate object, if any.
+  @return Returns an id.
+  @see MKPerformerDelegate.h
 */
 - delegate;
 
-  /* 
-     You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Archives partPerformers,firstTimeTag,lastTimeTag,timeShift,
-     duration, and partPerformerClass. Also optionally archives score
-     conductor and delegate using NXWriteObjectReference().
-     */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-  /* 
-     You never send this message directly.  
-     Note that -init is not sent to newly unarchived objects.
-     Should be invoked with NXReadObject(). 
-     */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+/*!
+  @brief Archives partPerformers,firstTimeTag,lastTimeTag,timeShift,
+ duration, and partPerformerClass.
+ 
+ You never send this message directly. Also optionally archives score
+ conductor and delegate.
+ */
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+
+/*!
+  @brief initialises new object from the decoder.
+
+  You never send this message directly.  
+  Note that -init is not sent to newly unarchived objects.
+ */
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 

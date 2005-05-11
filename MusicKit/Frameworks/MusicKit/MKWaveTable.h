@@ -14,10 +14,9 @@
 */
 /*!
   @class MKWaveTable
-  @brief
-
-A MKWaveTable represents a single period of a sound waveform as a series of
-samples. MKWaveTable is an abstract class that's succeeded by two inheriting
+  @brief A MKWaveTable represents a single period of a sound waveform as a series of samples. 
+ 
+MKWaveTable is an abstract class that's succeeded by two inheriting
 classes:  MKSamples and MKPartials.  The MKSamples subclass lets you define a
 MKWaveTable through association with a Sound object or soundfile; MKPartials lets
 you build a waveform by adding sine wave components.  If you're interested in
@@ -50,14 +49,14 @@ setting length to 0.
 The computation of the data is handled by the subclass method
 fillTableLength:scale:.
 
-Subclasses provided by the MusicKit are
+Subclasses provided by the MusicKit are:
 
 <UL>
  <LI>MKPartials computes a MKWaveTable given an arrays of harmonic amplitudes,
- frequency ratios, and phases.
+ frequency ratios, and phases.</LI>
 
  <LI>MKSamples stores a MKWaveTable of existing samples read in from a Sound
- object or soundfile.
+ object or soundfile.</LI>
 </UL>
  
 The MKWaveTable class caches multiple formats for the data. This is
@@ -87,25 +86,14 @@ fillTableLength:scale:.
     double *dataDouble;     /* Loaded or computed floating-point data */
 }
 
-+ new; 
- /* This is how you make up an empty MKWaveTable. Uses default malloc zone.
-    Also sends -init to the new instance. */
-
-- copyWithZone:(NSZone *)zone;
- /* Copies object and internal data structures. */
-
-
 /*!
-  @return Returns an id.
-  @brief Creates and returns a new MKWaveTable as a copy of the
-  receiver.
+  @brief Creates and returns a new MKWaveTable as a copy of the receiver.
 
-  Same as [self copyFromZone:[self zone]];
+  @return Returns an id.
 */
-- copy;
+- copyWithZone: (NSZone *) zone;
 
 /*!
-  @return Returns an id.
   @brief Initializes the receiver.
 
   This method should be invoked when a new
@@ -113,12 +101,16 @@ fillTableLength:scale:.
   existing object.  If you override this method in a subclass, you
   should include <b>[super init]</b> in the implementation.  Returns
   the receiver.
+  @return Returns an id.
 */
 - init;
 
+/*!
+  @brief dealloc frees dataDSP and dataDouble then sends [super free].
+    
+  It also removes the name, if any, from the MusicKit name table. 
+ */
 - (void)dealloc;
- /* Free frees dataDSP and dataDouble then sends [super free].
-    It also removes the name, if any, from the Music Kit name table. */
 
 /*!
   @return Returns an int.

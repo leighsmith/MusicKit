@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2005/05/11 07:59:03  leighsmith
+  Cleaned up parameter types and doxygen docs
+
   Revision 1.19  2005/04/15 04:18:25  leighsmith
   Cleaned up for gcc 4.0's more stringent checking of ObjC types
 
@@ -287,9 +290,9 @@ static void cancelMsgs(register id self)
        Implementation of this method is a subclass responsibility. 
        The subclass should implement this method such that when
        currentNote is nil, a default template is returned. */
-+ patchTemplateFor: (id) currentNote
++ patchTemplateFor: (MKNote *) currentNote
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return nil;
 }
 
@@ -375,7 +378,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      if noteOnSelf returns nil, sends [self noteEnd] and returns nil.
      Ordinarily sent only by MKSynthInstrument.
      */
-- noteOn: aNote
+- noteOn: (MKNote *) aNote
 {
     _phraseStatus = ((status == MK_idle) ? MK_phraseOn : MK_phraseRearticulate);
     if (noteOnGuts(self,aNote)) {
@@ -400,7 +403,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      The default implementation just returns self. 
 //////////////////////////////////////////////////////////////////////////////*/
 
-- noteOnSelf: aNote
+- noteOnSelf: (MKNote *) aNote
 {
   return self;
 }
@@ -410,7 +413,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      received. Implemented simply as [self noteUpdateSelf:aNote]. 
 //////////////////////////////////////////////////////////////////////////////*/
 
--noteUpdate:aNote
+-noteUpdate: (MKNote *) aNote
   /* Sent ordinarily only by the MKSynthInstrument when an update note is 
      received. Implemented simply as [self noteUpdateSelf:aNote]. */
 {
@@ -433,7 +436,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      aNote. 
 //////////////////////////////////////////////////////////////////////////////*/
 
--noteUpdateSelf:aNote
+-noteUpdateSelf: (MKNote *) aNote
 {
     return self;
 }
@@ -445,10 +448,11 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      */
 //////////////////////////////////////////////////////////////////////////////*/
 
--(double)noteOff:aNote
+- (double) noteOff: (MKNote *) aNote
 {
     id condClass = _MKClassConductor();
     double releaseDur;
+    
     if (_notePreemptMsgPtr) {
 	/* It's possible that we've been preempted for a noteOn and 
 	   a noteOff (on that tag) arrives even before the delayed noteOn 
@@ -505,7 +509,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      the maximum of the two. The default implementation returns 0. 
 //////////////////////////////////////////////////////////////////////////////*/
 
-- (double) noteOffSelf: aNote
+- (double) noteOffSelf: (MKNote *) aNote
 {
     return 0;
 }
@@ -552,7 +556,7 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
 - (BOOL) isEqual: anObject 
 //////////////////////////////////////////////////////////////////////////////*/
 
-- (BOOL) isEqual: anObject // Obsolete.
+- (BOOL) isEqual: (MKSynthPatch *) anObject // Obsolete.
 {
     int otherTag = [anObject noteTag];
     return (otherTag == noteTag);
@@ -614,7 +618,7 @@ id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
      3 voices receives a fourth note. It preempts one of the voices by 
      sending it preemptFor:newNote followed by noteOn:newNote. The default
      implementation does nothing. */
-- preemptFor: aNote
+- preemptFor: (MKNote *) aNote
 {
     return self;
 }
@@ -626,7 +630,7 @@ id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
      Subclass occasionally overrides this method.
      The default method does nothing. See also phraseStatus.
      */
-- moved:aUG
+- moved: (MKUnitGenerator *) aUG
 {
     return self;
 }
@@ -640,10 +644,10 @@ id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
     return _phraseStatus;
 }
 
-    /* Returns status of this MKSynthPatch. This is not necessarily the status
-       of all contained synthElements. For example, it is not unusual
-       for a MKSynthPatch to be idle but most of its MKUnitGenerators, with the
-       exception of the Out2sum, to be running. */
+/* Returns status of this MKSynthPatch. This is not necessarily the status
+   of all contained synthElements. For example, it is not unusual
+   for a MKSynthPatch to be idle but most of its MKUnitGenerators, with the
+   exception of the Out2sum, to be running. */
 - (int) status
 {
     return (int)status;

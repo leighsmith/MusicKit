@@ -11,31 +11,29 @@
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 CCRMA, Stanford University.
   Portions (Time code extensions) Copyright (c) 1993 Pinnacle Research.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
 /*!
   @class MKMTCPerformer
-  @brief
-
-MKMTCPerformer is used to generate MKNotes with MIDI time code parameters.  The main
-use of this class is to send the MKNotes to a MKMidi object.  To use an
+  @brief MKMTCPerformer is used to generate MKNotes with MIDI time code parameters.
+ 
+The main use of this class is to send the MKNotes to a MKMidi object. To use an
 MKMTCPerformer, simply, instantiate the object, activate it, connect a MKMidi object
-to its one NoteSender and start the performance.  This is done with the usual
+to its one MKNoteSender and start the performance.  This is done with the usual
 MKPerformer methods:
 	
 <tt>
-id myMTCPerformer =[[MKMTCPerformer alloc] init];	
-id myMidi = [MKMidi newOnDevice:"midi0"];	
-[[myMTCPerformer noteSender] connect:[myMidi noteReceiver]];
+MKMTCPerformer *myMTCPerformer = [[MKMTCPerformer alloc] init];	
+MKMidi *myMidi = [MKMidi newOnDevice: @"midi0"];	
+[[myMTCPerformer noteSender] connect: [myMidi noteReceiver]];
 
 [myMTCPerformer activate];	
 [myMidi run];	
-[Conductor startPerformance];
+[MKConductor startPerformance];
 </tt>
 
 This will begin generating time code in a forward direction, beginning with the
 value 0:0:0:0, using the default format (24 frames/second). 
-
 
 You set the format of the time code to be generated with the method
 <b>setFormat:</b>.  The argument should be one of the following constants,
@@ -67,11 +65,11 @@ You may want the time code to begin sending immediately, regardless of
 and pass it an argument of <i>firstTimeTag</i>:
 
 <tt>	
-id myMTCPerformer =[[MKMTCPerformer alloc] init];	
-[myMTCPerformer setFirstTimeTag:10.0];	
-[myMTCPerformer setTimeShift:-10.0];	
+MKMTCPerformer *myMTCPerformer = [[MKMTCPerformer alloc] init];	
+[myMTCPerformer setFirstTimeTag: 10.0];	
+[myMTCPerformer setTimeShift: -10.0];	
 [myMTCPerformer activate];	
-[Conductor startPerformance];
+[MKConductor startPerformance];
 </tt>
 
 If you want to generate time code beginning with a value of 2.0 seconds and
@@ -92,21 +90,21 @@ it the <b> setLastTimeTag:</b>message.  Normally, <i>  lastTimeTag </i>should
 be greater than <i>firstTimeTag</i>.  However, you can tell the MKPerformer to
 send reverse time code as follows:
 	
-<tt>[myMTCPerformer setDirection:MK_MTC_REVERSE];</tt>
+<tt>[myMTCPerformer setDirection: MK_MTC_REVERSE];</tt>
 
 Then, <i>lastTimeTag</i> should be less than <i>firstTimeTag</i>.  Time code
 values will count down from <i>firstTimeTag</i> until <i>lastTimeTag</i> is
 reached.  You cancel generation of reverse time code by sending the
 message:
 	
-<tt>[myMTCPerformer setDirection:MK_MTC_FORWARD];</tt>
+<tt>[myMTCPerformer setDirection: MK_MTC_FORWARD];</tt>
 
 As an alternative to using<b> setFirstTimeTag:</b>, <b>setLastTimeTag:</b> and
 <b>setTimeShift:</b>, you can use methods that allow you to specify the time
 directly in MTC units.  For example, to set <i>firstTimeTag</i> to a MTC value
 of 0:21:59:5, you send the following mesage:
 	
-<tt>[myMTCPerformer setFirstTimeTagMTCHours:0 minutes:21 seconds:59 frames:5];</tt>
+<tt>[myMTCPerformer setFirstTimeTagMTCHours: 0 minutes: 21 seconds: 59 frames: 5];</tt>
 
 This sets the firstTimeTag value as specified, assuming the current MTC format. 
 Analagous methods are provided for setting lastTimeTag and timeShift. 
@@ -151,14 +149,14 @@ is activated.  Normally, this is sufficient.  However, you can send a Full
 Message at any time, by sending  <b>sendFullMTCMessage</b>. 
 
 User bits are part of the SMPTE specification.  They are not interpreted by the
-Music Kit.  You can send user bits by sending <b>sendUserBits:groupFlagBits:</b>.
+MusicKit.  You can send user bits by sending <b>sendUserBits:groupFlagBits:</b>.
 See the MIDI Time Code specification or the SMPTE specification for the meaning
 of the arguments.
 
 You can ask the MKMTCPerformer the current MTC time with the <b>timeTag</b> or
 <b>getMTCHours:minutes:seconds:frames:</b> message, which return the time in
 seconds and MTC units, respectively.  The time tag returned is in the clock
-Conductor's time base.  
+MKConductor's time base.  
 
   @see  MKPerformer, MKMidi
 */
@@ -227,92 +225,88 @@ extern void
 - init;
 
 /*!
-  @param  firstTimeTag is a double.
-  @return Returns an id.
   @brief Sets <i>firstTimeTag</i> as specified.
 
-  This controls the time from
-  activation at which the MKPerformer will begin sending time code.   It
-  also controls the first time code value it will send.  You can
+  This controls the time from activation at which the MKPerformer will begin sending time code. 
+  It also controls the first time code value it will send.  You can
   decouple the time the performer runs from the time code it outputs
   by using Performer's <tt>setTimeShift:</tt>.  For example, to generate time
   code, beginning with time 2, and to start sending that time code at
   time 3, you'd send:
   	
   <tt>
-  [perf setFirstTimeTag:2];
-  [perf setTimeOffset:1];
+  [perf setFirstTimeTag: 2];
+  [perf setTimeOffset: 1];
   </tt>
+ @param  firstTimeTag is a double.
+ @return Returns an id.
 */
--setFirstTimeTag:(double)f;
+- setFirstTimeTag: (double) firstTimeTag;
 
 /*!
-  @param  lastTimeTag is a double.
-  @return Returns an id.
-  @brief Sets <i>lastTimetTag</i>, the last time code value that will be
-  sent.
+  @brief Sets <i>lastTimeTag</i>, the last time code value that will be sent.
 
   The MKPerformer runs until lastTimeTag is sent.  If direction
   is <b>MK_MTC_REVERSE</b>, <i>lastTimeTag</i> should be less than
   <i>firstTimeTag</i>.  Otherwise, <i>lastTimeTag</i> should be
   greater than <i>firstTimeTag</i>.
+  @param  lastTimeTag is a double.
+  @return Returns an id.
 */
--setLastTimeTag:(double)l;
+- setLastTimeTag: (double) lastTimeTag;
 
 /*!
-  @param  firstTimeTag is a double.
-  @return Returns an id.
-  @brief Same as <tt>setFirstTimeTag:</tt>, except that the time is specified in Midi time
+  @brief Same as <tt>setFirstTimeTag:</tt>, except that the time is specified in MIDI time
   code units.
 
   Assumes the current format. (See <tt>setFormat:</tt>)
-*/
--setFirstTimeTagMTCHours:(short)h minutes:(short)m seconds:(short)s frames:(short)f;
+ @param  h is a short.
+ @param  m is a short.
+ @param  s is a short.
+ @param  f is a short.
+ @return Returns an id.
+ */
+- setFirstTimeTagMTCHours: (short) h minutes: (short) m seconds: (short) s frames: (short) f;
 
 /*!
-  @param  h is a short.
-  @param  m is a short.
-  @param  s is a short.
-  @param  f is a short.
-  @return Returns an id.
-  @brief Same as setLastTimeTag:, except that the time is specified in Midi time
+  @brief Same as setLastTimeTag:, except that the time is specified in MIDI time
   code units.
 
   Assumes the current format. (See <tt>setFormat:</tt>)
-*/
--setLastTimeTagMTCHours:(short)h minutes:(short)m seconds:(short)s frames:(short)f;
+ @param  h is a short.
+ @param  m is a short.
+ @param  s is a short.
+ @param  f is a short.
+ @return Returns an id.
+ */
+- setLastTimeTagMTCHours: (short) h minutes: (short) m seconds: (short) s frames: (short) f;
 
 /*!
-  @param  h is a short.
-  @param  m is a short.
-  @param  s is a short.
-  @param  f is a short.
-  @return Returns an id.
   @brief Same as setTimeShift:, except that the time is specified in Midi
   time code units.
 
-  Assumes the current format. (See
-  <b>setFormat:</b>)
-*/
--setTimeShiftMTCHours:(short)h minutes:(short)m seconds:(short)s frames:(short)f;
+  Assumes the current format. (See <b>setFormat:</b>)
+ @param  h is a short.
+ @param  m is a short.
+ @param  s is a short.
+ @param  f is a short.
+ @return Returns an id.
+ */
+- setTimeShiftMTCHours: (short) h minutes: (short) m seconds: (short) s frames: (short) f;
 
 /*!
-  @return Returns a double.
   @brief Returns <i>firstTimeTag</i>, as previously set with
   <b>setLastTimeTag:</b> or <b>setFirstTimeTagMTCHours:minutes:seconds:frames:</b>.
-
-  
+  @return Returns a double.
 */
--(double)firstTimeTag;
+- (double) firstTimeTag;
 
 /*!
-  @return Returns a double.
   @brief Returns <i>lastTimeTag</i>, as previously set with
   <b>setLastTimeTag:</b> or <b>setLastTimeTagMTCHours:minutes:seconds:frames:</b>.
-
-  
+  @return Returns a double.
 */
--(double)lastTimeTag;
+- (double) lastTimeTag;
 
 /*!
   @param  fmt is an int.

@@ -29,33 +29,11 @@
   Portions Copyright (c) 1994 CCRMA, Stanford University
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.7  2005/05/09 15:52:54  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.6  2005/04/15 04:18:25  leighsmith
-  Cleaned up for gcc 4.0's more stringent checking of ObjC types
-
-  Revision 1.5  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.4  2000/11/25 23:04:01  leigh
-  Corrected typing of ivars and enforced their privacy
-
-  Revision 1.3  1999/09/04 22:44:04  leigh
-  setInfo now setInfoNote
-
-  Revision 1.2  1999/07/29 01:25:50  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKScorefileWriter
-  @brief
-
-A MKScorefileWriter is an MKInstrument that realizes MKNotes by writing them to a
-scorefile.  The name of the scorefile to which the MKNotes are written is set
+  @brief A MKScorefileWriter is an MKInstrument that realizes MKNotes by writing them to a scorefile.
+ 
+The name of the scorefile to which the MKNotes are written is set
 through methods inherited from MKFileWriter.
 
 Each of a ScorefileWriter's MKNoteReceivers corresponds to a MKPart that will appear
@@ -85,7 +63,8 @@ or NoteReceiver) during a performance involving a MKScorefileWriter.
 
 @interface MKScorefileWriter : MKFileWriter
 {
-    MKNote *info; /* The info MKNote to be written to the file. */
+    /*! @var info The info MKNote to be written to the file. */
+    MKNote *info; 
 
 @private
     int _highTag,_lowTag;
@@ -93,47 +72,42 @@ or NoteReceiver) during a performance involving a MKScorefileWriter.
     void *_p;
 }
  
- /* 
-  * scorefiles.  The string isn't copied.  Note: This method is superceded
-  * by the instance method by the same name.  */
-+(NSString *)fileExtension;
+/*! 
+  @brief Returns the default file extension for score files.
+
+  The string isn't copied. 
+  Note: This method is superceded by the instance method of the same name.  
+ */
++ (NSString *) fileExtension;
 
 /*!
-  @return Returns an NSString.
   @brief Returns "score", the default file extension for score files if the
   file was set with <b>setFile:</b> or <b>setStream:</b>.
 
-  Returns
-  "playscore", the default file extension for optimized format score
+  Returns "playscore", the default file extension for optimized format score
   files if the file was set with <b>setOptimizedFile:</b> or
   <b>setOptimizedStream:</b>. The string is not copied.
+  @return Returns an NSString instance.
 */
--(NSString *)fileExtension;
+- (NSString *) fileExtension;
 
 /*!
-  @param  aNote is an MKNote.
-  @return Returns an id.
-  @brief Sets the receiver's info MKNote, freeing a previously set info MKNote,
-  if any.
+  @brief Sets the receiver's info MKNote, freeing a previously set info MKNote, if any.
 
   The MKNote is written, in the scorefile, as a MKScore info
   statement.  Returns the receiver.
+  @param  aNote is an MKNote.
+  @return Returns an id.
 */
--setInfoNote:(MKNote *) aNote;
+- setInfoNote: (MKNote *) aNote;
 
 /*!
-  @return Returns an id.
-  @brief Returns the receiver's info MKNote, as set through
-  <b>setInfo:</b>.
-
-  
+  @brief Returns the receiver's info MKNote, as set through <b>setInfo:</b>.
+  @return Returns an MKNote instance.
 */
--(MKNote *) infoNote;
+- (MKNote *) infoNote;
 
 /*!
-  @param  aPartInfo is an MKNote.
-  @param  aNoteReceiver is an MKNoteReceiver.
-  @return Returns an id.
   @brief Sets <i>aPartInfo</i> as the MKNote that's written as the info MKNote
   for the MKPart that corresponds to the MKNoteReceiver
   <i>aNoteReceiver</i>.
@@ -142,109 +116,102 @@ or NoteReceiver) during a performance involving a MKScorefileWriter.
   is freed.  If the receiver is in performance, or if
   <i>aNoteReceiver</i> doesn't belong to the receiver, does nothing
   and returns <b>nil</b>, otherwise returns the receiver.
-*/
--setInfoNote:(MKNote *) aPartInfo forNoteReceiver: (MKNoteReceiver *) aNR;
+  @param  aPartInfo is an MKNote.
+  @param  aNoteReceiver is an MKNoteReceiver.
+  @return Returns an id.
+ */
+- setInfoNote: (MKNote *) aPartInfo forNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
-  @param  aNoteReceiver is an MKNoteReceiver instance.
-  @return Returns an MKNote instance.
   @brief Returns the info MKNote that's associated with an MKNoteReceiver
   (as set through -<b>setInfo:forNoteReceiver:</b>).
-
-  
+  @param  aNoteReceiver is an MKNoteReceiver instance.
+  @return Returns an MKNote instance.
 */
 - (MKNote *) infoNoteForNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
 /*!
-  @return Returns an id.
   @brief Initializes the scorefile.
 
-  You never invoke this method; it's
-  invoked automatically just before the receiver writes its first MKNote
-  to the scorefile.
+  You never invoke this method; it's invoked automatically just before the receiver
+  writes its first MKNote to the scorefile.
+  @return Returns an id.
 */
 - initializeFile; 
 
 /*!
-  @return Returns an id.
   @brief You never invoke this method; it's invoked automatically at the end
   of a performance.
-
-  
+  @return Returns an id.
 */
 - finishFile; 
 
- /* 
-  * Creates and returns a new MKScorefileWriter as a copy of the receiver.
-  * The new object copies the receivers MKNoteReceivers and info MKNotes.
-  * See MKInstrument copy method.
-  */
-- copyWithZone:(NSZone *)zone; 
+/*!
+  @brief Creates and returns a new MKScorefileWriter as a copy of the receiver.
+ 
+  The new object copies the receivers MKNoteReceivers and info MKNotes.
+  @see MKInstrument::copyWithZone: method.
+ */
+- copyWithZone: (NSZone *) zone; 
 
 /*!
-  @param  aNote is an id.
-  @param  aNoteReceiver is an id.
-  @return Returns an id.
   @brief Realizes <i>aNote</i> by writing it to the scorefile.
 
-  The MKNote
-  statement created from <i>aNote</i> is assigned to the MKPart that
+  The MKNote statement created from <i>aNote</i> is assigned to the MKPart that
   corresponds to <i>aNoteReceiver</i>.
-*/
-- realizeNote:aNote fromNoteReceiver:aNoteReceiver; 
+  @param  aNote is an MKNote instance.
+  @param  aNoteReceiver is an MKNoteReceiver instance.
+  @return Returns an id.
+ */
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
 
 /*!
-  @param  aName is a char *.
-  @return Returns an id.
   @brief Sets file and specifies that the data be written in ascii (<tt>.score</tt>)
   format.
 
   See superclass documentation for details.
+  @param  aName is an NSString instance.
+  @return Returns an id.
 */
-- setFile:(NSString *)aName;
+- setFile: (NSString *) aName;
 
 /*!
-  @param  aStream is an NSMutableData.
-  @return Returns an id.
-  @brief Sets stream and specifies that the data be written in ascii (<tt>.score</tt>)
-  format.
+  @brief Sets stream and specifies that the data be written in ascii (<tt>.score</tt>) format.
 
   See superclass documentation for details.
+  @param  aStream is an NSMutableData instance.
+  @return Returns an id.
 */
--setStream:(NSMutableData *)aStream;
+- setStream: (NSMutableData *) aStream;
 
 /*!
+  @brief Same as setStream: but specifies that the data be written in optimized scorefile (<tt>.playscore</tt>) format.
   @param  aStream is an NSMutableData.
   @return Returns an id.
-  @brief Same as setStream: but specifies that the data be written in
-  optimized scorefile (<tt>.playscore</tt>) format.
-
-  
 */
--setOptimizedStream:(NSMutableData *)aStream;
+- setOptimizedStream: (NSMutableData *) aStream;
 
 /*!
-  @param  aName is an NSString.
-  @return Returns an id.
   @brief Same as setFile: but specifies that the data be written in optimized
   (<tt>.playscore</tt>) format.
-
-  
+  @param  aName is an NSString.
+  @return Returns an id.
 */
--setOptimizedFile:(NSString *)aName;
+- setOptimizedFile: (NSString *) aName;
 
-  /* 
+/* 
      You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
      Invokes superclass write:, which archives MKNoteReceivers.
-     Then archives info, isOptimized, and MKPart info MKNotes.  */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-  /* 
-     You never send this message directly.  
-     Should be invoked via NXReadObject(). 
+     Then archives info, isOptimized, and MKPart info MKNotes.  
+ */
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+
+/* 
+   You never send this message directly.  
      Note that -init is not sent to newly unarchived objects.
-     See write:. */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+     See write:. 
+ */
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 

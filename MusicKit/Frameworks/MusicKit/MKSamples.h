@@ -28,20 +28,19 @@
 */
 /*!
   @class MKSamples
-  @brief
-
-A MKSamples object represents one complete cycle of a sound waveform as a series
-of samples.  The data for a MKSamples object is established through association
+  @brief A MKSamples object represents one complete cycle of a sound waveform as a series of samples.  
+ 
+The data for a MKSamples object is established through association
 with a Snd object, defined by the SndKit.  Two methods are provided to
 create this association:
 
 <UL>
 <LI>	<b>setSound:</b> takes a Snd object as an argument, copies it, and
-associates the reciever with the copied Snd.
+associates the reciever with the copied Snd.<LI>
 
 <LI>	<b>readSoundfile:</b> takes the name of a soundfile, creates a Snd
 object for the data contained therein, and associates the receiver with the
-newly created Snd.
+newly created Snd.</LI>
 </UL>
  
 The Snd object or soundfile must be one channel of 16-bit linear data
@@ -142,31 +141,21 @@ non-integer resampling is not currently supported.
 - (void) dealloc;
 
 /*!
-  @return Returns an id.
   @brief Creates and returns a new MKSamples object as a copy of the receiver.
 
-  
   The receiver's Snd is copied into the new MKSamples object.
+  @return Returns an id.
 */
 - copyWithZone: (NSZone *) zone;
 
 /*!
-  @param  aSound is an Snd.
-  @return Returns an id.
-  @brief Sets the receiver's Snd to a copy of <i>aSound</i> (the receiver's
-  current Snd is freed).
-
-  <i>aSound</i> must be one-channel, 16-bit
-  linear data.  You shouldn't free the Snd yourself; it's
-  automatically freed when the receiver is freed, initialized, or when
-  a subsequent Snd is set.  Returns <b>nil</b> if <i>aSound</i> is
-  in the wrong format, otherwise returns the receiver.
+  @brief Sets the receiver's Snd to a copy of <i>aSound</i>.
+  @param  aSound is an Snd, and will be converted to one-channel, 16-bit linear data.
+  @return Returns <b>NO</b> if <i>aSound</i> is in the wrong format, otherwise returns YES.
 */
 - (BOOL) setSound: (Snd *) aSound; 
 
 /*!
-  @param  aSoundfile is an NSString.
-  @return Returns <b>NO</b> if the <b>setSound:</b> message returns <b>nil</b>; otherwise returns YES for success.
   @brief Creates a new Snd object, reads the data from <i>aSoundfile</i>
   into the object, and then sends <b>setSound:</b> to the receiver
   with the new Snd as the argument.
@@ -174,30 +163,27 @@ non-integer resampling is not currently supported.
   You shouldn't free the Snd
   yourself; it's automatically freed when the receiver is freed,
   initialized, or when a subsequent Snd is set.  
+ @param  aSoundfile is an NSString.
+ @return Returns <b>NO</b> if the <b>setSound:</b> message returns <b>nil</b>; otherwise returns YES for success.
 */
 - (BOOL) readSoundfile: (NSString *) aSoundfile;
 
 /*!
-  @return Returns an Snd.
   @brief Returns the receiver's Snd object.
-
-  
-*/
+  @return Returns an Snd.
+ */
 - (Snd *) sound;
 
 /*!
-  @return Returns an NSString.
   @brief Returns the name of the receiver's soundfile, or <b>nil</b> if the
   receiver's Snd wasn't set through <b>readSoundfile:</b>.
 
-  The name
-  isn't copied; you shouldn't alter the returned string.
+  The name isn't copied; you shouldn't alter the returned string.
+  @return Returns an NSString.
 */
 - (NSString *) soundfile;
 
 /*!
-  @param  aStream is a NSMutableData.
-  @return Returns an id.
   @brief Writes the receiver in scorefile format.
 
   Writes the receiver in
@@ -205,48 +191,45 @@ non-integer resampling is not currently supported.
   set from a soundfile, a soundfile with the unique name
   &ldquo;samples<i>Number</i>.snd&rdquo; (where <i>Number</i> is added
   only if needed), is created and the Snd is written to it.  The
-  object remembers if its Snd has been written to a soundfile.  If
-  the receiver couldn't be written to the stream, returns <b>nil</b>,
-  otherwise returns the receiver.
+  object remembers if its Snd has been written to a soundfile.  
+ @param  aStream is a NSMutableData instance.
+ @return If the receiver couldn't be written to the stream, returns <b>nil</b>,
+ otherwise returns the receiver.
 */
 - writeScorefileStream: (NSMutableData *) aStream;
  /* 
-  * Writes the receiver in scorefile format to the stream aStream.  A
+  * A
   * MKSamples object is written by the name of the soundfile from which its
   * Snd was read, surrounded by braces:
   * 
   *   { "soundfileName" }
   * 
-  * If the Snd wasn't set from a soundfile, a soundfile with the
-  * unique name "samplesNumber.snd" (where number is added only if
-  * needed), is created and the Snd is written to it.  The object
-  * remembers if its Snd has been written to a soundfile.  If the
-  * receiver couldn't be written to the stream, returns nil, otherwise
-  * returns the receiver.
-  * 
   */
 
-  /* 
-     Archives object by archiving filename and sound object. Note that the
-     sound object is archived whether it was created from readSoundfile:
-     or from setSound:. We assume that the sound, even if it comes from
-     an external source, is an intrinsic part of the object. 
-     You never send this message directly.  */
+/*!
+  @brief Archives object by archiving filename and sound object.
+ 
+ Note that the sound object is archived whether it was created from 
+ readSoundfile: or from setSound:. We assume that the sound, even if
+ it comes from an external source, is an intrinsic part of the object. 
+ You never send this message directly.  
+ */
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 
-  /* 
-     Note that -init is not sent to newly unarchived objects.
-     You never send this message directly.  */
+/*! 
+  @brief Initialise from the NSCoder. 
+    
+  Note that -init is not sent to newly unarchived objects.
+  You never send this message directly.  
+ */
 - (id) initWithCoder: (NSCoder *) aDecoder;
 
-
 /*!
-  @return Returns an int.
   @brief Returns the tableType of the currently-cached data, if any,
   either MK_oscTable or MK_excitationTable.
 
-  If
-  none, returns the default, MK_oscTable.
+  If none, returns the default, MK_oscTable.
+ @return Returns an int.
 */
 - (int) tableType;
 
@@ -323,8 +306,6 @@ non-integer resampling is not currently supported.
 @interface MKSamples(OscTable)
 
 /*!
-  @param  aLength is an int.
-  @return Returns a DSPDatum *.
   @brief These methods provide data in <b>MK_oscTable</b> format.
 
   They are
@@ -338,12 +319,12 @@ non-integer resampling is not currently supported.
   nor freed by the sender. 
 
   Same as dataDSPLength:   
+ @param  aLength is an int.
+ @return Returns a DSPDatum *.
 */
 - (DSPDatum *) dataDSPAsOscTableLength: (int) aLength;
  
 /*!
-  @param  aLength is an int.
-  @return Returns a double *.
   @brief These methods provide data in <b>MK_oscTable</b> format.
 
   They are
@@ -357,6 +338,8 @@ non-integer resampling is not currently supported.
   nor freed by the sender. 
 
   Same as dataDoubleLength:
+ @param  aLength is an int.
+ @return Returns a double *.
 */
 - (double *) dataDoubleAsOscTableLength: (int) aLength;
  
@@ -368,35 +351,29 @@ non-integer resampling is not currently supported.
     Same as corresponding superclass methods.
 */
 /*!
-  @return Returns a DSPDatum *.
   @brief These methods provide data in <b>MK_oscTable</b> format.
 
-  They are
-  identical to the superclass versions (without the "OscTable" in
+  They are identical to the superclass versions (without the "OscTable" in
   their name).  For example, <b>dataDSPAsOscTable</b>is the same as
-  WaveTable's <b>dataDSP</b>.
+  MKWaveTable's <b>dataDSP</b>.
+ @return Returns a DSPDatum *.
 */  
 - (DSPDatum *) dataDSPAsOscTable;
 
 /*!
-  @return Returns a double *.
   @brief These methods provide data in <b>MK_oscTable</b> format.
 
   They are
   identical to the superclass versions (without the "OscTable" in
-  their name).  For example, <b>dataDSPAsOscTable</b>is the same as
-  WaveTable's <b>dataDSP</b>.              
+  their name).  For example, <b>dataDSPAsOscTable</b> is the same as
+  MKWaveTable's <b>dataDSP</b>.              
+ @return Returns a double *.
 */
 - (double *) dataDoubleAsOscTable;
 
-
 /*!
-  @param  aLength is an int.
-  @param  aScaling is a double.
-  @return Returns an id.
   @brief Computes the wavetable by copying the samples from the Snd.
 
-  
   If scaling is 0.0, the waveform is normalized. This method is sent
   automatically if necessary by the various data-retreival methods 
   (inherited from the MKWaveTable class).  If aLength is not the
@@ -404,14 +381,14 @@ non-integer resampling is not currently supported.
   is evenly divided by aLength.  If so, downsamples the data.
   Otherwise, generates a MusicKit error: MK_samplesNoResampleErr.
   Same as <b>fillTableLength:scale:</b>. Provided for symmetry.
-*/
+ @param  aLength is an int.
+ @param  aScaling is a double.
+ @return Returns an id.
+ */
 - fillOscTableLength: (int) aLength scale: (double) aScaling;
 
 /*!
   @brief  Same as fillOscTableLength:scale:
-  @param  aLength is an int.
-  @param  aScaling is a double.
-  @return  Returns self or <b>nil</b> if there's a problem.
   
   Copies <i>aLength</i> samples from the receiver's Snd into the
   <b>dataDSP</b> array (inherited from MKWaveTable) and scales the
@@ -424,7 +401,10 @@ non-integer resampling is not currently supported.
   
   The <b>dataDouble</b> array (also from MKWaveTable) is reset.
   You ordinarily don't invoke this method; it's invoked from methods defined in MKWaveTable.
-*/
+ @param  aLength is an int.
+ @param  aScaling is a double.
+ @return  Returns self or <b>nil</b> if there's a problem.
+ */
 - fillTableLength: (int) aLength scale:(double)aScaling ;
 
 @end
@@ -432,8 +412,6 @@ non-integer resampling is not currently supported.
 @interface MKSamples(ExcitationTable)
 
 /*!
-  @param  aLength is an int.
-  @param  aScaling is a double.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -448,12 +426,12 @@ non-integer resampling is not currently supported.
   the data if necessary at the requested scaling and length. If the 
   subclass has no data, returns NULL. The data should neither be modified
   nor freed by the sender.
+ @param  aLength is an int.
+ @param  aScaling is a double.
 */
 - (DSPDatum *) dataDSPAsExcitationTableLength: (unsigned int) aLength scale: (double) aScaling;
  
 /*!
-  @param  aLength is an int.
-  @param  aScaling is a double.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -468,6 +446,8 @@ non-integer resampling is not currently supported.
   the data if necessary at the requested scaling and length. If the 
   subclass has no data, returns NULL. The data should neither be modified
   nor freed by the sender.
+ @param  aLength is an int.
+ @param  aScaling is a double.
 */
 - (double *) dataDoubleAsExcitationTableLength: (unsigned int) aLength scale: (double) aScaling;
  
@@ -478,7 +458,6 @@ non-integer resampling is not currently supported.
     */
 
 /*!
-  @return Returns a DSPDatum *.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -488,12 +467,11 @@ non-integer resampling is not currently supported.
   if the currently-cached data is of the type <b>MK_excitationTable</b>
   and is of the default length and scaling.  If so, that data is returned.
   If not, it is recomputed.   
+ @return Returns a DSPDatum *.
 */
 - (DSPDatum *) dataDSPAsExcitationTable;
 
 /*!
-  @param  aLength is an int.
-  @return Returns a DSPDatum *.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -503,12 +481,12 @@ non-integer resampling is not currently supported.
   if the currently-cached data is of the type <b>MK_excitationTable</b>
   and is of the default length and scaling.  If so, that data is returned.
   If not, it is recomputed.   
+ @param  aLength is an int.
+ @return Returns a DSPDatum *.
 */
 - (DSPDatum *) dataDSPAsExcitationTableLength: (int) aLength;
 
 /*!
-  @param  aScaling is a double.
-  @return Returns a DSPDatum *.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -518,11 +496,12 @@ non-integer resampling is not currently supported.
   if the currently-cached data is of the type <b>MK_excitationTable</b>
   and is of the default length and scaling.  If so, that data is returned.
   If not, it is recomputed.   
+ @param  aScaling is a double.
+ @return Returns a DSPDatum *.
 */
 - (DSPDatum *) dataDSPAsExcitationTableScale: (double) aScaling;
 
 /*!
-  @return Returns a double *.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -532,12 +511,11 @@ non-integer resampling is not currently supported.
   if the currently-cached data is of the type <b>MK_excitationTable</b>
   and is of the default length and scaling.  If so, that data is returned.
   If not, it is recomputed.   
+ @return Returns a double *.
 */
 - (double *) dataDoubleAsExcitationTable;
 
 /*!
-  @param  aLength is an int.
-  @return Returns a double *.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -547,12 +525,12 @@ non-integer resampling is not currently supported.
   if the currently-cached data is of the type <b>MK_excitationTable</b>
   and is of the default length and scaling.  If so, that data is returned.
   If not, it is recomputed.   
+ @param  aLength is an int.
+ @return Returns a double *.
 */
 - (double *) dataDoubleAsExcitationTableLength: (int) aLength;
 
 /*!
-  @param  aScaling is a double.
-  @return Returns a double *.
   @brief These methods are similar to the superclass versions (without the
   "<b>ExcitationTable</b>" in their name), except that they specify
   that the table to be computed should be in <b>MK_excitationTable</b>
@@ -562,14 +540,12 @@ non-integer resampling is not currently supported.
   if the currently-cached data is of the type <b>MK_excitationTable</b>
   and is of the default length and scaling.  If so, that data is returned.
   If not, it is recomputed.   
+ @param  aScaling is a double.
+ @return Returns a double *.
 */
 - (double *) dataDoubleAsExcitationTableScale: (double) aScaling;
 
-
 /*!
-  @param  aLength is an int.
-  @param  aScaling is a double.
-  @return Returns an id.
   @brief Computes the sampled waveform from the sine wave components in
   <b>MK_excitationTable</b> format, by doing a recursive Chebychev
   polynomial expansion.
@@ -583,7 +559,10 @@ non-integer resampling is not currently supported.
   <i>tableType</i>internal instance variable to <b>MK_excitationTable</b>.
   If aLength is not the same as the length of the data, truncates or extends
   the sound. For best results, use an odd length.
-*/
+ @param  aLength is an int.
+ @param  aScaling is a double.
+ @return Returns an id.
+ */
 - fillExcitationTableLength: (int) aLength scale: (double) aScaling;
 
 @end

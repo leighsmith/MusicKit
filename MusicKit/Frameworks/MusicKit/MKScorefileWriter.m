@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2005/05/11 07:59:03  leighsmith
+  Cleaned up parameter types and doxygen docs
+
   Revision 1.11  2004/12/13 02:24:41  leighsmith
   New typing for MKNoteReceiver _setData: and _getData
 
@@ -286,7 +289,7 @@ Modification history:
   [super dealloc];
 }
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* Realizes note by writing it to the file, assigned to the part 
      corresponding to aNoteReceiver. */
 {

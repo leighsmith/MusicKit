@@ -62,6 +62,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2005/05/11 07:59:02  leighsmith
+  Cleaned up parameter types and doxygen docs
+
   Revision 1.11  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -115,38 +118,33 @@ Modification history:
 
 #import "PatchTemplatePrivate.h"
 
-@implementation MKPatchTemplate:NSObject
+@implementation MKPatchTemplate
 
 #define ENTRYDESCR @"{#SSI}"
 
-+new
+/* initialises a new MKPatchTemplate instance. */
+- init
 {
-    self = [super allocWithZone:NSDefaultMallocZone()];
-    [self init];
-    return self;
-}
-
--init
-  /* Creates a new MKPatchTemplate instance. */
-{
-    [super init];
-    _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
-    _connectionStorage = [[NSMutableArray array] retain];
-    _elementStorage = [[NSMutableArray array] retain];
+    self = [super init];
+    if(self != nil) {
+	_deallocatedPatches = [_MKClassOrchestra() _addTemplate: self];
+	_connectionStorage = [[NSMutableArray array] retain];
+	_elementStorage = [[NSMutableArray array] retain];	
+    }
     return self;
 }
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKPatchTemplate class])
       return;
-    [MKPatchTemplate setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
+    [MKPatchTemplate setVersion: VERSION2];//sb: suggested by Stone conversion guide (replaced self)
     return;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* TYPE: Archiving; Writes object.
      You never send this message directly.  
      */
@@ -156,7 +154,7 @@ Modification history:
 		 &_eMemSegments];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
   /* You never send this message directly.  
      Should be invoked via NXReadObject(). 
      See write:. */
@@ -182,12 +180,7 @@ Modification history:
     return self;
 }
 
--copy
-{
-    return [self copyWithZone:[self zone]];
-}
-
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* Creates a new MKPatchTemplate that's a copy of the receiver, containing
      the same connections and entries. */
 {
@@ -199,13 +192,13 @@ Modification history:
     return newObj;
 }
 
--(unsigned)synthElementCount
+- (unsigned) synthElementCount
   /* Returns the number of entries in the template. */
 {
     return [_elementStorage count];
 }
 
--to:(unsigned)toObjInt sel:(SEL)aSelector arg:(unsigned)withObjInt
+- to: (unsigned) toObjInt sel: (SEL) aSelector arg: (unsigned) withObjInt
   /* Adds a request to send aSelector to the entry specified by toObjInt
      with the argument as the entry specified by withObjInt. For example,
      if you say 
@@ -250,7 +243,7 @@ static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
     return curIndex; 
 }
 
--(unsigned)addUnitGenerator:(id)aUGClass ordered:(BOOL)isOrdered
+- (unsigned) addUnitGenerator: (id) aUGClass ordered: (BOOL) isOrdered
   /* Adds a MKUnitGenerator or PatchPoint class to the receiver. If isOrdered
      is NO, the ordering of the MKUnitGenerator in memory is considered
      irrelevant. It is more efficient, from the standpoint of memory 
@@ -263,13 +256,13 @@ static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
     return addEl(self, newEntry);
 }
 
--(unsigned)addUnitGenerator:aUGClass
+- (unsigned) addUnitGenerator: aUGClass
   /* Same as [self addUnitGenerator:aUGClass ordered:YES]; */
 {
-    return [self addUnitGenerator:aUGClass ordered:YES];
+    return [self addUnitGenerator: aUGClass ordered:YES];
 }
 
--(unsigned)addSynthData:(MKOrchMemSegment)segment length:(unsigned)len
+- (unsigned) addSynthData: (MKOrchMemSegment) segment length: (unsigned) len
   /* Adds a request for a data memory segment of the specified segment type
      and length. */
 {
@@ -280,7 +273,7 @@ static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
     return addEl(self, newEntry);
 }
 
--(unsigned)addPatchpoint:(MKOrchMemSegment)segment
+- (unsigned) addPatchpoint: (MKOrchMemSegment) segment
   /* Adds a request for a data memory segment of the specified segment type */
 {
     MKPatchEntry *newEntry = [[MKPatchEntry alloc] initWithClass: [MKSynthData class]
@@ -289,12 +282,12 @@ static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
     return addEl(self, newEntry);
 }
 
-NSMutableArray *_MKDeallocatedSynthPatches(MKPatchTemplate *templ,int orchIndex)
+NSMutableArray *_MKDeallocatedSynthPatches(MKPatchTemplate *templ, int orchIndex)
 {
     return templ->_deallocatedPatches[orchIndex];
 }
 
-BOOL _MKIsClassInTemplate(MKPatchTemplate *templ,id factObj)
+BOOL _MKIsClassInTemplate(MKPatchTemplate *templ, id factObj)
 {
     /* Returns YES if factObj is present in templ as a unit generator,
        ordered or unordered. */
@@ -307,7 +300,7 @@ BOOL _MKIsClassInTemplate(MKPatchTemplate *templ,id factObj)
    return NO;
 }
 
-void _MKEvalTemplateConnections(MKPatchTemplate *templ,id synthElements)
+void _MKEvalTemplateConnections(MKPatchTemplate *templ, id synthElements)
 {
     register unsigned n;
 //    int arr=0; //arr[conn->_toObjectOffset], arr[conn->_argObjectOffset]
@@ -326,7 +319,7 @@ unsigned _MKGetTemplateEMemUsage(MKPatchTemplate *templ)
     return templ->_eMemSegments;
 }
 
-void _MKSetTemplateEMemUsage(MKPatchTemplate *templ,MKOrchMemStruct *reso)
+void _MKSetTemplateEMemUsage(MKPatchTemplate *templ, MKOrchMemStruct *reso)
 {
     if (templ->_eMemSegments == MAXINT) {
 	if (reso->xData) 
@@ -340,8 +333,7 @@ void _MKSetTemplateEMemUsage(MKPatchTemplate *templ,MKOrchMemStruct *reso)
 
 #define CHECKCLASS 1
 
-id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
-		      int orchIndex)
+id _MKAllocSynthPatch(MKPatchTemplate *templ, id synthPatchClass, id anOrch, int orchIndex)
 {
     id aPatch;
 #if CHECKCLASS

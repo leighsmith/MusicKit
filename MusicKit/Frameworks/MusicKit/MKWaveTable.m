@@ -22,16 +22,6 @@
 
 @implementation MKWaveTable
 
-+  new
-  /* This is how you make up an empty seg envelope */
-{
-    self = [super allocWithZone:NSDefaultMallocZone()];
-    [self init];
-//    [self initialize]; /* Avoid breaking pre-2.0 apps. */
-    return self;
-}
-
-
 #define VERSION2 2
 
 + (void)initialize
@@ -68,34 +58,26 @@
     return self;
 }
 
-#if 0
-- (void)initialize 
-  /* For backwards compatibility */
-{ 
-    
-} 
-#endif
-
 - init
-/* This method is ordinarily invoked only when an 
-   instance is created. 
-   A subclass should send [super init] if it overrides this 
-   method. */ 
+    /* This method is ordinarily invoked only when an 
+    instance is created. 
+    A subclass should send [super init] if it overrides this 
+    method. */ 
 {
-  self = [super init];
-  if (self != nil) {
-    if (dataDSP) {
-      free(dataDSP);
-      dataDSP = NULL;
+    self = [super init];
+    if (self != nil) {
+	if (dataDSP) {
+	    free(dataDSP);
+	    dataDSP = NULL;
+	}
+	if (dataDouble) {
+	    free(dataDouble);
+	    dataDouble = NULL;
+	}
+	length = 0;
+	scaling = 0.0;
     }
-    if (dataDouble) {
-      free(dataDouble);
-      dataDouble = NULL;
-    }
-    length = 0;
-    scaling = 0.0;
-  }
-  return self;
+    return self;
 }
 
 - (unsigned) hash
@@ -138,25 +120,20 @@
     return newObj;
 }
 
-- copy
-{
-    return [self copyWithZone:[self zone]];
-}
-
 - (void)dealloc
-/* Frees cached data arrays then sends [super free].
-   It also removes the name, if any, from the Music Kit name table. */
+    /* Frees cached data arrays then sends [super free].
+    It also removes the name, if any, from the Music Kit name table. */
 {
-  if (dataDSP) {
-    free(dataDSP);
-    dataDSP = NULL;
-  }
-  if (dataDouble) {
-    free(dataDouble);
-    dataDouble = NULL;
-  }
-  MKRemoveObjectName(self);
-  [super dealloc];
+    if (dataDSP) {
+	free(dataDSP);
+	dataDSP = NULL;
+    }
+    if (dataDouble) {
+	free(dataDouble);
+	dataDouble = NULL;
+    }
+    MKRemoveObjectName(self);
+    [super dealloc];
 }
 
 - (unsigned int)length
@@ -180,13 +157,14 @@
    nor freed by the sender. */
 {
    if ((length != aLength) || (scaling != aScaling) || (length == 0))
-     if (![self fillTableLength:aLength scale:aScaling])
+     if (![self fillTableLength: aLength scale: aScaling])
        return NULL;
    if (!dataDSP && dataDouble) {
-	_MK_MALLOC(dataDSP, DSPDatum, (unsigned int)length);
-	if (!dataDSP) return NULL;
-	_MKDoubleToFix24Array (dataDouble, dataDSP, (unsigned int)length);
-	} 
+	_MK_MALLOC(dataDSP, DSPDatum, (unsigned int) length);
+	if (!dataDSP) 
+	    return NULL;
+	_MKDoubleToFix24Array(dataDouble, dataDSP, (unsigned int) length);
+    } 
    return dataDSP;
 }
 
@@ -197,17 +175,18 @@
    nor freed by the sender. */
 {  
    if ((length != aLength) || (scaling != aScaling) || (length == 0))
-     if (![self fillTableLength:aLength scale:aScaling])
-       return NULL;
+       if (![self fillTableLength: aLength scale: aScaling])
+	   return NULL;
    if (!dataDouble && dataDSP) {
-	_MK_MALLOC (dataDouble, double, (unsigned int)length);
-	if (!dataDouble) return NULL;
-        _MKFix24ToDoubleArray (dataDSP, dataDouble, (unsigned int)length);
-	} 
-   return dataDouble;
+	_MK_MALLOC (dataDouble, double, (unsigned int) length);
+	if (!dataDouble) 
+	    return NULL;
+        _MKFix24ToDoubleArray (dataDSP, dataDouble, (unsigned int) length);
+    } 
+    return dataDouble;
 }
 
-- fillTableLength:(int)aLength scale:(double)aScaling 
+- fillTableLength: (int) aLength scale: (double) aScaling 
 /* This method is a subclass responsibility.
 
    This method computes the data. It allocates or reuses either (or 
@@ -223,22 +202,22 @@
     [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
 }
 
-- (DSPDatum *)dataDSP
+- (DSPDatum *) dataDSP
 /* Returns the MKWaveTable as an array of DSPDatums
    with the current length and scaling, computing the data if it has
    not been computed yet. Returns NULL if the subclass cannot compute the
    data.  You should neither alter nor free the data. */
 {
-    return [self dataDSPLength:(unsigned int)length scale:scaling];
+    return [self dataDSPLength: (unsigned int) length scale: scaling];
 }
 
-- (double *)dataDouble
+- (double *) dataDouble
 /* Returns the MKWaveTable as an array of doubles, 
    with the current length and scaling, computing the data if it has
    not been computed yet. Returns NULL if the subclass cannot compute the
    data.  You should neither alter nor free the data. */
 {
-    return [self dataDoubleLength:(unsigned int)length scale:scaling];
+    return [self dataDoubleLength: (unsigned int) length scale: scaling];
 }
 
 - (DSPDatum *)dataDSPLength:(int)aLength

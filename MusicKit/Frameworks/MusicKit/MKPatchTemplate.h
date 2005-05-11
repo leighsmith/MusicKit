@@ -73,45 +73,19 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.8  2005/05/09 15:52:52  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.7  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.6  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.5  2000/11/25 22:58:01  leigh
-  Enforced ivar privacy
-
-  Revision 1.4  2000/06/09 17:17:51  leigh
-  Added MKPatchEntry replacing deprecated Storage class
-
-  Revision 1.3  2000/06/09 03:32:36  leigh
-  Comment cleanup and typed ivars to reduce warnings
-
-  Revision 1.2  1999/07/29 01:25:48  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKPatchTemplate
-  @brief
-
-A MKPatchTemplate is a recipe for building a MKSynthPatch object. It contains
+  @brief A MKPatchTemplate is a recipe for building a MKSynthPatch object. It contains
 specifications for the MKUnitGenerator and MKSynthData objects that are needed and
 instructions for connecting these objects together.
 
-PatchTemplate's <b>addUnitGenerator:ordered:</b> and <b>addSynthData:length:</b>
+MKPatchTemplate's <b>addUnitGenerator:ordered:</b> and <b>addSynthData:length:</b>
 methods describe the objects that make up the MKSynthPatch.  It's important to
 keep in mind that these methods don't add actual objects to the MKPatchTemplate. 
 Instead, they specify the types of objects that will be created when the
 MKSynthPatch is constructed by the MKOrchestra.
 
-A PatchTemplate's MKUnitGenerators are specified by their class, given as the
+A MKPatchTemplate's MKUnitGenerators are specified by their class, given as the
 first argument to the <b>addUnitGenerator:ordered:</b> method.  The argument
 should be a MKUnitGenerator leaf class, not a master class (leaf and master
 classes are explained in the MKUnitGenerator class description).
@@ -127,7 +101,7 @@ before B if no delay is to be incurred.  As a convenience, the
 automatically declared as ordered.  The advantage of unordered MKUnitGenerators is
 that their allocation is less constrained.
 
-SynthDatas are specified by a DSP memory segment and a length.  The memory
+MKSynthDatas are specified by a DSP memory segment and a length.  The memory
 segment is given as the first argument to <b>addSynthData:length:</b>.  This can
 be either MK_xData, for x data memory, or MK_yData, for y data memory.  Which
 memory segment to specify depends on where the MKUnitGenerators that access it
@@ -139,7 +113,7 @@ A typical use of a MKSynthData is to create a location called a <i>patchpoint</i
 that's written to by one MKUnitGenerator and then read by another.  A patchpoint,
 which is always 8 words long, is ordinarily the only way that two MKUnitGenerators
 can communicate.  The <b>addPatchPoint:</b> method is provided as a convenient
-way to add SynthDatas that are used as patchpoints.  The argument to this method
+way to add MKSynthDatas that are used as patchpoints.  The argument to this method
 is either MK_xPatch or MK_yPatch, for x and y patchpoint memory,
 respectively.
 
@@ -175,122 +149,98 @@ MKUnitGenerator directly to another MKUnitGenerator.
     unsigned int _eMemSegments; /* External memory segment bit vector */
 }
 
-
 /*!
-  @return Returns <b>self</b>.
   @brief Initializes a new MKPatchTemplate and returns <b>self</b>.
-
-  
+  @return Returns <b>self</b>.
 */
 - init;
 
- /* Returns a copy of the MKPatchTemplate. */
-- copyWithZone:(NSZone *)zone;
+/*!
+  @brief Returns a copy of the MKPatchTemplate. 
+  @return Returns an id.
+ */
+- copyWithZone: (NSZone *) zone;
 
 /*!
-  @return Returns an id.
-  @brief Creates and returns a MKPatchTemplate as a copy of the
-  receiver.
-
-  Same as <tt>[self copyFromZone:[self zone]];</tt>
-*/
--copy;   
-
-/*!
-  @param  anObjInt is an unsigned.
-  @param  aSelector is a SEL.
-  @param  anArgInt is an unsigned.
-  @return Returns an id.
   @brief Specifies a connection between the MKUnitGenerator identified by
   <i>objInt1</i> and the MKSynthData identified by <i>objInt2</i>.
 
-  The
-  means of the connection are specified in the method
+  The means of the connection are specified in the method
   <i>aSelector</i>, to which the MKUnitGenerator must respond. 
   <i>objInt1</i> and <i>objInt2</i> are identifying integers returned
-  by PatchTemplate's add methods. If either of these arguments are
+  by MKPatchTemplate's add methods. If either of these arguments are
   invalid identifiers, the method returns <b>nil</b>, otherwise it
   returns the receiver.
-*/
-- to:(unsigned )anObjInt sel:(SEL )aSelector arg:(unsigned )anArgInt; 
+ @param  anObjInt is an unsigned.
+ @param  aSelector is a SEL.
+ @param  anArgInt is an unsigned.
+ @return Returns an id.
+ */
+- to: (unsigned) anObjInt sel: (SEL) aSelector arg: (unsigned) anArgInt; 
 
 /*!
-  @param  aUGClass is an id.
-  @param  isOrdered is a BOOL.
-  @return Returns an unsigned.
   @brief Adds a MKUnitGenerator specification to the receiver.
 
-  The
-  MKUnitGenerator is an instance of <i>aUGClass</i>, a MKUnitGenerator
+  The MKUnitGenerator is an instance of <i>aUGClass</i>, a MKUnitGenerator
   leaf class.  If <i>isOrdered</i> is YES, then the order in which the
   specification is added (in relation to the receiver's other
   MKUnitGenerators) is the order in which the MKUnitGenerator, once
   created, is executed on the DSP.
-*/
--(unsigned ) addUnitGenerator:aUGClass ordered:(BOOL )isOrdered; 
+  @param  aUGClass is an id.
+  @param  isOrdered is a BOOL.
+  @return Returns an unsigned.
+ */
+- (unsigned) addUnitGenerator: (id) aUGClass ordered: (BOOL) isOrdered; 
 
 /*!
-  @param  aUGClass is an id.
-  @return Returns an unsigned.
   @brief Adds an ordered MKUnitGenerator specification to the receiver.
 
-  
-  Implemented as <b>[self addUnitGenerator:</b><i>aUGClass</i>
-  ordered:YES]. Returns an integer that identifies the MKUnitGenerator
-  specification.
+  Implemented as <b>[self addUnitGenerator:</b> <i>aUGClass</i> <b>ordered: YES]</b>. 
+  @param  aUGClass is an id.
+  @return Returns an unsigned integer that identifies the MKUnitGenerator specification.
 */
--(unsigned ) addUnitGenerator:aUGClass; 
+- (unsigned) addUnitGenerator: (id) aUGClass; 
 
 /*!
-  @param  segment is a MKOrchMemSegment.
-  @param  len is an unsigned.
-  @return Returns an unsigned.
   @brief Adds a MKSynthData specification to the receiver.
 
-  The MKSynthData has a
-  length of <i>len</i> DSPDatum words and is allocated from the DSP
+  The MKSynthData has a length of <i>len</i> DSPDatum words and is allocated from the DSP
   segment <i>segment</i>, which should be either MK_xData or MK_yData.
-  Returns an integer that identifies the MKSynthData
-  specification.
-*/
--(unsigned ) addSynthData:(MKOrchMemSegment )segment length:(unsigned )len; 
+  @param  segment is a MKOrchMemSegment.
+  @param  len is an unsigned.
+  @return Returns an unsigned integer that identifies the MKSynthData specification.
+ */
+- (unsigned) addSynthData: (MKOrchMemSegment) segment length: (unsigned) len; 
 
 /*!
-  @param  segment is a MKOrchMemSegment.
-  @return Returns an unsigned.
   @brief Adds a patchpoint (MKSynthData) specification to the receiver.
-
   
   <i>segment</i> is the DSP memory segment from which the patchpoint
   is allocated.  It can be either MK_xPatch or MK_yPatch.  Returns an
   integer that identifies the patchpoint specification.
+  @param  segment is a MKOrchMemSegment.
+  @return Returns an unsigned.
 */
--(unsigned)addPatchpoint:(MKOrchMemSegment)segment;
+- (unsigned) addPatchpoint: (MKOrchMemSegment) segment;
 
 /*!
-  @return Returns an unsigned.
   @brief Returns the number of MKUnitGenerator and MKSynthData specifications
-  (including patchpoints) that have been added to the
-  receiver.
-
-  
+  (including patchpoints) that have been added to the receiver.
+  @return Returns an unsigned.
 */
--(unsigned)synthElementCount;
+- (unsigned) synthElementCount;
 
 /* 
  You never send this message directly.  
 */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
 /* 
  You never send this message directly.  
  Should be invoked via NXReadObject(). 
  See write:. 
 */
-- (id)initWithCoder:(NSCoder *)aDecoder;
-
-/* Obsolete */
-+ new; 
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 

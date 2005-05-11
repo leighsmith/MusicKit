@@ -202,25 +202,16 @@ MKEnvStatus;
 - (int) stickPoint; 
 
 /*!
-  @param  index is an int.
-  @return Returns an id.
-  @brief Sets the object's stickpoint to the <i>index</i>'th breakpoint,
-  counting from 0.
+  @brief Sets the object's stickpoint to the <i>stickPointIndex</i>'th breakpoint, counting from 0.
 
-  Returns the object, or <b>nil</b> if <i>index</i>
-  is out of bounds.  Setting the stickpoint to MAXINT removes
-  it.
+  Returns the object, or <b>nil</b> if <i>stickPointIndex</i>
+  is out of bounds.  Setting the stickpoint to MAXINT removes it.
+  @param  stickPointIndex is an int.
+  @return Returns an id.
 */
-- setStickPoint: (int) sp; 
+- setStickPoint: (int) stickPointIndex; 
 
 /*!
-  @param  n is an int.
-  @param  xPtr is a double *.
-  @param  period is a double.
-  @param  yPtr is a double *.
-  @param  smoothingPtr is a double *.
-  @param  smoothing is a double.
-  @return Returns an id.
   @brief Fills the object with data by copying the values from <i>xPtr</i>,
   <i>yPtr</i>, and <i>smoothingPtr</i>.
 
@@ -230,7 +221,14 @@ MKEnvStatus;
   the object's default smoothing in the absence of
   <i>smoothingPtr</i>.  If <i>yPtr</i> is NULL, the object's y array
   is unchanged. Returns the object.
-*/
+ @param  n is an int.
+ @param  xPtr is a double *.
+ @param  period is a double.
+ @param  yPtr is a double *.
+ @param  smoothingPtr is a double *.
+ @param  smoothing is a double.
+ @return Returns an id.
+ */
 -    setPointCount: (int) n
             xArray: (double *) xPtr
   orSamplingPeriod: (double) period

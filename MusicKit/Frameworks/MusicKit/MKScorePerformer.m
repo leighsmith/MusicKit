@@ -400,11 +400,6 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return newObj;
 }
 
-- copy
-{
-    return [self copyWithZone:[self zone]];
-}
-
 - (void) dealloc
   /* Frees contained PartPerformers and self. */
 {
@@ -430,7 +425,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
-- partPerformerForPart: (MKPart *) aPart
+- (MKPartPerformer *) partPerformerForPart: (MKPart *) aPart
   /* Returns the MKPartPerformer for aPart, if found. */
 {
     MKPartPerformer *partPerformer;
@@ -442,14 +437,8 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return nil;
 }
 
-- partPerformers
-  /* TYPE: Processing
-   * Returns a copy of the Array of the receiver's MKPartPerformer collection.
-   * The PartPerformers themselves are not copied. It is the sender's
-   * responsibility to free the Array.
-   */
+- (NSArray *) partPerformers
 {
-    
     return _MKLightweightArrayCopy(partPerformers);
 }
 
@@ -484,7 +473,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return (int) status;
 }
 
-- setPartPerformerClass: aPartPerformerSubclass
+- setPartPerformerClass: (Class) aPartPerformerSubclass
 {
     if (!_MKInheritsFrom(aPartPerformerSubclass, [MKPartPerformer class]))
 	return nil;
@@ -492,7 +481,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
-- partPerformerClass
+- (Class) partPerformerClass
 {
     return partPerformerClass;
 }

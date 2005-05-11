@@ -250,16 +250,16 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
 /*!
   @brief Enqueues, with the appropriate Conductor, a request for
   <b>sendAndFreeNote:</b><i>aNote</i> to be sent to <b>self</b> after
-  <i>delayBeats</i>.
+  <i>delayTimeInBeats</i>.
 
   See <b>sendNote:atTime:</b> for a description of
   the MKConductor that's used.  
   @param  aNote is an MKNote instance.
-  @param  delayBeats is a double.
+  @param  delayTimeInBeats is a double.
   @return Returns <b>self</b>.
   @see - <b>sendNote:</b>, - <b>sendAndFreeNote:</b>, - <b>sendAndFreeNote:atTime:</b>,
 */
-- sendAndFreeNote: (MKNote *) aNote withDelay: (double) delayBeats;
+- sendAndFreeNote: (MKNote *) aNote withDelay: (double) delayTimeInBeats;
 
 /*!
   @brief Sends the message <b>sendNote:</b><i>aNote</i> to <b>self</b> and
@@ -291,20 +291,20 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
   @param  beatsSinceStart is a double.
   @see -<b>sendNote:</b>, -<b>sendNote:withDelay:</b>
 */
-- (void) sendNote: (MKNote *) aNote atTime: (double) time; 
+- (void) sendNote: (MKNote *) aNote atTime: (double) beatsSinceStart; 
 
 /*!
   @brief Enqueues with <i>aNote</i>'s MKConductor, a request for
   <b>sendNote:</b><i>aNote</i> to be sent to <b>self</b> after
-  <i>delayBeats</i>.
+  <i>delayTimeInBeats</i>.
 
   See <b>sendNote:atTime:</b> for a description of
   the MKConductor that's used.  
   @param  aNote is an MKNote instance.
-  @param  delayBeats is a double, measuring beats from the time this message is received.
+  @param  delayTimeInBeats is a double, measuring beats from the time this message is received.
   @see -<b>sendNote:</b>, -<b>sendNote:atTime:</b>
 */
-- (void) sendNote: (MKNote *) aNote withDelay: (double) delayTime; 
+- (void) sendNote: (MKNote *) aNote withDelay: (double) delayTimeInBeats; 
 
 /*!
   @brief Sends the message <b>receiveNote:</b><i>aNote</i> to the

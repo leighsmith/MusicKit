@@ -473,15 +473,17 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 - setLastTimeTag: (double) v;
 
 /*!
-  @brief 
-  @return Returns the first time tag in beats.
-  
+  @brief  Returns the first time tag in beats.
   Returns 0.
+  @return Returns the first time tag in beats.
  */
 - (double) firstTimeTag;
 
 /*!
- Returns MK_ENDOFTIME 
+  @brief  Returns the last time tag in beats.
+
+  Returns MK_ENDOFTIME.
+  @return  Returns the last time tag in beats.
  */
 - (double) lastTimeTag;
 
