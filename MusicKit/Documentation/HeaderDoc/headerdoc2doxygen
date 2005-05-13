@@ -1,0 +1,6 @@
+#!/bin/zsh
+foreach f ($@)
+echo $f
+awk -f ~/headerdoc2doxygen.awk < $f > /tmp/doxygen_header
+awk -f ~/cleandoxy.awk < /tmp/doxygen_header > $f
+end
