@@ -17,7 +17,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkvertuple "5.5.1">
+<!entity mkvertuple "5.5.2">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
 <!entity mkcvsweb "http://sourceforge.net/cvs/?group_id=9881">
