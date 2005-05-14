@@ -43,6 +43,7 @@
     [waterfallColor release];
     // TODO we're leaking like a sieve here...
     // waterFallPaths
+    [super dealloc];
 }
 
 - (void) setDelegate: (id) anObject

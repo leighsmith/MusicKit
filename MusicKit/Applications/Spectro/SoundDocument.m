@@ -313,7 +313,7 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 
 - showSelectionTimes
 {
-    int start;
+    unsigned int start;
     unsigned int size;
     float srate;
     

@@ -99,21 +99,20 @@
     srate = [aSound samplingRate];
 }
 
--(BOOL) setReductionFactor:(float)rf
+-(BOOL) setReductionFactor: (float) rf
 {
-	int start, size;
+    unsigned int start, size;
 
-	[soundView getSelection:&start size:&size];
-	reductionFactor = rf;
-	[soundView setReductionFactor:rf];
-	[soundView setSelection:start size:size];
-
-	return YES;
+    [soundView getSelection:&start size: &size];
+    reductionFactor = rf;
+    [soundView setReductionFactor: rf];
+    [soundView setSelection: start size: size];
+    return YES;
 }
 
 - delegate
 {
-	return delegate;
+    return delegate;
 }
 
 - soundView
@@ -182,21 +181,21 @@
 /* sizeToSelection: -- Set the display start/size to the start/size of
  * current selection.
  */
-- sizeToSelection:sender
+- sizeToSelection: sender
 {
-	int selstart, selsize;
+    unsigned int selstart, selsize;
 
-	[soundView getSelection:&selstart size:&selsize];
-	if (!selsize)
-		return self;
-	[self setWindowSize:selsize];		/* Need to do this first */
-	[self setWindowStart:selstart];		/* Now set start and scroll */
+    [soundView getSelection: &selstart size: &selsize];
+    if (!selsize)
+	return self;
+    [self setWindowSize: selsize];		/* Need to do this first */
+    [self setWindowStart: selstart];		/* Now set start and scroll */
 
 /* Be sure to notify the delegate that our display changed
- */
-	if (delegate && [delegate respondsToSelector:@selector(displayChanged:)])
-            [delegate performSelector:@selector(displayChanged:) withObject:self];
-	return self;
+*/
+    if (delegate && [delegate respondsToSelector: @selector(displayChanged:)])
+	[delegate performSelector: @selector(displayChanged:) withObject: self];
+    return self;
 }
 
 /* reflectScroll: -- handle a change in the relationship between

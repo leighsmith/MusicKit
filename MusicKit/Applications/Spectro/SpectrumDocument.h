@@ -56,9 +56,9 @@
     IBOutlet id totalFramesCell;
     int dataSize;
     int windowSize;
-    int firstSample;
-    int sampleCount;
-    int totalFrames;
+    unsigned int firstSample;
+    unsigned int sampleCount;
+    unsigned int totalFrames;
     int currentFrame;
     int channel;
     int power;
