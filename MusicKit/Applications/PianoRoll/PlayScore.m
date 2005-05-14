@@ -152,12 +152,14 @@ static void handleMKError(NSString *msg)
 
     return self;
 }
+
 - (void)dealloc
 {
     [scorePerformer release];
     [synthInstruments removeAllObjects];
     [synthInstruments release];
     [theOrch release];
+    [super dealloc];
 }
 
 - stop

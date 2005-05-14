@@ -27,6 +27,7 @@
 {
     [theScore release];
     [partView release];
+    [super dealloc];
 }
 
 - partView
