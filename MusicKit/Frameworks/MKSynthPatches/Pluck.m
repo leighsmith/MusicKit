@@ -587,7 +587,7 @@ static void setDefaults(Pluck *self)
     self->volume = MIDI_MAXDATA;
 }
 
--preemptFor:aNote
+-preemptFor: (MKNote *) aNote
 {
     /* This is unnecessary but if it's changed, the logic in updateParams
        must change too. */
@@ -614,7 +614,7 @@ static void setDefaults(Pluck *self)
     return claimNoise(self);  /* We need to make sure the noise is claimable */
 }
 
--noteOnSelf:aNote
+-noteOnSelf: (MKNote *) aNote
     /* Sent whenever a noteOn is received by the MKSynthPatch. 
      We allocate our delay memory here. */
 {
@@ -668,14 +668,14 @@ static void setDefaults(Pluck *self)
     return self;
 }
 
--noteUpdateSelf:aNote
+-noteUpdateSelf: (MKNote *) aNote
 {
     if (![self _updatePars:aNote noteType:MK_noteUpdate])
       [self noteEndSelf];
     return self;
 }
 
--(double)noteOffSelf:aNote
+-(double)noteOffSelf: (MKNote *) aNote
   /* Sent when patch goes from running to finalDecay */
 {
     if (![self _updatePars:aNote noteType:MK_noteOff])

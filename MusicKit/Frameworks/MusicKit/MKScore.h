@@ -501,7 +501,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @brief Returns the time tag of the earliest note in the score.
 
   This can be useful to determine how much silence precedes the first note.
-  @return Returns an double of time in seconds.
+  @return Returns a double of time in seconds.
  */
 - (double) earliestNoteTime;
 

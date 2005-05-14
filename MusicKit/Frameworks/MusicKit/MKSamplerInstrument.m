@@ -228,13 +228,13 @@
     return self;
 }
 
-- performerDidActivate:sender
+- performerDidActivate: (id) sender
 {
     NSLog(@"Got playingSample delegate activation notice\n");
     return self;
 }
 
-- performerDidDeactivate:sender
+- performerDidDeactivate: (id) sender
 {
     NSLog(@"Got playingSample delegate deactivation notice\n");
     return self;

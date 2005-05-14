@@ -39,7 +39,8 @@
   example, may wish to activate an editor for that object. An example
   of this behaviour may be found in <b>SndAudioProcessorInspector</b>.
 */
-@interface SndStreamArchitectureView : NSView {
+@interface SndStreamArchitectureView : NSView 
+{
 /*! @var timer */ 
   NSTimer *timer;
 /*! @var displayObjectsArray */ 
@@ -61,7 +62,8 @@
   @param      timer
   @return     self
 */
-- update: (NSTimer*) timer;
+- update: (NSTimer *) timer;
+
 /*!
   @brief   To come
   
@@ -70,7 +72,8 @@
   @param      rect
   @return     self
 */
-- drawStreamClient: (SndStreamClient*) client inRect: (NSRect) rect;
+- drawStreamClient: (SndStreamClient *) client inRect: (NSRect) rect;
+
 /*!
   @brief   To come
   
@@ -79,6 +82,7 @@
   @return     self
 */
 - drawMixerInRect: (NSRect) rect;
+
 /*!
   @brief   To come
   
@@ -87,6 +91,7 @@
   @return     self
 */
 - drawStreamManagerInRect: (NSRect) rect;
+
 /*!
   @brief   To come
   
@@ -95,50 +100,43 @@
   @param      rect
   @return     self
 */
-- drawAudioProcessorChain: (SndAudioProcessorChain*) apc inRect: (NSRect) rect;
+- drawAudioProcessorChain: (SndAudioProcessorChain *) apc inRect: (NSRect) rect;
+
 /*!
-  @brief   To come
-  
-  To come
+  @brief   To come  
   @param      aRect
   @param      aColor
   @return     self
 */
-- drawRect: (NSRect) aRect withColor: (NSColor*) aColor;
+- drawRect: (NSRect) aRect withColor: (NSColor *) aColor;
+
 /*!
-  @brief   To come
-  
-  To come
+  @brief   To come  
   @param      theEvent
 */
-- (void) mouseUp: (NSEvent*) theEvent;
+- (void) mouseUp: (NSEvent *) theEvent;
+
 /*!
   @brief   To come
-  
-  To come
   @param      delegate
   @return     self
 */
 - (void) setDelegate: (id) delegate;
+
 /*!
   @brief   To come
-  
-  To come
   @return     A delegate id.
 */
 - (id) delegate;
+
 /*!
-  @brief   To come
-  
-  To come
-  @param      delegate
+  @brief   To come  
   @return     Returns the id of the current, user selected audio architecture object.
 */
 - (id) currentlySelectedAudioArchObject;
+
 /*!
   @brief   Clears the currently selected audio architecture object to nil.
-  
-  To come
   @return     self.
 */
 - clearCurrentlySelectedAudioArchObject;

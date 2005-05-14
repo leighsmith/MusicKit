@@ -226,7 +226,7 @@ typedef enum {
               samplingRate and dataFormat variables.
   @return     Returns self.
 */
-- copyBytes: (void *) bytes count: (unsigned int) count format: (SndFormat) f;
+- copyBytes: (void *) bytes count: (unsigned int) count format: (SndFormat) format;
 
 /*!
   @brief   Copies bytes from the void * array given into a sub region of the buffer.
@@ -238,7 +238,7 @@ typedef enum {
               samplingRate and dataFormat variables.
   @return     Returns self.
  */
-- copyBytes: (void *) bytes intoRange: (NSRange) range format: (SndFormat) f;
+- copyBytes: (void *) bytes intoRange: (NSRange) range format: (SndFormat) format;
 
 /*!
   @brief   Copies from the start of the given buffer into a sub region of the receiving buffer.
@@ -255,6 +255,7 @@ typedef enum {
  
   Grows the internal NSMutableData object as necessary
   @param      fromBuffer The audio buffer to copy from.
+  @param      bufferRange The range of fromBuffer in sample frames to copy into.
   @param      fromFrameRange The start location and number of samples to copy to the receiving buffer.
   @return     Returns the number of frames actually copied.
  */

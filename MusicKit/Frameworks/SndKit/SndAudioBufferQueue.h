@@ -40,7 +40,8 @@ typedef enum {
   the SndStreamClients, which have both an input and output SndAudioBufferQueue.
   Provides thread safe buffer exchange and blocking operations.
 */
-@interface SndAudioBufferQueue : NSObject {
+@interface SndAudioBufferQueue : NSObject 
+{
 /*! @var pendingBuffers Array of buffers pending processing (to be consumed) */
     NSMutableArray  *pendingBuffers;
 /*! @var processedBuffers Array of processed buffers (post consumption) */

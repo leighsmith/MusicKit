@@ -111,7 +111,7 @@ extern double _MKTheTimeToWait(double nextMsgTime);
 -_removeActivePerformer:perf;
 -_runMTC:(double)requestedTime :(double)actualTime;
 -(double) _setMTCTime:(double)desiredTime;
--(double)_MTCPerformerActivateOffset:sender;
+-(double)_MTCPerformerActivateOffset: (id) sender;
 - _setMTCSynch: (MKMidi *) aMidiObj;
 
 void setupMTC(void);

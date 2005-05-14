@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2005/05/14 03:23:05  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.4  2005/05/09 15:27:44  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -115,7 +118,7 @@ velocitySensitivity is 0, velocity has no effect.
 
   <i>aNote</i> is ignored.
 */
-+patchTemplateFor:aNote;
++patchTemplateFor: (MKNote *) aNote;
  
 /*!
   @param  aNote is an id.
@@ -126,7 +129,7 @@ velocitySensitivity is 0, velocity has no effect.
   phrase, all instance variables are set to default values, then the
   values are read from the MKNote.  
 */
--noteOnSelf:aNote;
+-noteOnSelf: (MKNote *) aNote;
  
 /*!
   @param  aNote is an id.
@@ -137,7 +140,7 @@ velocitySensitivity is 0, velocity has no effect.
   Sets parameters as
   specified in <i>aNote</i>.
 */
--noteUpdateSelf:aNote;
+-noteUpdateSelf: (MKNote *) aNote;
  
 /*!
   @param  aNote is an id.
@@ -147,7 +150,7 @@ velocitySensitivity is 0, velocity has no effect.
   Finishes the note
   immediately.
 */
--(double)noteOffSelf:aNote;
+-(double)noteOffSelf: (MKNote *) aNote;
  
 /*!
   @return Returns an id.

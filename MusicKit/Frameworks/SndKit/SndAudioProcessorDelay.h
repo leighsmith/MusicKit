@@ -41,7 +41,8 @@ enum SndDelayParam {
   
   To come - see base class.
 */
-@interface SndAudioProcessorDelay : SndAudioProcessor {
+@interface SndAudioProcessorDelay : SndAudioProcessor 
+{
 /*! @var  chanL temporary delay buffer (left channel) */
   float  *chanL;
 /*! @var  chanR temporary delay buffer (right channel) */
@@ -60,11 +61,9 @@ enum SndDelayParam {
 
 /*!
   @brief   Factory method
-  @param      nSams
-  @param      fFB
-  @return     A Freshly initialized, autoreleased  delay processor.
-  
-  
+  @param      nSams Delay length in sample frames.
+  @param      fFB Percentage of feedback.
+  @return     A freshly initialized, autoreleased delay processor.
 */
 + delayWithLength: (const long) nSams feedback: (const float) fFB;
 
@@ -73,18 +72,12 @@ enum SndDelayParam {
   @param nSams
   @param fFB
   @return 
-  
-  
 */
 - setLength: (const long) nSams andFeedback: (const float) fFB;
 
 /*!
   @brief 
-  @param      nSams
-  @param      fFB
   @return self
-  
-  
 */
 - freemem;
 

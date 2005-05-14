@@ -66,7 +66,8 @@ enum {
 
   To come.
 */
-@interface SndAudioProcessorMP3Encoder : SndAudioProcessor {
+@interface SndAudioProcessorMP3Encoder : SndAudioProcessor 
+{
   /*! @var buffer_l Left audio channel data (pre-encoding)                      */
   float             *buffer_l;
   /*! @var buffer_r Right audio channel data (pre-encoding)                     */

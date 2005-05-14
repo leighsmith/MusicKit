@@ -71,7 +71,7 @@ class of the MKUnitGenerator that represents the unit generator.  For example, t
 download a copy of the unoise unit generator (which generates white noise), you
 allocate an instance of the UnoiseUG class: 
 
-<tt>
+<pre>
 // Create an MKOrchestra and a variable for the MKUnitGenerator.
 
 MKOrchestra *anOrch = [MKOrchestra new];
@@ -84,7 +84,7 @@ if (![anOrch open])
 // unit generator program is download to the DSP.
 
 aNoise = [anOrch allocateUnitGenerator: [UnoiseUGx class]];
-</tt>
+</pre>
 
 Notice that the receiver of the <b>class</b> message in the final line of the
 example is UnoiseUGx. The &ldquo;x&rdquo; is explained later in this class

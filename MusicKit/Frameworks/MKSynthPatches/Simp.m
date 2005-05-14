@@ -132,7 +132,7 @@ static int oscUG, outUG, outsig;
 }    
 
 
--noteOnSelf:aNote
+-noteOnSelf: (MKNote *) aNote
   /* Sent whenever a noteOn is received by the SynthInstrument. */
 {
   [self _updateParameters:aNote];
@@ -144,7 +144,7 @@ static int oscUG, outUG, outsig;
 }
 
 
--preemptFor:aNote
+-preemptFor: (MKNote *) aNote
   /* Sent whenever a running note is being preempted by a new note. */
 {
   [self _setDefaults];
@@ -152,14 +152,14 @@ static int oscUG, outUG, outsig;
 }
 
 
--noteUpdateSelf:aNote
+-noteUpdateSelf: (MKNote *) aNote
   /* Sent whenever a noteUpdate is received by the SynthInstrument. */
 {
   return [self _updateParameters:aNote];
 }
 
 
--(double)noteOffSelf:aNote
+-(double)noteOffSelf: (MKNote *) aNote
   /* Sent whenever a noteOff is received by the SynthInstrument. Returns
      the amplitude envelope completion time, needed to schedule the noteEnd. */
 {   

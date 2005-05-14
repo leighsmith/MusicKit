@@ -105,10 +105,10 @@ NSScrollView.
 
 <H2>Methods Implemented by the Delegate</H2>
 
- - selectionChanged:sender
+ - selectionChanged: (id) sender
  Sent to the delegate when the SndView's selection changes.
 
- - soundDidChange:sender
+ - soundDidChange: (id) sender
  Sent to the delegate when the SndView's sound data is edited.
 
 
@@ -461,7 +461,7 @@ enum SndViewStereoMode {
    Used to redirect delegate messages from the SndView's Snd object; you never invoke this method directly.
   @param  sender is an id.
 */
-- hadError: sender;
+- hadError: (id) sender;
 
 /*!
   @brief Initializes the SndView, fitting the object within the rectangle given by <i>frameRect</i>. 
@@ -552,7 +552,7 @@ enum SndViewStereoMode {
 
 /*!
   @param  thePasteboard is a NSPasteboard instance.
-  @param  type is a NSString instance.
+  @param  pboardType is a NSString instance.
   @brief Places the SndView's entire sound on the given pasteboard.
   
   Currently, the <i>type</i> argument must be &#ldquo;SndPasteboardType&#rdquo;,
@@ -561,28 +561,28 @@ enum SndViewStereoMode {
 - (void) pasteboard: (NSPasteboard *) thePasteboard provideDataForType: (NSString *) pboardType;
 
 /*!
-  @param  sender is an id.
   @brief Pauses the current playback or recording session by invoking Snd's <b>pause:</b> method.
+  @param  sender is an id.
 */
-- (void) pause: sender;
+- (void) pause: (id) sender;
 
 /*!
-  @param  sender is an id.
   @brief Play the current selection by invoking Snd's <b>play:</b> method.
   
   If there is no selection, the SndView's entire Snd is played.
   The <b>willPlay:</b> message is sent to the delegate before the
   selection is played; <b>didPlay:</b> is sent when the selection is
   done playing.
+  @param  sender is an id.
 */
-- (void) play: sender;
+- (void) play: (id) sender;
 
 /*!
   @param  sender is an id.
   @brief Resumes the current playback or recording session by invoking
               Snd's <b>resume:</b> method.
 */
-- (void) resume: sender;
+- (void) resume: (id) sender;
 
 /*!
   @param  sender is an id.
@@ -666,7 +666,7 @@ enum SndViewStereoMode {
   the method returns immediately without recomputing the frame
   size.
 */
-- (BOOL) setReductionFactor: (float) redFactor;
+- (BOOL) setReductionFactor: (float) reductionFactor;
 
 /*!
   @brief Sets the proportion of the sound displayed within the SndView frame.
@@ -809,18 +809,18 @@ enum SndViewStereoMode {
 - (void) setSound: (Snd *) aSound;
 
 /*!
-  @return Returns a Snd instance.
   @brief Returns the SndView's Snd object being displayed.
+  @return Returns a Snd instance.
 */
 - (Snd *) sound;
 
 /*!
-  @param  newSize is a NSSize.
   @brief Sets the width and height of the SndView's frame.
   
-   If autodisplaying is enabled, the SndView is automatically redisplayed.
+  If autodisplaying is enabled, the SndView is automatically redisplayed.
+  @param  newSize is a NSSize.
 */
-- (void) setFrameSize: (NSSize) _newSize;
+- (void) setFrameSize: (NSSize) newSize;
 
 /*!
   @return Returns an Snd.
@@ -849,15 +849,15 @@ enum SndViewStereoMode {
 - (void) tellDelegate: (SEL) theMessage;
 
 /*!
-  @param  theMessage is a SEL.
-  @brief Sends <i>theMessage</i> to the SndView's delegate with the
-              SndView as the argument.
+  @brief Sends <i>theMessage</i> to the SndView's delegate with the SndView as the argument.
 
-  If the delegate doesn't respond to the
-  message, then it isn't sent. You normally never invoke this method;
+  If the delegate doesn't respond to the message, then it isn't sent.
+  You normally never invoke this method;
   it's invoked automatically when an action, such as playing or
   editing, is performed. However, you can invoke it in the design of a
   SndView subclass.
+  @param  theMessage is a SEL.
+  @param  performance The SndPerformance instance performing when the message is sent.
 */
 - (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance;
 

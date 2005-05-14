@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2005/05/14 03:23:05  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.6  2005/05/09 15:27:44  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -197,7 +200,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 
   <i>aNote </i>is ignored.
 */
-+ patchTemplateFor:aNote;
++ patchTemplateFor: (MKNote *) aNote;
 
 /*!
   @param aNote is a (id)
@@ -206,7 +209,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 
   This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
-- noteOnSelf:aNote;
+- noteOnSelf: (MKNote *) aNote;
 
 /*!
   @param aNote is a (id)
@@ -215,7 +218,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 
   Sets parameters as specified in <i>aNote.</i>
 */
-- noteUpdateSelf:aNote;
+- noteUpdateSelf: (MKNote *) aNote;
 
 /*!
   @param aNote is a (id)
@@ -224,7 +227,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 
   This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
-- (double)noteOffSelf:aNote;
+- (double)noteOffSelf: (MKNote *) aNote;
 
 /*!
   @return A (id)
@@ -241,7 +244,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 
   
 */
-- preemptFor:aNote;
+- preemptFor: (MKNote *) aNote;
 - init;
 
 /* These methods are used by the subclass */

@@ -160,14 +160,14 @@
 - (NSString *) paramDisplay: (const int) index;
 
 /*!
- @brief  Sets the indexed parameter to the value v.
+ @brief  Sets the indexed parameter to the value given.
  
   By VST convention, the argument v should be in the range [0,1]. If the
   internal parameter has a different range, this should be mapped internally.
- @param  index Index of the parameter to be set 
- @param  v Floating point value in the range [0,1]
+ @param  index Index of the parameter to be set.
+ @param  value Floating point value in the range [0,1]
 */
-- (void) setParam: (const int) index toValue: (const float) v;
+- (void) setParam: (const int) index toValue: (const float) value;
 
 /*!
  @brief  Process the inputBuffer, and replace the results in the output buffer

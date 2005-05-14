@@ -16,6 +16,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2005/05/14 03:23:05  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.6  2005/05/09 15:27:44  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -107,7 +110,7 @@ When using this MKSynthPatch in an interactive real-time context, such as playin
 
   <i>aNote </i>is ignored.
 */
-+patchTemplateFor:aNote;
++patchTemplateFor: (MKNote *) aNote;
 
 @end
 

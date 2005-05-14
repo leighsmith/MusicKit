@@ -21,7 +21,7 @@ WAVEDECL(sinVibTemplate,sinVibUgs);
 WAVEDECL(ranVibTemplate,ranVibUgs);
 WAVEDECL(noVibTemplate,noVibUgs);
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
     /* Creates and returns a patchTemplate which specifies the
        UnitGenerators and Patchpoints to be used and how they are
        to be interconnected when one of these synthPatches is

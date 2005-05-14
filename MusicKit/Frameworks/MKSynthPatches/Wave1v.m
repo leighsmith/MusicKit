@@ -25,7 +25,7 @@ WAVEDECL(sinVibTemplate,sinVibUgs);
 WAVEDECL(ranVibTemplate,ranVibUgs);
 WAVEDECL(noVibTemplate,noVibUgs);
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     if (aNote) {
         #define NON_ZERO_NUMBER 1

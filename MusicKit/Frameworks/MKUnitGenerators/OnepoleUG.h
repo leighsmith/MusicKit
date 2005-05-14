@@ -66,28 +66,28 @@ the sign of the coefficent is switched in the OnezeroUG.
 @interface OnepoleUG : MKUnitGenerator
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
 
   Returns <b>nil</b>
   if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput:aPatchPoint;
+-setInput: (id) aPatchPoint;
 /* Sets filter input. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets filter output. */
 
 /*!
@@ -146,24 +146,23 @@ the sign of the coefficent is switched in the OnezeroUG.
 -setState:(double)val;
 
 /*!
-  @param  brightness is a double.
-  @param  frequency is a double.
-  @return Returns <b>self</b>.
   @brief This is a convenient method that adjusts the filter's gain and
   coefficient such that a constant <i>brightness</i> value produces
   the same number and relative amplitudes of a tone's harmonics
   regardless of the value of <i>frequency</i> as described
-	  in Jaffe/Smith, Computer Music Journal Vol.
-
-  7, No. 2,
-	  Summer 1983. For example, in a
+  in Jaffe/Smith, Computer Music Journal Vol. 7, No. 2, Summer 1983.
+ 
+  For example, in a
   musical phrase during which the brightness of the synthesized notes
   shouldn't be perceived to change, you would invoke this method once
   per note passing a constant <i>brightness</i> value (the
   successive <i>frequency</i> values would, of course, be determined
   by the pitches of the notes).  
-*/
--setBrightness:(double)gain forFreq:(double)freq;
+ @param  brightness is a double specifying the gain.
+ @param  frequency is a double.
+ @return Returns <b>self</b>.
+ */
+- setBrightness: (double) brightness forFreq: (double) frequency;
 /* You specify the gain at the specified fundamental frequency and the 
    appropriate filter frequency response is selected for you. By keeping
    the gain constant and varying the frequency, you can have a uniform

@@ -176,12 +176,12 @@
     @param      aBreakpoint
     @return     BOOL whether or not any breakpoints were removed
 */
-- (BOOL) removeBreakpointsBefore: (int) bp;
+- (BOOL) removeBreakpointsBefore: (int) aBreakpoint;
 
 /*!
     @brief   Removes all breakpoints with index greater than (not including) the
                 index specified.
-    @param      bp
+    @param      aBreakpoint
     @return     BOOL whether or not any breakpoints were removed
 */
 - (BOOL) removeBreakpointsAfter: (int) aBreakpoint;
@@ -236,18 +236,18 @@
 /*!
     @brief   Returns the x value corresponding to the requested breakpoint.
     @see the SndEnveloping protocol.
-    @param      See the SndEnveloping protocol
+    @param    xVal  See the SndEnveloping protocol
     @return     See the SndEnveloping protocol
 */
-- (int) breakpointIndexAfterX:(double)xVal;
+- (int) breakpointIndexAfterX: (double) xVal;
 
 /*!
     @brief   Returns the y value corresponding to the requested breakpoint.
     @see the SndEnveloping protocol.
-    @param      See the SndEnveloping protocol
+    @param     bp See the SndEnveloping protocol
     @return     See the SndEnveloping protocol
 */
-- (float) lookupYForBreakpoint:(int)bp;
+- (float) lookupYForBreakpoint: (int) bp;
 
 /*!
     @brief   Creates a new breakpoint in the envelope and returns the

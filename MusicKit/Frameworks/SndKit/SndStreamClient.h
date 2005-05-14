@@ -45,22 +45,21 @@ enum {
 
 /*!
   @brief Message sent when the client was not ready to accept the next input buffer.
-  @param The instance of SndStreamClient sending the message.
+  @param sender The instance of SndStreamClient sending the message.
 */
-- inputBufferSkipped:  sender;
+- inputBufferSkipped: (id) sender;
 
 /*!
-  @param The instance of SndStreamClient sending the message.
-  @brief Message sent when the client was not ready to provide the
-  next outputBuffer.
+  @brief Message sent when the client was not ready to provide the next outputBuffer.
+  @param sender The instance of SndStreamClient sending the message.
 */
-- outputBufferSkipped: sender;
+- outputBufferSkipped: (id) sender;
 
 /*!
-  @param The instance of SndStreamClient sending the message.
   @brief Message sent after each buffer has been processed. This is expensive.
+  @param sender The instance of SndStreamClient sending the message.
  */
-- didProcessStreamBuffer: sender;
+- didProcessStreamBuffer: (id) sender;
 
 @end
 
@@ -184,7 +183,6 @@ enum {
   SndStreamMixer/SndStreamManager are preempted, clearing any sounds such that any
   new buffer processed will be mixed without waiting for earlier processed buffers
   to be mixed.
-  @param      nowTime The new now time.
   @return     Returns the number of seconds that the stream has been preempted by.
  */
 - (double) preemptQueuedStream;

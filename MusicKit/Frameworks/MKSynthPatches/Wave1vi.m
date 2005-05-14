@@ -23,7 +23,7 @@ WAVEDECL(allVibTemplate,allVibUgs);
 WAVEDECL(sinVibTemplate,sinVibUgs);
 WAVEDECL(ranVibTemplate,ranVibUgs);
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     if (aNote) {
         #define NON_ZERO_NUMBER 1

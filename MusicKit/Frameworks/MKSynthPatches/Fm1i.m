@@ -233,7 +233,7 @@ id _MKSPGetFmSinVibTemplate(_MKSPFMNums *ugs,id oscClass) {
     return aTemplate;
 }
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     if (!template)
       template = _MKSPGetFmNoVibTemplate(&ugs,[OscgafiUGxxyy class]);
@@ -248,7 +248,7 @@ id _MKSPGetFmSinVibTemplate(_MKSPFMNums *ugs,id oscClass) {
     return self;
 }
 
--noteOnSelf:aNote
+-noteOnSelf: (MKNote *) aNote
   /* Sent whenever a noteOn is received. First updates the parameters,
    * then connects the carrier to the output. 
    */
@@ -259,13 +259,13 @@ id _MKSPGetFmSinVibTemplate(_MKSPFMNums *ugs,id oscClass) {
     return self;
 }
 
--noteUpdateSelf:aNote
+-noteUpdateSelf: (MKNote *) aNote
   /* Sent whenever a noteUpdate is received by the SynthInstrument. */
 {
     return [self _updateParameters:aNote];
 }
 
--(double)noteOffSelf:aNote
+-(double)noteOffSelf: (MKNote *) aNote
   /* Sent whenever a noteOff is received by the SynthInstrument. Returns
    * the amplitude envelope completion time, needed to schedule the noteEnd. */
 {   
@@ -294,7 +294,7 @@ id _MKSPGetFmSinVibTemplate(_MKSPFMNums *ugs,id oscClass) {
     return self;
 }
 
--preemptFor:aNote
+-preemptFor: (MKNote *) aNote
   /* Sent whenever a running note is being preempted by a new note. */
 {
     /* Cause envelope to go quickly to last value.  This is to prevent a

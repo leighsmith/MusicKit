@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2005/05/14 03:23:05  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.4  2005/05/09 15:27:44  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -308,7 +311,7 @@ noteTag.
   new phrase, all instance variables are set to default values, then
   the values are read from the Note.  
 */
--noteOnSelf:aNote;
+-noteOnSelf: (MKNote *) aNote;
 
 /*!
   @param  aNote is an id.
@@ -317,7 +320,7 @@ noteTag.
 
   
 */
--preemptFor:aNote;
+-preemptFor: (MKNote *) aNote;
 
 /*!
   @param  aNote is an id.
@@ -328,7 +331,7 @@ noteTag.
   Sets parameters as
   specified in <i>aNote.</i>
 */
--noteUpdateSelf:aNote;
+-noteUpdateSelf: (MKNote *) aNote;
 
 /*!
   @param  aNote is an id.
@@ -340,7 +343,7 @@ noteTag.
   the time for the envelopes to finish.  Also sets any parameters
   present in <i>aNote.</i>
 */
--(double)noteOffSelf:aNote;
+-(double)noteOffSelf: (MKNote *) aNote;
 
 /*!
   @return Returns an id.

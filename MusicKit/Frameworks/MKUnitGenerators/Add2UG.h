@@ -47,41 +47,41 @@ Add2UG produces the sum of two input signals:
 /* Specifies that all arguments are to be optimized if possible */
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 1 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>self</b> or <b>nil</b> if the argument isn't a
   patchpoint.
 */
--setInput1:aPatchPoint;
+-setInput1: (id) aPatchPoint;
 /* Sets input1 of adder. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 2 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>self</b> or <b>nil</b> if the argument isn't a
   patchpoint.
 */
--setInput2:aPatchPoint;
+-setInput2: (id) aPatchPoint;
 /* Sets input2 of adder. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>self</b> or <b>nil</b> if the argument isn't a
   patchpoint.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output of adder. */
 
 @end

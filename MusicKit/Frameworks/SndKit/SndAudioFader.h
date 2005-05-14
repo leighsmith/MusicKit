@@ -207,7 +207,7 @@ movements, then insert it into the SndAudioProcessorChain later.
     and right surround speaker. This needs further description as to how stereo panning
     should map onto other multichannel formats and in the most general sense, i.e even is left,
     odd is right.
-    @param balance is a float (-1.0 to +1.0)
+    @param newBalance is a float (-1.0 to +1.0)
     @param clear If TRUE, discard any future scheduled balance events.
     @return Returns self.
 */
@@ -347,6 +347,7 @@ movements, then insert it into the SndAudioProcessorChain later.
 
   This is just the standardised SndAudioProcessor protocol for assigning the amplitude and balance.
   @param index enumerated index for parameters.
+  @param v The floating point value to assign.
   */
 - (void) setParam: (const int) index toValue: (const float) v;
 
@@ -357,7 +358,7 @@ movements, then insert it into the SndAudioProcessorChain later.
   Not to be called directly. This method is called by
   SndAudioProcessorChain with buffers destined for audio output.
   @param inB the audio buffer with input to the processor
-  @param endB unused
+  @param outB unused
   @return Always returns NO since SndAudioFader processes audio in place, in inB.
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB

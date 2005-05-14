@@ -63,54 +63,54 @@ Mul1add2UG adds one signal to the product of two others:
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 1 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput1:aPatchPoint;
+-setInput1: (id) aPatchPoint;
 /* Sets input1 of adder. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 2 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput2:aPatchPoint;
+-setInput2: (id) aPatchPoint;
 /* Sets input2 of adder. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 3 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 3 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput3:aPatchPoint;
+-setInput3: (id) aPatchPoint;
 /* Sets input3 of adder. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output of adder. */
 
 @end

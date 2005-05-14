@@ -69,71 +69,57 @@ scaling on the second input.
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 1 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput1:aPatchPoint;
+-setInput1: (id) aPatchPoint;
 /* Sets input1 to specified patchPoint. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 2 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput2:aPatchPoint;
+-setInput2: (id) aPatchPoint;
 /* Sets input2 to specified patchPoint. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
-/* Sets output to specified patchPoint. */
-
+- setOutput: (id) aPatchPoint;
 
 /*!
-  @param  scale is a double.
-  @return Returns <b>self</b>.
   @brief Sets the factor by which first input signal is scaled.
-
-  
-  
-*/
--setScale1:(double)val;
-/* Sets constant to scale input1 values. */
-
-
-/*!
   @param  scale is a double.
   @return Returns <b>self</b>.
-  @brief Sets the factor by which second input signal is scaled.
-
-  
-  
 */
--setScale2:(double)val;
-/* Sets constant to scale input2 values. */
-
+- setScale1: (double) scale;
 
 /*!
-  @param  count is an int.
+  @brief Sets the factor by which second input signal is scaled.
+  @param  scale is a double.
   @return Returns <b>self</b>.
+*/
+- setScale2: (double) scale;
+
+/*!
   @brief Immediately switches the DswitchtUG to its first input and causes it
   to switch to its second input after <i>count</i> ticks have been
   read.
@@ -142,9 +128,11 @@ scaling on the second input.
   the second input is performed immediately.  If the object is
   currently reading from its first input because of a previous
   invocation of this method, the old <i>count</i> is superceded by the
-  new one.  
+  new one.
+ @param  count is an int.
+ @return Returns <b>self</b>.
 */
--setDelayTicks:(int)val;
+- setDelayTicks: (int) count;
 /* Sets delay in ticks (units of DSPMK_NTICK). 
    A negative value will switch immediately to input2. */
 

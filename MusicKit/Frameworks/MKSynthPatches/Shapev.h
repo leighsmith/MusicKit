@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2005/05/14 03:23:05  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.4  2005/05/09 15:27:44  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -93,7 +96,7 @@ fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.
   A non-zero for <b>svibAmp</b>and <b>rvibAmp </b>
   determines whether vibrato resources are allocated.
 */
-+ patchTemplateFor:aNote;
++ patchTemplateFor: (MKNote *) aNote;
 
 @end
 

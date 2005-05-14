@@ -30,7 +30,7 @@ static int
   _ySig,           /* a frequency patch point */
   _xSig;           /* another frequency patchpoint */ 
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     static MKPatchTemplate *theTemplate = nil;
   if (theTemplate)

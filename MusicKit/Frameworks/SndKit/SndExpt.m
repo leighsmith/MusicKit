@@ -50,14 +50,14 @@
 
 - (void) dealloc
 {
-	[cachedBuffer release];
-	cachedBuffer = nil;
-	[cacheLock release];
-	cacheLock = nil;
-	[readAheadBuffer release];
-	readAheadBuffer = nil;
-	[readAheadLock release];
-	readAheadLock = nil;
+    [cachedBuffer release];
+    cachedBuffer = nil;
+    [cacheLock release];
+    cacheLock = nil;
+    [readAheadBuffer release];
+    readAheadBuffer = nil;
+    [readAheadLock release];
+    readAheadLock = nil;
     [super dealloc];
 }
 
@@ -428,26 +428,26 @@ static SndExptAudioBufferServer *defaultServer = nil;
 - (void) serverThread
 {
     while (bGo) {
-		NSAutoreleasePool *pool = [NSAutoreleasePool new];
-		NSDate *date = [NSDate dateWithTimeIntervalSinceNow: 1.0];
-		
-		if (![pendingJobsArrayLock lockWhenCondition: SERVER_HAS_JOBS beforeDate: date])
-			continue;
-		
-		if ([pendingJobsArray count] == 0)
-			continue;
-		
-		activeJob = [[pendingJobsArray objectAtIndex: 0] retain];
-		[pendingJobsArray removeObject: activeJob];
-		
-		if ([pendingJobsArray count] > 0)
-			[pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
-		else
-			[pendingJobsArrayLock unlockWithCondition: SERVER_NO_JOBS];
-		
-		if (activeJob != nil)
-			[self doJob: activeJob];
-		[pool release];
+	NSAutoreleasePool *pool = [NSAutoreleasePool new];
+	NSDate *date = [NSDate dateWithTimeIntervalSinceNow: 1.0];
+	
+	if (![pendingJobsArrayLock lockWhenCondition: SERVER_HAS_JOBS beforeDate: date])
+	    continue;
+	
+	if ([pendingJobsArray count] == 0)
+	    continue;
+	
+	activeJob = [[pendingJobsArray objectAtIndex: 0] retain];
+	[pendingJobsArray removeObject: activeJob];
+	
+	if ([pendingJobsArray count] > 0)
+	    [pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
+	else
+	    [pendingJobsArrayLock unlockWithCondition: SERVER_NO_JOBS];
+	
+	if (activeJob != nil)
+	    [self doJob: activeJob];
+	[pool release];
     }
     [NSThread exit];
 }
@@ -464,9 +464,9 @@ static SndExptAudioBufferServer *defaultServer = nil;
 {
     self = [super init];
     if (self) {
-		clientSndExpt    = [sndExpt retain];
-		audioBufferRange = range;
-		audioBuffer      = nil;
+	clientSndExpt    = [sndExpt retain];
+	audioBufferRange = range;
+	audioBuffer      = nil;
     }
     return self;
 }
@@ -474,15 +474,15 @@ static SndExptAudioBufferServer *defaultServer = nil;
 - (void) dealloc
 {
     if (clientSndExpt)
-		[clientSndExpt release];
+	[clientSndExpt release];
     if (audioBuffer)
-		[audioBuffer release];
-	[super dealloc];
+	[audioBuffer release];
+    [super dealloc];
 }
 
-- (SndExpt*) snd            {  return [[clientSndExpt retain] autorelease];    }
-- (NSRange) range           {  return audioBufferRange;                        }
-- (SndAudioBuffer*) buffer  {  return [[audioBuffer retain] autorelease];  }
+- (SndExpt *) snd            { return [[clientSndExpt retain] autorelease]; }
+- (NSRange) range           { return audioBufferRange; }
+- (SndAudioBuffer *) buffer  { return [[audioBuffer retain] autorelease]; }
 
 @end
 

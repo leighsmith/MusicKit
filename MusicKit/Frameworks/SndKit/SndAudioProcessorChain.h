@@ -27,7 +27,8 @@
   
   To come
 */
-@interface SndAudioProcessorChain : NSObject {
+@interface SndAudioProcessorChain : NSObject
+{
 /*! @var  audioProcessorArray The array (chain) of SndAudioProcessors */
     NSMutableArray *audioProcessorArray;
 /*! @var  bypassProcessing YES disables processing. */

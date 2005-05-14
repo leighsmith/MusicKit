@@ -50,68 +50,64 @@ Scl2add2UG adds two input signals, both of which are scaled:
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 1 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput1:aPatchPoint;
+-setInput1: (id) aPatchPoint;
 /* Sets input1. This is the input that is scaled. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 2 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput2:aPatchPoint;
+-setInput2: (id) aPatchPoint;
 /* Sets input2. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output. */
 
 
 /*!
-  @param  (double)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the scaler on the first input.
 
   Effective values are between 0.0
   and 1.0 (a negative scaler is the same as its absolute value, but
   with a 180 degree phase shift).  
+  @param  val is a double.
+  @return Returns <b>self</b>.
 */
--setScale1:(double)val;
-/* Sets scaling on input1. */
-
+-setScale1: (double) val;
 
 /*!
-  @param  (double)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the scaler on the second input.
 
-  Effective values are between
-  0.0 and 1.0 (a negative scaler is the same as its absolute value,
+  Effective values are between 0.0 and 1.0 (a negative scaler is the same as its absolute value,
   but with a 180 degree phase shift).  
+  @param  val is a double.
+  @return Returns <b>self</b>.
 */
--setScale2:(double)val;
-/* Sets scaling on input2. */
+- setScale2: (double) val;
 
 /*!
   @param arg is an unsigned.

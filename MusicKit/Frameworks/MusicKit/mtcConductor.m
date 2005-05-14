@@ -270,7 +270,7 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
     return self;
 }
 
--(double)_MTCPerformerActivateOffset:sender
+-(double)_MTCPerformerActivateOffset: (id) sender
 {
     if (!MTCSynch)
 	return 0;

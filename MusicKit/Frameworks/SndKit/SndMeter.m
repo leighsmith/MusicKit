@@ -271,7 +271,7 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 - (Snd *)sound { return sound; }
 - (void) setSound:(Snd*) aSound { sound = aSound; }
 
-- (void)run:sender
+- (void)run: (id) sender
 {
     if (!smFlags.running && !_timedEntry && sound) {
 	float aveVal, peakVal;

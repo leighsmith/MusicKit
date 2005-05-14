@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2005/05/14 03:27:26  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.6  2005/05/09 15:52:49  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -312,7 +315,7 @@ instance of DSPSerialPortDevice or one of its subclasses.
 
 /*!
   @param  system is a DSPLoadSpec *.
-  @param  orchestra is an Orchestra *.
+  @param  orchestra is an MKOrchestra *.
   @return Returns an id.
   @brief Implement this to make any adjustments to the DSP monitor before it
   is loaded.
@@ -321,7 +324,7 @@ instance of DSPSerialPortDevice or one of its subclasses.
   DSPSetSystem(system); in the implementation.  Normally, it's better
   if you can make your adjustments in setUpSerialPort:.
 */
--adjustMonitor:(DSPLoadSpec *)system forOrchestra:orchestra;
+-adjustMonitor:(DSPLoadSpec *)system forOrchestra: (id) orchestra;
 
 @end
 

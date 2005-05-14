@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2005/05/14 03:27:26  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.2  1999/07/29 01:25:44  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -14,14 +17,14 @@
 #import <Foundation/NSObject.h>
 @interface MKConductorDelegate : NSObject
 
-- conductorWillSeek:sender;
-- conductorDidSeek:sender;
-- conductorDidReverse:sender;
-- conductorDidPause:sender;
-- conductorDidResume:sender;
+- conductorWillSeek: (id) sender;
+- conductorDidSeek: (id) sender;
+- conductorDidReverse: (id) sender;
+- conductorDidPause: (id) sender;
+- conductorDidResume: (id) sender;
 
--(double) beatToClock:(double)t from:sender;
--(double) clockToBeat:(double)t from:sender;
+-(double) beatToClock:(double)t from: (id) sender;
+-(double) clockToBeat:(double)t from: (id) sender;
 
 - conductorCrossedLowDeltaTThreshold;
 - conductorCrossedHighDeltaTThreshold;

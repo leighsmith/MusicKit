@@ -142,26 +142,21 @@ increment must be nonnegative.
 
 
 /*!
+  @brief Set output patchPoint of the oscillator.
   @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Set output patchPoint of the oscillator.
-
-  
 */
-- setOutput: aPatchPoint;
+- setOutput: (id) aPatchPoint;
 
 /*!
-  @param  anObj is an id.
-  @param  aLength is an int.
-  @return Returns an id.
   @brief Sets the lookup table of the oscillator.
 
   <i>anObj</i> can be a
-  SynthData object or a MKWaveTable (MKPartials or MKSamples).
+  MKSynthData object or a MKWaveTable (MKPartials or MKSamples).
   
   This method first releases its claim on the locally-allocated MKSynthData, if any.  (see below).
- Then, if <i>anObj</i> is a SynthData object, the SynthData object is used directly.
- If <i>anObj</i> is a WaveTable, the receiver first searches in its MKOrchestra's shared object table to see
+ Then, if <i>anObj</i> is a MKSynthData object, the SynthData object is used directly.
+ If <i>anObj</i> is a MKWaveTable, the receiver first searches in its MKOrchestra's shared object table to see
  if there is already an existing MKSynthData based  on the same MKWaveTable, of the same length, and in the
  required memory space.  Otherwise, a local MKSynthData object is created and installed in the shared object
  table so that other unit generators running simultaneously may share it.
@@ -169,15 +164,18 @@ increment must be nonnegative.
  You can determine what size was used by sending the tableLength message. If <i>anObj</i> is nil, this method
  simply releases the locally-allocated MKSynthData, if any.  
   
-  Note that altering the contents of a WaveTable will have no effect once it  has been installed,
+  Note that altering the contents of a MKWaveTable will have no effect once it  has been installed,
  even if you call <b>setTable:length:</b> again after  modifying the MKWaveTable. The reason is that the 
  MKOrchestra's shared data  mechanism finds the requested object based on its <b>id</b>, rather than its contents.
   
-  You should not free WaveTables used as arguments to OscgUG until the performance is over.
+  You should not free MKWaveTables used as arguments to OscgUG until the performance is over.
   
   If the table is not a power of 2, returns nil and generates the error MK_ugsPowerOf2Err. 
-*/
--setTable:anObj length:(int)aLength;
+  @param  anObj is an id.
+  @param  aLength is an int.
+  @return Returns an id.
+ */
+- setTable: (id) anObj length: (int) aLength;
 /* 
    Sets the lookup table of the oscillator.
    anObj can be a SynthData object or a WaveTable (Partials or Samples).
@@ -209,14 +207,11 @@ increment must be nonnegative.
 */
 
 /*!
+  @brief Like <b>setTable:length:</b>, but uses a default length.
   @param  anObj is an id.
   @return Returns an id.
-  @brief Like <b>setTable:length:</b>, but uses a default length.
-
-  
-  
 */
-- setTable: anObj;
+- setTable: (id) anObj;
 
 /*!
   @return Returns an id.

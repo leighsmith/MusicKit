@@ -79,27 +79,27 @@ method.
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
 
   Returns <b>nil</b>
   if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput:aPatchPoint;
+-setInput: (id) aPatchPoint;
 /* Sets input patchpoint as specified. */
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output patchpoint as specified. */
 
 

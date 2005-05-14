@@ -665,34 +665,27 @@ extern void MKSetPreemptDuration(double seconds);
 + close; 
 
 /*!
-  @return Returns an id.
-  @brief Sends <b>abort</b> to each of the MKOrchestra instances and sets each
-  to MK_devClosed.
+  @brief Sends <b>abort</b> to each of the MKOrchestra instances and sets each to MK_devClosed.
 
   If any of the MKOrchestras responds to the
   <b>abort</b> message by returning <b>nil</b>, so too does this
   method return <b>nil</b>.  Otherwise returns the
   receiver.
-  
-  <b>allocModulusSynthData:length:</b>
-  + <b>allocModulusSynthData:</b>(MKOrchMemSegment)<i>segment</i> <b>length:</b>(unsigned)<i>size</i>
-  
-  Like +<b>allocSynthData:length:</b> but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  For example, if <i>size</i> is 19, then the low 4 bits of the base address of the MKSynthData object returned will be 0.  
+  @return Returns an id.  
 */
 + abort;
 
 // TODO document
 // TODO investigate if needed.
--(void)synchTime:(NSTimer *)timer;
+- (void) synchTime: (NSTimer *) timer;
 
 /*!
-  @return Returns an int.
   @brief Returns the tick size used by synthesis unit-generators.
 
-  Each unit
-  generator runs for this many frames, and patchpoints are this
+  Each unit generator runs for this many frames, and patchpoints are this
   length. Since 1989, the tick-size used on the DSP has been
-  16.
+  16. 
+  @return Returns an int.
 */
 - (int) tickSize; 
 
@@ -895,17 +888,15 @@ extern void MKSetPreemptDuration(double seconds);
 - setSoundOut: (BOOL) yesOrNo;
 
 /*!
+  @brief Sets whether the receiver, which must be closed, receives sound, as <i>yesOrNo</i> is YES or NO.
   @param  yesOrNo is a BOOL.
   @return Returns the receiver, or <b>nil</b> if it isn't closed.
-  @brief Sets whether the receiver, which must be closed, receives sound, as <i>yesOrNo</i> is YES or NO.
  */
 - setSoundIn: (BOOL) yesOrNo;
 
 /*!
-  @return Returns a BOOL.
   @brief Sets whether soundIn is enabled.
-
-  
+  @return Returns a BOOL.
  */
 - (BOOL) soundIn;
 
@@ -939,11 +930,8 @@ extern void MKSetPreemptDuration(double seconds);
 - setOutputSoundfile: (NSString *) fileName;
 
 /*!
-  @return Returns an NSString instance.
-  @brief Returns a pointer to the name of the receiver's output soundfile, or
-  nil if none.
-
-  
+  @brief Returns a pointer to the name of the receiver's output soundfile, or nil if none.
+ @return Returns an NSString instance.
 */
 - (NSString *) outputSoundfile;
 
@@ -977,12 +965,11 @@ extern void MKSetPreemptDuration(double seconds);
   @return Returns an id.
   @brief Allocates a MKUnitGenerator of class <i>classObj</i>.
 
-  The object is
-  allocated on the first MKOrchestra that can accomodate it.  Returns
+  The object is allocated on the first MKOrchestra that can accomodate it.  Returns
   the MKUnitGenerator, or <b>nil</b> if the object couldn't be
   allocated.
 */
-+ allocUnitGenerator: classObj; // (Class) classObj 
++ allocUnitGenerator: (id) classObj; // (Class) classObj 
 
 /*!
   @param  segment is a MKOrchMemSegment.
@@ -997,54 +984,46 @@ extern void MKSetPreemptDuration(double seconds);
 */
 + allocSynthData: (MKOrchMemSegment) segment length: (unsigned) size; 
 
-
 /*!
-  @param  segment is a MKOrchMemSegment.
-  @return Returns an id.
   @brief Allocates a patchpoint in segment <i>segment</i> Returns the
   patchpoint (a MKSynthData object), or <b>nil</b> if the object
   couldn't be allocated.
-
-  
+  @param  segment is a MKOrchMemSegment.
+  @return Returns an id.
 */
 + allocPatchpoint: (MKOrchMemSegment) segment; 
 
 /*!
-  @param  aSynthPatchClass is an id.
-  @return Returns an id.
   @brief This is the same as <b>allocSynthPatch:patchTemplate:</b> but uses
   the default template obtained by sending the message
   <b>defaultPatchTemplate</b> to <i>aSynthPatchClass.</i>
+  @param  aSynthPatchClass is an id.
+  @return Returns an id.
 */
-+ allocSynthPatch: aSynthPatchClass;  // (Class) aSynthPatchClass 
++ allocSynthPatch: (id) aSynthPatchClass;  // (Class) aSynthPatchClass 
 
 /*!
-  @param  aSynthPatchClass is an id.
-  @param  p is an id.
-  @return Returns an id.
   @brief Allocates a MKSynthPatch with a MKPatchTemplate of <i>p</i> on the first
   DSP with sufficient resources.
 
-  Returns the MKSynthPatch or <b>nil</b>
-  if it couldn't be allocated.
+  Returns the MKSynthPatch or <b>nil</b> if it couldn't be allocated.
+  @param  aSynthPatchClass is an id.
+  @param  p is an id.
+  @return Returns an id.
 */
-+ allocSynthPatch: aSynthPatchClass patchTemplate: p;
++ allocSynthPatch: (id) aSynthPatchClass patchTemplate: (id) p;
 
 /*!
-  @param  aSynthResource is an id.
-  @return Returns an id.
   @brief Deallocates the argument, which must be a previously allocated
   MKSynthPatch, MKUnitGenerator or MKSynthData, by sending it the
   <b>dealloc</b> message.
 
   This method is provided for symmetry with
   the <b>alloc</b>family of methods.
-  
-  
-  <b> driverParameter: forDriver: unit: </b>
-  + (char *)<b>driverParameter:</b>(char *)<i>par</i> forDriver:(char *)<i>driverName</i>unit:(int)<i>unit</i>
+  @param  aSynthResource is an id.
+  @return Returns an id.
 */
-+ dealloc: aSynthResource;
++ dealloc: (id) aSynthResource;
 
 /*!
   @return Returns an id.
@@ -1067,9 +1046,6 @@ extern void MKSetPreemptDuration(double seconds);
 + (char *) nameForSharedType: (int) typeInt;
 
 /*!
-  @param  aSynthObj is an id.
-  @param  aKeyObj is an id.
-  @return Returns an id.
   @brief Places <i>aSynthObj</i> on the shared object table and sets its
   reference count to 1.
 
@@ -1081,14 +1057,13 @@ extern void MKSetPreemptDuration(double seconds);
   
   This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> 
   in that the length and segment are wild cards.
-*/
-- installSharedObject: aSynthObj for: aKeyObj;
-
-/*!
   @param  aSynthObj is an id.
   @param  aKeyObj is an id.
-  @param  type is a MKOrchSharedType.
   @return Returns an id.
+*/
+- installSharedObject: (id) aSynthObj for: (id) aKeyObj;
+
+/*!
   @brief Places <i>aSynthObj</i> on the shared object table and sets its
   reference count to 1.
 
@@ -1106,14 +1081,14 @@ extern void MKSetPreemptDuration(double seconds);
   
   This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b>
   in that the length and segment are wild cards.
-*/
-- installSharedObject:aSynthObj for:aKeyObj type:(MKOrchSharedType)aType;
+  @param  aSynthObj is an id.
+  @param  aKeyObj is an id.
+  @param  aType is a MKOrchSharedType.
+  @return Returns an id.
+ */
+- installSharedObject: (id) aSynthObj for: (id) aKeyObj type: (MKOrchSharedType) aType;
 
 /*!
-  @param  aSynthDataObj is an id.
-  @param  aKeyObj is an id.
-  @return Returns an id.
-  @brief Places <i>aSynthDataObj</i> on the shared object table in the
   segment specified by <i>aSynthDataObj</i> and sets its reference
   count to 1.
 
@@ -1123,13 +1098,14 @@ extern void MKSetPreemptDuration(double seconds);
   receiver.
   
   This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length is a wild card.
-*/
--installSharedSynthDataWithSegment:aSynthDataObj for:aKeyObj;
-
-/*!
   @param  aSynthDataObj is an id.
   @param  aKeyObj is an id.
   @return Returns an id.
+  @brief Places <i>aSynthDataObj</i> on the shared object table in the
+ */
+- installSharedSynthDataWithSegment: (id) aSynthDataObj for: (id) aKeyObj;
+
+/*!
   @brief Places <i>aSynthDataObj</i> on the shared object table in the
   segment specified by <i>aSynthDataObj</i> and sets its reference
   count to 1.
@@ -1139,19 +1115,21 @@ extern void MKSetPreemptDuration(double seconds);
   <b>nil</b> if the orchestra is not open.  Otherwise, returns the
   receiver.
   
-  This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length is a wild card.
-*/
-- installSharedSynthDataWithSegment: aSynthDataObj 
-				for: aKeyObj 
+  This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length
+  is a wild card.
+  @param  aSynthDataObj is an id.
+  @param  aKeyObj is an id.
+  @param  aType is an MKOrchSharedType.
+  @return Returns an id.
+ */
+- installSharedSynthDataWithSegment: (id) aSynthDataObj 
+				for: (id) aKeyObj 
 			       type: (MKOrchSharedType) aType;
 
--installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
- for:aKeyObj;
+- installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
+					 for: (id) aKeyObj;
 
 /*!
-  @param  aSynthDataObj is an id.
-  @param  aKeyObj is an id.
-  @return Returns an id.
   @brief Places <i>aSynthDataObj</i> on the shared object table in the
   segment of aSynthDataObj with the specified length and sets its
   reference count to 1.
@@ -1161,13 +1139,16 @@ extern void MKSetPreemptDuration(double seconds);
   <i>aSynthDataObj</i> is already present in the table.  Also returns
   <b>nil</b> if the orchestra is not open.  Otherwise, returns the
   receiver.
+ @param  aSynthDataObj is an id.
+ @param  aKeyObj is an id.
+ @param  aType is an MKOrchSharedType.
+ @return Returns an id. 
 */
--installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj for:aKeyObj 
- type:(MKOrchSharedType)aType;
+- installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
+					 for: (id) aKeyObj
+					type: (MKOrchSharedType) aType;
 
 /*!
-  @param  aKeyObj is an id.
-  @return Returns an id.
   @brief Returns, from the receiver's shared object table, the MKSynthData,
   MKUnitGenerator, or MKSynthPatch object that's indexed by <i>aKeyObj</i>
   If the object is found,  <i>aKeyObj</i>'s reference count is
@@ -1175,13 +1156,12 @@ extern void MKSetPreemptDuration(double seconds);
 
   If it isn't found, or if the receiver isn't open,
   returns <b>nil</b>.
+  @param  aKeyObj is an id.
+  @return Returns an id.
 */
-- sharedObjectFor:aKeyObj;
+- sharedObjectFor: (id) aKeyObj;
 
 /*!
-  @param  aKeyObj is an id.
-  @param  type is a MKOrchSharedType.
-  @return Returns an id.
   @brief Returns, from the receiver's shared object table, the MKSynthData,
   MKUnitGenerator, or MKSynthPatch object that's indexed by
   <i>aKeyObj.</i> <i> </i> The object must be allocated with the
@@ -1190,13 +1170,13 @@ extern void MKSetPreemptDuration(double seconds);
   If the object is found,  <i>aKeyObj</i>'s reference
   count is incremented. If it isn't found, or if the receiver isn't
   open, returns <b>nil</b>.
-*/
-- sharedObjectFor:aKeyObj type:(MKOrchSharedType)aType;
+ @param  aKeyObj is an id.
+ @param  aType is a MKOrchSharedType.
+ @return Returns an id.
+ */
+- sharedObjectFor: (id) aKeyObj type: (MKOrchSharedType) aType;
 
 /*!
-  @param  aKeyObj is an id.
-  @param  whichSegment is a MKOrchMemSegment.
-  @return Returns an id.
   @brief Returns, from the receiver's shared data table, the MKSynthData,
   MKUnitGenerator, or MKSynthPatch object that's indexed by
   <i>aKeyObj</i>.
@@ -1206,13 +1186,13 @@ extern void MKSetPreemptDuration(double seconds);
   If the object is found, <i>aKeyObj</i>'s reference count is
   incremented.  If it isn't found, or if the receiver isn't open,
   returns <b>nil</b>.
-*/
-- sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment;
-
-/*!
   @param  aKeyObj is an id.
   @param  whichSegment is a MKOrchMemSegment.
   @return Returns an id.
+*/
+- sharedSynthDataFor: (id) aKeyObj segment: (MKOrchMemSegment) whichSegment;
+
+/*!
   @brief Returns, from the receiver's shared data table, the MKSynthData,
   MKUnitGenerator, or MKSynthPatch object that's indexed by
   <i>aKeyObj</i>.
@@ -1222,14 +1202,16 @@ extern void MKSetPreemptDuration(double seconds);
   If the object is found, <i>aKeyObj</i>'s reference count is
   incremented.  If it isn't found, or if the receiver isn't open,
   returns <b>nil</b>.
-*/
-- sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment
-  type:(MKOrchSharedType)aType; 
-
-/*!
   @param  aKeyObj is an id.
   @param  whichSegment is a MKOrchMemSegment.
+  @param  aType is a MKOrchSharedType.
   @return Returns an id.
+*/
+- sharedSynthDataFor: (id) aKeyObj 
+	     segment: (MKOrchMemSegment) whichSegment
+		type: (MKOrchSharedType) aType; 
+
+/*!
   @brief Returns, from the receiver's shared data table, the MKSynthData,
   MKUnitGenerator, or MKSynthPatch object that's indexed by
   <i>aKeyObj</i>.
@@ -1239,16 +1221,16 @@ extern void MKSetPreemptDuration(double seconds);
   If the object is found, <i>aKeyObj</i>'s reference count is
   incremented.  If it isn't found, or if the receiver isn't open,
   returns <b>nil</b>.
-*/
-- sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment 
- length:(int)length;
-
-/*!
   @param  aKeyObj is an id.
   @param  whichSegment is a MKOrchMemSegment.
-  @param  length is an int.
-  @param  type is a MKOrchSharedType.
+  @param  length is an integer.
   @return Returns an id.
+*/
+- sharedSynthDataFor: (id) aKeyObj
+	     segment: (MKOrchMemSegment) whichSegment 
+	      length: (int) length;
+
+/*!
   @brief Returns, from the receiver's shared data table, the MKSynthData,
   MKUnitGenerator, or MKSynthPatch object that's indexed by
   <i>aKeyObj</i>.
@@ -1259,8 +1241,16 @@ extern void MKSetPreemptDuration(double seconds);
   object is found, <i>aKeyObj</i>'s reference count is incremented. 
   If it isn't found, or if the receiver isn't open, returns
   <b>nil</b>.
-*/
-- sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment length:(int)length type:(MKOrchSharedType)aType; 
+  @param  aKeyObj is an id.
+  @param  whichSegment is a MKOrchMemSegment.
+  @param  length is an int.
+  @param  aType is a MKOrchSharedType.
+  @return Returns an id.
+ */
+- sharedSynthDataFor: (id) aKeyObj
+	     segment: (MKOrchMemSegment) whichSegment
+	      length: (int) length
+		type: (MKOrchSharedType) aType; 
 
 /*!
   @return Returns an id.
@@ -1290,7 +1280,7 @@ extern void MKSetPreemptDuration(double seconds);
   The patchpoint shouldn't be deallocated. 
   <i>segment</i> can be MK_xPatch or MK_yPatch.
 */
-- segmentZero:(MKOrchMemSegment )segment; 
+- segmentZero: (MKOrchMemSegment) segment; 
 
 /*!
   @param  segment is a MKOrchMemSegment.
@@ -1303,7 +1293,7 @@ extern void MKSetPreemptDuration(double seconds);
   patchpoint shouldn't be deallocated.  <i>segment</i> can be
   MK_xPatch or MK_yPatch.
 */
-- segmentSink:(MKOrchMemSegment )segment; 
+- segmentSink: (MKOrchMemSegment) segment; 
 
 /*!
   @param  segment is a MKOrchMemSegment.
@@ -1316,7 +1306,7 @@ extern void MKSetPreemptDuration(double seconds);
   of idle MKUnitGenerators.  The patchpoint shouldn't be deallocated. 
   <i>segment</i> can be MK_xPatch or MK_yPatch.
 */
-- segmentSinkModulus:(MKOrchMemSegment )segment; 
+- segmentSinkModulus: (MKOrchMemSegment) segment; 
 
 /*!
   @return Returns an id.
@@ -1385,24 +1375,17 @@ extern void MKSetPreemptDuration(double seconds);
   @return Returns an id.
   @brief Used to print debugging information.
 
-  The arguments to the
-  <b>msg:</b> keyword are like those to <b>printf()</b>.  If the
-  <i>typeOfInfo</i> trace is set, prints to stderr.
-  
-  <b>upSamplingOutput </b>
-  - <b>upSamplingOutput</b>
-  
-  When sending sound to the DSP serial port, the sound may need to be up-sampled if the current sampling rate is supported by the serial port device only as a "half sampling rate" (see DSPSerialPortDevice for more info.)  Returns YES if we are upsampling the sound before sending it to its output location.   Subclasses may override this method. For example, the ArielQPSat class, when sending its sound to the hub DSP, forwards this message to the ArielQP obect that represents the hub DSP.
+  The arguments to the <b>msg:</b> keyword are like those to <b>printf()</b>.  If the
+  <i>typeOfInfo</i> trace is set, prints to stderr.  
 */
 - trace: (int) typeOfInfo msg: (NSString *) fmt,...; 
 
 /*!
-  @param  whichSegment is an int.
-  @return Returns an NSString instance.
   @brief Returns a pointer to the name of the specified MKOrchMemSegment.
-
   
   The name is not copied and should not be freed.
+  @param  whichSegment is an int.
+  @return Returns an NSString instance.
 */
 - (NSString *) segmentName: (int) whichSegment; 
 
@@ -1415,83 +1398,73 @@ extern void MKSetPreemptDuration(double seconds);
 - (unsigned short) orchestraIndex; 
 
 /*!
-  @return Returns a double.
   @brief Returns the compute time estimate currently used by the receiver in
   seconds per sample.
-
-  
+  @return Returns a double.
 */
 - (double) computeTime; 
 
 /*!
-  @param  aSynthPatchClass is an id.
-  @return Returns an id.
   @brief Same as <b>allocSynthPatch:patchTemplate:</b> but uses the default
   template, obtained by sending the message <b>defaultPatchTemplate</b> to <i>aSynthPatchClass</i>.
-
-  
+  @param  aSynthPatchClass is an id.
+  @return Returns an id.
 */
-- allocSynthPatch: aSynthPatchClass; 
+- allocSynthPatch: (id) aSynthPatchClass; 
 
 /*!
-  @param  aSynthPatchClass is an id.
-  @param  p is an id.
-  @return Returns an id.
   @brief Allocates and returns a MKSynthPatch for MKPatchTemplate <i>p</i>.
 
-  The
-  receiver first tries to find an idle MKSynthPatch; failing that, it
+  The receiver first tries to find an idle MKSynthPatch; failing that, it
   creates and returns a new one.  The MKUnitGenerators are added to the
   SynthPatch's unitGenerators list in the same order they are
   specified in the MKPatchTemplate.  If a new MKSynthPatch can't be built,
   this method returns <b>nil</b>.
-*/
-- allocSynthPatch: aSynthPatchClass patchTemplate: p; 
+  @param  aSynthPatchClass is an id.
+  @param  p is an id.
+  @return Returns an id.
+ */
+- allocSynthPatch: (id) aSynthPatchClass patchTemplate: (id) p; 
 
 /*!
-  @param  class is an id.
-  @return Returns an id.
   @brief Allocates and returns a MKUnitGenerator of the specified class,
   creating a new one, if necessary.
-
-  
+  @param  aClass is an id.
+  @return Returns an id.
 */
-- allocUnitGenerator: aClass; 
+- allocUnitGenerator: (id) aClass; 
 
 /*!
-  @param  class is an id.
-  @param  aUnitGeneratorInstance is an id.
-  @return Returns an id.
   @brief Allocates and returns a MKUnitGenerator of the specified class.
 
-  The
-  newly allocated object will execute before <i>aUnitGeneratorInstance</i>.
-*/
-- allocUnitGenerator: aClass before: aUnitGeneratorInstance; 
-
-/*!
-  @param  class is an id.
+  The newly allocated object will execute before <i>aUnitGeneratorInstance</i>.
+  @param  aClass is an id.
   @param  aUnitGeneratorInstance is an id.
   @return Returns an id.
-  @brief Allocates and returns a MKUnitGenerator of the specified class.
-
-  The
-  newly allocated object will execute after <i>aUnitGeneratorInstance</i>.
 */
-- allocUnitGenerator: aClass after: aUnitGeneratorInstance; 
+- allocUnitGenerator: (id) aClass before: (id) aUnitGeneratorInstance; 
 
 /*!
-  @param  class is an id.
+  @brief Allocates and returns a MKUnitGenerator of the specified class.
+
+  The newly allocated object will execute after <i>aUnitGeneratorInstance</i>.
+  @param  aClass is an id.
+  @param  aUnitGeneratorInstance is an id.
+  @return Returns an id. 
+ */
+- allocUnitGenerator: (id) aClass after: (id) aUnitGeneratorInstance; 
+
+/*!
+  @brief Allocates and returns an MKUnitGenerator of the specified class.
+
+  The newly allocated object will execute immediately after
+  <i>aUnitGeneratorInstance</i> and before <i>anotherUnitGenerator</i>.
+  @param  aClass is an id.
   @param  aUnitGeneratorInstance is an id.
   @param  anotherUnitGeneratorInstance is an id.
   @return Returns an id.
-  @brief Allocates and returns a MKUnitGenerator of the specified class.
-
-  The
-  newly allocated object will execute immediately after
-  <i>aUnitGeneratorInstance</i> and before <i>anotherUnitGenerator</i>.
-*/
-- allocUnitGenerator: aClass between: aUnitGeneratorInstance : anotherUnitGeneratorInstance;
+ */
+- allocUnitGenerator: (id) aClass between: (id) aUnitGeneratorInstance : (id) anotherUnitGeneratorInstance;
 
 - (NSString *) lastAllocationFailureString;
 
@@ -1521,16 +1494,16 @@ extern void MKSetPreemptDuration(double seconds);
 - allocPatchpoint: (MKOrchMemSegment) segment; 
 
 /*!
-  @param  aSynthResource is an id.
-  @return Returns an id.
   @brief Deallocates <i>aSynthResource</i> by sending it the <b>dealloc</b>
   message.
 
   <i>aSynthResource</i> may be a MKUnitGenerator, a MKSynthData
   or a MKSynthPatch.  This method is provided for symmetry with the
   <b>alloc</b> family of methods.
+  @param  aSynthResource is an id.
+  @return Returns an id.
 */
-- dealloc: aSynthResource;
+- dealloc: (id) aSynthResource;
 
 /*!
   @return Returns a BOOL.
@@ -1639,17 +1612,15 @@ extern void MKSetPreemptDuration(double seconds);
 
 
 /*!
-  @return Returns a BOOL
   @brief When sending sound to the DSP serial port, the sound
   may need to be up-sampled if the current sampling rate is supported
   by the serial port device only as a "half sampling rate" (see
-  DSPSerialPortDevice for more info.)  Returns YES if we are
-  upsampling the sound before sending it to its output location.
-
-  
+  DSPSerialPortDevice for more info).
+ 
   Subclasses may override this method. For example, the ArielQPSat
   class, when sending its sound to the hub DSP, forwards this message
   to the ArielQP obect that represents the hub DSP.
+  @return Returns YES if we are upsampling the sound before sending it to its output location.
 */
 - (BOOL) upSamplingOutput;
 
@@ -1657,9 +1628,8 @@ extern void MKSetPreemptDuration(double seconds);
   @return Returns an id.
   @brief A subclass may implement this message.
 
-  It is sent after boot and
-  before sound out is started.   The default implementation does
-  nothing.
+  It is sent after boot and before sound out is started.
+  The default implementation does nothing.
 */
 - setUpDSP;
 
@@ -1673,16 +1643,15 @@ extern void MKSetPreemptDuration(double seconds);
 - (BOOL) startSoundWhenOpening;
 
 /*!
-  @param  classObject is an id.
-  @param  index is an int.
-  @return Returns an id.
   @brief Used by subclasses to register themselves as the default class for
   the specified DSP index.
 
-  This allows the user to say 
-  <b>[MKOrchestra orchestraOnDSP:3]</b> and get an instance of <b>ArielQPSat</b>, for
-  example.
-*/
+  This allows the user to say <b>[MKOrchestra orchestraOnDSP:3]</b> and get an
+  instance of <b>ArielQPSat</b>, for example.
+  @param  classObject is an id.
+  @param  index is an int.
+  @return Returns an id.
+ */
 + registerOrchestraSubclass: (id) classObject forOrchIndex: (int) index;
 
 -segmentInputSoundfile:(MKOrchMemSegment)segment;
@@ -1723,29 +1692,27 @@ extern void MKSetPreemptDuration(double seconds);
 -(int)driverSubUnit;
 
 /*!
-  @param  parameter is a NSString.
-  @param  index is an unsigned short.
-  @return Returns an NSString.
   @brief &lt;&lt;Intel-based hardware only&gt;&gt; Returns the parameter
   value of the specified driver parameter for the driver associated
   with the given index of MKOrchestra.
 
-  The string is not copied and
-  should not be freed.   
-*/
-+(NSString *)driverParameter: (NSString *) parameterName forOrchIndex: (unsigned short) index;
+  The string is not copied and should not be freed.   
+ @param  parameterName is a NSString.
+ @param  index is an unsigned short.
+ @return Returns an NSString.
+ */
++ (NSString *) driverParameter: (NSString *) parameterName forOrchIndex: (unsigned short) index;
 
 /*!
-  @param  parameter is an NSString.
-  @return Returns an NSString.
   @brief &lt;&lt;Intel-based hardware only&gt;&gt; Returns the parameter
   value of the specified driver parameter for the driver associated
   with this instance of MKOrchestra.
 
-  The string is not copied and
-  should not be freed.   
+  The string is not copied and should not be freed.   
+  @param  parameterName is an NSString.
+  @return Returns an NSString.
 */
--(NSString *)driverParameter: (NSString *) parameterName;
+- (NSString *) driverParameter: (NSString *) parameterName;
 
 -awaitEndOfTime:(double)endOfTime timeStamp:(DSPTimeStamp *)aTimeStampP;
 
@@ -1759,7 +1726,7 @@ extern void MKSetPreemptDuration(double seconds);
 
 @interface OrchestraDelegate : NSObject
 
--orchestra:sender didRecordData:(short *)data size:(unsigned int)dataCount;
+-orchestra: (id) sender didRecordData:(short *)data size:(unsigned int)dataCount;
 
 @end
 

@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2005/05/14 03:27:26  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.4  2005/05/09 15:52:52  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -45,7 +48,7 @@
 
   
 */
-- performerDidActivate:sender;
+- performerDidActivate: (id) sender;
 
 /*!
   @param  sender is an id.
@@ -55,7 +58,7 @@
 
   
 */
-- performerDidPause:sender;
+- performerDidPause: (id) sender;
 
 /*!
   @param  sender is an id.
@@ -65,7 +68,7 @@
 
   
 */
-- performerDidResume:sender;
+- performerDidResume: (id) sender;
 
 /*!
   @param  sender is an id.
@@ -75,7 +78,7 @@
 
   
 */
-- performerDidDeactivate:sender;
+- performerDidDeactivate: (id) sender;
 
 @end
 

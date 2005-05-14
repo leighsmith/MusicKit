@@ -1,7 +1,7 @@
 /*
   $Id$
-  
   Defined In: The MusicKit
+ 
   Description:
     UnoiseUG - from dsp macro /usr/lib/dsp/ugsrc/unoise.asm (see source for details).
 
@@ -24,8 +24,6 @@
   @class UnoiseUG
   @brief <b>UnoiseUG</b> produces white noise at the sampling rate.
   
-  
-
 UnoiseUG produces a series of random values within the range
 	
 0.0 &lt;= <i>f</i> &lt; 1.0
@@ -46,7 +44,6 @@ produce a new random value every tick.
 @interface UnoiseUG: MKUnitGenerator
 
 /*!
-  @return Returns an id.
   @brief You never send this message.
 
   It's invoked by sending the
@@ -55,44 +52,36 @@ produce a new random value every tick.
   the object does not produce any output.  Note that you must send
   <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator
   after sending <b>idle</b>.
+  @return Returns an id.
 */
--idleSelf;
-/* Sets output to sink. */
+- idleSelf;
 
 /*!
+  @brief Specifies that all arguments are to be optimized if possible except seed.
   @param arg is an unsigned.
   @return Returns an BOOL.
-  @brief Specifies that all arguments are to be optimized if possible except seed.
-
-  
 */
-+(BOOL)shouldOptimize:(unsigned) arg;
++ (BOOL) shouldOptimize: (unsigned) arg;
 
 /*!
-  @param  (DSPDatum)seed is an id.
+  @param  seedVal is an DSPDatum.
   @return Returns <b>self</b>.
   @brief Sets the seed that's used to prime the random number generator.
 
-  To
-  create a unique series of random numbers, you should set the seed
-  itself to a randomly generated number.  
+  To create a unique series of random numbers, you should set the seed
+ itself to a randomly generated number. This is the current value and thus is changed
+ by the unit generator itself.
 */
--setSeed:(DSPDatum)seedVal;
-/* Sets seed of random sequence. This is the current value and thus is changed
-   by the unit generator itself. */
-
+- setSeed: (DSPDatum) seedVal;
 
 /*!
-  @param  aPatchpoint is an id.
-  @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
-  Returns
-  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-  <b>self</b>.
+  Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
+  @param  aPatchPoint is an id.
+  @return Returns an id.
 */
--setOutput:aPatchPoint;
-/* Sets output as specified. */
+-setOutput: (id) aPatchPoint;
 
 @end
 

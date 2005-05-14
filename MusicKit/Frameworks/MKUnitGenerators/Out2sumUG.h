@@ -76,8 +76,6 @@ stream.
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @param  (double)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the factor by which the signal that's written to the left
   output channel is scaled.
 
@@ -85,14 +83,12 @@ stream.
   that's just a tad less than 1.0.  Effective values are between 0.0
   and 1.0 (a negative <i>value</i> is the same as its absolute value,
   but with a 180 degree phase shift).  
-*/
--setLeftScale:(double)val;
-/* Sets scaling for left channel. */ 
-
+  @param  value is a double.
+  @return Returns <b>self</b>.
+ */
+- setLeftScale: (double) value;
 
 /*!
-  @param  (double)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the factor by which the signal that's written to the right
   output channel is scaled.
 
@@ -100,14 +96,12 @@ stream.
   that lacks 1.0 by a speck.    Effective values are between 0.0 and
   1.0 (a negative <i>value</i> is the same as its absolute value, but
   with a 180 degree phase shift).  
+  @param  value is a double.
+  @return Returns <b>self</b>.
 */
--setRightScale:(double)val;
-/* Sets scaling for right channel. */ 
-
+- setRightScale: (double) value;
 
 /*!
-  @param  (double)degrees is an id.
-  @return Returns <b>self</b>.
   @brief Distributes the input signal between the two output channels
   according to the value of <i>degrees</i>:  0.0 degrees is center,
   -45.0 is hard left, 45.0 is hard right.
@@ -115,9 +109,10 @@ stream.
   Bearing is reflected as
   <i>degrees</i> exceeds the boundaries; thus, for example, 50.0
   degrees is the same as 40.0, 60.0 is 30.0, 90.0 is 0.0, and so on. 
-  
+  @param  degrees is a double.
+  @return Returns <b>self</b>.
 */
--setBearing:(double)val;
+- setBearing: (double) degrees;
 /* As a convenience, you can set both scaleA and scaleB with a single 
    message. 
 
@@ -127,30 +122,23 @@ stream.
 
 
 /*!
-  @param  (double)degrees is an id.
-  @param  value is a double.
-  @return Returns <b>self</b>.
-  @brief This is the same as <b>setBearing:</b>, but the input signal is
-  scaled by <i>value</i>, which should be between 0.0 and 1.0, before
-  being distributed.
-
-  
-*/
--setBearing:(double)val scale:(double)aScale;
-/* Same as setBearing:, but including an overall amp scaling factor independent
-   of bearing. */
-
+  @brief This is the same as <b>setBearing:</b>, but the amplitude of the input signal is
+  scaled by <i>scaleValue</i>, which should be between 0.0 and 1.0, independent
+  of bearing, before being distributed.
+ @param  degrees is a double.
+ @param  scaleValue is a double.
+ @return Returns <b>self</b>.
+ */
+- setBearing: (double) degrees scale: (double) scaleValue;
 
 /*!
-  @return Returns an id.
   @brief If bearing has not been set, sets it to 0.0.
 
   This method is invoked
   when you send the <b>run</b> message to the object.
+  @return Returns an id.
 */
--runSelf;
-/* If bearing has not been set, sets it to 0. */
-
+- runSelf;
 
 /*!
   @return Returns an id.
@@ -169,15 +157,15 @@ stream.
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
 
   Returns <b>nil</b>
   if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput:aPatchPoint;
+-setInput: (id) aPatchPoint;
 /* Sets input patch point. */
 @end
 

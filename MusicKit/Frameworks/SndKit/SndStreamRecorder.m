@@ -12,13 +12,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#import <MKPerformSndMIDI/SndStruct.h>
+//#import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
 #import "SndStreamRecorder.h"
 #import "SndEndianFunctions.h"
-#include <unistd.h>
+//#include <unistd.h>
 
 @implementation SndStreamRecorder
 

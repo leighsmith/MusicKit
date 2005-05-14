@@ -24,8 +24,6 @@
   @class EnvFollowUG
   @brief <b>EnvFollowUG</b> derives an amplitude envelope from an input signal.
   
-  
-
 EnvFollowUG is an envelope follower, that tracks the peaks of a signal.  It
 converts an arbitrary signal to an envelope-like signal that is always positive
 and changes relatively slowly. 
@@ -44,38 +42,29 @@ and changes relatively slowly.
 }
 
 /*!
-  @param  aPatchpoint is an id.
-  @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
-
-  Returns <b>nil</b>
-  if the argument isn't a patchpoint; otherwise returns
-  <b>self</b>.
+  @param  aPatchPoint is an id.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
 */
-- setInput:(id) aPatchPoint;
+- setInput: (id) aPatchPoint;
 
 /*!
-  @param  aPatchpoint is an id.
-  @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
-
-  Returns
-  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-  <b>self</b>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
+  @param  aPatchPoint is an id.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
 */
-- setOutput:(id) aPatchPoint;
+- setOutput: (id) aPatchPoint;
 
 /*!
-  @param  (double)val is an id.
-  @return Returns an id.
-  @brief Release determines how quickly the object responds to amplitude
-  changes.
+  @brief Release determines how quickly the object responds to amplitude changes.
 
   More precisely, it is the coefficient of the one-pole
   filter that implements the envelope decay. Typical values are
   between 0.9 and 0.99.
+  @param  value is a double.
+  @return Returns an id.
 */
-- setRelease:(double)value;
+- setRelease: (double) value;
 
 - init;
 - idleSelf;

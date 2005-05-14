@@ -63,20 +63,18 @@ In1bUG<i>a</i>
 
   
 */
-+(BOOL)shouldOptimize:(unsigned) arg;
++ (BOOL) shouldOptimize: (unsigned) arg;
 
 /*!
-  @param  (double)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the factor by which the output signal is scaled.
 
-  By default,
-  the scaler is set to 1.0.  Effective values are between 0.0 and 1.0
+  By default, the scaler is set to 1.0.  Effective values are between 0.0 and 1.0
   (negative values are the same as their absolute values, but with a
   180 degree phase shift).  
+  @param  value is a double.
+  @return Returns <b>self</b>.
 */
--setScale:(double)val;
-/* Sets scaling for left channel. */ 
+-setScale: (double) value;
 
 /*!
   @return Returns an id.
@@ -89,15 +87,15 @@ In1bUG<i>a</i>
 /* If scaling has not been set, sets it to 1-e. */
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 
 @end
 

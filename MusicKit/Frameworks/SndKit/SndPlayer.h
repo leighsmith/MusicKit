@@ -116,11 +116,11 @@
   @brief Begin playing a Snd instance at some time in the future.
   @param s The sound to start playing
   @param inSeconds The future time interval in seconds when to start playing.
-  @param beginIndex The first sample of the sound to play.
+  @param beginAtIndex The first sample of the sound to play.
   @param endIndex The last sample of the sound to play.
   @return The SndPerformance object assocaited with this instance of the Snd's performance
 */
-- (SndPerformance *) playSnd: (Snd*) s 
+- (SndPerformance *) playSnd: (Snd *) s 
               withTimeOffset: (double) inSeconds
                 beginAtIndex: (unsigned long) beginAtIndex
                   endAtIndex: (unsigned long) endIndex;
@@ -129,8 +129,8 @@
   @brief Begin playing a Snd instance at some absolute stream time.
   @param s The sound to start playing
   @param playT The absolute stream time, in seconds, to start play back.
-  @param beginIndex The first sample of the sound to play.
-  @param endIndex The last sample of the sound to play.
+  @param beginAtIndex The first sample of the sound to play.
+  @param endAtIndex The last sample of the sound to play.
   @return The SndPerformance object assocaited with this instance of the Snd's performance
 */
 - (SndPerformance *) playSnd: (Snd *) s

@@ -261,7 +261,7 @@ static id getNoVibTemplate() {
   return template;
   }
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
   if (aNote) {
     double svibpc = doublePar(aNote, MK_svibAmp,.01);
@@ -512,7 +512,7 @@ static id getNoVibTemplate() {
 }    
 
 
--noteOnSelf:aNote
+-noteOnSelf: (MKNote *) aNote
   /* Sent whenever a noteOn is received by the SynthInstrument. */
 {
   /* Interpret all the parameters and send the necessary updates. */
@@ -525,7 +525,7 @@ static id getNoVibTemplate() {
 }
 
 
--preemptFor:aNote
+-preemptFor: (MKNote *) aNote
   /* Sent whenever a running note is being preempted by a new note. */
 {
   [UG(ampUG) preemptEnvelope];
@@ -534,14 +534,14 @@ static id getNoVibTemplate() {
 }
 
 
--noteUpdateSelf:aNote
+-noteUpdateSelf: (MKNote *) aNote
   /* Sent whenever a noteUpdate is received by the SynthInstrument. */
 {
   return [self _updateParameters:aNote];
 }
 
 
--(double)noteOffSelf:aNote
+-(double)noteOffSelf: (MKNote *) aNote
   /* Sent whenever a noteOff is received by the SynthInstrument. Returns
      the amplitude envelope completion time, needed to schedule the noteEnd. */
 {   

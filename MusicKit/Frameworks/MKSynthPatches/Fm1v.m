@@ -25,7 +25,7 @@ FMDECL(sinVibTemplate,sinVibUgs);
 FMDECL(ranVibTemplate,ranVibUgs);
 FMDECL(noVibTemplate,noVibUgs);
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     if (aNote) {
         #define NON_ZERO_NUMBER 1

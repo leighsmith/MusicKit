@@ -51,28 +51,23 @@ and satellite DSP setting.
 
 
 /*!
-  @param  aChan is an int.
-  @return Returns an id.
   @brief Sets the input channel that this instance of In1qpUG reads.
 
-  Channel
-  0 is the first channel, channel 1 is the second channel.   For
+  Channel 0 is the first channel, channel 1 is the second channel.   For
   quadraphonic streams, <i>aChan</i> may be larger.
+  @param  aChan is an integer, 0-based channel.
+  @return Returns an id.
 */
-- setChannel:(int)aChan;
-/* 0-based channel */
-
+- setChannel: (int) aChan;
 
 /*!
-  @param  value is a double.
-  @return Returns an id.
   @brief Sets the scale as specified.
 
   The default is 1.0. 
-  
+  @param  value is a double.
+  @return Returns an id.
 */
-- setScale:(double)val;
-/* Scaling */
+- setScale: (double) value;
 
 
 /*!
@@ -89,9 +84,9 @@ and satellite DSP setting.
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns

@@ -241,7 +241,7 @@ static id getNoVibTemplate() {
     return;
 }
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
     /* Creates and returns a patchTemplate which specifies the
        UnitGenerators and Patchpoints to be used and how they are
        to be interconnected when one of these synthPatches is
@@ -450,7 +450,7 @@ static id getNoVibTemplate() {
 }    
 
 
--noteOnSelf:aNote
+-noteOnSelf: (MKNote *) aNote
   /* Sent whenever a noteOn is received by the SynthInstrument. */
 {
   /* Interpret all the parameters and send the necessary updates. */
@@ -463,7 +463,7 @@ static id getNoVibTemplate() {
 }
 
 
--preemptFor:aNote
+-preemptFor: (MKNote *) aNote
   /* Sent whenever a running note is being preempted by a new note. */
 {
   [UG(ampUG) preemptEnvelope];
@@ -472,14 +472,14 @@ static id getNoVibTemplate() {
 }
 
 
--noteUpdateSelf:aNote
+-noteUpdateSelf: (MKNote *) aNote
   /* Sent whenever a noteUpdate is received by the SynthInstrument. */
 {
     return [self _updateParameters:aNote];
 }
 
 
--(double)noteOffSelf:aNote
+-(double)noteOffSelf: (MKNote *) aNote
   /* Sent whenever a noteOff is received by the SynthInstrument. Returns
      the amplitude envelope completion time, needed to schedule the noteEnd. */
 {   

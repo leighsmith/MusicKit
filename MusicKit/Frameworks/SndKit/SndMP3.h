@@ -136,10 +136,10 @@
  
   Caching is performed so repeatedly retrieving the same frame successively incurs no decoding overhead.
 			
-  @param buff The SndAudioBuffer object into which to copy the data.
+  @param anAudioBuffer The SndAudioBuffer object into which to copy the data.
   @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
 		  in the buffer to copy into.
-  @param sndFrameRange An NSRange of sample frames (i.e channel independent time position specified in samples)
+  @param sndReadingRange An NSRange of sample frames (i.e channel independent time position specified in samples)
   within the Snd to start reading data from and the last permissible index to read from.
   @return Returns the number of samples actually inserted. This may be less than the length specified
   in the bufferRange if sndStartIndex is less than the number samples needed to convert to

@@ -32,7 +32,7 @@ static int
   _ySig,           /* a frequency patch point */
   _xSig;           /* another frequency patchpoint */ 
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     /* Step 1: Create (or return) the MKPatchTemplate. */
     static MKPatchTemplate *theTemplate = nil;
@@ -190,7 +190,7 @@ static int
   return table;
 }
 
-- preemptFor:aNote
+- preemptFor: (MKNote *) aNote
 {
     [ampAsymp preemptEnvelope]; 
     [self _setDefaults];
@@ -401,7 +401,7 @@ static int
     return self;
 }    
 
-- noteOnSelf:aNote
+- noteOnSelf: (MKNote *) aNote
 {
     /* Apply the parameters to the patch. */	
     [self _applyParameters:aNote];
@@ -415,7 +415,7 @@ static int
     return self;
 }
 
-- noteUpdateSelf:aNote
+- noteUpdateSelf: (MKNote *) aNote
 {
     /* Apply the parameters to the patch. */	
     [self _applyParameters:aNote];
@@ -423,7 +423,7 @@ static int
     return self;	
 }
 
-- (double)noteOffSelf:aNote
+- (double)noteOffSelf: (MKNote *) aNote
 {   
     double x,y;
     /* Apply the parameters. */

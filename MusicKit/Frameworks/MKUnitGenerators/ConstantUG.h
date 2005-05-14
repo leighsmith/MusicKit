@@ -32,8 +32,6 @@
   @class ConstantUG
   @brief <b>ConstantUG </b>simply writes a constant to its output patchpoint. 
   
-  
-
 ConstantUG produces a constant value.  Since you can set the value of a
 patchpoint directly through the MKSynthData method <b>setToConstant:</b>, you
 rarely need instances of this class.  However, a ConstantUG object can be used
@@ -53,53 +51,38 @@ a ConstantUG to clear the patchpoint before the first oscillator reads it.
 #define __MK_ConstantUG_H___
 
 #import <MusicKit/MKUnitGenerator.h>
-@interface ConstantUG:MKUnitGenerator
+@interface ConstantUG: MKUnitGenerator
 
 /*!
+  @brief Specifies that all arguments are to be optimized if possible.
   @param arg is an unsigned.
   @return Returns an BOOL.
-  @brief Specifies that all arguments are to be optimized if possible.
-
-  
 */
-+(BOOL)shouldOptimize:(unsigned) arg;
++ (BOOL) shouldOptimize: (unsigned) arg;
 
 -idleSelf;
 /* Sets output patchpoint to sink. */
 
-
 /*!
-  @param  (DSPDatum)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the constant value to <i>value.</i>  
-*/
--setConstantDSPDatum:(DSPDatum)value;
-/* Sets constant value as int. */
-
-
-/*!
-  @param  (double)value is an id.
+  @param  value is an DSPDatum.
   @return Returns <b>self</b>.
-  @brief Sets the constant value to a DSPDatum converted from <i>value</i>.
-
-  
-  
 */
--setConstant:(double)value;
-/* Sets constant value as double. */
-
+- setConstantDSPDatum: (DSPDatum) value;
 
 /*!
-  @param  aPatchpoint is an id.
-  @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
-
-  Returns
-  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-  <b>self</b>.
+  @brief Sets the constant value to a DSPDatum converted from <i>value</i>.
+  @param  value is a double.
+  @return Returns <b>self</b>.
 */
--setOutput:aPatchPoint;
-/* Sets output location. */ 
+- setConstant: (double) value;
+
+/*!
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
+  @param  aPatchPoint is an id.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.  
+*/
+- setOutput: (id) aPatchPoint;
 
 @end
 

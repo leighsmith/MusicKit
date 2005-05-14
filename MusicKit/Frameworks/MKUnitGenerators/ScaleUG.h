@@ -42,36 +42,34 @@ ScaleUG multiplies its input by a constant scaler:
 @interface ScaleUG: MKUnitGenerator
 
 /*!
-  @param  aPatchpoint is an id.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
+  @param  aPatchPoint is an id.
   @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
 */
-- setInput: aPatchPoint;
-
+- setInput: (id) aPatchPoint;
 
 /*!
-  @param  aPatchpoint is an id.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
+  @param  aPatchPoint is an id.
   @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
 */
-- setOutput: aPatchPoint;
-
+- setOutput: (id) aPatchPoint;
 
 /*!
-  @param  (double)value is an id.
-  @return Returns <b>self</b>.
   @brief Sets the constant scale factor.
 
   Effective values are between 0.0 and 1.0
   (a negative scaler is the same as its absolute value, but with a 180
   degree phase shift).  
+  @param  value is a double.
+  @return Returns <b>self</b>.
 */
-- setScale: (double) val;
+- setScale: (double) value;
 
 /*!
+  @brief Specifies that all arguments are to be optimized if possible.
   @param arg is an unsigned.
   @return Returns an BOOL.
-  @brief Specifies that all arguments are to be optimized if possible.
 */
 + (BOOL) shouldOptimize: (unsigned) arg;
 

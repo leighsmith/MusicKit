@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2005/05/14 03:23:05  leighsmith
+  Clean up of parameter names to correct doxygen warnings
+
   Revision 1.6  2005/05/09 15:27:44  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -121,7 +124,7 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 
   This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
--noteOnSelf:aNote;
+-noteOnSelf: (MKNote *) aNote;
 
 /*!
   @param  aNote is an id.
@@ -130,7 +133,7 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 
   Sets parameters as specified in <i>aNote.</i>
 */
--noteUpdateSelf:aNote;
+-noteUpdateSelf: (MKNote *) aNote;
 
 /*!
   @param  aNote is an id.
@@ -139,7 +142,7 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 
   This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
--(double)noteOffSelf:aNote;
+-(double)noteOffSelf: (MKNote *) aNote;
 
 /*!
   @return Returns an id.
@@ -156,7 +159,7 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 
   
 */
--preemptFor:aNote;
+-preemptFor: (MKNote *) aNote;
 
 @end
 

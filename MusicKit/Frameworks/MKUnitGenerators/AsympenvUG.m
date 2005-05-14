@@ -147,7 +147,7 @@ enum args { antrg, aout, rate, trg, andur, anrate, dur, val };
 #define MAXRATE .125
 #define MINSMOOTH .0001 /* Otherwise exp() goes ape on 486 */
 
-+orchestraWillCreate:sender
++orchestraWillCreate: (id) sender
 {
 #define TICK_DUR (DSP_CLOCK_PERIOD/DSPMK_I_NTICK)
     MKLeafUGStruct *p = [self classInfo];

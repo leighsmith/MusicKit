@@ -67,59 +67,52 @@ timing of the switch to a tick boundary.
    delay counter. */
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 1 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 1 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput1:aPatchPoint;
+-setInput1: (id) aPatchPoint;
 /* Sets input1 to specified patchPoint. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input 2 patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input 2 patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput2:aPatchPoint;
+-setInput2: (id) aPatchPoint;
 /* Sets input2 to specified patchPoint. */
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output to specified patchPoint. */
 
 
 /*!
-  @param  (double)scale is an id.
-  @return Returns <b>self</b>.
   @brief Sets the factor by which first input signal is scaled.
-
-  
-  
+  @param scale is a double.
+  @return Returns <b>self</b>.
 */
--setScale1:(double)val;
-/* Sets constant to scale input1 values. */
-
+- setScale1: (double) scale;
 
 /*!
-  @param  (int)count is an id.
-  @return Returns <b>self</b>.
   @brief Immediately switches the DswitchUG to its first input and causes it
   to switch to its second input after <i>count</i> samples have been
   read.
@@ -128,12 +121,11 @@ timing of the switch to a tick boundary.
   the second input is performed immediately.  If the object is
   currently reading from its first input because of a previous
   invocation of this method, the old <i>count</i> is superceded by the
-  new one.  
+  new one.
+  @param count is an int. A negative value will switch immediately to input2.
+  @return Returns <b>self</b>.
 */
--setDelaySamples:(int)val;
-/* Sets delay in samples. A negative value will switch immediately to 
-   input2. */
-
+- setDelaySamples: (int) count;
 
 /*!
   @return Returns an id.

@@ -80,60 +80,53 @@ are used.
 +(BOOL)shouldOptimize:(unsigned) arg;
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>self</b>, or <b>nil</b> if the argument isn't a
   patchpoint.
 */
--setInput:aPatchPoint;
+-setInput: (id) aPatchPoint;
 /* Sets input of filter. */
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>self</b>, or <b>nil</b> if the argument isn't a
   patchpoint.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output of filter. */
 
 /*!
-  @param  (double)bb0 is an id.
-  @return Returns <b>self</b>.
   @brief Sets the filter coefficient to <i>bb0</i>.
 
-  For stability, the
-  coefficient should be within the bounds
+  For stability, the coefficient should be within the bounds:
   	
   -1.0 &lt; <i>bb0</i> &lt; 1.0
+  @param bb0 is an double.
+  @return Returns <b>self</b>.
 */
--setBB0:(double)val;
-/* Sets BB0 coefficient in equation above. */
+- setBB0: (double) bb0;
 
 /*!
-  @return Returns <b>self</b>.
   @brief Clears filter memory, i.e., sets the value of the two state
   variables (used for x(n-1) and y(n-1)) to 0.0.
-
-  
+  @return Returns <b>self</b>.
 */
--clear;
-/* Clears filter state variable. */
+- clear;
 
 /*!
+  @brief Returns filter delay at given frequency.
   @param  hzVal is a double.
   @return Returns a double.
-  @brief Returns filter delay at given frequency.
-
-  
 */
--(double)delayAtFreq:(double)hzVal;
+- (double) delayAtFreq: (double) hzVal;
 
 @end
 

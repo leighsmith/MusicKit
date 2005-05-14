@@ -157,22 +157,19 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
     phase. */
 
 /*!
-  @param  anObj is an id.
-  @return Returns an int.
   @brief Returns a default table length determined by the type of subclass
   and type of argument.
-
-  
+  @param  anObj is an id.
+  @return Returns an int.
 */
-+(int)defaultTableLength:anObj;
++ (int) defaultTableLength: (id) anObj;
 
 /*!
-  @param  aScaler is an int.
-  @return Returns an id.
   @brief Sets increment directly to an integer as specified.
 
-  
   Not normally called by the user. 
+  @param  aScaler is an int.
+  @return Returns an id.
 */
 -setIncScaler:(int)aScaler;
 
@@ -196,7 +193,7 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   received via <i>aPatchPoint</i> serves as a multiplier on the output
   of the oscillator. 
 */
--setAmpInput:aPatchPoint;
+-setAmpInput: (id) aPatchPoint;
  /* Sets amplitude envelope input to specified patchPoint. The signal received
     via aPatchPoint serves as a multiplier on the output of the oscillator. */
 
@@ -208,7 +205,7 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
 
   
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
  /* Set output patchPoint of the oscillator. */
 
 
@@ -225,7 +222,7 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   frequency envelope generator writing to the <i>incEnvInput</i>,  see
   <b> incAtFreq:</b> below. 
 */
--setIncInput:aPatchPoint;
+-setIncInput: (id) aPatchPoint;
  /* Set frequency envelope input to specified patchPoint. Note that OscgafUG  
    implements a multiplicative frequency envelope. The actual phase increment 
    is the value of the signal received via aPatchPoint multiplied by the 
@@ -318,22 +315,16 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
 
 
 /*!
+  @brief Like <b>setTable:length:</b>, but uses a default length.
   @param  anObj is an id.
   @return Returns an id.
-  @brief Like <b>setTable:length:</b>, but uses a default length.
-
-  
-  
 */
--setTable:anObj;
- /* Like setTable:length, but uses a default length. */
-
+- setTable: (id) anObj;
 
 /*!
   @return Returns an id.
   @brief Sets the lookup table to the DSP sine ROM, if address space is Y.
 
-  
   Otherwise generates an error.   Deallocates local wave table, if
   any.
 */

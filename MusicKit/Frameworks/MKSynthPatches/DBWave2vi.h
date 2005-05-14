@@ -106,47 +106,48 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
 }
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief Returns a template.
 
   A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines
   whether vibrato resources are allocated. 
+  @param  aNote is an MKNote instance.
+  @return Returns an id.
 */
-+ patchTemplateFor: aNote;
++ patchTemplateFor: (MKNote *) aNote;
    
 /*!
   @param  aNote is an id.
   @return Returns an id.
   @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
 
-  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
+  This method triggers (or retriggers) the MKNote's envelopes, if any.
+  If this is a new phrase, all instance variables are set to default values, then the values are
+  read from the MKNote.  
 */
-- noteOnSelf: aNote;
+- noteOnSelf: (MKNote *) aNote;
 
 /*!
-  @param  aNote is an id.
-  @return Returns a id.
-  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.
+  @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.
 
   Sets parameters as specified in <i>aNote.</i>
+  @param  aNote is an MKNote instance.
+  @return Returns a id.
 */
-- noteUpdateSelf: aNote;
+- noteUpdateSelf: (MKNote *) aNote;
 
 /*!
-  @param aNote is an id.
-  @return Returns a double.
   @brief <i>aNote</i> is assumed to be a noteOff.
 
-  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the
+  time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @param aNote is an MKNote instance.
+  @return Returns a double.
 */
-- (double) noteOffSelf: aNote;
+- (double) noteOffSelf: (MKNote *) aNote;
 
 /*!
-  @return Returns an id.
   @brief Resest instance variables to default values.
-
-  
+  @return Returns an id.
 */
 - noteEndSelf;
  

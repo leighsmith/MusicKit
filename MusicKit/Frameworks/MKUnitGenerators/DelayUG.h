@@ -80,33 +80,30 @@ method.
 
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
 
   Returns <b>nil</b>
   if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setInput:aPatchPoint;
+-setInput: (id) aPatchPoint;
 /* Sets input patchpoint as specified. */
 
 /*!
-  @param  aPatchpoint is an id.
+  @param  aPatchPoint is an id.
   @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
 
   Returns
   <b>nil</b> if the argument isn't a patchpoint; otherwise returns
   <b>self</b>.
 */
--setOutput:aPatchPoint;
+-setOutput: (id) aPatchPoint;
 /* Sets output patchpoint as specified. */
 
-
 /*!
-  @param  aSynthData is an id.
-  @return Returns <b>self</b>.
   @brief Sets the SynthData object used as the delay memory to
   <i>aSynthData</i>.
 
@@ -115,26 +112,26 @@ method.
   <i>aSynthData</i> is <b>nil</b>, the delay memory is set to the sink
   location.  For DelaymUG, <i>aSynthData</i> must be allocated as
   "modulus" memory. 
+  @param  aSynthData is an id.
+  @return Returns <b>self</b>.
 */
--setDelayMemory:aSynthData;
+- setDelayMemory: (id) aSynthData;
 /* Sets the delay memory to aSynthData.
    If you pass nil, uses sink as the delay memory. It is up to the caller
    to insure the memory is cleared. */
 
 
 /*!
-  @param  (int)delayLength is an id.
-  @return Returns an id.
-  @brief Sets the number of delayed samples to <i>delayLength</i>.
+  @brief Sets the number of delayed samples to <i>newDelayLength</i>.
 
-  The
-  argument must be no greater than the length of the SynthData object
-  that's used as the delay memory.  Returns <b>nil
-  </b>if<b></b><i>delayLength</i>  is too great or if the delay memory
-  hasn't been set<b>;</b>otherwise returns<b> self</b>. 
-  
+  The argument must be no greater than the length of the SynthData object
+  that's used as the delay memory.   
+  @param  newDelayLength is an int.
+  @return Returns <b>nil</b> if <i>newDelayLength</i> is too great or if the delay memory
+  hasn't been set; otherwise returns <b>self</b>.
 */
--adjustLength:(int)newLength;
+- adjustLength: (int) newDelayLength;
+
 /* If no setDelayMemory: message has been received, returns nil.
    Otherwise, adjusts the delay length as indicated. newLength
    must be <= the length of the block of memory specified
@@ -150,16 +147,14 @@ method.
 
 
 /*!
-  @param  (int)n is an id.
-  @return Returns an id.
   @brief Repositions the pointer to point to the <i>n</i>'th sample in the
   delay memory, counting from sample 0.
 
-  Returns  <b>nil</b> if
-  <i>n</i> is greater than the current length of the delay, or if the
-  delay memory hasn't been set; otherwise returns <b>self</b>.
+  @param offset is an int.
+  @return Returns <b>nil</b> if <i>n</i> is greater than the current length 
+  of the delay, or if the delay memory hasn't been set; otherwise returns <b>self</b>.
 */
--setPointer:(int)offset;
+- setPointer: (int) offset;
 /* If no setDelayMemory: message has been received, returns nil.
    Else sets pointer to specified offset. E.g. if offset == 0,
    this is the same as resetPointer. If offset is GEQ the length

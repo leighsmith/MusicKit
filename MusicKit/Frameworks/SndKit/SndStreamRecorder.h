@@ -74,7 +74,6 @@
 - (NSString*) description;
 
 /*! 
-  @param      time
   @return     Boolean indicating success
 */
 - (BOOL) startRecording;

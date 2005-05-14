@@ -50,9 +50,9 @@ must keep track of allocation itself.  By convention, location 1 is used as a
 (a place that is guaranteed to always hold a zero, assuming nobody overwrites
 it.)
 
-The Music Kit does not automatically clear DRAM, with the exception of the
+The MusicKit does not automatically clear DRAM, with the exception of the
 "zero" location.  If you want to clear a segment of DRAM, use a DelayqpUG, set
-the input location to <b>[orchestra segmentZero:MK_xPatch]</b> (or
+the input location to <b>[orchestra segmentZero: MK_xPatch]</b> (or
 <b>MK_yPatch</b>), and let the DelayqpUG run for a while.  
 
 <h2>Memory Spaces</h2>
@@ -73,110 +73,79 @@ the input location to <b>[orchestra segmentZero:MK_xPatch]</b> (or
 }
 
 /*!
+  @brief Specifies that all arguments are to be optimized if possible except the delay pointer.
   @param arg is an unsigned.
   @return Returns an BOOL.
-  @brief Specifies that all arguments are to be optimized if possible except the
-  delay pointer.
-
-  
 */
-+(BOOL)shouldOptimize:(unsigned) arg;
-/* Specifies that all arguments are to be optimized if possible except the
-   delay pointer. */
-
++ (BOOL) shouldOptimize: (unsigned) arg;
 
 /*!
-  @param  aPatchpoint is an id.
-  @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchpoint</i>.
-
-  Returns <b>nil</b>
-  if the argument isn't a patchpoint; otherwise returns
-  <b>self</b>.
+  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
+  @param  aPatchPoint is an id.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
 */
--setInput:aPatchPoint;
-/* Sets input patchpoint as specified. */
+- setInput: (id) aPatchPoint;
 
 /*!
-  @param  aPatchpoint is an id.
-  @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchpoint</i>.
-
-  Returns
-  <b>nil</b> if the argument isn't a patchpoint; otherwise returns
-  <b>self</b>.
+  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
+  @param  aPatchPoint is an id.
+  @return Returns <b>nil</b> if the argument isn't a patchpoint; otherwise returns <b>self</b>.
 */
--setOutput:aPatchPoint;
-/* Sets output patchpoint as specified. */
-
+-setOutput: (id) aPatchPoint;
 
 /*!
+  @brief Sets the address and length of the DRAM segment used as delay memory.
+
+  Also sets the pointer to the start of the DRAM segment.  
   @param  address is a DSPDatum.
   @param  length is a DSPDatum.
   @return Returns <b>self</b>.
-  @brief Sets the address and length of the DRAM segment used as delay
-  memory.
-
-  Also sets the pointer to the start of the DRAM segment.  
-  
-*/
--setDelayAddress:(DSPDatum)address length:(DSPDatum)length;
+ */
+- setDelayAddress: (DSPDatum) address length: (DSPDatum) length;
 
 /*!
-  @param  (int)delayLength is an id.
+  @brief Sets the number of delayed samples to <i>newDelayLength</i>.
+  @param  newDelayLength is an int.
   @return Returns an id.
-  @brief Sets the number of delayed samples to <i>delayLength</i>.
-
-  
-  
 */
--adjustLength:(int)newLength;
+- adjustLength: (int) newDelayLength;
 
 /*!
-  @param  (int)n is an id.
-  @return Returns <b>self</b>.
   @brief Repositions the pointer to point to the <i>n</i>'th sample in the
   DRAM segment used as delay memory, counting from sample 0.
-
-  
-  
+  @param  offset is an int.
+  @return Returns <b>self</b>.
 */
--setPointer:(int)offset;
+- setPointer: (int) offset;
 
 /*!
-  @return Returns <b>self</b>.
   @brief Resets the pointer to the beginning of the DRAM segment used as
   delay memory.
-
-  
+  @return Returns <b>self</b>.
 */
--resetPointer;
+- resetPointer;
 
 /*!
-  @return Returns an int.
   @brief Returns the number of samples delay.
-
-  
+  @return Returns an int.
 */
--(int)length;
+- (int) length;
 
--runSelf;
+- runSelf;
 
 /*!
-  @return Returns an id.
   @brief You never send this message.
 
-  It's invoked by sending the
-  <b>idle</b>message to the object.  
+  It's invoked by sending the <b>idle</b>message to the object.  
   Sets the output patchpoint to <i>sink</i>, thus ensuring that the object does not
   produce any output. Also, sets the DRAM delay memory segment to DRAM's <i>sink</i>
   (location 0) and the length to 1, so that the object.  Note that you must send
   <b>setOutput:</b> and <b>run</b> again to use the MKUnitGenerator after sending
-  <b>idle</b>.  
+  <b>idle</b>.
+  @return Returns an id.
 */
--idleSelf;
+- idleSelf;
 /* Patches output and delay memory to sink. */
-
 
 @end
 

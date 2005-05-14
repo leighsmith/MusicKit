@@ -377,12 +377,12 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (NSString *) name;
 
 /*!
-  @param  aName is a NSString instance.
-  @return Returns a BOOL.
   @brief Sets the Snd's name to <i>aName</i>.
 
   If <i>aName</i> is already being used, then the Snd's name
   isn't set and NO is returned; otherwise returns YES.
+  @param  theName is a NSString instance.
+  @return Returns a BOOL.
 */
 - setName: (NSString *) theName;
 
@@ -666,19 +666,18 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 // delegations which are nominated per performance.
 
 /*!
-  @param  theMessage is a SEL.
   @brief Sends <i>theMessage</i> to the Snd's delegate (only sent if the
               delegate implements <i>theMessage</i>).
 
-  You never invoke this method
-  directly; it's invoked automatically as the result of activities
-  such as recording and playing. However, you can use it in designing
-  a subclass of Snd.
-*/
+  You never invoke this method directly; it's invoked automatically as the
+  result of activities such as recording and playing.
+  However, you can use it in designing a subclass of Snd.
+  @param  theMessage is a SEL.
+  @param  performance The performance playing when the message is sent.
+ */
 - (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance;
 
 /*!
-  @param  theMessage is an NSString, which will be converted to a SEL.
   @brief Sends <i>theMessage</i> to the Snd's delegate (only sent if the
               delegate implements <i>theMessage</i>).
 
@@ -686,6 +685,8 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   directly; it's invoked automatically as the result of activities
   such as recording and playing. However, you can use it in designing
   a subclass of Snd.
+  @param  theMessage is an NSString, which will be converted to a SEL.
+  @param  performance The performance playing when the message is sent.
 */
 - (void) tellDelegateString: (NSString *) theMessage duringPerformance: (SndPerformance *) performance;
 

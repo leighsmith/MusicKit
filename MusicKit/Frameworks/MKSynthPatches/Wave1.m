@@ -20,7 +20,7 @@
 
 WAVEDECL(template,ugs);
 
-+patchTemplateFor:aNote
++patchTemplateFor: (MKNote *) aNote
 {
     if (!template)
       template = _MKSPGetWaveNoVibTemplate(&ugs,[OscgafUGxxyy class]);

@@ -93,11 +93,12 @@
   @param      seconds Time in seconds to start playing the sound
   @return     Returns self if able to initialise, nil if unable.
 */
-- initWithSnd: (Snd *) s playingAtTime: (double) t;
+- initWithSnd: (Snd *) s playingAtTime: (double) seconds;
 
 /*!
   @brief   Initialise a performance with a sound and a time to begin playing,
   and the index of the first and last samples of the sound to play.
+  @param      s The sound to be played
   @param      seconds Time in seconds to start playing the sound
   @param      beginIndex The sample index at which to start playback
   @param      endIndex The sample index at which to stop playback
@@ -111,8 +112,11 @@ playingAtTime: (double) seconds
 /*!
   @brief   Initialise a performance with a sound and a time to begin playing,
   and the index of the last sample of the sound to play.
-  @param      t The time to begin playback
-  @param      endIndex The sample index at which to stop playback
+  @param      s The Snd instance to begin playing.
+  @param      playTime The time to begin playback.
+  @param      startPosition The sample index at which to begin playback.
+  @param      duration The duration in seconds of the Snd instance to play.
+  @param      deltaTime TBD.
   @return     Returns self if able to initialise, nil if unable.
  */
 - initWithSnd: (Snd *) s
