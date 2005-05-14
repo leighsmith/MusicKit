@@ -17,11 +17,11 @@
 
 /*!
   @class SndAudioUnitController
-  @description Responsible for receiving user interface messages from the Cocoa or Carbon Audio Unit views
+  @brief Responsible for receiving user interface messages from the Cocoa or Carbon Audio Unit views
   and passing them down to the Audio Unit (which is wrapped within the SndAudioUnitProcessor).
   Receives buttons for bypassing an effect.
 
-  @brief Does this model one connection of a AudioUnitCarbonView instance to a SndAudioUnitProcessor instance? Several?
+  Does this model one connection of a AudioUnitCarbonView instance to a SndAudioUnitProcessor instance? Several?
 // Controls the display of an Audio Unit view.
 
   
