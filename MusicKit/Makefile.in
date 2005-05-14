@@ -18,33 +18,39 @@
 CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 PROJECT = -project MusicKit.xcode
 XCODEBUILD = xcodebuild $(PROJECT)
+# This allows overriding this on the command line.
+DSTROOT=/
+VERSION=0.0.0
 
 all:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Development build DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Development build DSTROOT=$(DSTROOT) $(CONFIG)
 
 install:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) VERSION=$(VERSION) $(CONFIG)
 
 frameworks:
-	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -buildstyle Embedded install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -buildstyle Embedded install DSTROOT=$(DSTROOT) $(CONFIG)
 
 palettes:
-	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 utilities:
-	$(XCODEBUILD) -target "Utilities Only (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "Utilities Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 examples:
-	$(XCODEBUILD) -target "Examples Only (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "Examples Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 applications:
-	$(XCODEBUILD) -target "Applications Only (Aggregate)" -buildstyle Deployment install DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "Applications Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 documentation:
-	$(MAKE) -C Documentation
+	$(MAKE) -C Documentation DSTROOT=$(DSTROOT) VERSION=$(VERSION)
+
+installdocs:
+	$(MAKE) -C Documentation install DSTROOT=$(DSTROOT) VERSION=$(VERSION)
 
 clean: cleandocs
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" clean DSTROOT=/ $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" clean DSTROOT=$(DSTROOT) $(CONFIG)
 
 cleandocs:
-	$(MAKE) -C Documentation clean
+	$(MAKE) -C Documentation clean DSTROOT=$(DSTROOT)
