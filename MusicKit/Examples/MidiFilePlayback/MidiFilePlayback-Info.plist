@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>midi.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.musickit.MidiFilePlayback</string>
 	<key>CFBundleInfoDictionaryVersion</key>
