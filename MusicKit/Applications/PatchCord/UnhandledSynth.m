@@ -77,8 +77,8 @@
 }
 
 
-// Return the NSText object
-- (id) text
+// Return the NSTextView object
+- (NSTextView *) text
 {
     return sysExText;
 }
