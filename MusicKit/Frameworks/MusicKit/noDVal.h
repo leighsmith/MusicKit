@@ -29,14 +29,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.2  1999/07/29 01:26:10  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+  Portions Copyright (c) 1999-2005 The MusicKit Project
 */
 #ifndef __MK_noDVal_H___
 #define __MK_noDVal_H___
@@ -48,28 +41,59 @@ Modification history:
 
 #ifndef MK_NODVAL
 
+/*!
+  @brief Test for no <b>double</b> value
+
+  <b>A number of Music Kit functions and methods</b> query for and return
+  <b>double</b>-valued quantities, such as the values of parameters and
+  time tags.  By convention, the value MK_NODVAL is returned if the
+  queried-for value hasn't been set; however, you can't test for this
+  value directly.  You must use the function <b>MKIsNoDVal()</b> instead,
+  passing as the argument the value that you wish to test.  The function
+  returns nonzero if <i>value</i> is equal to MK_NODVAL and 0 if it isn't.
+     
+  <b>MKGetNoDVal()</b> returns the no-<b>double</b>-value indicator. 
+  You use this function as the return value for functions and methods of
+  your own design in which you wish to indicate that a
+  <b>double</b>-valued quantity hasn't been set.  For convenience,
+  MK_NODVAL is defined as this function.  
+  @param  value is a double.
+  @return Returns an int.
+*/
 extern inline double MKGetNoDVal(void)
   /* Returns the special NaN that the Music Kit uses to signal "no value". */
 {
-	union {double d; int i[2];} u;
-	u.i[0] = _MK_NANHI;
-	u.i[1] = _MK_NANLO;
-	return u.d;
+    union {double d; int i[2];} u;
+    u.i[0] = _MK_NANHI;
+    u.i[1] = _MK_NANLO;
+    return u.d;
 }
 
+/*!
+  @brief Test for no <b>double</b> value
+
+  <b>A number of Music Kit functions and methods</b> query for and return
+  <b>double</b>-valued quantities, such as the values of parameters and
+  time tags.  By convention, the value MK_NODVAL is returned if the
+  queried-for value hasn't been set; however, you can't test for this
+  value directly.  You must use the function <b>MKIsNoDVal()</b> instead,
+  passing as the argument the value that you wish to test.  The function
+  returns nonzero if <i>value</i> is equal to MK_NODVAL and 0 if it isn't.
+     
+  @param  value is a double.
+  @return Returns an int.
+*/
 extern inline int MKIsNoDVal(double val)
   /* Compares val to see if it is the special NaN that the Music Kit uses
      to signal "no value". */
 {
-	union {double d; int i[2];} u;
-	u.d = val;
-	return (u.i[0] == _MK_NANHI); /* Don't bother to check low bits. */
+    union {double d; int i[2];} u;
+    u.d = val;
+    return (u.i[0] == _MK_NANHI); /* Don't bother to check low bits. */
 }
 
 #define MK_NODVAL MKGetNoDVal()     /* For convenience */
 
 #endif
-
-
 
 #endif

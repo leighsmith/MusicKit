@@ -10,7 +10,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2003 The MusicKit Project.
+  Portions Copyright (c) 1999-2005 The MusicKit Project.
 */
 
 #import <Foundation/Foundation.h>
@@ -302,19 +302,466 @@ typedef struct _MKMsgStruct {
 #define MK_ENDOFTIME (6000000000.0) /* A long time, but not as long as MK_FOREVER */
 
 /* Time functions */
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  val is a double.
+  @return Returns a double.
+*/
 extern double MKGetTime(void);           /* Returns the time in seconds. */
+
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  val is a double.
+  @return Returns a double.
+*/
 extern double MKGetDeltaT(void);         /* Returns deltaT, in seconds. */
+
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  val is a double.
+  @return Returns a double.
+*/
 extern void MKSetDeltaT(double val);     /* Sets deltaT, in seconds. */
+
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  newTime is a double.
+  @return Returns a double.
+*/
 extern double MKGetDeltaTTime(void);     /* Returns deltaT + time, in seconds. */
 
 /* The following modes determine how deltaT is interpreted. */
 #define MK_DELTAT_DEVICE_LAG 0
 #define MK_DELTAT_SCHEDULER_ADVANCE 1
  
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  newMode is an int.
+  @return Returns an extern.
+*/
 extern void MKSetDeltaTMode(int newMode);
+
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param   is a void.
+  @return Returns an extern.
+*/
 extern int MKGetDeltaTMode(void);
+
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  newTime is a double.
+  @return Returns a double.
+*/
 extern double MKSetTime(double newTime); /* Rarely used */
 
+/*!
+  @brief Create and manipulate MKConductor message requests
+
+  These functions let you enqueue message requests with a MKConductor
+  object.  The  MKMsgStruct structure encapulates a message request; it
+  consists of a method selector and its arguments, the recipient of the
+  message, and the time that the message should be sent.  A selector can
+  take a maximum of two 4-byte arguments.  You should never modify the
+  fields of a MKMsgStruct structure directly.  
+   
+   <b>MKNewMsgRequest()</b> creates and returns a new MKMsgStruct. 
+  <i>timeOfMsg</i> is the time in beats from the beginning of the
+  performance that the message will be sent, <i>whichSelector</i> is the
+  selector, <i>destinationObject</i> is the recipient of the message, and
+  <i>argCount</i> is the number of arguments to the selector followed by
+  the arguments themselves separated by commas.   
+   
+   After you've created a message request structure, you schedule it
+  with a MKConductor by calling<b> MKScheduleMsgRequest()</b><i>.</i>
+     
+   If you want to move a message request within a MKConductor's queue
+  you call the <b>MKRepositionMsgRequest()</b> function.  The specified
+  MKMsgStruct is moved to the time given by <i>newTimeOfMsg.</i>  You
+  should note that the MKMsgStruct that you pass as the
+  <i>aMsgStructPtr</i> argument may be replaced with a new structure
+  that's returned by the function<i>.</i>  To make sure you don't keep
+  around a pointer to an obsolete struct, call this function as follows:  
+     
+   <tt>	// Reposition and prime aMsgReq for additional functions calls.</tt>
+   <tt>	aMsgReq = MKRepositionMsgRequest(aMsgReq, 3.0);</tt>
+     
+   <b>MKCancelMsgRequest()</b> cancels the given message request and
+  frees the structure pointed to by <i>aMsgStructPtr.   </i>Be sure not to
+  cancel an already-canceled request.  To make sure you don't do that, you
+  should assign the returned value of the function (NULL) to the value you
+  pass.  Example of use:
+   
+   <tt>	aMsgReq = MKCancelMsgRequest(aMsgReq);</tt>
+   <tt>	// aMsgReq is now NULL</tt>
+   
+   <b>MKRescheduleMsgRequest()</b> is a convenience function that
+  cancels the structure pointed to by <i>aMsgStructPtr</i>, and then
+  creates and schedules a new request according to the arguments.  The new
+  MKMsgStruct is returned.
+  @param  timeOfMsg is a double.
+  @param  whichSelector is a SEL.
+  @param  destinationObject is an id.
+  @param  argCount is an int.
+  @return Return <i>NULL if argCount</i> is greater than 2.
+*/
 extern MKMsgStruct 
   *MKNewMsgRequest(double timeOfMsg, SEL whichSelector, id destinationObject, int argCount, ...);
 
@@ -322,12 +769,79 @@ extern MKMsgStruct
   *MKNewMsgRequestWithObjectArgs(double timeOfMsg, SEL whichSelector, id destinationObject,
 		   int argCount, id arg1, BOOL, id arg2, BOOL);
 
+/*!
+  @brief Create and manipulate MKConductor message requests
+
+  These functions let you enqueue message requests with a MKConductor
+  object.  The  MKMsgStruct structure encapulates a message request; it
+  consists of a method selector and its arguments, the recipient of the
+  message, and the time that the message should be sent.  A selector can
+  take a maximum of two 4-byte arguments.  You should never modify the
+  fields of a MKMsgStruct structure directly.  
+   
+  <b>MKNewMsgRequest()</b> creates and returns a new MKMsgStruct. 
+  <i>timeOfMsg</i> is the time in beats from the beginning of the
+  performance that the message will be sent, <i>whichSelector</i> is the
+  selector, <i>destinationObject</i> is the recipient of the message, and
+  <i>argCount</i> is the number of arguments to the selector followed by
+  the arguments themselves separated by commas.   
+   
+   After you've created a message request structure, you schedule it
+  with a MKConductor by calling <b>MKScheduleMsgRequest()</b><i>.</i>
+     
+  @param  aMsgStructPtr is a MKMsgStruct.
+  @param  conductor is an id.
+*/
 extern void 
   MKScheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor);
 
+/*!
+  @brief Create and manipulate MKConductor message requests
+
+  These functions let you enqueue message requests with a MKConductor
+  object.  The  MKMsgStruct structure encapulates a message request; it
+  consists of a method selector and its arguments, the recipient of the
+  message, and the time that the message should be sent.  A selector can
+  take a maximum of two 4-byte arguments.  You should never modify the
+  fields of a MKMsgStruct structure directly.  
+   
+  <b>MKCancelMsgRequest()</b> cancels the given message request and
+  frees the structure pointed to by <i>aMsgStructPtr.   </i>Be sure not to
+  cancel an already-canceled request.  To make sure you don't do that, you
+  should assign the returned value of the function (NULL) to the value you
+  pass.  Example of use:
+   
+   <tt>	aMsgReq = MKCancelMsgRequest(aMsgReq);</tt>
+   <tt>	// aMsgReq is now NULL</tt>
+   
+  @param  aMsgStructPtr is a MKMsgStruct *.
+  @return Returns a MKMsgStruct *.
+*/
 extern MKMsgStruct *
   MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr);
 
+/*!
+  @brief Create and manipulate MKConductor message requests
+
+  These functions let you enqueue message requests with a MKConductor
+  object.  The  MKMsgStruct structure encapulates a message request; it
+  consists of a method selector and its arguments, the recipient of the
+  message, and the time that the message should be sent.  A selector can
+  take a maximum of two 4-byte arguments.  You should never modify the
+  fields of a MKMsgStruct structure directly.  
+   
+  <b>MKRescheduleMsgRequest()</b> is a convenience function that
+  cancels the structure pointed to by <i>aMsgStructPtr</i>, and then
+  creates and schedules a new request according to the arguments.  The new
+  MKMsgStruct is returned.
+  @param  aMsgStructPtr, is a MKMsgStruct.
+  @param  conductor is an id.
+  @param  timeOfNewMsg is an id.
+  @param  whichSelector is a double.
+  @param  destinationObject is a SEL.
+  @param  argCount is an int.
+  @return Returns a MKMsgStruct *.
+*/
 extern MKMsgStruct *
   MKRescheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor,
 			 double timeOfNewMsg, SEL whichSelector,
@@ -340,9 +854,90 @@ extern MKMsgStruct *
 			 id arg1, BOOL retainArg1,
 			 id arg2, BOOL retainArg2);
 
+/*!
+  @brief Create and manipulate MKConductor message requests
+
+  These functions let you enqueue message requests with a MKConductor
+  object.  The  MKMsgStruct structure encapulates a message request; it
+  consists of a method selector and its arguments, the recipient of the
+  message, and the time that the message should be sent.  A selector can
+  take a maximum of two 4-byte arguments.  You should never modify the
+  fields of a MKMsgStruct structure directly.  
+   
+  If you want to move a message request within a MKConductor's queue
+  you call the <b>MKRepositionMsgRequest()</b> function.  The specified
+  MKMsgStruct is moved to the time given by <i>newTimeOfMsg.</i>  You
+  should note that the MKMsgStruct that you pass as the
+  <i>aMsgStructPtr</i> argument may be replaced with a new structure
+  that's returned by the function<i>.</i>  To make sure you don't keep
+  around a pointer to an obsolete struct, call this function as follows:  
+     
+   <tt>	// Reposition and prime aMsgReq for additional functions calls.</tt>
+   <tt>	aMsgReq = MKRepositionMsgRequest(aMsgReq, 3.0);</tt>
+     
+  @param  aMsgStructPtr is a MKMsgStruct *.
+  @param  newTimeOfMsg is a double.
+  @return Returns a MKMsgStruct *.
+*/
 extern MKMsgStruct *
   MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr, double newTimeOfMsg);
 
+/*!
+  @brief Set and get Music Kit time values
+
+  <b>MKGetTime()</b> returns the current time, in seconds, during a Music
+  Kit performance.   In a conducted performance (the norm), this is the
+  same as [MKConductor time]. 
+   
+   <b>MKSetDeltaT()</b> sets a performance's delta time in seconds.  The
+  delta time value is used in one of two ways, depending on the delta time
+  "mode", which is set with <b>MKSetDeltaTMode()</b>.  In
+  MK_DELTAT_DEVICE_LAG mode, deltaT is added into the timestamps of DSP
+  and MIDI messages, thus imposing a time lag between the Music Kit and
+  these devices. If, on the other hand, the delta time mode is
+  MK_DELTAT_SCHEDULER_ADVANCE, then deltaT is the amount by which the
+  Music Kit MKConductor attempts to run ahead of the devices.  In either
+  case, the lag is sometimes necessary to allow the Music Kit sufficient
+  compute time while maintaining rhythmic integrity.  Effective delta time
+  values can be quite small; for an application that requires real-time
+  response, a delta time of as much as 10 milliseconds (0.01 seconds) is
+  tolerable.  Delta time only affects devices that are timed.  In
+  addition, in order for the delta time value to be valid, the performance
+  and the devices must be started at (virtually) the same time.  That is,
+  send <b>[orchestra run]</b> and <b>[midi run]</b> immediately before
+  sending <b>[MKConductor startPerformance]</b>;
+   
+   <b>MKGetDeltaT()</b> returns the delta time value, in seconds. The
+  meaning of delta time depends on whether the performance is clocked or
+  unclocked.  In a clocked performance, the MKConductor tries to stay
+  <i>approximately</i> delta time seconds ahead of the devices (e.g. DSP).
+  In an unclocked performance, MKConductor tries to stay <i>at least</i>
+  delta time seconds ahead of the devices. Delta time has an effect only
+  if the device is in timed mode.
+   
+   <b>MKGetDeltaTTime()</b> returns the sum of the values returned by
+  <b>MKGetTime()</b> and <b>MKGetDeltaT()</b>.  
+   
+   <b>MKSetTime()</b> and <b>MKFinishPerformance()</b> are provided to
+  set the performance time and to end a performance, respectively, <i>but
+  only in the case of a performance that doesn't use the MKConductor
+  class.</i>  <i></i> During a conducted performance, <b>MKSetTime()</b>
+  has no effect and <b>MKFinishPerformance()</b> is the same as sending
+  <b>finishPerformance</b> to the MKConductor class.    Precisely,
+  <b>MKFinishPerformance()</b> his the effect of evaluating the
+  MKConductor's "after performance" queue of messages, which in turn tells
+  the Performers and Instruments that the performance is finished. 
+     
+   <b>MKSetLowDeltaTThreshold()</b> and <b>MKSetHighDeltaTThreshold()</b> controls the high and low watermark for the delta time notification mechanism. For example, to receive a message when the MKConductor has fallen behind such that the effective delta time is less than 1/4 of the value of MKGetDeltaT(), you'd call <b>MKSetLowDeltaTThreshold(.25);</b>  Similarly, to receive a message when the MKConductor has recovered such that the effective delta time is more than 3/4 of the value of <b>MKGetDeltaT()</b>, you'd call <b>MKSetHighDeltaTThreshold(.75);  </b>This mechanism allows you to receive a warning when the MKConductor is about to fall out of real time, due to heavy computation.   For example, you might want to automatically reduce the tempo in this case.  The notification itself is sent to the MKConductor class' delegate object.  See MKConductor.h for further details.  
+   
+   <b>MKSetDeltaTMode();</b>  Sets the delta time mode to one of
+  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE .    The default is
+  MK_DELTAT_DEVICE_LAG.
+   
+   <b>MKGetDeltaTMode();</b>  Returns the delta time mode.
+  @param  percentageOfDeltaT is a double.
+  @return Returns a void.
+*/
 extern void MKFinishPerformance(void);
 
 @interface MKConductor: NSObject

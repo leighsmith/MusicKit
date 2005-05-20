@@ -1,20 +1,8 @@
 /*
   $Id$
   Defined In: The MusicKit
-*/
-/*
-Modification history:
 
-  $Log$
-  Revision 1.4  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2001/07/02 16:56:01  sbrandon
-  - commented out cruft after endif
-
-  Revision 1.2  1999/07/29 01:26:03  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+  Portions Copyright (c) 1999-2005 The MusicKit Project.
 */
 #ifndef __MK_classFuncs_H___
 #define __MK_classFuncs_H___
@@ -22,6 +10,25 @@ Modification history:
 #define CLASSFUNCS_H
 
  /* Control of Music Kit-created objects. */
+/*!
+  @brief Set and retrieve scorefile creation classes
+
+  When you read a scorefile into your application, some number of objects
+  are automatically created.  Specifically, these objects are instances of
+  MKNote, Part, MKEnvelope, Partials, and Samples.  You can supply your
+  own classes from which these instances are created through these
+  functions.  The one restriction is that the class that you set must be a
+  subclass of the original class; for example, the class that you pass the
+  argument to <b>MKSetNoteClass()</b> must be a subclass of MKNote.
+     
+  The <b>MKGet<i>Class</i>Class()</b> functions return the requested
+  classes as set through the  functions above.
+  @param  noteSubclass is a MKNote.
+  @param   is a *.
+  @return <b>MKSet<i>Class</i>Class()</b> returns NO if the argument isn't a
+   subclass of <b><i>Class</i></b>; otherwise it returns YES.
+   
+*/
 extern BOOL MKSetNoteClass(id aNoteSubclass);
  /* When reading a scorefile, processing MIDI, etc., the Music Kit creates
   * MKNote objects. Use MKSetNoteClass() to substitute your own MKNote subclass.
@@ -35,10 +42,78 @@ extern id MKGetNoteClass(void);
 
  /* The following are similar to MKSetNoteClass() and MKGetNoteClass() for
   * other Music Kit classes. */
+/*!
+  @brief Set and retrieve scorefile creation classes
+
+  When you read a scorefile into your application, some number of objects
+  are automatically created.  Specifically, these objects are instances of
+  MKNote, Part, MKEnvelope, Partials, and Samples.  You can supply your
+  own classes from which these instances are created through these
+  functions.  The one restriction is that the class that you set must be a
+  subclass of the original class; for example, the class that you pass the
+  argument to <b>MKSetNoteClass()</b> must be a subclass of MKNote.
+     
+   The <b>MKGet<i>Class</i>Class() </b>functions return the requested
+  classes as set through the  functions above.
+  @param  partSubclass is a Part.
+  @param   is a *.
+*/
 extern BOOL MKSetPartClass(id aPartSubclass);
+
+/*!
+  @brief Set and retrieve scorefile creation classes
+
+  When you read a scorefile into your application, some number of objects
+  are automatically created.  Specifically, these objects are instances of
+  MKNote, Part, MKEnvelope, Partials, and Samples.  You can supply your
+  own classes from which these instances are created through these
+  functions.  The one restriction is that the class that you set must be a
+  subclass of the original class; for example, the class that you pass the
+  argument to <b>MKSetNoteClass()</b> must be a subclass of MKNote.
+     
+   The <b>MKGet<i>Class</i>Class() </b>functions return the requested
+  classes as set through the  functions above.
+  @param  envelopeSubclass is a Envelope.
+  @param   is a *.
+*/
 extern BOOL MKSetEnvelopeClass(id anEnvelopeSubclass);
+
+/*!
+  @brief Set and retrieve scorefile creation classes
+
+  When you read a scorefile into your application, some number of objects
+  are automatically created.  Specifically, these objects are instances of
+  MKNote, Part, MKEnvelope, Partials, and Samples.  You can supply your
+  own classes from which these instances are created through these
+  functions.  The one restriction is that the class that you set must be a
+  subclass of the original class; for example, the class that you pass the
+  argument to <b>MKSetNoteClass()</b> must be a subclass of MKNote.
+     
+   The <b>MKGet<i>Class</i>Class() </b>functions return the requested
+  classes as set through the  functions above.
+  @param  partialsSubclass is a Partials.
+  @param   is a *.
+*/
 extern BOOL MKSetPartialsClass(id aPartialsSubclass);
+
+/*!
+  @brief Set and retrieve scorefile creation classes
+
+  When you read a scorefile into your application, some number of objects
+  are automatically created.  Specifically, these objects are instances of
+  MKNote, Part, MKEnvelope, Partials, and Samples.  You can supply your
+  own classes from which these instances are created through these
+  functions.  The one restriction is that the class that you set must be a
+  subclass of the original class; for example, the class that you pass the
+  argument to <b>MKSetNoteClass()</b> must be a subclass of MKNote.
+     
+   The <b>MKGet<i>Class</i>Class() </b>functions return the requested
+  classes as set through the  functions above.
+  @param  samplesSubclass is a Samples.
+  @param   is a *.
+*/
 extern BOOL MKSetSamplesClass(id aSamplesSubclass);
+
 extern id MKGetPartClass(void);
 extern id MKGetEnvelopeClass(void);
 extern id MKGetPartialsClass(void);

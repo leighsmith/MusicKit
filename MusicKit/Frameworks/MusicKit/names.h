@@ -9,20 +9,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.4  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2001/07/02 16:58:36  sbrandon
-  - commented out cruft after endif
-
-  Revision 1.2  1999/07/29 01:26:10  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+  Portions Copyright (c) 1999-2005 The MusicKit Project.
 */
 #ifndef __MK_names_H___
 #define __MK_names_H___
@@ -60,6 +47,24 @@ Modification history:
   * file with the wrong name.) 
   */
 
+/*!
+  @brief Identify and return objects by name
+
+  The Music Kit provides a global naming mechanism that lets you identify
+  and locate objects by name.  While names are primarily used in reading
+  and writing scorefiles, any object - even a non-Music Kit object - can
+  be named.  Names needn't be unique; more than one object can be given
+  the same name.  However, a single object can have but one name at a
+  time.  
+   
+  <b>MKNameObject()</b> sets <i>object</i>'s name to a copy of
+  <i>name</i> and returns YES.  If the object already has a name, then
+  this function does nothing and returns <b>NO</b>.
+   
+  @param  name is an NSString instance.
+  @param  object is an id.
+  @return Returns a BOOL.
+*/
 extern BOOL MKNameObject(NSString * name,id object);
  /*
   * Adds the object theObject in the table, with name theName.
@@ -67,15 +72,58 @@ extern BOOL MKNameObject(NSString * name,id object);
   * nothing and returns NO. Otherwise returns YES. Note that the name is copied.
   */
 
-extern NSString * MKGetObjectName(id object);
+/*!
+  @brief Identify and return objects by name
+
+  The Music Kit provides a global naming mechanism that lets you identify
+  and locate objects by name.  While names are primarily used in reading
+  and writing scorefiles, any object - even a non-Music Kit object - can
+  be named.  Names needn't be unique; more than one object can be given
+  the same name.  However, a single object can have but one name at a
+  time.  
+   
+   <b>MKGetObjectName()</b> returns its argument's name, or NULL if it
+  isn't named.  The returned value is read-only and shouldn't be freed by
+  the caller.  
+   
+  @param  object is an id.
+  @return Returns an NSString instance.
+*/
+extern NSString *MKGetObjectName(id object);
  /* 
   * Returns object name if any. If object is not found, returns NULL. The name
   * is not copied and should not be freed by caller.
   */
 
+/*!
+  @brief Removes its argument's name (if any) and returns <b>nil</b>.  
+
+  The Music Kit provides a global naming mechanism that lets you identify
+  and locate objects by name.  While names are primarily used in reading
+  and writing scorefiles, any object - even a non-Music Kit object - can
+  be named.  Names needn't be unique; more than one object can be given
+  the same name.  However, a single object can have but one name at a
+  time.  
+   
+  @param  object is an id.
+  @return Returns an id.
+*/
 extern id MKRemoveObjectName(id object);
  /* Removes theObject from the table, if present. Returns nil. */
 
+/*!
+  @brief Returns the first object in the name table that has the name <i>name.</i>  
+
+  The Music Kit provides a global naming mechanism that lets you identify
+  and locate objects by name.  While names are primarily used in reading
+  and writing scorefiles, any object - even a non-Music Kit object - can
+  be named.  Names needn't be unique; more than one object can be given
+  the same name.  However, a single object can have but one name at a
+  time.  
+   
+  @param  name is a char.
+  @return Returns an id.
+*/
 extern id MKGetNamedObject(NSString *name);
  /* Returns the first object found in the name table, with the given name.
     Note that the name is not necessarily unique in the table; there may
@@ -113,12 +161,33 @@ extern id MKGetGlobalScorefileObject(NSString *name);
 
 
  /* Scorefile reading and writing. */
+/*!
+  @brief Write pitches to a scorefile
+
+  <b>MKWritePitchNames</b> sets the format by which frequency parameter
+  values are written to a scorefile.  If the argument is YES, the
+  parameter values are written as pitch name constants such as
+  &ldquo;a4&rdquo;.  If it's NO, frequencies are written as fractional
+  numbers.  
+  @param  usePitchNames is a BOOL.
+*/
 extern void MKWritePitchNames(BOOL usePitchNames);
  /* Selects whether values of the parameters freq0 and freq are written as 
   * pitch names or as frequencies in Hz. If you write them as pitch names,
   * they are rounded to the nearest pitch. The default is NO. 
   */
 
+/*!
+  @brief Write pitches to a scorefile
+
+  <b>MKWriteKeyNumNames</b> controls how keyNum
+  values are written to a scorefile.  If the argument is YES, the
+  parameter values are written as keyNum name constants such as "a4k".  If
+  it's NO,  key numbers are written as integers.
+  @param  yesOrNo is a BOOL.
+  @return Returns a void.
+  @see MKWritePitchNames().
+*/
 extern void MKWriteKeyNumNames(BOOL useKeyNums);
  /* Selects whether values of the parameter keyNum are written as 
   * keyNum names or as integers. The default is YES.

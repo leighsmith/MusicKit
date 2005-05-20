@@ -354,7 +354,42 @@ typedef enum {
     MK_SOFTTIMED = 2
 } MKOrchestraTiming;
 
+/*!
+  @brief Get the MKSynthPatch preemption time
+
+  During a performance, DSP resources can become scarce; it's sometimes
+  necessary to preempt active MKSynthPatches in order to synthesize new
+  MKNotes.  This preemption is handled by MKSynthInstrument objects. But
+  rather than simply yank the rug from under an active MKSynthPatch, a
+  certain amount of time is given to allow the patch to &ldquo;wind
+  down&rdquo; before it's killed in order to prevent clicks.  By default,
+  this grace period, or &ldquo;preempt duration&rdquo;, is 0.006 seconds -
+  not a lot of time but enough to avoid snapping the MKSynthPatch's
+  envelopes.  You can set the preempt duration yourself through
+  <b>MKSetPreemptDuration()</b>.  Preempt duration is global to an
+  application; it's current value is retrieved through
+  <b>MKGetPreemptDuration()</b>. 
+  @return Returns the preempt duration.
+*/
 extern double MKGetPreemptDuration(void);
+
+/*!
+  @brief Set the MKSynthPatch preemption time.
+
+  During a performance, DSP resources can become scarce; it's sometimes
+  necessary to preempt active MKSynthPatches in order to synthesize new
+  MKNotes.  This preemption is handled by MKSynthInstrument objects. But
+  rather than simply yank the rug from under an active MKSynthPatch, a
+  certain amount of time is given to allow the patch to &ldquo;wind
+  down&rdquo; before it's killed in order to prevent clicks.  By default,
+  this grace period, or &ldquo;preempt duration&rdquo;, is 0.006 seconds -
+  not a lot of time but enough to avoid snapping the MKSynthPatch's
+  envelopes.  You can set the preempt duration yourself through
+  <b>MKSetPreemptDuration()</b>.  Preempt duration is global to an
+  application; it's current value is retrieved through
+  <b>MKGetPreemptDuration()</b>. 
+  @param  seconds is a double.
+*/
 extern void MKSetPreemptDuration(double seconds);
  
 @interface MKOrchestra : SndStreamClient

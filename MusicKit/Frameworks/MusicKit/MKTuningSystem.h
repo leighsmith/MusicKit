@@ -107,18 +107,33 @@ configure the MIDI instrument).
 - install; 
 
 /*!
+  @brief Returns the number of "keys" (tunable elements) in a tuning system.
   @return Returns the number of "keys" (tunable elements) in a tuning system.
  */
 - (int) keyCount;
 
 /*!
-  @brief Returns a formatted NSString of the pitch indicated by the given key number. 
- */
+  @brief Return formatted pitch name given a key number
+
+  Returns an NSString object containing the pitch name associated with the
+  key number argument. The format of the string is the same as Scorefile
+  pitch arguments.
+  @param  keyNum is an int.
+  @return Returns an NSString object containing the pitch name or an empty string
+   if the key number argument  is outside its legitimate
+   range.
+  @see <b>MKWritePitchNames()</b>, <b>MKWriteKeyNumNames()</b>
+*/
 + (NSString *) pitchNameForKeyNum: (int) keyNum;
 
 /*!
   @brief Returns the installed frequency for the key number <i>aKeyNum</i>.
   
+  Returns the frequency that corresponds to the given key number,
+  based upon the mapping of key numbers to frequencies
+  in the <i>installed tuning system</i> (see the MKTuningSystem class
+  description for more information on the instralled tuning system).  
+
   If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
   to check for MK_NODVAL).  The value returned by this method is the same
   value as <i>aKeyNum</i>'s analogous pitch variable.
@@ -130,6 +145,11 @@ configure the MIDI instrument).
 /*!
   @brief Returns the receiver's frequency for the key number <i>aKeyNum</i>.
   
+  Returns the frequency that corresponds to the given key number,
+  based upon the mapping of key numbers to frequencies
+  in the <i>installed tuning system</i> (see the MKTuningSystem class
+  description for more information on the instralled tuning system).  
+
   If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
   to check for MK_NODVAL).
  @param  aKeyNum is a MKKeyNum.
@@ -258,15 +278,31 @@ configure the MIDI instrument).
 
 /*!
   @brief Transpose a frequency up by the specified number of semitones. 
+
+   <b>MKTranspose()</b> returns the frequency that results from
+  transposing <i>freq</i> by the specified number of semitones.  A
+  negative <i>semitones</i> value transposes down; a fractional value can
+  be used to transpose by less than a semitone.  The transposition
+  afforded by this function is always in twelve-tone equal-temperament,
+  regardless of the installed tuning system, as computed by the formula
+     
+   	result = <i>freq</i> * 2 <i>semitones</i>/12.0 
+   
   @param freq Starting frequency in Hz.
   @param semiTonesUp The number of 12 tone equal tempered semitones to transpose freq upwards.
   A negative value will transpose the note down.
- */
+  @return Returns a double.
+*/
 double MKTranspose(double freq, double semiTonesUp);
 
 /*!
   @brief Return the result of adjusting freq by the amount specified in pitchBend. 
   
+  <b>MKAdjustFreqWithPitchBend()</b> returns the frequency that results
+  when <i>freq</i> is tempered by <i>pitchBend</i> worth of
+  <i>sensitivity</i> semitones, where <i>pitchBend</i> is, again, a 14-bit
+  MIDI pitch bend number. 
+
   PitchBend is interpreted in the context of the current value of sensitivity. 
   @param freq A Frequency in Hertz.
   @param pitchBend A MIDI pitch bend value, interpreted according to sensitivity.
