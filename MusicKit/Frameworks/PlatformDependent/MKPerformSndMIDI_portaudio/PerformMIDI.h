@@ -93,7 +93,6 @@ typedef int MKMDReturn;
   @defined MKMD_RECEPTION_USING_PORTS
   @brief There are two different schemes of management of interface to the MKMD functions.
 
-  
   To achieve maximum portablity, we assume a Mach port is nothing more than an integer
   and functions as a handle with which to refer to a MIDI driver. It is only when receiving
   data do we need to actually behave as a Mach port. This is conditionally compiled using
@@ -106,21 +105,18 @@ typedef int MKMDReturn;
 /*!
   @defined MKMD_PORT_NULL
   @brief Indicates no communication port is to be used.
-
-  
 */
 #define MKMD_PORT_NULL 0
 
 /* Each event consists of a byte and a time stamp. */
 /*!
-  @typedef MKMDRawEvent
   @brief Each raw event consists of a MIDI message byte and a time stamp.
-  @field time Absolute time in quanta
-  @field byte The byte
 */
 typedef struct {
-    int time;             /* Absolute time in quanta */
-    unsigned char byte;   /* The byte */
+    /*! Absolute time in quanta. */
+    int time;
+    /*! The MIDI message byte. */
+    unsigned char byte;
 } MKMDRawEvent;
 
 /*!
@@ -783,11 +779,9 @@ PERFORM_API MKMDReturn
     MKMDParseInput(MKMDPort driver, MKMDOwnerPort owner, short unit, boolean_t parseIt);
 
 /*!
-  @function       MKMDErrorString
-  @brief       Interpret the errorCode and return the appropriate error string.
-  @param          errorCode
-  The error code returned by a MKMD function.
-  @return         Returns a readable string.
+  @brief Interpret the errorCode and return the appropriate error string.
+  @param errorCode The error code returned by a MKMD function.
+  @return Returns a readable string.
 */
 PERFORM_API char *MKMDErrorString(MKMDReturn errorCode);
 
