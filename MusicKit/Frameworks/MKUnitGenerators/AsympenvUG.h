@@ -397,12 +397,70 @@ transitionTime: (double) transitionTime;
 
 extern id MKAsympUGxClass(void);
 extern id MKAsympUGyClass(void);
+
+/*!
+  @brief Apply an Envelope on the DSP
+
+  This is a fairly complicated function that, simply put, does the
+  &ldquo;right thing&rdquo; in applying an MKEnvelope object to a
+  DSP-synthesized musical attribute during a Music Kit performance.  It's
+  designed to be called as part of the implementation of a MKSynthPatch
+  subclass.
+   
+   The <i>asymp</i> argument is an AsympUG object that will handle the
+  MKEnvelope on the DSP; <i>envelope</i> is the MKEnvelope object itself. 
+  The arguments <i>valueAt0</i>, <i>valueAt1</i>, <i>attackDur</i>, <i>and
+  releaseDur</i> scale and stretch the MKEnvelope; their values are
+  expected to be taken from an associated group of MKNote parameters.  For
+  example, to apply an MKEnvelope to the frequency of a synthesized
+  MKNote, the values of these arguments would be retrieved as follows:
+     
+   <tt>MKEnvelope *envelope = [aNote parAsEnvelope:MK_freqEnv];</tt>
+     <tt>double valueAt0 = [aNote parAsDouble:MK_freq0];</tt>
+     <tt>double valueAt1 = [aNote parAsDouble:MK_freq1];</tt>
+     <tt>double attackDur = [aNote parAsDouble:MK_freqAtt];</tt>
+     <tt>double releaseDur = [aNote parAsDouble:MK_freqRel];</tt>
+     
+   The <i>portamentoTime</i> argument is taken as the MKNote's
+  MK_portamentoTime value.  As the name implies, it sets the portamento or
+  &ldquo;slur&rdquo; between MKNotes and is only applied if the MKNote to
+  which the MKEnvelope belongs is a noteOn that's interrupting an existing
+  MKNote.  If the note is a MKNoteUpdate, the value is changed abruptly.
+     
+   The final argument, <i>status</i>, is used to distinguish the state
+  of the MKSynthPatch at the time that the envelope is applied.  You
+  retrieve the phrase status through MKSynthPatch's <b>phraseStatus</b>
+  method.  The use of portamento, for example, is determined by the value
+  of this argument.
+   
+   The <i>asymp</i> and <i>status </i>arguments are essential; the
+  parameter-valued arguments aren't.  The function tries to be intelligent
+  with regard to missing parameter-valued arguments; if, for example,
+  <i>envelope</i> is <b>nil</b>, the value of <i>valueAt1</i> is applied
+  as a constant. .
+   
+   <b>MKUpdateAsymp()</b> handles all the MKEnvelope breakpoint
+  scheduling - keep in mind that the breakpoint data in an MKEnvelope
+  object isn't transferred to the DSP as a unit but, instead, the
+  breakpoints are fed to the DSP through message requests scheduled with a
+  MKConductor.  The function always schedules MKEnvelope breakpoint
+  messages with the clockConductor. 
+  @param  asymp is a AsympUG instance.
+  @param  envelope is an MKEnvelope instance.
+  @param  valueAt0 is a double.
+  @param  valueAt1 is a double.
+  @param  attackDur is a double.
+  @param  releaseDur is a double.
+  @param  portamentoTime is a double.
+  @param  status is a MKPhraseStatus.
+  @return Returns a void.
+*/
 extern void MKUpdateAsymp(id asymp,
 			  id envelope,
-			  double val0,
-			  double val1,
-			  double attDur,
-			  double relDur,
+			  double valueAt0,
+			  double valueAt1,
+			  double attackDur,
+			  double releaseDur,
 			  double portamentoTime,
 			  MKPhraseStatus status);
 

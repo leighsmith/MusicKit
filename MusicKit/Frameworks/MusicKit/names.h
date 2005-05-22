@@ -2,7 +2,7 @@
   $Id$
   Defined In: The MusicKit
 
-  Description: This file contains various functions having to do with names in the Music Kit 
+  Description: This file contains various functions having to do with names in the MusicKit 
 
   Original Author: David Jaffe
 
@@ -16,9 +16,9 @@
 #ifndef MK_NAMES_H
 #define MK_NAMES_H
 
- /* Music Kit table management.
+ /* MusicKit table management.
   *  
-  * The Music Kit provides a simple naming mechanism.  There are 5
+  * The MusicKit provides a simple naming mechanism.  There are 5
   * functions provided for manipulating the name of an object. These are
   * declared below.
   * 
@@ -37,7 +37,7 @@
   * naming the corresponding MKNoteReceivers.
   * 
   * Note that the naming mechanism allows any object, whether or not it is
-  * in the Music Kit, to be named. In general, it is the Application's 
+  * in the MusicKit, to be named. In general, it is the Application's 
   * responsibility to remove the names before freeing the object. 
   * However, as a convenience, the following classes remove the instance name
   * when freeing the instance. Copying an object does not copy its name.
@@ -48,11 +48,15 @@
   */
 
 /*!
-  @brief Identify and return objects by name
+  @defgroup ObjNameFns Identify and return objects by name.
+ */
 
-  The Music Kit provides a global naming mechanism that lets you identify
+/*!
+  @brief Adds the object <i>object</i> into the table, with name <i>name</i>.
+
+  The MusicKit provides a global naming mechanism that lets you identify
   and locate objects by name.  While names are primarily used in reading
-  and writing scorefiles, any object - even a non-Music Kit object - can
+  and writing scorefiles, any object - even a non-MusicKit object - can
   be named.  Names needn't be unique; more than one object can be given
   the same name.  However, a single object can have but one name at a
   time.  
@@ -64,20 +68,16 @@
   @param  name is an NSString instance.
   @param  object is an id.
   @return Returns a BOOL.
+  @ingroup ObjNameFns
 */
 extern BOOL MKNameObject(NSString * name,id object);
- /*
-  * Adds the object theObject in the table, with name theName.
-  * If the object is already named, does 
-  * nothing and returns NO. Otherwise returns YES. Note that the name is copied.
-  */
 
 /*!
-  @brief Identify and return objects by name
+  @brief Returns object name if any.
 
-  The Music Kit provides a global naming mechanism that lets you identify
+  The MusicKit provides a global naming mechanism that lets you identify
   and locate objects by name.  While names are primarily used in reading
-  and writing scorefiles, any object - even a non-Music Kit object - can
+  and writing scorefiles, any object - even a non-MusicKit object - can
   be named.  Names needn't be unique; more than one object can be given
   the same name.  However, a single object can have but one name at a
   time.  
@@ -87,95 +87,95 @@ extern BOOL MKNameObject(NSString * name,id object);
   the caller.  
    
   @param  object is an id.
-  @return Returns an NSString instance.
+  @return Returns an NSString instance. If object is not found, returns NULL.
+  @ingroup ObjNameFns
 */
 extern NSString *MKGetObjectName(id object);
- /* 
-  * Returns object name if any. If object is not found, returns NULL. The name
-  * is not copied and should not be freed by caller.
-  */
 
 /*!
   @brief Removes its argument's name (if any) and returns <b>nil</b>.  
 
-  The Music Kit provides a global naming mechanism that lets you identify
+  The MusicKit provides a global naming mechanism that lets you identify
   and locate objects by name.  While names are primarily used in reading
-  and writing scorefiles, any object - even a non-Music Kit object - can
+  and writing scorefiles, any object - even a non-MusicKit object - can
   be named.  Names needn't be unique; more than one object can be given
   the same name.  However, a single object can have but one name at a
   time.  
    
   @param  object is an id.
   @return Returns an id.
+  @ingroup ObjNameFns
 */
 extern id MKRemoveObjectName(id object);
- /* Removes theObject from the table, if present. Returns nil. */
 
 /*!
   @brief Returns the first object in the name table that has the name <i>name.</i>  
 
-  The Music Kit provides a global naming mechanism that lets you identify
+  The MusicKit provides a global naming mechanism that lets you identify
   and locate objects by name.  While names are primarily used in reading
-  and writing scorefiles, any object - even a non-Music Kit object - can
+  and writing scorefiles, any object - even a non-MusicKit object - can
   be named.  Names needn't be unique; more than one object can be given
   the same name.  However, a single object can have but one name at a
   time.  
    
-  @param  name is a char.
+  @param  name is an NSString instance.
   @return Returns an id.
+  @ingroup ObjNameFns
 */
 extern id MKGetNamedObject(NSString *name);
- /* Returns the first object found in the name table, with the given name.
-    Note that the name is not necessarily unique in the table; there may
-    be more than one object with the same name.
-   */
 
- /* These two functions allow you to give an object a name that can be seen
-  * by a scorefile. 
-  */
+/*! 
+  @brief Allows giving an object a name that can be seen by a scorefile. 
+
+  Adds the object as a global scorefile object, 
+  referenced in the scorefile with the name specified. The name is copied.
+  The object does not become visible to a scorefile unless it explicitly
+  'imports' it by a getGlobal statement.
+  If there is already a global scorefile object with the specified name, 
+  does nothing and returns NO. Otherwise returns YES. 
+  The type of the object in the scorefile is determined as follows:
+  If object -isKindOf:MKWaveTable, then the type is MK_waveTable.
+  If object -isKindOf:MKEnvelope, then the type is MK_envelope.
+  Otherwise, the type is MK_object.
+  Note that the global scorefile table is independent of the MusicKit
+  name table. Thus, an object can be named in one and unnamed in the other,
+  or it can be named differently in each.
+  @param object The object to be named.
+  @param name The NSString instance containing the name.
+  @ingroup ObjNameFns
+*/
 extern BOOL MKAddGlobalScorefileObject(id object,NSString *name);
- /*
-  * Adds the object as a global scorefile object, 
-  * referenced in the scorefile with the name specified. The name is copied.
-  * The object does not become visible to a scorefile unless it explicitly
-  * 'imports' it by a getGlobal statement.
-  * If there is already a global scorefile object with the specified name, 
-  * does nothing and returns NO. Otherwise returns YES. 
-  * The type of the object in the scorefile is determined as follows:
-  * If object -isKindOf:MKWaveTable, then the type is MK_waveTable.
-  * If object -isKindOf:MKEnvelope, then the type is MK_envelope.
-  * Otherwise, the type is MK_object.
-  * Note that the global scorefile table is independent of the Music Kit
-  * name table. Thus, an object can be named in one and unnamed in the other,
-  * or it can be named differently in each.
-  */
 
-
+/*!
+  @brief Returns the global scorefile object with the given name.
+ 
+  Allows you to give an object a name that can be seen
+  by a scorefile. The object may be either one that was added
+  with MKAddGlobalScorefileObject or it may be one that was added
+  from within a scorefile using "putGlobal".
+  Objects accessible to the application are those of type 
+  MK_envelope, MK_waveTable and MK_object. 
+  @ingroup ObjNameFns
+ */
 extern id MKGetGlobalScorefileObject(NSString *name);
- /* Returns the global scorefile object with the given name. The object may
-  * be either one that was added with MKAddGlobalScorefileObject or it
-  * may be one that was added from within a scorefile using "putGlobal".
-  * Objects accessable to the application are those of type 
-  * MK_envelope, MK_waveTable and MK_object. 
-  */
 
+/*!
+  @defgroup ScorefileFns Scorefile reading and writing. 
+ */
 
- /* Scorefile reading and writing. */
 /*!
   @brief Write pitches to a scorefile
 
   <b>MKWritePitchNames</b> sets the format by which frequency parameter
-  values are written to a scorefile.  If the argument is YES, the
-  parameter values are written as pitch name constants such as
-  &ldquo;a4&rdquo;.  If it's NO, frequencies are written as fractional
-  numbers.  
+  values <b>freq0</b> and <b>freq</b> are written to a scorefile.
+  If the argument is YES, the parameter values are written as pitch name
+  constants such as &ldquo;a4&rdquo;. If it's NO, frequencies are written as fractional
+  numbers in Hz. If you write them as pitch names, they are rounded to the nearest pitch.
+  The default is NO.
   @param  usePitchNames is a BOOL.
+  @ingroup ScorefileFns
 */
 extern void MKWritePitchNames(BOOL usePitchNames);
- /* Selects whether values of the parameters freq0 and freq are written as 
-  * pitch names or as frequencies in Hz. If you write them as pitch names,
-  * they are rounded to the nearest pitch. The default is NO. 
-  */
 
 /*!
   @brief Write pitches to a scorefile
@@ -184,14 +184,11 @@ extern void MKWritePitchNames(BOOL usePitchNames);
   values are written to a scorefile.  If the argument is YES, the
   parameter values are written as keyNum name constants such as "a4k".  If
   it's NO,  key numbers are written as integers.
-  @param  yesOrNo is a BOOL.
-  @return Returns a void.
+  @param  useKeyNums is a BOOL.
   @see MKWritePitchNames().
+  @ingroup ScorefileFns
 */
 extern void MKWriteKeyNumNames(BOOL useKeyNums);
- /* Selects whether values of the parameter keyNum are written as 
-  * keyNum names or as integers. The default is YES.
-  */
 
 #endif /* MK_NAMES_H */
 #endif

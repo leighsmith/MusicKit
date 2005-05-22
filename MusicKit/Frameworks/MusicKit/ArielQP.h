@@ -42,6 +42,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2005/05/22 07:34:06  leighsmith
+  Corrected and updated headerdoc
+
   Revision 1.6  2005/05/09 15:52:49  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -197,12 +200,9 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 +newInSlot:(unsigned short)slot;
 
 /*!
-  @param  satellite is a char.
+  @brief Returns the specified satellite, which should be one of 'A', 'B', 'C', or 'D'.
+  @param  which is a char.
   @return Returns an id.
-  @brief Returns the specified satellite, which should be one of 'A', 'B',
-  'C', or 'D'.
-
-  
 */
 -satellite:(char)which;
 
@@ -259,32 +259,26 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 -(BOOL)satSoundIn;
 
 /*!
+  @brief Sends the specified selector to the four ArielQPSat objects.
   @param  selector is a SEL.
   @return Returns an id.
-  @brief Sends the specified selector to the four ArielQPSat objects.
-
-  
 */
 -makeSatellitesPerform:(SEL)selector;
 
 /*!
+  @brief Sends the specified selector to the four ArielQPSat objects with the
+  specified argument.
   @param  selector is a SEL.
   @param  arg is an id.
   @return Returns an id.
-  @brief Sends the specified selector to the four ArielQPSat objects with the
-  specified argument.
-
-  
 */
--makeSatellitesPerform:(SEL)selector with:arg;
+-makeSatellitesPerform:(SEL)selector with: (id) arg;
 
 /*!
   @param  selector is a SEL.
   @return Returns an id.
   @brief Sends the specified selector to the objects representing all five
   DSPs.
-
-  
 */
 -makeQPPerform:(SEL)selector;
 
@@ -294,10 +288,8 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
   @return Returns an id.
   @brief Sends the specified selector to the objects representing all five
   DSPs with the specified argument.
-
-  
 */
--makeQPPerform:(SEL)selector with:arg;
+- makeQPPerform: (SEL) selector with: (id) arg;
 
 /*!
   @param  yesOrNo is a BOOL.

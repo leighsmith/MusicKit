@@ -101,236 +101,226 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
   @brief  Initializes the SndMeter, fitting its graphic components within
   <i>frameRect</i>.
 
-  The object's attributes are initialized as
-  follows:<br>
-<b>Attribute	Value</b><br>
-Peak hold time		0.7 seconds<br>
-Background gray		[NSColor darkGrayColor]<br>
-Running bar gray	[NSColor lightGrayColor]<br>
-Peak bubble gray	[NSColor whiteColor]<br>
-Border			bezeled<br>
-*/
-- (id)initWithFrame:(NSRect)frameRect;
+  The object's attributes are initialized as follows:
 
-- (id)initWithCoder:(NSCoder *)aStream;
-- (void)encodeWithCoder:(NSCoder *)aStream;
+<table border=1 cellspacing=2 cellpadding=0 align=center>
+ <b>Attribute</b>	<b>Value</b><br>
+<tr>
+ <td>Peak hold time</td>
+ <td>0.7 seconds</td>
+</tr>
+<tr>
+ <td>Background gray</td>
+ <td>[NSColor darkGrayColor]</td>
+</tr>
+ <td>Running bar gray</td>
+ <td>[NSColor lightGrayColor]</td>
+</tr>
+<tr>
+ <td>Peak bubble gray</td>
+ <td>[NSColor whiteColor]</td>
+</tr>
+ <td>Border</td>
+ <td>bezeled</td>
+</tr>
+</table>
+ 
+*/
+- (id) initWithFrame: (NSRect) frameRect;
+
+- (id) initWithCoder: (NSCoder *) aStream;
+- (void) encodeWithCoder: (NSCoder *) aStream;
 
 /*!
-  @return Returns a float.
   @brief  Returns the SndMeter's hold time - the amount of time during
-  which a peak amplitude is detected and displayed by the peak bubble
-  - in seconds.
+  which a peak amplitude is detected and displayed by the peak bubble - in seconds.
 
   The default is 0.7 seconds.
+  @return Returns a float.
 */
-- (float)holdTime;
+- (float) holdTime;
 
 /*!
+  @brief Sets the SndMeter's peak value hold time in seconds.
+
+  This is the amount of time during which peak amplitudes are detected and held by
+  the peak bubble.
   @param  seconds is a float.
   @return Returns an id.
-  @brief  Sets the SoundMeter's peak value hold time in seconds.
-
-  This is the
-  amount of time during which peak amplitudes are detected and held by
-  the peak bubble.
 */
-- (void)setHoldTime:(float)seconds;
+- (void) setHoldTime: (float) seconds;
 
 /*!
-  @param  aColor is a NSColor.
   @brief  Sets the SndMeter's background color.
 
-  The default is NSColor's
-  <b>darkGrayColor</b>.
+  The default is NSColor's <b>darkGrayColor</b>.
+  @param  aColor is a NSColor instance.
 */
-- (void)setBackgroundColor:(NSColor *)color;
+- (void) setBackgroundColor: (NSColor *) aColor;
 
 /*!
-  @return Returns a NSColor *.
   @brief  Returns the SndMeter's background color.
 
-  The default background
-  color is NSColor's <b>darkGrayColor</b>.
+  The default background color is NSColor's <b>darkGrayColor</b>.
+  @return Returns a NSColor instance.
 */
-- (NSColor *)backgroundColor;
+- (NSColor *) backgroundColor;
 
 /*!
-  @param  aColor is a NSColor *.
   @brief  Sets the SndMeter's running bar color.
 
-  The default is NSColor's
-  <b>lightGrayColor</b>.
+  The default is NSColor's <b>lightGrayColor</b>.
+  @param  aColor is a NSColor instance.
 */
-- (void)setForegroundColor:(NSColor *)color;
+- (void) setForegroundColor: (NSColor *) aColor;
 
 /*!
-  @return Returns a NSColor *.
   @brief  Returns the color of the running bar.
 
-  The default foreground color
-  is NSColor's <b>lightGrayColor</b>.
+  The default foreground color is NSColor's <b>lightGrayColor</b>.
+  @return Returns a NSColor instance.
 */
-- (NSColor *)foregroundColor;
+- (NSColor *) foregroundColor;
 
 /*!
-  @param  aColor is a NSColor *.
-  @brief  Sets the SndMeter's peak bubble color.
+  @brief Sets the SndMeter's peak bubble color.
 
-  The default is NSColor's
-  <b>whiteColor</b>.
+  The default is NSColor's <b>whiteColor</b>.
+  @param  aColor is a NSColor instance.
 */
-- (void)setPeakColor:(NSColor *)color;
+- (void) setPeakColor: (NSColor *) aColor;
 
 /*!
-  @return Returns a NSColor *.
   @brief  Returns the SndMeter's peak bubble gray.
 
-  The default is NSColor's
-  <b>whiteColor</b>.
+  The default is NSColor's <b>whiteColor</b>.
+  @return Returns a NSColor instance.
 */
-- (NSColor *)peakColor;
+- (NSColor *) peakColor;
 
 /*!
-  @return Returns a Snd *.
   @brief Returns the Snd object that the SndMeter is metering.
-
-  
+  @return Returns a Snd instance.  
 */
-- (Snd *)sound;
+- (Snd *) sound;
 
 /*!
-  @param  aSound is a Snd *.
   @brief  Sets the SndMeter's Snd object.
-
-  
+  @param  aSound is a Snd instance.
 */
-- (void)setSound:(Snd *)aSound;
+- (void) setSound: (Snd *) aSound;
 
 /*!
-  @param  sender is an id.
   @brief  Starts the SndMeter running.
 
   The SndMeter object must have a
   Snd object associated with it for this method to have an effect.
   Note that this method only affects the state of the SndMeter - it
   doesn't trigger any activity in the Snd.
+  @param  sender is an id.
 */
-- (void)run:(id)sender;
+- (void) run: (id) sender;
 
 /*!
-  @param  sender is an id.
   @brief  Stops the SndMeter's metering activity.
 
-  Note that this method
-  only affects the state of the SndMeter - it doesn't trigger any
-  activity in the Snd.
+  Note that this method only affects the state of the SndMeter 
+  - it doesn't trigger any activity in the Snd.
+  @param  sender is an id.
 */
-- (void)stop:(id)sender;
+- (void) stop: (id) sender;
 
 /*!
+  @brief  Returns YES if the SndMeter is currently running; otherwise, returns NO.
+
+  The SndMeter's status doesn't depend on the activity of its Snd object.
   @return Returns a BOOL.
-  @brief  Returns YES if the SndMeter is currently running; otherwise,
-  returns NO.
-
-  The SndMeter's status doesn't depend on the activity
-  of its Snd object.
 */
-- (BOOL)isRunning;
+- (BOOL) isRunning;
 
 /*!
+  @brief Returns YES (the default) if the SndMeter has a border; otherwise, returns NO.
+
+  Note that the SndMeter class doesn't provide a method to change the type of border - 
+  it can display a bezeled border or none at all.
   @return Returns a BOOL.
-  @brief  Returns YES (the default) if the SndMeter has a border;
-  otherwise, returns NO.
-
-  Note that the SndMeter class doesn't
-  provide a method to change the type of border - it can display a
-  bezeled border or none at all.
 */
-- (BOOL)isBezeled;
+- (BOOL) isBezeled;
 
 /*!
+  @brief  If <i>aFlag</i> is YES, a bezeled border is drawn around the SndMeter.
+
+  If <i>aFlag</i> is NO and the SndMeter has a frame, the frame is removed.
   @param  aFlag is a BOOL.
-  @brief  If <i>aFlag</i> is YES, a bezeled border is drawn around the
-  SndMeter.
-
-  If <i>aFlag</i> is NO and the SndMeter has a frame,
-  the frame is removed.
 */
-- (void)setBezeled:(BOOL)aFlag;
+- (void) setBezeled: (BOOL) aFlag;
 
 /*!
-  @param  aValue is a float.
   @brief  Sets the current running value to <i>aValue</i>.
 
-  You never invoke
-  this method directly; it's invoked automatically when the SndMeter
-  is running. However, you can reimplement this method in a subclass
-  of SndMeter. 
+  You never invoke this method directly; it's invoked automatically
+  when the SndMeter is running. However, you can reimplement this
+  method in a subclass of SndMeter. 
+  @param  aValue is a float.
 */
-- (void)setFloatValue:(float)aValue;
+- (void) setFloatValue: (float) aValue;
 
 /*!
-  @return Returns a float.
   @brief  Returns the current running amplitude value as a floating-point
   number between 0.0 and 1.0.
 
-  This is the amplitude level that's
-  displayed by the running bar.
+  This is the amplitude level that's displayed by the running bar.
+  @return Returns a float.
 */
-- (float)floatValue;
+- (float) floatValue;
 
 /*!
-  @return Returns a float.
   @brief  Returns the most recently detected peak value as a floating-point
   number between 0.0 and 1.0.
 
-  This is the amplitude level that's
-  displayed by the peak bubble.
+  This is the amplitude level that's displayed by the peak bubble.
+  @return Returns a float.
 */
-- (float)peakValue;
+- (float) peakValue;
 
 /*!
-  @return Returns a float.
   @brief  Returns the minimum running value so far.
 
-  You can invoke this
-  method after you stop this SndMeter to retrieve the overall
+  You can invoke this method after you stop this SndMeter to retrieve the overall
   minimum value for the previous performance. The minimum value is
   cleared when you restart the SndMeter.
+  @return Returns a float.
 */
-- (float)minValue;
+- (float) minValue;
 
 /*!
-  @return Returns a float.
   @brief  Returns the maximum running value so far.
 
-  You can invoke this
-  method after you stop this SndMeter to retrieve the overall
+  You can invoke this method after you stop this SndMeter to retrieve the overall
   maximum value for the previous performance. The maximum value is
   cleared when you restart the SndMeter.
+  @return Returns a float.
 */
-- (float)maxValue;
+- (float) maxValue;
 
 /*!
-  @param  rects is a NSRect.
   @brief  Draws all the components of the SndMeter (frame, running bar, and
   peak bubble).
 
-  You never invoke this method directly; however, you
-  can override it in a subclass to change the way the components are
-  displayed. 
+  You never invoke this method directly; however, you can override it in a
+  subclass to change the way the components are displayed. 
+  @param  rects is a NSRect.
 */
-- (void)drawRect:(NSRect)rects;
+- (void) drawRect: (NSRect) rects;
 
 /*!
   @brief  Draws the SndMeter's running bar and peak bubble.
 
-  You never
-  invoke this method directly; it's invoked automatically while the
+  You never invoke this method directly; it's invoked automatically while the
   SndMeter is running. You can override this method to change the
   look of the running bar and peak bubble.
 */
-- (void)drawCurrentValue;
+- (void) drawCurrentValue;
 
 @end
 

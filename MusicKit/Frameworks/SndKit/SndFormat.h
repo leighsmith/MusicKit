@@ -28,19 +28,23 @@
 #import <MKPerformSndMIDI/PerformSound.h>
 
 /*!
-  @typedef SndFormat
+  @file SndFormat.h
+  @brief Include file for the SndFormat structure.
+ */
+
+/*!
   @brief Defines a structure for holding sound describing parameters, but no sample data itself.
   
-  This is the replacement for SndSoundStruct which is now deprecated.
-  @field dataFormat The data format code of enumerated type SndSampleFormat.
-  @field frameCount The number of multichannel samples in the sound. Total data size = frameCount * channelCount * SndSampleWidth(dataFormat).
-  @field channelCount The number of channels.
-  @field samplingRate The sampling rate in Hertz. Fractional sampling rates are supported.
+  This is the replacement for the now deprecated SndSoundStruct.
  */
 typedef struct {
+    /*! @brief The data format code of enumerated type SndSampleFormat. */
     SndSampleFormat dataFormat;
+    /*! @brief The number of multichannel samples in the sound. Total data size = frameCount * channelCount * SndSampleWidth(dataFormat). */
     long frameCount;
+    /*! @brief The number of channels. */
     int channelCount;
+    /*! @brief The sampling rate in Hertz. Fractional sampling rates are supported. */
     double sampleRate;
 } SndFormat;
 

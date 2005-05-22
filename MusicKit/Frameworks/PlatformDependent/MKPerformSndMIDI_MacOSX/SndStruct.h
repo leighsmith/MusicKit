@@ -37,28 +37,18 @@
 /*!
   @defined SND_MAGIC
   @brief Magic cookie for NeXT/Sun audio files.
-
-  
 */
 #define SND_MAGIC ((int)0x2e736e64)
 
 /*!
-  @typedef SndSoundStruct
   @brief Each raw event consists of a MIDI message byte and a time stamp.
-  @field	magic
-  Must be equal to SND_MAGIC
-  @field	dataLocation
-  Offset or pointer to the raw data
-  @field	dataSize
-  Number of bytes of data in the raw data
-  @field	dataFormat
-  The data format code
-  @field	samplingRate
-  The sampling rate
-  @field	channelCount
-  The number of channels
-  @field	info
-  Textual information relating to the sound.
+  @field magic  Must be equal to SND_MAGIC
+  @field dataLocation  Offset or pointer to the raw data
+  @field dataSize  Number of bytes of data in the raw data
+  @field dataFormat  The data format code
+  @field samplingRate  The sampling rate
+  @field channelCount  The number of channels
+  @field info  Textual information relating to the sound.
 */
 typedef struct {
     int magic;
@@ -76,32 +66,24 @@ typedef struct {
 /*!
   @defined SND_CFORMAT_BITS_DROPPED
   @brief Lossy compression.
-
-  
 */
 #define SND_CFORMAT_BITS_DROPPED        (0)
 
 /*!
   @defined SND_CFORMAT_BIT_FAITHFUL
   @brief No Loss compression.
-
-  
 */
 #define SND_CFORMAT_BIT_FAITHFUL        (1)
 
 /*!
   @defined SND_CFORMAT_ATC
   @brief Audio Transform Compression.
-
-  
 */
 #define SND_CFORMAT_ATC                 (2)
 
 /*!
   @defined ATC_FRAME_SIZE
   @brief Size in samples of each frame used during ATC compression.
-
-  
 */
 #define ATC_FRAME_SIZE (256)
 
@@ -111,32 +93,24 @@ typedef struct {
 /*!
   @defined SND_RATE_CODEC
   @brief Sampling rate for voice quality CODECs.
-
-  
 */
 #define SND_RATE_CODEC          (8012.8210513)
 
 /*!
   @defined SND_RATE_LOW
   @brief Sampling rate for low quality music.
-
-  
 */
 #define SND_RATE_LOW            (22050.0)
 
 /*!
   @defined SND_RATE_HIGH
   @brief Sampling rate for high quality music.
-
-  
 */
 #define SND_RATE_HIGH           (44100.0)
 
 /*!
   @defined SND_RATE_LOW_PC
   @brief Sampling rate for very low quality music on PCs.
-
-  
 */
 #define SND_RATE_LOW_PC         (11025.0)
 

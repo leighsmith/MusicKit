@@ -44,13 +44,10 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-// classgroup Filters
 /*!
   @class BiquadUG
   @brief <b>BiquadUG</b> is a two-pole, two-zero filter useful for adding resonances. 
   
-  
-
 The <b>BiquadUG</b> unit-generator implements a two-pole, two-zero filter
 section in direct form.  The output space can only be <i>y</i> DSP memory.   
 Therefore, only two leaf classes exist, <b>BiquadUGx</b> and <b>BiquadUGy</b>,
@@ -59,11 +56,11 @@ corresponding to the two possible input spaces.
 The biquad transfer function is
 
 <pre>
-<tab>  -1         -2
-<tab>  1  +  b1 * z   + b2 * z
-<tab>H(z) = g * -------------------------
-<tab>  -1         -2
-<tab>  1  +  a1 * z   + a2 * z
+                        -1         -2
+            1  +  b1 * z   + b2 * z
+H(z) = g * -------------------------
+                        -1         -2
+            1  +  a1 * z   + a2 * z
 </pre>
 
 The biquad difference equation which implements H(z) is
@@ -85,7 +82,8 @@ p. 155) for further discussion.
 <b>BiquadUG<i>ab</i></b>
 <i>a</i>	output
 <i>b</i>	input
-*/
+ @ingroup FilterUGs
+ */
 #ifndef __MK_BiquadUG_H___
 #define __MK_BiquadUG_H___
 

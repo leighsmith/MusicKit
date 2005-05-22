@@ -21,15 +21,13 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum SndDistortionParam
- @brief Parameter keys
+ @brief SndDistortionParam  Parameter keys
  @constant distort_kBoostAmount Pre amp boost amount
  @constant distort_kKnee  Knee level in range [0,1]
  @constant distort_kHardness  Degree of hard clipping
  @constant distort_kBoostRange  Pre amp boost range
  @constant distort_kNumParams  Number of parameters
  */
-
 enum {
   distort_kBoostAmount = 0,
   distort_kKnee        = 1,

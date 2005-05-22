@@ -24,7 +24,7 @@
     exit.
    
     A parameter's value can be a double, int, NSString object, an MKEnvelope object,
-    MKWaveTable object, or other (non-Music Kit) object.  These six
+    MKWaveTable object, or other (non-MusicKit) object.  These six
     parameter value types are represented by the following MKDataType
     constants:
    
@@ -274,11 +274,13 @@ if (!MKIsNoDVal(amp))<br>
 </tt>
 </li>
  
-<li> If you're looking for and processing a large number of
+<li> 
+If you're looking for and processing a large number of
 parameters in one block, then you should make calls to the
 <b>MKNextParameter()</b> C function, which returns the values of a
 MKNote's extant parameters only.  See the function's description in
-Chapter 2 for more details.</li>
+Chapter 2 for more details.
+</li>
 </ul>
 
 A MKNote has two special timing attributes:  A MKNote's time tag
@@ -418,7 +420,7 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 
 @private
     NSHashTable *_parameters;       /* Set of parameter values. */
-    unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of Music Kit parameters. */
+    unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of MusicKit parameters. */
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */
     unsigned short _highAppPar; /* Highest bit in _appPars (0 if none). */
     /* _orderTag disambiguates simultaneous notes. If it's negative,
@@ -777,7 +779,7 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
 
 /*!
   @param  newTag is an int.
-  @return  Returns self</b>.
+  @return  Returns <b>self</b>.
   @brief Sets the MKNote's note tag to <i>newTag</i>; if the note type is
   <b>MK_mute</b> it's changed to MK_noteUpdate.
   
@@ -933,9 +935,9 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
   * to be written to a scorefile).  An object's ASCII representation
   * shouldn't contain the character ']'.  Returns the receiver.
   * 
-  * None of the Music Kit classes implement readASCIIStream: or
+  * None of the MusicKit classes implement readASCIIStream: or
   * writeASCIIStream: so you can't use this method to set a parameter to a
-  * Music Kit object (you should invoke the setPar:toEnvelope: or
+  * MusicKit object (you should invoke the setPar:toEnvelope: or
   * setPar:toWaveTable: to set the value of a parameter to an MKEnvelope or
   * MKWaveTable object).  This method is provided to support extensions to the 
   * MusicKit allowing you to set the value of a parameter to an instance of 
@@ -1238,6 +1240,10 @@ the section entitled Music Tables
 
 @end
 
+/*!
+  @defgroup ParameterFns Query for a MKNote's parameters.
+ */
+
 /* NoteTag allocation. */
 
 /*!
@@ -1272,7 +1278,7 @@ extern unsigned MKNoteTag(void);
 extern unsigned MKNoteTags(unsigned n);
 
 /*!
-  @brief Convert decibels to amplitude
+  @brief Convert decibels to amplitude.
 
   <b>MKdB()</b> returns an amplitude value (within the range [0.0, 1.0])
   converted from its argument specified as decibels. The returned value
@@ -1286,12 +1292,17 @@ extern unsigned MKNoteTags(unsigned n);
 */
 extern double MKdB(double dB);          
 
-/*!  
-  @brief Translate loudness from the Music Kit to MIDI. Maps MIDI
+/*!
+  @defgroup AmplitudeFns Convert amplitude to and from MIDI values.
+*/
+
+/*!
+  @ingroup AmplitudeFns
+  @brief Translate loudness from the MusicKit to MIDI. Maps MIDI
   value (such as velocity) onto an amplitude scaler such that 64->1.0,
   127->10.0, and 0->0.
 
-  These functions help you convert Music Kit amplitude values to MIDI
+  These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa. This is primarily designed for scaling
   amplitude by a value derived from MIDI velocity.
    
@@ -1328,6 +1339,7 @@ extern double MKdB(double dB);
 extern double MKMidiToAmp(int midiValue);
 
 /*!
+  @ingroup AmplitudeFns
   @brief Translate loudness from the MusicKit to MIDI. Same as MKMidiToAmp, but uses sensitivity to control how much effect midiValue has.
 
   These functions help you convert MusicKit amplitude values to MIDI
@@ -1357,9 +1369,10 @@ extern double MKMidiToAmp(int midiValue);
 extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
 
 /*!
-  @brief Translate loudness from the Music Kit to MIDI. Maps an amplitude scaler onto velocity such that MKAmpToMidi(MKMidiToAmp(x)) == x.
+  @ingroup AmplitudeFns
+  @brief Translate loudness from the MusicKit to MIDI. Maps an amplitude scaler onto velocity such that MKAmpToMidi(MKMidiToAmp(x)) == x.
 
-  <b>These functions help you convert Music Kit amplitude values to MIDI
+  <b>These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa.</b>
    
    <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
@@ -1389,9 +1402,10 @@ extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
 extern int MKAmpToMidi(double amp);
 
 /*!
-  @brief Translate loudness from the Music Kit to MIDI. Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler such that 64->0.1, 127->1.0, and 0->0. 
+  @ingroup AmplitudeFns
+  @brief Translate loudness from the MusicKit to MIDI. Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler such that 64->0.1, 127->1.0, and 0->0. 
 
-  <b>These functions help you convert Music Kit amplitude values to MIDI
+  <b>These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa.</b>
    
   <b>MKAmpAttenuationToMidi()</b> and <b>MKMidiToAmpAttenuation()</b>
@@ -1417,13 +1431,14 @@ extern int MKAmpToMidi(double amp);
 */
 extern double MKMidiToAmpAttenuation(int midiValue);
 
-/*!  
+/*!
+  @ingroup AmplitudeFns
   @brief Translate loudness from the MusicKit to MIDI. Maps MIDI
   controller values (e.g. volume pedal) onto an amplitude scaler such
   that 64->0.1, 127->1.0, and 0->0. Uses sensitivity to control how
   much effect midiValue has.
 
-  <b>These functions help you convert Music Kit amplitude values to MIDI
+  <b>These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa.</b>
    
   <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
@@ -1438,7 +1453,10 @@ extern double MKMidiToAmpAttenuation(int midiValue);
    This provides a scale in which an amp of 0.0 yields a MIDI value of
   0, 1.0 produces 64, and 10.0 gives 127.  
    
-   <b>MKMidiToAmpWithSensitivity()</b> and <b>MKMidiToAmpAttenuationWithSensitivity()</b> are modifications of the similarly named MIDI-to-amp and MIDI-to-ampAttenuation functions in which an additional sensitivity value, nominally in the range 0.0 to 1.0, is used to scale the product of the conversion. 
+   <b>MKMidiToAmpWithSensitivity()</b> and <b>MKMidiToAmpAttenuationWithSensitivity()</b> 
+   are modifications of the similarly named MIDI-to-amp and MIDI-to-ampAttenuation
+   functions in which an additional sensitivity value, nominally in the range
+   0.0 to 1.0, is used to scale the product of the conversion. 
    
    The multiplicity of conversion functions is provided in deference to
   the nature of MIDI volume computation:  Unlike DSP-bound amplitude
@@ -1447,7 +1465,10 @@ extern double MKMidiToAmpAttenuation(int midiValue);
   being velocity, main volume control, and foot pedal control.  While the
   velocity value generated by a MIDI instrument is almost never at the
   maximum, the other values often are.  In general, you use
-  <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> (or <b>MKMidiToAmpWithSensitivy()</b>) to convert between amplitude and velocity.  The amp attenuation functions are used to generate a value from or to be applied to one of MIDI controller parameters.
+  <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> (or <b>MKMidiToAmpWithSensitivy()</b>)
+  to convert between amplitude and velocity.  The amp attenuation 
+  functions are used to generate a value from or to be applied to one
+  of MIDI controller parameters.
   @param  midiValue is an int.
   @param  sensitivity is a double.
   @return Returns a double.
@@ -1455,11 +1476,12 @@ extern double MKMidiToAmpAttenuation(int midiValue);
 extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensitivity);
 
 /*!
-  @brief Translate loudness from the Music Kit to MIDI. Maps an
+  @ingroup AmplitudeFns
+  @brief Translate loudness from the MusicKit to MIDI. Maps an
   amplitude scaler onto velocity such that
   MKAmpAttenuationToMidi(MKMidiToAmpAttenuation(x)) == x. 
 
-  <b>These functions help you convert Music Kit amplitude values to MIDI
+  <b>These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa.</b>
    
    <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
@@ -1499,35 +1521,20 @@ extern int MKAmpAttenuationToMidi(double amp);
  
   This can be used, for example, to print the names of all known parameters as follows:
  
-  <tt>for (i = 0; i <= MKHighestPar(); i++) printf([MKNote
-  parNameForTag: i]);</tt>
+<pre>
+  for (i = 0; i <= MKHighestPar(); i++) 
+     printf([MKNote parNameForTag: i]);
+</pre>
   @return Returns an int.
   @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
   <b>MKIsNoDVal()</b>
+  @ingroup ParameterFns
  */
 extern int MKHighestPar(void);
 
 /*!
   @brief Query for a MKNote's parameters
 
-  <b>MKIsNoteParPresent()</b> returns YES or NO as the parameter
-  <i>par</i> within the MKNote <i>aNote</i> is or isn't present; a
-  parameter is considered present only if it's been given a value.  The
-  function is equivalent to MKNote's <b>isParPresent:</b> method.  Unless
-  the mere existence of the parameter is significant, you would follow a
-  call to <b>MKIsNoteParPresent()</b> with a parameter value retrieval
-  function, such as <b>MKGetNoteParAsDouble()</b>:
-   
-   <tt>double freq;</tt>
-   
-   <tt>// Get the value of MK_freq only if the parameter has been set.
-  </tt>
-   <tt>if (MKIsNoteParPresent(aNote, MK_freq))</tt>
-   <tt>{</tt>
-   <tt>	freq = MKGetParAsDouble(aNote, MK_freq);</tt>
-     <tt>	... // do something with freq </tt>
-   <tt>}</tt>
-   
    <b>MKInitParameterIteration()</b> and <b>MKNextParameter()</b> work
   together to return, one by one, the full complement of a MKNote's
   parameter identifiers.  <b>MKInitParameterIteration()</b> primes its
@@ -1540,33 +1547,35 @@ extern int MKHighestPar(void);
   returns parameter identifiers; you still must retrieve the value of the
   parameter.  An example for your delight:
    
-   <tt>// Initialize the iteration state for the desired MKNote. </tt>
-     <tt>void *aState = MKInitParameterIteration(aNote);</tt>
-     <tt>int par;</tt>
+<pre>
+// Initialize the iteration state for the desired MKNote. 
+ void *aState = MKInitParameterIteration(aNote);
+ int par;
+
+// Get the parameters until the MKNote is exhausted. 
+ while ((par = MKNextParameter(aNote, aState)) != MK_noPar)
+ {
+    // Operate on the parameters of interest. 
+    switch (par) 
+    {
+	case MK_freq:
+	    // Get the value of MK_freq and apply it. 
+	    ... 
+	    break;
+	case MK_amp:
+	    // Get the value of MK_amp and apply it. 
+	    ... 
+	    break;
+	default: 
+	    // Ignore all other parameters. 
+	    break;  
+    }
+}
+</pre>
    
-   <tt>// Get the parameters until the MKNote is exhausted. </tt>
-     <tt>while ((par = MKNextParameter(aNote, aState)) != MK_noPar)</tt>
-     <tt>{</tt>
-   <tt>	// Operate on the parameters of interest. </tt>
-     <tt>	switch (par)</tt> 
-   <tt>	{</tt>
-   <tt>		case MK_freq:</tt>
-   <tt>			// Get the value of MK_freq and apply it. </tt>
-     <tt>			...</tt> 
-   <tt>			break;</tt>
-   <tt>		case MK_amp:</tt>
-   <tt>			// Get the value of MK_amp and apply it. </tt>
-     <tt>			...</tt> 
-   <tt>			break;</tt>
-   <tt>		default:</tt> 
-   <tt>			// Ignore all other parameters. </tt>
-   <tt>			break;</tt>  
-   <tt>	}</tt>
-   <tt>}</tt>
-   
-   In essence, the two examples do the same thing:  They find and
-  operate on parameters of interest.  Which methodology to adopt - whether
-  to test for the existence of  particular parameters as in the first
+  In essence, this example and the example shown in MKIsNoteParPresent() do the same
+  thing:  They find and operate on parameters of interest.  Which methodology to 
+  adopt - whether to test for the existence of  particular parameters as in the first
   example, or to retrieve the identifiers of all present parameters as in
   the second - depends on how &ldquo;saturated&rdquo; the MKNote is with
   interesting parameters.  If you only want a couple of parameters then
@@ -1581,30 +1590,13 @@ extern int MKHighestPar(void);
   @return Returns a NSHashEnumerator.
   @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
   <b>MKIsNoDVal()</b>
+  @ingroup ParameterFns
 */
 extern NSHashEnumerator *MKInitParameterIteration(id aNote);
 
 /*!
-  @brief Query for a MKNote's parameters
+  @brief Retrieve the next parameter.
 
-  <b>MKIsNoteParPresent()</b> returns YES or NO as the parameter
-  <i>par</i> within the MKNote <i>aNote</i> is or isn't present; a
-  parameter is considered present only if it's been given a value.  The
-  function is equivalent to MKNote's <b>isParPresent:</b> method.  Unless
-  the mere existence of the parameter is significant, you would follow a
-  call to <b>MKIsNoteParPresent()</b> with a parameter value retrieval
-  function, such as <b>MKGetNoteParAsDouble()</b>:
-   
-   <tt>double freq;</tt>
-   
-   <tt>// Get the value of MK_freq only if the parameter has been set.
-  </tt>
-   <tt>if (MKIsNoteParPresent(aNote, MK_freq))</tt>
-   <tt>{</tt>
-   <tt>	freq = MKGetParAsDouble(aNote, MK_freq);</tt>
-     <tt>	... // do something with freq </tt>
-   <tt>}</tt>
-   
    <b>MKInitParameterIteration()</b> and <b>MKNextParameter()</b> work
   together to return, one by one, the full complement of a MKNote's
   parameter identifiers.  <b>MKInitParameterIteration()</b> primes its
@@ -1653,20 +1645,14 @@ extern NSHashEnumerator *MKInitParameterIteration(id aNote);
   a reasonably sophisticated MKSynthPatch, for example), then it's
   probably faster to iterate over all the parameters through
   <b>MKNextParameter()</b>.  
-   
-   <b>MKHighestPar()</b> returns the parameter tag of the highest
-  numbered parameter.  This can be used, for example, to print the names
-  of all known parameters as follows:
-   	
-   <tt>		for (i=0; i&lt;=MKHighestPar(); i++) </tt>
-   <tt>			printf([MKNote parNameForTag:i]);</tt>
   @param  aNote is a Note.
-  @param  iterationState is a *.
+  @param  iterationState is a NSHashEnumerator *.
   @return Returns an int.
-  @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
-  <b>MKIsNoDVal()</b>
+  @see <b>MKInitParameterIteration()</b>, <b>MKGetNoteParAsDouble()</b>, 
+       <b>MKGetNoteParAsInt()</b>, etc., <b>MKIsNoDVal()</b>
+  @ingroup ParameterFns
 */
-extern int MKNextParameter(id aNote, NSHashEnumerator *aState);
+extern int MKNextParameter(id aNote, NSHashEnumerator *iterationState);
  /* These functions provide iteration over the parameters of a Note. 
  * Usage:
  *
@@ -1688,9 +1674,14 @@ extern int MKNextParameter(id aNote, NSHashEnumerator *aState);
  *  MK_noPar.
  */
 
- /* Functions that are equivalent to above methods, for speed. */
 /*!
-  @brief Set and retrieve a Note's parameters
+  @defgroup Set and retrieve a MKNote's parameters. Functions that are equivalent to MKNote methods, for speed. 
+ */
+
+/*@{*/
+
+/*!
+  @brief Set a MKNote's parameter to a double value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1735,7 +1726,7 @@ The <b>MKGetParAs...()</b> functions
 extern id MKSetNoteParToDouble(id aNote,int par,double value);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Set a MKNote's parameter to an integer value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1762,7 +1753,7 @@ extern id MKSetNoteParToDouble(id aNote,int par,double value);
 extern id MKSetNoteParToInt(id aNote,int par,int value);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Set a MKNote's parameter to a NSString value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1786,10 +1777,10 @@ extern id MKSetNoteParToInt(id aNote,int par,int value);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToString(id aNote,int par,NSString *value);
+extern id MKSetNoteParToString(id aNote, int par, NSString *value);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Set a MKNote's parameter to a MKEnvelope value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1809,14 +1800,14 @@ extern id MKSetNoteParToString(id aNote,int par,NSString *value);
   regarding the operations of these functions.
   @param  aNote is an MKNote instance.
   @param  par is an int.
-  @param  envObj is a Envelope.
+  @param  envObj is an MKEnvelope instance.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToEnvelope(id aNote,int par,id envObj);
+extern id MKSetNoteParToEnvelope(id aNote, int par, id envObj);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Set a MKNote's parameter to a MKWaveTable value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1826,7 +1817,7 @@ extern id MKSetNoteParToEnvelope(id aNote,int par,id envObj);
      
    is the same as the message:
    
-   <tt><b>[aNote setPar:MK_freq toDouble:440.0] </b></tt>
+   <tt><b>[aNote setPar: MK_freq toDouble: 440.0]</b></tt>
      
    As ever, calling a function is somewhat faster than sending a
   message, thus you may want to use these functions, rather than the
@@ -1836,14 +1827,14 @@ extern id MKSetNoteParToEnvelope(id aNote,int par,id envObj);
   regarding the operations of these functions.
   @param  aNote is an MKNote instance.
   @param  par is an int.
-  @param  waveObj is a WaveTable.
+  @param  waveObj is a MKWaveTable instance.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToWaveTable(id aNote,int par,id waveObj);
+extern id MKSetNoteParToWaveTable(id aNote, int par, id waveObj);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Set a MKNote's parameter to an Object value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1861,16 +1852,16 @@ extern id MKSetNoteParToWaveTable(id aNote,int par,id waveObj);
   parameters, or in situations where speed is crucial.  See the method
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
-  @param  aNote is a MKNote.
+  @param  aNote is a MKNote instance.
   @param  par is an int.
-  @param  value is an id.
+  @param  anObj is an id.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToObject(id aNote,int par,id anObj);
+extern id MKSetNoteParToObject(id aNote, int par, id anObj);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as a double value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1910,7 +1901,7 @@ extern id MKSetNoteParToObject(id aNote,int par,id anObj);
 extern double MKGetNoteParAsDouble(id aNote,int par);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as an integer value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1922,22 +1913,22 @@ extern double MKGetNoteParAsDouble(id aNote,int par);
    
    <tt><b>[aNote setPar:MK_freq toDouble:440.0] </b></tt>
      
-   As ever, calling a function is somewhat faster than sending a
+  As ever, calling a function is somewhat faster than sending a
   message, thus you may want to use these functions, rather than the
   corresponding methods, if you're examining and manipulating barrels of
   parameters, or in situations where speed is crucial.  See the method
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
-  @param  aNote is a Note.
-  @param  par is a *.
-  @param   is an int.
+  @param  aNote is a MKNote instance.
+  @param  par is an int.
+  @return Returns an integer.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern int MKGetNoteParAsInt(id aNote,int par);
+extern int MKGetNoteParAsInt(id aNote, int par);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as a NSString value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1956,15 +1947,15 @@ extern int MKGetNoteParAsInt(id aNote,int par);
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
   @param  aNote is a Note.
-  @param  par is a *.
-  @param   is an int.
+  @param  par is an int.
+  @return Returns an NSString instance.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern NSString *MKGetNoteParAsString(id aNote,int par);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as a NSString value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -1982,16 +1973,15 @@ extern NSString *MKGetNoteParAsString(id aNote,int par);
   parameters, or in situations where speed is crucial.  See the method
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
-  @param  aNote is a Note.
-  @param  par is a *.
-  @param   is an int.
+  @param  aNote is a MKNote instance.
+  @param  par is an int.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern NSString *MKGetNoteParAsStringNoCopy(id aNote,int par);
+extern NSString *MKGetNoteParAsStringNoCopy(id aNote, int par);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as an MKEnvelope value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -2010,15 +2000,15 @@ extern NSString *MKGetNoteParAsStringNoCopy(id aNote,int par);
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
   @param  aNote is a Note.
-  @param  par is a *.
-  @param   is an int.
+  @param  par is an int.
+  @return Returns an MKEnvelope instance.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKGetNoteParAsEnvelope(id aNote,int par);
+extern id MKGetNoteParAsEnvelope(id aNote, int par);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as an MKWaveTable value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -2036,16 +2026,16 @@ extern id MKGetNoteParAsEnvelope(id aNote,int par);
   parameters, or in situations where speed is crucial.  See the method
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
-  @param  aNote is a Note.
-  @param  par is a *.
-  @param   is an int.
+  @param  aNote is a MKNote instance.
+  @param  par is an int.
+  @return Returns an MKWaveTable instance.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKGetNoteParAsWaveTable(id aNote,int par);
+extern id MKGetNoteParAsWaveTable(id aNote, int par);
 
 /*!
-  @brief Set and retrieve a Note's parameters
+  @brief Retrieve an MKNote's parameter as an object value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
@@ -2064,12 +2054,14 @@ extern id MKGetNoteParAsWaveTable(id aNote,int par);
   descriptions in the MKNote class for more information (by implication)
   regarding the operations of these functions.
   @param  aNote is a Note.
-  @param  par is a *.
-  @param   is an int.
+  @param  par is an int.
+  @return Returns an id.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKGetNoteParAsObject(id aNote,int par);
+extern id MKGetNoteParAsObject(id aNote, int par);
+
+/*@}*/
 
 /*!
   @brief Query for a MKNote's parameters
@@ -2082,76 +2074,23 @@ extern id MKGetNoteParAsObject(id aNote,int par);
   call to <b>MKIsNoteParPresent()</b> with a parameter value retrieval
   function, such as <b>MKGetNoteParAsDouble()</b>:
    
-   <tt>double freq;</tt>
+<pre>
+double freq;
    
-   <tt>// Get the value of MK_freq only if the parameter has been set.</tt>
-   <tt>if (MKIsNoteParPresent(aNote, MK_freq))</tt>
-   <tt>{</tt>
-   <tt>	freq = MKGetParAsDouble(aNote, MK_freq);</tt>
-     <tt>	... // do something with freq.</tt>
-   <tt>}</tt>
-   
-   <b>MKInitParameterIteration()</b> and <b>MKNextParameter()</b> work
-  together to return, one by one, the full complement of a MKNote's
-  parameter identifiers.  <b>MKInitParameterIteration()</b> primes its
-  MKNote argument for successive calls to <b>MKNextParameter()</b>, each
-  of which retrieves the next parameter in the MKNote.  When all the
-  parameters have been visited, <b>MKNextParameter()</b> returns the value
-  MK_noPar.  The pointer returned by <b>MKInitParameterIteration()</b>
-  must be passed as the <i>iterationState</i> argument to
-  <b>MKNextParameter()</b>.  Keep in mind that <b>MKNextParameter()</b>
-  returns parameter identifiers; you still must retrieve the value of the
-  parameter.  An example for your delight:
-   
-   <tt>// Initialize the iteration state for the desired MKNote.</tt>
-   <tt>void *aState = MKInitParameterIteration(aNote);</tt>
-   <tt>int par;</tt>
-   
-   <tt>// Get the parameters until the MKNote is exhausted.</tt>
-   <tt>while ((par = MKNextParameter(aNote, aState)) != MK_noPar)</tt>
-   <tt>{</tt>
-   <tt>	// Operate on the parameters of interest.</tt>
-   <tt>	switch (par)</tt> 
-   <tt>	{</tt>
-   <tt>		case MK_freq:</tt>
-   <tt>			// Get the value of MK_freq and apply it.</tt>
-   <tt>			...</tt> 
-   <tt>			break;</tt>
-   <tt>		case MK_amp:</tt>
-   <tt>			// Get the value of MK_amp and apply it.</tt>
-   <tt>			...</tt> 
-   <tt>			break;</tt>
-   <tt>		default:</tt> 
-   <tt>			// Ignore all other parameters.</tt>
-   <tt>			break;</tt>  
-   <tt>	}</tt>
-   <tt>}</tt>
-   
-   In essence, the two examples do the same thing:  They find and
-  operate on parameters of interest.  Which methodology to adopt - whether
-  to test for the existence of  particular parameters as in the first
-  example, or to retrieve the identifiers of all present parameters as in
-  the second - depends on how &ldquo;saturated&rdquo; the MKNote is with
-  interesting parameters.  If you only want a couple of parameters then
-  it's generally more efficient to call <b>MKIsNoteParPresent()</b> for
-  each of them.  However, if you're interested in most - or what you
-  assume to be most - of a MKNote's parameters (as is usually the case for
-  a reasonably sophisticated MKSynthPatch, for example), then it's
-  probably faster to iterate over all the parameters through
-  <b>MKNextParameter()</b>.  
-   
-  <b>MKHighestPar()</b> returns the parameter tag of the highest
-  numbered parameter.  This can be used, for example, to print the names
-  of all known parameters as follows:
-   	
-   <tt>		for (i=0; i&lt;=MKHighestPar(); i++) </tt>
-   <tt>			printf([MKNote parNameForTag:i]);</tt>
+// Get the value of MK_freq only if the parameter has been set.
+if (MKIsNoteParPresent(aNote, MK_freq)) {
+    freq = MKGetParAsDouble(aNote, MK_freq);
+    ... // do something with freq.
+}
+</pre>
+      
   @param  aNote is a MKNote instance.
   @param  par is an int.
   @return Returns a BOOL.
   @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
   <b>MKIsNoDVal()</b>
+  @ingroup ParameterFns
 */
-extern BOOL MKIsNoteParPresent(id aNote,int par);
+extern BOOL MKIsNoteParPresent(id aNote, int par);
 
 #endif

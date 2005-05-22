@@ -14,9 +14,9 @@
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /* 
-	How Envelopes Are Used in the Music Kit SynthPatch Library 
+	How Envelopes Are Used in the MusicKit SynthPatch Library 
 
-In the Music Kit SynthPatch library, envelopes are specified in the
+In the MusicKit SynthPatch library, envelopes are specified in the
 parameter list as some combination of an MKEnvelope object (a list of
 time, value, and optional smoothing values), up to two value-modifying
 numbers, and up to two time-scaling numbers.  See
@@ -78,7 +78,7 @@ envelope was supplied in the preceeding noteOn.
 
 	Phrases 
 
-The Music Kit supports continuity between notes in a phrase.  When two
+The MusicKit supports continuity between notes in a phrase.  When two
 notes are part of the same phrase (they have the same time tag) or a
 sounding note is updated by a noteUpdate, the envelope of the latter
 note does not simply interrupt that of the earlier note.  Rather, the

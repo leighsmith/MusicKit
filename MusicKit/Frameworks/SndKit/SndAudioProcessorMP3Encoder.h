@@ -43,14 +43,12 @@
 // in the README file in the libshout source directory.
 
 /*!
- @enum SndMP3EncoderParam
- @brief Parameter keys
+ @brief SndMP3EncoderParam Parameter keys
  @constant mp3enc_kServerAddress  Server address (as ip or url)
  @constant mp3enc_kServerPort  Server port
  @constant mp3enc_kServerPassword  Server password
  @constant mp3enc_kNumParams  Number of parameters 
  */
-
 enum {
   mp3enc_kServerAddress  = 0,
   mp3enc_kServerPort     = 1,

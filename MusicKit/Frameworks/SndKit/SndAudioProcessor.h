@@ -94,8 +94,8 @@
 
 /*!
   @brief   Initialization method
-  @param      count
-  @param      name
+  @param      count Number of parameters.
+  @param      name Name of sound audio processor.
   @return     Returns <B>self</B>.
 */
 - initWithParamCount: (const int) count name: (NSString *) name;

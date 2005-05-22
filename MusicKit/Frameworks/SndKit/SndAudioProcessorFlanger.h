@@ -22,8 +22,7 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum SndFlangerParam
- @brief Parameter keys
+ @brief SndFlangerParam Parameter keys
  @constant flanger_kRate  Sweep rate
  @constant flanger_kMin  Minimum z buffer extent
  @constant flanger_kMax  Maximum z buffer extent
@@ -32,8 +31,7 @@
  @constant flanger_kFeedback  Feedback
  @constant flanger_kNumParams  Number of parameters
  */
-enum
-{
+enum {
   flanger_kRate      = 0,
   flanger_kMin       = 1,
   flanger_kMax       = 2,

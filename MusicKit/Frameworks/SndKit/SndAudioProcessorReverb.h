@@ -26,8 +26,7 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum SndReverbParam
- @brief Parameter keys
+ @brief SndReverbParam Parameter keys
  @constant rvrbRoomSize  Room size
  @constant rvrbDamp  Damping amount
  @constant rvrbWet  Wet level

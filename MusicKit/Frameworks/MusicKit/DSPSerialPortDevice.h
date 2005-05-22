@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2005/05/22 07:34:06  leighsmith
+  Corrected and updated headerdoc
+
   Revision 1.7  2005/05/14 03:27:26  leighsmith
   Clean up of parameter names to correct doxygen warnings
 
@@ -173,7 +176,7 @@ instance of DSPSerialPortDevice or one of its subclasses.
   the length of the array.  A subclass may override this
   method.
 */
--(int)hardwareSupportedSamplingRates:(double **)ar ;
+-(int)hardwareSupportedSamplingRates:(double **) rates;
 
 /*!
   @param  rate is a double.
@@ -301,17 +304,15 @@ instance of DSPSerialPortDevice or one of its subclasses.
   setting up the serial port, before the DSP produces output.  The
   default version of this method does nothing. 
 */
--unMuteSerialPort:orch;
+-unMuteSerialPort: (id) orchestra;
 
 /*!
   @param  orchestra is an id.
   @return Returns an id.
   @brief Subclass may override this method to do any special muting or other
   things needed for clean shut-down.
-
-  
 */
--closeDownSerialPort:orch;
+-closeDownSerialPort: (id) orchestra;
 
 /*!
   @param  system is a DSPLoadSpec *.
@@ -357,10 +358,8 @@ Solutions AD64x ADC &amp; DAT interface.
   @return Returns an int.
   @brief Returns 3 and sets *<i>rates</i> to a malloc'ed array containing
   48000, 44100, and 32000.
-
-  
 */
--(int)hardwareSupportedSamplingRates:(double **)ar;
+-(int)hardwareSupportedSamplingRates:(double **)rates;
 
 /*!
   @param  orchestra is an id.
@@ -371,7 +370,7 @@ Solutions AD64x ADC &amp; DAT interface.
   the appropriate values for the AD64x.   If sendsSettings is YES, it
   sets the device to the proper sampling rate and professional/consumer mode setting.
 */
--setUpSerialPort:orchestra;
+-setUpSerialPort: (id) orchestra;
 
 /*!
   @return Returns an int.
@@ -397,19 +396,15 @@ Solutions AD64x ADC &amp; DAT interface.
   @param  orchestra is an id.
   @return Returns an id.
   @brief Unmutes device.
-
-  
 */
--unMuteSerialPort:orch;
+-unMuteSerialPort: (id) orchestra;
 
 /*!
   @param  orchestra is an id.
   @return Returns an id.
   @brief Mutes device to prevent buzzing.
-
-  
 */
--closeDownSerialPort:orch;
+-closeDownSerialPort: (id) orchestra;
 
 @end
 
@@ -447,7 +442,7 @@ Stealth DAI2400 DAT interface.
 
   
 */
--setEmphasis:(BOOL)yesOrNo;
+-setEmphasis:(BOOL)useEmphasis;
 
 /*!
   @param  rates is a double **.
@@ -457,17 +452,16 @@ Stealth DAI2400 DAT interface.
 
   
 */
--(int)hardwareSupportedSamplingRates:(double **)ar;
+-(int)hardwareSupportedSamplingRates:(double **)rates;
 
 /*!
   @param  orchestra is an id.
   @return Returns an id.
   @brief This is invoked by Orchestra open to set up the serial port.
 
-  Sends
-  the appropriate values for the StealthDAI2400.
+  Sends the appropriate values for the StealthDAI2400.
 */
--setUpSerialPort:orchestra;
+-setUpSerialPort: (id) orchestra;
 
 @end
 
@@ -501,7 +495,8 @@ Ariel ProPort ADC/DAC interface.
   Sends
   the appropriate values for the ArielProPort.
 */
--setUpSerialPort:orchestra;
+-setUpSerialPort: (id) orchestra;
+
 @end
 
 @interface TurtleBeachMS:DSPSerialPortDevice

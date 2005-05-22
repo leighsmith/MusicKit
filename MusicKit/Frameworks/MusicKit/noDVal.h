@@ -42,9 +42,13 @@
 #ifndef MK_NODVAL
 
 /*!
-  @brief Test for no <b>double</b> value
+  @defgroup NoDValFns Test for no <b>double</b> value.
+ */
 
-  <b>A number of Music Kit functions and methods</b> query for and return
+/*!
+  @brief Returns the special NaN that the MusicKit uses to signal "no value".
+
+  <b>A number of MusicKit functions and methods</b> query for and return
   <b>double</b>-valued quantities, such as the values of parameters and
   time tags.  By convention, the value MK_NODVAL is returned if the
   queried-for value hasn't been set; however, you can't test for this
@@ -57,11 +61,10 @@
   your own design in which you wish to indicate that a
   <b>double</b>-valued quantity hasn't been set.  For convenience,
   MK_NODVAL is defined as this function.  
-  @param  value is a double.
   @return Returns an int.
+  @ingroup NoDValFns
 */
 extern inline double MKGetNoDVal(void)
-  /* Returns the special NaN that the Music Kit uses to signal "no value". */
 {
     union {double d; int i[2];} u;
     u.i[0] = _MK_NANHI;
@@ -70,9 +73,9 @@ extern inline double MKGetNoDVal(void)
 }
 
 /*!
-  @brief Test for no <b>double</b> value
+  @brief Compares value to see if it is the special NaN that the MusicKit uses to signal "no value".
 
-  <b>A number of Music Kit functions and methods</b> query for and return
+  <b>A number of MusicKit functions and methods</b> query for and return
   <b>double</b>-valued quantities, such as the values of parameters and
   time tags.  By convention, the value MK_NODVAL is returned if the
   queried-for value hasn't been set; however, you can't test for this
@@ -82,10 +85,9 @@ extern inline double MKGetNoDVal(void)
      
   @param  value is a double.
   @return Returns an int.
+  @ingroup NoDValFns
 */
-extern inline int MKIsNoDVal(double val)
-  /* Compares val to see if it is the special NaN that the Music Kit uses
-     to signal "no value". */
+extern inline int MKIsNoDVal(double value)
 {
     union {double d; int i[2];} u;
     u.d = val;

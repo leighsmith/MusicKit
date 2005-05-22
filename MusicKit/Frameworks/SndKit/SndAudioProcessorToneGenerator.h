@@ -21,8 +21,7 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum SndToneGenParam
- @brief Parameter keys
+ @brief SndToneGenParam Parameter keys
  @constant toneGen_kFreq  Frequency 
  @constant toneGen_kAmp  Amplitude
  @constant toneGen_kPhase  Phase offset

@@ -94,35 +94,31 @@ that overrides the <b>-outputChannelCount</b> method to return 4 and overrides t
 - setScale: (double) value;
 
 /*!
-  @param  chan is an int.
-  @return Returns an id.
   @brief Sets the channel to which the Out1nUG sends its output.
 
-  
   <i>chan</i> is 0-based.   For example, in a square quadraphonic
   configuration, the channels would be as follows:
   	
-  <i><u>chan</u></i>	<i><u>position</u></i>	
+  <i><b>chan</b></i>	<i><b>position</b></i>	
   0		left front	
   1		right front	
   2		right rear (or left rear, if using "Z" convention)	
   3		left rear (or right rear, if using "Z" convention)
   
   You should never set <i>chan</i> greater than or equal to the number of output channels.  
+  @param  chan is an int.
+  @return Returns an id.
 */
--setChannel:(int)chan;
-/* Sets channel.  chan is 0-based. */ 
+- setChannel: (int) chan;
 
 /*!
-  @return Returns an id.
   @brief If scale has not been set, sets it to 1.0.
 
-  This method is invoked
-  when you send the <b>run </b>message to the object.
+  This method is invoked when you send the <b>run</b> message to the object.
+  @return Returns an id.
 */
 -runSelf;
 /* If scaling has not been set, sets it to 1-e. */
-
 
 /*!
   @param  aPatchPoint is an id.

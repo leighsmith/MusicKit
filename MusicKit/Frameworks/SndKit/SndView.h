@@ -594,7 +594,7 @@ enum SndViewStereoMode {
   recording has completed. Recorded data is always taken from the
   CODEC microphone input.
 */
-- (void) record: sender;
+- (void) record: (id) sender;
 
 /*!
   @param  sender is an id.
