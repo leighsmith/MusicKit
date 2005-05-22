@@ -109,13 +109,12 @@ typedef int MKMDReturn;
 #define MKMD_PORT_NULL 0
 
 /*!
-  @typedef MKMDRawEvent
   @brief Each raw event consists of a MIDI message byte and a time stamp.
-  @field time Absolute time in quanta
-  @field byte The byte
 */
 typedef struct {
-    int time; 
+    /*! @brief Absolute time in quanta. */
+    int time;
+    /*! @brief The MIDI message byte. */
     unsigned char byte;
 } MKMDRawEvent;
 
