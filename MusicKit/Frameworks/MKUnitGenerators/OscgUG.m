@@ -29,6 +29,9 @@
 /* 
   Modification history:
   $Log$
+  Revision 1.4  2005/05/27 04:28:33  leighsmith
+  Renamed _MKErrorf() to the latest MKErrorCode() naming
+
   Revision 1.3  2000/06/13 19:25:01  leigh
   Now use SndKit and MKDSP frameworks, cleaned doco
 
@@ -104,7 +107,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	    [self setTableToSineROM];
 	}
 	else {
-            _MKErrorf(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) cString]);
 	    return nil;
 	}
     }
@@ -309,7 +312,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	    /* The following statement added by DAJ */
 	    if (anObj != synthData) /* If user alloced, let it be */
 	      [synthData mkdealloc];  /* Release our claim on it. */
-            _MKErrorf(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
 	    return nil;
 	}
 	/* Set some relevant instance variables. */
@@ -331,7 +334,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	if (MKIsTraced(MK_TRACEUNITGENERATOR))
 	  fprintf(stderr,"X-space oscgaf cannot use sine ROM at time %.3f. \n",
 		  MKGetTime());
-	_MKErrorf(MK_spsCantGetMemoryErr,"",MKGetTime());
+	MKErrorCode(MK_spsCantGetMemoryErr,"",MKGetTime());
 	return nil; /* added by Daj */
     }
     if (_table) {  /* Added by DAJ. */
@@ -354,7 +357,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	success = [self setTableToSineROM];
 	if (anObj && /* If anObj is nil (user-specified sine ROM), don't warn */
 	    success) 
-	  _MKErrorf(MK_spsSineROMSubstitutionErr, MKGetTime());
+	  MKErrorCode(MK_spsSineROMSubstitutionErr, MKGetTime());
     }
     return success;
 }

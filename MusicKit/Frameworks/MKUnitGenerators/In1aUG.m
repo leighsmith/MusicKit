@@ -11,6 +11,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.4  2005/05/27 04:28:33  leighsmith
+  Renamed _MKErrorf() to the latest MKErrorCode() naming
+
   Revision 1.3  2000/06/13 19:25:01  leigh
   Now use SndKit and MKDSP frameworks, cleaned doco
 
@@ -47,7 +50,7 @@ extern DSPFix48 *_MKCurSample(id orch);
     int release;
     [orchestra getMonitorVersion:&version release:&release];
     if (version != 'A')
-      _MKErrorf(MK_dspMonitorVersionError,[self class]);
+      MKErrorCode(MK_dspMonitorVersionError,[self class]);
     if (DSPMKSendValueTimed(_MKCurSample(orchestra),DSP_X_SSI_REP,
 			    DSPLCtoMS[(int)DSP_LC_P],relocation.pLoop+2))
       return nil;

@@ -11,6 +11,9 @@
 /*
 Modification history:
   $Log$
+  Revision 1.4  2005/05/27 04:28:33  leighsmith
+  Renamed _MKErrorf() to the latest MKErrorCode() naming
+
   Revision 1.3  2000/06/13 19:25:01  leigh
   Now use SndKit and MKDSP frameworks, cleaned doco
 
@@ -39,7 +42,7 @@ enum args { chan, scl, dspptr, oadr, skip };
     [super init];
     [orchestra getMonitorVersion:&version release:&release];
     if (version != 'A')
-      _MKErrorf(MK_dspMonitorVersionError,[self class]);
+      MKErrorCode(MK_dspMonitorVersionError,[self class]);
     qpSatellite = 0;
     return [self setAddressArg:skip toInt:DSP_X_O_SFRAME_W];
 }
@@ -70,7 +73,7 @@ enum args { chan, scl, dspptr, oadr, skip };
     sprintf(s,"X_SAT%d_REP",num);
     addr = DSPGetSystemSymbolValueInLC(s, DSP_LC_X);
     if (!addr) {
-	_MKErrorf(MK_dspMonitorVersionError,[self class]);
+	MKErrorCode(MK_dspMonitorVersionError,[self class]);
 	return nil;
     }
     return [self setAddressArg:dspptr toInt:addr];

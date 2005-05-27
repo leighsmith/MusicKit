@@ -47,7 +47,7 @@ enum args { ainp, aout, pdel, adel, edel};
     [super init];
     [orchestra getMonitorVersion:&version release:&release];
     if (version != 'A')
-      _MKErrorf(MK_dspMonitorVersionError,[self class]);
+      MKErrorCode(MK_dspMonitorVersionError,[self class]);
     return self;
 }
 

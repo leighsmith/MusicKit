@@ -168,7 +168,7 @@ static id clockConductor = nil;
   [super init];
   [orchestra getMonitorVersion:&version release:&release];
   if (version != 'A')
-    _MKErrorf(MK_dspMonitorVersionError,[self class]);
+    MKErrorCode(MK_dspMonitorVersionError,[self class]);
   _samplingRate = [orchestra samplingRate];
   _smoothConstant = -T48COEFF / _samplingRate;
   _tickRate = _samplingRate/DSPMK_NTICK + 0.5;

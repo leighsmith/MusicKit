@@ -47,7 +47,7 @@ extern DSPFix48 *_MKCurSample(id orch);
     int release;
     [orchestra getMonitorVersion:&version release:&release];
     if (version != 'A')
-      _MKErrorf(MK_dspMonitorVersionError,[self class]);
+      MKErrorCode(MK_dspMonitorVersionError,[self class]);
     if (DSPMKSendValueTimed(_MKCurSample(orchestra),DSP_X_DMA_WFP,
 			    DSPLCtoMS[(int)DSP_LC_P],relocation.pLoop+2))
       return nil;

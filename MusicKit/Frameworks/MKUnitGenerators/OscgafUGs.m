@@ -53,6 +53,9 @@
 /* 
   Modification history:
   $Log$
+  Revision 1.5  2005/05/27 04:28:33  leighsmith
+  Renamed _MKErrorf() to the latest MKErrorCode() naming
+
   Revision 1.4  2001/09/15 18:24:08  leighsmith
   Corrected headerfile name include
 
@@ -129,7 +132,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
     [super init];
     [orchestra getMonitorVersion:&version release:&release];
     if (version != 'A')
-      _MKErrorf(MK_dspMonitorVersionError,[self class]);
+      MKErrorCode(MK_dspMonitorVersionError,[self class]);
     _phase = MK_NODVAL;
     _mag = MK_NODVAL;
     incRatio = MK_NODVAL;
@@ -147,7 +150,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	    [self setTableToSineROM];
 	}
 	else {
-            _MKErrorf(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) cString]);
 	    return nil;
 	}
     }
@@ -249,7 +252,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
      table must be set before sending this message.  */
 {
     if (tableLength == 0) {
-        _MKErrorf(MK_ugsNotSetGetErr,LOOKUP_TABLE_STR,[NSStringFromClass([self class]) cString],INCREMENT_STR);
+        MKErrorCode(MK_ugsNotSetGetErr,LOOKUP_TABLE_STR,[NSStringFromClass([self class]) cString],INCREMENT_STR);
 	return 0.0;
     }
     return (MKIsNoDVal(aFreq)) ? MK_NODVAL : 
@@ -345,7 +348,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	    /* The following statement added by DAJ */
 	    if (anObj != synthData) /* If user alloced, let it be */
 	      [synthData mkdealloc];  /* Release our claim on it. */
-            _MKErrorf(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
 	    return nil;
 	}
 	/* Set some relevant instance variables. */
@@ -367,7 +370,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	if (MKIsTraced(MK_TRACEUNITGENERATOR))
 	  fprintf(stderr,"X-space oscgaf cannot use sine ROM at time %.3f. \n",
 		  MKGetTime());
-	_MKErrorf(MK_spsCantGetMemoryErr,"",MKGetTime());
+	MKErrorCode(MK_spsCantGetMemoryErr,"",MKGetTime());
 	return nil; /* added by Daj */
     }
     if (_table) {  /* Added by DAJ. */
@@ -390,7 +393,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	success = [self setTableToSineROM];
 	if (anObj && /* If anObj is nil (user-specified sine ROM), don't warn */
 	    success) 
-	  _MKErrorf(MK_spsSineROMSubstitutionErr, MKGetTime());
+	  MKErrorCode(MK_spsSineROMSubstitutionErr, MKGetTime());
     }
     return success;
 }
