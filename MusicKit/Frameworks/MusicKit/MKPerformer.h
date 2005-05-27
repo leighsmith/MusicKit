@@ -175,9 +175,19 @@ the MusicKit MKPartPerformer:
 #import "MKNoteSender.h"
 #import "MKConductor.h"
 
-typedef enum _MKPerformerStatus { /* Status for Performers. */
+/*!
+  @brief This enumeration defines the state of a MKPerformer.  A MKPerformer may be
+ in one of the following three states:
+ */
+typedef enum _MKPerformerStatus {
+    /*! Not yet activated or already deactivated. */
     MK_inactive,
+    /*! MKPerformer has been activated. MKPerformer is either performing
+       (if [MKConductor startPerformance] has been invoked), or will start
+       performing when the performance starts (as soon as 
+       [MKConductor startPerformance] is invoked.) */
     MK_active,
+    /*! MKPerformer was activated, then paused. */
     MK_paused
 } MKPerformerStatus;
 

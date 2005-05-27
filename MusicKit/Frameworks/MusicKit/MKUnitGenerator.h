@@ -47,14 +47,13 @@
     instance of one.  MKUnitGenerator objects are always instances of leaf
     classes.
     
-    CF: MKSynthData, MKSynthPatch, MKOrchestra
 
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
 /*!
   @class MKUnitGenerator
@@ -137,6 +136,8 @@ You can modify a master class - for example, the <b>setFreq:</b> method
 mentioned above would be implemented in a master class - but you never create an
 instance of one.  MKUnitGenerator objects are always instances of leaf
 classes.
+ 
+  @see MKSynthData, MKSynthPatch, MKOrchestra
 */
 #ifndef __MK_UnitGenerator_H___
 #define __MK_UnitGenerator_H___
@@ -148,16 +149,25 @@ classes.
 #import <Foundation/NSObject.h>
 #import "orch.h"
 
-typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
-    MKOrchAddrStruct addrStruct;  /* Specifies location of arg. */
-    DSPMemorySpace addressMemSpace;/* For address-valued arguments, 
-                      space where the DSP code assumes the 
-                      address is or DSP_MS_N */
-    DSPLongDatum curVal;           /* The most recently poked value of arg.
-                      If arg is not long, low order word
-                      is ignored. (Used by optimizer)  */
-    BOOL initialized;              /* Argument set yet? (Used by optimizer) */
-    int type;                      /* Reserved. */
+/*!
+  @brief <b>MKUGArgStruct</b> is the structure that represents each DSP unit
+  generator memory argument.  All fields are private and should not be
+  altered.  The meaning of the fields is as follows:
+ */
+typedef struct _MKUGArgStruct {
+    /*! Specifies location of the argument on the DSP. */
+    MKOrchAddrStruct addrStruct;
+    /*! For address-valued memory arguments, this is the memory space where the DSP 
+       code assumes the address is located. For datum-valued memory arguments,
+       <b>addressMemSpace</b> is DSP_MS_N. */
+    DSPMemorySpace addressMemSpace;
+    /*! Most-recently sent value for this argument.  If type is not long, low order word is ignored. 
+       (Used by optimizer) */
+    DSPLongDatum curVal;
+    /*! YES if a value has been sent to the DSP since the object was instantiated. (Used by optimizer) */
+    BOOL initialized;
+    /*! Unused, Reserved. */
+    int type;
 } MKUGArgStruct;
 
 #import "dspwrap.h"

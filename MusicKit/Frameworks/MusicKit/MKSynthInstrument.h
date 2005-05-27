@@ -92,9 +92,47 @@ You can examine the updates and controllerTable with the method
 #ifndef __MK_SynthInstrument_H___
 #define __MK_SynthInstrument_H___
 
+/*!
+  @defgroup SynthInstrumentAllocConsts MKSynthInstrument Allocation Constants
+  @brief MKSynthInstrument Allocation Constants.
+
+  The steps performed by MKSynthInstrument for each of the allocation
+  modes are given below:
+ 
+ MANUAL:
+ <ul>
+ <li>1m. Look for idle patch of correct template.</li>
+ <li>2m. Else try and preempt patch of correct template.</li>
+ <li>3m. Else look for idle patch of incorrect template.</li>
+ <li>4m. Else try and preempt patch of incorrect template.</li>
+ <li>5m. Else give up.</li>
+ </ul>
+ 
+ AUTO:
+ <ul>
+ <li>1a. Try to alloc a new patch of correct template.</li>
+ <li>2a. Else try and preempt patch of correct template.</li>
+ <li>3a. Else try and preempt patch of incorrect template.</li>
+ <li>4a. Else give up.</li>
+ </ul>
+ 
+ MIXED
+ Same as MANUAL, except for the insertion of step 1m+ after 1m:
+ <ul>
+ <li>1m+. Try to alloc a new patch of correct template.</li>
+ </ul>
+ */
+
+/*{*/
+
+/*! Automatic allocation from a global pool. */
 #define MK_AUTOALLOC 0
+/*! Allocation from a local, manually-allocated, pool. */
 #define MK_MANUALALLOC 1
+/*! Hybrid between AUTO and MANUAL. First tries local pool, then tries global pool. */
 #define MK_MIXEDALLOC 2
+
+/*}*/
 
 #import "MKInstrument.h"
 #import "MKNote.h"
@@ -102,13 +140,13 @@ You can examine the updates and controllerTable with the method
 
 @interface MKSynthInstrument : MKInstrument
 {
-    id synthPatchClass;                   /* class used to create patches. */
-    unsigned short allocMode;             /* One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
-    NSMutableDictionary *taggedPatches;   /* Dictionary mapping noteTags to MKSynthPatches */
-    NSMutableDictionary *controllerTable; /* Dictionary mapping MIDI controllers to values */
-    MKNote *updates;                      /* MKNote for storing common (no noteTag) updates. */
-    BOOL retainUpdates;                   /* NO if updates and controllerTable are cleared after each performance. */
-    Class orchestra;               	  /* MKOrchestra class to allocate MKSynthPatches from */
+    id synthPatchClass;                   /*!< class used to create patches. */
+    unsigned short allocMode;             /*!< One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
+    NSMutableDictionary *taggedPatches;   /*!< Dictionary mapping noteTags to MKSynthPatches */
+    NSMutableDictionary *controllerTable; /*!< Dictionary mapping MIDI controllers to values */
+    MKNote *updates;                      /*!< MKNote for storing common (no noteTag) updates. */
+    BOOL retainUpdates;                   /*!< NO if updates and controllerTable are cleared after each performance. */
+    Class orchestra;               	  /*!< MKOrchestra class to allocate MKSynthPatches from */
 
 @private
     NSMutableArray *_patchLists;
@@ -136,9 +174,9 @@ You can examine the updates and controllerTable with the method
   If you decrease the number of manually allocated MKSynthPatches during a performance, 
   the extra MKSynthPatches aren't deallocated until they become inactive.  In other words,
   reallocating downward won't interrupt notes that are already sounding.
- @param  voices is an int.
- @param  aTemplate is an id.
- @return Returns an int.
+  @param  voices is an int.
+  @param  aTemplate is an id.
+  @return Returns an int.
  */
 - (int) setSynthPatchCount: (int) voices patchTemplate: (id) aTemplate;
 
@@ -150,14 +188,13 @@ You can examine the updates and controllerTable with the method
   <tt>[self setSynthPatchCount: voices template: nil];</tt>
   
   Returns the number of objects that were allocated.
- @param  voices is an int.
- @return Returns an int.
+  @param  voices is an int.
+  @return Returns an int.
 */
 - (int) setSynthPatchCount: (int) voices;
 
 /*!
-  @brief Returns the number of allocated MKSynthPatch objects created with the
-  MKPatchTemplate <i>aTemplate</i>.
+  @brief Returns the number of allocated MKSynthPatch objects created with the MKPatchTemplate <i>aTemplate</i>.
   @param  aTemplate is an id.
   @return Returns an int.
 */

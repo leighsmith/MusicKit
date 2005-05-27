@@ -42,6 +42,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2005/05/27 09:52:25  leighsmith
+  Added constants and types doxygen comments from old RTF doco
+
   Revision 1.7  2005/05/22 07:34:06  leighsmith
   Corrected and updated headerdoc
 
@@ -160,10 +163,12 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 #import "MKOrchestra.h"
 #import "MKSynthData.h"
 
+/*! Special QuintProcessor DRAM location that always holds a zero. */
 #define MK_DRAM_ZERO 0           /* Use first sample as a ZERO */
+/*! Special QuintProcessor DRAM location that acts as a "sink" or "bit bucket." */
 #define MK_DRAM_SINK 1           /* Use second sample as a SINK */
 
-@interface ArielQP:MKOrchestra
+@interface ArielQP: MKOrchestra
 {
     int slot;         /* One of 2, 4 or 6 */
     BOOL satSoundIn;  /* YES if we're receiving sound from the satellites */
@@ -177,8 +182,7 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
   @return Returns an id.
   @brief If an ArielQP for slot 2 already exists, returns it.
 
-  Otherwise, if
-  an Ariel QuintProcessor board is installed in slot 2, creates and
+  Otherwise, if an Ariel QuintProcessor board is installed in slot 2, creates and
   returns a new instance of ArielQP and creates, if necessary, four
   instances of ArielQPSat.  Otherwise returns nil.
 */
@@ -189,7 +193,6 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
   @return Returns an id.
   @brief If an ArielQP for the specified already exists, returns it.
 
-  
   Otherwise, if an Ariel QuintProcessor board is installed in the
   specified, creates and returns a new instance of ArielQP and
   creates, if necessary, four instances of ArielQPSat.  Otherwise
@@ -244,8 +247,6 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 /*!
   @return Returns a BOOL.
   @brief Returns whether Auto Refresh is on.
-
-  
 */
 -(BOOL)DRAMAutoRefresh;
 
@@ -253,8 +254,6 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
   @return Returns a BOOL.
   @brief Returns whether the hub/satellite inter-process sound link is
   enabled.
-
-  
 */
 -(BOOL)satSoundIn;
 
@@ -331,9 +330,7 @@ message, automatically disables the other.
 
 /*!
   @return Returns an id.
-  @brief Returns the hub corresponding to this satellite.
-
-  
+  @brief Returns the hub corresponding to this satellite.  
 */
 -hub;
 
@@ -363,8 +360,6 @@ message, automatically disables the other.
   @return Returns a BOOL.
   @brief Returns whether the hub/satellite inter-process sound link is
   enabled.
-
-  
 */
 -(BOOL)hubSoundOut;
 
@@ -372,8 +367,7 @@ message, automatically disables the other.
   @return Returns an int.
   @brief If hub sound out, forwards this message to the hub.
 
-  Otherwise
-  invokes super's version of this method.
+  Otherwise invokes super's version of this method.
 */
 -(int)outputChannelOffset;
 
@@ -381,8 +375,7 @@ message, automatically disables the other.
   @return Returns an int.
   @brief If hub sound out, forwards this message to the hub.
 
-  Otherwise
-  invokes super's version of this method.
+  Otherwise invokes super's version of this method.
 */
 -(int)outputChannelCount;
 
@@ -390,8 +383,7 @@ message, automatically disables the other.
   @return Returns an int.
   @brief If hub sound out, forwards this message to the hub.
 
-  Otherwise
-  invokes super's version of this method.
+  Otherwise invokes super's version of this method.
 */
 -(int)outputInitialOffset;
 
@@ -399,8 +391,7 @@ message, automatically disables the other.
   @return Returns a BOOL.
   @brief If hub sound out, forwards this message to the hub.
 
-  Otherwise
-  invokes super's version of this method.
+  Otherwise invokes super's version of this method.
 */
 -(BOOL)upSamplingOutput;
 
@@ -408,8 +399,7 @@ message, automatically disables the other.
   @return Returns a BOOL.
   @brief If hub sound out, forwards this message to the hub.
 
-  Otherwise
-  invokes super's version of this method.
+  Otherwise invokes super's version of this method.
 */
 -(BOOL)isRealTime;
 /* 
@@ -425,8 +415,6 @@ message, automatically disables the other.
   @brief Same as superclass method except that sending this message
   automatically sends <b>setHubSoundOut:NO</b> if hubSoundOut is
   enabled.
-
-  
 */
 -setSerialSoundOut:(BOOL)yesOrNo;
 

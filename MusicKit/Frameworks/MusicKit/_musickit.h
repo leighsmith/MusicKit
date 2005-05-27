@@ -143,22 +143,21 @@ extern BOOL _MKInheritsFrom(id aFactObj,id superObj);
 
 #define _MK_PERMS 0664 /* RW for owner and group. R for others */ 
 
-#define _MK_DPSPRIORITY NSDefaultRunLoopMode 	/*sb: or is it NSEventTrackingRunLoopMode?
-						 * originally: 30 */
+#define _MK_DPSPRIORITY NSDefaultRunLoopMode 	/* sb: or is it NSEventTrackingRunLoopMode? originally: 30 */
 						/* Almost maximum. Display Postscript priority */
 
- /*
-  * The following magic number appears as the first 4 bytes of the optimized 
-  * scorefile (".playscore" file extension). It is used for type checking and 
-  * byte ordering information.
-  */
+/*!
+  @brief Magic number at the start of an optimized scorefile
+ 
+  Optimized scorefiles are stored in the file system with a <i>.playscore</i> file name extension.
+  Such files are recognized programmatically by a unique 4-byte constant that starts the file.
+  It is used for type checking and byte ordering information.
+  MK_SCOREMAGIC gives this constant. Note that binary scorefiles are always stored big-endian.
+ */
 #define MK_SCOREMAGIC ((int)0x2e706c61)  // ".pla"
 
 /* Initialization of musickit */
 extern void _MKCheckInit();
-
-//sb: needed?
-//#import <objc/objc-runtime.h>
 
 /* The following finds the class or nil if its not there. */
 /*sb: this is the proper OpenStep way, as far as I know */

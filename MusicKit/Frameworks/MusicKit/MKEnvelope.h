@@ -129,12 +129,20 @@ MKEnvelope be used when Envelopes are automatically created.
 
 #import <Foundation/Foundation.h>
 
+/*!
+  @brief This enumeration defines the return values of the MKEnvelope method
+  <b>getNth:x:y:smoothing:</b>.
+ */
 typedef enum _MKEnvStatus { 
+    /*! Attempt to read invalid point in envelope. */
     MK_noMorePoints = -1,
+    /*! MKEnvelope has not been properly initialized. */
     MK_noEnvError = 0,
+    /*! The requested point is the stick point of the MKEnvelope. */
     MK_stickPoint,
-    MK_lastPoint} 
-MKEnvStatus;
+    /*! The requested point is the last point of the MKEnvelope. */
+    MK_lastPoint
+} MKEnvStatus;
 
 @interface MKEnvelope : NSObject
 {

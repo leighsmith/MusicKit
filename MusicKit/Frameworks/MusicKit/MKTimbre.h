@@ -105,15 +105,15 @@ method  to retrieve the database and then archiving that object.
     NSMutableArray *waveTables;         /* Array object of MKWaveTables */
 }
 
+/*! Maximum length of the name of a MKTimbre object. */
 #define MK_MAXTIMBRENAMELEN 64
 
 /*!
-  @brief Retrieve timbre if it exists, otherwise create it and install it in
-  Data Base.
- @param  name is an NSString.
- @return Returns an id.
+  @brief Retrieve timbre if it exists, otherwise create it and install it in Data Base.
+  @param  name is an NSString.
+  @return Returns an id.
 */
-+newTimbre:(NSString *)name;
++ newTimbre: (NSString *) name;
 
 /*!
   @brief Initialize timbre to be a new anonymous timbre.

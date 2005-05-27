@@ -76,14 +76,40 @@ stream that it's synthesizing.
 #import "MKUnitGenerator.h"
 #import "orch.h"
 
+/*!
+@brief This enumeration defines the state of a MKSynthPatch and is designed for
+ use in a MKSynthPatch subclass implementation.  Each instance of
+ MKSynthPatch performs a single musical voice.  The <b>MKPhraseStatus</b>
+ defines where in the phrase that voice is.  The method
+ <b>phraseStatus</b> returns one of these values.  MKNote that if a
+ MKSynthPatch is not in one of the subclass methods <b>noteOnSelf:,
+ noteOffSelf:, noteUpdateSelf:,</b> or<b> noteEndSelf</b>, the method
+ <b>phraseStatus</b> returns <b>MK_noPhraseActivity.</b>
+ 
+ */
+
 typedef enum _MKPhraseStatus {
+    /*! MKSynthPatch is processing a noteOn for a new phrase. */
     MK_phraseOn,
+    /*! MKSynthPatch is processing a noteOn for a preempted phrase.  That is, a phrase
+    for another noteTag was preempted because there were not enough DSP
+    resources available to play the new note. */
     MK_phraseOnPreempt,
+    /*! MKSynthPatch is processing a noteOn for a rearticulation of an existing phrase.
+    That is, a noteOn has been received for a noteTag that is already in the process
+    of playing a phrase. */
     MK_phraseRearticulate,
+    /*! MKSynthPatch is processing a noteUpdate for a phrase
+    that has received a noteOn but has not yet received a noteOff. */
     MK_phraseUpdate,
+    /*! MKSynthPatch is processing a noteOff. */
     MK_phraseOff,
+    /*! MKSynthPatch is processing a noteUpdate for a phrase that has received a noteOff. */
     MK_phraseOffUpdate,
+    /*! MKSynthPatch is executing the <b>noteEnd</b> method.*/
     MK_phraseEnd,
+    /*! MKSynthPatch is not currently executing any of the methods <b>noteOnSelf:</b>,
+    <b>noteOffSelf:</b>, <b>noteUpdateSelf</b>, or <b>noteEndSelf</b>. */
     MK_noPhraseActivity
 } MKPhraseStatus;
 

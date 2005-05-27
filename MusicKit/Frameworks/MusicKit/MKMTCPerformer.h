@@ -164,34 +164,51 @@ MKConductor's time base.
 #define __MK_MTCPerformer_H___
 #import "MKPerformer.h"
 
-/* The following defines must agree with the MIDI time code spec. */
+/*!
+  @brief Midi Time Code Constants
+ 
+  These constants define the MIDI Time code formats and directions used by
+  the MTCPerformer class.
+  The following defines must agree with the MIDI time code spec.
+ */
+
+/*! 24 frame/sec. MIDI Time code format */
 #define MK_MTC_FORMAT_24      0   
+/*! 25 frame/sec. MIDI Time code format */
 #define MK_MTC_FORMAT_25      1
+/*! 30 frame/sec., drop frame. MIDI Time code format */
 #define MK_MTC_FORMAT_DROP_30 2
+/*! 30 frame/sec., non-drop frame. MIDI Time code format */
 #define MK_MTC_FORMAT_30      3
 
+/*! Reverse MIDI Time code direction. */
 #define MK_MTC_REVERSE (-1)
+/*! Forward MIDI Time code direction. */
 #define MK_MTC_FORWARD 1
 
-/* These functions do not compensate for deltaT.  They're just straight
- * translation  
+/* These functions do not compensate for deltaT.  They're just straight translation  
  */
-extern double 
-  MKConvertMTCToSeconds(short format,short hours,short minutes,short seconds,
-			short frames);
+extern double MKConvertMTCToSeconds(short format,
+				    short hours,
+				    short minutes,
+				    short seconds,
+				    short frames);
 
-extern void 
-  MKConvertSecondsToMTC(double seconds,short format,short *hoursPtr,short *minutesPtr,
-			short *secondsPtr,short *framesPtr);
+extern void MKConvertSecondsToMTC(double seconds, 
+				  short format,
+				  short *hoursPtr,
+				  short *minutesPtr,
+				  short *secondsPtr,
+				  short *framesPtr);
 
-@interface MKMTCPerformer:MKPerformer
+@interface MKMTCPerformer: MKPerformer
 {
-    double firstTimeTag;   /* firstTimeTag, as specified by user. */
-    double lastTimeTag;    /* lastTimeTag, as specified by user. */
-    int direction;         /* 1 for forward, -1 for reverse */
-    short format;          /* MTC format */
-    id noteSender;
-    id aNote;
+    double firstTimeTag;   /*!< firstTimeTag, as specified by user. */
+    double lastTimeTag;    /*!< lastTimeTag, as specified by user. */
+    int direction;         /*!< 1 for forward, -1 for reverse. */
+    short format;          /*!< MTC format. */
+    id noteSender;  // TODO MKNoteSender *
+    id aNote; // TODO MKNote *
     BOOL frozen;
 
 @private

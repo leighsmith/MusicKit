@@ -1,51 +1,67 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.3  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.2  1999/07/29 01:26:04  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+ 
+  Description:
+    The following is the UnitGenerator's interface with the MC56001. You
+    never need to deal with these structures. They are generated automatically
+    by the utility dspwrap.
+ 
+ Copyright 1988-1992, NeXT Inc.  All rights reserved.
+ Portions Copyright 1999-2005 The MusicKit Project.
 */
 #ifndef __MK_dspwrap_H___
 #define __MK_dspwrap_H___
 
-/* The following is the UnitGenerator's interface with the MC56001. You
-   never need to deal with these structures. They are generated automatically
-   by the utility dspwrap. */
-
-typedef struct _MKMasterUGStruct { /* Used by MKUnitGenerator "master" class. */
-    unsigned argCount;             /* Number of arguments. */
-    int symCount[DSP_LC_NUM];      /* Number of symbols loaded in each space.
-                      Needed for symbols that are not args. */
-    int fixupCount[DSP_LC_NUM_P];  /* Number of fixups in each P space */
-    DSPSymbol *symbols[DSP_LC_NUM];/* Symbol list per DSP location ctr. */
-    DSPSymbol *argSymbols;         /* Array of argument symbols. */
-    void *reserved;                /* Reserved */ 
+/*!
+  @brief The <b>MKMasterUGStruct</b> struct represents the DSP statistics of a
+  "master" MKUnitGenerator class.  That is, it contains all the
+  information common to the subclasses.  Its fields should not be altered.
+  Their meaning is as follows:
+ */
+typedef struct _MKMasterUGStruct {
+    /*! Number of memory arguments. */
+    unsigned argCount;
+    /*! Number of symbols loaded in each space.  Needed for symbols that are not args.*/
+    int symCount[DSP_LC_NUM];
+    /*! Number of fixups in each P space.*/
+    int fixupCount[DSP_LC_NUM_P];
+    /*! Symbol list for each DSP location counter.*/
+    DSPSymbol *symbols[DSP_LC_NUM];
+    /*! Array of symbols corresponding to memory arguments.*/
+    DSPSymbol *argSymbols;
+    /*! Reserved.*/
+    void *reserved;
 } MKMasterUGStruct;
 
-typedef struct _MKLeafUGStruct {    /* Used by MKUnitGenerator "leaf" class. */
-    MKOrchMemStruct reso;           /* Resources needed  */
-    double computeTime;             /* Time for this unit generator to
-                                       compute one sample, in seconds. */
-    id **availLists;                /* Array of lists of idle patches,
-                                       indexed by dsp number. */
-    DSPDataRecord *data[DSP_LC_NUM];/* Sorted absolute data records */
-    DSPFixup *fixups[DSP_LC_NUM_P]; /* Fix-up array for each P space */
-    DSPMemorySpace *argSpaces;      /* Array which tells which space each
-                                       argument points to. If the argument
-                                       is not address-valued, the array value 
-                                       here is DSP_MS_N. */
-    MKMasterUGStruct *master;       /* Pointer to master UGStruct  */
+/*!
+  @brief The <b>MKLeafUGStruct</b> struct represents the DSP statistics of a
+  "leaf" MKUnitGenerator class.  That is, it contains the information
+  specific to a particular memory space combination.  Its fields should
+  not be altered.   Their meaning is as follows:
+ */
+typedef struct _MKLeafUGStruct {
+    /*! Memory and computation resources needed by this unit generator. */
+    MKOrchMemStruct reso;
+    /*! Time for this unit generator to compute one sample, in seconds, when 
+        unit generator is on chip. */
+    double computeTime;
+    /*! Array of lists of idle patches, indexed by dsp number. */
+    id **availLists;
+    /*! Sorted absolute data records.  */
+    DSPDataRecord *data[DSP_LC_NUM];
+    /*! Fix-up array for each P space. */
+    DSPFixup *fixups[DSP_LC_NUM_P];
+    /*! Array which tells which space each argument points to. If the argument
+        is not address-valued, the array value here is <b>DSP_MS_N</b>.  */
+    DSPMemorySpace *argSpaces;
+    /*! Pointer to corresponding MKMasterUGStruct. */
+    MKMasterUGStruct *master;
+    /*! Reserved */
     int reserved1;                  
-    double offChipComputeTime;      /* Compute time when ug is off chip. */
+    /*! Compute time when unit generator is off chip. */
+    double offChipComputeTime;
+    /*! Reserved */
     void *reserved2;
 } MKLeafUGStruct;
 

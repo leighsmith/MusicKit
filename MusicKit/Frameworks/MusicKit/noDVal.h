@@ -90,10 +90,20 @@ extern inline double MKGetNoDVal(void)
 extern inline int MKIsNoDVal(double value)
 {
     union {double d; int i[2];} u;
-    u.d = val;
+    u.d = value;
     return (u.i[0] == _MK_NANHI); /* Don't bother to check low bits. */
 }
 
+/*!
+  @brief  Special <i>double</i> value that means "invalid value."
+
+  MusicKit methods that return a value of type <i>double</i> and want to
+  signal an invalid value return MK_NODVAL, which stands for <b>N</b>o
+  <b>D</b>ouble <b>VAL</b>ue.   This is not an actual valid floating point
+  number.  It is a particular non-signaling "NAN" (not a number.) 
+  Therefore, it can not be compared using ==.  You must use the special
+  functions defined in <b>noDVal.h</b>.
+ */
 #define MK_NODVAL MKGetNoDVal()     /* For convenience */
 
 #endif

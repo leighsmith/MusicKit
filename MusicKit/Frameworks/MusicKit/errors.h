@@ -17,21 +17,43 @@
 
 #import <Foundation/Foundation.h>
 
-/* MusicKit TRACE codes */
-#define MK_TRACEORCHALLOC 1       /* MKOrchestra allocation information */
-#define MK_TRACEPARS 2            /* App params, when first encountered. */
-#define MK_TRACEDSP 4             /* MusicKit DSP messages */
-#define MK_TRACEMIDI 8            /* MIDI in/out/time warnings */
-#define MK_TRACEPREEMPT 16        /* MKSynthInstrument preemptions msgs */
-#define MK_TRACESYNTHINS  32      /* MKSynthInstrument messages */
-#define MK_TRACESYNTHPATCH 64     /* MKSynthPatch library messages */
-#define MK_TRACEUNITGENERATOR 128 /* MKUnitGenerator library messages */
-#define MK_TRACECONDUCTOR 256     /* Conductor time messages */
-#define MK_TRACEDSPARRAYS 512     /* Print arrays loaded to DSP */
-
 /*!
   @defgroup Tracing Trouble-shoot the MusicKit.
+  */
+/*!
+  @brief Trace Constants
+ 
+  To enable a set of messages, you pass a trace code to the
+  <b>MKSetTrace()</b> function.  You can enable more than one set with a
+  single function call by bitwise-or'ing the codes.   Clearing a trace is
+  done similarly, by passing codes to <b>MKClearTrace()</b>.  The
+  <b>MKIsTraced()</b> function returns YES or NO as the argument code is
+  or isn't currently traced.  These functions should only be used while
+  you're debugging and fine-tuning your application.  
+ 
+  For more information on the constants and their meaning, see
+  the trace function documentation.
  */
+/*! DSP (MKOrchestra) resource allocation */
+#define MK_TRACEORCHALLOC 1
+/*! Application-defined parameters, when first encountered. */
+#define MK_TRACEPARS 2
+/*! DSP manipulation */
+#define MK_TRACEDSP 4
+/*! MIDI in/out/time warnings */
+#define MK_TRACEMIDI 8
+/*! MKSynthPatch preemption */
+#define MK_TRACEPREEMPT 16
+/*! MKSynthInstrument mechanations */
+#define MK_TRACESYNTHINS  32
+/*! MKSynthPatch library messages */
+#define MK_TRACESYNTHPATCH 64
+/*! MKUnitGenerator library messages */
+#define MK_TRACEUNITGENERATOR 128
+/*! MKConductor time setting messages */
+#define MK_TRACECONDUCTOR 256
+/*! DSP array-setting messages */
+#define MK_TRACEDSPARRAYS 512
 
 /*!
   @brief Turns on specified trace bit.
@@ -496,91 +518,179 @@ extern NSMutableData *MKErrorStream(void);
 
 #define MK_ERRORBASE 4000    /* 1000 error codes for us start here */
 
+/*!
+  @brief This enumeration defines the exceptions that the MusicKit can generate
+  via the <b>MKErrorCode</b>() mechanism.   The errors are in six
+  categories: general errors, representation errors, synthesis errors,
+  scorefile errors, MKUnitGenerator library errors and MKSynthPatch
+  library errors.
+ */
 typedef enum _MKErrno {
+    // <b>GENERAL ERRORS</b>
+    /*!	Used as a way of specifying MusicKit errors not otherwise defined. */	
     MK_musicKitErr = MK_ERRORBASE,
+    /*! Used for errors from the operating system. For example, the MIDI object 
+        uses this error to report problems gaining access to the MIDI device. */
     MK_machErr,
-    /* Representation errors */
-    MK_cantOpenFileErr ,
+
+    // <b>REPRESENTATION ERRORS</b>General purpose errors dealing with music representation.	
+    /*! Warns that a file can't be opened.  */
+    MK_cantOpenFileErr,
+    /*! Warns that a file can't be closed. */
     MK_cantCloseFileErr,
+    /*! Warns that notes were found in a scorefile with times out of order. */
     MK_outOfOrderErr,           /* Scorefile parsing/writing error */
+    /*! Samples class: Warns that the MKSamples object cannot change the sampling 
+	rate of a waveform by anything but a negative power of 2. */
     MK_samplesNoResampleErr,
+    /*!	Warns that the MusicKit has run out of <i>noteTags</i>. */
     MK_noMoreTagsErr,
+    /*!	Warns that a class is specified in a scorefile as a <i>scorefile object type</i>; 
+        but that class does not implement the appropriate protocol to be used in that way. */
     MK_notScorefileObjectTypeErr,
-    /* Synthesis errors */
+    
+    /* Synthesis errors */    
+    /*!	MKOrchestra class: Attempt to free a MKUnitGenerator that's in use. */
     MK_orchBadFreeErr,
+    /*! MKSynthData class: A DSP error occurred when trying to clear a MKSynthData. */
     MK_synthDataCantClearErr,   /* MKSynthData errors */ 
+    /*!	MKSynthData class: A DSP error occurred when trying to load a MKSynthData. */
     MK_synthDataLoadErr,
+    /*!	MKSynthData class: An attempt was made to set the value of a read-only MKSynthData. */
     MK_synthDataReadonlyErr,
+    /*! MKSynthInstrument class: A MKNote had to be omitted. */
     MK_synthInsOmitNoteErr,     /* MKSynthInstrument errors */
+    /*!	MKSynthInstrument class: No MKSynthPatch class was set. */
     MK_synthInsNoClass,
+    /*! MKUnitGenerator class: A DSP error occurred when loading a unit generator. */
     MK_ugLoadErr,               /* MKUnitGenerator errors. */
+    /*!	MKUnitGenerator class: A bad argument was specified.  Probably a bug in a subclass. */
     MK_ugBadArgErr,
+    /*!	MKUnitGenerator class: A DSP error occurred when trying to put an address in an argument. */
     MK_ugBadAddrPokeErr,
+    /*!	MKUnitGenerator class: A DSP error occurred when trying to put a datum in an argument. */
     MK_ugBadDatumPokeErr,
+    /*!	MKUnitGenerator class: An attempt was made to set an argument to a MKSynthData from a different MKOrchestra. */
     MK_ugOrchMismatchErr,
+    /*!	MKUnitGenerator class: The memory space of an address-valued argument does not match the MKSynthData it was given. */
     MK_ugArgSpaceMismatchErr,
+    /*!	MKUnitGenerator class: An attempt was made to set a DSP unit generator argument to a datum value when that
+        unit generator argument accepts only an address. */
     MK_ugNonAddrErr,
+    /*!	MKUnitGenerator class: An attempt was made to set a DSP unit generator argument to an address value when
+        that unit generator argument accepts only a datum. */
     MK_ugNonDatumErr,
 
-    /* Scorefile errors. */
+    /* Scorefile Language Errors. */
+    /*!	Illegal expression. */
     MK_sfBadExprErr,     /* Illegal constructs */
+    /*! Illegal definition. */
     MK_sfBadDefineErr,
+    /*! Illegal parameter value. */
     MK_sfBadParValErr,
+    /*! Illegal nesting of definitions. */
     MK_sfNoNestDefineErr,
 
+    /*! Illegal declaration. */
     MK_sfBadDeclErr,     /* Missing constructs */
+    /*! Missing string where a string is required. */
     MK_sfMissingStringErr,
+    /*! Illegal note type. */
     MK_sfBadNoteTypeErr,
+    /*! Illegal (non-integer) note tag. */
     MK_sfBadNoteTagErr,
     MK_sfMissingBackslashErr,
+    /*! Missing semicolon. */
     MK_sfMissingSemicolonErr,
+    /*! Undeclared symbol. */
     MK_sfUndeclaredErr,
+    /*! Illegal assignment. */
     MK_sfBadAssignErr,
+    /*! Illegal include. */
     MK_sfBadIncludeErr,
+    /*! Illegal parameter. */
     MK_sfBadParamErr,
+    /*! Illegal number. */
     MK_sfNumberErr,
+    /*! Illegal string. */
     MK_sfStringErr,
+    /*! Illegal global symbol. */
     MK_sfGlobalErr,
+    /*! Undefined global symbol. */
     MK_sfCantFindGlobalErr,
     
+    /*! Multiple definitions. */
     MK_sfMulDefErr, /* Duplicate constructs */
+    /*! Duplicate declarations. */
     MK_sfDuplicateDeclErr,
 
+    /*! Something may not appear where it does appear. */
     MK_sfNotHereErr,
+    /*! Something is declared where it should not be   declared.. */
     MK_sfWrongTypeDeclErr,
+    /*! Illegal header statement. */
     MK_sfBadHeaderStmtErr,
+    /*! Illegal body statement. */
     MK_sfBadStmtErr,
 
+    /*! Illegal initialization. */
     MK_sfBadInitErr,
+    /*! Illegal argument follows the <b>tune</b> construct. */
     MK_sfNoTuneErr,
+    /*! Unused. */
     MK_sfNoIncludeErr,
+    /*! Can't find a file. */
     MK_sfCantFindFileErr,
+    /*! Can't write a file. */
     MK_sfCantWriteErr,
+    /*! Times appear out of order in a file. */
     MK_sfOutOfOrderErr,
+    /*! <b>comment</b> without a matching  <b>endComment</b>. */
     MK_sfUnmatchedCommentErr,
+    /*! A noteOff or noteUpdate appears for an inactive noteTag. */
     MK_sfInactiveNoteTagErr,
+    /*! An Objective-C class is specified which can not be found. */
     MK_sfCantFindClass,
+    /*! Lookup value is out of bounds. */
     MK_sfBoundsErr, 
+    /*! Illegal type conversion. */
     MK_sfTypeConversionErr,
+    /*! An attempt to set a read-only variable. */
     MK_sfReadOnlyErr,
+    /*! An arithmetic error, such as divide by zero. */
     MK_sfArithErr,
+    /*! An attempt to read a text file that is not a ScoreFile. */
     MK_sfNonScorefileErr,
+    /*! Too many errors have occurred -- aborting. */
     MK_sfTooManyErrorsErr,
     
     /* Unit generator library errors. */
+    /*! MK_ugsNotSetRunErr Indicates a memory argument that needs to be set before <b>run</b> is sent. */
     MK_ugsNotSetRunErr,
+    /*!	Indicates that a MKUnitGenerator that accepts only power-of-2 length MKSynthData was passed a MKSynthData of some other length. */
     MK_ugsPowerOf2Err,
+    /*! Indicates that a value was queried before a dependent value was set. */
     MK_ugsNotSetGetErr,
 
     /* Synth patch library errors. */
+    /*! Indicates a MKSynthPatch cannot get enough DSP  memory for some purpose. */
     MK_spsCantGetMemoryErr,
+    /*! Indicates a MKSynthPatch is substituting the sine ROM for the requested wavetable,
+	due to a lack of DSP memory. */
     MK_spsSineROMSubstitutionErr,
+    /*! Indicates an invalid keyword was passed to the MKTimbre data base. */
     MK_spsInvalidPartialsDatabaseKeywordErr, 
+    /*! Indicates that a parameter is out of range. */
     MK_spsOutOfRangeErr,
+    /*!	Indicates that a MKSynthPatch can't allocate an MKUnitGenerator it needs.
+        This can arise, for example, if a MKSynthPatch allocates MKUnitGenerators
+	outside of its basic definition (i.e. outside of the <b>patchTemplateFor:</b> method.) */
     MK_spsCantGetUGErr,
 
     /* Errors added in Release 3.0 */
+    /*!	MKSynthData class: Problem reading MKSynthData from DSP.  */
     MK_synthDataCantReadDSPErr,
+    /*!	MKOrchestra class: Mismatch between DSP monitor version and MKOrchestra version. */
     MK_dspMonitorVersionError,
     /* End marker */
     MK_highestErr,

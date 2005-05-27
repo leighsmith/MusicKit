@@ -277,10 +277,14 @@ Appendix B. entitled MIDI Time Code in the MusicKit</a>.
 extern "C" {
 #endif
 
- /* The Conductor message structure.  All fields are private and
+ /* The MKConductor message structure.  All fields are private and
   * shouldn't be altered directly from an application.
   * LMS: should become an object named MKConductorMsg
   */
+/*!
+  @brief <b>MKMsgStruct</b> is the structure that represents a message the MKConductor will send to an object.
+  @see <b>MKNewMsgRequest</b>(), <b>MKScheduleMsgRequest</b>(), <b>MKCancelMsgRequest</b>(), <b>MKRescheduleMsgRequest</b>(), and <b>MKRepositionMsgRequest</b>().
+ */
 typedef struct _MKMsgStruct { 
     double _timeOfMsg;     
     SEL _aSelector;       
@@ -299,6 +303,7 @@ typedef struct _MKMsgStruct {
     MKConductor *_conductor;
 } MKMsgStruct;
 
+/*! Largest time value that may be scheduled with the MKConductor. */
 #define MK_ENDOFTIME (6000000000.0) /* A long time, but not as long as MK_FOREVER */
 
 /*!
@@ -369,15 +374,19 @@ extern void MKSetDeltaT(double val);
 */
 extern double MKGetDeltaTTime(void);
 
-/* The following modes determine how deltaT is interpreted. */
+/*!
+  @brief These constants control the <i>deltaT mode</i>, determining how deltaT is interpreted.. 
+  @see MKConductor and the Performance Concepts documentation for details.
+ */
+/*! Commands to device have an offset added to their time. */
 #define MK_DELTAT_DEVICE_LAG 0
+/*! Scheduler (MKConductor) subtracts offset from the time it uses internally to schedule messages. */
 #define MK_DELTAT_SCHEDULER_ADVANCE 1
  
 /*!
   @brief Sets the delta time mode.
  
-  Sets the delta time mode to one of
-  MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE.
+  Sets the delta time mode to one of MK_DELTAT_DEVICE_LAG or MK_DELTAT_SCHEDULER_ADVANCE.
   The default is MK_DELTAT_DEVICE_LAG.
   @param  newMode is an int.
   @ingroup TimeFns
