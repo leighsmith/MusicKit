@@ -1,19 +1,10 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
-*/
-/*
-Modification history:
 
-  $Log$
-  Revision 1.3  2001/07/02 16:56:40  sbrandon
-  - commented out cruft after endif
-
-  Revision 1.2  1999/07/29 01:26:05  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
+  Copyright 1988-1992, NeXT Inc.  All rights reserved.
+  Portions Copyright 1999-2005, The MusicKit Project.
+ */
 #ifndef __MK_keynums_H___
 #define __MK_keynums_H___
 #ifndef KEYNUMS_H
@@ -22,9 +13,11 @@ Modification history:
 /* Here are the midi key macro definitions. 
 
    For the sake of terseness and convenience of use, we break here from the 
-   Music Kit convention of appending MK_ to the start of macros. 
+   MusicKit convention of appending MK_ to the start of macros. 
   */
-
+/*!
+  @brief MIDI key numbers.  See MusicTables.rtf for more information.
+ */
 typedef enum _MKKeyNum {
     c00k =0,cs00k,d00k,ef00k,e00k,f00k,fs00k,g00k,af00k,a00k,bf00k,b00k,
     c0k,cs0k,d0k,ef0k,e0k,f0k,fs0k,g0k,af0k,a0k,bf0k,b0k,
