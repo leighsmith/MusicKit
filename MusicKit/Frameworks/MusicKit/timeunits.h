@@ -13,6 +13,10 @@
 #define __MK_timeunits_H___
 
 /*!
+  @file timeunits.h
+ */
+
+/*!
   @brief This enumeration specifies the manner in which time is recorded by
   MKScorefileWriter, MKPartWriter and MKScoreWriter classes.  The values are: 
  */

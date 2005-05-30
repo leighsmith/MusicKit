@@ -204,26 +204,26 @@ been set.  You can determine whether a parameter is present in one of
 four ways:
 
 <ul>
-<li> The easiest way is to invoke the boolean method <b>isParPresent:</b>,
+<li>The easiest way is to invoke the boolean method <b>isParPresent:</b>,
 passing the parameter tag as the argument.  An
 equivalent C function, <b>MKIsNoteParPresent()</b> is also provided
 for greater efficiency.</li>
 
 <li> At a lower lever, you can invoke the <b>parVector:</b> method
-to retrieve one of a MKNote's &ldquo;parameter bit vectors,"
+to retrieve one of a MKNote's &ldquo;parameter bit vectors&rdquo;,
 integers that the MKNote uses internally to indicate which parameters
 are present.  You query a parameter bit vector by masking it with the
 parameter's tag:
 	
-<tt>
-// A MKNote may have more then one bit vector to accommodate all<br>
-// its parameters.<br>
+<pre>
+// A MKNote may have more then one bit vector to accommodate all
+// its parameters.
 
-int parVector = [aNote parVector:(MK_amp/32)];
+int parVector = [aNote parVector: (MK_amp / 32)];
 	
-// If MK_amp is present, the predicate will be true.<br>
-if (parVector &amp; (1 &lt;&lt; (MK_amp % 32)))
-</tt>
+// If MK_amp is present, the predicate will be true.
+if (parVector &amp; (1 &lt;&lt; (MK_amp &percent; 32)))
+</pre>
 </li>
  
 <li> If you plan on retrieving the value of the parameter after
@@ -250,7 +250,7 @@ appropriate parameter-not-set value, as given below:
 </tr>
 <tr>
 <td align=left>NSString</td>
-<td align=left>&#64;"" (this needs checking - LMS)</td>
+<td align=left>&at;&ldquo;&rdquo; (this needs checking - LMS)</td>
 </tr>
 <tr>
 <td align=left>id</td>
@@ -264,14 +264,14 @@ predicate. To check for this return value, you must call the
 in-line function <b>MKIsNoDVal()</b>; the function returns 0 if
 its argument is MK_NODVAL and nonzero if not:
 	
-<tt>
-// Retrieve the value of the amplitude parameter.<br>
-double amp = [aNote parAsDouble:MK_amp];<br>
+<pre>
+// Retrieve the value of the amplitude parameter.
+double amp = [aNote parAsDouble: MK_amp];
 	
-// Test for the parameter's existence.<br>
-if (!MKIsNoDVal(amp))<br>
-  ... // do something with the parameter<br>
-</tt>
+// Test for the parameter's existence.
+if (!MKIsNoDVal(amp))
+  ... // do something with the parameter
+</pre>
 </li>
  
 <li> 
@@ -384,6 +384,10 @@ retrieve the MKNote class with <b>MKGetNoteClass()</b>.
 
 #define BITS_PER_INT 32
 #define MK_MKPARBITVECTS ((((int)MK_appPars-1)/ BITS_PER_INT)+1)
+
+/*! 
+  @file MKNote.h
+ */
 
 /*!
   @brief This enumeration defines the types of MKNote objects.  The types are as follows.
@@ -1052,8 +1056,7 @@ typedef enum _MKDataType {
 - (BOOL) isParPresent: (int) parameterTag;
 
 /*!
-  @brief Returns the data type of <i>the value of the parameter identified by
-  parameterTag</i>.
+  @brief Returns the data type of <i>the value of the parameter identified by parameterTag</i>.
 
   The data type is set when the parameter's value
   is set; the specific data type of the value, one of the MKDataType

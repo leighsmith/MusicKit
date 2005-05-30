@@ -18,6 +18,10 @@
 #import <Foundation/Foundation.h>
 
 /*!
+  @file errors.h
+ */
+
+/*!
   @defgroup Tracing Trouble-shoot the MusicKit.
   */
 /*!
@@ -405,7 +409,7 @@ extern BOOL MKIsTraced(int traceCode);
 extern void MKSetScorefileParseErrorAbort(int threshholdCount);
 
 /*!
-  @brief Handle MusicKit errors
+  @brief Sets function to be used when MKError() and MKErrorCode() are called.
 
   These functions define the MusicKit's error handling mechanism. 
   <b>MKError()</b> is used to signal an error.  It calls the current Music
@@ -435,7 +439,7 @@ extern void MKSetScorefileParseErrorAbort(int threshholdCount);
     performance-oriented class. 
    */
 extern void MKSetErrorProc(void (*errProc)(NSString *msg));
-    /* Sets proc to be used when MKError() and MKErrorCode() are called. 
+    /*  
        If errProc is NULL, uses the default error proc, which writes to the 
        MusicKit error NSMutableData (see MKSetErrorStream()). 
        errProc takes one string argument. 
@@ -447,7 +451,8 @@ extern void MKSetErrorProc(void (*errProc)(NSString *msg));
 
 
 /*!
-  @brief Handle MusicKit errors
+  @brief Calls the user's error procedure (aka function, set with MKSetErrorProc), if any, with 
+         one argument, the message. Otherwise, writes the message on the MusicKit error stream.
 
   These functions define the MusicKit's error handling mechanism. 
   <b>MKError()</b> is used to signal an error.  It calls the current Music
@@ -467,17 +472,13 @@ extern void MKSetErrorProc(void (*errProc)(NSString *msg));
   <b>MKError()</b> from your application, <b>errno</b> isn't set. 
   
   @param  msg is an NSString instance.
-  @return Returns an id.
+  @see MKSetErrorStream.
   @ingroup ErrorFns
  */
 extern void MKError(NSString *msg);
-    /* Calls the user's error proc (set with MKSetErrorProc), if any, with 
-       one argument, the msg. Otherwise, writes the message on the Music
-       Kit error stream. (See MKSetErrorStream) Returns nil.
-       */
 
 /*!
-  @brief Handle MusicKit errors
+  @brief Sets the MusicKit error stream.
 
   These functions define the MusicKit's error handling mechanism. 
   <b>MKError()</b> is used to signal an error.  It calls the current Music
@@ -495,16 +496,16 @@ extern void MKError(NSString *msg);
   MusicKit itself generates an error, the global system variable
   <b>errno</b> is set to one of these error codes.  If you call
   <b>MKError()</b> from your application, <b>errno</b> isn't set. 
-  
-  @param  aStream is a NSMutableData instance.
+
+  The MusicKit initialization sets the error stream to stderr. 
+  Note that during a multi-threaded MusicKit 
+  performance, errors invoked from the MusicKit thread are not sent
+  to the error stream. Use MKSetErrorProc to see them.
+ 
+  @param  aStream is a NSMutableData instance. nil means stderr.
   @ingroup ErrorFns
 */
 extern void MKSetErrorStream(NSMutableData *aStream);
-    /* Sets the MusicKit error stream. 
-       nil means stderr. The MusicKit initialization sets the error 
-       stream to stderr. Note that during a multi-threaded MusicKit 
-       performance, errors invoked from the MusicKit thread are not sent
-       to the error stream. Use MKSetErrorProc to see them. */
 
 /*!
   @brief Returns the MusicKit error stream. This is, by default, stderr.
@@ -520,8 +521,9 @@ extern NSMutableData *MKErrorStream(void);
 
 /*!
   @brief This enumeration defines the exceptions that the MusicKit can generate
-  via the <b>MKErrorCode</b>() mechanism.   The errors are in six
-  categories: general errors, representation errors, synthesis errors,
+  via the <b>MKErrorCode</b>() mechanism.
+ 
+  The errors are in six categories: general errors, representation errors, synthesis errors,
   scorefile errors, MKUnitGenerator library errors and MKSynthPatch
   library errors.
  */

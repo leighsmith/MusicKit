@@ -77,17 +77,19 @@ stream that it's synthesizing.
 #import "orch.h"
 
 /*!
-@brief This enumeration defines the state of a MKSynthPatch and is designed for
- use in a MKSynthPatch subclass implementation.  Each instance of
- MKSynthPatch performs a single musical voice.  The <b>MKPhraseStatus</b>
- defines where in the phrase that voice is.  The method
- <b>phraseStatus</b> returns one of these values.  MKNote that if a
- MKSynthPatch is not in one of the subclass methods <b>noteOnSelf:,
- noteOffSelf:, noteUpdateSelf:,</b> or<b> noteEndSelf</b>, the method
- <b>phraseStatus</b> returns <b>MK_noPhraseActivity.</b>
- 
+  @file MKSynthPatch.h
  */
 
+/*!
+  @brief This enumeration defines the state of a MKSynthPatch and is designed for
+  use in a MKSynthPatch subclass implementation.
+ 
+  Each instance of MKSynthPatch performs a single musical voice.  The <b>MKPhraseStatus</b>
+  defines where in the phrase that voice is.  The method <b>phraseStatus</b> returns one
+  of these values. Note that if a MKSynthPatch is not in one of the subclass methods
+  <b>noteOnSelf:</b>, <b>noteOffSelf:</b>, <b>noteUpdateSelf:</b>, or <b>noteEndSelf</b>, the method
+  <b>phraseStatus</b> returns <b>MK_noPhraseActivity</b>.
+ */
 typedef enum _MKPhraseStatus {
     /*! MKSynthPatch is processing a noteOn for a new phrase. */
     MK_phraseOn,

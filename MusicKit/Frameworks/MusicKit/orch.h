@@ -19,6 +19,10 @@
 #import <MKDSP/dsp.h>             /* Contains DSPAddress, etc. */
 
 /*!
+  @file orch.h
+ */
+
+/*!
   @brief This enumeration specifies the memory segments supported by the
   MusicKit.  These memory segments are not necessarily contiguous on the
   DSP -- they are "logical" rather than "physical".  The segments are:

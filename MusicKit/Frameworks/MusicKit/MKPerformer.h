@@ -176,6 +176,10 @@ the MusicKit MKPartPerformer:
 #import "MKConductor.h"
 
 /*!
+  @file MKPerformer.h
+ */
+
+/*!
   @brief This enumeration defines the state of a MKPerformer.  A MKPerformer may be
  in one of the following three states:
  */

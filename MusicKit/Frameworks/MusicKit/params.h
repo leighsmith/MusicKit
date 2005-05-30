@@ -20,7 +20,11 @@
 */
 #ifndef __MK_params_H___
 #define __MK_params_H___
-	 
+
+/*!
+  @brief params.h
+ */
+
 /*!
   @brief MusicKit-defined MKNote parameters.   
   

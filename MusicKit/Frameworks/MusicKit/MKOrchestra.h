@@ -334,16 +334,19 @@ release notes for the latest information on supported drivers.
 #import "MKSynthData.h"
 
 /*!
+  @file MKOrchestra.h
+ */
+
+/*!
   @brief This enumeration defines the types of shared objects that can be
-  registered with the MKOrchestra's shared object mechanism.  The shared
-  object mechanism manages reference counts, automatic lazy garbage
-  collection, etc.
-  
- Note that the same data object may be registered as the key for
- several different types of shared data.  For example, a MKPartials
- object may have associated with it two MKSynthData objects, one
- representing its oscTable representation and one representing its
- waveshapingTable representation.
+  registered with the MKOrchestra's shared object mechanism.
+ 
+  The shared object mechanism manages reference counts, automatic lazy garbage
+  collection, etc. Note that the same data object may be registered as the key for
+  several different types of shared data.  For example, a MKPartials
+  object may have associated with it two MKSynthData objects, one
+  representing its oscTable representation and one representing its
+  waveshapingTable representation.
  */
 typedef enum _MKOrchSharedType {
     /*! Wildcard. */

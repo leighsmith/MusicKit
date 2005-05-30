@@ -12,6 +12,10 @@
 #ifndef __MK_devstatus_H___
 #define __MK_devstatus_H___
 
+/*! 
+  @file MKDeviceStatus.h
+ */
+
 /*!
   @brief Status for MKMidi/MKOrchestra MusicKit classes.
  
@@ -20,20 +24,22 @@
   called <i>device classes</i>.  The values for <b>MKDeviceStatus</b> are
   defined below.
  
- There are five methods for changing the state, defined in all
- MusicKit device classes:
+  There are five methods for changing the state, defined in all
+  MusicKit device classes:
  
- <b>open</b>	Opens Mach device if not already open.  Resets object if
- needed.  Sets status to <b>MK_devOpen</b>.  Returns nil if some problem occurs,
- else self.
- <b>run</b>	If not open, does a <b>[self open]</b>. If not already
- running, starts Mach device clock.  Sets status to <b>MK_devRunning</b>.
- <b>stop</b>	If not open, does a <b>[self open]</b>. Otherwise, stops
- Mach device clock and sets status to <b>MK_devStopped</b>.
- <b>close</b>	Closes the Mach device after waiting for all enqueued
- events to finish. Returns self and sets status to <b>MK_devClosed</b> unless there's
- some problem closing the device, in which case, returns nil.
- <b>abort</b>	Like close, but doesn't wait for enqueued events to finish.
+  <ul>
+  <li><b>open</b>	Opens Mach device if not already open.  Resets object if
+  needed.  Sets status to <b>MK_devOpen</b>.  Returns nil if some problem occurs,
+  else self.</li>
+  <li><b>run</b>	If not open, does a <b>[self open]</b>. If not already
+  running, starts Mach device clock.  Sets status to <b>MK_devRunning</b>.</li>
+  <li><b>stop</b>	If not open, does a <b>[self open]</b>. Otherwise, stops
+  Mach device clock and sets status to <b>MK_devStopped</b>.</li>
+  <li><b>close</b>	Closes the Mach device after waiting for all enqueued
+  events to finish. Returns self and sets status to <b>MK_devClosed</b> unless there's
+  some problem closing the device, in which case, returns nil.</li>
+  <li><b>abort</b>	Like close, but doesn't wait for enqueued events to finish.</li>
+  </ul>
  */
 typedef enum _MKDeviceStatus { 
     /*! Mach device is closed. */

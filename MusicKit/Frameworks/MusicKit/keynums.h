@@ -10,11 +10,14 @@
 #ifndef KEYNUMS_H
 #define KEYNUMS_H
 
-/* Here are the midi key macro definitions. 
+/*!
+  @file keynums.h
+  @brief The MIDI key macro definitions. 
 
    For the sake of terseness and convenience of use, we break here from the 
    MusicKit convention of appending MK_ to the start of macros. 
-  */
+ */
+
 /*!
   @brief MIDI key numbers.  See MusicTables.rtf for more information.
  */

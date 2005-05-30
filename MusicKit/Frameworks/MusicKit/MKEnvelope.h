@@ -130,6 +130,9 @@ MKEnvelope be used when Envelopes are automatically created.
 #import <Foundation/Foundation.h>
 
 /*!
+  @file MKEnvelope.h
+ */
+/*!
   @brief This enumeration defines the return values of the MKEnvelope method
   <b>getNth:x:y:smoothing:</b>.
  */
