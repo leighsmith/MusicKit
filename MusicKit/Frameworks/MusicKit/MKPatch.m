@@ -12,27 +12,6 @@
   purposes so long as the author attribution and this copyright message remains intact
   and accompanies all derived code.
 */
-/*
-  $Log$
-  Revision 1.6  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.5  2002/01/24 16:55:57  sbrandon
-  fixed nasty release bug in findFilenameForClassname
-
-  Revision 1.4  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.3  2001/04/20 02:57:11  leighsmith
-  Improved variable naming
-
-  Revision 1.2  2001/03/12 01:55:38  leigh
-  Moved patch locations inside the class implementation since they shouldn't be accessible to apps at compile time, only at run time
-
-  Revision 1.1  2001/03/06 21:47:32  leigh
-  Abstracted patch loading from MKSynthPatches into MKPatch
-
-*/
 #import "MKPatch.h"
 
 #define MK_SYNTHPATCH_DIR @"MusicKit/SynthPatches/"
@@ -40,7 +19,7 @@
 
 @implementation MKPatch
 
-// Nothing for now, eventually we could incorporate nib loading and display for each MKPatch.
+// TODO Nothing for now, eventually we could incorporate nib loading and display for each MKPatch.
 
 @end
 
@@ -58,7 +37,8 @@ static NSString *findFilenameForClassname(NSString *className)
         else
             filename = [NSString stringWithString: className];
     }
-    else filename = [NSString stringWithString: className];
+    else 
+	filename = [NSString stringWithString: className];
 
     if (![filename isAbsolutePath]) {
         NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
@@ -85,7 +65,7 @@ static Class getClassWithoutWarning(NSString *clname)
     return NSClassFromString(clname);
 }
 
-+ findPatchClass: (NSString *) className
++ (Class) findPatchClass: (NSString *) className
     /* The user can load in arbitrary bundles. */
 {
     NSString *filename;
