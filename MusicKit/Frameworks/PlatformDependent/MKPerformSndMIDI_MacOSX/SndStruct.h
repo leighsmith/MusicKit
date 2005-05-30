@@ -42,21 +42,21 @@
 
 /*!
   @brief Each raw event consists of a MIDI message byte and a time stamp.
-  @field magic  Must be equal to SND_MAGIC
-  @field dataLocation  Offset or pointer to the raw data
-  @field dataSize  Number of bytes of data in the raw data
-  @field dataFormat  The data format code
-  @field samplingRate  The sampling rate
-  @field channelCount  The number of channels
-  @field info  Textual information relating to the sound.
 */
 typedef struct {
+    /*! Must be equal to SND_MAGIC. */
     int magic;
+    /*! Offset or pointer to the raw data. */
     int dataLocation;
+    /*! Number of bytes of data in the raw data. */
     int dataSize;
+    /*! The data format code. */
     int dataFormat;
+    /*! The sampling rate. */
     int samplingRate;
+    /*! The number of channels. */
     int channelCount;
+    /*! Textual information relating to the sound. */
     char info[4];
 } SndSoundStruct;
 
