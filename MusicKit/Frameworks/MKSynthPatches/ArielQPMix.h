@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2005/05/31 10:57:31  leighsmith
+  Added group definitions and assignments
+
   Revision 1.5  2005/05/09 15:27:42  leighsmith
   Converted headerdoc comments to doxygen comments
 
@@ -28,7 +31,8 @@
 
 */
 /*!
-  @class ArielQPMix
+  @ingroup
+
   @brief Multiple DSP operation with the Ariel QuintProcessor board.
   
   

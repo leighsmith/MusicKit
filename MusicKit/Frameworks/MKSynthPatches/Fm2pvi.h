@@ -10,30 +10,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.5  2005/05/14 03:23:05  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.4  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.3  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.2  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm2pvi
+  @ingroup FrequencyModulationSynthesis
   @brief Like <b>Fm1vi</b>, but has 2 modulators in parallel, vibrato, and interpolating carrier.
   
-  
-
 <b>Fm2pvi</b> is a parallel-modulator frequency modulation MKSynthPatch, with an
 interpolating-oscillator as a carrier.  It provides for envelopes on amplitude,
 frequency, and a separate envelope on each modulator's FM index.  It also

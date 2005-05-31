@@ -12,33 +12,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.7  2005/05/14 03:23:05  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.6  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2001/11/16 20:37:51  leighsmith
-  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
-
-  Revision 1.4  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.3  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup WaveTable Synthesis
 /*!
   @class Wave1
+  @ingroup WaveTableSynthesis
   @brief Wavetable synthesis with 1 non-interpolating (drop-sample) oscillator.
   
-  
-
 <b>Wave1i</b> is a single-interpolating-oscillator wavetable MKSynthPatch with an amplitude and frequency envelope.  
 <b>Wave1</b> (a subclass of <b>Wave1i</b>) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.)  <b>Wave1i</b> is used as the root class for a number of wavetable MKSynthPatches.
 

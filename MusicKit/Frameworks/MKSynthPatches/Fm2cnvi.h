@@ -10,33 +10,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.7  2005/05/14 03:23:05  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.6  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2001/11/16 20:37:51  leighsmith
-  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
-
-  Revision 1.4  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.3  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm2cnvi
+  @ingroup FrequencyModulationSynthesis
   @brief Like <b>Fm2cvi</b>, but with an additional noise modulator.
   
-  
-
 <b>Fm2cnvi</b> is a cascade-modulator frequency modulation MKSynthPatch, with an interpolating-oscillator as a carrier and a noise source modulating the frequency of the two wavetable modulators.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index, as well as an envvelope on the noise source.  It also supports vibrato.   Although it does not inherit from <b>Fm2cvi</b>, it implements the same parameters, plus some of its own. 
 
 <img src="http://www.musickit.org/Frameworks/MKSynthPatches/Images/FM2cnvi.png">

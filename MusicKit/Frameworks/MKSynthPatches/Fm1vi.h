@@ -12,31 +12,14 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.6  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2001/11/16 20:37:51  leighsmith
-  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
-
-  Revision 1.4  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.3  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm1vi
+  @ingroup FrequencyModulationSynthesis
   @brief FM synthesis with 1 modulator, vibrato, interpolating carrier and arbitrary waveforms
   for carrier and modulator.
   
-  
-
 <b>Fm1vi</b> is like <b>Fm1i</b>, but it includes periodic and random vibrato.
 <b>Fm1v</b>(a subclass of <b>Fm1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).  
 

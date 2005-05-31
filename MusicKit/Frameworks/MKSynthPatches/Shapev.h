@@ -10,30 +10,12 @@
   Copyright (c) 1992 Eric J. Graves & Stanford University.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.5  2005/05/14 03:23:05  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.4  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.3  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.2  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup Waveshaping (a.k.a. Nonlinear Distortion) Synthesis
 /*!
-  @class Shapev
+  @ingroup WaveshapingSynthesis
   @brief Same as <b>Shape</b> but with periodic and random vibrato.
   
-  
-
 <b>Shapev</b> is like <b>Shape</b>, but it includes periodic and random
 vibrato.
 

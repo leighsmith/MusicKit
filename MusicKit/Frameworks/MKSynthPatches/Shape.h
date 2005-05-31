@@ -10,33 +10,16 @@
   Copyright (c) 1992 Eric J. Graves & Stanford University.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.7  2005/05/14 03:23:05  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.6  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2001/11/16 20:37:51  leighsmith
-  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
-
-  Revision 1.4  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.3  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
+/*!
+   @defgroup WaveshapingSynthesis Waveshaping (a.k.a. Nonlinear Distortion) Synthesis
 */
-//  classgroup Waveshaping (a.k.a. Nonlinear Distortion) Synthesis
 /*!
   @class Shape
+  @ingroup WaveshapingSynthesis
   @brief Waveshaping synthesis, with index control and amplitude envelope.
   
-  
-
 <b>Shape</b> is a single-lookup table non-linear distortion (waveshaping) SynthPatch.  It has an interpolating-oscillator for a "carrier" (oscillator driving the lookup) with an arbitrary waveform, an interpolating lookup table, and envelopes on amplitude (scaler on output), frequency, and waveshaping index (amplitude of carrier).  Additionally, 
 
 For further information, see the LeBrun article sited below.  Other documentation includes <b>WaveShaping.math.ps</b> (or the similarly-named Mathematica files) in the folder <b>/LocalLibrary/Documentation/MusicKit+DSP/Music/Concepts/SpecialTopics/</b>

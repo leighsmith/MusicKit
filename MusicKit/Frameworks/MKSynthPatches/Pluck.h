@@ -10,38 +10,30 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.7  2005/05/14 03:23:05  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.6  2005/05/09 15:27:44  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2001/11/16 20:37:51  leighsmith
-  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
-
-  Revision 1.4  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.3  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
+/*!
+   @defgroup PhysicalModelingSynthesis Virtual Acoustics (a.k.a. Physical Modeling or Waveguide) Synthesis
 */
-//  classgroup Virtual Acoustics (a.k.a. Physical Modeling or Waveguide) Synthesis
 /*!
   @class Pluck
+  @ingroup PhysicalModelingSynthesis
   @brief Plucked string synthesis.
   
-  
+ Pluck implements a Plucked string with fine-tuning of pitch and dynamics, as described in
+ Jaffe/Smith, and Karplus/Strong, "The Music Machine", MIT Press, 1989.  This is a type of
+ "virtual acoustic" synthesis (also called "physical modeling" or "waveguide synthesis".)
 
-Pluck implements a Plucked string with fine-tuning of pitch and dynamics, as described in Jaffe/Smith, and Karplus/Strong, "The Music Machine", MIT Press, 1989.  This is a type of "virtual acoustic" synthesis (also called "physical modeling" or "waveguide synthesis".)
+ Pluck creates a sound suggesting a struck or plucked string. 
+ It uses a delay line to represent the string.  The lower the pitch, the more delay memory it needs.
+ The implication is that a passage with many low notes may have problems running out of DSP memory.
+ Pluck does dynamic allocation of its delay memory.  This may result in some loss of memory over time
+ due to DSP memory fragmentation.  
 
-Pluck creates a sound suggesting a struck or plucked string.  It uses a delay line to represent the string.  The lower the pitch, the more delay memory it needs.  The implication is that a passage with many low notes may have problems running out of DSP memory.  Pluck does dynamic allocation of its delay memory.  This may result in some loss of memory over time due to DSP memory fragmentation.  
-
-Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for a sampling rate of 22050 and 2600 Hz for a sampling rate of 44100.  (For the curious, this annoying limitation could be lifted if the SynthPatch were redesigned to be one giant UnitGenerator.  The limitation comes in the pipeline delay, which is the tick size 16 samples.)
+ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for a sampling rate of
+ 22050 and 2600 Hz for a sampling rate of 44100.  (For the curious, this annoying limitation could be
+ lifted if the MKSynthPatch were redesigned to be one giant UnitGenerator.  The limitation comes in
+ the pipeline delay, which is the tick size 16 samples).
 
 <img src="Images/Pluck.png"> 
 
@@ -87,19 +79,19 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 @interface Pluck:MKSynthPatch
 {
     /* Here are the parameters. */
-    double freq;                  /* Frequency.   */
-    double sustain;               /* Sustain parameter value */
-    double ampRel;                /* AmpRel parameter value.*/
-    double decay;                 /* Decay parameter value. */
-    double bright;                /* Brightness parameter value */
-    double amp;                   /* Amplitude parameter value.   */
-    double bearing;               /* Bearing parameter value. */
-    double baseFreq;              /* Frequency, not including pitch bend  */
-    int pitchBend;                /* Modifies freq. */
-    double pitchBendSensitivity;  /* How much effect pitch bend has. */
-    double velocitySensitivity;   /* How much effect velocity has. */
-    int velocity;                 /* Velocity scales bright. */
-    int volume;                   /* Midi volume pedal */
+    double freq;                  /*!< Frequency.   */
+    double sustain;               /*!< Sustain parameter value */
+    double ampRel;                /*!< AmpRel parameter value.*/
+    double decay;                 /*!< Decay parameter value. */
+    double bright;                /*!< Brightness parameter value */
+    double amp;                   /*!< Amplitude parameter value.   */
+    double bearing;               /*!< Bearing parameter value. */
+    double baseFreq;              /*!< Frequency, not including pitch bend  */
+    int pitchBend;                /*!< Modifies freq. */
+    double pitchBendSensitivity;  /*!< How much effect pitch bend has. */
+    double velocitySensitivity;   /*!< How much effect velocity has. */
+    int velocity;                 /*!< Velocity scales bright. */
+    int volume;                   /*!< Midi volume pedal */
     id _reservedPluck1;
     id _reservedPluck2;
     int _reservedPluck3;
@@ -108,58 +100,57 @@ Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for
 
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief Returns a default template.
 
-  <i>aNote </i>is ignored.
+  <i>currentNote</i> is ignored.
+  @param  currentNote is an MKNote instance.
+  @return Returns an id.
 */
-+patchTemplateFor:currentNote;
--init;
++ patchTemplateFor: (MKNote *) currentNote;
+
+- init;
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief <i>aNote</i> is assumed to be a noteOn or noteDur.
 
-  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
+  This method triggers (or retriggers) the MKNote's envelopes, if any.
+  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
+  @param  aNote is an MKNote instance.
+  @return Returns an id.
 */
--noteOnSelf: (MKNote *) aNote;
+- noteOnSelf: (MKNote *) aNote;
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.
 
-  Sets parameters as specified in <i>aNote.</i>
+  Sets parameters as specified in <i>aNote</i>.
+  @param  aNote is an MKNote instance.
+  @return Returns an id.
 */
--noteUpdateSelf: (MKNote *) aNote;
+- noteUpdateSelf: (MKNote *) aNote;
 
 /*!
-  @param  aNote is an id.
-  @return Returns a double.
   @brief <i>aNote</i> is assumed to be a noteOff.
 
-  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  This method causes the MKNote's envelopes (if any) to begin its release portion and returns
+  the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @param  aNote is an MKNote instance.
+  @return Returns a double.
 */
--(double)noteOffSelf: (MKNote *) aNote;
+- (double) noteOffSelf: (MKNote *) aNote;
 
 /*!
-  @return Returns an id.
   @brief Resest instance variables to default values.
-
-  
+  @return Returns an id.
 */
--noteEndSelf;
+- noteEndSelf;
 
 /*!
-  @param  aNote is an id.
-  @return Returns an id.
   @brief Preempts envelope, if any.
-
-  
+  @param  aNote is an MKNote instance.
+  @return Returns an id.
 */
--preemptFor: (MKNote *) aNote;
+- preemptFor: (MKNote *) aNote;
 
 @end
 

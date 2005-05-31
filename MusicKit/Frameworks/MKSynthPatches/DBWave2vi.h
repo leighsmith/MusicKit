@@ -3,7 +3,6 @@
   
   Defined In: The MusicKit
   Description:
-  classgroup WaveTable Synthesis 
     (See discussion below)
 
   Original Author: David A. Jaffe
@@ -11,14 +10,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
 /*!
   @class DBWave2vi
+  @ingroup WaveTableSynthesis
   @brief Like <b>Wave1vi</b>, but with two wavetables and interpolation between them.
   
-  
-
 <b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis MKSynthPatch
 with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.
 Although <b>DBWave2vi</b> does not inherit from any other wavetable synthesis class, it is similar

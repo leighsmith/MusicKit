@@ -10,26 +10,12 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.4  2005/05/09 15:27:43  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.3  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.2  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup Frequency Modulation Synthesis
 /*!
   @class DBFm1vi
+  @ingroup FrequencyModulationSynthesis
   @brief Like <b>Fm1vi</b>, but supports the Timbre Data Base.
-  
-  
 
 <b>DBFm1vi</b> is like <b>Fm1vi</b>, but it includes support for the Music Kit
 Timbre Data Base. The Timbre Data Base is a set of spectra derived from recordings of
