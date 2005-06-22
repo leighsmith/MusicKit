@@ -9,6 +9,7 @@
 
 # Default distribution is the MusicKit.
 DISTNAME=MusicKit
+PACKAGENAME=MK
 DISTCHECKEDOUTSRCLOC=/tmp/MKSRC
 # This allows us to have a different default CVSROOT
 MKCVSROOT=:ext:leighsmith@cvs.sourceforge.net:/cvsroot/musickit
@@ -26,7 +27,7 @@ TARLOC=/tmp
 # than triggering it.
 # We set where the Documentation makefile build will put the README
 # in order to copy it from there into the source distribution directory.
-COPYREADMEFROM=/tmp/mkpdf/${DISNAME}_README.pdf
+COPYREADMEFROM=/tmp/MKDocumentation.build/PDF/${DISTNAME}_README.pdf
 
 if [ x_$1 = x_ ]; then
     echo "source shipping script for the ${DISTNAME} projects"
@@ -40,11 +41,7 @@ else
 fi
 
 echo "Make sure you've already done this:"
-echo "make $COPYREADMEFROM"
-
-if [ $DISTNAME = MusicKit ]; then
-    PACKAGENAME=MK
-fi
+echo "cd Documentation; make $COPYREADMEFROM"
 
 CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
 
