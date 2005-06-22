@@ -997,57 +997,97 @@ problems you may encounter in getting things to build.
       <sect3>
 	<title>Install <productname>MinGW</productname> and friends</title>
 
-	<para>
+	<itemizedlist>
+	  <listitem>
+	    <para>
 Install the minimal command line <acronym>GNU</acronym> system by
-running <filename>MSYS-1.0.9.exe</filename>.  Install complier,
-libraries and headers by running
-<filename>Mingw-3.1.0.exe</filename>. Install into the <filename
-class=directory>C:/msys/mingw</filename> location.  Install the
-<acronym>CVS</acronym> and other development tools
-<filename>msysDTK-1.0.1.exe</filename> Install
-<filename>gcc-3.3.1.tar.gz</filename>.
+running <filename>MSYS-1.0.10.exe</filename>.
 </para>
-
-	<para>
+	  </listitem>
+	  <listitem>
+	    <para>
+Install complier, libraries and headers by running
+<filename>MinGW-3.2.0-rc-3.exe</filename>. Install into the <filename
+class=directory>C:/msys/mingw</filename> location.
+</para>
+	    <para>
 When installing MSYS, ensure that the user name or at least the home
 directory is a single name without a space, as this tends to break
 <command>configure</command>. This is further described in GNUstep's
 <filename>gnustep/core/make/Documentation/README.MinGW</filename>
 </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+Install the <acronym>CVS</acronym> version control system and other
+development tools with the MSYS developer tool kit
+<filename>msysDTK-1.0.1.exe</filename>.
+<!--
+ Install the most up to date C
+compiler from <filename>gcc-core-3.4.2-20040916-1.tar.gz</filename>
+and the Objective C compiler from
+<filename>gcc-objc-3.4.2-20040916-1.tar.gz</filename>.
+-->
+</para>
+	  </listitem>
+	</itemizedlist>
       </sect3>
       <sect3>
 	<title>Install libraries supporting GNUstep</title>
 	<itemizedlist>
 	  <listitem>
 	    <para>
-<ulink
-       url="ftp://ftp.remotesensing.org/pub/libtiff/tiff-3.6.0-beta2">libtiff V3.6.0</ulink>
-needs patching to accept ./configure --libdir and --includedir
+<ulink url="http://www.gzip.org/zlib">zlib-1.2.2.tar.gz</ulink>
 </para>
 	  </listitem>
 	  <listitem>
 	    <para>
-I couldn't get a version of libiconv to compile with MinGW, even 
-<ulink url="http://www.gnu.org/software/libiconv-1.9.1.tar.gz">
-libiconv 1.9.1</ulink> and had to settle for installing a binary version.
+<ulink url="ftp://ftp.remotesensing.org/pub/libtiff/tiff-3.7.2.tar.gz">
+libtiff V3.7.2.tar.gz</ulink>
+./configure --disable-cxx CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib
 </para>
 	  </listitem>
 	  <listitem>
 	    <para>
-<ulink url="ftp://xmlsoft.org/libxml2-2.5.11.tar.gz">
-libxml2 V2.5.11</ulink>
+You need at least
+<ulink url="http://ftp.gnu.org/gnu/libiconv/libiconv-1.9.2.tar.gz">
+libiconv V1.9.2</ulink> in order to compile (with gcc-3.4.2) on MinGW.
 </para>
 	  </listitem>
 	  <listitem>
 	    <para>
-<ulink url="ftp://ftp.gnustep.org/pub/gnustep/libs/ffcall-1.8d.tar.gz">ffcall V1.8d</ulink>
+<ulink url="ftp://xmlsoft.org/libxml2-2.6.19.tar.gz">
+libxml2 V2.6.19</ulink>.
 </para>
+	    <informalexample>
+	      <screen>
+./configure --with-iconv=/usr/local --with-zlib=/usr/local
+</screen>
+	    </informalexample>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="ftp://xmlsoft.org/libxslt-1.1.14.tar.gz">
+libxslt V1.1.14
+</ulink>
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="ftp://ftp.gnustep.org/pub/gnustep/libs/ffcall-1.10.tar.gz">ffcall V1.10</ulink>
+</para>
+	    <informalexample>
+	      <screen>
+./configure --prefix=$GNUSTEP_SYSTEM_ROOT
+make
+make install
+</screen>
+	    </informalexample>
 	  </listitem>
 
 <!--
-zlib
-
-libjpeg
+jpeg-6b-4-{bin,dep,lib}.zip
+libpng-1.2.8
 -->
 	</itemizedlist>
       </sect3>
@@ -1071,6 +1111,15 @@ instead of
 	<informalexample>
 	  <screen>
 . /usr/GNUstep/System/Makefiles/GNUstep.sh
+</screen>
+	</informalexample>
+
+	<para>
+Configure <filename>gnustep-base</filename> 
+</para>
+	<informalexample>
+	  <screen>
+./configure CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib
 </screen>
 	</informalexample>
 	<para>
