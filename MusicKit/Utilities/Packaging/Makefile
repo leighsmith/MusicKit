@@ -1,14 +1,18 @@
 #
 # $Id$
 #
-# Makefile to automate the packaging of binaries of the MusicKit frameworks,
-# applications, commands and libraries ready for user deployment.
+# Makefile to automate the packaging of sources and binaries of the 
+# MusicKit frameworks, applications, commands and libraries ready for
+# user deployment and then automates the secure uploading of the
+# package and README tarballs to the sourceforge website.
 #
-# Taken from an article on Stepwise:
+#
+# Binary packaging originally taken from an article on Stepwise:
 # http://www.stepwise.com/Articles/Technical/Packages/BuildingAPackage.html
 #
 # Leigh Smith <leigh@leighsmith.com> 1999/11/29
 #
+
 # The version number as V.R.P to release under.
 RELEASE=
 DISTNAME=MusicKit
@@ -23,6 +27,13 @@ RELEASESRCDIR=$(WORKINGDIR)/MKSRC
 # development machine is the same as on the target installation machine.
 INSTALL_FILE_DIR=$(WORKINGDIR)/$(PACKAGENAME)Install
 INSTALLROOT=/
+
+SITEUSER=leighsmith
+UPLOAD_SERVER=upload.sourceforge.net
+DOC_TARBALL_PATH=$(WORKINGDIR)/MKDocumentation.build/
+DOC_TARBALL=MusicKitREADME.tar.bz2
+DOC_SITE=musickit.sourceforge.net
+DOC_SITEHTMLDIR=/home/groups/m/mu/musickit
 
 # case `uname` in
 #     "Darwin")
@@ -43,11 +54,22 @@ OS_ACRONYM=MOX
 # if [ x_$(RELEASE) = x_ ]; then echo "Usage: make RELEASE=V.R.P"; exit 1; fi
 
 PACKAGEFILE=$(WORKINGDIR)/$(PACKAGENAME).pkg
-SHIPFILE=$(WORKINGDIR)/$(PACKAGENAME)-$(RELEASE).b.$(OS_ACRONYM).pkg.tar
-
+BINARY_TARBALL=$(PACKAGENAME)-$(RELEASE).b.$(OS_ACRONYM).pkg.tar
+SRC_TARBALL=$(PACKAGENAME)-$(RELEASE).s.tar.gz
 CVSTAG=$(DISTNAME)_`echo $(RELEASE) | tr '.' '-'`
 
-packageBinaries: $(SHIPFILE)
+all: packageBinaries packageSources
+
+# Upload the files to the server
+ship: packageBinaries packageSources
+	scp $(DOC_TARBALL_PATH)/$(DOC_TARBALL) $(SITEUSER)@$(DOC_SITE):$(DOC_TARBALL)
+	ssh -l $(SITEUSER) $(DOC_SITE) "cd $(DOC_SITEHTMLDIR); tar xjf ~/$(DOC_TARBALL)"
+	ftp -u ftp://anonymous:$(SITEUSER)@$(UPLOAD_SERVER)/incoming/$(BINARY_TARBALL) $(WORKINGDIR)/$(BINARY_TARBALL)
+	ftp -u ftp://anonymous:$(SITEUSER)@$(UPLOAD_SERVER)/incoming/$(SRC_TARBALL) $(SRC_TARBALL_PATH)/$(SRC_TARBALL)
+
+packageSources:
+
+packageBinaries: $(WORKINGDIR)/$(BINARY_TARBALL)
 
 # Clean out anything already there.
 clean:
@@ -56,7 +78,7 @@ clean:
 	sudo /bin/rm -r -f $(INSTALL_FILE_DIR)
 
 # just tar the file ready for transmission, no point compressing.
-$(SHIPFILE): $(PACKAGEFILE)
+$(WORKINGDIR)/$(BINARY_TARBALL): $(PACKAGEFILE)
 	cd $(WORKINGDIR); \
 	tar cf $@ $(PACKAGENAME).pkg
 	@echo "Finished. Final package is located at $@"
@@ -75,6 +97,7 @@ $(RELEASESRCDIR)/$(DISTNAME)/configure: $(RELEASESRCDIR)/$(DISTNAME)/configure.a
 
 # Configure the system.
 $(RELEASESRCDIR)/$(DISTNAME)/Makefile: $(RELEASESRCDIR)/$(DISTNAME)/configure
+	cd $(RELEASESRCDIR)/$(DISTNAME); \
 	sh ./configure
 
 $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework: $(RELEASESRCDIR)/$(DISTNAME)/Makefile
