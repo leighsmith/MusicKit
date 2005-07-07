@@ -54,11 +54,11 @@ $(MY_NAME)_OBJC_FILES = \
          SndAudioProcessorDistortion.m \
          SndAudioProcessorFlanger.m \
          SndAudioProcessorInspector.m \
+         SndAudioProcessorMP3Encoder.m \
          SndAudioProcessorNoiseGate.m \
          SndAudioProcessorRecorder.m \
          SndAudioProcessorReverb.m \
          SndAudioProcessorToneGenerator.m \
-         SndAudioProcessorMP3Encoder.m \
          SndBreakpoint.m \
          SndConvert.m \
          SndDisplayData.m \
@@ -75,12 +75,14 @@ $(MY_NAME)_OBJC_FILES = \
 	 SndPasteboard.m \
          SndPerformance.m \
          SndPlayer.m \
+         SndPlaying.m \
          SndResample.m \
          SndStreamArchitectureView.m \
          SndStreamClient.m \
          SndStreamManager.m \
          SndStreamMixer.m \
          SndStreamRecorder.m \
+         SndStretchableScroller.m \
          SndTable.m \
          SndView.m
 
