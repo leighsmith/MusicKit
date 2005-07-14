@@ -66,15 +66,8 @@
 #import "SndStreamClient.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamMixer.h"
-
-#if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
-# import "SndAudioProcessorMP3Encoder.h"
-#endif
-
-#if HAVE_LIBMP3HIP
-# import "SndMP3.h"
-#endif
-
+#import "SndAudioProcessorMP3Encoder.h"
+#import "SndMP3.h"
 #import "SndAudioProcessor.h"
 #import "SndAudioProcessorChain.h"
 #import "SndAudioProcessorDelay.h"

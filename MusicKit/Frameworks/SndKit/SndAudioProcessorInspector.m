@@ -15,6 +15,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#if HAVE_CONFIG_H
+# import "SndKitConfig.h"
+#endif
+
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import "SndStreamArchitectureView.h"
@@ -25,9 +29,7 @@
 #import "SndAudioProcessorDistortion.h"
 #import "SndAudioProcessorFlanger.h"
 #import "SndAudioProcessorNoiseGate.h"
-#ifdef SND_MP3_ENCODER
 #import "SndAudioProcessorMP3Encoder.h"
-#endif
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorToneGenerator.h"
@@ -42,21 +44,23 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 
 + defaultAudioProcessorInspector
 {
-  if (defaultInspector == nil) {
-    // Force registration of all known SndAudioProcessor classes
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorDelay class]];
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorDistortion class]];
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorFlanger class]];
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorNoiseGate class]];
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorReverb class]];
-#ifdef SND_MP3_ENCODER
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorMP3Encoder class]];
+    if (defaultInspector == nil) {
+	// Force registration of all known SndAudioProcessor classes
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorDelay class]];
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorDistortion class]];
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorFlanger class]];
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorNoiseGate class]];
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorReverb class]];
+#if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorMP3Encoder class]];
 #endif
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorRecorder class]];
-    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorToneGenerator class]];
-    defaultInspector = [[SndAudioProcessorInspector alloc] init];
-  }
-  return defaultInspector;
+#if HAVE_LIBSNDFILE
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorRecorder class]];
+#endif
+	[SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorToneGenerator class]];
+	defaultInspector = [[SndAudioProcessorInspector alloc] init];
+    }
+    return defaultInspector;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

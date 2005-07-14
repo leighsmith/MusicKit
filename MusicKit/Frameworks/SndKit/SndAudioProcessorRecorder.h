@@ -18,9 +18,20 @@
 #ifndef __SNDKIT_SNDAUDIOPROCESSORRECORDER_H__
 #define __SNDKIT_SNDAUDIOPROCESSORRECORDER_H__
 
+/* We #include this file regardless of the setting of
+   HAVE_CONFIG_H so that other applications compiling against this
+   header don't have to define it. If you are seeing errors for
+   SndKitConfig.h not found when compiling the MusicKit, you haven't
+   run ./configure 
+*/
+#import "SndKitConfig.h"
+
+#if HAVE_LIBSNDFILE
+
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
-#import <sndfile.h>
+
+# import <sndfile.h>
 
 @class SndAudioBuffer;
 @class SndAudioBufferQueue;
@@ -72,22 +83,19 @@ enum SndRecorderParam {
 
 /*!
   @brief   Returns whether the receiver is currently recording.
-  
-  
-  @return     TRUE if currently recording
+  @return  YES if currently recording.
 */
 - (BOOL) isRecording;
 
 /*!
   @brief Sets the buffer used for recording.
+  @return YES if able to prepare correctly, NO if there was a problem.
  */
 - (BOOL) prepareToRecordForDuration: (double) recordDuration;
 
 /*!
-  @brief 
-  
-  
-  @return     TRUE if recording started ok
+  @brief YES if recording started ok.
+  @return YES if recording started ok.
 */
 - (BOOL) startRecording;
 
@@ -95,18 +103,16 @@ enum SndRecorderParam {
   @brief Sets up recording of the file in the given format.
   
   This method is not normally called, use startRecordingToFile:withDataFormat:channelCount:samplingRate:
-	  instead. This method, setUpRecordFile:withFormat: is defined here in order to facilitate overriding
+  instead. This method, setUpRecordFile:withFormat: is defined here in order to facilitate overriding
   in subclasses.
-  @return     Returns YES if able to open the file for writing, NO if there is an error.
+  @return Returns YES if able to open the file for writing, NO if there is an error.
  */
 - (BOOL) setUpRecordFile: (NSString *) filename
 	      withFormat: (SndFormat) format;
 
 /*!
   @brief   Begins recording to the given format in the given format.
-  
-  
-  @return     Returns YES if able to open the file for writing, NO if there is an error.
+  @return  Returns YES if able to open the file for writing, NO if there is an error.
 */
 - (BOOL) startRecordingToFile: (NSString*) filename
                withDataFormat: (SndSampleFormat) dataFormat
@@ -114,33 +120,25 @@ enum SndRecorderParam {
                  samplingRate: (int) samRate;
 
 /*!
-  @brief 
-  
-  
-  @return     self
+  @brief Stops the recording of the stream to file.
+  @return Returns self.
 */
 - stopRecording;
 
 /*!
-  @brief 
-  
-  TODO remove this, redundant, always wait until the queue clears.
-  @return     
+  @brief TODO remove this, redundant, always wait until the queue clears.
+  @return Returns self.
 */
 - stopRecordingWait: (BOOL) wait;
 
 /*!
   @brief Returns the number of frames recorded.
-  
-  
-  @return     
+  @return The number of frames recorded.
 */
 - (long) framesRecorded;
 
 /*!
-  @brief 
-  
-  
+  @brief Sets the linear amplitude the stream must rise above before recording begins.
 */
 - (void) setStartTriggerThreshold: (float) f;
 
@@ -149,5 +147,6 @@ enum SndRecorderParam {
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
+#endif
 
 #endif

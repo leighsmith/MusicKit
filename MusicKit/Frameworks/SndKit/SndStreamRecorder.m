@@ -12,13 +12,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//#import <MKPerformSndMIDI/SndStruct.h>
+// Only compile this class if the libsndfile library has been installed.
+#if HAVE_CONFIG_H
+# import "SndKitConfig.h"
+#endif
+
+#if HAVE_LIBSNDFILE
+
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
 #import "SndStreamRecorder.h"
 #import "SndEndianFunctions.h"
-//#include <unistd.h>
 
 @implementation SndStreamRecorder
 
@@ -114,7 +119,7 @@
     BOOL r = FALSE;
     
     if ([recorder isRecording]) 
-	NSLog(@"SndStreamRecorder::prepareToRecordForDuration - Error: already recording!\n");
+	NSLog(@"SndStreamRecorder -prepareToRecordForDuration: Error: already recording!\n");
     
     else {
 #if 0
@@ -148,7 +153,7 @@
 	[outputBufferLock unlockWithCondition: OB_isInit];
     }
     if ([recorder isRecording]) 
-	NSLog(@"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
+	NSLog(@"SndStreamRecorder -startRecordingToFile: Error: already recording!\n");
     
     b = [recorder startRecordingToFile: filename
 			withDataFormat: [exposedOutputBuffer dataFormat]
@@ -161,3 +166,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 @end
+
+#else
+#warning Did not compile SndStreamRecorder class since libsndfile library was not installed.
+#endif

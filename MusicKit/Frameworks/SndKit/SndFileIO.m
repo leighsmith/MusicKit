@@ -21,7 +21,10 @@
 
 #define DEBUG_MESSAGES 0
 
-#define HAVE_LIBSNDFILE 1
+// Selectively compile this class if the libsndfile library has not been installed.
+#if HAVE_CONFIG_H
+# import "SndKitConfig.h"
+#endif
 
 #ifndef GNUSTEP
 # ifndef WIN32
@@ -34,7 +37,7 @@
 #  import <io.h>
 # endif
 #else
-# import <fcntl.h>
+//# import <fcntl.h>
 #endif
 
 #import "SndFunctions.h"
@@ -46,6 +49,7 @@
 + (int) fileFormatForEncoding: (NSString *) extensionString
 		   dataFormat: (SndSampleFormat) sndFormatCode
 {
+#if HAVE_LIBSNDFILE
     int sndfileFormat;
     int formatIndex, formatCount;
     SF_FORMAT_INFO sfFormatInfo;
@@ -94,11 +98,16 @@
 	NSLog(@"Snd +fileFormatForEncoding:dataFormat: unhandled format %d\n", sndFormatCode);
     }
     return sndfileFormat;
+#else
+#warning Disabled sound file I/O in Snd class since libsndfile library was not installed.
+    return 0;
+#endif
 }
 
-// return the file extensions supported by our sound file reading library, typically sox or sndlibfile.
+// return the file extensions supported by our sound file reading library, nowdays libsndfile.
 + (NSArray *) soundFileExtensions
 {
+#if HAVE_LIBSNDFILE
     // libsndfile doesn't have a concept of aliases for common file extensions so
     // we have to add them manually. This is bad. libsndfile should provide an alias list.
     NSMutableArray *fileTypes = [NSMutableArray arrayWithObjects: @"aif", @"nist", @"aifc", @"snd", nil];
@@ -121,6 +130,9 @@
 	[fileTypes addObject: [fileExtension uppercaseString]];
     }
     return [NSArray arrayWithArray: fileTypes]; // make it immutable
+#else
+    return [NSArray array];
+#endif
 }
 
 + (NSString *) defaultFileExtension
@@ -144,6 +156,7 @@
 
 - (SndFormat) soundFormatOfFilename: (NSString *) path
 {
+#if HAVE_LIBSNDFILE
     SndFormat headerFormat = { SND_FORMAT_UNSPECIFIED, 0, 0, 0 };
     SNDFILE *sfp;
     SF_INFO sfinfo;
@@ -169,16 +182,23 @@
     sf_close(sfp);
     
     return headerFormat;
+#else
+    SndFormat headerFormat = { SND_FORMAT_UNSPECIFIED, 0, 0, 0 };
+
+    return headerFormat;
+#endif
 }
 
-#ifndef HAVE_LIBSNDFILE
 
 // Retrieve loop points
 // The AIFF loop structure is a lot richer than our simplistic single loop structure. So for now
 // we just use the first AIFF loop.
 // Returns YES if we could find a set of loop points, NO if not.
-BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *loopEndIndex)
+- (NSRange) loopRange
 {
+    NSRange loop = { };
+    
+#if HAVE_LIBSNDFILE
     if(ft->instr.nloops > 0) {
 	int loopNum;
 	
@@ -195,15 +215,15 @@ BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *lo
 			// Loop forward and backward
 			break;
 		}
-	        *loopStartIndex = ft->loops[loopNum].start;
-		*loopEndIndex   = ft->loops[loopNum].start + ft->loops[loopNum].length;
-		return YES;
+	        loop.location = ft->loops[loopNum].start;
+		loop.length   = ft->loops[loopNum].start + ft->loops[loopNum].length;
+		return loop;
 	    }
 	}
     }
-    return NO;
-}
 #endif
+    return loop;
+}
 
 // TODO it would be preferable to have readSoundfile: (NSString *) fromRange: (NSRange) 
 // However we need a mechanism to indicate infinity for the length in order to signal to read to EOF.
@@ -211,6 +231,7 @@ BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *lo
 	   startFrame: (unsigned long) startFrame
 	   frameCount: (long) frameCount // must be signed for -1 = read to EOF marker.
 {
+#if HAVE_LIBSNDFILE
     SNDFILE *sfp;
     SF_INFO sfinfo;
     SF_FORMAT_INFO soundFileFormatInfo;
@@ -323,6 +344,9 @@ BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *lo
     loopEndIndex = [self lengthInSampleFrames] - 1;
     
     return SND_ERR_NONE;
+#else
+    return SND_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 - (int) readSoundfile: (NSString *) filename
@@ -347,6 +371,8 @@ BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *lo
         
     return [self readSoundfile: filename startFrame: 0 frameCount: -1];    
 }
+
+#if HAVE_LIBSNDFILE
 
 // writes the sound data, soundDataFormat describes the format of the data pointed to by soundData.
 // TODO The parameters can probably be eventually changed to take an SndAudioBuffer when Snd's hold it's internal
@@ -380,11 +406,14 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     return SND_ERR_NONE;
 }
 
+#endif
+
 // The underlying sound file writing library (libsndfile) will look after endian issues.
 - (int) writeSoundfile: (NSString *) filename
 	    fileFormat: (NSString *) fileFormat
 	    dataFormat: (SndSampleFormat) fileDataFormat
 {
+#if HAVE_LIBSNDFILE
     SF_INFO sfinfo;
     SNDFILE *sfp;
     int error;
@@ -429,6 +458,9 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     sf_close(sfp);
 
     return SND_ERR_NONE;
+#else
+    return SND_ERR_NOT_IMPLEMENTED;
+#endif
 }
 
 // Set the output format from the format of the sound itself, which

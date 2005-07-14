@@ -19,6 +19,9 @@
 
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
+#import "SndKitConfig.h"
+
+#if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
 
 #import <lame/lame.h>
 // Note:
@@ -88,35 +91,39 @@ enum {
  @return  NSString with the default IP/URL address for the icecast server.
  */
 + (NSString*) defaultServerAddress;
+
 /*!
  @brief  Returns icecast's default source/encoder connection port id.
  @return  An int which is the default mp3 source/encoder port id on the server.
  */
 + (int) defaultSourcePort;
+
 /*!
  @brief  Returns the default password used to connect to the icecast server
  @return  An NSString with the default password for the icecast server.
  */
 + (NSString*) defaultSourcePassword;
+
 /*!
  @brief  Returns the current IP/URL of the icecast server
  @return  NSString with the current IP/URL address of the icecast server.
- 
-  
  */
 - (NSString*) serverAddress;
+
 /*!
  @brief  Returns the current password being used to connect to the icecast
  server's MP3 source port.
  @return  NSString with the current MP3 source port password.
  */
 - (NSString*) serverPassword;
+
 /*!
  @brief  Returns the current MP3 source port being used to connect to the
  icecast server
  @return  The current MP3 source port number.
  */
 - (int) serverPort;
+
 /*!
  @brief  Sets the icecast server connection parameters.
  @param  address IP/URL address of icecast server.
@@ -132,6 +139,7 @@ enum {
  @return  TRUE if a connection was established.
  */
 - (BOOL) connectToShoutcastServer;
+
 /*!
  @brief  Disconnects from the icecast server's MP3 source port.
  */
@@ -140,5 +148,6 @@ enum {
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
+#endif
 
 #endif

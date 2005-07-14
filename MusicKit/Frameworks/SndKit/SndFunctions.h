@@ -71,7 +71,6 @@
 #endif
 
 /*!
-  @function SndFormatDescription
   @brief Returns a NSString description of the sound format. 
   @param format A SndFormat structure containing the sound format parameters.
   @return Returns a NSString description of the sound format.
@@ -79,7 +78,6 @@
 SNDKIT_API NSString *SndFormatDescription(SndFormat format);
 
 /*!
-  @function SndStructDescription
   @brief Returns a NSString description of the sound. 
   @param sound A SndStructSound containing the Snd
   @return Returns a NSString description of the sound.
@@ -87,14 +85,12 @@ SNDKIT_API NSString *SndFormatDescription(SndFormat format);
 SNDKIT_API NSString *SndStructDescription(SndSoundStruct *sound);
 
 /*!
-  @function SndPrintStruct
   @brief Prints a description of the sound to stderr.
   @param sound A SndStructSound containing the Snd.
  */
 SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
 
 /*!
-  @function SndPrintFrags
   @brief Prints, to stdout, a description of the data fragments in the sound.
   @param sound A SndStructSound containing the sound data.
   @return Returns?
@@ -102,7 +98,6 @@ SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
 SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
 
 /*!
-  @function SndFormatName
   @brief Returns and NSString describing the data format, in either a terse or verbose manner.
   @param dataFormat The sample format enumerated integer. See ? for a description.
   @param verbose YES returns the verbose description, NO returns the terse description.
@@ -111,7 +106,6 @@ SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
 SNDKIT_API NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose);
 
 /*!
-  @function SndFrameSize
   @brief Returns the size of a sample frame, that is, the number of bytes comprising a sample times the number of channels.
   @param sound A SndFormat describing the format of a sound.
   @return Returns the size of a sample frame in bytes.
@@ -119,7 +113,6 @@ SNDKIT_API NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose);
 SNDKIT_API int SndFrameSize(SndFormat sound);
 
 /*!
-  @function SndMaximumAmplitude
   @brief Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
   @param dataFormat The sample format enumerated integer. See ?  for a description.
   @return Returns the maximum value of a sample.
@@ -127,37 +120,33 @@ SNDKIT_API int SndFrameSize(SndFormat sound);
 SNDKIT_API double SndMaximumAmplitude(SndSampleFormat dataFormat);
 
 /*!
-  @function SndSampleWidth
   @brief Returns the size of a sample in bytes for the given format code. 
   @param dataFormat The sample format enumerated integer. See ?  for a description.
   @return Returns the size of a sample in bytes.
  */
-SNDKIT_API int  SndSampleWidth(SndSampleFormat dataFormat);
+SNDKIT_API int SndSampleWidth(SndSampleFormat dataFormat);
 
 /*!
- @function SndBytesToFrames
- @brief Given the data size in bytes, the number of channels and the data format, return the number of samples.
- @param byteCount The size of sample data in bytes.
- @param channelCount The number of audio channels.
- @param dataFormat The sample data encoding format.
- @return Return the number of samples
+  @brief Given the data size in bytes, the number of channels and the data format, return the number of samples.
+  @param byteCount The size of sample data in bytes.
+  @param channelCount The number of audio channels.
+  @param dataFormat The sample data encoding format.
+  @return Return the number of samples
 */
-SNDKIT_API int  SndBytesToFrames(int byteCount,
-                                  int channelCount,
-                                  SndSampleFormat dataFormat);
+SNDKIT_API int SndBytesToFrames(int byteCount,
+                                int channelCount,
+                                SndSampleFormat dataFormat);
 
 /*!
-@function SndFramesToBytes
- @brief Calculates the number of bytes needed to store the data specified by the parameters
- @param sampleCount
- @param channelCount
- @param dataFormat
- @return The size of the sample data in bytes.
+  @brief Calculates the number of bytes needed to store the data specified by the parameters
+  @param sampleCount
+  @param channelCount
+  @param dataFormat
+  @return The size of the sample data in bytes.
  */
-SNDKIT_API long  SndFramesToBytes(long sampleCount, int channelCount, SndSampleFormat dataFormat);
+SNDKIT_API long SndFramesToBytes(long sampleCount, int channelCount, SndSampleFormat dataFormat);
 
 /*!
-  @function SndFormatOfSNDStreamBuffer
   @brief Returns the format of a SNDStreamBuffer.
   @param streamBuffer A pointer to a SNDStreamBuffer. 
   @return A SndFormat structure holding valid frame and channel counts and the data format.
@@ -165,7 +154,6 @@ SNDKIT_API long  SndFramesToBytes(long sampleCount, int channelCount, SndSampleF
 SNDKIT_API SndFormat SndFormatOfSNDStreamBuffer(SNDStreamBuffer *streamBuffer);
 
 /*!
-  @function SndDataSize
   @brief Calculates the number of bytes needed to store the sample data specified by the format.
   @param format A SndFormat structure holding valid frame and channel counts and the data format.
   @return The size of the sample data in bytes.
@@ -173,47 +161,42 @@ SNDKIT_API SndFormat SndFormatOfSNDStreamBuffer(SNDStreamBuffer *streamBuffer);
 SNDKIT_API long SndDataSize(SndFormat format);
 
 /*!
-@function SndConvertDecibelsToLinear
- @brief Converts the relative deciBel [-oo,0] level dB to a linear amplitude in the range [0,1];
- @param db
- @return The linear equivalent of the relative deciBel level dB
+  @brief Converts the relative deciBel [-oo,0] level dB to a linear amplitude in the range [0,1];
+  @param db parameter in deciBels.
+  @return The linear equivalent of the relative deciBel level dB
  */
 SNDKIT_API float SndConvertDecibelsToLinear(float db);
 
 /*!
-@function SndConvertLinearToDecibels
- @brief Converts a linear amplitude in the range [0,1] to relative deciBels [-oo,0]
- @param lin
- @return The relative decibel equivalent of lin
+  @brief Converts a linear amplitude in the range [0,1] to relative deciBels [-oo,0]
+  @param linearAmplitude An amplitude in the range [0, 1].
+  @return The relative decibel equivalent of linearAmplitude.
  */
-SNDKIT_API float SndConvertLinearToDecibels(float lin);
+SNDKIT_API float SndConvertLinearToDecibels(float linearAmplitude);
 
 /*!
-@function SndFrameCount
- @brief returns the number of samples in the Snd
- @param sound A SndStructSound containing the Snd
- @return
+  @brief returns the number of samples in the Snd
+  @param sound A SndStructSound containing the Snd
+  @return
  */
 SNDKIT_API int SndFrameCount(const SndSoundStruct *sound);
 
 /*!
-@function SndFree
- @brief Frees the sound contained in the structure sound
- @param sound A SndStructSound containing the Snd
- @return
+  @brief Frees the sound contained in the structure sound
+  @param sound A SndStructSound containing the Snd
+  @return
  */
 SNDKIT_API int SndFree(SndSoundStruct *sound);
 
 /*!
-@function SndAlloc
- @brief Allocates a sound as specified by the parameters.
- @param sound The address of a SndStructSound pointer in which to alloc the Snd
- @param dataSize
- @param dataFormat
- @param samplingRate
- @param channelCount
- @param infoSize
- @return
+  @brief Allocates a sound as specified by the parameters.
+  @param sound The address of a SndStructSound pointer in which to alloc the Snd
+  @param dataSize
+  @param dataFormat
+  @param samplingRate
+  @param channelCount
+  @param infoSize
+  @return
  */
 SNDKIT_API int SndAlloc(SndSoundStruct **sound,
                                    int dataSize,
@@ -222,50 +205,50 @@ SNDKIT_API int SndAlloc(SndSoundStruct **sound,
                                    int channelCount,
                                    int infoSize);
 
+#if HAVE_LIBSNDFILE
 /*!
-@function SndWriteSampleData
- @brief To come 
- @param path
- @param sound
- @return
+  @brief To come 
+  @param sfp
+  @param soundData
+  @param soundDataFormat
+  @return
  */
 SNDKIT_API int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat);
+#endif
 
 /*!
-  @function SndSwapBigEndianSoundToHost
   @brief Swaps the sound data in big endian format to host (native) format.
   
   Sound data is held internally in the SndKit in "host" or "native" format, either big or little endian,
   depending on the processor architecture. The SndSwapBigEndianSoundToHost() function will
   convert the supplied data from big endian format, typically received by network reception or some other
   application where the endian format is known to the most efficient native format. This is a no-op on big endian machines.
- @param dest
- @param src
- @param sampleCount
- @param channelCount
- @param dataFormat
- @return
+  @param dest
+  @param src
+  @param sampleCount
+  @param channelCount
+  @param dataFormat
+  @return
  */
 SNDKIT_API int SndSwapBigEndianSoundToHost(void *dest,
-                                  void *src,
-                                   int sampleCount,
-                                   int channelCount,
-                                   SndSampleFormat dataFormat);
+					   void *src,
+                                           int sampleCount,
+                                           int channelCount,
+                                           SndSampleFormat dataFormat);
 
 /*!
-  @function SndSwapHostToBigEndianSound
   @brief Swaps the sound data in host (native) format to big endian format.
   
   Sound data is held internally in the SndKit in "host" or "native" format, either big or little endian,
   depending on the processor architecture. The SndSwapHostToBigEndianSound() function will
 			  convert the supplied data to big endian format, typically suitable for network transmission or some other
 			  application where the endian format must be known. This is a no-op on big endian machines.
- @param dest
- @param src
- @param sampleCount
- @param channelCount
- @param dataFormat
- @return 
+  @param dest
+  @param src
+  @param sampleCount
+  @param channelCount
+  @param dataFormat
+  @return 
  */
 SNDKIT_API int SndSwapHostToBigEndianSound(void *dest,
                                   void *src,

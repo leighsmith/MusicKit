@@ -4,7 +4,7 @@
 //  SndKit
 //
 //  Description:
-//    Snd subclass reading MP3 files. 
+//    Snd subclass reading MP3 compressed files. 
 //
 //  Original Author: SKoT McDonald <skot@tomandandy.com>
 //
@@ -18,6 +18,10 @@
 
 #ifndef __SND_MP3_H__
 #define __SND_MP3_H__
+
+#import "SndKitConfig.h"
+
+#if HAVE_LIBMP3HIP
 
 #import <Foundation/Foundation.h>
 #import "Snd.h"
@@ -73,7 +77,6 @@
     NSMutableData *pcmData; // the decoded linear sample data.
     long           decodedSampleCount; // Number of samples decoded so far.
     BOOL           bDecoding;    // we are decoding.
-    
 }
 
 /*!
@@ -101,16 +104,34 @@
 - (int) readSoundURL: (NSURL *) soundURL;
 - initFromSoundURL: (NSURL *) url;
 - (void) dealloc;
+
+/*!
+  @brief Returns the duration of the sound in seconds.
+ */
 - (double) duration;
+
+/*!
+  @brief Returns the duration of the sound in sample frames.
+ */
 - (long) lengthInSampleFrames;
+
+/*!
+  @brief Returns the number of channels of the sound.
+ */
 - (int) channelCount;
+
+/*!
+  @brief Returns the sampling rate of the sound in Hz.
+ */
 - (double) samplingRate;
+
+/*!
+  @brief Returns the sample data format the sound samples.
+ */
 - (SndSampleFormat) dataFormat;
 
 /*!
-  @brief Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
-
-  
+  @brief Actually all this does is check the MP3 is the same as the native format, if not it flags an error.  
  */
 - (int) convertToSampleFormat: (SndSampleFormat) toFormat
 	   samplingRate: (double) toRate
@@ -118,8 +139,6 @@
 
 /*!
   @brief Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
-
-  
  */
 - (int) convertToNativeFormat;
 
@@ -169,6 +188,12 @@
 + (NSArray *) soundFileExtensions;
 
 /*!
+  @brief Returns a pointer to memory containing a decompressed region of sound samples containing the given sample frame.
+  @param frame The sample frame to find.
+  @param currentFrame
+  @param lastFrameInBlock
+  @param dataFormat
+  @return Returns a void * pointer to memory holding the region of sound samples.
  */
 - (void *) fragmentOfFrame: (int) frame 
 	   indexInFragment: (unsigned int *) currentFrame 
@@ -186,5 +211,7 @@
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
+
+#endif
 
 #endif

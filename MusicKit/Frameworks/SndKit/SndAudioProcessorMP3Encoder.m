@@ -17,7 +17,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Only compile this class if the HIP library has been installed.
+// Only compile this class if the LAME and Shoutcast libraries have been installed.
 #if HAVE_CONFIG_H
 # import "SndKitConfig.h"
 #endif
