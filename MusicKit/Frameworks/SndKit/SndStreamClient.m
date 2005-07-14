@@ -18,7 +18,7 @@
 
 #if SET_THREAD_PRIORITY
  #include <sched.h>
- #if (defined(__ppc__) && defined(__APPLE__))
+ #if defined(__APPLE__)
   #include <mach/mach_init.h>
   #include <mach/task_policy.h>
   #include <mach/thread_act.h>
@@ -473,7 +473,7 @@ enum {
 }
 
 #ifdef SET_THREAD_PRIORITY
-#if (defined(__ppc__) && defined(__APPLE__))
+#if defined(__APPLE__)
 int get_bus_speed()
 {
     int mib[2]; // Management Information Base
@@ -503,7 +503,7 @@ int get_bus_speed()
 
 static void inline setThreadPriority()
 {
-#if (defined(__ppc__) && defined(__APPLE__))
+#if defined(__APPLE__)
     struct thread_time_constraint_policy ttcpolicy;
     kern_return_t theError;
 
