@@ -196,30 +196,27 @@
 // Returns YES if we could find a set of loop points, NO if not.
 - (NSRange) loopRange
 {
-    NSRange loop = { };
+    // TODO loopEndIndex will be loop.location + loop.length - 1;
+    NSRange loop = { 0, [self lengthInSampleFrames] };
     
 #if HAVE_LIBSNDFILE
-    if(ft->instr.nloops > 0) {
-	int loopNum;
-	
-	for(loopNum = 0; loopNum < ft->instr.nloops; loopNum++) {
-	    if (ft->loops[loopNum].count > 0) {
-		switch(ft->loops[loopNum].type & ~ST_LOOP_SUSTAIN_DECAY) {
-		    case 0:
-			// Loop is off
-			break;
-		    case 1:
-			// Loop forward only.
-			break;
-		    case 2:
-			// Loop forward and backward
-			break;
-		}
-	        loop.location = ft->loops[loopNum].start;
-		loop.length   = ft->loops[loopNum].start + ft->loops[loopNum].length;
-		return loop;
-	    }
+    SF_LOOP_INFO loopInfo;
+    int result = sf_command(NULL, SFC_GET_LOOP_INFO, &loopInfo, sizeof(loopInfo));
+
+    if(result) {
+	switch(loopInfo.loop_mode) {
+	case SF_LOOP_NONE:
+	    // Loop is off
+	    break;
+	case SF_LOOP_FORWARD:
+	    // Loop forward only.
+	    break;
+	case SF_LOOP_BACKWARD:
+	    // Loop backward (only?)
+	    break;
 	}
+	// loop.location = loopInfo.start;
+	// loop.length   = loopInfo.start + loopInfo.length;
     }
 #endif
     return loop;
