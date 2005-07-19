@@ -75,7 +75,7 @@
 
 - copyWithZone: (NSZone *) zone
 {
-    SndAudioProcessorRecorder *newRecorder = [[self class] copyWithZone: zone];
+    SndAudioProcessorRecorder *newRecorder = [[[self class] allocWithZone: zone] init];
     
     newRecorder->writingQueue = [writingQueue copy]; // This allows the copy to be independent.
     newRecorder->fileFormat = fileFormat;
