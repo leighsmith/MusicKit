@@ -1,5 +1,8 @@
 # -*- Makefile -*-
 #  $Id$
+#
+# @configure_input@
+#
 #  Defined In: The MusicKit
 #  Description:
 #    Makefile preamble for GNUstep
@@ -13,7 +16,7 @@
 #  message remains intact and accompanies all derived code.
 
 #  Modification history:
-#    See the CVS repository for the log i.e cvs log GNUmakefile.preamble
+#    See the CVS repository for the log i.e cvs log GNUmakefile.preamble.in
 #
 
 # for all platforms, attempt to pre-link to libraries so that individual
@@ -26,19 +29,15 @@ LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
 
 ADDITIONAL_FLAGS += @DEFS@
 
+ADDITIONAL_CPPFLAGS += @CPPFLAGS@
+
+ADDITIONAL_LDFLAGS += @LDFLAGS@
+
 # LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME)
 
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME) -lwinmm  
-
-# The /usr/local/[include|lib] is where the shout and lame headers and libraries
-# should have been placed.
-
-  ADDITIONAL_FLAGS += -I/usr/local/include
-
-  SHARED_LD_POSTFLAGS += -L/usr/local/lib
-
 else
   PKG_CONFIG=$(shell which pkg-config 2>/dev/null)
   ifneq ($(PKG_CONFIG),"")
