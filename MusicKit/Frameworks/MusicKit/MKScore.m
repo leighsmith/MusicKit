@@ -17,139 +17,7 @@
  Portions Copyright (c) 1999-2000, The MusicKit Project.
  */
 /*
- Modification history:
-
- $Log$
- Revision 1.43  2005/05/14 05:54:45  leighsmith
- Correected gcc 4.0 warnings mixing signed and unsigned ints. Other parameter type cleanups.
-
- Revision 1.42  2005/05/04 11:51:15  leighsmith
- Cleaned up typing
-
- Revision 1.41  2005/04/16 00:04:04  leighsmith
- Doco & formatting cleanup
-
- Revision 1.40  2005/04/15 04:18:25  leighsmith
- Cleaned up for gcc 4.0's more stringent checking of ObjC types
-
- Revision 1.39  2004/12/06 18:27:36  leighsmith
- Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
-
- Revision 1.38  2004/11/20 04:11:22  leighsmith
- Corrected the parameter and return types of several methods
-
- Revision 1.37  2004/01/21 22:17:40  leighsmith
- Corrected typing of several parameters, added MKScoreFormat enum, earliestNoteTime, scoreFormatOfFile:, renamed partNamed: to partTitled: and added a new partNamed: distinguishing a MKParts name from it's MK_title
-
- Revision 1.36  2003/12/31 00:32:53  leighsmith
- Cleaned up naming of methods, removing underscores
-
- Revision 1.35  2003/08/04 21:14:33  leighsmith
- Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
- Revision 1.34  2002/08/20 23:26:02  leighsmith
- Removed warning of undeclared method class in bundleExtensions, added setAlternativeScorefileExtensions: to allow alternative names for scorefiles
-
- Revision 1.33  2002/05/01 14:33:35  sbrandon
- Added static array to hold plugins, added +bundleExtensions to return info collected from plugins, added documentation from the Standard MIDI File Spec defining how time signatures are stored, added the implementation of +addPlugin:, fixed a problem in score merging that caused an endless loop under certain situations, altered readScoreFile to try to open files with plugins if extension is appropriate.
- Note that the plugin implementation is under review.
-
- Revision 1.32  2002/04/03 03:59:41  skotmcdonald
- Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
- Revision 1.31  2002/03/12 22:52:56  sbrandon
- Changed some of the ways that the list of parts is dealt with. Specifically,
- changed to indexOfObjectIdenticalTo: from indexOfObject, since the isEqual:
- method on MKPart now does a deep compare.
-
- Revision 1.30  2002/03/06 07:54:34  skotmcdonald
- Added method partNamed which returns the MKPart with a given info-note title
-
- Revision 1.29  2002/01/23 15:33:02  sbrandon
- The start of a major cleanup of memory management within the MK. This set of
- changes revolves around MKNote allocation/retain/release/autorelease.
-
- Revision 1.28  2002/01/15 12:14:35  sbrandon
- replaced [NSMutableData data] with alloc:initWithCapacity: so as to prevent
- auto-released data - we release it manually when finished with it.
-
- Revision 1.27  2001/11/16 19:56:45  skotmcdonald
- Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
-
- Revision 1.26  2001/09/06 21:27:48  leighsmith
- Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
- Revision 1.25  2001/08/07 16:17:06  leighsmith
- Cleaned up encoding and decoding
-
- Revision 1.24  2001/02/23 03:29:44  leigh
- Removed redundant and dangerous releasePartsOnly method
-
- Revision 1.23  2000/11/28 19:02:50  leigh
- replaced malloc with _MKMalloc (which does error checking), added -fileExtensions, -scorefileExtensions, changed -midiExtensions to produce a list of possible midifile extensions
-
- Revision 1.22  2000/11/25 22:27:55  leigh
- Removed redundant and potentially bug inducing releaseParts
-
- Revision 1.21  2000/11/21 19:34:27  leigh
- *** empty log message ***
-
- Revision 1.20  2000/06/09 18:05:59  leigh
- Added braces to reduce finicky compiler warnings
-
- Revision 1.19  2000/06/09 15:01:03  leigh
- typed the parameter returned by -parts
-
- Revision 1.18  2000/05/26 21:03:19  leigh
- Added combineNotes to do the combination over all MKParts
-
- Revision 1.17  2000/05/06 02:41:32  leigh
- putSysExcl allocates a mutable char array to operate on, since _MKGetSysExByte writes to the string pointer
-
- Revision 1.16  2000/05/06 00:29:36  leigh
- Converted tagTable to NSMutableDictionary
-
- Revision 1.15  2000/04/26 01:20:27  leigh
- Corrected readScorefileStream to take a NSData instead of NSMutableData instance
-
- Revision 1.14  2000/04/25 02:08:40  leigh
- Renamed free methods to release methods to reflect OpenStep behaviour
-
- Revision 1.13  2000/04/16 04:22:44  leigh
- Comment cleanup and removed assignment in condition warning
-
- Revision 1.12  2000/04/03 23:45:42  leigh
- Added description method
-
- Revision 1.11  2000/03/31 00:09:31  leigh
- Adopted OpenStep naming of factory methods
-
- Revision 1.10  2000/03/29 03:17:47  leigh
- Cleaned up doco and ivar declarations
-
- Revision 1.9  2000/03/11 01:11:24  leigh
- Reading instrument and track names in level 1 MIDI files now are stored in the MKPart infoNote
-
- Revision 1.8  2000/02/11 22:52:39  leigh
- Fixed memory leak reading scorefiles
-
- Revision 1.7  2000/02/08 04:15:18  leigh
- Added +midifileExtension
-
- Revision 1.6  2000/02/08 03:16:05  leigh
- Improved MIDI file writing, generating separate tempo track with MKPart info entries
-
- Revision 1.5  1999/10/10 01:10:22  leigh
- MIDI mode messages read from SMF0 files now receive MK_midiChan parameters so MKScores read from SMF1 or SMF0 behave the same.
-
- Revision 1.4  1999/09/04 22:02:18  leigh
- Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
- Revision 1.3  1999/08/06 00:38:10  leigh
- converted strtols to NSScanners
-
- Revision 1.2  1999/07/29 01:16:42  leigh
- Added Win32 compatibility, CVS logs, SBs changes
+ Modification history prior to CVS commital:
 
  12/8/89/daj  - Fixed bug in midi-file reading -- first part was being
  initialized to a bogus info object.
@@ -668,24 +536,27 @@ static void putMidi(struct __MKMidiOutStruct *ptr)
 
 static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
 {
-  int sysExStrLen = [sysExclString cStringLength];
-  char *sysExclStr = alloca(sysExStrLen);
-  unsigned char *buffer = alloca(sysExStrLen); /* More than enough */
-  unsigned char *bufptr = buffer;
-  int bufferLen;
-  unsigned char c;
+    int sysExStrLen = [sysExclString cStringLength];
+    char *sysExclStr = _MKMalloc(sysExStrLen); // was alloca
+    unsigned char *buffer = _MKMalloc(sysExStrLen); /* More than enough */
+    unsigned char *bufptr = buffer;
+    int bufferLen;
+    unsigned char c;
 
-  [sysExclString getCString: sysExclStr];
-  c = _MKGetSysExByte(&sysExclStr);
-  if (c == MIDI_SYSEXCL)
+    [sysExclString getCString: sysExclStr];
     c = _MKGetSysExByte(&sysExclStr);
-  *bufptr++ = c;
-  while (*sysExclStr && c != MIDI_EOX)
-    *bufptr++ = c = _MKGetSysExByte(&sysExclStr);
-  if (c != MIDI_EOX)
-    *bufptr++ = MIDI_EOX;
-  bufferLen = bufptr - buffer;
-  MKMIDIFileWriteSysExcl(ptr->_midiFileStruct, timeInQuanta(ptr->_midiFileStruct,ptr->_timeTag), bufferLen, buffer);
+    if (c == MIDI_SYSEXCL)
+	c = _MKGetSysExByte(&sysExclStr);
+    *bufptr++ = c;
+    while (*sysExclStr && c != MIDI_EOX)
+	*bufptr++ = c = _MKGetSysExByte(&sysExclStr);
+    if (c != MIDI_EOX)
+	*bufptr++ = MIDI_EOX;
+    bufferLen = bufptr - buffer;
+    MKMIDIFileWriteSysExcl(ptr->_midiFileStruct,
+			   timeInQuanta(ptr->_midiFileStruct,ptr->_timeTag),
+			   bufferLen,
+			   buffer);
 }
 
 static void sendBufferedData(struct __MKMidiOutStruct *ptr)
@@ -697,7 +568,7 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 // return the possible extensions of MIDI files for pathnames
 + (NSArray *) midifileExtensions
 {
-  return [NSArray arrayWithObjects: _MK_MIDIFILEEXT, nil];
+    return [NSArray arrayWithObjects: _MK_MIDIFILEEXT, nil];
 }
 
 // return the extension of scorefiles allowed
@@ -714,10 +585,11 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 
 + (NSArray *) bundleExtensions
 {
-    int i,count;
+    int i;
     NSMutableArray *a = [NSMutableArray new];
     NSObject <MusicKitPlugin> *p;
-    count = [plugins count];
+    int count = [plugins count];
+
     for (i = 0 ; i < count ; i++) {
         p = [plugins objectAtIndex:i];
         if ([[[p class] protocolVersion] isEqualToString:@"1"]) {
@@ -814,7 +686,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
 	    MKMIDIFileWriteSig(fileStructP, T, MKMIDI_timeSig, allData);
 	}
 	if (PRESENT(MK_keySignature)) {
-	    NSString *keySigString = STRPAR(curNote,MK_keySignature);
+	    NSString *keySigString = STRPAR(curNote, MK_keySignature);
 	    NSScanner *keySigScan;
 	    int sf, mi;
 	    unsigned int allData;
@@ -831,7 +703,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
 	    MKMIDIFileWriteSig(fileStructP, T, MKMIDI_keySig, allData);
 	}
 	if (PRESENT(MK_tempo))
-	    MKMIDIFileWriteTempo(fileStructP,T, DOUBLEPAR(curNote,MK_tempo));
+	    MKMIDIFileWriteTempo(fileStructP, T, DOUBLEPAR(curNote, MK_tempo));
     }
 }
 
@@ -1264,7 +1136,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    break;
 		default: { /* Sys exclusive */
 		    unsigned j;
-		    char *str = alloca(*nData * 3); /* 3 chars per byte */
+		    char *str = _MKMalloc(*nData * 3); /* 3 chars per byte */
 		    char *ptr = str;
 		    unsigned char *p = *data;
 		    unsigned char *endP = p + *nData;
