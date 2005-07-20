@@ -6,7 +6,7 @@
     The MKMidi object provides MIDI input/output access. It emulates some of the
     behavior of a MKPerformer: It contains a NSMutableArray of MKNoteSenders, one per MIDI
     channel (as well as an extra one for MIDI system and channel mode messages).
-    You can receive MKNotes derived from MIDI input by connecting an Instrument's
+    You can receive MKNotes derived from MIDI input by connecting an MKInstrument's
     MKNoteReceivers to the MKNoteSenders of a MKMidi instance.
    
     Similarly, MKMidi emulates some of the behavior of an MKInstrument: It contains
@@ -16,12 +16,12 @@
    
     However, the MKMidi object is unlike a MKPerformer in that it represents a 
     real-time  device. In this manner, MKMidi is somewhat like MKOrchestra, 
-    which represents the DSP. The protocol for controlling Midi is the same 
+    which represents the DSP. The protocol for controlling MKMidi is the same 
     as that for the MKOrchestra. This protocol is described in the file 
     <MusicKit/MKDeviceStatus.h>.
     
-    The conversion between Music Kit and MIDI semantics is described in the
-    Music Kit documentation.
+    The conversion between MusicKit and MIDI semantics is described in the
+    MusicKit documentation.
 
   Original Author: David A. Jaffe
 
@@ -104,31 +104,31 @@ performance must be clocked if you want to use a MKMidi object.
 As MKMidi receives MIDI messages it creates MKNote objects following these rules:
 
 <ul>
-<li>	For each MIDI message that has a Note Number, a MKNote object is created and
+<li>For each MIDI message that has a Note Number, a MKNote object is created and
   given a noteTag that corresponds to the combination of the message's Channel 
   Number and Note Number.</li>
 
-<li>	If multiple Note Offs are received (for a particular Channel/Note number) without
+<li>If multiple Note Offs are received (for a particular Channel/Note number) without
   intervening Note Ons, only the first Note Off is converted into a MKNote object. 
   The others are suppressed.</li>
 
-<li>	A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.</li>
+<li>A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.</li>
 
-<li>	If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in
+<li>If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in
   the corresponding MKNote object is omitted.</li>
 </ul>
  
 In sending messages to an external synthesizer, MKMidi converts MKNote objects to MIDI messages:
 
 <ul>
-<li>	If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off
+<li>If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off
   is generated on the same channel and with the same Key Number as those for the Note Ons.</li>
 
-<li>	If two successive noteOns have the same noteTag but different MK_keyNum values, the second
+<li>If two successive noteOns have the same noteTag but different MK_keyNum values, the second
   Note On message is followed by a Note Off with the Key Number of the first Note On.</li>  
   This is to accommodate MIDI Mono Mode.
 
-<li>	A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.</li>
+<li>A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.</li>
 </ul>
 
 A number of parameters are provided to accommodate MIDI messages.  These are described in
@@ -148,9 +148,7 @@ The MIDI synthesizer is attached to a serial port at the back of a NeXT computer
 to a MPU-401 compatible card installed in a P.C., to a MIDI device defined within 
 Microsoft Windows DirectMusic or to a MIDI device defined within Apple MacOS X CoreMIDI.
   
-USING MIDI ON NeXT HARDWARE
-
-See <b>Administration/MidiHardwareInfo.rtf</b>
+See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
 
 */
 #ifndef __MK_Midi_H___
@@ -220,30 +218,22 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 #define MK_MAXMIDIS 16  /* Maximum number of Intel-based Midi objects */
 
 /*!
-  @return Returns an MKConductor.
   @brief Returns the conductor that the MKNotes originating with MKMidi will
   return when sent the -<b>conductor</b> message.
 
-  By default, returns
-  the defaultConductor, if the MKConductor class is loaded, else nil.
-  
+  @return By default, returns the defaultConductor, if the MKConductor class is loaded, else nil.
 */
 - (MKConductor *) conductor;
 
 /*!
-  @param  aConductor is an MKConductor.
-  @return Returns an id.
   @brief Sets the MKConductor that the MKNotes originating with MKMidi will
   return when sent the <b>-conductor</b> message.
-
-  
+  @param  aConductor is an MKConductor.
+  @return Returns an id.
 */
 - setConductor: (MKConductor *) aConductor;
 
 /*!
-  @param  devName is a NSString *.
-  @param  hostName is a NSString *.
-  @return Returns an id.
   @brief If a MKMidi object for the device <i>devName</i> on host
   <i>hostName</i> doesn't already exist, this creates such an object
   and creates and adds to it a full complement of MKNoteSenders and
@@ -255,25 +245,27 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   
   &lt;&lt;On Non-NeXT hardware, <i>hostName</i> is currently ignored - thus,
   you may not open a MIDI device on a network-based device when running on white hardware.&gt;&gt;
+  @param  devName is a NSString instance.
+  @param  hostName is a NSString instance.
+  @return Returns an id.
 */
 + midiOnDevice: (NSString *) devName host: (NSString *) hostName;
 
 /*!
-  @param  devName is a NSString *.
-  @return Returns an id.
   @brief If a MKMidi object for the device <i>devName</i> doesn't already
   exist, this creates such an object and creates and adds to it a full
   complement of MKNoteSenders and MKNoteReceivers.
 
-  Otherwise, returns
-  the existing object.  <i>devName</i>, for the NeXT (black) hardware,
+  Otherwise, returns the existing object. 
+  <i>devName</i>, for the NeXT (black) hardware,
   is "midi0" for serial port A or "midi1" for serial port B.    On
   white hardware "midi0" corresponds to the value of the defaults data
   base variable <i>MIDI0</i>, owned by <i>MIDI</i>.  (See the NeXT
   documentation on <b>dwrite</b> for more information about the
   defaults data base.)   Alternatively, <i>devName</i> may be the
   direct driverName/unit combination, e.g. "Mididriver2." 
-  
+  @param  devName is a NSString instance.
+  @return Returns an id.  
 */
 + midiOnDevice: (NSString *) devName;
  /* Allocates and initializes a new object, if one doesn't exist already, for
@@ -287,14 +279,13 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 
 
 /*!
-  @return Returns an id.
   @brief If a MKMidi object for the device &ldquo;midi0&ldquo; doesn't already
   exist, this creates such an object and creates and adds to it a full
   complement of MKNoteSenders and MKNoteReceivers.
 
-  Otherwise, returns
-  the existing object.  &ldquo;midi0&rdquo; corresponds to serial port A on the
+  Otherwise, returns the existing object.  &ldquo;midi0&rdquo; corresponds to serial port A on the
   NeXT (black) hardware, the default MIDI port on other platforms.  
+  @return Returns an id.
 */
 + midi;
 
@@ -303,20 +294,20 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   @param devName An NSString naming the device. This should be that obtained from +<b>getDriverNames</b>.
   @param hostName An NSString naming the host machine that is running the MIDI device. Currently unused.
   @return Returns an initialised instance.
- */
+ */
 - initOnDevice: (NSString *) devName hostName: (NSString *) hostName;
 
 /*!
   @brief Initialises an allocated instance for a named MIDI device on the local host.
   @param devName An NSString naming the device. This should be that obtained from +<b>getDriverNames</b>.
   @return Returns an initialised instance.
- */
+ */
 - initOnDevice: (NSString *) devName;
 
 /*!
   @brief Initialises an allocated instance on the default MIDI device on the local host.
   @return Returns an initialised instance.
- */
+ */
 - init;
 
 /*!
@@ -325,15 +316,12 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 - (void) dealloc;
 
 /*!
-  @return Returns a MKDeviceStatus.
   @brief Returns the receiver's MKDeviceStatus device status.
-
-  
+  @return Returns a MKDeviceStatus.
 */
 - (MKDeviceStatus) deviceStatus;
 
 /*!
-  @return Returns an id.
   @brief Opens the receiver, thus enabling two-way communication with the
   MIDI device it represents.
 
@@ -341,50 +329,47 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   MK_devOpen.  If the receiver is already open, its input and output
   message queues are flushed.  Returns the receiver, or <b>nil</b> if
   it couldn't be opened.
+  @return Returns an id.
 */
 - open;
 
 /*!
-  @return Returns an id.
   @brief Opens the receiver for input from the MIDI device it represents.
 
-  If
-  the receiver is already open, its input message queue is flushed. 
+  If the receiver is already open, its input message queue is flushed. 
   Returns the receiver, or <b>nil</b> if it couldn't be
   opened.
+  @return Returns an id.
 */
 - openInputOnly;
 
 /*!
-  @return Returns an id.
   @brief Opens the receiver for output to the MIDI device it represents.
 
-  If
-  the receiver is already open, its output message queue is flushed. 
+  If the receiver is already open, its output message queue is flushed. 
   Returns the receiver, or <b>nil</b> if it couldn't be
   opened.
+  @return Returns an id.
 */
 - openOutputOnly;
 
 /*!
-  @return Returns an id.
   @brief Starts the receiver's clock, first opening the receiver if
   necessary, and sets the receiver's status to MK_devRunning.
 
-  Returns
-  the receiver, or <b>nil</b> if it's closed and can't be
+  Returns the receiver, or <b>nil</b> if it's closed and can't be
   opened.
+  @return Returns an id.
 */
 - run;
 
 /*!
-  @return Returns an id.
   @brief Stops the receiver's clock and sets the receiver's status to
   MK_devStopped; opens the receiver if it isn't already open.
 
-  Returns
-  the receiver, or <b>nil</b> if it's closed and can't be
+  Returns the receiver, or <b>nil</b> if it's closed and can't be
   opened.
+  @return Returns an id.
 */
 - stop;
 
@@ -392,23 +377,18 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   @brief Waits for the receiver's output queue to empty and then closes the
   receiver, sets its status to MK_devClosed, and releases the device
   port.
-
-  
 */
 - (void) close;
 
 /*!
-  @return Returns an id.
   @brief Immediately closes the receiver without waiting for the output queue to empty,
   sets its status to MK_devClosed, and releases the device port.
 
-  Returns the receiver.
+  @return Returns the receiver.
 */
 - abort;
 
 /*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
   @brief Establishes whether MIDI messages are sent timed or untimed, as
   <i>yesOrNo</i> is YES or NO.
 
@@ -417,21 +397,22 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   global and local delta times).  If it's untimed, the timestamps are
   always 0, indicating, to the MIDI driver, that the messages should
   be sent immediately.  The default is timed.
+  @param  yesOrNo is a BOOL.
+  @return Returns an id.
 */
 - setOutputTimed: (BOOL) yesOrNo;
 
 /*!
-  @return Returns a BOOL.
   @brief Returns YES if the receiver is timed, otherwise returns NO.
 
-  The
-  default is YES.
+  The default is YES.
   
   If setOutputTimed:YES is sent, events are sent to the driver with time
   stamps equal to the MKConductor's time plus "deltaT". (See MKSetDeltaT()).
   If setOutputTimed:NO is sent, events are sent to the driver with a time
   stamp of 0, indicating they are to be played as soon as they are received.
 
+  @return Returns a BOOL.
   @see  -<b>setOutputTimed:</b>
 */
 - (BOOL) outputIsTimed;
@@ -453,8 +434,6 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 - (MKNoteSender *) channelNoteSender: (unsigned) channel;
 
 /*!
-  @param  channel is an unsigned MIDI channel.
-  @return Returns an MKNoteReceiver instance.
   @brief Returns the MKNoteReceiver corresponding to the specified channel <i>n</i>, or
   <b>nil</b> if none.
 
@@ -465,40 +444,38 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   the MK_midiChan parameter of the note, if any, to determine which
   MIDI channel to send the note on. If no MK_midiChan parameter is present,
   the default is channel 1. 
+  @param  channel is an unsigned MIDI channel.
+  @return Returns an MKNoteReceiver instance.
 */
 - (MKNoteReceiver *) channelNoteReceiver: (unsigned) channel;
 
 /*!
-  @return Returns an MKNoteReceiver instance.
   @brief Returns the default MKNoteReceiver.
-
-  
+  @return Returns an MKNoteReceiver instance.
 */
 - (MKNoteReceiver *) noteReceiver;
 
 /*!
-  @return Returns an id.
   @brief Returns a NSArray containing the receiver's MKNoteReceivers.
 
-  The
-  NSArray object will be autoreleased, although its contents (the
+  The NSArray object will be autoreleased, although its contents (the
   MKNoteReceiver objects themselves) will not be released.
+  @return Returns an id.
 */
 - (NSArray *) noteReceivers;
 
 /*!
-  @return Returns an id.
   @brief Returns the default MKNoteSender
+  @return Returns an id.
 */
 - (MKNoteSender *) noteSender;
 
 /*!
-  @return Returns an id.
   @brief Returns a NSArray containing the receiver's MKNoteSenders.
 
-  The
-  NSArray object will be autoreleased, although its contents (the
+  The NSArray object will be autoreleased, although its contents (the
   MKNoteSender objects themselves) will not be released.
+  @return Returns an id.
 */
 - (NSArray *) noteSenders;
   
@@ -506,25 +483,22 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 - (void) handleMachMessage: (void *) machMessage;
 
 /*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
   @brief If <i>yesOrNo</i> is <b>YES</b> the MKConductor's clock is synched
   to the MIDI driver's clock whenever the receiver receives a MIDI
   message.
 
   If the receiver isn't closed, this does nothing and
   returns <b>nil</b>; otherwise returns the receiver.
-  
+  @param  yesOrNo is a BOOL.
+  @return Returns an id.
 */
 - setUseInputTimeStamps: (BOOL) yesOrNo;
 
 /*!
-  @return Returns a BOOL.
   @brief Returns YES if the MKConductor's clock is synched to the MIDI
   driver's clock, otherwise returns NO.
 
-  The default is
-  YES.
+  The default is YES.
   
   By default, MKConductor's time is adjusted to that of
   the MKMidi input clock (useInputTimeStamps == YES). This
@@ -544,25 +518,23 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   It is the application's responsibility to insure that
   MKMidi is stopped when the performance is paused and
   that Midi is run when the performance is resumed.  
+  @return Returns a BOOL.
 */
 - (BOOL) useInputTimeStamps;
 
-
 /*!
-  @param  param is a MKMidiParVal.
-  @return Returns an id.
   @brief Instructs the receiver to ignore messages that set the
   MK_sysRealTime parameter to <i>param</i>.
 
   The list of values that
   are ignored by default is given in <b>acceptSys:</b>.  Returns the
   receiver.
+  @param  param is a MKMidiParVal.
+  @return Returns an id.
 */
 - ignoreSys: (MKMidiParVal) param;
 
 /*!
-  @param  param is a MKMidiParVal.
-  @return Returns an id.
   @brief Instructs the receiver to accept in-coming MIDI messages that set
   the MK_sysRealTime parameter to the value specified in <i>param</i>,
   which must be one of the following:
@@ -572,84 +544,76 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   MK_sysContinue 
   MK_sysStop
   MK_sysActiveSensing.
-
-  
   
   By default, MIDI messages that set the MK_sysRealTime
-  parameter are ignored.  Returns the receiver.  
+  parameter are ignored.  
 
-	  These are currently the only MIDI messges that can be
+  These are currently the only MIDI messges that can be
   ignored. You enable or disable this feature using the
   ignoreSys: and acceptSys: methods. For example, to
-  receive MK_sysActiveSensing, send [aMidiObj
-  acceptSys:MK_activeSensing].  
+  receive MK_sysActiveSensing, send [aMidiObj acceptSys: MK_activeSensing].  
+  @param  param is a MKMidiParVal.
+  @return Returns the receiver.
 */
 - acceptSys: (MKMidiParVal) param;
 
 /*!
-  @return Returns a double.
   @brief Returns the receiver's local delta time in seconds
+  @return Returns a double.
 */
 - (double) localDeltaT;
 
 /*!
-  @param  value is a double.
-  @return Returns an the receiver (an id).
   @brief Sets the value of the receiver's local delta time, in seconds.
 
-  This
-  has no effect if the receiver isn't timed. 
+  This has no effect if the receiver isn't timed. 
   LocalDeltaT is added to time stamps sent to MIDI-out. 
   This is in addition to the deltaT set with MKSetDeltaT(). 
   Has no effect if the receiver is not in outputIsTimed mode. 
   The default local delta time is 0.0.
+  @param  value is a double.
+  @return Returns an the receiver (an id).
 */
 - setLocalDeltaT: (double) value;
 
 /*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
   @brief If set to YES, the MKNotes fashioned from the incoming MIDI stream
   are all sent to MKNoteSender 0 (the one that normally gets only
   system messages).
 
   In addition, a MK_midiChan is added so that the
   stream can be split up again later.
+  @param  yesOrNo is a BOOL.
+  @return Returns an id.
 */
 - setMergeInput: (BOOL) yesOrNo;
 
 /*!
-  @return Returns an id.
   @brief If the receiver is running, blocks until all enqueued MIDI data has
   been sent to the MIDI cable.
-
-  
+  @return Returns an id.
 */
 - awaitQueueDrain;
 
 /*!
-  @return Returns an id.
   @brief If the receiver is open for output, sends a MIDI noteOff to the MIDI
   cable on every key number on every MIDI channel.
 
-  Unlike
-  <b>allNotesOff</b>, this method sends MIDI noteOffs regardless of
+  Unlike <b>allNotesOff</b>, this method sends MIDI noteOffs regardless of
   whether an unmatched MIDI noteOn was previously sent.
+  @return Returns an id.
 */
 - allNotesOffBlast;
 
 /*!
-  @return Returns an id.
   @brief If the receiver is open for output, sends a MIDI noteOff to the MIDI
   cable for every key number and MIDI channel for which an unmatched
   MIDI noteOn was previously sent.
-
-  
+  @return Returns an id.
 */
 - allNotesOff;
 
 /*!
-  @return Returns a double.
   @brief Returns time according to the MIDI driver.
 
   If the <i>deltaT</i>
@@ -661,16 +625,11 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   not [MKConductor adjustTime] or  [MKConductor lockPerformacne] was
   invoked.  @see  MKSetDeltaTMode(), MKSetDeltaT() and
   MKConductor.
+  @return Returns a double.
 */
 - (double) time;
 
 /*!
-  @param  format is a short *.
-  @param  h is a short *.
-  @param  m is a short *.
-  @param  s is a short *.
-  @param  f is a short *.
-  @return Returns an id.
   @brief This only works if the receiver is currently providing MIDI time
   code to a MKConductor.
 
@@ -680,6 +639,12 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   adjustTime] or  [MKConductor lockPerformacne] was invoked.    If the
   <i>deltaT</i> mode is <b>MK_DELTAT_SCHEDULER_ADVANCE</b>, the
   returned value has <i>deltaT</i> added to it. 
+  @param  format is a short *.
+  @param  h is a short *.
+  @param  m is a short *.
+  @param  s is a short *.
+  @param  f is a short *.
+  @return Returns an id.
 */
 - getMTCFormat: (short *) format
 	 hours: (short *) h
@@ -688,60 +653,53 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 	frames: (short *) f;
 
 /*!
-  @return Returns an id.
   @brief If the receiver has been set to provide MIDI time code to a
-  MKConductor, this method returns that MKConductor.
-
-  Otherwise, it
-  returns <b>nil</b>.
+  MKConductor, this method returns that MKConductor. Otherwise, it returns <b>nil</b>.
+  @return Returns an MKConductor instance.
 */
 - synchConductor;
 
 /*!
-  @return Returns an NSArray instance.
   @brief Returns an array of all available bidirectional driver names added to the system.
   
   The arrays and strings are copied and autoreleased. Only those drivers which support
   both output and input are returned. To return additional drivers which may support only
   input or output, use +<b>getDriverNamesForInput:</b>.
+  @return Returns an NSArray instance.
 */
 + (NSArray *) getDriverNames;
 
 /*!
-  @return Returns an NSArray instance.
   @brief Returns an array of all available driver names for input.
   
   This list may include drivers that are also available for output and those drivers which are for input only.
+  @return Returns an NSArray instance.
  */
 + (NSArray *) getDriverNamesForInput;
 
 /*!
-  @return Returns an NSArray instance.
   @brief Returns an array of all available driver names for output.
   
   This list may include drivers that are also available for input and those drivers which are for output only.
+  @return Returns an NSArray instance.
  */
 + (NSArray *) getDriverNamesForOutput;
 
 /*!
-  @return Returns an NSString instance.
   @brief Returns the name of the MIDI driver associated with this instance of MKMidi.
-
-  
+  @return Returns an NSString instance.
 */
 - (NSString *) driverName;
 
 /*!
-  @return Returns an NSString instance.
   @brief Returns description of which device, the unit and the host the MKMidi
   object has been initialised on
+  @return Returns an NSString instance.
 */
 - (NSString *) description;
 
 /*!
   @brief Download MMA DownLoadable Sounds with patch numbers provided.
-
-  
 */
 - (void) downloadDLS: (NSArray *) dlsPatches;
 
