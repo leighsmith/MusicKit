@@ -84,6 +84,9 @@ Modification history prior to CVS commit:
    1/28/96/daj -  Minor optimization to getBinaryDataDecl 
 */
 
+#if HAVE_CONFIG_H
+# import "MusicKitConfig.h"
+#endif
 #import "_musickit.h"
 #import "_MKNameTable.h"
 #import "NotePrivate.h"
@@ -603,41 +606,42 @@ static short rvalue(_MKParameterUnion **valAddr, short type)
 
 static double ran(void)
 {
-  //#if WIN32
-  //return ((double) rand()) / RAND_MAX;
-  //#else
+#if HAVE_RANDOM
     /* Returns a random number between 0 and 1. */
 #   define   RANDOMMAX (double)((long)MAXINT)
     setstate(scoreRPtr->_ranState);
-    return ((double)random()) / RANDOMMAX;
-    //#endif
+    return ((double) random()) / RANDOMMAX;
+#elif HAVE_RAND
+    return ((double) rand()) / RAND_MAX;
+#endif
 }
 
 #define STATESIZEINBYTES 256
 
 static void _setRanSeed(unsigned seed)
 {
-  //#if WIN32
-  //  srand(seed);
-  //#else
-    initstate(seed,scoreRPtr->_ranState,STATESIZEINBYTES);
-    //#endif
+#if HAVE_RANDOM
+    initstate(seed, scoreRPtr->_ranState, STATESIZEINBYTES);
+#elif HAVE_RAND
+    srand(seed);
+#endif
 }
-
-static char *defaultStateArr = NULL;
-/* This is a workaround for a suspected libc problem */
 
 static char *initRan(void)
 {
     char *stateArr;
-    //#ifndef WIN32
+
+#if HAVE_RANDOM
+    /* This is a workaround for a suspected libc problem */
+    static char *defaultStateArr = NULL;
+
     if (!defaultStateArr) {
-      _MK_MALLOC(defaultStateArr,char,STATESIZEINBYTES);
-      initstate(1,defaultStateArr,STATESIZEINBYTES);
+	_MK_MALLOC(defaultStateArr, char, STATESIZEINBYTES);
+	initstate(1, defaultStateArr, STATESIZEINBYTES);
     }
-    _MK_MALLOC(stateArr,char,STATESIZEINBYTES);
-    initstate(1,stateArr,STATESIZEINBYTES);
-    //#endif
+    _MK_MALLOC(stateArr, char, STATESIZEINBYTES);
+    initstate(1, stateArr, STATESIZEINBYTES);
+#endif
     return stateArr;
 }
 
@@ -654,7 +658,7 @@ static void ranSeed(void)
     NSTimeInterval seconds;
 
     MATCH(_MK_ranSeed);
-    seconds = [[NSDate date] timeIntervalSince1970]; // Who said flares wouldn't come back into fashion...
+    seconds = [[NSDate date] timeIntervalSince1970]; // Who said flared jeans wouldn't come back into fashion...?
     _setRanSeed((unsigned) seconds);
 }
 
@@ -2048,8 +2052,7 @@ initParsePtr(NSData *aStream, BOOL TopLevelFile, NSString *name)
 
 #define ISINCLUDEFILE(_parseP) (_parseP->_backwardsLink)
 
-static parseStateStruct * 
-initScoreParsePtr(NSString * scorefilePath)
+static parseStateStruct *initScoreParsePtr(NSString *scorefilePath)
 {
     /* Used for include files */
     NSData *aStream;
@@ -2073,7 +2076,7 @@ initScoreParsePtr(NSString * scorefilePath)
         scoreStreamPointer = parsePtr->_pointer = 4;
     }
     if (!parsePtr)
-      return NULL;
+	return NULL;
     return parsePtr;
 }
 
@@ -2107,24 +2110,25 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
        top level file.  Returns NULL. */
     scoreRPtr = scorefileRPtr;
     if (!scoreRPtr) 
-      return NULL;
+	return NULL;
     if (scoreRPtr->_binary)
         [scoreRPtr->_binaryIndexedObjects release];
     parsePtr = (parseStateStruct *) scoreRPtr->_parsePtr;
     while (parsePtr)
-      parsePtr = popFileStack();
+	parsePtr = popFileStack();
     _MKFreeScorefileTable(scoreRPtr->_symbolTable);
     [scoreRPtr->_noteTagTable release];
     [scoreRPtr->_aNote release];
     if (scoreRPtr->_freeStream) {
         [scoreRPtr->printStream release];
     }
-    //#ifndef WIN32
+#if HAVE_RANDOM
     setstate(defaultStateArr); /* Make libc forget our ranState */
     free(scoreRPtr->_ranState);  /* 1/13/96 DAJ */
     scoreRPtr->_ranState = NULL;
-    //#endif
-    free(scoreRPtr); scoreRPtr = NULL;
+#endif
+    free(scoreRPtr);
+    scoreRPtr = NULL;
     return NULL;
 }
 
@@ -2138,6 +2142,7 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
 static short getBinaryShort(BOOL inHeader)
 {
     short rtn;
+
     if (inHeader) {
         if (scoreStreamPointer + sizeof(short) > scoreStreamLength) abortBinary(); //sb
         [parsePtr->_stream getBytes: &rtn range: NSMakeRange(scoreStreamPointer,sizeof(short))];
@@ -2159,6 +2164,7 @@ static short getBinaryShort(BOOL inHeader)
 static int getBinaryInt(BOOL inHeader)
 {
     int rtn;
+
     if (inHeader) {
         if (scoreStreamPointer + sizeof(int) > scoreStreamLength)
             abortBinary(); //sb
@@ -2182,6 +2188,7 @@ static int getBinaryInt(BOOL inHeader)
 static double getBinaryDouble(BOOL inHeader)
 {
     double rtn;
+
     NSSwappedDouble sdbl; // was NSSwappedFloat
     if (inHeader) {
         if (scoreStreamPointer + sizeof(sdbl) > scoreStreamLength)
@@ -2206,6 +2213,7 @@ static double getBinaryDouble(BOOL inHeader)
 static float getBinaryFloat(BOOL inHeader)
 {
     float rtn;
+
     NSSwappedFloat sfl;
     if (inHeader) {
         if (scoreStreamPointer + sizeof(sfl) > scoreStreamLength) abortBinary();
@@ -2229,6 +2237,7 @@ static NSString *getBinaryString(BOOL install, BOOL inHeader)
     /* If install is NO, we're running "fast and dangerous" */
 {
     register int c;
+
     if (inHeader) {
         if (scoreStreamPointer >= scoreStreamLength) abortBinary();
         c = ((char *)[parsePtr->_stream bytes])[scoreStreamPointer++];
@@ -2923,11 +2932,11 @@ static void tune(void)
             error(MK_sfNoTuneErr,curToken());
             val = 0; /* This stmt can never be reached, but makes compiler happy */
         }
-#ifdef GNUSTEP
-        [MKTuningSystem _transpose:val]; /* GNUSTEP silliness: can't call transpose because it conflicts with NSResponder:-transpose */
-#else
+//#ifdef GNUSTEP
+//        [MKTuningSystem _transpose:val]; /* GNUSTEP silliness: can't call transpose because it conflicts with NSResponder:-transpose */
+//#else
         [MKTuningSystem transpose: val];
-#endif
+//#endif
     }
     else {
         id var = tokenVal->symbol;
