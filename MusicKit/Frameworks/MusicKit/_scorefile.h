@@ -9,32 +9,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2005, The MusicKit Project.
 */
-/*
-Modification history:
 
-  $Log$
-  Revision 1.6  2002/03/12 22:55:22  sbrandon
-  Changed _binaryIndecies from NSMutableDictionary to NSMapTable.
-
-  Revision 1.5  2000/06/09 14:55:11  leigh
-  Typed ivars to reduce warnings
-
-  Revision 1.4  2000/05/06 00:26:59  leigh
-  Converted _binaryIndecies to NSMutableDictionary
-
-  Revision 1.3  2000/04/26 01:19:03  leigh
-  Corrected _MKNewScoreInStruct to take a NSData instead of NSMutableData instance
-
-  Revision 1.2  1999/07/29 01:26:03  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-  daj/04/23/90 - Created from _musickit.h 
-*/
 #ifndef __MK__scorefile_H___
 #define __MK__scorefile_H___
 
-#import <Foundation/NSData.h> /*sb for obvious reasons */
+#import <Foundation/Foundation.h>
 
 #import "_MKNameTable.h"
 
@@ -48,7 +29,7 @@ typedef struct __MKScoreInStruct {
 				       go to stderr */
     void *_parsePtr;                /* Private pointer to parse state. */
     _MKNameTable *_symbolTable;     /* Private symbol table used for parse. */
-    id _noteTagTable;               /* Private map to unique set of noteTags.*/
+    NSMutableDictionary *_noteTagTable; /* Private map to unique set of noteTags.*/
     int _fileHighTag,_fileLowTag;   /* Private. Tag range. */
     int _newLowTag;                 /* Private. Tag base for noteTag map. */
     id _aNote;                      /* Private. parser 'owns' note. */
