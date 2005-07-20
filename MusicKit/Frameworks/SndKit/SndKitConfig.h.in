@@ -32,7 +32,7 @@
 
 #undef HAVE_LIBSHOUT
 
-#undef HAVE_PORTAUDIO
+#undef HAVE_PORTAUDIO_H
 
 #if BUILD_libSndKit_DLL
 #  define SNDKIT_API  __declspec(dllexport)
@@ -45,11 +45,7 @@
 #  define SNDKIT_DECLARE
 #endif
 
-#ifdef GNUSTEP
-#include <objc/objc.h>
-#else
 #import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-#endif
 
 //typedef char BOOL;
 
