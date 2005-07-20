@@ -26,19 +26,19 @@
 # import "SndKitConfig.h"
 #endif
 
-#ifndef GNUSTEP
-# ifndef WIN32
-#  import <libc.h>
-# else
-#  import <stdio.h>
-#  import <fcntl.h>
-#  import <Winsock.h>
-#  import <malloc.h>
-#  import <io.h>
-# endif
-#else
-//# import <fcntl.h>
-#endif
+// #ifndef GNUSTEP
+// # ifndef WIN32
+// #  import <libc.h>
+// # else
+// #  import <stdio.h>
+// #  import <fcntl.h>
+// #  import <Winsock.h>
+// #  import <malloc.h>
+// #  import <io.h>
+// # endif
+// #else
+// # import <fcntl.h>
+// #endif
 
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
@@ -160,8 +160,9 @@
     SndFormat headerFormat = { SND_FORMAT_UNSPECIFIED, 0, 0, 0 };
     SNDFILE *sfp;
     SF_INFO sfinfo;
-    
-    if ((sfp = sf_open([path fileSystemRepresentation], SFM_READ, &sfinfo)) == NULL) {
+    NSFileHandle *readingFileHandle = [NSFileHandle fileHandleForReadingAtPath: path]; 
+
+    if ((sfp = sf_open_fd([readingFileHandle fileDescriptor], SFM_READ, &sfinfo, TRUE)) == NULL) {
 	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
 	    NSLog(@"%s\n", sf_strerror(sfp));
             if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowLogOnReadError"]) {
@@ -237,14 +238,16 @@
     long totalNumOfSamplesToRead;
     int errorClosing;
     const char *comment;
+    NSFileHandle *readingFileHandle;
     
     if (path == nil)
 	return SND_ERR_BAD_FILENAME;
     if ([path length] == 0)
 	return SND_ERR_BAD_FILENAME;
-    if ((sfp = sf_open([path fileSystemRepresentation], SFM_READ, &sfinfo)) == NULL) {
+    readingFileHandle = [NSFileHandle fileHandleForReadingAtPath: path]; 
+    if ((sfp = sf_open_fd([readingFileHandle fileDescriptor], SFM_READ, &sfinfo, TRUE)) == NULL) {
 	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
-	    NSLog(@"%s\n", sf_strerror(sfp));
+	    NSLog(@"File reading error: %s\n", sf_strerror(sfp));
             if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowLogOnReadError"]) {
                 char readingLogBuffer[2048];  // TODO we could malloc and free this here instead.
 
@@ -355,7 +358,7 @@
     name = nil;
     
     if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
-	// NSLog(@"Snd -readSoundfile: sound file %@ doesn't exist",filename);
+	NSLog(@"Snd -readSoundfile: sound file %@ doesn't exist", filename);
 	return SND_ERR_CANNOT_OPEN;
     }
     
@@ -363,8 +366,10 @@
     fileAttributeDictionary = [fileManager fileAttributesAtPath: filename
 					           traverseLink: YES];
     
-    if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
+    if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular) {
+	NSLog(@"Snd -readSoundfile: sound file %@ not a regular file\n", filename);
         return SND_ERR_CANNOT_OPEN;
+    }
         
     return [self readSoundfile: filename startFrame: 0 frameCount: -1];    
 }
@@ -406,7 +411,7 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
 #endif
 
 // The underlying sound file writing library (libsndfile) will look after endian issues.
-- (int) writeSoundfile: (NSString *) filename
+- (int) writeSoundfile: (NSString *) path
 	    fileFormat: (NSString *) fileFormat
 	    dataFormat: (SndSampleFormat) fileDataFormat
 {
@@ -414,6 +419,7 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     SF_INFO sfinfo;
     SNDFILE *sfp;
     int error;
+    NSFileHandle *writingFileHandle;
     
     sfinfo.samplerate = (int) [self samplingRate];
     sfinfo.channels = [self channelCount];
@@ -424,17 +430,17 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
 	return SND_ERR_UNKNOWN;
     }
 
-    if((sfp = sf_open([filename fileSystemRepresentation], SFM_WRITE, &sfinfo)) == NULL)
+    writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: path]; 
+    if ((sfp = sf_open_fd([writingFileHandle fileDescriptor], SFM_WRITE, &sfinfo, TRUE)) == NULL)
 	return SND_ERR_UNKNOWN;
     
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowOutputFileFormat"]) {
 	NSLog(@"Output file %s: using sample rate %d, encoding %x, %d %s",
-	      [filename fileSystemRepresentation],
+	      [path fileSystemRepresentation],
 	      sfinfo.samplerate,
 	      (unsigned char) sfinfo.format,
 	      sfinfo.channels,
 	      (sfinfo.channels > 1) ? "channels" : "channel");
-	
     }
 
 #if DEBUG_MESSAGES

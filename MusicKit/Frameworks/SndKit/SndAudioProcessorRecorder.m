@@ -150,6 +150,7 @@
 	      withFormat: (SndFormat) format
 {
     SF_INFO sfinfo;
+    NSFileHandle *writingFileHandle;
     
     sfinfo.samplerate = (int) format.sampleRate;
     sfinfo.channels = format.channelCount;
@@ -160,7 +161,8 @@
 	return NO;
     }
     
-    if((recordFile = sf_open([filename fileSystemRepresentation], SFM_WRITE, &sfinfo)) != NULL) {
+    writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: filename]; 
+    if((recordFile = sf_open_fd([writingFileHandle fileDescriptor], SFM_WRITE, &sfinfo, TRUE)) == NULL) {
 	[recordFileName release];
 	recordFileName = [filename copy];
 
