@@ -3,78 +3,27 @@
  Defined In: The MusicKit
 
  Description:
- MKPartials, a subclass of MKWaveTable, accepts a set of arrays containing
- the amplitude and frequency ratios and initial phases of a set of partials
- representing a waveform.  If one of the getData methods is called
- (inherited from the MKWaveTable object), a wavetable is additively synthesized
- and returned.
+   MKPartials, a subclass of MKWaveTable, accepts a set of arrays containing
+   the amplitude and frequency ratios and initial phases of a set of partials
+   representing a waveform.  If one of the getData methods is called
+   (inherited from the MKWaveTable object), a wavetable is additively
+   synthesized and returned.
 
- By "frequency ratios", we mean that when this object is passed to a unit
- generator, the resulting component frequencies of the waveform will be
- these numbers times the unit generator's overall frequency value.
- Similarly, the resulting component amplitudes will be the "amplitude
- ratios" times the unit generator's overall amplitude term.
+   By "frequency ratios", we mean that when this object is passed to a unit
+   generator, the resulting component frequencies of the waveform will be
+   these numbers times the unit generator's overall frequency value.
+   Similarly, the resulting component amplitudes will be the "amplitude
+   ratios" times the unit generator's overall amplitude term.
 
  Original Author: David Jaffe
 
  Copyright (c) 1988-1992, NeXT Computer, Inc.
  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
  Portions Copyright (c) 1994 Stanford University
- Portions Copyright (c) 1999-2000, The MusicKit Project.
+ Portions Copyright (c) 1999-2005, The MusicKit Project.
  */
 /*
- Modification history:
-
- $Log$
- Revision 1.17  2004/12/06 18:27:36  leighsmith
- Renamed _MKErrorf() to meaningful MKErrorCode(), now void, rather than returning id
-
- Revision 1.16  2003/12/31 00:39:53  leighsmith
- Cleaned up naming of methods, removing underscores
-
- Revision 1.15  2003/08/04 21:14:33  leighsmith
- Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
- Revision 1.14  2002/09/25 22:28:52  leighsmith
- Renamed mySin and myCos to MKSine, MKCosine and placed into better named file and split out prototypes to a header for inclusion in MKPartials
-
- Revision 1.13  2002/09/24 21:45:29  leighsmith
- Cleaned up _normalize for gcc 3.1 warnings
-
- Revision 1.12  2002/04/15 14:20:40  sbrandon
- - remembered to encode/decode superclass in archival methods
- - added -hash and -isEqual: methods to aid in situations where object is
-   used as a key in dictionaries or maptables.
-
- Revision 1.11  2002/04/03 03:59:41  skotmcdonald
- Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
- Revision 1.10  2001/09/06 21:27:48  leighsmith
- Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
- Revision 1.9  2001/08/07 16:16:11  leighsmith
- Corrected class name during decode to match latest MK prefixed name
-
- Revision 1.8  2001/07/02 16:38:54  sbrandon
- MKPartials.m
-
- Revision 1.7  2000/11/25 22:46:58  leigh
- Standardised comment header
-
- Revision 1.6  2000/10/11 07:32:26  skot
- Fixed link error
-
- Revision 1.5  2000/10/04 07:52:05  skot
- Improved description method for debug purposes
-
- Revision 1.4  2000/10/04 06:16:15  skot
- Added description selectors
-
- Revision 1.3  2000/06/09 18:06:29  leigh
- Added braces to reduce finicky compiler warnings
-
- Revision 1.2  1999/07/29 01:16:40  leigh
- Added Win32 compatibility, CVS logs, SBs changes
+ Modification history prior to commit to CVS:
 
  09/15/89/daj - Changed to use new fastFft.
  10/02/89/daj - Fixed scaling bug (bug 3670)
@@ -114,7 +63,7 @@
 #import "_error.h"
 #import "trigonometry.h"
 
-@implementation  MKPartials:MKWaveTable
+@implementation  MKPartials
 
 #define NORMALFORM(_self) if ((_self)->dbMode) normalform(_self)
 
@@ -600,11 +549,11 @@ return self;
 static BOOL isPowerOfTwo(int n)
 /* Query whether n is a pure power of 2 */
 {
-  while (n > 1) {
-    if (n % 2) break;
-    n >>= 1;
-  }
-  return (n == 1);
+    while (n > 1) {
+	if (n % 2) break;
+	n >>= 1;
+    }
+    return (n == 1);
 }
 
 #define POWERS_OF_2_ERROR \
@@ -617,195 +566,202 @@ NSLocalizedStringFromTableInBundle(@"MKPartials object currently supports table 
 
 // #import "fastFFT.c"
 
-- setFromSamples:(MKSamples *)samplesObject
-  /* Sets three arrays based on FFT of the supplied samples object. */
+/* Sets three arrays based on FFT of the supplied samples object. */
+- setFromSamples: (MKSamples *) samplesObject
 {
-  double *arr;
-  double real,imaginary;
-  int i;
-  double *theSamples = [samplesObject dataDouble];
-  double oneOverN;
-  int howMany = [samplesObject length]; /* Must be after dataDouble message */
-  int halfHowMany = howMany / 2;
-  if (!isPowerOfTwo(howMany)) {
-    MKErrorCode(MK_musicKitErr,
-              POWERS_OF_2_ERROR);
-    /*** FIXME ***/
-    return nil;
-  }
-  /* Now reset everything */
-  freeArrays(self);
-  _freqArrayFreeable = YES;
-  _ampArrayFreeable = YES;
-  _phaseArrayFreeable = YES;
-  dbMode = NO;
+    double *arr;
+    double real,imaginary;
+    int i;
+    double *theSamples = [samplesObject dataDouble];
+    double oneOverN;
+    int howMany = [samplesObject length]; /* Must be after dataDouble message */
+    int halfHowMany = howMany / 2;
 
-  /* Now proceed with the FFT */
-  arr = alloca(sizeof(double) * howMany);              /* For FFT */
-  memmove(arr,theSamples,howMany * sizeof(double));
-  fft_real_to_hermitian(arr,howMany);
-  _MK_MALLOC(ampRatios,double,halfHowMany);
-  _MK_MALLOC(phases,double,halfHowMany);
-  oneOverN = 1.0/halfHowMany;
-  ampRatios[0] = arr[0] * oneOverN;
-  phases[0] = 0;
-  for (i = 1; i<halfHowMany; i++) {
-    real = arr[i];
-    imaginary = arr[howMany - i];
-    ampRatios[i] = sqrt(real * real + imaginary * imaginary) * oneOverN;
-    phases[i] = RADIANS_TO_DEG(atan2(imaginary,real))+90;
-    /* MKPartials is a sum of sines, not cosines, so add 90 degrees. */
-  }
-  _MK_MALLOC(freqRatios,double,halfHowMany);
-  for (arr = freqRatios, i = 0; i<halfHowMany; i++)
-    *arr++ = i;
-  partialCount = halfHowMany;
-  length = 0;   /* This ensures a recomputation of the tables. */
-  return self;
-}
-
--prunePartials:(double)amplitudeThreshold
-  /* Change contents to remove any partials with amplitudes below
-  specified threshold. */
-{
-  int i,j;
-  double *freqRatiosNew,*ampRatiosNew,*phasesNew = NULL;
-  if (!ampRatios || !freqRatios || (partialCount <= 0))
-    return nil;
-  _MK_MALLOC(freqRatiosNew,double,partialCount);
-  _MK_MALLOC(ampRatiosNew,double,partialCount);
-  if (phases)
-    _MK_MALLOC(phasesNew,double,partialCount);
-  for (i=0, j=0; i<partialCount; i++) {
-    if (ampRatios[i] > amplitudeThreshold) {
-      ampRatiosNew[j] = ampRatios[i];
-      freqRatiosNew[j] = freqRatios[i];
-      if (phases)
-        phasesNew[j] = phases[i];
-      j++;
+    if (!isPowerOfTwo(howMany)) {
+	MKErrorCode(MK_musicKitErr, POWERS_OF_2_ERROR);
+	/*** FIXME ***/
+	return nil;
     }
-  }
-  partialCount = j;
-  if (partialCount) {
-    _MK_REALLOC(freqRatiosNew,double,partialCount);
-    _MK_REALLOC(ampRatiosNew,double,partialCount);
-    if (phases)
-      _MK_REALLOC(phasesNew,double,partialCount);
-    else phasesNew = NULL;
-  }
-  freeArrays(self);
-  freqRatios = freqRatiosNew;
-  ampRatios = ampRatiosNew;
-  _freqArrayFreeable = _ampArrayFreeable = YES;
-  if (phasesNew) {
-    phases = phasesNew;
+    /* Now reset everything */
+    freeArrays(self);
+    _freqArrayFreeable = YES;
+    _ampArrayFreeable = YES;
     _phaseArrayFreeable = YES;
-  }
-  dbMode = NO;
-  length = 0;   /* This ensures a recomputation of the tables. */
-  return self;
+    dbMode = NO;
+
+    /* Now proceed with the FFT */
+    _MK_MALLOC(arr, double, howMany);              /* For FFT */
+    memmove(arr, theSamples, howMany * sizeof(double));
+    fft_real_to_hermitian(arr, howMany);
+    _MK_MALLOC(ampRatios, double, halfHowMany);
+    _MK_MALLOC(phases, double, halfHowMany);
+    oneOverN = 1.0 / halfHowMany;
+    ampRatios[0] = arr[0] * oneOverN;
+    phases[0] = 0;
+    for (i = 1; i < halfHowMany; i++) {
+	real = arr[i];
+	imaginary = arr[howMany - i];
+	ampRatios[i] = sqrt(real * real + imaginary * imaginary) * oneOverN;
+	phases[i] = RADIANS_TO_DEG(atan2(imaginary, real)) + 90;
+	/* MKPartials is a sum of sines, not cosines, so add 90 degrees. */
+    }
+    _MK_MALLOC(freqRatios, double, halfHowMany);
+    for (arr = freqRatios, i = 0; i < halfHowMany; i++)
+	*arr++ = i;
+    partialCount = halfHowMany;
+    length = 0;   /* This ensures a recomputation of the tables. */
+    return self;
 }
 
--(int)tableType
+/* Change contents to remove any partials with amplitudes below
+   specified threshold. */
+- prunePartials: (double) amplitudeThreshold
 {
-  return tableType;
+    int i, j;
+    double *freqRatiosNew, *ampRatiosNew, *phasesNew = NULL;
+
+    if (!ampRatios || !freqRatios || (partialCount <= 0))
+	return nil;
+    _MK_MALLOC(freqRatiosNew, double, partialCount);
+    _MK_MALLOC(ampRatiosNew, double, partialCount);
+    if (phases)
+	_MK_MALLOC(phasesNew, double, partialCount);
+    for (i = 0, j = 0; i < partialCount; i++) {
+	if (ampRatios[i] > amplitudeThreshold) {
+	    ampRatiosNew[j] = ampRatios[i];
+	    freqRatiosNew[j] = freqRatios[i];
+	    if (phases)
+		phasesNew[j] = phases[i];
+	    j++;
+	}
+    }
+    partialCount = j;
+    if (partialCount) {
+	_MK_REALLOC(freqRatiosNew, double, partialCount);
+	_MK_REALLOC(ampRatiosNew, double, partialCount);
+	if (phases)
+	    _MK_REALLOC(phasesNew, double, partialCount);
+	else 
+	    phasesNew = NULL;
+    }
+    freeArrays(self);
+    freqRatios = freqRatiosNew;
+    ampRatios = ampRatiosNew;
+    _freqArrayFreeable = _ampArrayFreeable = YES;
+    if (phasesNew) {
+	phases = phasesNew;
+	_phaseArrayFreeable = YES;
+    }
+    dbMode = NO;
+    length = 0;   /* This ensures a recomputation of the tables. */
+    return self;
+}
+
+- (int) tableType
+{
+    return tableType;
 }
 
 @end
 
 @implementation MKPartials(OscTable)
 
-- fillOscTableLength:(int)aLength scale:(double)aScaling
+- fillOscTableLength: (int) aLength scale: (double) aScaling
 {
-  return [self fillTableLength:aLength scale:aScaling];
+  return [self fillTableLength: aLength scale: aScaling];
 }
 
-- fillTableLength:(unsigned int)aLength scale:(double)aScaling
-  /* Computes the wavetable from the data provided by the
-             setN: method.  Returns self, or nil if an error is found. If
-  scaling is 0.0, the waveform is normalized. This method is sent
-automatically if necessary by the various getData: methods
+/* Computes the wavetable from the data provided by the
+   setN: method.  Returns self, or nil if an error is found. If
+   scaling is 0.0, the waveform is normalized. This method is sent
+  automatically if necessary by the various getData: methods
   (inherited from the Wave class) used to access the resulting
-  wavetable. */
+  wavetable. 
+*/
+- fillTableLength: (unsigned int) aLength scale: (double) aScaling
 {
-  int i;
-  double cosPhase = 0; /* Initialize to shut up compiler warnings */
-  double sinPhase = 0;
-  double tmp;
-  int indexVal,halfLength;
-  tableType = MK_oscTable;
+    int i;
+    double cosPhase = 0; /* Initialize to shut up compiler warnings */
+    double sinPhase = 0;
+    double tmp;
+    int indexVal, halfLength;
+    tableType = MK_oscTable;
 
-  if (!ampRatios || !freqRatios || (partialCount <= 0))
-    return nil;
-  if (aLength == 0) {
-    if (length == 0)
-      aLength = DEFAULT_OSC_TABLE_LENGTH;
-    else
-      aLength = length;
-  }
-  if (!isPowerOfTwo(aLength)) {
-    MKErrorCode(MK_musicKitErr,
-              POWERS_OF_2_ERROR);
-    /*** FIXME ***/
-    return nil;
-  }
-  if (!dataDouble || (length != aLength)) {
-    if (dataDouble) {
-      free(dataDouble);
-      dataDouble = NULL;
+    if (!ampRatios || !freqRatios || (partialCount <= 0))
+	return nil;
+    if (aLength == 0) {
+	if (length == 0)
+	    aLength = DEFAULT_OSC_TABLE_LENGTH;
+	else
+	    aLength = length;
     }
-    _MK_CALLOC(dataDouble, double, aLength);
-  }
-  length = aLength;
-  if (dataDSP) {free(dataDSP); dataDSP = NULL;}
-  halfLength = length / 2;
-  memset(dataDouble, 0, length * sizeof(double));
-  if (!phases) {
-    cosPhase = MKCosine(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
-    sinPhase = MKSine(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
-    /* We subtract M_PI_2 so that a zero phase means sine and a PI/2
-      phase means cosine. */
-  }
-  if (dbMode)
-    for (i = 0; i<partialCount; i++) {
-      indexVal = ((short *)freqRatios)[i];
-      if (indexVal == 0) {
-        /* Value at n=0 must be real */
-        dataDouble[indexVal] = ((float *)ampRatios)[i] * halfLength;
-        dataDouble[length - indexVal] = 0;
-      } else if (indexVal < halfLength) {
-        if (phases) {
-          tmp = DEG_TO_RADIANS(phases[i])-M_PI_2;
-          cosPhase = MKCosine(tmp);
-          sinPhase = MKSine(tmp);
-        }
- 	      tmp = ((float *)ampRatios)[i] * halfLength;
- 	      dataDouble[indexVal] = tmp * cosPhase;
- 	      dataDouble[length - indexVal] = tmp * sinPhase;
-      }
+    if (!isPowerOfTwo(aLength)) {
+	MKErrorCode(MK_musicKitErr, POWERS_OF_2_ERROR);
+	/*** FIXME ***/
+	return nil;
     }
-      else for (i = 0; i<partialCount; i++) {
-        indexVal = freqRatios[i];
-        if (indexVal == 0) {
-          /* Value at n=0 must be real */
-          dataDouble[indexVal] = ampRatios[i] * halfLength;
-          dataDouble[length - indexVal] = 0;
-        } else if (indexVal < halfLength) {
-          if (phases) {
-            tmp = DEG_TO_RADIANS(phases[i])-M_PI_2;
-            cosPhase = MKCosine(tmp);
-            sinPhase = MKSine(tmp);
-          }
-          tmp = ampRatios[i] * halfLength;
-          dataDouble[indexVal] = tmp * cosPhase;
-          dataDouble[length - indexVal] = tmp *  sinPhase;
-        }
-      }
-        fftinv_hermitian_to_real(dataDouble,length);
-  scaling = aScaling;
-  [self _normalize];
+    if (!dataDouble || (length != aLength)) {
+	if (dataDouble) {
+	    free(dataDouble);
+	    dataDouble = NULL;
+	}
+	_MK_CALLOC(dataDouble, double, aLength);
+    }
+    length = aLength;
+    if (dataDSP) {free(dataDSP); dataDSP = NULL;}
+    halfLength = length / 2;
+    memset(dataDouble, 0, length * sizeof(double));
+    if (!phases) {
+	cosPhase = MKCosine(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
+	sinPhase = MKSine(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
+	/* We subtract M_PI_2 so that a zero phase means sine and a PI/2
+	   phase means cosine. */
+    }
+    if (dbMode) {
+	for (i = 0; i < partialCount; i++) {
+	    indexVal = ((short *)freqRatios)[i];
+	    if (indexVal == 0) {
+		/* Value at n=0 must be real */
+		dataDouble[indexVal] = ((float *)ampRatios)[i] * halfLength;
+		dataDouble[length - indexVal] = 0;
+	    } 
+	    else if (indexVal < halfLength) {
+		if (phases) {
+		    tmp = DEG_TO_RADIANS(phases[i]) - M_PI_2;
+		    cosPhase = MKCosine(tmp);
+		    sinPhase = MKSine(tmp);
+		}
+		tmp = ((float *)ampRatios)[i] * halfLength;
+		dataDouble[indexVal] = tmp * cosPhase;
+		dataDouble[length - indexVal] = tmp * sinPhase;
+	    }
+	}
+    }
+    else {
+	for (i = 0; i < partialCount; i++) {
+	    indexVal = freqRatios[i];
+	    if (indexVal == 0) {
+		/* Value at n=0 must be real */
+		dataDouble[indexVal] = ampRatios[i] * halfLength;
+		dataDouble[length - indexVal] = 0;
+	    } 
+	    else if (indexVal < halfLength) {
+		if (phases) {
+		    tmp = DEG_TO_RADIANS(phases[i])-M_PI_2;
+		    cosPhase = MKCosine(tmp);
+		    sinPhase = MKSine(tmp);
+		}
+		tmp = ampRatios[i] * halfLength;
+		dataDouble[indexVal] = tmp * cosPhase;
+		dataDouble[length - indexVal] = tmp *  sinPhase;
+	    }
+	}
+    }
+    fftinv_hermitian_to_real(dataDouble,length);
+    scaling = aScaling;
+    [self _normalize];
 
-  return self;
+    return self;
 }
 
 - (DSPDatum *) dataDSPLength: (unsigned int) aLength scale: (double) aScaling
@@ -814,141 +770,143 @@ automatically if necessary by the various getData: methods
   subclass has no data, returns NULL. The data should neither be modified
   nor freed by the sender. */
 {
-  if ((tableType != MK_oscTable) ||
-      (length != aLength) || (scaling != aScaling) || (length == 0))
-    if (![self fillTableLength:aLength scale:aScaling])
-      return NULL;
-  if (!dataDSP && dataDouble) {
-    _MK_MALLOC(dataDSP, DSPDatum, length);
-    if (!dataDSP) return NULL;
-    _MKDoubleToFix24Array (dataDouble, dataDSP, length);
-  }
-  return dataDSP;
+    if ((tableType != MK_oscTable) ||
+	(length != aLength) || (scaling != aScaling) || (length == 0))
+	if (![self fillTableLength:aLength scale:aScaling])
+	    return NULL;
+    if (!dataDSP && dataDouble) {
+	_MK_MALLOC(dataDSP, DSPDatum, length);
+	if (!dataDSP) return NULL;
+	_MKDoubleToFix24Array (dataDouble, dataDSP, length);
+    }
+    return dataDSP;
 }
 
+/* Returns the MKWaveTable as an array of doubles, recomputing
+   the data if necessary at the requested scaling and length. If the
+   subclass has no data, returns NULL. The data should neither be modified
+   nor freed by the sender. 
+ */
 - (double *) dataDoubleLength: (unsigned int) aLength scale: (double) aScaling
-  /* Returns the MKWaveTable as an array of doubles, recomputing
-  the data if necessary at the requested scaling and length. If the
-  subclass has no data, returns NULL. The data should neither be modified
-  nor freed by the sender. */
 {
-  if ((tableType != MK_oscTable) ||
-      (length != aLength) || (scaling != aScaling) || (length == 0))
-    if (![self fillTableLength:aLength scale:aScaling])
-      return NULL;
-  if (!dataDouble && dataDSP) {
-    _MK_MALLOC (dataDouble, double, length);
-    if (!dataDouble) return NULL;
-    _MKFix24ToDoubleArray (dataDSP, dataDouble, length);
-  }
-  return dataDouble;
+    if ((tableType != MK_oscTable) ||
+	(length != aLength) || (scaling != aScaling) || (length == 0))
+	if (![self fillTableLength:aLength scale:aScaling])
+	    return NULL;
+    if (!dataDouble && dataDSP) {
+	_MK_MALLOC (dataDouble, double, length);
+	if (!dataDouble) return NULL;
+	_MKFix24ToDoubleArray (dataDSP, dataDouble, length);
+    }
+    return dataDouble;
 }
 
-- (DSPDatum *) dataDSPAsOscTableLength:(int)aLength;
+- (DSPDatum *) dataDSPAsOscTableLength: (int) aLength;
 {
-  return [self dataDSPLength:aLength];
+    return [self dataDSPLength: aLength];
 }
 
-- (double *)dataDoubleAsOscTableLength:(int)aLength;
+- (double *) dataDoubleAsOscTableLength: (int) aLength;
 {
-  return [self dataDoubleLength:aLength];
+    return [self dataDoubleLength: aLength];
 }
 
-- (DSPDatum *) dataDSPAsOscTableScale:(double)aScaling;
+- (DSPDatum *) dataDSPAsOscTableScale: (double) aScaling;
 {
-  return [self dataDSPScale:aScaling];
+    return [self dataDSPScale: aScaling];
 }
 
-- (double *)dataDoubleAsOscTableScale:(double)aScaling;
+- (double *) dataDoubleAsOscTableScale: (double) aScaling;
 {
-  return [self dataDoubleScale:aScaling];
+    return [self dataDoubleScale: aScaling];
 }
 
-- (double *)   dataDoubleAsOscTable
+- (double *) dataDoubleAsOscTable
 {
-  return [self dataDouble];
+    return [self dataDouble];
 }
 
 - (DSPDatum *) dataDSPAsOscTable
 {
-  return [self dataDSP];
+    return [self dataDSP];
 }
 
 @end
 
 @implementation MKPartials(Private)
 
-- writeBinaryScorefileStream: (NSMutableData *) aStream
 /* Writes on aStream the following:
-{1.0, 0.3, 0.0}{2.0,.1,0.0}{3.0,.01,0.0}
-  Returns nil if ampRatios or freqRatios is NULL, otherwise self. */
+  {1.0, 0.3, 0.0}{2.0,.1,0.0}{3.0,.01,0.0}
+  Returns nil if ampRatios or freqRatios is NULL, otherwise self. 
+*/
+- writeBinaryScorefileStream: (NSMutableData *) aStream
 {
-  int i;
-  double *aRatios,*fRatios,*phs;
-  _MKWriteChar(aStream,'\0'); /* Marks it as a partials rather than samples
-               */
-  if ((freqRatios == NULL) || (ampRatios == NULL)) {
-    _MKWriteChar(aStream,'\2');
-    _MKWriteDouble(aStream,1.0);
-    _MKWriteDouble(aStream,1.0);
-    return nil;
-  }
-  i = 0;
-  fRatios = freqRatios;
-  aRatios = ampRatios;
-  phs = phases;
-  while (i < partialCount) {
-    if (phs == NULL) {
-      _MKWriteChar(aStream,(i == 0) ? '\3' : '\2');
-      _MKWriteDouble(aStream,*fRatios++);
-      _MKWriteDouble(aStream,*aRatios++);
-      if (i == 0)
-        _MKWriteDouble(aStream,defaultPhase);
+    int i;
+    double *aRatios, *fRatios, *phs;
+    
+    _MKWriteChar(aStream, '\0'); /* Marks it as a partials rather than samples */
+    if ((freqRatios == NULL) || (ampRatios == NULL)) {
+	_MKWriteChar(aStream, '\2');
+	_MKWriteDouble(aStream, 1.0);
+	_MKWriteDouble(aStream, 1.0);
+	return nil;
     }
-    else {
-      _MKWriteChar(aStream,'\3');
-      _MKWriteDouble(aStream,*fRatios++);
-      _MKWriteDouble(aStream,*aRatios++);
-      _MKWriteDouble(aStream,*phs++);
+    i = 0;
+    fRatios = freqRatios;
+    aRatios = ampRatios;
+    phs = phases;
+    while (i < partialCount) {
+	if (phs == NULL) {
+	    _MKWriteChar(aStream,(i == 0) ? '\3' : '\2');
+	    _MKWriteDouble(aStream,*fRatios++);
+	    _MKWriteDouble(aStream,*aRatios++);
+	    if (i == 0)
+		_MKWriteDouble(aStream,defaultPhase);
+	}
+	else {
+	    _MKWriteChar(aStream,'\3');
+	    _MKWriteDouble(aStream,*fRatios++);
+	    _MKWriteDouble(aStream,*aRatios++);
+	    _MKWriteDouble(aStream,*phs++);
+	}
+	i++;
     }
-    i++;
-  }
-  _MKWriteChar(aStream,'\0');
-  return self;
+    _MKWriteChar(aStream,'\0');
+    return self;
 }
 
+/* Same as setPartialCount:freqRatios:ampRatios:phases:orDefaultPhase
+  except that the array arguments are not copied or freed. */
 - _setPartialNoCopyCount: (int)howMany
               freqRatios: (short *)fRatios
                ampRatios: (float *)aRatios
                   phases: (double *)phs
           orDefaultPhase: (double)defPhase
-/* Same as setPartialCount:freqRatios:ampRatios:phases:orDefaultPhase
-  except that the array arguments are not copied or freed. */
 {
-  if (fRatios) {
-    freeArray(self,MK_freq);
-    freqRatios = (double *)fRatios;
-    _freqArrayFreeable = NO;
-  }
-  if (aRatios) {
-    freeArray(self,MK_amp);
-    ampRatios = (double *)aRatios;
-    _ampArrayFreeable = NO;
-  }
-  if (phs == NULL)
-    defaultPhase = defPhase;
-  else {
-    freeArray(self,MK_phase);
-    phases = phs;
-    _phaseArrayFreeable = NO;
-  }
-  partialCount = howMany;
-  length = 0;   /* This ensures a recomputation of the tables. */
-  dbMode = YES;
-  return self;
+    if (fRatios) {
+	freeArray(self,MK_freq);
+	freqRatios = (double *)fRatios;
+	_freqArrayFreeable = NO;
+    }
+    if (aRatios) {
+	freeArray(self,MK_amp);
+	ampRatios = (double *)aRatios;
+	_ampArrayFreeable = NO;
+    }
+    if (phs == NULL)
+	defaultPhase = defPhase;
+    else {
+	freeArray(self,MK_phase);
+	phases = phs;
+	_phaseArrayFreeable = NO;
+    }
+    partialCount = howMany;
+    length = 0;   /* This ensures a recomputation of the tables. */
+    dbMode = YES;
+    return self;
 }
 
--_normalize
+- _normalize
 {
     register double *dataEnd,*dataPtr;
     double tmp;
