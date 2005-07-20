@@ -1,5 +1,0 @@
-dspwrap is a program which reads DSP assembly language source code and emits 
-Objective C or C code and possibly some documentation files.  See the man
-page for more info.
-
-Beware that earlier versions of dspwrap may inhabit earlier NeXTStep or OpenStep systems. These should be renamed or removed.

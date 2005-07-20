@@ -1,5 +1,0 @@
-This example program takes MIDI through midi0 (serial port A on NeXT
-hardware) and generates echoes on successive MIDI channels. Note that
-you must have a synthesizer capable of multi-channel synthesis plugged
-into the serial port to hear the echoes. You must also be sure to
-configure your synthesizer to respond on MIDI channels 1-8.

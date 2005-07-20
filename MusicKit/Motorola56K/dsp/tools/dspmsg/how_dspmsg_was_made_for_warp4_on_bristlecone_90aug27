@@ -1,1 +1,0 @@
-cc -g -O -o dspmsg dspmsg.o _DSPMakeIncludeFiles.o -ldsp_p -lsys_s
