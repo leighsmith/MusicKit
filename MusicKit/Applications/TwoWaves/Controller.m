@@ -11,9 +11,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 #import "Controller.h"
-#ifdef WIN32
-# import <Foundation/NSPathUtilities.h>
-#endif
 
 #include <math.h>  // for pow()
 
@@ -102,6 +99,7 @@ static BOOL clipping = NO;
 void doCalc(int type, short *pointer, float theFreq, float theAmp)
 {
     int i;
+
     switch (type) {
     case 0: /*sine*/
     default:
@@ -141,6 +139,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 {
     float theFreq,theAmp;
     short *pointer = (short *)[[soundView1 sound] data];
+
     theAmp = [volNum1 floatValue] * 32768 / 10;
     theFreq = [freqNum1 floatValue];
     doCalc(type1, pointer, theFreq, theAmp);
@@ -151,6 +150,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 {
     float theFreq,theAmp;
     short *pointer = (short *)[[soundView2 sound] data];
+
     theFreq = [freqNum2 floatValue];
     theAmp = [volNum2 floatValue] * 32768 / 10;
     doCalc(type2, pointer, theFreq, theAmp);
@@ -181,7 +181,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     return self;
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification
+- (void) applicationWillTerminate: (NSNotification *) aNotification
 {
     [theSound1 release];
     [theSound2 release];
@@ -189,13 +189,13 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     [newSound release];
 }
 
-- (void)dealloc
+- (void) dealloc
 {
     [super dealloc];
 }
 
 /* 3 seconds */
-- (Snd *) singleSound:sender
+- (Snd *) singleSound: sender
 {
     short *pointer;
     Snd *newSoundA = [[Snd alloc] initWithFormat: SND_FORMAT_LINEAR_16
@@ -236,14 +236,15 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 }
 
 /* 3 seconds */
-- playA:sender
+- playA: sender
 {
     [[self singleSound: sender] play];
     return self;
 }
 
-- playB:sender
-{ /* 3 seconds */
+/* 3 seconds */
+- playB: sender
+{
     [[self singleSound: sender] play];
     return self;
 }
@@ -254,6 +255,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     int i;
     float amp1,amp2,freq1,freq2;
     float theLength = [sLength floatValue];
+
     amp1 = [volNum1 floatValue] * 32768 / 10;
     amp2 = [volNum2 floatValue] * 32768 / 10;
     freq1 = [freqNum1 floatValue];
@@ -268,6 +270,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
         
         for (i = 0; i < theLength*SAMPLING_RATE; i++) {
             float num1,num2;
+
             switch (type1) {
             case 0:
             default:
@@ -312,6 +315,18 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
         }
     }
     somethingChanged = NO;
+    /*
+    NSLog(@"newSound = %@\n", newSound);
+    NSLog(@"respondsToSelector: @selector(play) = %d\n", 
+	  [newSound respondsToSelector: @selector(play)]);
+    NSLog(@"respondsToSelector: @selector(play:) = %d\n", 
+	  [newSound respondsToSelector: @selector(play:)]);
+    NSLog(@"respondsToSelector: @selector(waitUntilStopped) = %d\n", 
+	  [newSound respondsToSelector: @selector(waitUntilStopped)]);
+    NSLog(@"respondsToSelector: @selector(description) = %d\n", 
+	  [newSound respondsToSelector: @selector(description)]);
+    */
+
     [newSound play];
     return self;
 }
@@ -368,22 +383,22 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 
 - waveChanged:sender
 {
-	somethingChanged = YES;
-	if (sender == waveType1) {
-		type1 = [sender selectedRow];
-		[self calcSound1];
-                [soundView1 invalidateCacheStartPixel:0 end:-1];
-		[soundView1 display];
-	}
-	if (sender == waveType2) {
-		type2 = [sender selectedRow];
-		[self calcSound2];
-                [soundView2 invalidateCacheStartPixel:0 end:-1];
-		[soundView2 display];
-	}		
-	[self calcSound3];
-        [soundView3 invalidateCacheStartPixel:0 end:-1];
-	[soundView3 display];
+    somethingChanged = YES;
+    if (sender == waveType1) {
+	type1 = [sender selectedRow];
+	[self calcSound1];
+	[soundView1 invalidateCacheStartPixel:0 end:-1];
+	[soundView1 display];
+    }
+    if (sender == waveType2) {
+	type2 = [sender selectedRow];
+	[self calcSound2];
+	[soundView2 invalidateCacheStartPixel:0 end:-1];
+	[soundView2 display];
+    }		
+    [self calcSound3];
+    [soundView3 invalidateCacheStartPixel:0 end:-1];
+    [soundView3 display];
     return self;
 }
 
@@ -395,7 +410,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 
 - recalc
 {
-
-	return self;
+    return self;
 }
+
 @end
