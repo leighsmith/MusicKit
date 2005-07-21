@@ -34,16 +34,11 @@
 
 #undef HAVE_PORTAUDIO_H
 
-#if BUILD_libSndKit_DLL
-#  define SNDKIT_API  __declspec(dllexport)
-#  define SNDKIT_DECLARE __declspec(dllexport)
-#elif libSndKit_ISDLL
-#  define SNDKIT_API  extern __declspec(dllimport)
-#  define SNDKIT_DECLARE __declspec(dllimport)
-#else
-#  define SNDKIT_API extern
-#  define SNDKIT_DECLARE
-#endif
+// These were used by Stephen to get around the byzantine Win32 linking process.
+// The GNU linker now (V3.4.2 at least) handles Win32 linking without import/export
+// declarations, so these declarations have become redundant.
+#define SNDKIT_API extern
+#define SNDKIT_DECLARE
 
 #import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 
