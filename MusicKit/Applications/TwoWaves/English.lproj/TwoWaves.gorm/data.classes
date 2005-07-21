@@ -1,0 +1,52 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    Controller = {
+	Actions = (
+	    "play:",
+	    "playA:",
+	    "playB:",
+	    "updateNums:",
+	    "updateSliders:",
+	    "waveChanged:",
+	    "changeLength:"
+	);
+	Outlets = (
+	    freqNum1,
+	    freqNum2,
+	    freqSlide1,
+	    freqSlide2,
+	    soundView1,
+	    soundView2,
+	    soundView3,
+	    volNum1,
+	    volNum2,
+	    volSlide1,
+	    volSlide2,
+	    waveType1,
+	    waveType2,
+	    mesgBox,
+	    sLength
+	);
+	Super = NSObject;
+    };
+    FirstResponder = {
+	Actions = (
+	    "changeLength:",
+	    "play:",
+	    "playA:",
+	    "playB:",
+	    "updateNums:",
+	    "updateSliders:",
+	    "waveChanged:"
+	);
+	Super = NSObject;
+    };
+    NSPanel = {
+	Actions = (
+	    "orderFront:"
+	);
+	Super = NSWindow;
+    };
+    SndView = {
+    };
+}
