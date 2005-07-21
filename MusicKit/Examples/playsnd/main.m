@@ -95,7 +95,7 @@ BOOL playsnd_init_shoutcast()
     }
     else {
 	printf("Couldn't connect to MP3 reflection server on %s:%i with password [%s]\n",
-	    [[mp3enc serverAddress] cString], [mp3enc serverPort], [[mp3enc serverPassword] cString]);
+	    [[mp3enc serverAddress] UTF8String], [mp3enc serverPort], [[mp3enc serverPassword] UTF8String]);
 	[mp3enc release];
 	mp3enc = nil;
 	return NO;
@@ -131,7 +131,7 @@ int main (int argc, const char * argv[])
     float  timeOffset         = 0.0f;
     double deltaTime = 1.0;
     int    i = 1;
-    const  char  *soundFileName       = NULL;
+    NSString  *soundFileName       = nil;
 #if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
     NSString *shoutcastServerAddress  = [SndAudioProcessorMP3Encoder defaultServerAddress];
     NSString *shoutcastSourcePassword = [SndAudioProcessorMP3Encoder defaultSourcePassword];
@@ -202,14 +202,14 @@ int main (int argc, const char * argv[])
 		default: fprintf(stderr, "Ignoring unrecognized option -%c\n",argv[i][1]);
 	    }
 	}
-	else if (soundFileName == NULL)
-	    soundFileName = argv[i];
+	else if (soundFileName == nil)
+	    soundFileName = [[NSString stringWithUTF8String: argv[i]] retain];
 	else {
 	    printf("Regrettably, playsnd doesn't support playing multiple files yet (no tech reason why not...).\n");
-	    printf("  This file will not be played: %s\n",argv[i]);
+	    printf("  This file will not be played: %s\n", argv[i]);
 	}
     }
-    if (soundFileName == NULL)
+    if (soundFileName == nil)
 	printError(-2, "No soundfile name given");
     
     // Reason why we finally exit here instead of eariler - allow all error msgs to
@@ -219,39 +219,43 @@ int main (int argc, const char * argv[])
     
     // Finally: do the actual sound playing!
 
-    filename  = [fm stringWithFileSystemRepresentation: soundFileName
-						length: strlen(soundFileName)];
-    extension = [filename pathExtension];
+    // NSLog(@"soundFileName = %@\n", soundFileName);
 
-    bFileExists = [fm fileExistsAtPath: filename isDirectory: &bIsDir];
+    extension = [soundFileName pathExtension];
+
+    bFileExists = [fm fileExistsAtPath: soundFileName isDirectory: &bIsDir];
     if (!bFileExists || bIsDir) {
         NSArray *ext = [Snd soundFileExtensions];
         int i, c = [ext count];
 
         for (i = 0; i < c; i++) {
-	    NSString *temp = [filename stringByAppendingPathExtension: [ext objectAtIndex: i]];
+	    NSString *temp = [soundFileName stringByAppendingPathExtension: [ext objectAtIndex: i]];
 	    
 	    if ([fm fileExistsAtPath: temp]) {
 		bFileExists = TRUE;
-		filename = temp;
+		soundFileName = temp;
 		break;
 	    }
         }
     }
 
-    if (![fm fileExistsAtPath: filename]) {
-        printError(-2, "Can't find sound file %s\n", [filename cString]);
+    if (![fm fileExistsAtPath: soundFileName]) {
+        printError(-2, "Can't find sound file %s\n", [fm fileSystemRepresentationWithPath: soundFileName]);
     }
     else {
         int waitCount = 0;
         int maxWait;
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
+	SndError error;
+
 //        SndAudioProcessorRecorder *rec = nil;
 //        long b1, b2;
 	
 //        b1 = clock();
-        if([s readSoundfile: filename] != SND_ERR_NONE) {
-            printError(-2, "Can't read sound file %s\n", [filename cString]);
+	error = [s readSoundfile: soundFileName];
+        if(error != SND_ERR_NONE) {
+            //printError(-2, "Can't read sound file %s\n", [fm fileSystemRepresentationWithPath: soundFileName]);
+            printError(-2, "Can't read sound file %s, error %d\n", [soundFileName UTF8String], error);
             return returnCode;
         }
 
