@@ -12,59 +12,28 @@
  Release 4.0 modifications copyright CCRMA, Stanford University, 1993
  */
 /* 
-Modification history:
- $Log$
- Revision 2.0  2004/12/06 18:29:22  leighsmith
- Removed serial port devices and adopted new MKOrchestra API
+Modification history prior to commit to CVS:
 
- Revision 1.11  2004/08/09 20:17:41  leighsmith
- Removed const declaration of argv since it clashed with getopt prototype
- 
- Revision 1.10  2004/01/19 20:35:21  leighsmith
- Changed argv typing to reduce warnings
- 
- Revision 1.9  2001/09/19 23:43:34  leighsmith
- Upgraded to more descriptive parTagForName: and parNameForTag: methods
- 
- Revision 1.8  2001/04/24 23:30:30  leighsmith
- Changed to new findPatchClass method name
- 
- Revision 1.7  2000/11/29 01:53:39  leigh
- Added midifile play support (since playmidifile/recordmidifile are too low level
-			      
-			      Revision 1.6  2000/10/11 18:13:41  leigh
-			      Further typing of parameters, removed erroneous free of noteSenders
-			      
-			      Revision 1.5  2000/09/30 20:04:46  leigh
-			      Adopted getopt operation for extra command line operation
-			      
-			      Revision 1.4  2000/09/18 22:27:34  leigh
-			      reduced warnings from unassigned instruments and performers
-			      
-			      Revision 1.3  2000/04/27 01:55:31  leigh
-			      Usage reflects search path for libraries, release bugs fixed, proper status displayed
-			      
-			      
-			      12/20/89/daj - Added support for optimized scorefiles.
-			      03/05/90/daj - Removed warning message for no synthPatch in -f mode.
-			      04/11/90/mtm - Added support for generating DSP Commands soundfile.
-			      07/1/90/daj -  Added Midi support and repeat count.
-			      07/26/90/daj - Removed nice() (on conditional compilation).  New MK
-			      runs performance at a high-priority (equivalent to nice(-18)).
-			      Added setThreadPriority:
-			      08/06/90/daj - Merged in midi and repeat features from CCRMA summer class
-			      version.
-			      08/14/90/daj - Added setuid(getuid()) 
-			      There's a definite bug in coordination between DSP and Midi.
-			      The DSP generally starts too soon, which means (probably) that the 
-			      sound-out buffers are not getting properly filled.
-			      10/04/92/daj - Changed directory (back) to be /LocalLibrary/Music/Scores.
-			      10/04/93/daj - Added -p switch.
-			      10/04/94/daj - Changed default channelNoteReceiver for midi parts from 1
-			      to 0.  That way, channel information in the notes will
-			      be preserved.  Added alternativeSamplingRate for Multisound.
-			      10/11/94/daj - Fixed bugs. Added -a switch, etc.
-			      */ 
+  12/20/89/daj - Added support for optimized scorefiles.
+  03/05/90/daj - Removed warning message for no synthPatch in -f mode.
+  04/11/90/mtm - Added support for generating DSP Commands soundfile.
+  07/1/90/daj -  Added Midi support and repeat count.
+  07/26/90/daj - Removed nice() (on conditional compilation).  New MK
+                 runs performance at a high-priority (equivalent to nice(-18)).
+                 Added setThreadPriority:
+  08/06/90/daj - Merged in midi and repeat features from CCRMA summer class
+                 version.
+  08/14/90/daj - Added setuid(getuid()) 
+                 There's a definite bug in coordination between DSP and Midi.
+                 The DSP generally starts too soon, which means (probably) that the 
+                 sound-out buffers are not getting properly filled.
+  10/04/92/daj - Changed directory (back) to be /LocalLibrary/Music/Scores.
+  10/04/93/daj - Added -p switch.
+  10/04/94/daj - Changed default channelNoteReceiver for midi parts from 1
+                 to 0.  That way, channel information in the notes will
+                 be preserved.  Added alternativeSamplingRate for Multisound.
+ 10/11/94/daj - Fixed bugs. Added -a switch, etc.
+ */ 
 
 #import <Foundation/Foundation.h>
 #import <MusicKit/MusicKit.h>
@@ -170,7 +139,7 @@ The following options are recognized: \n\
     unsigned i;
 
     for(i = 0; i < [libraryDirs count]; i++)
-    [searchedDirectories appendFormat: @"   %@\n", [[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: SCORE_DIR]];
+	[searchedDirectories appendFormat: @"   %@\n", [[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: SCORE_DIR]];
 
     fprintf(stderr, help, [searchedDirectories cString], [SOUND_EXTENSION cString], [SOUND_EXTENSION cString]);
 }
@@ -244,16 +213,19 @@ static BOOL checkForMidi(id obj)
     int i,cnt;
     id info;
     char *sp;
+    
     if (weGotScore = [obj isKindOf: [MKScore class]])
 	subobjs = [obj parts];
-    else subobjs = [obj noteSenders];
+    else 
+	subobjs = [obj noteSenders];
     if (!subobjs)
 	return NO;
     cnt = [subobjs count];
-    for (i=0; i<cnt; i++) {
+    for (i = 0; i < cnt; i++) {
 	if (weGotScore)
 	    info = [[subobjs objectAtIndex: i] info];
-	else info = [obj infoForNoteSender: [subobjs objectAtIndex: i]];
+	else 
+	    info = [obj infoForNoteSender: [subobjs objectAtIndex: i]];
 	if ([info isParPresent: MK_synthPatch] &&
 	    (isMidiClassName([info parAsStringNoCopy: MK_synthPatch]))) {
 	    [subobjs free];
@@ -271,9 +243,11 @@ static void nullErrorHandler(NSString *msg)
     NSLog(msg);
 }
 
-static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
+static int openOrch(int orchIndex, BOOL waitForIt, BOOL quiet, BOOL allDSPs)
+{
     static int warnedAlready[16] = {0};
     MKOrchestra *theOrch = [MKOrchestra nthOrchestra: orchIndex];
+    
     if (!theOrch)
 	return -1;
     if (warnedAlready[orchIndex])
@@ -281,7 +255,7 @@ static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
     if (![theOrch open]) {
 	if (waitForIt) {
 	    if (!quiet)
-		fprintf(stderr,"Waiting for DSP%d...\n",[theOrch orchestraIndex]);
+		fprintf(stderr,"Waiting for DSP%d...\n", [theOrch orchestraIndex]);
 	    for (;;) {
 		// sleep(3); 
 		if ([theOrch open])
@@ -290,7 +264,7 @@ static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
 	} 
 	else {
 	    if (!quiet)
-		fprintf(stderr,"Can't open DSP%d.\n",[theOrch orchestraIndex]);
+		fprintf(stderr,"Can't open DSP%d.\n", [theOrch orchestraIndex]);
 	    if (!allDSPs)
 		exit(1);
 	    warnedAlready[orchIndex] = 1;
@@ -525,7 +499,7 @@ int main(int argc, char *argv[])
 			continue;
 		    }
 		    if ([[MKOrchestra nthOrchestra: orchIndex] deviceStatus] != MK_devOpen) {
-			if (openOrch(orchIndex,waitForIt,quiet,allDSPs) == -1)
+			if (openOrch(orchIndex, waitForIt, quiet, allDSPs) == -1)
 			    continue;			
 		    }
 		    weGotAnOpenOrch = YES;
@@ -546,132 +520,133 @@ int main(int argc, char *argv[])
                     if (repeat == 0 && synthPatchCount < voices && !quiet)
                         fprintf(stderr,
 				"Could only allocate %d instead of %d %ss for %s\n",
-				synthPatchCount,voices,
+				synthPatchCount, voices,
 				[[synthPatchClass name] cString], [MKGetObjectName(aPart) cString]);
 		}
 	    }
 	}
-else {  /* on the fly */
-int partCount,synthPatchCount,voices,midiChan,whichMidi;
-NSString *className;
-NSArray *noteSenders;
-MKNote *partInfo;
-MKSynthInstrument *anIns;
-MKNoteSender *aNoteSender;
-id synthPatchClass;
-noteSenders = [aPerformer noteSenders];
-partCount = [noteSenders count];
-for (i = 0; i < partCount; i++) {
-    aNoteSender = [noteSenders objectAtIndex: i];
-    partInfo = [(MKScorefilePerformer *) aPerformer infoNoteForNoteSender: aNoteSender];
-    if (!partInfo) {               
-	continue;
-    }		
-    if (allDSPs) {
-	if ([partInfo isParPresent: orchPar])
-	    orchIndex = [partInfo parAsInt: orchPar];
-	else
-	    continue;
-    } 
-    if (![partInfo isParPresent: MK_synthPatch]) 
-	continue;         
-    className = [partInfo parAsStringNoCopy: MK_synthPatch];
-    if (isMidiClassName(className)) {
-	if (repeat == 0) {
-	    midiChan = [partInfo parAsInt: MK_midiChan];
-	    if ((midiChan == MAXINT) || (midiChan > 16))
-		midiChan = 0;
-	    if ([className isEqualToString: @"midi"])
-		className = @"midi0";
-	    if ([className isEqualToString: @"midi1"])
-		whichMidi = 1;
-	    else
-		whichMidi = 0;
-	    if (midis[whichMidi] == nil) {
-		midis[whichMidi] = [MKMidi midiOnDevice: className];
-		if(midis[whichMidi] == nil) {
-		    fprintf(stderr, "No MIDI devices of class %s present, unable to play.\n", [className cString]);
+	else {  /* on the fly */
+	    int partCount, synthPatchCount, voices, midiChan, whichMidi;
+	    NSString *className;
+	    NSArray *noteSenders;
+	    MKNote *partInfo;
+	    MKSynthInstrument *anIns;
+	    MKNoteSender *aNoteSender;
+	    id synthPatchClass;
+	    
+	    noteSenders = [aPerformer noteSenders];
+	    partCount = [noteSenders count];
+	    for (i = 0; i < partCount; i++) {
+		aNoteSender = [noteSenders objectAtIndex: i];
+		partInfo = [(MKScorefilePerformer *) aPerformer infoNoteForNoteSender: aNoteSender];
+		if (!partInfo) {               
 		    continue;
+		}		
+		if (allDSPs) {
+		    if ([partInfo isParPresent: orchPar])
+			orchIndex = [partInfo parAsInt: orchPar];
+		    else
+			continue;
+		} 
+		if (![partInfo isParPresent: MK_synthPatch]) 
+		    continue;         
+		className = [partInfo parAsStringNoCopy: MK_synthPatch];
+		if (isMidiClassName(className)) {
+		    if (repeat == 0) {
+			midiChan = [partInfo parAsInt: MK_midiChan];
+			if ((midiChan == MAXINT) || (midiChan > 16))
+			    midiChan = 0;
+			if ([className isEqualToString: @"midi"])
+			    className = @"midi0";
+			if ([className isEqualToString: @"midi1"])
+			    whichMidi = 1;
+			else
+			    whichMidi = 0;
+			if (midis[whichMidi] == nil) {
+			    midis[whichMidi] = [MKMidi midiOnDevice: className];
+			    if(midis[whichMidi] == nil) {
+				fprintf(stderr, "No MIDI devices of class %s present, unable to play.\n", [className cString]);
+				continue;
+			    }
+			}
+			[aNoteSender connect: [midis[whichMidi] channelNoteReceiver: midiChan]];
+		    }
+		}
+		else { /* dsp */
+		    synthPatchClass = [MKSynthPatch findPatchClass: className];
+		    if (!synthPatchClass) {          
+			if (!quiet)
+			    fprintf(stderr, "Class %s cannot be loaded into program.\n",
+				    [className cString]);
+			continue;
+		    }
+		    if ([[MKOrchestra nthOrchestra: orchIndex] deviceStatus] != MK_devOpen) {
+			if (openOrch(orchIndex, waitForIt, quiet, allDSPs) == -1)
+			    continue;			
+		    }
+		    weGotAnOpenOrch = YES;
+		    if (repeat == 0) {
+			instruments = [NSMutableArray arrayWithCapacity: partCount];
+			[instruments insertObject: [MKSynthInstrument new] atIndex: i];      
+		    }
+		    anIns = (MKSynthInstrument *) [instruments objectAtIndex: i];
+		    [aNoteSender connect: [anIns noteReceiver]];
+		    [anIns setSynthPatchClass: synthPatchClass 
+				    orchestra: [MKOrchestra nthOrchestra: orchIndex]];
+		    if (![partInfo isParPresent: MK_synthPatchCount])
+			continue;         
+		    voices = [partInfo parAsInt: MK_synthPatchCount];
+		    synthPatchCount = 
+			[anIns setSynthPatchCount: voices patchTemplate:
+			    [synthPatchClass patchTemplateFor: partInfo]];
+		    if (repeat == 0 && synthPatchCount < voices) 
+			if (!quiet)
+			    fprintf(stderr, "Could only allocate %d instead of %d %ss for %s\n",
+				    synthPatchCount, voices, [[synthPatchClass name] cString],
+				    [MKGetObjectName(aNoteSender) cString]);
 		}
 	    }
-	    [aNoteSender connect: [midis[whichMidi] channelNoteReceiver: midiChan]];
 	}
-    }
-    else { /* dsp */
-	synthPatchClass = [MKSynthPatch findPatchClass: className];
-	if (!synthPatchClass) {          
-	    if (!quiet)
-		fprintf(stderr,"Class %s cannot be loaded into program.\n",
-			[className cString]);
-	    continue;
-	}
-	if ([[MKOrchestra nthOrchestra: orchIndex] deviceStatus] != MK_devOpen) {
-	    if (openOrch(orchIndex,waitForIt,quiet,allDSPs) == -1)
-		continue;			
-	}
-	weGotAnOpenOrch = YES;
-	if (repeat == 0) {
-	    instruments = [NSMutableArray arrayWithCapacity: partCount];
-	    [instruments insertObject: [MKSynthInstrument new] atIndex: i];      
-	}
-	anIns = (MKSynthInstrument *) [instruments objectAtIndex: i];
-	[aNoteSender connect: [anIns noteReceiver]];
-	[anIns setSynthPatchClass: synthPatchClass 
-			orchestra: [MKOrchestra nthOrchestra: orchIndex]];
-	if (![partInfo isParPresent: MK_synthPatchCount])
-	    continue;         
-	voices = [partInfo parAsInt: MK_synthPatchCount];
-	synthPatchCount = 
-	    [anIns setSynthPatchCount: voices patchTemplate:
-		[synthPatchClass patchTemplateFor: partInfo]];
-	if (repeat == 0 && synthPatchCount < voices) 
-	    if (!quiet)
-		fprintf(stderr, "Could only allocate %d instead of %d %ss for %s\n",
-			synthPatchCount, voices, [[synthPatchClass name] cString],
-			[MKGetObjectName(aNoteSender) cString]);
-    }
-}
-}
-MKSetDeltaT(1.0);              
-[MKConductor setClocked: NO];     
-for (i=0; i<2; i++) 
-[(MKMidi *) midis[i] openOutputOnly];
-if (weGotAnOpenOrch && allDSPs) 
-[MKOrchestra open]; /* Open any remaining dsps */
+	MKSetDeltaT(1.0);              
+	[MKConductor setClocked: NO];     
+	for (i = 0; i < 2; i++) 
+	    [midis[i] openOutputOnly];
+	if (weGotAnOpenOrch && allDSPs) 
+	    [MKOrchestra open]; /* Open any remaining dsps */
 #if 1
-for (i=0; i<2; i++) 
-if (midiOffset > 0) 
-[midis[i] setLocalDeltaT: midiOffset];
-else if (midiOffset < 0) {
-    int i;
-    for (i=0; i<[MKOrchestra DSPCount]; i++)
-	[[MKOrchestra nthOrchestra: i] setLocalDeltaT: -midiOffset];
-}
+	for (i = 0; i < 2; i++) 
+	    if (midiOffset > 0) 
+		[midis[i] setLocalDeltaT: midiOffset];
+	    else if (midiOffset < 0) {
+		int i;
+		for (i = 0; i < [MKOrchestra DSPCount]; i++)
+		    [[MKOrchestra nthOrchestra: i] setLocalDeltaT: -midiOffset];
+	    }
 #endif
-if (!quiet) {
-    if (commandsFile)
-	fprintf(stderr,"writing to %s...\n", [commandsFile cString]);
-    if (outputFile)
-	fprintf(stderr,"writing to %s...\n", [outputFile cString]);
-    else
-	fprintf(stderr,"playing...\n");
-}
-for (i=0; i<2; i++)
-[(MKMidi *) midis[i] run];
-if (weGotAnOpenOrch)
-[MKOrchestra run];                  
-[MKConductor startPerformance];  
-// sleep(10000);
-if (weGotAnOpenOrch)
-[MKOrchestra close];                
-for (i=0; i<2; i++)
-[(MKMidi *) midis[i] close];
-if (!quiet)
-fprintf(stderr,"...done\n");
+	if (!quiet) {
+	    if (commandsFile)
+		fprintf(stderr,"writing to %s...\n", [commandsFile cString]);
+	    if (outputFile)
+		fprintf(stderr,"writing to %s...\n", [outputFile cString]);
+	    else
+		fprintf(stderr,"playing...\n");
+	}
+	for (i = 0; i < 2; i++)
+	 [midis[i] run];
+	if (weGotAnOpenOrch)
+	    [MKOrchestra run];                  
+	[MKConductor startPerformance];  
+	// sleep(10000);
+	if (weGotAnOpenOrch)
+	    [MKOrchestra close];                
+	for (i = 0; i < 2; i++)
+	    [midis[i] close];
+	if (!quiet)
+	    fprintf(stderr,"...done\n");
     }
-[pool release];
-exit(0);       // insure the process exit status is 0
-return 0;      // ...and make main fit the ANSI spec.
+    [pool release];
+    exit(0);       // insure the process exit status is 0
+    return 0;      // ...and make main fit the ANSI spec.
 }
 
 
