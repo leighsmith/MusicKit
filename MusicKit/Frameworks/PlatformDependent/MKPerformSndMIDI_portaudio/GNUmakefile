@@ -22,7 +22,7 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME = MKPerformSndMIDI
-VERSION = 5.5.0
+VERSION = 5.5.3
 
 #include ../Version
 #include ../config.mak
@@ -46,14 +46,15 @@ $(MY_NAME)_RESOURCE_DIRS =
 ADDITIONAL_CFLAGS += -g -Wall
 
 # The Bundle Objective-C source files to be compiled
-$(MY_NAME)_OBJC_FILES = PerformSound.m
-
-$(MY_NAME)_C_FILES = PerformMIDI.c 
+$(MY_NAME)_OBJC_FILES = PerformSound.m PerformMIDI.m
 
 # The framework installed header files
-$(MY_NAME)_HEADER_FILES = PerformSound.h PerformMIDI.h \
-         mididriver_types.h PerformSoundPrivate.h \
-         SndStruct.h SndFormats.h \
+$(MY_NAME)_HEADER_FILES = PerformSound.h \
+         PerformMIDI.h \
+         mididriver_types.h \
+         PerformSoundPrivate.h \
+         SndStruct.h \
+         SndFormats.h \
          MKPerformSndMIDIConfig.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = MKPerformSndMIDI
