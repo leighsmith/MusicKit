@@ -3,7 +3,7 @@
 #   Defined In: The MusicKit
 #
 #  Description:
-#    Makefile for GNUstep
+#    SndKit Makefile for GNUstep
 #
 #  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
 #
@@ -22,7 +22,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 # For use in rpm generation:
 PACKAGE_NAME = SndKit
-VERSION = 5.5.0
+VERSION = 5.5.3
 
 srcdir = .
 
@@ -146,7 +146,7 @@ $(MY_NAME)_HEADER_FILES = \
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
 # Extra DLL exports file
-$(MY_NAME)_DLL_DEF = $(MY_NAME).def
+# $(MY_NAME)_DLL_DEF = $(MY_NAME).def
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   $(MY_NAME)_OBJC_FILES += SndConditionLock.m
@@ -165,4 +165,4 @@ else
   include $(GNUSTEP_MAKEFILES)/framework.make
 endif
 
--include Makefile.postamble
+-include GNUmakefile.postamble

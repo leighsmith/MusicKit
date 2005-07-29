@@ -33,12 +33,7 @@ ADDITIONAL_CPPFLAGS += @CPPFLAGS@
 
 ADDITIONAL_LDFLAGS += @LDFLAGS@
 
-# LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME)
-
-
-ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME) -lwinmm  
-else
+ifneq (mingw32, $(GNUSTEP_TARGET_OS))
   PKG_CONFIG=$(shell which pkg-config 2>/dev/null)
   ifneq ($(PKG_CONFIG),"")
     SNDFILE_LIBS=$(shell pkg-config --libs sndfile 2>/dev/null)
