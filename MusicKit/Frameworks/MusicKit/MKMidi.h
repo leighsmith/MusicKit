@@ -665,7 +665,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
   The arrays and strings are copied and autoreleased. Only those drivers which support
   both output and input are returned. To return additional drivers which may support only
   input or output, use +<b>getDriverNamesForInput:</b>.
-  @return Returns an NSArray instance.
+  @return Returns an NSArray of NSStrings of driver names supplied by the operating system.
 */
 + (NSArray *) getDriverNames;
 
@@ -673,7 +673,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
   @brief Returns an array of all available driver names for input.
   
   This list may include drivers that are also available for output and those drivers which are for input only.
-  @return Returns an NSArray instance.
+  @return Returns an NSArray of NSStrings of driver names supplied by the operating system.
  */
 + (NSArray *) getDriverNamesForInput;
 
@@ -681,7 +681,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
   @brief Returns an array of all available driver names for output.
   
   This list may include drivers that are also available for input and those drivers which are for output only.
-  @return Returns an NSArray instance.
+  @return Returns an NSArray of NSStrings of driver names supplied by the operating system.
  */
 + (NSArray *) getDriverNamesForOutput;
 
