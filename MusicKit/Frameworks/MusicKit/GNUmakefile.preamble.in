@@ -1,4 +1,7 @@
 #  $Id$
+#
+# @configure_input@
+#
 #  Defined In: The MusicKit
 #  Description:
 #    Makefile preamble for GNUstep
@@ -11,11 +14,19 @@
 #  commercial purposes so long as the author attribution and this copyright
 #  message remains intact and accompanies all derived code.
 
-
-# What are the libraries this library depends upon. This is needed for some
+# What are the libraries this library depends upon? This is needed for some
 # systems where building a shared library requires to pass to the linker
 # all the libraries the target library depends upon.
 
-# LIBRARIES_DEPEND_UPON = -lSndKit -lobjc -l$(FOUNDATION_LIBRARY_NAME)
+LIBRARIES_DEPEND_UPON = -lMKDSP -lMKPerformSndMIDI -lSndKit -lobjc -l$(FOUNDATION_LIBRARY_NAME) @LIBS@
+
+# Assigned from the autoconf analysis.
+ADDITIONAL_CPPFLAGS += @CPPFLAGS@ 
+
+ADDITIONAL_LDFLAGS += @LDFLAGS@
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  ADDITIONAL_LDFLAGS += -Wl,--export-all-symbols -Wl,--enable-runtime-pseudo-reloc
+endif
 
 ADDITIONAL_FLAGS += @DEFS@

@@ -88,16 +88,9 @@ $(MY_NAME)_HEADER_FILES = \
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         timeunits.h tokens.h fastFFT.h MKPatch.h MKPlugin.h\
-		 #ArielQP.h DSPSerialPortDevice.h
+         timeunits.h tokens.h fastFFT.h MKPatch.h MKPlugin.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = MusicKit
-
-$(MY_NAME)_DLL_DEF = $(MY_NAME).def
-
-ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
-endif
 
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
