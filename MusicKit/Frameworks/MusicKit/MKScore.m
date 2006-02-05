@@ -537,8 +537,8 @@ static void putMidi(struct __MKMidiOutStruct *ptr)
 static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
 {
     int sysExStrLen = [sysExclString cStringLength];
-    char *sysExclStr = _MKMalloc(sysExStrLen); // was alloca
-    unsigned char *buffer = _MKMalloc(sysExStrLen); /* More than enough */
+    char *sysExclStr = (char *) _MKMalloc(sysExStrLen); // was alloca
+    unsigned char *buffer = (unsigned char *) _MKMalloc(sysExStrLen); /* More than enough */
     unsigned char *bufptr = buffer;
     int bufferLen;
     unsigned char c;
@@ -910,7 +910,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 {
 #   define ROOM 4 /* Up to 3 digits per number followed by space */
     int size = nBytes * ROOM;
-    char *str = _MKMalloc(size); // was alloca
+    char *str = (char *) _MKMalloc(size); // was alloca
     NSString * retStr;
     int i, j;
     
@@ -1136,7 +1136,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    break;
 		default: { /* Sys exclusive */
 		    unsigned j;
-		    char *str = _MKMalloc(*nData * 3); /* 3 chars per byte */
+		    char *str = (char *) _MKMalloc(*nData * 3); /* 3 chars per byte */
 		    char *ptr = str;
 		    unsigned char *p = *data;
 		    unsigned char *endP = p + *nData;

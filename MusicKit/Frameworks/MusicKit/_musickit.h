@@ -209,10 +209,10 @@ extern void _MKOrchTrace(MKOrchestra *orch, int typeOfInfo, NSString * fmt, ...)
 extern unsigned _MKTraceFlag;
 #define _MKTrace() _MKTraceFlag
 
-/* Memory alloc */
-extern char * _MKMalloc(); /* These will be replaced with NeXT equiv*/
-extern char * _MKCalloc(); 
-extern char * _MKRealloc();
+/* Memory alloc. These will be replaced with NeXT equiv */
+extern void * _MKMalloc(unsigned size);
+extern char * _MKCalloc(unsigned nelem, unsigned elsize); 
+extern char * _MKRealloc(void *ptr, unsigned size);
 #define  _MK_MALLOC( VAR, TYPE, NUM )				\
    ((VAR) = (TYPE *) _MKMalloc( (unsigned)(NUM)*sizeof(TYPE) )) 
 #define  _MK_REALLOC( VAR, TYPE, NUM )				\

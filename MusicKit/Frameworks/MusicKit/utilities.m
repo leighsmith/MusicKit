@@ -128,11 +128,9 @@ id _MKCheckClassConductor()
 
 
 /* Music Kit malloc functions */
-char *_MKCalloc(nelem, elsize)
-    unsigned nelem, elsize;
+char *_MKCalloc(unsigned nelem, unsigned elsize)
 {
-    void *rtn;
-    rtn = calloc(nelem, elsize);
+    void *rtn = calloc(nelem, elsize);
     if (!rtn) {
 	NSLog(@"MusicKit memory exausted.\n");
 	exit(1);
@@ -140,11 +138,10 @@ char *_MKCalloc(nelem, elsize)
     return rtn;
 }
 
-char *_MKMalloc(size)
-    unsigned size;
+void *_MKMalloc(unsigned size)
 {
-    void *rtn;
-    rtn = malloc(size);
+    void *rtn = malloc(size);
+    
     if (!rtn) {
 	NSLog(@"MusicKit memory exausted.\n");
 	exit(1);
@@ -152,12 +149,10 @@ char *_MKMalloc(size)
     return rtn;
 }
 
-char *_MKRealloc(ptr,size)
-    void *ptr;
-    unsigned size;
+char *_MKRealloc(void *ptr, unsigned size)
 {
-    char *rtn;
-    rtn = realloc(ptr,size);
+    char *rtn = realloc(ptr,size);
+    
     if (!rtn) {
 	NSLog(@"MusicKit memory exausted.\n");
 	exit(1);
@@ -202,20 +197,20 @@ NSMutableArray *_MKDeepMutableArrayCopy(NSMutableArray *oldArray)
 /* Tracing */
 /* See musickit.h for details */
 
+/* Set a trace bit */
 unsigned MKSetTrace(int debugFlag)
-    /* Set a trace bit */
 {
     return (unsigned)(_MKTraceFlag |= debugFlag);
 }
 
+/* Clear a trace bit */
 unsigned MKClearTrace(int debugFlag)
-    /* Clear a trace bit */
 {
     return (unsigned)(_MKTraceFlag &= (~debugFlag));
 }
 
+/* Check a trace bit */
 BOOL MKIsTraced(int debugFlag)
-    /* Check a trace bit */
 {
     return (_MKTraceFlag & debugFlag) ? YES : NO;
 }
@@ -225,11 +220,11 @@ BOOL MKIsTraced(int debugFlag)
 
 static void (*errorProc)(NSString *msg) = NULL;
 
+/* Sets proc to be used when MKError() is called. If errProc is NULL,
+   uses the default error handler, which writes to stderr. When the
+   *errProc is called, errno is set to the MKErrno corresponding to err.
+   errProc takes one string argument. */
 void MKSetErrorProc(void (*errProc)(NSString *msg))
-    /* Sets proc to be used when MKError() is called. If errProc is NULL,
-       uses the default error handler, which writes to stderr. When the
-       *errProc is called, errno is set to the MKErrno corresponding to err.
-       errProc takes one string argument. */
 {
     errorProc = errProc;
 }

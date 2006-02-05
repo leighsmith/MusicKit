@@ -179,10 +179,10 @@ Modification history prior to CVS commit.
 //#error StreamConversion: NXSeek should be converted to an NSData method
 //    NXSeek(SCOREPTR->_stream,SCOREPTR->_tagRangePos,NX_FROMSTART);
     if (_lowTag < _highTag) {
-        NSData *dataToAppend = [[NSString stringWithFormat: @"noteTagRange = %d to %d;\n", _lowTag,_highTag] 	dataUsingEncoding:NSNEXTSTEPStringEncoding];
+        NSData *dataToAppend = [[NSString stringWithFormat: @"noteTagRange = %d to %d;\n", _lowTag, _highTag] dataUsingEncoding:NSNEXTSTEPStringEncoding];
         int len = [dataToAppend length];
-        NSRange range = {SCOREPTR->_tagRangePos, len};/*sb: there are 40 spaces, but this replaces exact amount. */
-        char *aBuffer = _MKMalloc(len);
+        NSRange range = {SCOREPTR->_tagRangePos, len}; /*sb: there are 40 spaces, but this replaces exact amount. */
+        char *aBuffer = (char *) _MKMalloc(len);
         [dataToAppend getBytes: aBuffer]; //stick our string into a char buffer
 
         [SCOREPTR->_stream replaceBytesInRange: range withBytes: aBuffer];
