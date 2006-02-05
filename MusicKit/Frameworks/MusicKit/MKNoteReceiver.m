@@ -165,7 +165,7 @@ Modification history before commit to CVS:
     MKNoteReceiver *newObj = NSCopyObject(self, 0, zone);
     newObj->noteSenders = [[NSMutableArray arrayWithCapacity: [noteSenders count]] retain];
     for (i = 0; i < n; i++)
-        [newObj connect: [noteSenders objectAtIndex:i]];
+        [newObj connect: [noteSenders objectAtIndex: i]];
     newObj->dataObject = nil;
     newObj->owner = nil;
     return newObj;

@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2006/02/05 17:57:11  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.5  2002/01/29 16:45:53  sbrandon
   changed all uses of _MKOrchTrace to use NSString args.
 
@@ -31,11 +34,7 @@ Modification history:
 #import <Foundation/Foundation.h>
 #import "MKUnitGenerator.h" /* these 2 added by sb */
 
-#define SynthElement MKUnitGenerator 
-/* It's actually either MKUnitGenerator or MKSynthData, but this makes compiler 
-   happy */
-
-id _MKSetSynthElementSynthPatchLoc(SynthElement *synthEl,unsigned short loc)
+id _MKSetSynthElementSynthPatchLoc(SynthElement *synthEl, unsigned short loc)
     /* Used for cross-ref into MKSynthPatch location. */
 {
     synthEl->_synthPatchLoc = loc;
@@ -48,12 +47,12 @@ unsigned _MKGetSynthElementSynthPatchLoc(SynthElement *synthEl)
     return synthEl->_synthPatchLoc;
 }
 
-void _MKProtectSynthElement(SynthElement *synthEl,BOOL protectIt)
+void _MKProtectSynthElement(SynthElement *synthEl, BOOL protectIt)
 {
     synthEl->_protected = protectIt;
 }    
 
-static void doDealloc(SynthElement *synthEl,BOOL shouldIdle)
+static void doDealloc(SynthElement *synthEl, BOOL shouldIdle)
 {
     if (shouldIdle)
       [synthEl idle];

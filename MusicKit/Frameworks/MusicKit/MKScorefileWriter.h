@@ -36,25 +36,25 @@
 The name of the scorefile to which the MKNotes are written is set
 through methods inherited from MKFileWriter.
 
-Each of a ScorefileWriter's MKNoteReceivers corresponds to a MKPart that will appear
-in the scorefile.  Unlike most Instruments, the MKScorefileWriter class doesn't
+Each of a MKScorefileWriter's MKNoteReceivers corresponds to a MKPart that will appear
+in the scorefile.  Unlike most MKInstruments, the MKScorefileWriter class doesn't
 add any MKNoteReceivers to a newly created object, they must be added by invoking
 the <b>addNoteReceiver:</b> method.
 
 The names of the MKParts represented in the scorefile are taken from the
-NoteRecievers for which they were created.  You can name a NoteReceiver by
+MKNoteRecievers for which they were created.  You can name a MKNoteReceiver by
 calling the <b>MKNameObject()</b> function.
 
 The header of the scorefile always includes a <b>part</b> statement that names
 the MKParts represented in the MKScore, and a <b>tagRange</b> statement that states
 the range of noteTag values used in the MKNote statements.  A MKScorefileWriter can
 be given an info MKNote that's written as a MKScore info statement in the file;
-similarly, the ScorefileWriter's MKNoteReceivers can each contain a MKPart info
+similarly, the MKScorefileWriter's MKNoteReceivers can each contain a MKPart info
 MKNote.  These, too, are written to the scorefile, each in a separate MKPart info
 statement.
 
 You shouldn't change the name of a data object (such as an MKEnvelope, MKWaveTable,
-or NoteReceiver) during a performance involving a MKScorefileWriter.
+or MKNoteReceiver) during a performance involving a MKScorefileWriter.
 */
 #ifndef __MK_ScorefileWriter_H___
 #define __MK_ScorefileWriter_H___
@@ -65,9 +65,10 @@ or NoteReceiver) during a performance involving a MKScorefileWriter.
 {
     /*! @var info The info MKNote to be written to the file. */
     MKNote *info; 
-
+    
 @private
-    int _highTag,_lowTag;
+    int _highTag;
+    int _lowTag;
     BOOL _isOptimized;
     void *_p;
 }

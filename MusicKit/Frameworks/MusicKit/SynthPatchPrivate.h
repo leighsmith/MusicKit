@@ -14,15 +14,13 @@
 #import "MKSynthPatch.h"
 
 /* MKSynthPatch functions and defines */
-extern id _MKSynthPatchPreempt(id aPatch,id aNote,id controllers);
-extern id _MKAddPatchToList(id self,id *headP,id *tailP,unsigned short listFlag);
-extern id _MKSynthPatchSetInfo(id synthP, int aNoteTag, id synthIns);
-extern id _MKSynthPatchNoteDur(id synthP,id aNoteDur,BOOL noTag);
-extern void _MKSynthPatchScheduleNoteEnd(id synthP,double releaseDur);
-extern id _MKRemoveSynthPatch(id synthP,id *headP,id *tailP,
-			      unsigned short listFlag);
-extern void _MKReplaceFinishingPatch(id synthP,id *headP,id *tailP,
-				     unsigned short listFlag);
+extern id _MKSynthPatchPreempt(MKSynthPatch *aPatch, id aNote, id controllers);
+extern id _MKAddPatchToList(MKSynthPatch *synthP, MKSynthPatch **headP, MKSynthPatch **tailP, unsigned short listFlag);
+extern id _MKSynthPatchSetInfo(MKSynthPatch *synthP, int aNoteTag, id synthIns);
+extern id _MKSynthPatchNoteDur(MKSynthPatch *synthP, id aNoteDur, BOOL noTag);
+extern void _MKSynthPatchScheduleNoteEnd(id synthP, double releaseDur);
+extern id _MKRemoveSynthPatch(MKSynthPatch *synthP, MKSynthPatch **headP, MKSynthPatch **tailP, unsigned short listFlag);
+extern void _MKReplaceFinishingPatch(MKSynthPatch *synthP, MKSynthPatch **headP, MKSynthPatch **tailP, unsigned short listFlag);
 extern id _MKSynthPatchCmp();
 
 

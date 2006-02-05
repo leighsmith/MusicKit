@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.4  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -24,11 +27,11 @@ Modification history:
 #import "MKPatchTemplate.h"
 
 /* MKPatchTemplate functions */
-extern BOOL _MKIsClassInTemplate(id templ,id factObj);
-extern NSMutableArray *_MKDeallocatedSynthPatches(id templ,int orchIndex);
-extern void _MKEvalTemplateConnections(id templ,id synthPatchContents);
-extern void _MKSetTemplateEMemUsage(id templ,MKOrchMemStruct *reso);
-extern unsigned _MKGetTemplateEMemUsage(id templ);
-extern id _MKAllocSynthPatch(id templ,id synthPatchFactory,id anOrch,int orchIndex);
+extern BOOL _MKIsClassInTemplate(MKPatchTemplate *templ, id factObj);
+extern NSMutableArray *_MKDeallocatedSynthPatches(MKPatchTemplate *templ, int orchIndex);
+extern void _MKEvalTemplateConnections(MKPatchTemplate *templ, id synthPatchContents);
+extern void _MKSetTemplateEMemUsage(MKPatchTemplate *templ, MKOrchMemStruct *reso);
+extern unsigned _MKGetTemplateEMemUsage(MKPatchTemplate *templ);
+extern id _MKAllocSynthPatch(MKPatchTemplate *templ, id synthPatchFactory, id anOrch, int orchIndex);
 
 #endif

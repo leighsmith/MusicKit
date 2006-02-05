@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.20  2005/05/11 07:59:03  leighsmith
   Cleaned up parameter types and doxygen docs
 
@@ -1067,8 +1070,7 @@ id _MKRemoveSynthPatch(MKSynthPatch *synthP,MKSynthPatch **headP,
         to ensure you don't release prematurely 
 //////////////////////////////////////////////////////////////////////////////*/
 
-id _MKRemoveSynthPatch(MKSynthPatch *synthP,MKSynthPatch **headP,
-		                   MKSynthPatch **tailP,unsigned short listFlag)
+id _MKRemoveSynthPatch(MKSynthPatch *synthP, MKSynthPatch **headP, MKSynthPatch **tailP, unsigned short listFlag)
 {
     register MKSynthPatch *tmp = *tailP;
     if (synthP->_whichList != listFlag)
@@ -1149,8 +1151,7 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
        sb: also keeps a retain of the object! 
 //////////////////////////////////////////////////////////////////////////////*/
 
-id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tailP,
-                     unsigned short listFlag)
+id _MKAddPatchToList(MKSynthPatch *self, MKSynthPatch **headP, MKSynthPatch **tailP, unsigned short listFlag)
 {
     if (self->_whichList == listFlag)
       return *headP;        /* Don't add it twice. */

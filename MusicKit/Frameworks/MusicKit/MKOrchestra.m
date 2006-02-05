@@ -2771,152 +2771,149 @@ Returns YES if compaction was accomplished.
         id sp,aUG;
         BOOL UGIsOffChip,UGWasOffChip = NO;
         unsigned int elNum=0;
-        int pendingArgBLT= -1; //id *pendingArgBLT = NULL;
-        int pendingLoopBLT = -1; // *pendingLoopBLT = NULL;
+        unsigned int pendingArgBLT= ~0; //id *pendingArgBLT = NULL;
+        unsigned int pendingLoopBLT = ~0; // *pendingLoopBLT = NULL;
         MKOrchMemStruct *ugReso,resoToBLT,newReloc,fromBLT,toBLT, *oldReloc;
         int pLoopNeeds;
 	// TODO needs release
-        register NSMutableArray *aList = _MKLightweightArrayCopy(self->unitGeneratorStack);//was [self->unitGeneratorStack copy]; /* Local copy */
-	    id spHead = nil;
-	    id spTail = nil;
-	    [self beginAtomicSection];
-	    
-	    elNum = i; 
+        register NSMutableArray *aList = _MKLightweightArrayCopy(self->unitGeneratorStack); //was [self->unitGeneratorStack copy]; /* Local copy */
+	id spHead = nil;
+	id spTail = nil;
+	
+	[self beginAtomicSection];
+	elNum = i; 
+	aUG = [aList objectAtIndex: elNum];
+	elNum++;
+	[aUG retain]; //so we won't lose it after removal. Must release later.
+	[self->unitGeneratorStack removeObjectAtIndex: (elNum - 1)];  //sb. removes from ORIGINAL array not copy.
+	if ((sp = [aUG synthPatch]))
+	    [sp _prepareToFree: &spHead : &spTail]; /* won't add twice */
+	DSPSetCurrentDSP(self->orchIndex);
+	if (_MK_ORCHTRACE(self, MK_TRACEORCHALLOC)) {
+	    _MKOrchTrace(self, MK_TRACEORCHALLOC, @"Compacting unitGeneratorStack.");
+	    _MKOrchTrace(self, MK_TRACEORCHALLOC, garbageMsg, NSStringFromClass([aUG class]), aUG);
+	}
+	/* freeUG sets unitGeneratorStacks to what they would be if this were actually
+	    the top of the unitGeneratorStack. */
+	UGIsOffChip = (([aUG relocation]->pLoop) >= self->_bottomOfExternalMemory[P_EMEM]);
+	if ((!UGIsOffChip) && self->isLoopOffChip) /* Clear offchip loop */
+	    self->isLoopOffChip = givePELoop(self, self->_bottomOfExternalMemory[P_EMEM]);
+	freeUG(self,aUG,sp);    //sb: hmmm. Does this do the release for me? yep I think so
+	for (i++; i < n; i++) {            /* Starting with the next one... */
 	    aUG = [aList objectAtIndex: elNum];
-	    elNum++;
-	    [aUG retain]; //so we won't lose it after removal. Must release later.
-	    [self->unitGeneratorStack removeObjectAtIndex: (elNum - 1)];  //sb. removes from ORIGINAL array not copy.
-	    if ((sp = [aUG synthPatch]))
-		[sp _prepareToFree: &spHead : &spTail]; /* won't add twice */
-	    DSPSetCurrentDSP(self->orchIndex);
-	    if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC)) {
-		_MKOrchTrace(self,MK_TRACEORCHALLOC,
-			     @"Compacting unitGeneratorStack.");
-		_MKOrchTrace(self,MK_TRACEORCHALLOC,garbageMsg,NSStringFromClass([aUG class]), aUG);
+	    if ([aUG isFreeable]) {         /* Can we flush this UG? */
+		if (pendingLoopBLT != -1)
+		    bltLoop(self, &fromBLT, &toBLT, &resoToBLT, &pendingLoopBLT, elNum, aList); //sb: FIXME! what does blt do? Uses address of el
+		if (pendingArgBLT != -1)
+		    bltArgs(self, &fromBLT, &toBLT, &resoToBLT, &pendingArgBLT, elNum, aList); //sb: FIXME! what does blt do? Uses address of el
+		[self->unitGeneratorStack removeObject: aUG]; /* Same routine as above.*/ 
+		if ((sp = [aUG synthPatch]))
+		    [sp _prepareToFree: &spHead : &spTail]; 
+		if (_MK_ORCHTRACE(self, MK_TRACEORCHALLOC))
+		    _MKOrchTrace(self, MK_TRACEORCHALLOC, garbageMsg, NSStringFromClass([aUG class]), aUG);
+		freeUG2(self,aUG,sp);      /* But now just free offchip mem */ 
+		elNum++;
 	    }
-	    /* freeUG sets unitGeneratorStacks to what they would be if this were actually
-		the top of the unitGeneratorStack. */
-	    UGIsOffChip = (([aUG relocation]->pLoop) >= 
-			   self->_bottomOfExternalMemory[P_EMEM]);
-	    if ((!UGIsOffChip) && self->isLoopOffChip) /* Clear offchip loop */
-		self->isLoopOffChip = givePELoop(self,
-						 self->_bottomOfExternalMemory[P_EMEM]);
-	    freeUG(self,aUG,sp);    //sb: hmmm. Does this do the release for me? yep I think so
-	    for (i++; i < n; i++) {            /* Starting with the next one... */
-		aUG = [aList objectAtIndex: elNum];
-		if ([aUG isFreeable]) {         /* Can we flush this UG? */
-		    if (pendingLoopBLT != -1)
-			bltLoop(self,&fromBLT,&toBLT,&resoToBLT,&pendingLoopBLT,elNum,aList);//sb: FIXME! what does blt do? Uses address of el
-		    if (pendingArgBLT != -1)
-			bltArgs(self,&fromBLT,&toBLT,&resoToBLT,&pendingArgBLT,elNum,aList);//sb: FIXME! what does blt do? Uses address of el
-			[self->unitGeneratorStack removeObject: aUG]; /* Same routine as above.*/ 
-			if ((sp = [aUG synthPatch]))
-			    [sp _prepareToFree: &spHead : &spTail]; 
-			if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC))
-			    _MKOrchTrace(self,MK_TRACEORCHALLOC,garbageMsg,NSStringFromClass([aUG class]),
-					 aUG);
-			freeUG2(self,aUG,sp);      /* But now just free offchip mem */ 
-			elNum++;
+	    else {                         /* A running UG must be moved */
+		ugReso = [aUG resources];
+		oldReloc = [aUG relocation];
+		pLoopNeeds = ugReso->pLoop + noops;
+		/* The following seems confusing because there are several things to keep in mind: 
+		 * Is the unit generator on chip or off chip before it's moved?
+		 * Is the unit generator on chip or off chip after it's moved?
+		 * Has the (new) loop spilled off chip yet? 
+		 */
+		if (self->isLoopOffChip) {  /* We're already off chip */
+		    newReloc.pLoop = noops + getPELoop(self, pLoopNeeds);
+		    UGIsOffChip = YES;
 		}
-else {                         /* A running UG must be moved */
-ugReso = [aUG resources];
-oldReloc = [aUG relocation];
-pLoopNeeds = ugReso->pLoop + noops;
-/* The following seems confusing because there are several
-things to keep in mind: 
-* Is the unit generator on chip or off chip before it's moved?
-* Is the unit generator on chip or off chip after it's moved?
-* Has the (new) loop spilled off chip yet? 
-*/
-if (self->isLoopOffChip) {  /* We're already off chip */
-newReloc.pLoop = noops + getPELoop(self,pLoopNeeds);
-UGIsOffChip = YES;
-}
-else {                      /* We're not yet off chip */
-/* Can we fit the ug on chip? */
-if ((self->_piLoop + pLoopNeeds) <= MAXPILOOP) {
-    /* Yes. The UG can be moved on chip */
-    UGIsOffChip = NO; /* We increment piLoop later */
-    newReloc.pLoop = noops + self->_piLoop;
-    /* Are we moving from off chip to on chip? */
-    if (oldReloc->pLoop >= 
-	self->_bottomOfExternalMemory[P_EMEM]) {
-	MKLeafUGStruct *p = [aUG classInfo];
-	/* Need to correct compute time. Also need
-	to split up the blt. */
-	self->computeTime -= 
-	    (getUGComputeTime(self,oldReloc->pLoop,p) -
-	     getUGComputeTime(self,newReloc.pLoop,p));
-	if ((pendingLoopBLT != -1) && !UGWasOffChip)
-	    /* If previous UG was not off chip, we need
-	    to flush BLT here, since BLT can't straddle
-	    chip. */
-	    bltLoop(self,&fromBLT,&toBLT,&resoToBLT,
-		    &pendingLoopBLT,elNum,aList);
-	UGWasOffChip = YES;
-    } else UGWasOffChip = NO;
-}
-else { /* We're moving off chip now */
-/* Add a leaper so orchestra system can straddle
-on-chip/off-chip boundary. */
-UGIsOffChip = YES;
-if (pendingLoopBLT != -1) 
-bltLoop(self,&fromBLT,&toBLT,&resoToBLT,
-	&pendingLoopBLT,elNum,aList);
-newReloc.pLoop = noops + getPELoop(self,pLoopNeeds);
-putLeaper(self,newReloc.pLoop);
-}
-}
-if (!(pendingArgBLT != -1)) {
-    toBLT.xArg = self->_xArg;
-    toBLT.yArg = self->_yArg;
-    toBLT.lArg = self->_lArg;
-    fromBLT.xArg = oldReloc->xArg;
-    fromBLT.yArg = oldReloc->yArg;
-    fromBLT.lArg = oldReloc->lArg;
-    resoToBLT.xArg = ugReso->xArg; 
-    resoToBLT.yArg = ugReso->yArg;
-    resoToBLT.lArg = ugReso->lArg;
-    pendingArgBLT = elNum;
-} else {
-    resoToBLT.xArg += ugReso->xArg; 
-    resoToBLT.yArg += ugReso->yArg;
-    resoToBLT.lArg += ugReso->lArg;
-}
-newReloc.xArg = self->_xArg; /* First grab values */
-newReloc.yArg = self->_yArg;
-newReloc.lArg = self->_lArg;
-self->_xArg += ugReso->xArg; /* Now adjust for next reso. */
-self->_yArg += ugReso->yArg;
-self->_lArg += ugReso->lArg;
-if (!(pendingLoopBLT != -1)) {       
-    toBLT.pLoop = newReloc.pLoop - noops;
-    fromBLT.pLoop = oldReloc->pLoop - noops;
-    resoToBLT.pLoop = ugReso->pLoop + noops; 
-    pendingLoopBLT = elNum;//sb: check this. could el become null?
-} else resoToBLT.pLoop += (ugReso->pLoop + noops); 
-if (!UGIsOffChip)            
-self->_piLoop += pLoopNeeds;  /* Adjust the next reso */
-_MKRerelocUG(aUG,&newReloc);
-elNum++;
-}   /* End of running UG block. */
-	    }
-if (pendingLoopBLT != -1) 
-bltLoop(self,&fromBLT,&toBLT,&resoToBLT,&pendingLoopBLT,elNum,aList);
-if (pendingArgBLT != -1) 
-bltArgs(self,&fromBLT,&toBLT,&resoToBLT,&pendingArgBLT,elNum,aList); 
-//        [aList release];                        /* Free local copy */
-[spTail _freeList: spHead];           /* Free synthpatches */
-setLooper(self);                     
-[self endAtomicSection];
+		else {                      /* We're not yet off chip */
+		    /* Can we fit the ug on chip? */
+		    if ((self->_piLoop + pLoopNeeds) <= MAXPILOOP) {
+			/* Yes. The UG can be moved on chip */
+			UGIsOffChip = NO; /* We increment piLoop later */
+			newReloc.pLoop = noops + self->_piLoop;
+			/* Are we moving from off chip to on chip? */
+			if (oldReloc->pLoop >= self->_bottomOfExternalMemory[P_EMEM]) {
+			    MKLeafUGStruct *p = [aUG classInfo];
+			    /* Need to correct compute time. Also need
+			    to split up the blt. */
+			    self->computeTime -= 
+				(getUGComputeTime(self,oldReloc->pLoop,p) -
+				 getUGComputeTime(self,newReloc.pLoop,p));
+			    if ((pendingLoopBLT != -1) && !UGWasOffChip)
+				/* If previous UG was not off chip, we need
+				to flush BLT here, since BLT can't straddle
+				chip. */
+				bltLoop(self, &fromBLT, &toBLT, &resoToBLT, &pendingLoopBLT, elNum, aList);
+			    UGWasOffChip = YES;
+			}
+			else
+			    UGWasOffChip = NO;
+		    }
+		    else { /* We're moving off chip now */
+			/* Add a leaper so orchestra system can straddle on-chip/off-chip boundary. */
+			UGIsOffChip = YES;
+			if (pendingLoopBLT != -1) 
+			    bltLoop(self, &fromBLT, &toBLT, &resoToBLT, &pendingLoopBLT, elNum, aList);
+			newReloc.pLoop = noops + getPELoop(self, pLoopNeeds);
+			putLeaper(self, newReloc.pLoop);
+		    }
+		}
+		if (!(pendingArgBLT != -1)) {
+		    toBLT.xArg = self->_xArg;
+		    toBLT.yArg = self->_yArg;
+		    toBLT.lArg = self->_lArg;
+		    fromBLT.xArg = oldReloc->xArg;
+		    fromBLT.yArg = oldReloc->yArg;
+		    fromBLT.lArg = oldReloc->lArg;
+		    resoToBLT.xArg = ugReso->xArg; 
+		    resoToBLT.yArg = ugReso->yArg;
+		    resoToBLT.lArg = ugReso->lArg;
+		    pendingArgBLT = elNum;
+		} 
+		else {
+		    resoToBLT.xArg += ugReso->xArg; 
+		    resoToBLT.yArg += ugReso->yArg;
+		    resoToBLT.lArg += ugReso->lArg;
+		}
+		newReloc.xArg = self->_xArg; /* First grab values */
+		newReloc.yArg = self->_yArg;
+		newReloc.lArg = self->_lArg;
+		self->_xArg += ugReso->xArg; /* Now adjust for next reso. */
+		self->_yArg += ugReso->yArg;
+		self->_lArg += ugReso->lArg;
+		if (!(pendingLoopBLT != -1)) {       
+		    toBLT.pLoop = newReloc.pLoop - noops;
+		    fromBLT.pLoop = oldReloc->pLoop - noops;
+		    resoToBLT.pLoop = ugReso->pLoop + noops; 
+		    pendingLoopBLT = elNum; //sb: check this. could el become null?
+		} 
+		else
+		    resoToBLT.pLoop += (ugReso->pLoop + noops); 
+		if (!UGIsOffChip)            
+		    self->_piLoop += pLoopNeeds;  /* Adjust the next reso */
+		_MKRerelocUG(aUG,&newReloc);
+		elNum++;
+	    }   /* End of running UG block. */
+	}
+	if (pendingLoopBLT != -1) 
+	    bltLoop(self, &fromBLT, &toBLT, &resoToBLT, &pendingLoopBLT, elNum, aList);
+	if (pendingArgBLT != -1) 
+	    bltArgs(self, &fromBLT, &toBLT, &resoToBLT, &pendingArgBLT, elNum, aList); 
+	//        [aList release];                        /* Free local copy */
+	[spTail _freeList: spHead];           /* Free synthpatches */
+	setLooper(self);                     
+	[self endAtomicSection];
 
-/* Top of list might have been  freed so we need to set looper
-explicitly. Actually, if we know for sure that the unitGeneratorStack has been
-popped, this is not necessary, we could just blt p one word more. */
+	/* Top of list might have been  freed so we need to set looper
+	explicitly. Actually, if we know for sure that the unitGeneratorStack has been
+	popped, this is not necessary, we could just blt p one word more. */
 
-return YES; 
+	return YES; 
     } 
 }
+
 #else
 
 static BOOL compactResourceStack(MKOrchestra *self)

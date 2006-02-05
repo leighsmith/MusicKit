@@ -127,7 +127,7 @@ static int sendUGTimed(DSPFix48 *aTimeStamp,MKLeafUGStruct *classInfo,
     return 0;
 }
 
-id _MKFixupUG(MKUnitGenerator *self,DSPFix48 *ts)
+id _MKFixupUG(MKUnitGenerator *self, DSPFix48 *ts)
     /* Just poke fixups. */
 {
     int i,j;
@@ -613,7 +613,7 @@ void _MKAdjustTimeIfNecessary(void)
 #define TIMESTAMP() \
   ((sameTimeOrch == self->orchestra) ? ts : _MKCurSample(self->orchestra))
 
-id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
+id MKSetUGDatumArg(MKUnitGenerator *self, unsigned argNum, DSPDatum val)
   /* ArgNum must be a datum-valued arg. Use
      setAddressArg:to: to set an address-valued arg. 
      If argNum is an L-space argument, the high-order word is set to val and
@@ -678,7 +678,7 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
     return MKSetUGDatumArg(self,argNum,val);
 }
 
-id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
+id MKSetUGDatumArgLong(MKUnitGenerator *self, unsigned argNum, DSPLongDatum *val)
   /* ArgNum must be a datum-valued arg. Use
      setAddressArg:to: to set an address-valued arg. 
      If arg is not in L-space, only the high 24 bits of val are used.

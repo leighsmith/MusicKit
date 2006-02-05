@@ -1355,11 +1355,11 @@ void _MKWriteParameters(MKNote *self,NSMutableData *aStream,_MKScoreOutStruct *p
     else [aStream appendBytes:";\n" length:2];
 }
 
-static id writeBinaryNoteAux(MKNote *self,id aPart,_MKScoreOutStruct *p)
+static id writeBinaryNoteAux(MKNote *self, id aPart, _MKScoreOutStruct *p)
 {
     NSMutableData *aStream = p->_stream;
     _MKWriteShort(aStream, _MK_partInstance);
-    _MKWriteShort(aStream, (int)NSMapGet(p->_binaryIndecies, aPart));
+    _MKWriteShort(aStream, (int) NSMapGet(p->_binaryIndecies, aPart));
     switch (self->noteType) {
       case MK_noteDur: {
           double dur = ((p->_ownerIsNoteRecorder) ? 
@@ -1432,23 +1432,23 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
     return self;
 }
 
--writeScorefileStream:(NSMutableData *)aStream
+- writeScorefileStream: (NSMutableData *) aStream
   /* TYPE: Display; Displays the receiver in ScoreFile format.
    * Displays, on aStream, the receiver in ScoreFile format.
    * Returns the receiver.
    */
 {
-    return writeNoteAux(self,NULL,aStream,MKGetObjectName(part));
+    return writeNoteAux(self, NULL, aStream, MKGetObjectName(part));
 }
 
-id _MKWriteNote2(MKNote *self,id aPart,_MKScoreOutStruct *p)
+id _MKWriteNote2(MKNote *self, id aPart, _MKScoreOutStruct *p)
     /* Used internally for writing notes to scorefiles. */
 {
     id tmp;
 
     if (p->_binary)
-        return writeBinaryNoteAux(self,aPart,p);
-    return writeNoteAux(self,p,p->_stream, _MKNameTableGetObjectName(p->_nameTable, aPart, &tmp));
+        return writeBinaryNoteAux(self, aPart, p);
+    return writeNoteAux(self, p, p->_stream, _MKNameTableGetObjectName(p->_nameTable, aPart, &tmp));
 }
 
 /* Assorted C functions ----------------------------------------- */

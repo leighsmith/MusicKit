@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 2.1  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 2.0  2004/12/06 18:09:03  leighsmith
   Beginning of rewrite to use the SndKit for native synthesis
 
@@ -39,14 +42,14 @@ Modification history:
 
 /* MKOrchestra functions */
 extern id MKOrchestraClasses(void);
-extern void _MKOrchResetPreviousLosingTemplate(id self);
-extern id _MKFreeMem(id self,MKOrchAddrStruct *mem);
+extern void _MKOrchResetPreviousLosingTemplate(MKOrchestra *self);
+extern id _MKFreeMem(MKOrchestra *self, MKOrchAddrStruct *mem);
 extern int _MKAddTemplate(id aNewTemplate);
 extern FILE *_MKGetOrchSimulator();
-extern DSPFix48 *_MKCurSample(id orch);
+extern DSPFix48 *_MKCurSample(MKOrchestra *orch);
 extern void _MKOrchAddSynthIns(id anIns);
 extern void _MKOrchRemoveSynthIns(id anIns);
-extern BOOL _MKOrchLateDeltaTMode(id theOrch); /* See MKOrchestra.m ***SIGH*** */
+extern BOOL _MKOrchLateDeltaTMode(MKOrchestra *theOrch); /* See MKOrchestra.m ***SIGH*** */
 
 @interface MKOrchestra(Private)
 

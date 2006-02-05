@@ -59,15 +59,15 @@ static void writeScoreInfo(_MKScoreOutStruct *p,id info)
 #define NO_TAG_YET -1.0
 
 _MKScoreOutStruct *
-_MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShift,
-		BOOL isNoteRecorder,BOOL binary)
+_MKInitScoreOut(NSMutableData *fileStream, id owner, MKNote *anInfoNote, double timeShift, BOOL isNoteRecorder, BOOL binary)
 {
     /* Makes new _MKScoreOutStruct for specified file.
        Assumes file has just been opened. */
-    _MKScoreOutStruct * p;
+    _MKScoreOutStruct *p;
+    
     if (!fileStream) 
       return NULL;
-    _MK_MALLOC(p,_MKScoreOutStruct,1);
+    _MK_MALLOC(p, _MKScoreOutStruct, 1);
     p->_stream = [fileStream retain];             
     p->_nameTable = _MKNewScorefileParseTable();
     /* We need keyword and such symbols here to make sure there's no
@@ -80,14 +80,13 @@ _MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShif
 #   define DEFAULTINDECIES 8
     p->_binary = binary;
     if (binary) {
-	p->_binaryIndecies = NSCreateMapTable(NSObjectMapKeyCallBacks,
-                                NSIntMapValueCallBacks, DEFAULTINDECIES);
+	p->_binaryIndecies = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, DEFAULTINDECIES);
         p->_highBinaryIndex = 0;
     }
     else
         p->_binaryIndecies = NULL;
     if (binary)
-      _MKWriteInt(p->_stream,MK_SCOREMAGIC);
+	_MKWriteInt(p->_stream,MK_SCOREMAGIC);
     writeScoreInfo(p,anInfoNote);
     return p;
 }
@@ -210,7 +209,7 @@ _MKScoreOutStruct *_MKFinishScoreOut(_MKScoreOutStruct * p, BOOL writeEnd)
 }
 
 _MKScoreOutStruct *
-_MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * p)
+_MKWriteNote(MKNote *aNote, MKPart *aPart, _MKScoreOutStruct *p)
 {
     /* If p is NULL, return NULL. Else write note, adding timeTag if 
        necessary.
@@ -220,18 +219,17 @@ _MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * p)
       return NULL;
     if (!(p->isInBody)) {
 	if (BINARY(p))
-	  _MKWriteShort(p->_stream,_MK_begin);
+	  _MKWriteShort(p->_stream, _MK_begin);
 	else {
 	    [p->_stream appendData:
-	        [[NSString stringWithFormat:@"\n\n%s;\n\n", 
+	        [[NSString stringWithFormat: @"\n\n%s;\n\n", 
 		_MKTokNameNoCheck(_MK_begin)]
-		dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+		dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         }
 	p->isInBody = YES;
     }
     timeTag = ((p->_ownerIsNoteRecorder) ? 
-	       _MKTimeTagForTimeUnit(aNote,[p->_owner timeUnit],
-				     [p->_owner compensatesDeltaT]) :
+	       _MKTimeTagForTimeUnit(aNote, [p->_owner timeUnit], [p->_owner compensatesDeltaT]) :
 	       [aNote timeTag] + p->_timeShift);
     if (timeTag < 0)
       timeTag = 0;
@@ -257,16 +255,15 @@ _MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * p)
 	    _MKWriteFloat(p->_stream,(float)t);
 	}
 	else {
-	  [p->_stream appendData:
-	      [[NSString stringWithFormat:@"%s %.5f;\n", _MKTokNameNoCheck(_MK_time),
-		   timeTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	    [p->_stream appendData:
+		[[NSString stringWithFormat:@"%s %.5f;\n", _MKTokNameNoCheck(_MK_time), timeTag] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         }
 	p->timeTag = timeTag;
     }
     else if (timeTag < p->timeTag) 
-      MKErrorCode(MK_outOfOrderErr,timeTag,p->timeTag);
+	MKErrorCode(MK_outOfOrderErr, timeTag, p->timeTag);
     if (aNote) 
-      _MKWriteNote2(aNote,aPart,p);
+	_MKWriteNote2(aNote, aPart, p);
     return p;
 }
 

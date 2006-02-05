@@ -21,6 +21,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.6  2002/01/29 16:05:59  sbrandon
   re-typed _MKOrchTrace calls to use NSString
 
@@ -73,7 +76,7 @@ static void freeObject (void *aList)
 static void noFree (void *item) {};
 #endif
 
-id _MKFreeSharedSet(id sharedSet,NSHashTable **garbageTable)
+id _MKFreeSharedSet(NSMutableDictionary *sharedSet, NSHashTable **garbageTable)
 {
     NSEnumerator *enumerator = [sharedSet objectEnumerator];
     id myList;
@@ -107,7 +110,7 @@ static void reallyRelease(_SharedSynthInfo *aSharedSynthInfo)
     [aSharedSynthInfo release];
 }
 
-BOOL _MKReleaseSharedSynthClaim(_SharedSynthInfo *aSharedSynthInfo,BOOL lazy)
+BOOL _MKReleaseSharedSynthClaim(_SharedSynthInfo *aSharedSynthInfo, BOOL lazy)
     /* Returns YES if still in use or slated for garbage collection.
        Returns NO if it can be deallocated now. */
 {

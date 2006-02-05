@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.4  2005/04/15 04:18:25  leighsmith
   Cleaned up for gcc 4.0's more stringent checking of ObjC types
 
@@ -21,18 +24,18 @@
 #import "MKUnitGenerator.h"
 
 /* Unit Generator functions */
-extern id _MKFixupUG(id self,DSPFix48 *ts);
-extern void _MKRerelocUG(id self,MKOrchMemStruct *newReloc);
-extern void _MKBeginUGBlock(id anOrch,BOOL adjustIt);
+extern id _MKFixupUG(MKUnitGenerator *self, DSPFix48 *ts);
+extern void _MKRerelocUG(MKUnitGenerator *self, MKOrchMemStruct *newReloc);
+extern void _MKBeginUGBlock(id anOrch, BOOL adjustIt);
 extern void _MKEndUGBlock(void);
 extern void _MKAdjustTimeIfNecessary(void);
 
 /* Synth Element functions (defined in MKUnitGenerator) */
-extern void _MKDeallocSynthElement(id synthEl,BOOL shouldReset);
-extern void _MKDeallocSynthElementSafe(id synthEl,BOOL lazy);
-extern void _MKProtectSynthElement(id dataObj,BOOL protectIt);
-extern id _MKSetSynthElementSynthPatchLoc(id synthEl,unsigned short loc);
-extern unsigned _MKGetSynthElementSynthPatchLoc(id synthEl);
+extern void _MKDeallocSynthElement(SynthElement *synthEl, BOOL shouldReset);
+extern void _MKDeallocSynthElementSafe(SynthElement *synthEl, BOOL lazy);
+extern void _MKProtectSynthElement(SynthElement *dataObj, BOOL protectIt);
+extern id _MKSetSynthElementSynthPatchLoc(SynthElement *synthEl, unsigned short loc);
+extern unsigned _MKGetSynthElementSynthPatchLoc(SynthElement *synthEl);
 
 @interface MKUnitGenerator(Private)
 

@@ -178,12 +178,13 @@ as measured. Thus, the total time to wait is about .1 second.
     }
 }
 
-static BOOL sysExists(MKOrchestra *self,int *prevSys,NSString *name)
+static BOOL sysExists(MKOrchestra *self, int *prevSys, NSString *name)
 {
     int i;
     MKOrchestra *orch;
+    
     FOREACHORCH(i) {
-	if (i != self->orchIndex && [[orchs[i] monitorFileName] isEqualToString:name]) {//sb: was strcmp([orchs[i] monitorFileName],name)==0
+	if (i != self->orchIndex && [[orchs[i] monitorFileName] isEqualToString: name]) {//sb: was strcmp([orchs[i] monitorFileName],name)==0
 	    orch = orchs[i];
 	    if (orch->mkSys) {
 		*prevSys = i;
@@ -202,7 +203,7 @@ static int myDSPMKInit(MKOrchestra *self)
     BOOL reboot;
     
     if (!self->mkSys) {                   /* First time */
-        int prevSys;
+        int prevSys = 0;
 	NSString *searchDSP = nil; //sb: was: char searchDSP[MAXPATHLEN+1];
 	NSString ** foundFile = NULL; //sb: was: char foundFile[MAXPATHLEN+1];
 	NSString *foundFile2;
@@ -215,7 +216,7 @@ static int myDSPMKInit(MKOrchestra *self)
 	    return DSP_EMISC;
 	if (sysExists(self, &prevSys, s)) {
 	    reboot = YES;
-	    DSPCopyLoadSpec(&self->mkSys, ((MKOrchestra *)[MKOrchestra nthOrchestra:prevSys])->mkSys);
+	    DSPCopyLoadSpec(&self->mkSys, ((MKOrchestra *)[MKOrchestra nthOrchestra: prevSys])->mkSys);
 	}
 	else {
 	    reboot = NO;
@@ -224,14 +225,14 @@ static int myDSPMKInit(MKOrchestra *self)
 	    else 
 		searchDSP = [[s copy] autorelease];//strcpy(searchDSP,s);
 		
-	    if (!_MKFindAppWrapperFile(searchDSP,foundFile)) {
+	    if (!_MKFindAppWrapperFile(searchDSP, foundFile)) {
 		/* Now try looking for the .lod version */ /*sb: I think this is what was intended */
-		searchLOD = [[searchDSP stringByDeletingPathExtension] stringByAppendingPathExtension:@"lod"];
+		searchLOD = [[searchDSP stringByDeletingPathExtension] stringByAppendingPathExtension: @"lod"];
 //                strcpy(searchLOD,s);
 //                strcpy(searchLOD+strlen(searchLOD)-3,"lod");
-		if (!_MKFindAppWrapperFile(searchLOD,foundFile)) {
+		if (!_MKFindAppWrapperFile(searchLOD, foundFile)) {
 		    /* Now try looking for version on /usr/local/lib/dsp/monitor */
-		    foundFile2 = [NSString stringWithFormat:@"%@%@",@"/usr/local/lib/dsp/monitor/",searchDSP];
+		    foundFile2 = [NSString stringWithFormat: @"%@%@", @"/usr/local/lib/dsp/monitor/", searchDSP];
 		    foundFile = &foundFile2;
 		}
 //sprintf(foundFile,"%s%s","/usr/local/lib/dsp/monitor/",searchDSP);

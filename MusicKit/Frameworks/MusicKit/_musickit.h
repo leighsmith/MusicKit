@@ -205,7 +205,7 @@ extern int _MKFindAppWrapperFile(NSString *fileName,NSString **returnNameBuffer)
 #define _MK_VARRESOLUTION (((double)1.0/(double)44000.0)/(double)2.0)
 
 /* For debugging */
-extern void _MKOrchTrace(id orch,int typeOfInfo,NSString * fmt, ...);
+extern void _MKOrchTrace(MKOrchestra *orch, int typeOfInfo, NSString * fmt, ...);
 extern unsigned _MKTraceFlag;
 #define _MKTrace() _MKTraceFlag
 

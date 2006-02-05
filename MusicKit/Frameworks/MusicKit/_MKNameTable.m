@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.16  2006/02/05 17:57:10  leighsmith
+ Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
  Revision 1.15  2004/11/16 18:17:26  leighsmith
  Removed _MKTuningSystemInit() so it is now unnecessary to initialise the tuning system until it is needed
 
@@ -394,7 +397,7 @@ BOOL MKNameObject(NSString * nameStr,id object)
   return rtnVal;
 }
 
-NSString * MKGetObjectName(id object)
+NSString *MKGetObjectName(id object)
 /*
  * Returns object name if any. If object is not found, returns nil. The name
  * is not copied and should not be freed or altered by caller.

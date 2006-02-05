@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.4  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -55,13 +58,13 @@ _ScorefileVar *_MKNewScorefileVar(_MKParameter *parObj,NSString * name,BOOL unty
     return self;
 }
 
-id _MKSetReadOnlySFVar(_ScorefileVar *self,BOOL yesOrNo)
+id _MKSetReadOnlySFVar(_ScorefileVar *self, BOOL yesOrNo)
 {
     self->readOnly = yesOrNo; 
     return self;
 }
 
-int _MKSetDoubleSFVar(_ScorefileVar *self,double floval)
+int _MKSetDoubleSFVar(_ScorefileVar *self, double floval)
     /* Sets receiver, doing appropriate type conversion to type
        of receiver. Attempting to set an envelope-valued typed ScorefileVar 
        with this method generates an error. */

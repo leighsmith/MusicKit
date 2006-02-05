@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.3  2000/05/13 17:16:49  leigh
   Doco cleanup and stricter typing of parameters
 
@@ -59,19 +62,19 @@
 
 @end
 
-extern _MKParameter *_MKSFVarGetParameter(id sfVar);
-extern _ScorefileVar *_MKNewScorefileVar(_MKParameter *aPar,NSString * name,BOOL untyped, BOOL isReadOnly);
-extern int _MKSFVarInternalType(id sfVar);
-extern _MKParameterUnion *_MKSFVarRaw(id sfVar);
-extern int _MKSetDoubleSFVar(id sfVar,double floval);
-extern int _MKSetIntSFVar(id sfVar,int  intval);
-extern int _MKSetStringSFVar(id sfVar,NSString * strval);
-extern int _MKSetEnvSFVar(id sfVar,id envelope);
-extern int _MKSetWaveSFVar(id sfVar,id waveTable);
-extern int _MKSetObjSFVar(id sfVar,id anObj);
+extern _MKParameter *_MKSFVarGetParameter(_ScorefileVar *sfVar);
+extern _ScorefileVar *_MKNewScorefileVar(_MKParameter *aPar, NSString * name, BOOL untyped, BOOL isReadOnly);
+extern int _MKSFVarInternalType(_ScorefileVar *sfVar);
+extern _MKParameterUnion *_MKSFVarRaw(_ScorefileVar *sfVar);
+extern int _MKSetDoubleSFVar(_ScorefileVar *sfVar, double floval);
+extern int _MKSetIntSFVar(_ScorefileVar *sfVar, int intval);
+extern int _MKSetStringSFVar(_ScorefileVar *sfVar, NSString *strval);
+extern int _MKSetEnvSFVar(_ScorefileVar *sfVar, id envelope);
+extern int _MKSetWaveSFVar(_ScorefileVar *sfVar, id waveTable);
+extern int _MKSetObjSFVar(_ScorefileVar *sfVar, id anObj);
 extern id _MKSetScorefileVarPreDaemon();
 extern id _MKSetScorefileVarPostDaemon();
-extern id _MKSetReadOnlySFVar(id sfVar,BOOL yesOrNo);
+extern id _MKSetReadOnlySFVar(_ScorefileVar *sfVar, BOOL yesOrNo);
 void _MKSFSetPrintfunc();
 
 #endif

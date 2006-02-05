@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2006/02/05 17:57:10  leighsmith
+  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
+
   Revision 1.8  2002/04/16 15:07:38  sbrandon
   removed a couple of defunct imports
 
@@ -93,15 +96,11 @@ extern _MKParameter * _MKCopyParameter(_MKParameter *aPar);
 
 #import "_scorefile.h"
 
-extern void _MKParWriteStdValueOn(_MKParameter *rcvr,NSMutableData *aStream,
-				  _MKScoreOutStruct *p);
-extern void _MKParWriteOn(_MKParameter *rcvr,NSMutableData *aStream,
-			  _MKScoreOutStruct *p);
-extern void _MKParWriteValueOn(_MKParameter *rcvr,NSMutableData *aStream,
-			  _MKScoreOutStruct *p);
-extern unsigned _MKGetParNamePar(id aParName);
-extern void _MKArchiveParOn(_MKParameter *param,NSCoder *aTypedStream); /*sb: NSCoder originally ocnverted as NSArchiver */
-extern void _MKUnarchiveParOn(_MKParameter *param,NSCoder *aTypedStream); /*sb: originally ocnverted as NSArchiver */
+extern void _MKParWriteStdValueOn(_MKParameter *rcvr, NSMutableData *aStream, _MKScoreOutStruct *p);
+extern void _MKParWriteOn(_MKParameter *rcvr, NSMutableData *aStream, _MKScoreOutStruct *p);
+extern void _MKParWriteValueOn(_MKParameter *rcvr, NSMutableData *aStream, _MKScoreOutStruct *p);
+extern void _MKArchiveParOn(_MKParameter *param, NSCoder *aTypedStream); /*sb: NSCoder originally converted as NSArchiver */
+extern void _MKUnarchiveParOn(_MKParameter *param, NSCoder *aTypedStream); /*sb: originally converted as NSArchiver */
 extern id  _MKDummyParameter();
 extern BOOL _MKIsPar(unsigned aPar);
 extern BOOL _MKIsPrivatePar(unsigned aPar);
@@ -113,7 +112,5 @@ typedef enum __MKPrivPar {
 _MKPrivPar;
 
 extern _MKParameter *_MKFreeParameter(_MKParameter *param);
-
-
 
 #endif

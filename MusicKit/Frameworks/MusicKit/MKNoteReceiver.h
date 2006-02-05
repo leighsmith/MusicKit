@@ -129,23 +129,17 @@ their assumption of the role of MKInstrument.
 }
  
 /*!
+  @brief Returns the MKInstrument (or MKMidi object) that owns the MKNoteReceiver.
   @return Returns an id.
-  @brief Returns the MKInstrument (or MKMidi object) that owns the
-  MKNoteReceiver.
-
-  
-  
-  @see - <b>addNoteReceiver:</b> (MKInstrument, MKMidi)
+  @see -<b>addNoteReceiver:</b> (MKInstrument, MKMidi)
 */
 - owner; 
 
 /*!
-  @return Returns <b>self</b>.
-  @brief Initializes a MKNoteReceiver that was created through
-  <b>allocFromZone:</b>.
+  @brief Initializes a MKNoteReceiver that was created through <b>allocFromZone:</b>.
 
-  
   Subclass should send [super init] when overriding this method.
+  @return Returns <b>self</b>.
 */
 - init;
 
@@ -155,122 +149,88 @@ their assumption of the role of MKInstrument.
 - (void) dealloc; 
 
 /*!
+  @brief Severs the connection between the MKNoteReceiver and
+  <i>aNoteSender</i>; if the MKNoteSender isn't connected, this does nothing.
   @param  aNoteSender is an MKNoteSender instance.
   @return Returns <b>self</b>.
-  @brief Severs the connection between the MKNoteReceiver and
-  <i>aNoteSender</i>; if the MKNoteSender isn't connected, this does
-  nothing.
-
-  
-  
-  @see - <b>disconnect</b>, - <b>connect:</b>, - <b>isConnected:</b>, - <b>connections</b> 
+  @see -<b>disconnect</b>, -<b>connect:</b>, -<b>isConnected:</b>, -<b>connections</b> 
 */
 - disconnect: (MKNoteSender *) aNoteSender; 
 
 /*!
+  @brief Severs the connections between the MKNoteReceiver and all the MKNoteSenders it's connected to.
   @return Returns <b>self</b>.
-  @brief Severs the connections between the MKNoteReceiver and all the
-  MKNoteSenders it's connected to.
-
-  
-  
   @see -<b>disconnect:</b>, -<b>connect:</b>, -<b>isConnected:</b>, -<b>connections</b> 
 */
 - disconnect; 
 
 /*!
-  @param  aNoteSender is an MKNoteSender instance.
-  @return Returns a BOOL.
   @brief Returns YES if <i>aNoteSender</i> is connected to the
   MKNoteReceiver, otherwise returns NO.
-
-  
-  
-  @see - <b>connect</b>, - <b>disconnect</b>, - <b>connections</b>, - <b>connectionCount</b>,  
+  @param  aNoteSender is an MKNoteSender instance.
+  @return Returns a BOOL.
+  @see -<b>connect</b>, -<b>disconnect</b>, -<b>connections</b>, -<b>connectionCount</b>
 */
 - (BOOL) isConnected: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @param  aNoteSender is an MKNoteSender instance.
-  @return Returns <b>self</b>.
   @brief Connects <i>aNoteSender</i> to the MKNoteReceiver; if the argument
   isn't a MKNoteSender, the connection isn't made.
-
-  
-  
-  @see - <b>disconnect:</b>, - <b>isConnected</b>, - <b>connections</b>
+  @param  aNoteSender is an MKNoteSender instance.
+  @return Returns <b>self</b>.
+  @see -<b>disconnect:</b>, -<b>isConnected</b>, -<b>connections</b>
 */
 - connect: (MKNoteSender *) aNoteSender; 
 
 /*!
-  @return Returns <b>self</b>.
   @brief Disables the MKNoteReceiver's ability to send <b>realizeNote:fromMKNoteReceiver:</b>
   messages to its owner.
-
-  
-  
-  @see - <b>isSquelched</b>, - <b>unsquelch</b>
+  @return Returns <b>self</b>.
+  @see -<b>isSquelched</b>, -<b>unsquelch</b>
 */
 - squelch; 
 
 /*!
-  @return Returns <b>self</b>.
   @brief Enables the MKNoteReceiver's ability to send <b>realizeNote:fromMKNoteReceiver:</b>
   messages to its owner, undoing the effect of a previous <b>squelch</b> message.
-
-  
-  
-  @see - <b>isSquelched</b>, - <b>squelch</b>
+  @return Returns <b>self</b>.
+  @see -<b>isSquelched</b>, -<b>squelch</b>
 */
 - unsquelch; 
 
 /*!
-  @return Returns a BOOL.
-  @brief Returns YES if the MKNoteReceiver is squelched, otherwise returns
-  NO.
+  @brief Returns YES if the MKNoteReceiver is squelched, otherwise returns NO.
 
   A squelched MKNoteReceiver won't invoke its owner's
   <b>realizeNote:fromNoteReceiver:</b> method.
-  
-  @see - <b>squelch</b>, - <b>unsquelch</b>
+  @return Returns a BOOL.
+  @see -<b>squelch</b>, -<b>unsquelch</b>
 */
 - (BOOL) isSquelched; 
 
 /*!
-  @param  zone is a NSZone *.
-  @return Returns an id.
   @brief Creates and returns a new MKNoteReceiver with the same
   connections as the receiver.
-
   
-  This is the same as <b>copy</b>, but the new object is allocated
-  from <i>zone</i>.
-  
-  @see - <b>copy</b>
+  This is the same as <b>copy</b>, but the new object is allocated from <i>zone</i>.
+  @param  zone is a NSZone instance.
+  @return Returns an id.
+  @see -<b>copy</b>
 */
 - copyWithZone: (NSZone *) zone; 
 
 /*!
+  @brief Returns the number of MKNoteSenders that are connected to the MKNoteReceiver.
   @return Returns an unsigned int.
-  @brief Returns the number of MKNoteSenders that are connected to the
-  MKNoteReceiver.
-
-  
-  
-  @see - <b>connect:</b>,<b></b> -
-  <b>disconnect:</b>,<b></b>- <b>isConnected</b>,<b> </b> -
-  <b>connections</b>
+  @see -<b>connect:</b>, -<b>disconnect:</b>, -<b>isConnected</b>, -<b>connections</b>
 */
 - (unsigned) connectionCount;
 
 /*!
-  @return Returns a NSArray instance.
   @brief Creates and returns a NSArray of the MKNoteSenders that are
   connected to the MKNoteReceiver.
-
-  
-  
-  @see - <b>connect:</b>,<b> </b>- <b>disconnect:</b>,<b></b> - <b>isConnected</b>
+  @return Returns a NSArray instance.
+  @see -<b>connect:</b>, -<b>disconnect:</b>, -<b>isConnected</b>
 */
 - (NSArray *) connections;
 

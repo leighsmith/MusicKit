@@ -1611,13 +1611,13 @@ while ((par = MKNextParameter(aNote, aState)) != MK_noPar) {
   probably faster to iterate over all the parameters through
   <b>MKNextParameter()</b>.  
    
-  @param  aNote is a MKNote.
+  @param  aNote is a MKNote instance.
   @return Returns a NSHashEnumerator.
   @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
   <b>MKIsNoDVal()</b>
   @ingroup ParameterFns
 */
-extern NSHashEnumerator *MKInitParameterIteration(id aNote);
+extern NSHashEnumerator *MKInitParameterIteration(MKNote *aNote);
 
 /*!
   @brief Retrieve the next parameter.
@@ -1643,7 +1643,7 @@ extern NSHashEnumerator *MKInitParameterIteration(id aNote);
        <b>MKGetNoteParAsInt()</b>, etc., <b>MKIsNoDVal()</b>
   @ingroup ParameterFns
 */
-extern int MKNextParameter(id aNote, NSHashEnumerator *iterationState);
+extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
 
 /*!
   @defgroup NoteParameterFns Set and retrieve a MKNote's parameters. Functions that are equivalent to MKNote methods, for speed. 
@@ -1694,7 +1694,7 @@ The <b>MKGetParAs...()</b> functions
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToDouble(id aNote,int par,double value);
+extern id MKSetNoteParToDouble(MKNote *aNote, int par, double value);
 
 /*!
   @brief Set a MKNote's parameter to an integer value.
@@ -1721,7 +1721,7 @@ extern id MKSetNoteParToDouble(id aNote,int par,double value);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToInt(id aNote,int par,int value);
+extern id MKSetNoteParToInt(MKNote *aNote, int par, int value);
 
 /*!
   @brief Set a MKNote's parameter to a NSString value.
@@ -1748,7 +1748,7 @@ extern id MKSetNoteParToInt(id aNote,int par,int value);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToString(id aNote, int par, NSString *value);
+extern id MKSetNoteParToString(MKNote *aNote, int par, NSString *value);
 
 /*!
   @brief Set a MKNote's parameter to a MKEnvelope value.
@@ -1775,7 +1775,7 @@ extern id MKSetNoteParToString(id aNote, int par, NSString *value);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToEnvelope(id aNote, int par, id envObj);
+extern id MKSetNoteParToEnvelope(MKNote *aNote, int par, id envObj);
 
 /*!
   @brief Set a MKNote's parameter to a MKWaveTable value.
@@ -1802,7 +1802,7 @@ extern id MKSetNoteParToEnvelope(id aNote, int par, id envObj);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToWaveTable(id aNote, int par, id waveObj);
+extern id MKSetNoteParToWaveTable(MKNote *aNote, int par, id waveObj);
 
 /*!
   @brief Set a MKNote's parameter to an Object value.
@@ -1829,7 +1829,7 @@ extern id MKSetNoteParToWaveTable(id aNote, int par, id waveObj);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKSetNoteParToObject(id aNote, int par, id anObj);
+extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
 
 /*!
   @brief Retrieve an MKNote's parameter as a double value.
@@ -1869,7 +1869,7 @@ extern id MKSetNoteParToObject(id aNote, int par, id anObj);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern double MKGetNoteParAsDouble(id aNote,int par);
+extern double MKGetNoteParAsDouble(MKNote *aNote, int par);
 
 /*!
   @brief Retrieve an MKNote's parameter as an integer value.
@@ -1896,7 +1896,7 @@ extern double MKGetNoteParAsDouble(id aNote,int par);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern int MKGetNoteParAsInt(id aNote, int par);
+extern int MKGetNoteParAsInt(MKNote *aNote, int par);
 
 /*!
   @brief Retrieve an MKNote's parameter as a NSString value.
@@ -1923,7 +1923,7 @@ extern int MKGetNoteParAsInt(id aNote, int par);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern NSString *MKGetNoteParAsString(id aNote,int par);
+extern NSString *MKGetNoteParAsString(MKNote *aNote, int par);
 
 /*!
   @brief Retrieve an MKNote's parameter as a NSString value.
@@ -1949,7 +1949,7 @@ extern NSString *MKGetNoteParAsString(id aNote,int par);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern NSString *MKGetNoteParAsStringNoCopy(id aNote, int par);
+extern NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote, int par);
 
 /*!
   @brief Retrieve an MKNote's parameter as an MKEnvelope value.
@@ -1976,7 +1976,7 @@ extern NSString *MKGetNoteParAsStringNoCopy(id aNote, int par);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKGetNoteParAsEnvelope(id aNote, int par);
+extern id MKGetNoteParAsEnvelope(MKNote *aNote, int par);
 
 /*!
   @brief Retrieve an MKNote's parameter as an MKWaveTable value.
@@ -2003,7 +2003,7 @@ extern id MKGetNoteParAsEnvelope(id aNote, int par);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKGetNoteParAsWaveTable(id aNote, int par);
+extern id MKGetNoteParAsWaveTable(MKNote *aNote, int par);
 
 /*!
   @brief Retrieve an MKNote's parameter as an object value.
@@ -2030,7 +2030,7 @@ extern id MKGetNoteParAsWaveTable(id aNote, int par);
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
-extern id MKGetNoteParAsObject(id aNote, int par);
+extern id MKGetNoteParAsObject(MKNote *aNote, int par);
 
 /*@}*/
 
@@ -2062,6 +2062,6 @@ if (MKIsNoteParPresent(aNote, MK_freq)) {
   <b>MKIsNoDVal()</b>
   @ingroup ParameterFns
 */
-extern BOOL MKIsNoteParPresent(id aNote, int par);
+extern BOOL MKIsNoteParPresent(MKNote *aNote, int par);
 
 #endif

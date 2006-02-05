@@ -59,14 +59,14 @@ typedef struct __MKScoreOutStruct {
 
 /* Functions for writing score files: */
 extern _MKScoreOutStruct *
-_MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,
-		  double timeShift,BOOL isNoteRecorder,BOOL binary);
+_MKInitScoreOut(NSMutableData *fileStream, id owner, MKNote *anInfoNote,
+		  double timeShift, BOOL isNoteRecorder, BOOL binary);
 extern _MKScoreOutStruct *
-  _MKWritePartDecl(id part, _MKScoreOutStruct * p,id aPartInfo);
+  _MKWritePartDecl(MKPart *part, _MKScoreOutStruct *p, MKNote *aPartInfo);
 extern _MKScoreOutStruct *
-  _MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * scoreWPtr);
+  _MKWriteNote(MKNote *aNote, MKPart *aPart, _MKScoreOutStruct *scoreWPtr);
 extern _MKScoreOutStruct *
-  _MKFinishScoreOut(_MKScoreOutStruct * scoreWPtr,   BOOL writeEnd);
+  _MKFinishScoreOut(_MKScoreOutStruct *scoreWPtr, BOOL writeEnd);
 
 /* Functions for reading score files: */
 extern void _MKParseScoreHeader(_MKScoreInStruct *scorefileRPtr);

@@ -149,6 +149,9 @@ classes.
 #import <Foundation/NSObject.h>
 #import "orch.h"
 
+/* It's actually either MKUnitGenerator or MKSynthData, but this makes compiler happy */
+#define SynthElement MKUnitGenerator 
+
 /*!
   @brief <b>MKUGArgStruct</b> is the structure that represents each DSP unit
   generator memory argument.  All fields are private and should not be
@@ -619,12 +622,12 @@ typedef struct _MKUGArgStruct {
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
   taken as the value .
-  @param  ug is a MKUnitGenerator.
+  @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  value is a DSPDatum.
   @return Returns an id.
 */
-id MKSetUGDatumArg(id ug, unsigned argNum, DSPDatum value);
+id MKSetUGDatumArg(MKUnitGenerator *ug, unsigned argNum, DSPDatum value);
 
 /*!
   @brief Set DSP unit generator arguments
@@ -666,12 +669,12 @@ id MKSetUGDatumArg(id ug, unsigned argNum, DSPDatum value);
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
   taken as the value .
-  @param  ug is a MKUnitGenerator.
+  @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  value is a DSPLongDatum *.
   @return Returns an id.
 */
-id MKSetUGDatumArgLong(id ug, unsigned argNum, DSPLongDatum *value);
+id MKSetUGDatumArgLong(MKUnitGenerator *ug, unsigned argNum, DSPLongDatum *value);
 
 /*!
   @brief Set DSP unit generator arguments
@@ -713,12 +716,12 @@ id MKSetUGDatumArgLong(id ug, unsigned argNum, DSPLongDatum *value);
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
   taken as the value .
-  @param  ug is a MKUnitGenerator.
+  @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  memoryObj is an MKSynthData.
   @return Returns an id.
 */
-id MKSetUGAddressArg(id ug, unsigned argNum, id memoryObj);
+id MKSetUGAddressArg(MKUnitGenerator *ug, unsigned argNum, id memoryObj);
 
 /*!
   @brief Set DSP unit generator arguments
@@ -760,12 +763,12 @@ id MKSetUGAddressArg(id ug, unsigned argNum, id memoryObj);
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
   taken as the value .
-  @param  ug is a MKUnitGenerator.
+  @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  address is a DSPAddress.
   @return Returns an id.
 */
-id MKSetUGAddressArgToInt(id ug, unsigned argNum, DSPAddress address);
+id MKSetUGAddressArgToInt(MKUnitGenerator *ug, unsigned argNum, DSPAddress address);
 
 
 /*!

@@ -30,43 +30,7 @@
   Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
-Modification history:
-
-  $Log$
-  Revision 1.12  2005/05/11 07:59:03  leighsmith
-  Cleaned up parameter types and doxygen docs
-
-  Revision 1.11  2004/12/13 02:24:41  leighsmith
-  New typing for MKNoteReceiver _setData: and _getData
-
-  Revision 1.10  2004/10/25 16:22:50  leighsmith
-  Updated for new ivar name
-
-  Revision 1.9  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.8  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.7  2002/01/29 16:32:01  sbrandon
-  don't bother to retain/release constant NSStrings
-  (_MK_BINARYSCOREFILEEXT, _MK_SCOREFILEEXT)
-
-  Revision 1.6  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.5  2001/08/07 16:12:30  leighsmith
-  Corrected class name during decode to match latest MK prefixed name
-
-  Revision 1.4  2000/11/29 00:38:13  leigh
-  Comment cleanup, now using _MKMalloc instead of malloc (better error checking)
-
-  Revision 1.3  1999/09/04 22:44:23  leigh
-  setInfo now setInfoNote
-
-  Revision 1.2  1999/07/29 01:16:43  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+Modification history prior to CVS commit.
   09/18/89/daj - Added casts to (id) in _getData/_setData: to accomodate new
                  void * type.
   10/25/89/daj - Added instance variable isOptimized.		 
@@ -90,63 +54,78 @@ Modification history:
 @implementation MKScorefileWriter
 
 #define SCOREPTR ((_MKScoreOutStruct *)_p)
-#define PARTINFO(_aNR) ([_aNR _getData])
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKScorefileWriter class])
         return;
     [MKScorefileWriter setVersion: VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- init
+{
+    self = [super init];
+    if(self != nil) {
+	info = nil;
+    }
+    return self;
+}
+
+// Whenever we add a MKNoteReceiver, we create a MKPart and associate it with the note receiver.
+- addNoteReceiver: (MKNoteReceiver *) aNoteReceiver
+{
+    MKPart *partAssociatedWithNoteReceiver;
+    id result = [super addNoteReceiver: aNoteReceiver];
+    
+    if(result != nil) {
+	// Determine if we already have an MKPart associated with the MKNoteReceiver.
+	partAssociatedWithNoteReceiver = [aNoteReceiver _getData];
+	if(partAssociatedWithNoteReceiver == nil) { // create it fresh.
+	    partAssociatedWithNoteReceiver = [MKPart partWithName: MKGetObjectName(aNoteReceiver)];
+	    [aNoteReceiver _setData: partAssociatedWithNoteReceiver];
+	}
+    }
+    return result;
+}
+
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
      Invokes superclass write:, which archives MKNoteReceivers.
      Then archives info, isOptimized, and MKPart info MKNotes.  */
 {
-    unsigned n = [noteReceivers count], i;
+    unsigned n = [noteReceivers count], noteReceiverIndex;
 
     [aCoder encodeValuesOfObjCTypes: "@ci", &info, &_isOptimized, &n];
-    for (i = 0; i < n; i++)
-        [aCoder encodeObject: PARTINFO([noteReceivers objectAtIndex: i])];
+    for (noteReceiverIndex = 0; noteReceiverIndex < n; noteReceiverIndex++)
+        [aCoder encodeObject: [[[noteReceivers objectAtIndex: noteReceiverIndex] _getData] infoNote]];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
-  /* You never send this message directly.  
-     Should be invoked via NXReadObject(). 
-     See write:. */
+- (id) initWithCoder: (NSCoder *) aDecoder
 {
-    id *el;
     int noteReceiverCount;
+    int noteReceiverIndex;
 
     if ([aDecoder versionForClassName: @"MKScorefileWriter"] == VERSION2) {
-	[aDecoder decodeValuesOfObjCTypes:"@ci",&info,&_isOptimized,&noteReceiverCount];
-	/* Because we can't install the MKPart infos now in the MKNoteReceivers,
-	   we have to use them temporarily in an available pointer, _p. 
-	   See awake below. */
-	_MK_MALLOC(el,id,noteReceiverCount);
-	_p = el;
-	while (noteReceiverCount--) 
-	  *el++ = [[aDecoder decodeObject] retain];
+	[aDecoder decodeValuesOfObjCTypes: "@ci", &info, &_isOptimized, &noteReceiverCount];
+	NSArray *allNoteReceivers = [super noteReceivers];
+	/* TODO Because we can't install the MKPart infos now in the MKNoteReceivers 
+	   (since the MKNoteReceivers are in the super class), we have to save them temporarily
+	   in an available NSArray _p and then insert them later. However at the moment there doesn't
+	   seem to be a good time to determine when to do this. So this may be broken, unless the object decoding order has changed.
+	 */
+	for(noteReceiverIndex = 0; noteReceiverIndex < noteReceiverCount; noteReceiverIndex++) {
+	    MKNote *partInfoNote = [aDecoder decodeObject];
+	    MKNoteReceiver *aNoteReceiver = [allNoteReceivers objectAtIndex: noteReceiverIndex];
+	    
+	    // Create a MKPart
+	    MKPart *partAssociatedWithNoteReceiver = [MKPart partWithName: MKGetObjectName(aNoteReceiver)];
+	    [partAssociatedWithNoteReceiver setInfoNote: partInfoNote];
+	    [aNoteReceiver _setData: partAssociatedWithNoteReceiver];
+	}
     }
-    /* from awake (sb) */
-    {
-        unsigned n;
-//        id *el1,
-        unsigned int el1;
-        id *el2;
-
-        for (el1 = 0 /*NX_ADDRESS(noteReceivers)*/,
-         el2 = (id *)_p, n = [noteReceivers count];
-         n--;)
-             [[noteReceivers objectAtIndex:el1++] _setData:*el2++]; /* *el1++ */
-    free(_p);
-    _p = NULL;
-    }
-/****/
     return self;
 }
 
@@ -168,19 +147,19 @@ Modification history:
     return _isOptimized ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT ;
 }
 
--initializeFile
+- initializeFile
     /* Initializes file specified by the name of the MKFileWriter. You never
        send this message directly. */
 {
-    id el;
-    unsigned n = [noteReceivers count], i;
+    unsigned n = [noteReceivers count], noteReceiverIndex;
+    
     _highTag = -1;
     _lowTag = MAXINT;
-    _p = (void *)_MKInitScoreOut(stream,self,info,timeShift,YES,_isOptimized);
+    _p = (void *) _MKInitScoreOut(stream, self, info, timeShift, YES, _isOptimized);
     /* Write declarations in header. */
-    for (i = 0; i < n; i++) {
-        el = [noteReceivers objectAtIndex:i];
-        _MKWritePartDecl(el, SCOREPTR, PARTINFO(el));
+    for (noteReceiverIndex = 0; noteReceiverIndex < n; noteReceiverIndex++) {
+	MKPart *partForNoteReceiver = [[noteReceivers objectAtIndex: noteReceiverIndex] _getData];
+        _MKWritePartDecl(partForNoteReceiver, SCOREPTR, [partForNoteReceiver infoNote]);
     }
 
 //#error StreamConversion: NXTell should be converted to an NSData method
@@ -191,8 +170,8 @@ Modification history:
     return self;
 }
 
--finishFile
-    /* Does not close file. You never send this message directly. */
+/* Does not close file. You never send this message directly. */
+- finishFile
 {
 //    long curPos;
 //#error StreamConversion: NXTell should be converted to an NSData method
@@ -200,13 +179,13 @@ Modification history:
 //#error StreamConversion: NXSeek should be converted to an NSData method
 //    NXSeek(SCOREPTR->_stream,SCOREPTR->_tagRangePos,NX_FROMSTART);
     if (_lowTag < _highTag) {
-        NSData *dataToAppend = [[NSString stringWithFormat:@"noteTagRange = %d to %d;\n", _lowTag,_highTag] 	dataUsingEncoding:NSNEXTSTEPStringEncoding];
+        NSData *dataToAppend = [[NSString stringWithFormat: @"noteTagRange = %d to %d;\n", _lowTag,_highTag] 	dataUsingEncoding:NSNEXTSTEPStringEncoding];
         int len = [dataToAppend length];
         NSRange range = {SCOREPTR->_tagRangePos, len};/*sb: there are 40 spaces, but this replaces exact amount. */
         char *aBuffer = _MKMalloc(len);
-        [dataToAppend getBytes:aBuffer]; //stick our string into a char buffer
+        [dataToAppend getBytes: aBuffer]; //stick our string into a char buffer
 
-        [SCOREPTR->_stream replaceBytesInRange:range withBytes:aBuffer];
+        [SCOREPTR->_stream replaceBytesInRange: range withBytes: aBuffer];
         free(aBuffer);
     }
 /*
@@ -214,11 +193,11 @@ Modification history:
 #error StreamConversion: NXSeek should be converted to an NSData method
     NXSeek(SCOREPTR->_stream,curPos,NX_FROMSTART);
  */
-    (void)_MKFinishScoreOut(SCOREPTR,YES);
+    (void) _MKFinishScoreOut(SCOREPTR, YES);
     return self;
 }
 
--setInfoNote:(MKNote *) aNote
+- setInfoNote: (MKNote *) aNote
   /* Sets info, overwriting any previous info. aNote is copied. The info is 
      written out in the initializeFile method. The old info, if any, is freed. 
      */
@@ -235,28 +214,28 @@ Modification history:
 
 - setInfoNote: (MKNote *) aNote forNoteReceiver: (MKNoteReceiver *) aNR
   /* Sets Info for partName corresponding to specified NoteReceiver.
-     If in performance or if aNR is not a NoteReceiver of the 
+     If in performance or if aNR is not a MKNoteReceiver of the 
      receiver, generates an error and returns nil. 
      If the receiver is in performance, does nothing and returns nil. 
      aNote is copied. The old info, if any, is freed. */
 {
     if (noteSeen || (![self isNoteReceiverPresent: aNR]))
-      return nil;
+	return nil;
     // TODO this will leak. We need to recheck if we need to copy the note.
-    [aNR _setData: [aNote copy]];
+    [[aNR _getData] setInfoNote: [aNote copy]];
     return self;
 }
 
 - (MKNote *) infoNoteForNoteReceiver: (MKNoteReceiver *) aNoteReceiver
 {
-    return PARTINFO(aNoteReceiver);
+    return [[aNoteReceiver _getData] infoNote];
 } 
 
 - copyWithZone: (NSZone *) zone 
     /* Copies object and set of parts. The copy has a copy of 
        the noteReceivers and info notes. */
 {
-    unsigned int i;
+    unsigned int noteReceiverIndex;
     unsigned n = [noteReceivers count];
     MKScorefileWriter *newObj =  [super copyWithZone:zone];
     newObj->_highTag = -1;
@@ -264,29 +243,23 @@ Modification history:
     newObj->_p = NULL;
     newObj->info = [info copy];
 
-    for (i = 0; i < n; i++)
-        [[newObj->noteReceivers objectAtIndex: i] _setData: [PARTINFO([noteReceivers objectAtIndex: i]) copy]];
+    for (noteReceiverIndex = 0; noteReceiverIndex < n; noteReceiverIndex++) {
+        MKPart *part = [[newObj->noteReceivers objectAtIndex: noteReceiverIndex] _getData];
+	
+	[part setInfoNote: [[part infoNote] copy]];
+    }
     
     return newObj;
 }
 
-- (void)dealloc
-  /* Frees receiver, MKNoteReceivers and info notes. */ 
-{
-  /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
-  * maybe need to put self in a global list of non-dealloced objects for later cleanup */
-  unsigned n, i;
-  if ([self inPerformance])
-    return;
-  if (info != nil) {
-    [info release];
-    info = nil;
-  }
-  n = [noteReceivers count];
-  for (i = 0; i < n; i++)
-    [PARTINFO([noteReceivers objectAtIndex: i]) release]; /* Free part info notes. */
-  
-  [super dealloc];
+/* Frees receiver, MKNoteReceivers and info notes. */ 
+- (void) dealloc
+{    
+    if (info != nil) {
+	[info release];
+	info = nil;
+    }    
+    [super dealloc];
 }
 
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
@@ -294,47 +267,47 @@ Modification history:
      corresponding to aNoteReceiver. */
 {
     int noteTag = [aNote noteTag];
+    
     if (noteTag != MAXINT) {
-	_highTag = MAX(noteTag,_highTag);
-	_lowTag = MIN(noteTag,_lowTag);
+	_highTag = MAX(noteTag, _highTag);
+	_lowTag = MIN(noteTag, _lowTag);
     }
-    _MKWriteNote(aNote,aNoteReceiver,SCOREPTR);
+    _MKWriteNote(aNote, [aNoteReceiver _getData], SCOREPTR);
     return self;
 }
 
--setOptimizedStream:(NSMutableData *)aStream
+- setOptimizedStream: (NSMutableData *) aStream
   /* Same as setStream: but specifies that the data be written in optimized 
      scorefile format. */
 {
-    id rtn;
-    rtn = [super setStream:aStream];
+    id rtn = [super setStream: aStream];
     _isOptimized = YES;
     return rtn;
 }
 
--setOptimizedFile:(NSString *)aName
+- setOptimizedFile: (NSString *) aName
   /* Same as setFile: but specifies that the file be in optimized format. */
 {
     id rtn;
-    rtn = [super setFile:aName];
+    rtn = [super setFile: aName];
     _isOptimized = YES;
     return rtn;
 }
 
--setFile:(NSString *)aName
+- setFile: (NSString *) aName
   /* See superclass documentation */
 {
     id rtn;
-    rtn = [super setFile:aName];
+    rtn = [super setFile: aName];
     _isOptimized = NO;
     return rtn;
 }
 
--setStream:(NSMutableData *)aStream
+- setStream: (NSMutableData *) aStream
   /* See superclass documentation */
 {
     id rtn;
-    rtn = [super setStream:aStream];
+    rtn = [super setStream: aStream];
     _isOptimized = NO;
     return rtn;
 }

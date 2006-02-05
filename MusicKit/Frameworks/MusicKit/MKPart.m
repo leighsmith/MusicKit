@@ -107,7 +107,7 @@ static id compact(MKPart *self)
 # undef OBJECTATINDEX
 }
 
-static void removeNote(MKPart *self,id aNote);
+static void removeNote(MKPart *self, MKNote *aNote);
 
 - combineNotes
   /* TYPE: Editing
