@@ -113,9 +113,9 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
 #ifndef __MK_NoteSender_H___
 #define __MK_NoteSender_H___
 
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 
-@interface MKNoteSender: NSObject <NSCoding>
+@interface MKNoteSender: NSObject
 {
     /*! @var noteReceivers Array of connected MKNoteReceivers. */
     NSMutableArray *noteReceivers;

@@ -112,9 +112,9 @@ their assumption of the role of MKInstrument.
 #ifndef __MK_NoteReceiver_H___
 #define __MK_NoteReceiver_H___
 
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 
-@interface MKNoteReceiver: NSObject <NSCoding>
+@interface MKNoteReceiver: NSObject
 {
     /*! @var noteSenders Array of connected MKNoteSenders. */
     NSMutableArray *noteSenders;
