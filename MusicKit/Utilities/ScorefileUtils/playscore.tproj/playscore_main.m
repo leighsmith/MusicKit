@@ -509,7 +509,7 @@ int main(int argc, char *argv[])
 		    }
                     [(MKSynthInstrument *)(anIns = [instruments objectAtIndex: i])
                         setSynthPatchClass: synthPatchClass
-				 orchestra: [MKOrchestra nthOrchestra: orchIndex]];
+				 orchestra: [[MKOrchestra nthOrchestra: orchIndex] class]];
 		    if (![partInfo isParPresent: MK_synthPatchCount])
                         continue;         
 		    voices = [partInfo parAsInt: MK_synthPatchCount];
@@ -592,7 +592,7 @@ int main(int argc, char *argv[])
 		    anIns = (MKSynthInstrument *) [instruments objectAtIndex: i];
 		    [aNoteSender connect: [anIns noteReceiver]];
 		    [anIns setSynthPatchClass: synthPatchClass 
-				    orchestra: [MKOrchestra nthOrchestra: orchIndex]];
+				    orchestra: [[MKOrchestra nthOrchestra: orchIndex] class]];
 		    if (![partInfo isParPresent: MK_synthPatchCount])
 			continue;         
 		    voices = [partInfo parAsInt: MK_synthPatchCount];
