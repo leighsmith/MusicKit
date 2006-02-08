@@ -81,7 +81,7 @@ void showHelp(const char *absolutePath)
 SndAudioProcessorMP3Encoder *mp3enc = nil;
 #endif
 
-BOOL playsnd_init_shoutcast()
+BOOL playsnd_init_shoutcast(NSString *shoutcastServerAddress, int shoutcastPortNumber, NSString *shoutcastSourcePassword)
 {
 #if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
     mp3enc = [[SndAudioProcessorMP3Encoder alloc] init];
@@ -89,7 +89,7 @@ BOOL playsnd_init_shoutcast()
 				 port: shoutcastPortNumber
 			     password: shoutcastSourcePassword];
     if ([mp3enc connectToShoutcastServer]) {
-	[[player audioProcessorChain] addAudioProcessor: [mp3enc autorelease]];
+	[[[SndPlayer defaultSndPlayer] audioProcessorChain] addAudioProcessor: [mp3enc autorelease]];
 	[mp3enc setActive: TRUE];
 	return YES;
     }
@@ -146,7 +146,7 @@ int main (int argc, const char * argv[])
 #else
     Snd *s = [Snd new];
 #endif
-    NSString          *filename = nil, *extension = nil;
+    NSString          *extension = nil;
     NSFileManager     *fm       = [NSFileManager defaultManager];
     BOOL               bFileExists = FALSE, bIsDir = FALSE;
 
@@ -311,7 +311,7 @@ int main (int argc, const char * argv[])
         }
 #endif
         if (bMP3Shoutcast) {
-	    bMP3Shoutcast = playsnd_init_shoutcast();
+	    bMP3Shoutcast = playsnd_init_shoutcast(shoutcastServerAddress, shoutcastPortNumber, shoutcastSourcePassword);
         }
         {
 	    SndPerformance *perf;
