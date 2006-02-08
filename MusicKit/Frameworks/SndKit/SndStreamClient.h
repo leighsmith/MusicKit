@@ -391,6 +391,12 @@ enum {
 - (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
+  @brief Assigns a replacement audio processor chain.
+  @param newAudioProcessorChain A SndAudioProcessorChain instance.
+ */
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain;
+
+/*!
   @brief   Sets the client's delegate object
   @param      d
   @return     Returns self.

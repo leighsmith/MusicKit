@@ -780,9 +780,15 @@ static void inline setThreadPriority()
 // audioProcessorChain
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioProcessorChain*) audioProcessorChain
+- (SndAudioProcessorChain *) audioProcessorChain
 {
   return [[processorChain retain] autorelease];
+}
+
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain
+{
+    [processorChain release];
+    processorChain = [newAudioProcessorChain retain];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
