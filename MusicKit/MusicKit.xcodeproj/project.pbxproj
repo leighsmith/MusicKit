@@ -1968,7 +1968,7 @@
 		D8C2755505A73B28008ABA16 /* globals.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = globals.m; path = Frameworks/MKSynthPatches/globals.m; sourceTree = "<group>"; };
 		D8D1B6A90812492700D9156A /* playscorefilemidi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playscorefilemidi; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8D1B6AD0812496D00D9156A /* playscorefilemidi.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = playscorefilemidi.m; path = Examples/playscorefilemidi/playscorefilemidi.m; sourceTree = "<group>"; };
-		D8D1B7380817D26600D9156A /* MusicKit_README.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = MusicKit_README.sgml; path = Documentation/MusicKit_README.sgml; sourceTree = "<group>"; };
+		D8D1B7380817D26600D9156A /* MusicKit_README.sgml */ = {isa = PBXFileReference; explicitFileType = text.xml; fileEncoding = 30; name = MusicKit_README.sgml; path = Documentation/MusicKit_README.sgml; sourceTree = "<group>"; };
 		D8D1B7440817D3D200D9156A /* IntroMusicKit.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = IntroMusicKit.sgml; path = Documentation/Concepts/IntroMusicKit.sgml; sourceTree = "<group>"; };
 		D8D1B7450817D3D200D9156A /* IntroSndKit.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = IntroSndKit.sgml; path = Documentation/Concepts/IntroSndKit.sgml; sourceTree = "<group>"; };
 		D8D1B7460817D3D200D9156A /* MIDITimeCode.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = MIDITimeCode.sgml; path = Documentation/Concepts/MIDITimeCode.sgml; sourceTree = "<group>"; };
@@ -8684,6 +8684,1283 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D854FDB909A525F300697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = 5.5;
+				GCC_ALTIVEC_EXTENSIONS = NO;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				OTHER_LDFLAGS = (
+					"-seg1addr",
+					98000000,
+					"-framework",
+					Foundation,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MKPerformSndMIDI;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDBA09A525F300697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = 5.5;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PFE_FILE_C_DIALECTS = "objective-c";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Frameworks/SndKit/SndKit-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/sw/lib,
+				);
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-seg1addr",
+					98018000,
+					"$(CONFIGURED_LIBS)",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SndKit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDBB09A525F300697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = 5.5;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-seg1addr",
+					98390000,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MKDSP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDBC09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = 5.5;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+					"-seg1addr",
+					983B0000,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MusicKit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wall";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDBD09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MusicKit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDBE09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Palettes/SndView/SndViewPalette-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				WRAPPER_EXTENSION = palette;
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDBF09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = "Palettes Only";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC009A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = convertscore;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC109A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = scorefile2stella;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC209A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = playscore;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC309A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = "Utilities (Aggregate)";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC409A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Examples/MidiRecord/MidiRecord-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MidiRecord;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC509A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Examples/MidiLoop/MidiLoop-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MidiLoop;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC609A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Examples/MidiPlay/MidiPlay-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MidiPlay;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC709A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Examples/MidiFilePlayback/MidiFilePlayback-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MidiFilePlayback;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC809A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Examples/MidiEcho/MidiEcho-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MidiEcho;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDC909A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Examples/MidiEcho-1-MIDI-Channel/MidiEcho-1-Channel-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = "MidiEcho-1-Channel";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDCA09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = mixsounds;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDCB09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = maxamp;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDCC09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = extractchannel;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDCD09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = sndinfo;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDCE09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = playsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDCF09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = recsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD009A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = playsndfaders;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD109A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MultipleSoundPlayer;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD209A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefilemidi;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD309A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = example1;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD409A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Examples/example3/example3-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = example3;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD509A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = "Examples (Aggregate)";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD609A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Applications/Spectro/Spectro-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = Spectro;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD709A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Applications/PatchCord/PatchCord-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = PatchCord;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD809A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = TwoWaves;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDD909A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = ScorePlayer;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDDA09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = PianoRoll;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDDB09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = EnvelopeEd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDDC09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = "Applications Only (Aggregate)";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDDD09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PATH = "/bin:/usr/local/bin:/usr/bin:/sw/bin";
+				PREBINDING = NO;
+				PRODUCT_NAME = Documentation;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDDE09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = "MusicKit (Aggregate)";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDDF09A525F400697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = 5.5;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Frameworks/MKSynthPatches/MKSynthPatches-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MKSynthPatches;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDE009A525F500697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = MKUnitGenerators;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDE109A525F500697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "PatchCordFramework-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H",
+					"-maltivec",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = PatchCord;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = "Intel Development";
+		};
+		D854FDE209A525F500697E71 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = i386;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+			};
+			name = "Intel Development";
+		};
 		D8B44F1E099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -13379,6 +14656,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F1E099617E500B5C3A4 /* Development */,
+				D854FDB909A525F300697E71 /* Intel Development */,
 				D8B44F1F099617E500B5C3A4 /* Deployment */,
 				D8B44F20099617E500B5C3A4 /* Embedded */,
 				D8B44F21099617E500B5C3A4 /* Default */,
@@ -13390,6 +14668,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F23099617E500B5C3A4 /* Development */,
+				D854FDBA09A525F300697E71 /* Intel Development */,
 				D8B44F24099617E500B5C3A4 /* Deployment */,
 				D8B44F25099617E500B5C3A4 /* Embedded */,
 				D8B44F26099617E500B5C3A4 /* Default */,
@@ -13401,6 +14680,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F28099617E500B5C3A4 /* Development */,
+				D854FDBB09A525F300697E71 /* Intel Development */,
 				D8B44F29099617E500B5C3A4 /* Deployment */,
 				D8B44F2A099617E500B5C3A4 /* Embedded */,
 				D8B44F2B099617E500B5C3A4 /* Default */,
@@ -13412,6 +14692,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F2D099617E500B5C3A4 /* Development */,
+				D854FDBC09A525F400697E71 /* Intel Development */,
 				D8B44F2E099617E500B5C3A4 /* Deployment */,
 				D8B44F2F099617E500B5C3A4 /* Embedded */,
 				D8B44F30099617E500B5C3A4 /* Default */,
@@ -13423,6 +14704,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F32099617E500B5C3A4 /* Development */,
+				D854FDBD09A525F400697E71 /* Intel Development */,
 				D8B44F33099617E500B5C3A4 /* Deployment */,
 				D8B44F34099617E500B5C3A4 /* Embedded */,
 				D8B44F35099617E500B5C3A4 /* Default */,
@@ -13434,6 +14716,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F37099617E500B5C3A4 /* Development */,
+				D854FDBE09A525F400697E71 /* Intel Development */,
 				D8B44F38099617E500B5C3A4 /* Deployment */,
 				D8B44F39099617E500B5C3A4 /* Embedded */,
 				D8B44F3A099617E500B5C3A4 /* Default */,
@@ -13445,6 +14728,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F3C099617E500B5C3A4 /* Development */,
+				D854FDBF09A525F400697E71 /* Intel Development */,
 				D8B44F3D099617E500B5C3A4 /* Deployment */,
 				D8B44F3E099617E500B5C3A4 /* Embedded */,
 				D8B44F3F099617E500B5C3A4 /* Default */,
@@ -13456,6 +14740,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F41099617E500B5C3A4 /* Development */,
+				D854FDC009A525F400697E71 /* Intel Development */,
 				D8B44F42099617E500B5C3A4 /* Deployment */,
 				D8B44F43099617E500B5C3A4 /* Embedded */,
 				D8B44F44099617E500B5C3A4 /* Default */,
@@ -13467,6 +14752,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F46099617E500B5C3A4 /* Development */,
+				D854FDC109A525F400697E71 /* Intel Development */,
 				D8B44F47099617E500B5C3A4 /* Deployment */,
 				D8B44F48099617E500B5C3A4 /* Embedded */,
 				D8B44F49099617E500B5C3A4 /* Default */,
@@ -13478,6 +14764,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F4B099617E500B5C3A4 /* Development */,
+				D854FDC209A525F400697E71 /* Intel Development */,
 				D8B44F4C099617E500B5C3A4 /* Deployment */,
 				D8B44F4D099617E500B5C3A4 /* Embedded */,
 				D8B44F4E099617E500B5C3A4 /* Default */,
@@ -13489,6 +14776,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F50099617E500B5C3A4 /* Development */,
+				D854FDC309A525F400697E71 /* Intel Development */,
 				D8B44F51099617E500B5C3A4 /* Deployment */,
 				D8B44F52099617E500B5C3A4 /* Embedded */,
 				D8B44F53099617E500B5C3A4 /* Default */,
@@ -13500,6 +14788,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F55099617E500B5C3A4 /* Development */,
+				D854FDC409A525F400697E71 /* Intel Development */,
 				D8B44F56099617E500B5C3A4 /* Deployment */,
 				D8B44F57099617E500B5C3A4 /* Embedded */,
 				D8B44F58099617E500B5C3A4 /* Default */,
@@ -13511,6 +14800,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F5A099617E500B5C3A4 /* Development */,
+				D854FDC509A525F400697E71 /* Intel Development */,
 				D8B44F5B099617E500B5C3A4 /* Deployment */,
 				D8B44F5C099617E500B5C3A4 /* Embedded */,
 				D8B44F5D099617E500B5C3A4 /* Default */,
@@ -13522,6 +14812,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F5F099617E500B5C3A4 /* Development */,
+				D854FDC609A525F400697E71 /* Intel Development */,
 				D8B44F60099617E500B5C3A4 /* Deployment */,
 				D8B44F61099617E500B5C3A4 /* Embedded */,
 				D8B44F62099617E500B5C3A4 /* Default */,
@@ -13533,6 +14824,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F64099617E500B5C3A4 /* Development */,
+				D854FDC709A525F400697E71 /* Intel Development */,
 				D8B44F65099617E500B5C3A4 /* Deployment */,
 				D8B44F66099617E500B5C3A4 /* Embedded */,
 				D8B44F67099617E500B5C3A4 /* Default */,
@@ -13544,6 +14836,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F69099617E500B5C3A4 /* Development */,
+				D854FDC809A525F400697E71 /* Intel Development */,
 				D8B44F6A099617E500B5C3A4 /* Deployment */,
 				D8B44F6B099617E500B5C3A4 /* Embedded */,
 				D8B44F6C099617E500B5C3A4 /* Default */,
@@ -13555,6 +14848,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F6E099617E500B5C3A4 /* Development */,
+				D854FDC909A525F400697E71 /* Intel Development */,
 				D8B44F6F099617E500B5C3A4 /* Deployment */,
 				D8B44F70099617E500B5C3A4 /* Embedded */,
 				D8B44F71099617E500B5C3A4 /* Default */,
@@ -13566,6 +14860,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F73099617E500B5C3A4 /* Development */,
+				D854FDCA09A525F400697E71 /* Intel Development */,
 				D8B44F74099617E500B5C3A4 /* Deployment */,
 				D8B44F75099617E500B5C3A4 /* Embedded */,
 				D8B44F76099617E500B5C3A4 /* Default */,
@@ -13577,6 +14872,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F78099617E500B5C3A4 /* Development */,
+				D854FDCB09A525F400697E71 /* Intel Development */,
 				D8B44F79099617E500B5C3A4 /* Deployment */,
 				D8B44F7A099617E500B5C3A4 /* Embedded */,
 				D8B44F7B099617E500B5C3A4 /* Default */,
@@ -13588,6 +14884,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F7D099617E500B5C3A4 /* Development */,
+				D854FDCC09A525F400697E71 /* Intel Development */,
 				D8B44F7E099617E500B5C3A4 /* Deployment */,
 				D8B44F7F099617E500B5C3A4 /* Embedded */,
 				D8B44F80099617E500B5C3A4 /* Default */,
@@ -13599,6 +14896,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F82099617E500B5C3A4 /* Development */,
+				D854FDCD09A525F400697E71 /* Intel Development */,
 				D8B44F83099617E500B5C3A4 /* Deployment */,
 				D8B44F84099617E500B5C3A4 /* Embedded */,
 				D8B44F85099617E500B5C3A4 /* Default */,
@@ -13610,6 +14908,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F87099617E500B5C3A4 /* Development */,
+				D854FDCE09A525F400697E71 /* Intel Development */,
 				D8B44F88099617E500B5C3A4 /* Deployment */,
 				D8B44F89099617E500B5C3A4 /* Embedded */,
 				D8B44F8A099617E500B5C3A4 /* Default */,
@@ -13621,6 +14920,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F8C099617E500B5C3A4 /* Development */,
+				D854FDCF09A525F400697E71 /* Intel Development */,
 				D8B44F8D099617E500B5C3A4 /* Deployment */,
 				D8B44F8E099617E500B5C3A4 /* Embedded */,
 				D8B44F8F099617E500B5C3A4 /* Default */,
@@ -13632,6 +14932,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F91099617E500B5C3A4 /* Development */,
+				D854FDD009A525F400697E71 /* Intel Development */,
 				D8B44F92099617E500B5C3A4 /* Deployment */,
 				D8B44F93099617E500B5C3A4 /* Embedded */,
 				D8B44F94099617E500B5C3A4 /* Default */,
@@ -13643,6 +14944,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F96099617E500B5C3A4 /* Development */,
+				D854FDD109A525F400697E71 /* Intel Development */,
 				D8B44F97099617E500B5C3A4 /* Deployment */,
 				D8B44F98099617E500B5C3A4 /* Embedded */,
 				D8B44F99099617E500B5C3A4 /* Default */,
@@ -13654,6 +14956,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F9B099617E500B5C3A4 /* Development */,
+				D854FDD209A525F400697E71 /* Intel Development */,
 				D8B44F9C099617E500B5C3A4 /* Deployment */,
 				D8B44F9D099617E500B5C3A4 /* Embedded */,
 				D8B44F9E099617E500B5C3A4 /* Default */,
@@ -13665,6 +14968,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FA0099617E500B5C3A4 /* Development */,
+				D854FDD309A525F400697E71 /* Intel Development */,
 				D8B44FA1099617E500B5C3A4 /* Deployment */,
 				D8B44FA2099617E500B5C3A4 /* Embedded */,
 				D8B44FA3099617E500B5C3A4 /* Default */,
@@ -13676,6 +14980,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FA5099617E500B5C3A4 /* Development */,
+				D854FDD409A525F400697E71 /* Intel Development */,
 				D8B44FA6099617E500B5C3A4 /* Deployment */,
 				D8B44FA7099617E500B5C3A4 /* Embedded */,
 				D8B44FA8099617E500B5C3A4 /* Default */,
@@ -13687,6 +14992,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FAA099617E500B5C3A4 /* Development */,
+				D854FDD509A525F400697E71 /* Intel Development */,
 				D8B44FAB099617E500B5C3A4 /* Deployment */,
 				D8B44FAC099617E500B5C3A4 /* Embedded */,
 				D8B44FAD099617E500B5C3A4 /* Default */,
@@ -13698,6 +15004,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FAF099617E500B5C3A4 /* Development */,
+				D854FDD609A525F400697E71 /* Intel Development */,
 				D8B44FB0099617E500B5C3A4 /* Deployment */,
 				D8B44FB1099617E500B5C3A4 /* Embedded */,
 				D8B44FB2099617E500B5C3A4 /* Default */,
@@ -13709,6 +15016,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FB4099617E500B5C3A4 /* Development */,
+				D854FDD709A525F400697E71 /* Intel Development */,
 				D8B44FB5099617E500B5C3A4 /* Deployment */,
 				D8B44FB6099617E500B5C3A4 /* Embedded */,
 				D8B44FB7099617E500B5C3A4 /* Default */,
@@ -13720,6 +15028,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FB9099617E500B5C3A4 /* Development */,
+				D854FDD809A525F400697E71 /* Intel Development */,
 				D8B44FBA099617E500B5C3A4 /* Deployment */,
 				D8B44FBB099617E500B5C3A4 /* Embedded */,
 				D8B44FBC099617E500B5C3A4 /* Default */,
@@ -13731,6 +15040,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FBE099617E500B5C3A4 /* Development */,
+				D854FDD909A525F400697E71 /* Intel Development */,
 				D8B44FBF099617E500B5C3A4 /* Deployment */,
 				D8B44FC0099617E500B5C3A4 /* Embedded */,
 				D8B44FC1099617E500B5C3A4 /* Default */,
@@ -13742,6 +15052,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FC3099617E500B5C3A4 /* Development */,
+				D854FDDA09A525F400697E71 /* Intel Development */,
 				D8B44FC4099617E500B5C3A4 /* Deployment */,
 				D8B44FC5099617E500B5C3A4 /* Embedded */,
 				D8B44FC6099617E500B5C3A4 /* Default */,
@@ -13753,6 +15064,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FC8099617E500B5C3A4 /* Development */,
+				D854FDDB09A525F400697E71 /* Intel Development */,
 				D8B44FC9099617E500B5C3A4 /* Deployment */,
 				D8B44FCA099617E500B5C3A4 /* Embedded */,
 				D8B44FCB099617E500B5C3A4 /* Default */,
@@ -13764,6 +15076,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FCD099617E500B5C3A4 /* Development */,
+				D854FDDC09A525F400697E71 /* Intel Development */,
 				D8B44FCE099617E500B5C3A4 /* Deployment */,
 				D8B44FCF099617E500B5C3A4 /* Embedded */,
 				D8B44FD0099617E500B5C3A4 /* Default */,
@@ -13775,6 +15088,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FD2099617E500B5C3A4 /* Development */,
+				D854FDDD09A525F400697E71 /* Intel Development */,
 				D8B44FD3099617E500B5C3A4 /* Deployment */,
 				D8B44FD4099617E500B5C3A4 /* Embedded */,
 				D8B44FD5099617E500B5C3A4 /* Default */,
@@ -13786,6 +15100,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FD7099617E500B5C3A4 /* Development */,
+				D854FDDE09A525F400697E71 /* Intel Development */,
 				D8B44FD8099617E500B5C3A4 /* Deployment */,
 				D8B44FD9099617E500B5C3A4 /* Embedded */,
 				D8B44FDA099617E500B5C3A4 /* Default */,
@@ -13797,6 +15112,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FDC099617E500B5C3A4 /* Development */,
+				D854FDDF09A525F400697E71 /* Intel Development */,
 				D8B44FDD099617E500B5C3A4 /* Deployment */,
 				D8B44FDE099617E500B5C3A4 /* Embedded */,
 				D8B44FDF099617E500B5C3A4 /* Default */,
@@ -13808,6 +15124,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FE1099617E500B5C3A4 /* Development */,
+				D854FDE009A525F500697E71 /* Intel Development */,
 				D8B44FE2099617E500B5C3A4 /* Deployment */,
 				D8B44FE3099617E500B5C3A4 /* Embedded */,
 				D8B44FE4099617E500B5C3A4 /* Default */,
@@ -13819,6 +15136,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FE6099617E500B5C3A4 /* Development */,
+				D854FDE109A525F500697E71 /* Intel Development */,
 				D8B44FE7099617E500B5C3A4 /* Deployment */,
 				D8B44FE8099617E500B5C3A4 /* Embedded */,
 				D8B44FE9099617E500B5C3A4 /* Default */,
@@ -13830,6 +15148,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FEB099617E500B5C3A4 /* Development */,
+				D854FDE209A525F500697E71 /* Intel Development */,
 				D8B44FEC099617E500B5C3A4 /* Deployment */,
 				D8B44FED099617E500B5C3A4 /* Embedded */,
 				D8B44FEE099617E500B5C3A4 /* Default */,
