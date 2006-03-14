@@ -632,13 +632,6 @@ static char *initRan(void)
     char *stateArr;
 
 #if HAVE_RANDOM
-    /* This is a workaround for a suspected libc problem */
-    static char *defaultStateArr = NULL;
-
-    if (!defaultStateArr) {
-	_MK_MALLOC(defaultStateArr, char, STATESIZEINBYTES);
-	initstate(1, defaultStateArr, STATESIZEINBYTES);
-    }
     _MK_MALLOC(stateArr, char, STATESIZEINBYTES);
     initstate(1, stateArr, STATESIZEINBYTES);
 #endif
@@ -2123,7 +2116,6 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
         [scoreRPtr->printStream release];
     }
 #if HAVE_RANDOM
-    setstate(defaultStateArr); /* Make libc forget our ranState */
     free(scoreRPtr->_ranState);  /* 1/13/96 DAJ */
     scoreRPtr->_ranState = NULL;
 #endif
