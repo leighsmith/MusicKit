@@ -51,8 +51,18 @@ AC_HEADER_STDC
 # Check for pthreads (needed for portaudio)
 AC_CHECK_LIB(pthread, pthread_create)
 
+# Check for available random number generators.
+AC_CHECK_FUNCS(random rand)
+
+# For Win32 DirectSound operation we need to link against a number of
+# other libraries. Unfortunately we can't just test for the libraries
+# presence using functions.
+#if [ mingw32 cygwin ]; then
+  WIN32LIBS="-lwinmm -ldsound -lole32"
+#fi
+
 # Check if we have portaudio installed, if so, use MKPerformSndMIDI_portaudio
-AC_CHECK_LIB(portaudio, Pa_Initialize)
+AC_CHECK_LIB(portaudio, Pa_Initialize, ,, [$WIN32LIBS])
 
 # separately check the portaudio header was installed.
 AC_CHECK_HEADERS(portaudio.h)
@@ -85,14 +95,17 @@ AC_CONFIG_HEADERS(Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/MKPerf
 
 # Configures a top-level GNUmakefile for GNUstep systems or a
 # Makefile for MacOS X which then runs xcodebuild.
-# Since only one top-level make file will be created, the appropriate
-# file is selected when make is run.
+# Since only one top-level make file will be created, this causes the 
+# appropriate file to be selected when make is run.
 AC_CONFIG_FILES($TOPLEVELBUILD \
 		Frameworks/GNUmakefile
                 Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/GNUmakefile.preamble \
                 Frameworks/SndKit/GNUmakefile.preamble \
 		Frameworks/MKDSP_Native/GNUmakefile.preamble \
 		Frameworks/MusicKit/GNUmakefile.preamble \
+		Examples/playsnd/GNUmakefile.preamble \
 		Documentation/Makefile)
+
+# 		Utilities/ScorefileUtils/playscore.tproj/GNUmakefile.preamble \
 
 AC_OUTPUT
