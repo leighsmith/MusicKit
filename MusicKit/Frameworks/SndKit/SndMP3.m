@@ -26,6 +26,7 @@
 #import "SndMP3.h"
 #import "SndError.h"
 #import "SndAudioBuffer.h"
+#import <math.h> // Required for GNUstep. Should be unnecessary in later versions of GS.
 
 // Debugging print statements. 1 = print out, 0 squelch.
 #define DEBUG_READING 0
@@ -154,9 +155,12 @@ static int bitrateLookupTable[16][6] = {
   { MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE }
 };
 
-static const long samplingRateLookupTable[9] = { 44100, 48000, 32000,
-                                                 22050, 24000, 16000,
-                                                 11025, 12000,  8000 };
+static const long samplingRateLookupTable[4][3] = {
+  { 11025, 12000,  8000 }, /* vers 2.5 */
+  {    -1,    -1,    -1 }, /* reserved */
+  { 22050, 24000, 16000 }, /* vers 2 */
+  { 44100, 48000, 32000 }, /* vers 1 */
+};
 
 + (NSArray *) soundFileExtensions
 {
@@ -260,13 +264,14 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     int frameSize, samplingRate = [self samplingRate];
     float framesPerSecond;
     int layer, bitrateIndex, version = 0, bitrate, samplesPerFrame = SND_MPEGV1_SAMPLES_PER_FRAME;
+    short versionIndex = ((frameHeader >> 19) & 0x3);
 
     if ((frameHeader >> 21) & 0x07FF)
 	NSLog(@"frame sync is ok\n");
     else
 	NSLog(@"bad frame sync\n");
 
-    switch ((frameHeader >> 19) & 0x03) {
+    switch (versionIndex) {
 	case 0: NSLog(@"version: MPEG 2.5\n"); break;
 	case 1: NSLog(@"version: reserved\n"); break;
 	case 2: version = 2; samplesPerFrame = SND_MPEGV2_SAMPLES_PER_FRAME; break;
@@ -287,8 +292,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     bitrateIndex = (frameHeader >> 12) & 0xF;
     bitrate = bitrateLookupTable[bitrateIndex][(version - 1) * 3 + layer - 1];
     NSLog(@"Bitrate: %i (index: %i)\n", bitrate, bitrateIndex);
-
-    NSLog(@"Sampling frequency: %li\n", samplingRateLookupTable[(frameHeader >> 10) & 0x3]);
+    NSLog(@"Sampling frequency: %li\n", samplingRateLookupTable[versionIndex][(frameHeader >> 10) & 0x3]); 
     NSLog(@"Padding: %s\n", (frameHeader >> 9) & 0x1 ? "yes" : "no");
     NSLog(@"Channel Mode: %li\n", (frameHeader >> 6) & 0x3);
     NSLog(@"Mode extension: %li\n", (frameHeader >> 4) & 0x3);
@@ -308,7 +312,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 {
     int layer, bitrateIndex, version = 0, bitrate = 0, samplesPerFrame = SND_MPEGV1_SAMPLES_PER_FRAME;
     int frameSize;
-    int samplingRate = [self samplingRate];
+    int samplingRate = [self samplingRate]; 
     float framesPerSecond;
     const unsigned char *bitstream = [mp3DataToSearch bytes];
     long mp3LengthInBytes = [mp3DataToSearch length];
@@ -373,7 +377,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 			int formatIndex = (version - 1) * 3 + layer - 1;
 			bitrate = bitrateLookupTable[bitrateIndex][formatIndex];
 		    }
-                    // samplingRate = samplingRateLookupTable[(frameHeader >> 10) & 0x3)];
+                    //samplingRate = samplingRateLookupTable[((frameHeader >> 19) & 0x3)][((frameHeader >> 10) & 0x3)];
 		    framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
 		    frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
 #if DEBUG_FRAME_COUNTING
@@ -601,7 +605,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     long mp3DataPos    = 0;
     long mp3DataLength = [mp3Data length];
     //    long length = 0;
-    long sams_created = 0;
+    long samplesCreated = 0;
     long sams_created_total = 0;
     unsigned char* mp3DataBytes = (unsigned char*) [mp3Data bytes];
     long requestedStartSample = 0, requestedSampleCount = 0, iterations = 0;
@@ -622,7 +626,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     pcmData = [[NSMutableData alloc] initWithLength: pcmSize * sizeof(short) * 2];
     [pcmDataLock unlock];
     
-    while (mp3DataPos < mp3DataLength || sams_created > 0) {
+    while (mp3DataPos < mp3DataLength || samplesCreated > 0) {
 	int mp3FeedAmount = 417; // a frame
 	int bytes_created;
 	
@@ -630,15 +634,15 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 	    mp3FeedAmount = mp3DataLength - mp3DataPos;
 	
 	bytes_created = hip_decode_headers(&mp3DataDescription, mp3DataBytes + mp3DataPos, mp3FeedAmount, (char *) pcm, 4608);
-	sams_created = bytes_created / sizeof(short) / mp3DataDescription.stereo;
-	// NSLog(@"sams_created = %d\n", sams_created);
+	samplesCreated = bytes_created / sizeof(short) / (mp3DataDescription.stereo ? mp3DataDescription.stereo : 2);
+	// NSLog(@"samplesCreated = %d\n", samplesCreated);
 	mp3DataPos += mp3FeedAmount;
 	
-	if (sams_created > 0) {
+	if (samplesCreated > 0) {
 	    long i, offset = 0, pos = samplesRecovered * 2;
-	    long sams_to_unpack = sams_created;
+	    long sams_to_unpack = samplesCreated;
 	    
-	    if (sams_created_total + sams_created > requestedStartSample) {
+	    if (sams_created_total + samplesCreated > requestedStartSample) {
 		short *pData = NULL;
 		offset = requestedStartSample - sams_created_total;
 		
@@ -661,8 +665,8 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 		[pcmDataLock unlock];
 	    }
 	}
-	sams_created_total  += sams_created;
-	decodedSampleCount += sams_created;
+	sams_created_total  += samplesCreated;
+	decodedSampleCount += samplesCreated;
 	iterations++;
 #if DEBUG_READING
 	NSLog(@"[%04li] Decoded: %li/%li\n", iterations, decodedSampleCount, soundFormat.frameCount);
@@ -965,7 +969,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 
 	// NSLog(@"Decoding from %d, Retried hip_decode_headers, bytesRetrieved = %d\n", moreDataFrom, bytesRetrieved);
     }
-    framesCreated = bytesRetrieved / sizeof(short) / mp3DataDescription.stereo;
+    framesCreated =  bytesRetrieved / sizeof(short) / (mp3DataDescription.stereo ? mp3DataDescription.stereo : 2);
 #if DEBUG_DECODE
     NSLog(@"decodeMP3FrameID: framesCreated = %d\n", framesCreated);
 #endif
