@@ -78,8 +78,8 @@ check_sgmltrans:
 	if [ $(SGMLTRANS)_x = _x ]; then echo "DocBook SGML translator not found"; exit 1; fi
 
 clean:
-	-rm -r $(HTML_TMPDIR)
-	-rm -r $(PDF_OUTPUT_DIR) 
+	-rm -rf $(HTML_TMPDIR)
+	-rm -rf $(PDF_OUTPUT_DIR) 
 
 install:: $(DOC_TARBALL) $(INSTALL_DIR)
 	(cd $(INSTALL_DIR); tar xjfp $(DOC_TARBALL); mv htdocs MusicKit )
