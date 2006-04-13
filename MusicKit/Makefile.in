@@ -16,32 +16,32 @@
 #
 
 CONFIG = OTHER_CFLAGS="@DEFS@ @CPPFLAGS@" LDFLAGS="@LDFLAGS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
-PROJECT = -project MusicKit.xcode
+PROJECT = -project MusicKit.xcodeproj
 XCODEBUILD = xcodebuild $(PROJECT)
 # This allows overriding this on the command line.
 DSTROOT=/
 VERSION=0.0.0
 
 all:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Development build DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Development build DSTROOT=$(DSTROOT) $(CONFIG)
 
 install:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) VERSION=$(VERSION) $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) VERSION=$(VERSION) $(CONFIG)
 
 frameworks:
-	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -buildstyle Embedded install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration Embedded install DSTROOT=$(DSTROOT) $(CONFIG)
 
 palettes:
-	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 utilities:
-	$(XCODEBUILD) -target "Utilities Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Utilities Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 examples:
-	$(XCODEBUILD) -target "Examples Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Examples Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 applications:
-	$(XCODEBUILD) -target "Applications Only (Aggregate)" -buildstyle Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Applications Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
 
 documentation:
 	$(MAKE) -C Documentation DSTROOT=$(DSTROOT) VERSION=$(VERSION)
