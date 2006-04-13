@@ -71,8 +71,11 @@ ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
 INSTALL_DIR=$(DSTROOT)/Library/Documentation
 
 # Generate the HTML tarball. The HTML tarball will create the PDF
-# before it copies it into the HTML directory.
-all: $(DOC_TARBALL)
+# before it copies them into the HTML directory.
+all: check_sgmltrans $(DOC_TARBALL)
+
+check_sgmltrans:
+	if [ $(SGMLTRANS)_x = _x ]; then echo "DocBook SGML translator not found"; exit 1; fi
 
 clean:
 	-rm -r $(HTML_TMPDIR)
