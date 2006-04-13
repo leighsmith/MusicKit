@@ -2,16 +2,16 @@
   $Id$
 
   Description:
-    mixsounds is an example of a Music Kit performance that actually makes
+    mixsounds is an example of a MusicKit performance that actually makes
     no sound. Rather, it's "output" is a sound file that is the result of
     a mix of the soundfiles specified in its input scorefile.
     See the README file on this directory for details.
 
     Since no real-time interaction is involved, and since we want the program
-    to run as fast as possible, the Conductor is set to unclocked mode.
-    In unclocked mode the Conductor's +startPerformance method initiates a
-    tight loop that sends Notes as fast as possible until all Notes have been
-    sent, then returns. In this program, each "Note" is actually a
+    to run as fast as possible, the MKConductor is set to unclocked mode.
+    In unclocked mode the MKConductor's +startPerformance method initiates a
+    tight loop that sends MKNotes as fast as possible until all MKNotes have been
+    sent, then returns. In this program, each MKNote is actually a
     soundfile mix specification. 
 */
 
