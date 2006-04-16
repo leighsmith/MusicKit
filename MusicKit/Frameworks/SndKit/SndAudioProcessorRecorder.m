@@ -151,7 +151,9 @@
 {
     SF_INFO sfinfo;
     NSFileHandle *writingFileHandle;
+    NSString *expandedFilename = [filename stringByExpandingTildeInPath];
     
+    sfinfo.frames = 0;
     sfinfo.samplerate = (int) format.sampleRate;
     sfinfo.channels = format.channelCount;
     sfinfo.format = [Snd fileFormatForEncoding: [filename pathExtension] dataFormat: format.dataFormat];
@@ -161,16 +163,25 @@
 	return NO;
     }
     
-    writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: filename]; 
-    if((recordFile = sf_open_fd([writingFileHandle fileDescriptor], SFM_WRITE, &sfinfo, TRUE)) == NULL) {
-	[recordFileName release];
-	recordFileName = [filename copy];
-
-	return YES;
+    // fileHandleForWritingAtPath requires a file to actually exist, otherwise it returns nil, so we create an empty file 
+    // (which may have a Unicode filename), so we can then hand over a file descriptor to sf_open_fd.
+    if(![[NSFileManager defaultManager] createFileAtPath: expandedFilename contents: nil attributes: nil]) {
+	NSLog(@"SndAudioProcessorRecorder -setupRecordFile Error creating file '%@' for recording.\n", expandedFilename);
+	return NO;
     }
     else {
-	NSLog(@"SndAudioProcessorRecorder -setupRecordFile Error opening file '%@' for recording.\n", filename);
-	return NO;
+	writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: expandedFilename];
+	//NSLog(@"writingFileHandle = %@\n", writingFileHandle);
+	if((recordFile = sf_open_fd([writingFileHandle fileDescriptor], SFM_WRITE, &sfinfo, TRUE)) != NULL) {
+	    [recordFileName release];
+	    recordFileName = [expandedFilename copy];
+	    
+	    return YES;
+	}
+	else {
+	    NSLog(@"SndAudioProcessorRecorder -setupRecordFile Error opening file '%@' for recording.\n", expandedFilename);
+	    return NO;
+	}	
     }
 }
 
