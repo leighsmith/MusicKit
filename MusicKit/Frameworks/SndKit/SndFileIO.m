@@ -5,8 +5,8 @@
 //  Description:
 //    Routines to read and write sound files.
 //    Historically these have been functions rather than methods. Nowdays, we
-//    Keep them as functions only to isolate our sound file reading library
-//    libsndfile or libst (sox) from the rest of the code base, especially regarding
+//    keep them as functions only to isolate our sound file reading library
+//    (libsndfile) from the rest of the code base, especially regarding
 //    including headers etc.
 //
 //  Original Author: Leigh M. Smith <leigh@leighsmith.com>
@@ -25,20 +25,6 @@
 #if HAVE_CONFIG_H
 # import "SndKitConfig.h"
 #endif
-
-// #ifndef GNUSTEP
-// # ifndef WIN32
-// #  import <libc.h>
-// # else
-// #  import <stdio.h>
-// #  import <fcntl.h>
-// #  import <Winsock.h>
-// #  import <malloc.h>
-// #  import <io.h>
-// # endif
-// #else
-// # import <fcntl.h>
-// #endif
 
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
@@ -160,7 +146,7 @@
     SndFormat headerFormat = { SND_FORMAT_UNSPECIFIED, 0, 0, 0 };
     SNDFILE *sfp;
     SF_INFO sfinfo;
-    NSFileHandle *readingFileHandle = [NSFileHandle fileHandleForReadingAtPath: path]; 
+    NSFileHandle *readingFileHandle = [NSFileHandle fileHandleForReadingAtPath: [path stringByExpandingTildeInPath]]; 
 
     if ((sfp = sf_open_fd([readingFileHandle fileDescriptor], SFM_READ, &sfinfo, TRUE)) == NULL) {
 	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
@@ -244,7 +230,7 @@
 	return SND_ERR_BAD_FILENAME;
     if ([path length] == 0)
 	return SND_ERR_BAD_FILENAME;
-    readingFileHandle = [NSFileHandle fileHandleForReadingAtPath: path]; 
+    readingFileHandle = [NSFileHandle fileHandleForReadingAtPath: [path stringByExpandingTildeInPath]]; 
     if ((sfp = sf_open_fd([readingFileHandle fileDescriptor], SFM_READ, &sfinfo, TRUE)) == NULL) {
 	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
 	    NSLog(@"File reading error: %s\n", sf_strerror(sfp));
@@ -332,6 +318,7 @@
     }
     
     errorClosing = sf_close(sfp);
+    [readingFileHandle closeFile];
     if (errorClosing != 0)
 	return SND_ERR_UNKNOWN;
     
@@ -353,25 +340,26 @@
 {
     NSDictionary *fileAttributeDictionary;
     NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *expandedFilename = [filename stringByExpandingTildeInPath];
     
     [name release];
     name = nil;
     
-    if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
-	NSLog(@"Snd -readSoundfile: sound file %@ doesn't exist", filename);
+    if (![[NSFileManager defaultManager] fileExistsAtPath: expandedFilename]) {
+	NSLog(@"Snd -readSoundfile: sound file %@ doesn't exist", expandedFilename);
 	return SND_ERR_CANNOT_OPEN;
     }
     
     // check its seekable, by checking it is POSIX regular.
-    fileAttributeDictionary = [fileManager fileAttributesAtPath: filename
+    fileAttributeDictionary = [fileManager fileAttributesAtPath: expandedFilename
 					           traverseLink: YES];
     
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular) {
-	NSLog(@"Snd -readSoundfile: sound file %@ not a regular file\n", filename);
+	NSLog(@"Snd -readSoundfile: sound file %@ not a regular file\n", expandedFilename);
         return SND_ERR_CANNOT_OPEN;
     }
         
-    return [self readSoundfile: filename startFrame: 0 frameCount: -1];    
+    return [self readSoundfile: expandedFilename startFrame: 0 frameCount: -1];    
 }
 
 #if HAVE_LIBSNDFILE
@@ -430,7 +418,12 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
 	return SND_ERR_UNKNOWN;
     }
 
-    writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: path]; 
+    if(![[NSFileManager defaultManager] createFileAtPath: path contents: nil attributes: nil]) {
+	NSLog(@"SndAudioProcessorRecorder -writeSoundfile:fileFormat:dataFormat: Error creating file '%@' for recording.\n", path);
+	return SND_ERR_UNKNOWN;
+    }
+    writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: path];
+    // NSLog(@"fileFormat = %@, writingFileHandle = %@", fileFormat, writingFileHandle);
     if ((sfp = sf_open_fd([writingFileHandle fileDescriptor], SFM_WRITE, &sfinfo, TRUE)) == NULL)
 	return SND_ERR_UNKNOWN;
     
@@ -443,15 +436,17 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
 	      (sfinfo.channels > 1) ? "channels" : "channel");
     }
 
+    if(info != nil) {
 #if DEBUG_MESSAGES
-    NSLog(@"Output file: writing info comment \"%s\"\n", [info cString]);
-#endif
-    error = sf_set_string(sfp, SF_STR_COMMENT, [info cString]);
-    // if saving comments are not supported for this file format, just skip it silently
-    if(error != 0) {
-	NSLog(@"Error writing info comment \"%s\": %s\n", [info cString], sf_error_number(error));
-	// TODO libsndfile does not allow testing whether strings are supported or not, so we have to skip over a potential hard error.
-	// return SND_ERR_CANNOT_WRITE;	
+	NSLog(@"Output file: writing info comment \"%s\"\n", [info UTF8String]);
+#endif	
+	error = sf_set_string(sfp, SF_STR_COMMENT, [info UTF8String]);
+	// if saving comments are not supported for this file format, just skip it silently
+	if(error != 0) {
+	    NSLog(@"-writeSoundfile:fileFormat:dataFormat: Error writing info comment \"%s\": %s\n", [info UTF8String], sf_error_number(error));
+	    // TODO libsndfile does not allow testing whether strings are supported or not, so we have to skip over a potential hard error.
+	    // return SND_ERR_CANNOT_WRITE;	
+	}
     }
     
     // Writing the whole thing out assumes the sound is compacted.
@@ -459,7 +454,8 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     if(error != SND_ERR_NONE)
 	return error;
     sf_close(sfp);
-
+    [writingFileHandle closeFile];
+    
     return SND_ERR_NONE;
 #else
     return SND_ERR_NOT_IMPLEMENTED;
