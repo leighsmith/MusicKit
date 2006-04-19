@@ -607,6 +607,9 @@
 		D869644B07C1657F00785798 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D869644C07C1657F00785798 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D869644D07C1657F00785798 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D86B0ACD09F6CAA2003B4720 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D86B0ACE09F6CAA2003B4720 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D86B0ACF09F6CAA2003B4720 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D86CBB8507ADAE9A00CB06E4 /* MidiEcho.nib in Resources */ = {isa = PBXBuildFile; fileRef = D86CBB8307ADAE9A00CB06E4 /* MidiEcho.nib */; };
 		D86CBB8C07ADAF6100CB06E4 /* Info.nib in Resources */ = {isa = PBXBuildFile; fileRef = D86CBB8A07ADAF6100CB06E4 /* Info.nib */; };
 		D86CBBBC07ADB89A00CB06E4 /* convertscore.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8708B5205B312E00074C18D /* convertscore.1 */; };
@@ -1526,6 +1529,7 @@
 		D844A7C907C827CD0086A55B /* playsndfaders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playsndfaders; sourceTree = BUILT_PRODUCTS_DIR; };
 		D847900E07A8B84500F7C83A /* MusicKitConfig.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MusicKitConfig.h; path = Frameworks/MusicKit/MusicKitConfig.h; sourceTree = "<group>"; };
 		D847900F07A8B84500F7C83A /* MusicKitConfig.h.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MusicKitConfig.h.in; path = Frameworks/MusicKit/MusicKitConfig.h.in; sourceTree = "<group>"; };
+		D84B2D9C09D558A900766BD4 /* Makefile.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 30; name = Makefile.in; path = Documentation/Makefile.in; sourceTree = "<group>"; };
 		D84CDEDE061F57D5007B002D /* SndPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndPasteboard.h; path = Frameworks/SndKit/SndPasteboard.h; sourceTree = "<group>"; };
 		D84CDEDF061F57D5007B002D /* SndPasteboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPasteboard.m; path = Frameworks/SndKit/SndPasteboard.m; sourceTree = "<group>"; };
 		D84E1E5F05B5E487002B493F /* MidiEcho.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MidiEcho.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1599,7 +1603,7 @@
 		D85A3022061F3A820065380E /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = English; path = Applications/Spectro/Help/English.lproj/SpectroHelp.sgml; sourceTree = "<group>"; };
 		D85C2F8806308A2900E6397B /* SndEditing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndEditing.m; path = Frameworks/SndKit/SndEditing.m; sourceTree = "<group>"; };
 		D85E27D206FA098200385C32 /* PatchCord.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PatchCord.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D85E27D306FA098A00385C32 /* PatchCordFramework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "PatchCordFramework-Info.plist"; path = "/Local/Users/leigh/Sources/Music/MusicKit/PatchCordFramework-Info.plist"; sourceTree = "<absolute>"; };
+		D85E27D306FA098A00385C32 /* PatchCordFramework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "PatchCordFramework-Info.plist"; path = "Applications/PatchCord/PatchCordFramework-Info.plist"; sourceTree = "<group>"; };
 		D85E27F406FA0C0100385C32 /* ScorePlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScorePlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85E27F606FA0C0300385C32 /* ScorePlayer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "ScorePlayer-Info.plist"; path = "Applications/ScorePlayer/ScorePlayer-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D85E27FB06FA0D0800385C32 /* ScorePlayer_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ScorePlayer_main.m; path = Applications/ScorePlayer/ScorePlayer_main.m; sourceTree = "<group>"; };
@@ -2033,7 +2037,7 @@
 		D8E8D5F00784649E00AAE755 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/EnvelopeEd/English.lproj/Info.nib; sourceTree = "<group>"; };
 		D8E8D5F60784653B00AAE755 /* EnvelopeEd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = EnvelopeEd.icns; path = Applications/EnvelopeEd/EnvelopeEd.icns; sourceTree = "<group>"; };
 		D8F8011307A1C749005C1665 /* SndKitConfig.h.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = SndKitConfig.h.in; path = Frameworks/SndKit/SndKitConfig.h.in; sourceTree = "<group>"; };
-		D8FD873409F6667B001E01B4 /* example5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = example5.app; path = ApplicationBuilding/Development/example5.app; sourceTree = "<group>"; };
+		D8FD873409F6667B001E01B4 /* example5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example5.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8FD873609F6667B001E01B4 /* example5-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "example5-Info.plist"; path = "Examples/example5/example5-Info.plist"; sourceTree = "<group>"; };
 		D8FD873D09F666F0001E01B4 /* example5_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = example5_main.m; path = Examples/example5/example5_main.m; sourceTree = "<group>"; };
 		D8FD873E09F666F0001E01B4 /* MyCustomObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MyCustomObject.h; path = Examples/example5/MyCustomObject.h; sourceTree = "<group>"; };
@@ -2363,6 +2367,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D86B0ACD09F6CAA2003B4720 /* MKPerformSndMIDI.framework in Frameworks */,
+				D86B0ACE09F6CAA2003B4720 /* SndKit.framework in Frameworks */,
+				D86B0ACF09F6CAA2003B4720 /* MKDSP.framework in Frameworks */,
 				D8FD86B609F65F87001E01B4 /* MusicKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4887,6 +4894,7 @@
 		D8DB4E61059FA0D100624233 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				D84B2D9C09D558A900766BD4 /* Makefile.in */,
 				D8D1B7380817D26600D9156A /* MusicKit_README.sgml */,
 				D8D1B74F0817D3DA00D9156A /* Concepts */,
 				D8D1B7520817D3F600D9156A /* Tutorials */,
@@ -5903,9 +5911,9 @@
 ";
 			productType = "com.apple.product-type.framework";
 		};
-		D844A75707C7EF320086A55B /* playsnd (Tool) */ = {
+		D844A75707C7EF320086A55B /* playsnd */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F86099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsnd (Tool)" */;
+			buildConfigurationList = D8B44F86099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsnd" */;
 			buildPhases = (
 				D844A75507C7EF320086A55B /* Sources */,
 				D844A75607C7EF320086A55B /* Frameworks */,
@@ -5934,7 +5942,7 @@
 			};
 			dependencies = (
 			);
-			name = "playsnd (Tool)";
+			name = playsnd;
 			productName = playsnd;
 			productReference = D844A75807C7EF320086A55B /* playsnd */;
 			productType = "com.apple.product-type.tool";
@@ -6149,9 +6157,9 @@
 ";
 			productType = "com.apple.product-type.application";
 		};
-		D84E211505B70643002B493F /* mixsounds (Tool) */ = {
+		D84E211505B70643002B493F /* mixsounds */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F72099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "mixsounds (Tool)" */;
+			buildConfigurationList = D8B44F72099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "mixsounds" */;
 			buildPhases = (
 				D84E211205B70643002B493F /* Headers */,
 				D84E211305B70643002B493F /* Sources */,
@@ -6180,14 +6188,14 @@
 			comments = "MIXSOUNDS\n\nThis directory contains \"mixsounds\", an example program that mixes\nsoundfiles based on a scorefile description of the mix.  mixsounds\nallows you to set the amplitude scaling of each soundfile and to\nchange that scaling over time by applying an amplitude envelope. It\nallows you to resample (change the pitch of) a file.  It also allows\nyou to specify that only a portion of a file be used in the mix.\nThere is no limit to the number of soundfiles that may be mixed\ntogether. Also, the same soundfile may be mixed several times and may\noverlap with itself.  The soundfiles may have different sampling rates\nand different formats.  However, the output must be 16 bit linear.\nThe mix is done on the main CPU, rather than the DSP.  The more files\nyou mix, the longer it will take the program to run.  Note also that\nif you mix many large files, you will need a fair degree of swap\nspace--keep some room free on the disk off of which you booted.\n\nmixsounds is also an illustration of how to make your own Music Kit\nInstrument subclass to \"realize Notes\" in some novel fashion. In this\ncase, Notes are soundfile mix specifications. They are \"realized\" by\nbeing mixed into the output file.\n\nTo run the program with the file testMix.score as input and writing to the file\ntestMix.snd type the following to a shell:\n\n        mixsounds testMix.score testMix.snd\n        \nThis file mixes three of the sounds on /NextLibrary/Music/Sounds together into \na new sound.\n\nYou can then play the result, testMix.snd, with the SoundPlayer Demo or the\nsndplay command-line program.\n\n\nSCOREFILE SEMANTICS AND AN EXAMPLE\n\nMixsounds responds to only two Music Kit noteTypes, noteDur and\nnoteUpdate with no noteTag.  noteUpdates are used only to set\ndefaults.  Since many processing algorithms are applied before a mix,\nnoteUpdates in the middle of a file may not take effect until the next\nnote.\n\nMixsounds recognizes the following parameters:\n\n        soundFile      - The sound file to be read, specified as a string.\n        timeOffset     - Time offset into the file to begin reading. E.g.\n                                a time offset of 1 means begin 1 second into\n                                the file. Note that timeOffset is computed \n\t\t\t\tbefore any pitch change.\n        dur            - Duration of the file to use. E.g. a dur of .5\n                                means to use only .5 seconds of the file.\n                                Note that dur is computed before any pitch \n\t\t\t\tchange. A dur of 0 means \"the whole thing\".\n        amp            - The amplitude scaling to be applied to the file.\n\tampEnv\t       - The amplitude envelope. The X values are in seconds.\n\t\t\t\tThe Y values are scaled by the amp parameter.  \n\t\t\t\tThe resulting amplitude is the file amplitude\n\t\t\t\tmultipled by amp multiplied by ampEnv.\n\t\t\t\tNote that the way ampEnv is applied depends\n\t\t\t\ton ampEnvTimeScale.\n\tampEnvTimeScale - If this parameter is 0 or not present, ampEnv is\n\t\t\t\tapplied before any pitch change. Thus, the\n\t\t\t\ttimes in the envelope refer to the times in the\n\t\t\t\toriginal file. If this parameter is 1, ampEnv \n\t\t\t\tis applied after any pitch change.  If this \n\t\t\t\tparameter is 2, ampEnv times are scaled to \n\t\t\t\texactly fit the\tselected file segment.\n\tfreq1\t       - New assumed fundamental frequency. Must be \n\t\t\t\taccompanied by freq0.\n\tfreq0\t       - Old assumed fundamental frequency. Must be\n\t\t\t\taccompanied by freq1.\n\tbearing\t       - This parameter is relevant only when mixing a mono\n\t\t\t\tfile into a stereo mix.  It represents the\n\t\t\t\tright/left panning of the signal and is in the\n\t\t\t\trange (-45:45).\n\nAn example will help clarify how these parameters work. First let's write out\none of the example .score files as a .snd file. We use the command-line utility\nplayscore. To a shell, type the following:\n\n        playscore -w Examp1.aiff Examp1.score\n\nNow, here's the contents of testMix2.score, which mixes Examp1.aiff with itself\nand other example soundfiles.\n\n        part p1; /* We use only one part. The part is not relevant in this \n                    program because we mix all parts together in the output\n                    file. */\n\n\tenvelope aEnv = [(0,1)(1.9,1)(2,0)];\n\n        BEGIN;\n        /* First, here's an 'echo' effect. We use the first 2 seconds of \n\t   Examp1.aiff */\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.1 ampEnv:aEnv;\n        t +.5;\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.05 ampEnv:aEnv;\n        t +.5;\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.025 ampEnv:aEnv;\n        t +.5;\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.01 ampEnv:aEnv;\n        t + 4;\n        p1 (0) soundFile:\"/Next/Library/Sounds/Frog.snd\" amp:.1;\n        /* A duration of 0 means 'the whole thing' */\n\nADDING AN ENVELOPE TO A FILE\n\nEnvelopes are simple Music Kit envelopes, where the time is in seconds.\nExample:\n\n        part p1;\n        BEGIN;\n        p1 (8) soundFile:\"Examp1.aiff\" amp:.1 ampEnv:[(0,0)(1,1)(2,.1)(8,0)]\n\t\ttimeOffset:.4;\n\t/* Note that the times in the ampEnv applied BEFORE the file has\n           been adjusted as specifed in the timeOffset.  For example, in \n\t   this case, the envelope (and the sound) begin .4 seconds into\n\t   the file and the envelope goes to zero 8.4 seconds into the file.\n\t   See ampEnvTimeScale above.\n\t*/\n\tEND;\n\nCHANGING THE PITCH OF A FILE\n\nThis is a little tricky because it also changes the length of the\nfile.  The important thing to rememeber is that the duration and\ntimeOffset parameters, as well as the amplitude envelope are applied\nbefore the pitch/time change is made, by default.  For example, if a\nfile is raised an octave, it gets twice as short.\n\nExample:\n\n        part p1;\n        BEGIN;\n        p1 (8) soundFile:\"Examp1.aiff\" amp:.1 freq0:440 freq1:880; /* 8va */\n\tEND;\n\nHINTS\n\nKeep in mind that to prevent overflow distortion, the sum of the\namplitudes of all files that overlap at any one time must be less than\n1. A good rule of thumb is to set each file's amp parameter to the\nreciprocal of the total number of files that overlap at any one time.\nA simple program called \"maxamp\" is provided to check the maximum amplitude.\n\nAlso remember that you will get a click if a soundfile enters or\nleaves the mix when its amplitude is not 0. To avoid clicks, you must\nselect carefully the portion of the soundfile you use.\n\nMixsounds was written by David Jaffe, with Michael McNabb adding the\nenveloping and pitch transposition, the latter based on code provided\nby Julius Smith.  The source to the pitch transposition is not currently\navailable.\n\nEXTENDING MIXSOUNDS\n\nTo add your own processing routines and parameters, copy the mixsounds\ndirectory, open the file MixInstrument.m and search for \"###\".  Follow\ndirections in that file.  If you are using mixsounds with Common Music,\nyou must also create a Common Music \"part declaration\".  An example\nis given in this directory as cm-part.lisp.\n\nUSING MIXSOUNDS WITH COMMON MUSIC\n\nCommon Music supports Mixsounds.  However, this version of Mixsounds contains\nparameters not in the original version so a special Common Music file is \nneeded.  See cm-part.lisp on this directory.  Substitute this file for the\ncommon-music/mk/mixsounds.lisp file and make common music.  Alternatively,\nchage the name of the part in cm-part.lisp and use the new part name.\nAn example file to access mixsounds from common music is given in \ncommon-music-example.lisp.\n\nBUGS\n\nmixsounds can eat up swap space if you try to mix a large number of\nfile on top of one another or if you have very long files and are\nchanging pitch.  This is because mixsounds does its operations in\nmemory (with the exception of writing out the final mix.)  It would be\n*very* nice to fix this problem, but it's not trivial.\n\n";
 			dependencies = (
 			);
-			name = "mixsounds (Tool)";
+			name = mixsounds;
 			productName = mixsounds;
 			productReference = D84E211605B70643002B493F /* mixsounds */;
 			productType = "com.apple.product-type.tool";
 		};
-		D84E217F05B707F2002B493F /* maxamp (Tool) */ = {
+		D84E217F05B707F2002B493F /* maxamp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F77099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "maxamp (Tool)" */;
+			buildConfigurationList = D8B44F77099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "maxamp" */;
 			buildPhases = (
 				D84E217C05B707F2002B493F /* Headers */,
 				D84E217D05B707F2002B493F /* Sources */,
@@ -6215,14 +6223,14 @@
 			};
 			dependencies = (
 			);
-			name = "maxamp (Tool)";
+			name = maxamp;
 			productName = maxamp;
 			productReference = D84E218005B707F2002B493F /* maxamp */;
 			productType = "com.apple.product-type.tool";
 		};
-		D84E21BE05B7087A002B493F /* extractchannel (Tool) */ = {
+		D84E21BE05B7087A002B493F /* extractchannel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F7C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "extractchannel (Tool)" */;
+			buildConfigurationList = D8B44F7C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "extractchannel" */;
 			buildPhases = (
 				D84E21BB05B7087A002B493F /* Headers */,
 				D84E21BC05B7087A002B493F /* Sources */,
@@ -6250,14 +6258,14 @@
 			};
 			dependencies = (
 			);
-			name = "extractchannel (Tool)";
+			name = extractchannel;
 			productName = extractchannel;
 			productReference = D84E21BF05B7087A002B493F /* extractchannel */;
 			productType = "com.apple.product-type.tool";
 		};
-		D84E221205B70AED002B493F /* sndinfo (Tool) */ = {
+		D84E221205B70AED002B493F /* sndinfo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F81099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "sndinfo (Tool)" */;
+			buildConfigurationList = D8B44F81099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "sndinfo" */;
 			buildPhases = (
 				D84E220F05B70AED002B493F /* Headers */,
 				D84E221005B70AED002B493F /* Sources */,
@@ -6286,7 +6294,7 @@
 			};
 			dependencies = (
 			);
-			name = "sndinfo (Tool)";
+			name = sndinfo;
 			productName = sndinfo;
 			productReference = D84E221305B70AED002B493F /* sndinfo */;
 			productType = "com.apple.product-type.tool";
@@ -6611,9 +6619,9 @@
 ";
 			productType = "com.apple.product-type.application";
 		};
-		D86963BF07C164F000785798 /* example1 (Tool) */ = {
+		D86963BF07C164F000785798 /* example1 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F9F099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example1 (Tool)" */;
+			buildConfigurationList = D8B44F9F099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example1" */;
 			buildPhases = (
 				D86963BD07C164F000785798 /* Sources */,
 				D86963BE07C164F000785798 /* Frameworks */,
@@ -6642,7 +6650,7 @@
 			};
 			dependencies = (
 			);
-			name = "example1 (Tool)";
+			name = example1;
 			productName = example1;
 			productReference = D86963C007C164F000785798 /* example1 */;
 			productType = "com.apple.product-type.tool";
@@ -6710,9 +6718,9 @@
 ";
 			productType = "com.apple.product-type.application";
 		};
-		D8708B4805B312A70074C18D /* convertscore (Tool) */ = {
+		D8708B4805B312A70074C18D /* convertscore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F40099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "convertscore (Tool)" */;
+			buildConfigurationList = D8B44F40099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "convertscore" */;
 			buildPhases = (
 				D8708B4505B312A70074C18D /* Headers */,
 				D8708B4605B312A70074C18D /* Sources */,
@@ -6741,14 +6749,14 @@
 			};
 			dependencies = (
 			);
-			name = "convertscore (Tool)";
+			name = convertscore;
 			productName = convertscore;
 			productReference = D8708B4905B312A70074C18D /* convertscore */;
 			productType = "com.apple.product-type.tool";
 		};
-		D8708B6905B313730074C18D /* scorefile2stella (Tool) */ = {
+		D8708B6905B313730074C18D /* scorefile2stella */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F45099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "scorefile2stella (Tool)" */;
+			buildConfigurationList = D8B44F45099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "scorefile2stella" */;
 			buildPhases = (
 				D8708B6505B313730074C18D /* Headers */,
 				D8708B6605B313730074C18D /* Sources */,
@@ -6776,14 +6784,14 @@
 			};
 			dependencies = (
 			);
-			name = "scorefile2stella (Tool)";
+			name = scorefile2stella;
 			productName = scorefile2stella;
 			productReference = D8708B6A05B313730074C18D /* scorefile2stella */;
 			productType = "com.apple.product-type.tool";
 		};
-		D8708B9905B314800074C18D /* playscore (Tool) */ = {
+		D8708B9905B314800074C18D /* playscore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D8B44F4A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscore (Tool)" */;
+			buildConfigurationList = D8B44F4A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscore" */;
 			buildPhases = (
 				D8708B9605B314800074C18D /* Headers */,
 				D8708B9705B314800074C18D /* Sources */,
@@ -6812,7 +6820,7 @@
 			};
 			dependencies = (
 			);
-			name = "playscore (Tool)";
+			name = playscore;
 			productName = playscore;
 			productReference = D8708B9A05B314800074C18D /* playscore */;
 			productType = "com.apple.product-type.tool";
@@ -7637,10 +7645,10 @@
 				D8C274E005A739E6008ABA16 /* MKSynthPatches (Framework) */,
 				D85F905107DFE7D4009DC57B /* MKUnitGenerators (Framework) */,
 				D879C3BF05A2B47F005DB251 /* SndView Palette (Bundle) */,
-				D8708B4805B312A70074C18D /* convertscore (Tool) */,
-				D8708B6905B313730074C18D /* scorefile2stella (Tool) */,
-				D8708B9905B314800074C18D /* playscore (Tool) */,
-				D86963BF07C164F000785798 /* example1 (Tool) */,
+				D8708B4805B312A70074C18D /* convertscore */,
+				D8708B6905B313730074C18D /* scorefile2stella */,
+				D8708B9905B314800074C18D /* playscore */,
+				D86963BF07C164F000785798 /* example1 */,
 				D8684F4C081CA69900926058 /* example3 */,
 				D8A1DC3F09F65B890094B3F5 /* example4 */,
 				D8FD873309F6667B001E01B4 /* example5 */,
@@ -7650,11 +7658,11 @@
 				D870944205B5DFDF0074C18D /* MidiFilePlayback */,
 				D84E1E5E05B5E487002B493F /* MidiEcho */,
 				D84E1F9005B5E5B5002B493F /* MidiEcho-1-Channel */,
-				D84E211505B70643002B493F /* mixsounds (Tool) */,
-				D84E217F05B707F2002B493F /* maxamp (Tool) */,
-				D84E21BE05B7087A002B493F /* extractchannel (Tool) */,
-				D84E221205B70AED002B493F /* sndinfo (Tool) */,
-				D844A75707C7EF320086A55B /* playsnd (Tool) */,
+				D84E211505B70643002B493F /* mixsounds */,
+				D84E217F05B707F2002B493F /* maxamp */,
+				D84E21BE05B7087A002B493F /* extractchannel */,
+				D84E221205B70AED002B493F /* sndinfo */,
+				D844A75707C7EF320086A55B /* playsnd */,
 				D844A7AC07C7F1EE0086A55B /* recsnd */,
 				D844A7C807C827CD0086A55B /* playsndfaders */,
 				D8E1DDF907CA78B40018F8F3 /* MultipleSoundPlayer */,
@@ -8490,7 +8498,7 @@
 /* Begin PBXTargetDependency section */
 		D80DA5CB0764E4250052DFAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D84E221205B70AED002B493F /* sndinfo (Tool) */;
+			target = D84E221205B70AED002B493F /* sndinfo */;
 			targetProxy = D80DA5CA0764E4250052DFAF /* PBXContainerItemProxy */;
 		};
 		D8306767082C5F2B00BCA5C1 /* PBXTargetDependency */ = {
@@ -8500,7 +8508,7 @@
 		};
 		D844A7B707C7F2AA0086A55B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D844A75707C7EF320086A55B /* playsnd (Tool) */;
+			target = D844A75707C7EF320086A55B /* playsnd */;
 			targetProxy = D844A7B607C7F2AA0086A55B /* PBXContainerItemProxy */;
 		};
 		D844A7B907C7F2AA0086A55B /* PBXTargetDependency */ = {
@@ -8540,17 +8548,17 @@
 		};
 		D84E21D805B70940002B493F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D84E211505B70643002B493F /* mixsounds (Tool) */;
+			target = D84E211505B70643002B493F /* mixsounds */;
 			targetProxy = D84E21D705B70940002B493F /* PBXContainerItemProxy */;
 		};
 		D84E21DA05B70940002B493F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D84E217F05B707F2002B493F /* maxamp (Tool) */;
+			target = D84E217F05B707F2002B493F /* maxamp */;
 			targetProxy = D84E21D905B70940002B493F /* PBXContainerItemProxy */;
 		};
 		D84E21DC05B70940002B493F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D84E21BE05B7087A002B493F /* extractchannel (Tool) */;
+			target = D84E21BE05B7087A002B493F /* extractchannel */;
 			targetProxy = D84E21DB05B70940002B493F /* PBXContainerItemProxy */;
 		};
 		D863A038059FAB1D00339D3B /* PBXTargetDependency */ = {
@@ -8575,17 +8583,17 @@
 		};
 		D8708B7B05B314040074C18D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D8708B4805B312A70074C18D /* convertscore (Tool) */;
+			target = D8708B4805B312A70074C18D /* convertscore */;
 			targetProxy = D8708B7A05B314040074C18D /* PBXContainerItemProxy */;
 		};
 		D8708B7D05B3140A0074C18D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D8708B6905B313730074C18D /* scorefile2stella (Tool) */;
+			target = D8708B6905B313730074C18D /* scorefile2stella */;
 			targetProxy = D8708B7C05B3140A0074C18D /* PBXContainerItemProxy */;
 		};
 		D8708BCE05B315980074C18D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D8708B9905B314800074C18D /* playscore (Tool) */;
+			target = D8708B9905B314800074C18D /* playscore */;
 			targetProxy = D8708BCD05B315980074C18D /* PBXContainerItemProxy */;
 		};
 		D8708DFF05B31C970074C18D /* PBXTargetDependency */ = {
@@ -8650,7 +8658,7 @@
 		};
 		D8D1B6A00812473C00D9156A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D86963BF07C164F000785798 /* example1 (Tool) */;
+			target = D86963BF07C164F000785798 /* example1 */;
 			targetProxy = D8D1B69F0812473C00D9156A /* PBXContainerItemProxy */;
 		};
 		D8D1B6B0081249CC00D9156A /* PBXTargetDependency */ = {
@@ -9102,12 +9110,12 @@
 		D854FDBA09A525F300697E71 /* Intel Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
+				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lsndfile -lvorbis -logg";
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.5;
-				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9120,10 +9128,7 @@
 					/usr/local/lib,
 					/sw/lib,
 				);
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98018000,
@@ -9153,10 +9158,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9188,10 +9190,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9246,10 +9245,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Palettes/SndView/SndViewPalette-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9302,10 +9298,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9332,10 +9325,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9361,10 +9351,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9417,10 +9404,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiRecord/MidiRecord-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9448,10 +9432,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiLoop/MidiLoop-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9479,10 +9460,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiPlay/MidiPlay-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9510,10 +9488,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiFilePlayback/MidiFilePlayback-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9541,10 +9516,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiEcho/MidiEcho-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9572,10 +9544,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiEcho-1-MIDI-Channel/MidiEcho-1-Channel-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9602,10 +9571,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9632,10 +9598,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9662,10 +9625,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9692,10 +9652,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9720,17 +9677,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
 					"-framework",
 					AppKit,
 				);
-				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = playsnd;
 				SECTORDER_FLAGS = "";
@@ -9752,10 +9705,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9784,17 +9734,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
 					"-framework",
 					AppKit,
 				);
-				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = playsndfaders;
 				SECTORDER_FLAGS = "";
@@ -9817,17 +9763,13 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
 					"-framework",
 					AppKit,
 				);
-				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = MultipleSoundPlayer;
 				SECTORDER_FLAGS = "";
@@ -9849,10 +9791,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9881,10 +9820,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9914,10 +9850,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/example3/example3-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9974,10 +9907,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Applications/Spectro/Spectro-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10005,10 +9935,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Applications/PatchCord/PatchCord-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10034,10 +9961,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10067,10 +9991,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10100,10 +10021,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10133,10 +10051,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10340,7 +10255,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = i386;
-				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 			};
@@ -10618,10 +10533,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98000000,
@@ -10754,10 +10666,7 @@
 					/usr/local/lib,
 					/sw/lib,
 				);
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98018000,
@@ -10892,10 +10801,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11024,10 +10930,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11036,7 +10939,6 @@
 					"-seg1addr",
 					983B0000,
 				);
-				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wall";
@@ -15487,7 +15389,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F40099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "convertscore (Tool)" */ = {
+		D8B44F40099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "convertscore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F41099617E500B5C3A4 /* Development */,
@@ -15499,7 +15401,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F45099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "scorefile2stella (Tool)" */ = {
+		D8B44F45099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "scorefile2stella" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F46099617E500B5C3A4 /* Development */,
@@ -15511,7 +15413,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F4A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscore (Tool)" */ = {
+		D8B44F4A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F4B099617E500B5C3A4 /* Development */,
@@ -15607,7 +15509,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F72099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "mixsounds (Tool)" */ = {
+		D8B44F72099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "mixsounds" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F73099617E500B5C3A4 /* Development */,
@@ -15619,7 +15521,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F77099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "maxamp (Tool)" */ = {
+		D8B44F77099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "maxamp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F78099617E500B5C3A4 /* Development */,
@@ -15631,7 +15533,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F7C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "extractchannel (Tool)" */ = {
+		D8B44F7C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "extractchannel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F7D099617E500B5C3A4 /* Development */,
@@ -15643,7 +15545,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F81099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "sndinfo (Tool)" */ = {
+		D8B44F81099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "sndinfo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F82099617E500B5C3A4 /* Development */,
@@ -15655,7 +15557,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F86099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsnd (Tool)" */ = {
+		D8B44F86099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsnd" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44F87099617E500B5C3A4 /* Development */,
@@ -15715,7 +15617,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		D8B44F9F099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example1 (Tool)" */ = {
+		D8B44F9F099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D8B44FA0099617E500B5C3A4 /* Development */,
