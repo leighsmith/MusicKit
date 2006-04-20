@@ -251,19 +251,17 @@ typedef struct {
 } DSPDRIVEROutputQueueMessage;
 
 typedef struct {
-    mach_msg_header_t  h;
-    msg_type_t    t;
     int           regionTag; /* Also used for dsperror and dspmsg codes */
 } DSPDRIVERSimpleMessage;
 
 typedef struct {
     mach_msg_header_t  h;
-    msg_type_t    t1;
+    int		  t1;
     int           regionTag;
     int           nbytes;
     int           pageIndex;
     int           chan;
-    msg_type_t    t2;
+    int    t2;
     void          *data;  /* Either short * or int * */
 } DSPDRIVERDataMessage;
 
