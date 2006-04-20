@@ -30,10 +30,6 @@ INSTALLROOT=/
 
 SITEUSER=leighsmith
 UPLOAD_SERVER=upload.sourceforge.net
-DOC_TARBALL_PATH=$(WORKINGDIR)/MKDocumentation.build/
-DOC_TARBALL=MusicKitREADME.tar.bz2
-DOC_SITE=musickit.sourceforge.net
-DOC_SITEHTMLDIR=/home/groups/m/mu/musickit
 
 # case `uname` in
 #     "Darwin")
@@ -62,8 +58,7 @@ all: packageBinaries packageSources
 
 # Upload the files to the server
 ship: packageBinaries packageSources
-	scp $(DOC_TARBALL_PATH)/$(DOC_TARBALL) $(SITEUSER)@$(DOC_SITE):$(DOC_TARBALL)
-	ssh -l $(SITEUSER) $(DOC_SITE) "cd $(DOC_SITEHTMLDIR); tar xjf ~/$(DOC_TARBALL)"
+	# should be doing: sudo $(MAKE) -C Documentation upload DSTROOT=$(INSTALL_FILE_DIR)
 	ftp -u ftp://anonymous:$(SITEUSER)@$(UPLOAD_SERVER)/incoming/$(BINARY_TARBALL) $(WORKINGDIR)/$(BINARY_TARBALL)
 	ftp -u ftp://anonymous:$(SITEUSER)@$(UPLOAD_SERVER)/incoming/$(SRC_TARBALL) $(SRC_TARBALL_PATH)/$(SRC_TARBALL)
 
