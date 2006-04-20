@@ -3754,7 +3754,8 @@
 			children = (
 				D8708B0205B3119C0074C18D /* playscore */,
 				D8708B0905B311AE0074C18D /* scoreinfo */,
-				D8708B1005B311F90074C18D /* Translators */,
+				D8708B1D05B3122A0074C18D /* scorefile2stella */,
+				D8708B1605B312240074C18D /* convertscore */,
 			);
 			name = "Scorefile Utilities";
 			sourceTree = "<group>";
@@ -3775,15 +3776,6 @@
 				D8708BBB05B315370074C18D /* Other Sources */,
 			);
 			name = scoreinfo;
-			sourceTree = "<group>";
-		};
-		D8708B1005B311F90074C18D /* Translators */ = {
-			isa = PBXGroup;
-			children = (
-				D8708B1D05B3122A0074C18D /* scorefile2stella */,
-				D8708B1605B312240074C18D /* convertscore */,
-			);
-			name = Translators;
 			sourceTree = "<group>";
 		};
 		D8708B1605B312240074C18D /* convertscore */ = {
