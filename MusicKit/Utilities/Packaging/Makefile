@@ -63,6 +63,7 @@ ship: packageBinaries packageSources
 	ftp -u ftp://anonymous:$(SITEUSER)@$(UPLOAD_SERVER)/incoming/$(SRC_TARBALL) $(SRC_TARBALL_PATH)/$(SRC_TARBALL)
 
 packageSources:
+	echo "Not implemented, must run packageSources shell script"
 
 packageBinaries: $(WORKINGDIR)/$(BINARY_TARBALL)
 
