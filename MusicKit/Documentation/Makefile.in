@@ -6,15 +6,10 @@
 #
 # Usage: make CHANGELOG=[ChangeLog] OBJDIR=[ObjectDirectory] VERSION=[VersionString]
 #
-# Create a set of HTML pages and PDFs from the SGML documentation suitable for
-# distribution on the musickit.org web-site. We do this with a
-# customised stylesheet (in DSSSL) to produce the correct text
-# colouring, background images etc.
-#
-# Also creates HTML pages of class documentation from header files
-# using HeaderDoc and copies in PDF's of documentation.
-# The entire tree of documentation is then packaged up suitable for
-# shipping to a webserver.
+# Create a set of HTML pages and PDFs from the SGML documentation and creates HTML pages
+# of class documentation from header files using Doxygen. The entire tree of documentation
+# is then packaged up suitable for shipping to the musickit.org web-site. We do this with a
+# customised stylesheet (in DSSSL) to produce the correct text colouring, background images etc.
 #
 # Leigh Smith <leigh@leighsmith.com>
 #
@@ -79,12 +74,23 @@ ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
 #
 INSTALL_DIR=$(DSTROOT)/Library/Documentation/MusicKit
 
+#
+# Check an SGML translator has been found in the autoconf configuration process.
+# If there isn't, we want to exit gracefully rather than causing an error which will stop
+# the entire MusicKit build process.
+#
+ifeq ($(SGMLTRANS),)
+check_sgmltrans:
+	$(warning DocBook SGML translator not found, building of documentation skipped.)
+	@exit 0
+endif
+
 # 
-# The highest level and default rule, make everything.
+# The highest level and default rule if there is an SGML translator, makes everything.
 # Generates the HTML tarball. The HTML tarball will create the PDF
 # before it copies them into the HTML directory.
 #
-all: check_sgmltrans $(DOC_TARBALL_PATH)
+all: $(DOC_TARBALL_PATH)
 
 clean:
 	-rm -rf $(HTML_TMPDIR)
@@ -101,9 +107,6 @@ install:: $(DOC_TARBALL_PATH) $(INSTALL_DIR)
 upload: $(DOC_TARBALL_PATH)
 	scp $(DOC_TARBALL_PATH) $(SITEUSER)@$(SITE):$(DOC_TARBALL_FILE)
 	ssh -l $(SITEUSER) $(SITE) "tar -x -j -C $(SITEHTMLDIR) -f ~/$(DOC_TARBALL_FILE)"
-
-check_sgmltrans:
-	if [ $(SGMLTRANS)_x = _x ]; then echo "DocBook SGML translator not found"; exit 1; fi
 
 $(INSTALL_DIR):
 	mkdir -p $(INSTALL_DIR)
