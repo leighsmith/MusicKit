@@ -167,6 +167,7 @@
     }
     
     sf_close(sfp);
+    [readingFileHandle closeFile];
     
     return headerFormat;
 #else
@@ -225,6 +226,7 @@
     int errorClosing;
     const char *comment;
     NSFileHandle *readingFileHandle;
+    NSAutoreleasePool *fileReadingPool = [[NSAutoreleasePool alloc] init];
     
     if (path == nil)
 	return SND_ERR_BAD_FILENAME;
@@ -330,6 +332,8 @@
     // TODO when we can retrieve the loop indexes from the sound file, this should become the default value.
     loopEndIndex = [self lengthInSampleFrames] - 1;
     
+    [fileReadingPool release];
+    
     return SND_ERR_NONE;
 #else
     return SND_ERR_NOT_IMPLEMENTED;
@@ -374,24 +378,24 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     switch(soundDataFormat.dataFormat) {
     case SND_FORMAT_FLOAT:
 	if (sf_write_float(sfp, (float *) soundData, sampleCount) != sampleCount) {
-	    NSLog(@"writing from floats error: %s\n", sf_strerror(sfp));
+	    NSLog(@"SndWriteSampleData() error writing %ld floats: %s\n", sampleCount, sf_strerror(sfp));
 	    return SND_ERR_UNKNOWN;
 	}
 	break;
     case SND_FORMAT_LINEAR_16:
 	if (sf_write_short(sfp, (short *) soundData, sampleCount) != sampleCount) {
-	    NSLog(@"writing from shorts error: %s\n", sf_strerror(sfp));
+	    NSLog(@"SndWriteSampleData() error writing %ld shorts: %s\n", sampleCount, sf_strerror(sfp));
 	    return SND_ERR_UNKNOWN;
 	}
 	break;
     case SND_FORMAT_LINEAR_32:
 	if (sf_write_int(sfp, (int *) soundData, sampleCount) != sampleCount) {
-	    NSLog(@"writing from ints error: %s\n", sf_strerror(sfp));
+	    NSLog(@"SndWriteSampleData() error writing %ld ints: %s\n", sampleCount, sf_strerror(sfp));
 	    return SND_ERR_UNKNOWN;
 	}
 	break;
     default:
-	NSLog(@"Unable to write from format %d, not supported\n", soundDataFormat.dataFormat);	    
+	NSLog(@"SndWriteSampleData() Unable to write from format %d, not supported\n", soundDataFormat.dataFormat);	    
     }
     return SND_ERR_NONE;
 }
