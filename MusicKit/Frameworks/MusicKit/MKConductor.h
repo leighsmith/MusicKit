@@ -658,13 +658,13 @@ extern void MKFinishPerformance(void);
     double beatSize;    
   /*! @var timeOffset Performance timeOffset in seconds. */
     double timeOffset;
-  /*! @var isPaused YES if this instance is paused. Note that pausing
+  /*! @var isPaused Set to YES if this instance is paused. Note that pausing
     all MKConductors through the pause factory method doesn't set this
     to YES. */ 
     BOOL isPaused;      
   /*! @var delegate The object's delegate. */
     id delegate;
-  /*! @var activePerformers NSMutableArray object of active performers
+  /*! @var activePerformers An NSMutableArray object of active performers
     using this conductor. Don't alter this NSMutableArray. */
     NSMutableArray *activePerformers;
   /*! @var MTCSync MIDI Time Code synchronization object, if any. */
