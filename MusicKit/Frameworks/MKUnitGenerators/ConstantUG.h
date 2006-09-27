@@ -27,7 +27,7 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-// classgroup Table Lookup
+// classgroup Patchpoint Arithmetic
 /*!
   @class ConstantUG
   @brief <b>ConstantUG </b>simply writes a constant to its output patchpoint. 

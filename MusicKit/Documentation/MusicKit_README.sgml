@@ -8,7 +8,7 @@ $Id$
 (Author attribution below)
 
 The following entities in DOCTYPE describe the revision tuple and the
-exact version tuple of the source code (as a CVS version tag)
+exact version tuple of the source code (as a Subversion version tag)
 this document refers to. Change accordingly to match the source
 and binary distributions. Likewise if the distribution web site changes.
 -->
@@ -17,10 +17,10 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkvertuple "5.5.2">
+<!entity mkvertuple "5.5.3">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
-<!entity mkcvsweb "http://sourceforge.net/cvs/?group_id=9881">
+<!entity mksvnweb "http://sourceforge.net/svn/?group_id=9881">
 <!entity mksfweb "http://www.sourceforge.net/projects/musickit">
 <!-- Disable mklists to stop spam -->
 <!entity mklists "@lists.sourceforge.net_nospam">
@@ -31,7 +31,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity gsguivertuple "0.8.5">
 <!-- Libraries used -->
 <!entity libsndfileweb "http://www.mega-nerd.com/libsndfile">
-<!entity libsndfilevertuple "1.0.11">
+<!entity libsndfilevertuple "1.0.14">
 <!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile">
 <!entity hipvertuple "0.4pre1">
 <!entity hipdownload "http://icepick.info/projects/libmp3hip">
@@ -39,12 +39,12 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity lamevertuple "3.93.1">
 <!entity lamedownload "http://prdownloads.sourceforge.net/lame">
 <!entity oggvorbisweb "http://www.xiph.org/ogg/vorbis">
-<!entity oggvertuple "1.0">
+<!entity oggvertuple "1.1.3">
 <!entity oggdownload "http://www.xiph.org/ogg/vorbis/download">
-<!entity vorbisvertuple "1.0">
+<!entity vorbisvertuple "1.1.2">
 <!entity vorbisdownload "http://www.xiph.org/ogg/vorbis/download">
 <!entity libshoutweb "http://www.icecast.org">
-<!entity libshoutvertuple "2.0">
+<!entity libshoutvertuple "2.2">
 <!entity libshoutdownload "http://www.icecast.org/files/libshout">
 <!entity portaudioweb "http://www.portaudio.com/">
 <!entity portaudiovertuple "19">
@@ -88,13 +88,13 @@ and binary distributions. Likewise if the distribution web site changes.
           <postcode>11217</postcode>
           <country>USA</country>
 -->
-          <phone>+61-4-0255-4184</phone> 
+          <phone>+31-6-2871-7830</phone> 
           <email>&maintaineremail;</email>
         </address>
       </affiliation>
     </author>
     <copyright>
-      <year>2000-2005</year>
+      <year>2000-2006</year>
       <holder>The MusicKit Project</holder>
     </copyright>
     <revhistory>
@@ -175,7 +175,7 @@ Source code is available for everything, with the exception of the
 low-level sound and <acronym>DSP</acronym> drivers.  This means
 researchers and developers may study the source or even customize the
 Music Kit and <acronym>DSP</acronym> tools to suit their needs.
-Enhancements can be committed to the <link linkend=fixes>CVS
+Enhancements can be committed to the <link linkend=fixes><product>Subversion</product>
 repository</link> to have them incorporated for future
 releases. Commercial software developers may freely incorporate and
 adapt the software to accelerate development of software products.
@@ -358,7 +358,7 @@ sites and open source portals:
 	      </inlinemediaobject>
 sourceforge.net
             </ulink>
-hosts the CVS repository, news, mail lists and web site.
+hosts the <product>Subversion</product> repository, news, mail lists and web site.
           </para>
         </listitem>
 	<listitem>
@@ -442,7 +442,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-announce</ulink>.
 	<listitem>
 	  <para>
 Discussions on development of the <productname>MusicKit</productname>
-and notices of updates committed to the CVS source repository are sent
+and notices of updates committed to the <product>Subversion</product> source repository are sent
 to <email>musickit-developer&mklists;</email> mail list.  Subscribe to
 the list by visiting
 <ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-developer">
@@ -464,7 +464,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-users</ulink>.
       <para>
 Don't assume nothing is being done if you don't hear anything for a
 while!  The maintainers are usually adding fixes/code, but full
-releases are less frequent. The <link linkend=fixes>CVS
+releases are less frequent. The <link linkend=fixes><product>Subversion</product>
 repository</link> can be used to track all updates and obtain them as
 they are committed by developers.
 </para>
@@ -494,7 +494,7 @@ The file
 Documentation/MusicKit_ChangeLog
 </filename>
 </ulink>
-lists changes and is generated from the CVS logs.
+lists changes and is generated from the <product>Subversion</product> logs.
 </para>
       </listitem>
     </itemizedlist>
@@ -1019,7 +1019,7 @@ directory is a single name without a space, as this tends to break
 	  </listitem>
 	  <listitem>
 	    <para>
-Install the <acronym>CVS</acronym> version control system and other
+Install the <product>Subversion</product> version control system and other
 development tools with the MSYS developer tool kit
 <filename>msysDTK-1.0.1.exe</filename>.
 <!--
@@ -1097,8 +1097,8 @@ libpng-1.2.8
 Read the instructions in
 <filename>gnustep/core/make/Documentation/README.MinGW</filename>. I
 installed <productname>GNUstep</productname> from the head of the
-<acronym>CVS</acronym> tree. If you are working from the head of the
-<acronym>CVS</acronym> tree also use:
+<product>Subversion</product> tree. If you are working from the head of the
+<product>Subversion</product> tree also use:
 </para>
 	<informalexample>
 	  <screen>
@@ -1279,14 +1279,14 @@ knowledge it will continue to work.
 </para>
 
     <sect2>
-      <title><acronym>CVS</acronym> Branch Structure</title>
+      <title><product>Subversion</product> Branch Structure</title>
 
       <para>
 Different software projects adopt different procedures for dealing
 with <emphasis>branching</emphasis> of the code base. The MusicKit
 project currently has few branches, however this is an attempt to
 define a policy for developers to conform to and to therefore be able
-to use when retrieving from the CVS tree.  For example, some projects
+to use when retrieving from the <product>Subversion</product> tree.  For example, some projects
 use branches for the &ldquo;bleeding-edge&rdquo; or experimental
 development, with the &ldquo;head&rdquo; or &ldquo;trunk&rdquo; of the
 code tree being stable. Positive experiments are then merged back into
@@ -1547,11 +1547,11 @@ systems.
           </term>
 	  <listitem>
 	    <para>
-At the moment, the portaudio <acronym>CVS</acronym> repository version is the
+At the moment, the portaudio <product>Subversion</product> repository version is the
 only version that works on <productname>MinGW</productname> and so
 <filename>MKPerformSndMIDI_portaudio</filename> uses the upcoming
-V&portaudiovertuple; release.  Either fetch the <acronym>CVS</acronym>
-snapshot, or using <acronym>CVS</acronym>, checkout
+V&portaudiovertuple; release.  Either fetch the <product>Subversion</product>
+snapshot, or using <product>Subversion</product>, checkout
 the portaudio version &portaudiovertuple; development branch. On
 <productname>Linux</productname>/<productname><acronym>BSD</acronym></productname>/<productname><acronym>SGI</acronym></productname>
 etc do:
@@ -1834,12 +1834,12 @@ for regression testing.
       </para>
     </sect2>
 
-    <sect2 id="RetrieveCVS">
-      <title>Retrieving Sources From The CVS Repository</title>
+    <sect2 id="RetrieveSubversion">
+      <title>Retrieving Sources From The <product>Subversion</product> Repository</title>
       <para>
-The bleeding edge source is obtainable from the CVS repository on
+The bleeding edge source is obtainable from the <product>Subversion</product> repository on
 <ulink url="http://www.sourceforge.net">sourceforge</ulink> and is
-described in detail by <ulink url="&mkcvsweb;">this sourceforge page</ulink>.
+described in detail by <ulink url="&mksvnweb;">this sourceforge page</ulink>.
 </para>
     </sect2>
 
@@ -2417,11 +2417,11 @@ array. The parent object is expected to copy it.
   <sect1 id="fixes">
     <title>Contributing Fixes</title>
     <para>
-Please! Changes are maintained via an 
-<ulink url="&mkcvsweb;">open CVS system</ulink>.
-If you send me <email>&maintaineremail;</email> changes I will incorporate
-them and check them in. If you are planning to do major work, I can
-register you as a developer to provide write access to the CVS server.
+Please! Changes are maintained via an <ulink url="&mksvnweb;">open
+<product>Subversion</product> system</ulink>.  If you send me
+<email>&maintaineremail;</email> changes I will incorporate them and check them in. If you
+are planning to do major work, I can register you as a developer to provide write access
+to the <product>Subversion</product> server.
 </para>
 
     <para>
