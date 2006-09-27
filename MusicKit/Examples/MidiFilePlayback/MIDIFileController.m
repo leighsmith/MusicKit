@@ -33,30 +33,32 @@
 
 - init
 {
-    currentTempo = [tempoSlider doubleValue];
-    sampleInstrument = [[MKSamplerInstrument alloc] init];
-    [sampleInstrument retain];
+    self = [super init];
+    if(self != nil) {
+	currentTempo = [tempoSlider doubleValue];
+	sampleInstrument = [[MKSamplerInstrument alloc] init];
+	[sampleInstrument retain];
 
-    /* Get the Midi object for the default MIDI serial port. */
-    midiInstrument = [MKMidi midi];
-    [midiInstrument retain];
-    NSLog(@"Initialised with %@ driver\n", [midiInstrument driverName]);
+	/* Get the Midi object for the default MIDI serial port. */
+	midiInstrument = [MKMidi midi];
+	[midiInstrument retain];
+	NSLog(@"Initialised with %@ driver\n", [midiInstrument driverName]);
 
-    aScorePerformer = [[MKScorePerformer alloc] init];
-    [aScorePerformer retain];
+	aScorePerformer = [[MKScorePerformer alloc] init];
+	[aScorePerformer retain];
 
-    /* Create a PartPerformer to perform the Part. */
-    samplePartPerformer = [[MKPartPerformer alloc] init];
-    [samplePartPerformer retain];
-    [[samplePartPerformer noteSender] connect: [sampleInstrument noteReceiver]];
+	/* Create a MKPartPerformer to perform the MKPart. */
+	samplePartPerformer = [[MKPartPerformer alloc] init];
+	[samplePartPerformer retain];
+	[[samplePartPerformer noteSender] connect: [sampleInstrument noteReceiver]];
 
-    midiPathName = NSHomeDirectory();
-    [midiPathName retain];
+	midiPathName = NSHomeDirectory();
+	[midiPathName retain];
 
-    // rather than just loading and playing a sound file, we read in a plist of a keymap allowing us to overide
-    // specific MIDI channels and keys with sound files.
-    keymap = nil;     // by default we don't do this until the user selects a keymap file.
-
+	// rather than just loading and playing a sound file, we read in a plist of a keymap allowing us to overide
+	// specific MIDI channels and keys with sound files.
+	keymap = nil;     // by default we don't do this until the user selects a keymap file.
+    }
     return self;
 }
 
@@ -184,10 +186,10 @@
     [midiInstrument run];                    /* This starts the device driver clock. */
     [MKConductor startPerformance];  /* Start sending Notes, loops until done. */
 
-NSLog(@"Completed startPerformance\n");
+    // NSLog(@"Completed startPerformance\n");
     /* 
     MKConductor's startPerformance method does not return until the performance is over.
-    Note, however, that if the Conductor is in a different mode, startPerformance returns
+    Note, however, that if the MKConductor is in a different mode, startPerformance returns
     immediately (if it is in clocked mode or if you have specified that the performance is
     to occur in a separate thread).  See the MKConductor documentation for details.
     In this case we will return immediately.
