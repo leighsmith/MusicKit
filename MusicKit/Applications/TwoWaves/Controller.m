@@ -208,27 +208,27 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     amp1 = [volNum1 floatValue] * 32768 / 10;
     freq1 = [freqNum1 floatValue];
     pointer = (short *)[newSoundA data];
-    for (i = 0; i < 3*SAMPLING_RATE; i++) {
+    for (i = 0; i < 3 * SAMPLING_RATE; i++) {
         float num1;
         switch (type1) {
         case 0:
         default:
-            num1 = (float)SINWAVE(SAMPLING_RATE,freq1,amp1,i);
+            num1 = (float) SINWAVE(SAMPLING_RATE, freq1, amp1, i);
             break;
         case 1:
-            num1 = (float)COSWAVE(SAMPLING_RATE,freq1,amp1,i);
+            num1 = (float) COSWAVE(SAMPLING_RATE, freq1, amp1, i);
             break;
         case 2:
-            num1 = (float)SQUAREWAVE(SAMPLING_RATE,freq1,amp1,i);
+            num1 = (float) SQUAREWAVE(SAMPLING_RATE, freq1, amp1, i);
             break;
         case 3:
-            num1 = (float)SAWTOOTH(SAMPLING_RATE,freq1,amp1,i);
+            num1 = (float) SAWTOOTH(SAMPLING_RATE, freq1, amp1, i);
             break;
         case 4:
-            num1 = (float)REVSAWTOOTH(SAMPLING_RATE,freq1,amp1,i);
+            num1 = (float) REVSAWTOOTH(SAMPLING_RATE, freq1, amp1, i);
             break;
         case 5:
-            num1 = (float)TRIANGLE(SAMPLING_RATE,freq1,amp1,i);
+            num1 = (float) TRIANGLE(SAMPLING_RATE, freq1, amp1, i);
         }
         pointer[i] = num1;
     }
@@ -249,7 +249,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     return self;
 }
 
-- play:sender
+- play: sender
 {
     short *pointer;
     int i;
@@ -266,9 +266,9 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 				  channelCount: 1
 					frames: SAMPLING_RATE * theLength
 				  samplingRate: SAMPLING_RATE];
-        pointer = (short *)[newSound data];
+        pointer = (short *) [newSound data];
         
-        for (i = 0; i < theLength*SAMPLING_RATE; i++) {
+        for (i = 0; i < theLength * SAMPLING_RATE; i++) {
             float num1,num2;
 
             switch (type1) {
