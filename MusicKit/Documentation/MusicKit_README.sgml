@@ -34,7 +34,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity libsndfilevertuple "1.0.14">
 <!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile">
 <!entity hipvertuple "0.4pre1">
-<!entity hipdownload "http://icepick.info/projects/libmp3hip">
+<!entity hipdownload "http://icepick.info/projects_old/libmp3hip">
 <!entity lameweb "http://www.sourceforge.net/projects/lame">
 <!entity lamevertuple "3.93.1">
 <!entity lamedownload "http://prdownloads.sourceforge.net/lame">
