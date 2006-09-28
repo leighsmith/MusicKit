@@ -811,6 +811,7 @@
 		D8C2754305A73AEA008ABA16 /* partialsDB.h in Headers */ = {isa = PBXBuildFile; fileRef = D8C2753D05A73AEA008ABA16 /* partialsDB.h */; };
 		D8C2755605A73B28008ABA16 /* _MKList.m in Sources */ = {isa = PBXBuildFile; fileRef = D8C2755405A73B28008ABA16 /* _MKList.m */; };
 		D8C2755705A73B28008ABA16 /* globals.m in Sources */ = {isa = PBXBuildFile; fileRef = D8C2755505A73B28008ABA16 /* globals.m */; };
+		D8C6E3420ACC4AC4004978A9 /* music.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8C6E3410ACC4AC4004978A9 /* music.tiff */; };
 		D8D1B6AE0812496D00D9156A /* playscorefilemidi.m in Sources */ = {isa = PBXBuildFile; fileRef = D8D1B6AD0812496D00D9156A /* playscorefilemidi.m */; };
 		D8D1B72E08124ED000D9156A /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D8D1B72F08124ED000D9156A /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -1874,6 +1875,7 @@
 		D8C2753D05A73AEA008ABA16 /* partialsDB.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = partialsDB.h; path = Frameworks/MKSynthPatches/partialsDB.h; sourceTree = "<group>"; };
 		D8C2755405A73B28008ABA16 /* _MKList.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = _MKList.m; path = Frameworks/MKSynthPatches/_MKList.m; sourceTree = "<group>"; };
 		D8C2755505A73B28008ABA16 /* globals.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = globals.m; path = Frameworks/MKSynthPatches/globals.m; sourceTree = "<group>"; };
+		D8C6E3410ACC4AC4004978A9 /* music.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = music.tiff; path = Applications/ScorePlayer/Images/music.tiff; sourceTree = "<group>"; };
 		D8D1B6A90812492700D9156A /* playscorefilemidi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playscorefilemidi; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8D1B6AD0812496D00D9156A /* playscorefilemidi.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = playscorefilemidi.m; path = Examples/playscorefilemidi/playscorefilemidi.m; sourceTree = "<group>"; };
 		D8D1B7380817D26600D9156A /* MusicKit_README.sgml */ = {isa = PBXFileReference; explicitFileType = text.xml; fileEncoding = 30; name = MusicKit_README.sgml; path = Documentation/MusicKit_README.sgml; sourceTree = "<group>"; };
@@ -2577,6 +2579,7 @@
 			children = (
 				D828F9AC0780C46700215EB9 /* play.tiff */,
 				D828F9AD0780C46700215EB9 /* playH.tiff */,
+				D8C6E3410ACC4AC4004978A9 /* music.tiff */,
 				D880FE3F0780AF2200FD03CC /* Midi.icns */,
 				D880FE400780AF2200FD03CC /* PlayScore.icns */,
 				D880FE410780AF2200FD03CC /* Score.icns */,
@@ -3196,10 +3199,10 @@
 		D85A2F2F061F33D40065380E /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				D85A2FA5061F35910065380E /* Spectro.nib */,
 				D85A2F9F061F35910065380E /* preferences.nib */,
 				D85A2FA1061F35910065380E /* soundDocument.nib */,
 				D85A2FA3061F35910065380E /* soundInfo.nib */,
-				D85A2FA5061F35910065380E /* Spectro.nib */,
 				D85A2FA7061F35920065380E /* spectrum.nib */,
 			);
 			name = Interfaces;
@@ -6268,6 +6271,7 @@
 				D828F9AE0780C46700215EB9 /* play.tiff in Resources */,
 				D828F9AF0780C46700215EB9 /* playH.tiff in Resources */,
 				D828F9B90780C52400215EB9 /* ScorePlayer.sgml in Resources */,
+				D8C6E3420ACC4AC4004978A9 /* music.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
