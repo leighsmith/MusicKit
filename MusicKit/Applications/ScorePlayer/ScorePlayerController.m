@@ -63,7 +63,6 @@ static NSString *dir = nil;
 static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
-static id stopImage,playImage,playHImage;
 // MIDI management
 static NSMutableDictionary *midis;
 static MKSamplerInstrument *sampleInstrument = nil;
@@ -449,7 +448,7 @@ static int fileType(NSString *name)
     return YES;
 }
 
-static BOOL setFile(ScorePlayerController *self)
+- (BOOL) setFile
 {
     MKTuningSystem *tuningSys;
     MKNote *scoreInfo;
@@ -458,15 +457,15 @@ static BOOL setFile(ScorePlayerController *self)
     MKSetScorefileParseErrorAbort(10);
     /* Can this every happen? */
     if (!fileName || ![fileName length]) {
-        [self->theMainWindow setTitle: STR_NO_FILE_OPEN];
+        [theMainWindow setTitle: STR_NO_FILE_OPEN];
         return NO;
     }
     scoreForm = fileType(fileName);    // determine what sort of file we are reading.
     setFileTime();
     scoreObj = [MKScore score];
-    [self->theMainWindow setTitle: [NSString stringWithFormat: STR_READING, shortFileName]];
-    [self->theMainWindow display];
-    [self->playButton setEnabled: NO];
+    [theMainWindow setTitle: [NSString stringWithFormat: STR_READING, shortFileName]];
+    [theMainWindow display];
+    [playButton setEnabled: NO];
     tuningSys = [[MKTuningSystem alloc] init]; /* 12-tone equal tempered */
     [tuningSys install];
     [tuningSys release];
@@ -480,9 +479,9 @@ static BOOL setFile(ScorePlayerController *self)
 	scoreObj = nil;
         [fileName release];
 	fileName = @"";
-	[self->theMainWindow setTitle: STR_SCOREPLAYER];
-	[self->playButton setEnabled: YES];
-	[self->theMainWindow display];
+	[theMainWindow setTitle: STR_SCOREPLAYER];
+	[playButton setEnabled: YES];
+	[theMainWindow display];
 	return NO;
     }
     samplingRate = [theOrch defaultSamplingRate];
@@ -522,28 +521,28 @@ static BOOL setFile(ScorePlayerController *self)
 	    to not knowing where we are in soundout buffering. Using more, 
 	    but smaller buffers would solve this. */
     }
-lastTempo = desiredTempo = initialTempo;
-[self->tempoSlider setFloatValue: 0.0];
-[self->tempoTextField setFloatValue: initialTempo];
-[self->theMainWindow setTitle: shortFileName];
-[self->theMainWindow display];
-[self->playButton setEnabled: YES];
-[scoreObj retain];  // yep, keep it.
-return YES;
+    lastTempo = desiredTempo = initialTempo;
+    [tempoSlider setFloatValue: 0.0];
+    [tempoTextField setFloatValue: initialTempo];
+    [theMainWindow setTitle: shortFileName];
+    [theMainWindow display];
+    [playButton setEnabled: YES];
+    [scoreObj retain];  // yep, keep it.
+    return YES;
 }
 
 
 -_enableMTCControls:(BOOL)yesOrNo
 {
-    [timeCodeButton setEnabled:yesOrNo];
-    [timeCodePortMatrix setEnabled:yesOrNo];
+    [timeCodeButton setEnabled: yesOrNo];
+    [timeCodePortMatrix setEnabled: yesOrNo];
     if (yesOrNo) 
         [timeCodeTextField setStringValue:
             (synchToTimeCode) ? @"Press Play, then start time code" : @"Press button above to enable time code"];
     if (!synchToTimeCode)
-        [timeCodeTextField setEnabled:yesOrNo];
+        [timeCodeTextField setEnabled: yesOrNo];
     else 
-        [timeCodeTextField setEnabled:YES];
+        [timeCodeTextField setEnabled: YES];
     return self;
 }
 
@@ -570,8 +569,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
     [tempoAnimator invalidate];
     [tempoAnimator release];
     tempoAnimator = nil;
-    [playButton setImage: playImage];
-    [playButton display];
+    [playButton setState: NSOffState];
     [tooFastErrorMsg setTextColor: [NSColor lightGrayColor]];
     [tooFastErrorMsg setBackgroundColor: [NSColor lightGrayColor]];
     if (errorDuringPlayback && ![errorLog isVisible])
@@ -591,7 +589,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
 void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
 {
     [tempoAnimator invalidate];
-    [myself->playButton setImage:playImage];
+    [myself->playButton setImage: playImage];
     [myself->playButton display];
     [myself->tooFastErrorMsg setTextColor:[NSColor lightGrayColor]];
     [myself->tooFastErrorMsg setBackgroundColor:[NSColor lightGrayColor]];
@@ -601,11 +599,11 @@ void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
     isLate = NO;
     wasLate = NO;
     errorDuringPlayback = NO;
-    [myself->theMainWindow setTitle:shortFileName];
+    [myself->theMainWindow setTitle: shortFileName];
     [myself->theMainWindow display];
     [myself->soundSavePanel close];
     [myself->dspCommandsSavePanel close];
-    [myself _enableMTCControls:YES];
+    [myself _enableMTCControls: YES];
     return myself;
 }
 #endif
@@ -632,7 +630,7 @@ static BOOL checkForMidi(MKScore *obj)
     for (i = 0; i < cnt; i++) {
 	info = [(MKPart *)[subobjs objectAtIndex: i] infoNote];
 	if ([info isParPresent: MK_synthPatch] &&
-	    (isMidiClassName([info parAsStringNoCopy:MK_synthPatch]))) {
+	    (isMidiClassName([info parAsStringNoCopy: MK_synthPatch]))) {
 	    return YES;
 	}
     }
@@ -658,7 +656,7 @@ static double getUntempo(float tempoVal)
 #define ANIMATE_DIFF_THRESHOLD 1.0
 #define ANIMATE_INCREMENT 0.3
 
-static void playIt(ScorePlayerController *self)
+- (void) playIt
 {
     int partCount, synthPatchCount, voices, i, midiChan;
     NSString *className;
@@ -718,9 +716,9 @@ static void playIt(ScorePlayerController *self)
     
 #if SOUND_OUT_PAUSE_BUG
     if (checkForMidi(scoreObj))
-	[theOrch setFastResponse:YES];
+	[theOrch setFastResponse: YES];
     else
-	[theOrch setFastResponse:NO];
+	[theOrch setFastResponse: NO];
 #endif
     [theOrch setOutputCommandsFile: (DSPCommands) ? outputFilePath : nil];
     [theOrch setOutputSoundfile: (writeData) ? outputFilePath : nil];
@@ -740,7 +738,7 @@ static void playIt(ScorePlayerController *self)
     partCount = [partPerformers count];
     synthInstruments = [[NSMutableArray array] retain];
     for (i = 0; i < partCount; i++) {
-	partPerformer = [partPerformers objectAtIndex:i];
+	partPerformer = [partPerformers objectAtIndex: i];
 	aPart = [partPerformer part]; 
 	partInfo = [aPart infoNote];
 	if (!partInfo) {
@@ -795,7 +793,7 @@ static void playIt(ScorePlayerController *self)
 		continue;         
 	    voices = [partInfo parAsInt: MK_synthPatchCount];
 	    synthPatchCount = [anIns setSynthPatchCount: voices
-                                          patchTemplate: [synthPatchClass patchTemplateFor:partInfo]];
+                                          patchTemplate: [synthPatchClass patchTemplateFor: partInfo]];
 	    if (synthPatchCount < voices) {
                 errMsg = [NSString stringWithFormat: STR_TOO_MANY_SYNTHPATCHES,
                     synthPatchCount, voices, className, MKGetObjectName(aPart)];
@@ -807,13 +805,12 @@ static void playIt(ScorePlayerController *self)
 	}
     }
     errorDuringPlayback = NO;
-    [self->theMainWindow setTitle: [NSString stringWithFormat: STR_PLAYING, shortFileName]];
-    [self->theMainWindow display];
+    [theMainWindow setTitle: [NSString stringWithFormat: STR_PLAYING, shortFileName]];
+    [theMainWindow display];
     MKSetDeltaT(.75);
     [MKOrchestra setTimed: YES];
     [MKConductor afterPerformanceSel: @selector(endOfTime) to: self argCount: 0];
-    [self->playButton setImage: stopImage];
-    [self->playButton display];
+    [playButton setState: NSOnState]; // Should be this anyway
     if (synchToTimeCode)
     [self showConductorDidPause];
     if (writeData) {
@@ -823,8 +820,8 @@ static void playIt(ScorePlayerController *self)
 	writeMsg = @"Writing DSP Commands format soundfile.";
     }
     if (writeData || DSPCommands) {
-	[self->soundWriteMsg setStringValue: writeMsg];
-	[self->soundSavePanel orderFront: self];
+	[soundWriteMsg setStringValue: writeMsg];
+	[soundSavePanel orderFront: self];
     }
     tempoAnimator = [[NSTimer scheduledTimerWithTimeInterval: ANIMATE_INCREMENT
 						      target: self
@@ -869,13 +866,6 @@ static void playIt(ScorePlayerController *self)
     }
 }
 
-static id localIconImage(NSString *s)
-{
-    NSString * buf;
-    buf = [[NSBundle mainBundle] pathForResource:s ofType:@"tiff"]; 
-    return [[NSImage alloc] initByReferencingFile:buf];
-}
-
 + (void) initialize
 {
     NSDictionary *scorePlayerDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -911,17 +901,14 @@ static void abortNow();
 	@"",@"StealthDAI2400",@"SSAD64x",@"ArielProPort",@"DSPSerialPortDevice",nil];
     
     SSAD64xPanel = StealthDAI2400Panel = NeXTDACPanel = nil;
-    playImage = localIconImage(@"play");
-    [playButton setImage: playImage];
-    [playButton display];
     openFileExtensions = [[MKScore fileExtensions] retain];  // accept both MIDI and Scorefiles.
     errorLog = [[ErrorLog alloc] init];
     [MKConductor setThreadPriority: 1.0];
-    [MKPartPerformer setFastActivation:YES]; /* We're not modifying parts while playing */
+    [MKPartPerformer setFastActivation: YES]; /* We're not modifying parts while playing */
     setuid(getuid()); /* Must be after setThreadPriority. */
-    [MKConductor useSeparateThread:YES];
+    [MKConductor useSeparateThread: YES];
 //    [MKConductor setDelegate: self]; /* Default is no tempo adjustment */
-    [[MKConductor defaultConductor] setDelegate:self];
+    [[MKConductor defaultConductor] setDelegate: self];
     /* These numbers could be endlessly tweaked */
     MKSetLowDeltaTThreshold(.25);
     MKSetHighDeltaTThreshold(.4);
@@ -929,17 +916,12 @@ static void abortNow();
 #if 0
     ec = port_allocate(task_self(), &endOfTimePort);
 #error DPSConversion: 'addPort:forMode:' used to be DPSAddPort(endOfTimePort, (DPSPortProc)endOfTimeProc, sizeof(msg_header_t), (void *)self, 30).  endOfTimePort should be retained to avoid loss through deallocation, the functionality of (DPSPortProc)endOfTimeProc should be implemented by a delegate of the NSPort in response to 'handleMachMessage:' or 'handlePortMessage:',  and 30 should be converted to an NSRunLoop mode (NSDefaultRunLoopMode, NSModalPanelRunLoopMode, and NSEventTrackingRunLoopMode are predefined).
-    [[NSRunLoop currentRunLoop] addPort:[NSPort portWithMachPort:endOfTimePort] forMode:30];
+    [[NSRunLoop currentRunLoop] addPort:[NSPort portWithMachPort: endOfTimePort] forMode: 30];
 #endif
     MKSetErrorProc(handleMKError);
-        
-    /* set up the playButton */
-    stopImage = localIconImage(@"stop");
-    playHImage = localIconImage(@"playH");
-    [playButton setAlternateImage:playHImage];
-    
+
     midis = [[NSMutableDictionary dictionaryWithCapacity: 8] retain]; // heaps!
-    [MKOrchestra setAbortNotification:self]; 
+    [MKOrchestra setAbortNotification: self]; 
     theOrch = [[MKOrchestra alloc] init];
     capabilities = [theOrch capabilities];
     
@@ -996,7 +978,7 @@ static BOOL setUpFile(NSString *workspaceFileName)
 	    dir = nil;
 	}
 	else 
-	    success = [openPanel runModalForTypes:openFileExtensions];
+	    success = [openPanel runModalForTypes: openFileExtensions];
 	if (!success)
 	    return NO;
         [fileName release];
@@ -1040,16 +1022,16 @@ static void abortNow()
     }
 }
 
-- (void)selectFile:sender
+- (void) selectFile: sender
 {
     abortNow(); /* Could move this to after setUpFile() */
     if (!setUpFile(nil)) {
         return;
     }
-    setFile(self); 
+    [self setFile]; 
 }
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+- (BOOL) application: (NSApplication *) theApplication openFile: (NSString *) filename
 {
     NSString *aType = [fileName pathExtension];
     if (aType)
@@ -1057,14 +1039,14 @@ static void abortNow()
             return NO;
     setUpFile(filename);
     abortNow();
-    setFile(self);
+    [self setFile];
     return YES;
 }
 
-- (void) playStop:sender
+- (void) playStop: sender
 {
     if (!fileName || ![fileName length])
-        [self selectFile:self];
+        [self selectFile: self];
     if (!fileName || ![fileName length])
         return;
     if (PLAYING)
@@ -1072,14 +1054,14 @@ static void abortNow()
     else {
 	if (needToReread()) {
             NSLog(@"File has changed, re-reading\n");
-	    setFile(self);
+	    [self setFile];
 	}
-        playIt(self);
+        [self playIt];
     }
     return;
 }
 
-- setTooFastErrorMsg:obj
+- setTooFastErrorMsg: obj
 {
     tooFastErrorMsg = obj;
     return self;
@@ -1102,7 +1084,7 @@ static void adjustTempo(double slowDown)
     if (MKGetTime() < PROTECT_PAGING_TIME)
         return self;
     adjustTempo(INITIAL_SLOWDOWN_FACTOR);
-    [[MKConductor defaultConductor] setTempo:desiredTempo];
+    [[MKConductor defaultConductor] setTempo: desiredTempo];
     isLate = YES;
     return self;
 }
@@ -1115,7 +1097,7 @@ static void adjustTempo(double slowDown)
     return self;
 }
 
-- animateTempo:sender
+- animateTempo: sender
 {
     double diff;
     BOOL forceAdjustment;
@@ -1141,53 +1123,53 @@ static void adjustTempo(double slowDown)
     [MKConductor lockPerformance];
     [[MKConductor defaultConductor] setTempo: desiredTempo];
     [MKConductor unlockPerformance];
-    [tempoTextField setFloatValue:desiredTempo];
+    [tempoTextField setFloatValue: desiredTempo];
     if (wasLate || isLate)
-	[tempoSlider setFloatValue:getUntempo(desiredTempo)];
+	[tempoSlider setFloatValue: getUntempo(desiredTempo)];
     lastTempo = desiredTempo;
     return self;
 }
 
-- (void)setTempoFrom:sender	// currently called by slider only
+- (void) setTempoFrom: sender	// currently called by slider only
 {
     double val = [sender doubleValue];
     desiredTempo = getTempo(val);
     // LMS it's unclear if this was only able to happen when not playing due to earlier MK limitations.
     //    if (!PLAYING) {  
     [[MKConductor defaultConductor] setTempo: desiredTempo];
-    [tempoTextField setFloatValue:desiredTempo];
+    [tempoTextField setFloatValue: desiredTempo];
     lastTempo = desiredTempo;
 //    }
 }
 
-- (void)setTimeCodeSynch:sender
+- (void) setTimeCodeSynch: sender
 {
     synchToTimeCode = [sender intValue];
     [timeCodeTextField setStringValue: (synchToTimeCode) ? @"Press Play, then start time code" : @"Press button above to enable time code"]; 
 }
 
-- (void)setTimeCodeSerialPort:sender
+- (void) setTimeCodeSerialPort: sender
 {
     /* 0 for portA, 1 for portB */
     timeCodeDevice = [[sender selectedCell] title]; 
 }
 
 
-- conductorWillSeek:sender
+- conductorWillSeek: sender
 {
-    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorWillSeek)
-					    to:self argCount:0];
+    [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorWillSeek)
+					    to: self argCount: 0];
     return self;
 }
 
-- conductorDidSeek:sender
+- conductorDidSeek: sender
 {
-    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidSeek)
-					    to:self argCount:0];
+    [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidSeek)
+					    to: self argCount: 0];
     return self;
 }
 
-- conductorDidReverse:sender
+- conductorDidReverse: sender
 {
     [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidReverse)
                                             to: self
@@ -1195,7 +1177,7 @@ static void adjustTempo(double slowDown)
     return self;
 }
 
-- conductorDidPause:sender
+- conductorDidPause: sender
 {
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
@@ -1209,7 +1191,7 @@ static void adjustTempo(double slowDown)
     return self;
 }
 
-- conductorDidResume:sender
+- conductorDidResume: sender
 {
     [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidResume) to: self argCount: 0];
     return self;
@@ -1220,24 +1202,24 @@ static void adjustTempo(double slowDown)
     abortNow();
 }
 
-BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *theType)
 /* Set up and run the Save panel for the given type.  The accessory view
 * is a button which allows the type to be changed when saving scores.
 */
+BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *theType)
 {
     BOOL flag;
     
     if (!savePanel) {
 	savePanel = [NSSavePanel new];
 	[savePanel setTitle:@"ScorePlayer Save"];
-	[accessoryView setImagePosition:NSImageAbove];
-	[accessoryView setTarget:mySelf];
+	[accessoryView setImagePosition: NSImageAbove];
+	[accessoryView setTarget: mySelf];
 	[accessoryView setAction:@selector(changeSaveType:)];
-	[accessoryView setFrameSize:NSMakeSize(124, 68)];
+	[accessoryView setFrameSize: NSMakeSize(124, 68)];
     }
-    [savePanel setAccessoryView:accessoryView];
+    [savePanel setAccessoryView: accessoryView];
     if (theType && [theType length])
-        [savePanel setRequiredFileType:theType];
+        [savePanel setRequiredFileType: theType];
     flag = [savePanel runModalForDirectory:@"" file:@""];
     if (flag)
         *returnBuf = [savePanel filename];
@@ -1249,12 +1231,15 @@ BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *
 NSString *getPath(NSString *dir, NSString *name, NSString *ext)
 /* Construct a path given a file name, directory, and type */
 {
-    if (!dir || ![dir length]) dir = [NSHomeDirectory() retain];
-    if (!name ) name=@"";
-    if (!ext ) ext=@"";
-    if ([[name pathExtension] isEqualToString:ext])
+    if (!dir || ![dir length]) 
+	dir = [NSHomeDirectory() retain];
+    if (!name ) 
+	name=@"";
+    if (!ext ) 
+	ext=@"";
+    if ([[name pathExtension] isEqualToString: ext])
         name = [name stringByDeletingPathExtension];
-    return [dir stringByAppendingPathComponent:[name stringByAppendingPathExtension:ext]];
+    return [dir stringByAppendingPathComponent: [name stringByAppendingPathExtension: ext]];
 }
 
 - setSaveType:(int)type
@@ -1265,28 +1250,29 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
 	accessoryView = [[NSButton alloc] init];
         [fileTypes release];
         fileTypes = [[NSArray alloc] initWithObjects:
-            STR_SCOREFILE, STR_PLAYSCOREFILE, STR_MIDIFILE, STR_DSPFILE, STR_SOUNDFILE,nil];
+            STR_SCOREFILE, STR_PLAYSCOREFILE, STR_MIDIFILE, STR_DSPFILE, STR_SOUNDFILE, nil];
     }
     // TODO, the icons should probably be determined from the OS itself, not held within the app, since the
     // ScorePlayer has it's preferred file icon, but other programs may also.
-    [accessoryView setImage:[NSImage imageNamed:[fileIcons objectAtIndex:type]]];
-    [accessoryView setTitle:[fileTypes objectAtIndex:type]];
-    [savePanel setRequiredFileType:[saveFileExtensions objectAtIndex:type]];
+    [accessoryView setImage: [NSImage imageNamed: [fileIcons objectAtIndex: type]]];
+    [accessoryView setTitle: [fileTypes objectAtIndex: type]];
+    [savePanel setRequiredFileType: [saveFileExtensions objectAtIndex: type]];
     return self;
 }
 
-- changeSaveType:sender
+- changeSaveType: sender
     /* Called by the accessory view (the Type button on the Save Panel */
 {
     saveType++;
     if (saveType == SOUND_FILE && (!(capabilities & MK_soundfileOut)))
         saveType++;
-    if (saveType > SOUND_FILE) saveType = SCORE_FILE; /* Wrap */
-    [self setSaveType:saveType];
+    if (saveType > SOUND_FILE) 
+	saveType = SCORE_FILE; /* Wrap */
+    [self setSaveType: saveType];
     return self;
 }
 
-- (void)saveScoreAs:sender
+- (void) saveScoreAs: sender
     /* Save the score, always prompting for a file name first.
        This is what the SaveAs: menu item calls. */
 {
@@ -1294,35 +1280,33 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
         abortNow();
     if (saveType == -1) 
 	[self setSaveType: SCORE_FILE];
-    if (!getSavePath(&outputFilePath,outputFileDir, outputFileName,
-                     [saveFileExtensions objectAtIndex: saveType]))
+    if (!getSavePath(&outputFilePath, outputFileDir, outputFileName, [saveFileExtensions objectAtIndex: saveType]))
 	return;
     [outputFilePath retain];
     outputFileDir = [[outputFilePath stringByDeletingLastPathComponent] retain];
     outputFileName = [[outputFilePath lastPathComponent] retain];
     [self setSaveType: fileType(outputFilePath)];
     [outputFilePath release];
-    outputFilePath = [getPath(outputFileDir, outputFileName,
-			      [saveFileExtensions objectAtIndex: saveType]) retain];
+    outputFilePath = [getPath(outputFileDir, outputFileName, [saveFileExtensions objectAtIndex: saveType]) retain];
     switch (saveType) {
 	case SCORE_FILE: 
-	    [scoreObj writeScorefile:outputFilePath];
+	    [scoreObj writeScorefile: outputFilePath];
 	    break;
 	case PLAYSCORE_FILE: 
-	    [scoreObj writeOptimizedScorefile:outputFilePath];
+	    [scoreObj writeOptimizedScorefile: outputFilePath];
 	    break;
 	case MIDI_FILE:
-	    [scoreObj writeMidifile:outputFilePath];
+	    [scoreObj writeMidifile: outputFilePath];
 	    break;
 	case DSP_COMMANDS_FILE:
 	    /* Here we play the score, capturing the performance in the DSPCommands file. */
 	    DSPCommands = YES;
-	    [playButton performClick:self];
+	    [playButton performClick: self];
 	    break;
 	case SOUND_FILE:
 	    /* Here we play the score, capturing the performance in the sound file. */
 	    writeData = YES;
-	    [playButton performClick:self];
+	    [playButton performClick: self];
 	    break;
 	default:
 	    break;
@@ -1330,16 +1314,17 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     [[NSCursor arrowCursor] set]; 
 }
 
-- (void)help:sender
-    /* Display the help file formatted as HTML with the default handling application. */
+/* Display the help file formatted as HTML with the default handling application. */
+- (void) help: sender
 {
     /* Look in the app wrapper */
     NSString *helpfile = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent: @"help.html"];
+    
     if (![[NSWorkspace sharedWorkspace] openFile: helpfile])
         NSRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, @"", nil, nil);
 }
 
--pause:sender
+- pause: sender
 {
     [MKConductor lockPerformance];
     [[MKConductor defaultConductor] pause];
@@ -1347,7 +1332,7 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     return self;
 }
 
--resume:sender
+- resume: sender
 {
     [MKConductor lockPerformance];
     [[MKConductor defaultConductor] resume];
