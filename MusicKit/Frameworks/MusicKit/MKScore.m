@@ -617,7 +617,7 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 #define WRITETEXT(_meta,_par) MKMIDIFileWriteText(fileStructP,T,(_meta),STRPAR(curNote,(_par)))
 
 /* Write a single MKNote to the MIDI file, tagged appropriately */
-static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *curNote, double timeShift, int defaultChan)
+static void writeNoteToMidifile(_MKMidiOutStruct *p, MKMIDIFileOut *fileStructP, MKNote *curNote, double timeShift, int defaultChan)
 {
     int chan;
     unsigned parBits;
@@ -714,7 +714,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
 	    timeShift: (double) timeShift
 {
     _MKMidiOutStruct *p;
-    void *fileStructP;
+    MKMIDIFileOut *fileStructP;
     double t = 0;
     MKNote *anInfo = nil;
     NSString *title = nil;
@@ -832,57 +832,65 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     return self;
 }
 
--writeMidifile:(NSString *)aFileName firstTimeTag:(double)firstTimeTag
-   lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift
-  /* Write midi to file with specified name. */
+/* Write midi to file with specified name. */
+- writeMidifile: (NSString *) aFileName 
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag 
+      timeShift: (double) timeShift
 {
-  NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
-  BOOL success;
-
-  [self writeMidifileStream: stream
-               firstTimeTag: firstTimeTag
-                lastTimeTag: lastTimeTag
-                  timeShift: timeShift];
-  success = _MKOpenFileStreamForWriting(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], stream, YES);
-  [stream release];
-
-  if (!success) {
-    MKErrorCode(MK_cantCloseFileErr, aFileName);
-    return nil;
-  }
-  else {
-    return self;
-  }
+    NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
+    BOOL success;
+    
+    [self writeMidifileStream: stream
+		 firstTimeTag: firstTimeTag
+		  lastTimeTag: lastTimeTag
+		    timeShift: timeShift];
+    success = _MKOpenFileStreamForWriting(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], stream, YES);
+    [stream release];
+    
+    if (!success) {
+	MKErrorCode(MK_cantCloseFileErr, aFileName);
+	return nil;
+    }
+    else {
+	return self;
+    }
 }
 
 /* Midi file writing "convenience methods" --------------------------- */
 
--writeMidifileStream:(NSMutableData *)aStream
-        firstTimeTag:(double)firstTimeTag
-         lastTimeTag:(double)lastTimeTag
+- writeMidifileStream: (NSMutableData *) aStream
+	 firstTimeTag: (double) firstTimeTag
+	  lastTimeTag: (double) lastTimeTag
 {
-  return [self writeMidifileStream:aStream firstTimeTag:firstTimeTag
-                       lastTimeTag:lastTimeTag timeShift:0.0];
+    return [self writeMidifileStream: aStream
+			firstTimeTag: firstTimeTag
+			 lastTimeTag: lastTimeTag
+			   timeShift: 0.0];
 }
 
--writeMidifile:(NSString *)aFileName
-  firstTimeTag:(double)firstTimeTag
-   lastTimeTag:(double)lastTimeTag
+- writeMidifile: (NSString *) aFileName
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag
 {
-  return [self writeMidifile:aFileName firstTimeTag:firstTimeTag
-                 lastTimeTag:lastTimeTag timeShift:0.0];
+    return [self writeMidifile: aFileName 
+		  firstTimeTag: firstTimeTag
+		   lastTimeTag: lastTimeTag
+		     timeShift: 0.0];
 }
 
--writeMidifileStream:(NSMutableData *)aStream
+- writeMidifileStream: (NSMutableData *) aStream
 {
-  return [self writeMidifileStream:aStream firstTimeTag:0.0
-                       lastTimeTag:MK_ENDOFTIME];
+    return [self writeMidifileStream: aStream
+			firstTimeTag: 0.0
+			 lastTimeTag: MK_ENDOFTIME];
 }
 
--writeMidifile:(NSString *)aFileName
+-writeMidifile: (NSString *) aFileName
 {
-  return [self writeMidifile:aFileName firstTimeTag:0.0
-                 lastTimeTag:MK_ENDOFTIME];
+    return [self writeMidifile: aFileName
+		  firstTimeTag: 0.0
+		   lastTimeTag: MK_ENDOFTIME];
 }
 
 
@@ -894,7 +902,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
      timeShift: (double) timeShift
 {
     id rtnVal;
-    id stream;/*sb: could be NSMutableData or NSData */
+    id stream; /*sb: could be NSMutableData or NSData */
 
     stream = _MKOpenFileStreamForReading(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], YES);
     if (stream == nil)
