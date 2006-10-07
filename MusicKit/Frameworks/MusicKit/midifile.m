@@ -104,13 +104,11 @@ MKMIDIFileIn *MKMIDIFileBeginReading(NSMutableData *midiStream, BOOL evaluateTem
     return rtn;
 }
 
-#define IP ((MKMIDIFileIn *)p)
-
 void MKMIDIFileEndReading(MKMIDIFileIn *p)
 {
-    free(IP->data);
-    IP->data = NULL;
-    free(IP);
+    free(p->data);
+    p->data = NULL;
+    free(p);
     p = NULL; 
 }
 
@@ -399,21 +397,21 @@ int MKMIDIFileReadPreamble(MKMIDIFileIn *p,int *level,int *trackCount)
     int size;
     short fmt, tracks, div;
 
-    if ((!readChunkType(IP->midiStream,typebuf,&(IP->streamPos))) ||
+    if ((!readChunkType(p->midiStream,typebuf,&(p->streamPos))) ||
         (strcmp(typebuf,"MThd")) ||  /* not a midifile */
-         (!readLong(IP->midiStream,&size,&(IP->streamPos))) ||
+         (!readLong(p->midiStream,&size,&(p->streamPos))) ||
          (size < 6) ||               /* bad header */
-         (!readShort(IP->midiStream,&fmt,&(IP->streamPos))) ||
+         (!readShort(p->midiStream,&fmt,&(p->streamPos))) ||
          (fmt < 0 || fmt > 2)  ||     /* must be level 0, 1 or 2 */
-         (!readShort(IP->midiStream,&tracks,&(IP->streamPos))) ||
-         (!readShort(IP->midiStream,&div,&(IP->streamPos))))
+         (!readShort(p->midiStream,&tracks,&(p->streamPos))) ||
+         (!readShort(p->midiStream,&div,&(p->streamPos))))
          return endOfStream;
      size -= 6;
      if (size)
-         IP->streamPos += size; //sb: to replace seek
-         /*      NXSeek(IP->midiStream,size,NX_FROMCURRENT);*/ /* Skip any extra length in field. */
+         p->streamPos += size; //sb: to replace seek
+         /*      NXSeek(p->midiStream,size,NX_FROMCURRENT);*/ /* Skip any extra length in field. */
     *trackCount = fmt ? tracks-1 : 1;
-    *level = IP->format = fmt;
+    *level = p->format = fmt;
     if (div < 0) { /* Time code encoding? */
 	/* For now, we undo the effect of the time code. We may want to
 	   eventually pass the time code up? */ 
@@ -423,90 +421,92 @@ int MKMIDIFileReadPreamble(MKMIDIFileIn *p,int *level,int *trackCount)
 	/* SMPTEformat is one of 24, 25, 29, or 30. It's stored negative */
 	div = ticksPerFrame * SMPTEformat;
     }
-    IP->division = div;
-    IP->currentTrack = -1;
-//    IP->timeScale = 60000000.0 / (double)(IP->division * IP->quantaSize);
-    IP->timeScale = 1000000.0/(double)(IP->division * IP->quantaSize);
+    p->division = div;
+    p->currentTrack = -1;
+//    p->timeScale = 60000000.0 / (double)(p->division * p->quantaSize);
+    p->timeScale = 1000000.0/(double)(p->division * p->quantaSize);
     return ok;
 }
 
 int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
-    /* return endOfStream when EOS is reached, return 1 otherwise.
-       Data should be an array of length 3. */
 {
-    int deltaTime,quantaTime,state = undefined;
+    int deltaTime, quantaTime, state = undefined;
     unsigned char theByte = '\0';
     unsigned int poin;
-    if (IP->currentTrack < 0 && !readTrackHeader(p,&(IP->streamPos))) 
-      return endOfStream;
+    
+    if (p->currentTrack < 0 && !readTrackHeader(p, &(p->streamPos))) 
+	return endOfStream;
     for (; ;) {
-        if (!readVariableQuantity(IP->midiStream,&deltaTime,&(IP->streamPos))) 
-	  return endOfStream;
-	IP->currentTime += deltaTime;
-//	quantaTime = SCALEQUANTA(p,IP->currentTime); **** removed by dirk ****
-	quantaTime = IP->currentOffset + SCALEQUANTA(p,IP->currentTime);
-        if (IP->streamPos >= [IP->midiStream length])
+        if (!readVariableQuantity(p->midiStream, &deltaTime, &(p->streamPos))) 
+	    return endOfStream;
+	p->currentTime += deltaTime;
+//	quantaTime = SCALEQUANTA(p,p->currentTime); **** removed by dirk ****
+	quantaTime = p->currentOffset + SCALEQUANTA(p, p->currentTime);
+        if (p->streamPos >= [p->midiStream length])
             return endOfStream;
-        poin = IP->streamPos;
-        theByte = ((const char *)[IP->midiStream bytes])[poin++];
-        IP->streamPos = poin;
+        poin = p->streamPos;
+        theByte = ((const char *)[p->midiStream bytes])[poin++];
+        p->streamPos = poin;
 	if (theByte == 0xff) {
-	    state = readMetaevent(p,&(IP->streamPos));
-	    IP->metaeventFlag = YES;
+	    state = readMetaevent(p, &(p->streamPos));
+	    p->metaeventFlag = YES;
 	    if (state != unrecognized) {
-		IP->quanta = quantaTime;
+		p->quanta = quantaTime;
 		return state;
 	    }
-	} else if ((theByte == MIDI_SYSEXCL) || (state != undefined)) {
+	} 
+	else if ((theByte == MIDI_SYSEXCL) || (state != undefined)) {
 	    /* System exclusive */
-            state = readSysExclEvent(p,state,&(IP->streamPos));
-	    IP->metaeventFlag = NO;
+            state = readSysExclEvent(p, state, &(p->streamPos));
+	    p->metaeventFlag = NO;
 	    switch (state) {
-	      case firstISysExcl:
-		IP->quanta = quantaTime;
-		break;
-	      case middleISysExcl:
-		IP->quanta += quantaTime;
-		break;
-	      case endISysExcl:
-		IP->quanta += quantaTime;
-		return ok;
-	      case endOfStream:
-	      case sysExcl:
-		IP->quanta = quantaTime;
-		return ok;
-	      default:
-		break;
+		case firstISysExcl:
+		    p->quanta = quantaTime;
+		    break;
+		case middleISysExcl:
+		    p->quanta += quantaTime;
+		    break;
+		case endISysExcl:
+		    p->quanta += quantaTime;
+		    return ok;
+		case endOfStream:
+		case sysExcl:
+		    p->quanta = quantaTime;
+		    return ok;
+		default:
+		    break;
 	    }
-	} else if (theByte == 0xf7) { /* Special "escape" code */
-	    IP->quanta = quantaTime;
-            return readEscapeEvent(p,&(IP->streamPos));
-	} else { /* Normal MIDI */
+	} 
+	else if (theByte == 0xf7) { /* Special "escape" code */
+	    p->quanta = quantaTime;
+            return readEscapeEvent(p,&(p->streamPos));
+	} 
+	else { /* Normal MIDI */
 	    BOOL newRunningStatus = (theByte & MIDI_STATUSBIT);
 	    if (newRunningStatus)
-	      IP->runningStatus = theByte;
-	    IP->metaeventFlag = 0;
-	    IP->quanta = quantaTime;
-	    IP->nData = calcMidiEventSize(IP->runningStatus);
-	    IP->data[0] = IP->runningStatus;
-	    if (IP->nData > 1) {
+		p->runningStatus = theByte;
+	    p->metaeventFlag = 0;
+	    p->quanta = quantaTime;
+	    p->nData = calcMidiEventSize(p->runningStatus);
+	    p->data[0] = p->runningStatus;
+	    if (p->nData > 1) {
 		if (newRunningStatus) {
-//                    if (!NXRead(IP->midiStream,&(IP->data[1]),1)) 
-                    if (IP->streamPos >= [IP->midiStream length])
+//                    if (!NXRead(p->midiStream,&(p->data[1]),1)) 
+                    if (p->streamPos >= [p->midiStream length])
                         return endOfStream;
-                    poin = IP->streamPos;
-                    IP->data[1] = ((const char *)[IP->midiStream bytes])[poin++];
-                    IP->streamPos=poin;
+                    poin = p->streamPos;
+                    p->data[1] = ((const char *)[p->midiStream bytes])[poin++];
+                    p->streamPos=poin;
 		}
-		else IP->data[1] = theByte;
-		if (IP->nData > 2) {
-//                    if (!NXRead(IP->midiStream,&(IP->data[2]),1))
-                    if (IP->streamPos >= [IP->midiStream length])
+		else p->data[1] = theByte;
+		if (p->nData > 2) {
+//                    if (!NXRead(p->midiStream,&(p->data[2]),1))
+                    if (p->streamPos >= [p->midiStream length])
                         return endOfStream;
-                    poin = IP->streamPos;
-                    IP->data[2] = ((const char *)[IP->midiStream bytes])[poin++];
-                    IP->streamPos = poin;
-                    }
+                    poin = p->streamPos;
+                    p->data[2] = ((const char *)[p->midiStream bytes])[poin++];
+                    p->streamPos = poin;
+		}
 	    }
 	    return ok;
 	}
@@ -518,25 +518,11 @@ int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
  * writing
  */
 
-typedef struct _midiFileOutStruct {
-    double tempo;     
-    double timeScale; 
-    int currentTrack;
-    int division;
-    int currentCount;
-    int lastTime;
-    NSMutableData *midiStream;
-    int quantaSize;
-    BOOL evaluateTempo;
-} midiFileOutStruct;
-
-#define OP ((midiFileOutStruct *)p)
-
-static int writeBytes(midiFileOutStruct *p, const unsigned char *bytes,int count)
+static int writeBytes(MKMIDIFileOut *p, const unsigned char *bytes,int count)
 {
 //    int bytesWritten;
     /*bytesWritten = */[p->midiStream appendBytes:bytes length:count];
-    OP->currentCount += count;
+    p->currentCount += count;
 /*    if (bytesWritten != count)
       return endOfStream;
     else return ok;
@@ -544,14 +530,14 @@ static int writeBytes(midiFileOutStruct *p, const unsigned char *bytes,int count
     return ok;
 }
 
-static int writeByte(midiFileOutStruct *p, unsigned char n)
+static int writeByte(MKMIDIFileOut *p, unsigned char n)
 {
     /*int bytesWritten = */[p->midiStream appendBytes:&n length:1];
     p->currentCount += 1;//bytesWritten;
     return 1;//bytesWritten;
 }
 
-static int writeShort(midiFileOutStruct *p, short n)
+static int writeShort(MKMIDIFileOut *p, short n)
 {
 //    int bytesWritten;
     n = NSSwapHostShortToBig(n);
@@ -561,7 +547,7 @@ static int writeShort(midiFileOutStruct *p, short n)
     return 2;
 }
 
-static int writeLong(midiFileOutStruct *p, int n)
+static int writeLong(MKMIDIFileOut *p, int n)
 {
 //    int bytesWritten;
     n = NSSwapHostIntToBig(n);
@@ -571,7 +557,7 @@ static int writeLong(midiFileOutStruct *p, int n)
         return 4;
 }
 
-static int writeChunkType(midiFileOutStruct *p, char *buf)
+static int writeChunkType(MKMIDIFileOut *p, char *buf)
 {
     /*int bytesWritten = */[p->midiStream appendBytes:buf length:4];
     p->currentCount += 4;//bytesWritten;
@@ -579,7 +565,7 @@ static int writeChunkType(midiFileOutStruct *p, char *buf)
     return 4;
 }
 
-static int writeVariableQuantity(midiFileOutStruct *p, int n)
+static int writeVariableQuantity(MKMIDIFileOut *p, int n)
 {
     if ((n >= (1 << 28) && !writeByte(p,(((n>>28)&15)|128) )) ||
 	(n >= (1 << 21) && !writeByte(p,(((n>>21)&127)|128) )) ||
@@ -589,25 +575,25 @@ static int writeVariableQuantity(midiFileOutStruct *p, int n)
     return writeByte(p,(n&127));
 }
 
-void *MKMIDIFileBeginWriting(NSMutableData *midiStream, int level, NSString *sequenceName,
-			      BOOL evaluateTempo)
+MKMIDIFileOut *MKMIDIFileBeginWriting(NSMutableData *midiStream, int level, NSString *sequenceName, BOOL evaluateTempo)
 {
     short lev = level, div = DEFAULTDIVISION, ntracks = 1;
-    midiFileOutStruct *p;
-    _MK_MALLOC(p,midiFileOutStruct,1);
-    OP->tempo = DEFAULTTEMPO; 	    /* in beats per minute */
-    OP->quantaSize = MKMIDI_DEFAULTQUANTASIZE; /* size in microseconds */
-    OP->lastTime = 0;
-    OP->midiStream = midiStream;
+    MKMIDIFileOut *p;
+    
+    _MK_MALLOC(p, MKMIDIFileOut, 1);
+    p->tempo = DEFAULTTEMPO; 	    /* in beats per minute */
+    p->quantaSize = MKMIDI_DEFAULTQUANTASIZE; /* size in microseconds */
+    p->lastTime = 0;
+    p->midiStream = midiStream;
     if ((!writeChunkType(p,"MThd")) || (!writeLong(p,6)) ||
 	!writeShort(p,lev) || !writeShort(p,ntracks) || !writeShort(p,div))
       return endOfStream;
-    OP->division = div;
-    OP->currentTrack = -1;
-//    OP->timeScale = 60000000.0 / (double)(OP->division * OP->quantaSize);
-    OP->timeScale = (double)(OP->division * OP->quantaSize)/1000000.0;
-    OP->currentCount = 0;
-    OP->evaluateTempo = evaluateTempo;
+    p->division = div;
+    p->currentTrack = -1;
+//    p->timeScale = 60000000.0 / (double)(p->division * p->quantaSize);
+    p->timeScale = (double)(p->division * p->quantaSize)/1000000.0;
+    p->currentCount = 0;
+    p->evaluateTempo = evaluateTempo;
     if (MKMIDIFileBeginWritingTrack(p,sequenceName))
       return p;
     else {
@@ -617,12 +603,12 @@ void *MKMIDIFileBeginWriting(NSMutableData *midiStream, int level, NSString *seq
     }
 }
 
-int MKMIDIFileEndWriting(void *p)
+int MKMIDIFileEndWriting(MKMIDIFileOut *p)
 {
-  short ntracks = OP->currentTrack+1; /* +1 for "tempo track" */
+  short ntracks = p->currentTrack+1; /* +1 for "tempo track" */
   NSRange replaceRange;
 
-  if (OP->currentCount) {  /* Did we forget to finish before? */
+  if (p->currentCount) {  /* Did we forget to finish before? */
     int err = MKMIDIFileEndWritingTrack(p,0);
     if (err == endOfStream) {
       free(p);
@@ -634,23 +620,23 @@ int MKMIDIFileEndWriting(void *p)
   replaceRange.length = 2;
 
   ntracks = NSSwapHostShortToBig(ntracks);
-  [OP->midiStream replaceBytesInRange: replaceRange withBytes: &ntracks];
+  [p->midiStream replaceBytesInRange: replaceRange withBytes: &ntracks];
 
   if(p) { free(p); p = NULL; };
   return ok;
 }
 
-int MKMIDIFileBeginWritingTrack(void *p, NSString *trackName)
+int MKMIDIFileBeginWritingTrack(MKMIDIFileOut *p, NSString *trackName)
 {
-    if (OP->currentCount) /* Did we forget to finish before? */
+    if (p->currentCount) /* Did we forget to finish before? */
       MKMIDIFileEndWritingTrack(p,0);
     if (!writeChunkType(p,"MTrk")) 
       return endOfStream;
     if (!writeLong(p,0))  /* This will be the length of the track, but is dummy'ed for now. */
       return endOfStream;
-    OP->lastTime = 0;
-    OP->currentTrack++;
-    OP->currentCount = 0; /* Set this after the "MTrk" and dummy length are written */
+    p->lastTime = 0;
+    p->currentTrack++;
+    p->currentCount = 0; /* Set this after the "MTrk" and dummy length are written */
     if (trackName) {
         int i = [trackName cStringLength];
 	if (i) {
@@ -663,17 +649,17 @@ int MKMIDIFileBeginWritingTrack(void *p, NSString *trackName)
     return ok;
 }
 
-static int writeTime(midiFileOutStruct *p, int quanta)
+static int writeTime(MKMIDIFileOut *p, int quanta)
 {
-    int thisTime = (int)(0.5 + (OP->timeScale * quanta));
-    int deltaTime = thisTime - OP->lastTime;
-    OP->lastTime = thisTime;
+    int thisTime = (int)(0.5 + (p->timeScale * quanta));
+    int deltaTime = thisTime - p->lastTime;
+    p->lastTime = thisTime;
     if (!writeVariableQuantity(p,deltaTime)) 
       return endOfStream;
     return ok;
 }
 
-int MKMIDIFileEndWritingTrack(void *p,int quanta)
+int MKMIDIFileEndWritingTrack(MKMIDIFileOut *p,int quanta)
 {
     int cc;
     int trackLengthPos;
@@ -687,18 +673,18 @@ int MKMIDIFileEndWritingTrack(void *p,int quanta)
     /* Seek back to the track length field for this track. */
 
     /* +4 because we don't include the "MTrk" specification and length in the count */
-    trackLengthPos = [OP->midiStream length] - (OP->currentCount+4);
+    trackLengthPos = [p->midiStream length] - (p->currentCount+4);
     
-    cc = NSSwapHostIntToBig(OP->currentCount);
+    cc = NSSwapHostIntToBig(p->currentCount);
     replaceRange.location = trackLengthPos;
     replaceRange.length = 4;
-    [OP->midiStream replaceBytesInRange: replaceRange withBytes: &cc];
+    [p->midiStream replaceBytesInRange: replaceRange withBytes: &cc];
 
-    OP->currentCount = 0; /* Signals other functions that we've just finished a track. */
+    p->currentCount = 0; /* Signals other functions that we've just finished a track. */
     return ok;
 }
 
-int MKMIDIFileWriteSig(void *p,int quanta,short metaevent,unsigned data)
+int MKMIDIFileWriteSig(MKMIDIFileOut *p,int quanta,short metaevent,unsigned data)
 {
     BOOL keySig = (metaevent == MKMIDI_keySig);
     unsigned char b;
@@ -712,7 +698,7 @@ int MKMIDIFileWriteSig(void *p,int quanta,short metaevent,unsigned data)
     return (keySig) ? writeShort(p,data) : writeLong(p,data);
 }
 
-int MKMIDIFileWriteText(void *p,int quanta,short metaevent,NSString *text)
+int MKMIDIFileWriteText(MKMIDIFileOut *p,int quanta,short metaevent,NSString *text)
 {
     int i;
     if (!text)
@@ -726,8 +712,8 @@ int MKMIDIFileWriteText(void *p,int quanta,short metaevent,NSString *text)
     return ok;
 }
 
-int MKMIDIFileWriteSMPTEoffset(void *p,unsigned char hr,unsigned char min,
-				unsigned char sec,unsigned char ff,
+int MKMIDIFileWriteSMPTEoffset(MKMIDIFileOut *p, unsigned char hr, unsigned char min,
+				unsigned char sec, unsigned char ff,
 				unsigned char fr)
 {
     if (!writeByte(p,0) ||  /* Delta-time is always 0 for SMPTE offset */
@@ -739,23 +725,25 @@ int MKMIDIFileWriteSMPTEoffset(void *p,unsigned char hr,unsigned char min,
     return ok;
 }
 
-int MKMIDIFileWriteSequenceNumber(void *p,int data)
+int MKMIDIFileWriteSequenceNumber(MKMIDIFileOut *p, int data)
 {
     if (!writeByte(p,0) || /* Delta time is 0 */
 	!writeByte(p,0xff) ||
 	!writeByte(p,SEQUENCENUMBER) ||
-	!writeByte(p,2) || !writeShort(p,data))
-      return endOfStream;
+	!writeByte(p,2) ||
+	!writeShort(p,data))
+	return endOfStream;
     return ok;
 }
 
-int MKMIDIFileWriteTempo(void *p,int quanta, double beatsPerMinute)
+int MKMIDIFileWriteTempo(MKMIDIFileOut *p, int quanta, double beatsPerMinute)
 {
     int n;
-    OP->tempo = beatsPerMinute;
-    n = (int)(0.5 + (60000000.0 / OP->tempo));
-    if (OP->evaluateTempo) {
-      OP->timeScale = (double) n / (double)(OP->division * OP->quantaSize);
+    
+    p->tempo = beatsPerMinute;
+    n = (int)(0.5 + (60000000.0 / p->tempo));
+    if (p->evaluateTempo) {
+      p->timeScale = (double) n / (double)(p->division * p->quantaSize);
       /* 
        * if evaluating tempo we replace the original with 60bpm
        * to preserve the absolute timing between notes.
@@ -772,7 +760,7 @@ int MKMIDIFileWriteTempo(void *p,int quanta, double beatsPerMinute)
     return ok;
 }
 
-int MKMIDIFileWriteEvent(register void *p, int quanta, int nData, unsigned char *bytes)
+int MKMIDIFileWriteEvent(register MKMIDIFileOut *p, int quanta, int nData, unsigned char *bytes)
 {
     if (!writeTime(p,quanta))
       return endOfStream;
@@ -785,13 +773,11 @@ int MKMIDIFileWriteEvent(register void *p, int quanta, int nData, unsigned char 
     return ok;
 }
 
-int MKMIDIFileWriteSysExcl(void *p, int quanta, int nData, unsigned char *bytes)
-    /* Assumes there's no MIDI_SYSEXCL at start and there is a
-     * MIDI_EOX at end. */
+int MKMIDIFileWriteSysExcl(MKMIDIFileOut *p, int quanta, int nData, unsigned char *bytes)
 {
     if (!writeTime(p,quanta) || !writeByte(p,MIDI_SYSEXCL) ||
 	!writeVariableQuantity(p,nData) || !writeBytes(p,bytes,nData))
-      return endOfStream;
+	return endOfStream;
     return ok;
 }
 
@@ -799,12 +785,12 @@ int MKMIDIFileWriteSysExcl(void *p, int quanta, int nData, unsigned char *bytes)
 
 // this is a kludge in the sense that it is modifying the times as they are read from the MIDI file.
 // if we ever wanted to playback twice what was read, we would have a problem.
-int MKMIDISetReadQuantasize(void *p,int usec)
+int MKMIDISetReadQuantasize(MKMIDIFileIn *p, int usec)
 {
-    IP->quantaSize = usec;
-    if (IP->division) {
-	double n = 60000000.0 / IP->tempo;
-	IP->timeScale = n / (double)(IP->division * IP->quantaSize);
+    p->quantaSize = usec;
+    if (p->division) {
+	double n = 60000000.0 / p->tempo;
+	p->timeScale = n / (double)(p->division * p->quantaSize);
     }
     return usec;
 }

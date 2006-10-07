@@ -93,6 +93,18 @@ typedef struct _midiFileInStruct {
     unsigned int streamPos; /*sb: used to keep track of position within stream, for reading and writing. */
 } MKMIDIFileIn;
 
+typedef struct _midiFileOutStruct {
+    double tempo;     
+    double timeScale; 
+    int currentTrack;
+    int division;
+    int currentCount;
+    int lastTime;
+    NSMutableData *midiStream;
+    int quantaSize;
+    BOOL evaluateTempo;
+} MKMIDIFileOut;
+
 /*!
   @brief Begins reading the standard MIDI file located in the NSData instance fileData.
   TODO should be NSData, not NSMutableData.
@@ -112,6 +124,8 @@ extern int MKMIDIFileReadPreamble(MKMIDIFileIn *p, int *level, int *track_count)
 /*!
  @brief Read the next event in the current track. Return nonzero if successful;
   zero if an error or end-of-stream occurred.
+ Data should be an array of length 3. 
+ @result Return endOfStream when EOS is reached, return 1 otherwise.
  */
 extern int MKMIDIFileReadEvent(MKMIDIFileIn *p);
 
@@ -122,45 +136,48 @@ extern int MKMIDIFileReadEvent(MKMIDIFileIn *p);
   call MKMIDIFileBeginWritingTrack.
   MKMIDIFileBeginWriting must be balanced by a call to MKMIDIFileEndWriting.
  */
-void *MKMIDIFileBeginWriting(NSMutableData *s, int level, NSString *sequenceName, BOOL evaluateTempo);
+MKMIDIFileOut *MKMIDIFileBeginWriting(NSMutableData *midiStream, int level, NSString *sequenceName, BOOL evaluateTempo);
 
 /*!
  @brief Terminates writing to the stream. After this call, the stream may be closed.
  */
-extern int MKMIDIFileEndWriting(void *p);
+extern int MKMIDIFileEndWriting(MKMIDIFileOut *p);
 
 /*!
  @brief Must be called in a level 1 file to bracket each
  chunk of track data (except track 0, which is special).
  */
-extern int MKMIDIFileBeginWritingTrack(void *p, NSString *trackName);
+extern int MKMIDIFileBeginWritingTrack(MKMIDIFileOut *p, NSString *trackName);
 
 /*!
  @brief Must be called in a level 1 file to bracket each
  chunk of track data (except track 0, which is special).
  */
-extern int MKMIDIFileEndWritingTrack(void *p, int quanta);
+extern int MKMIDIFileEndWritingTrack(MKMIDIFileOut *p, int quanta);
 
-extern int MKMIDIFileWriteTempo(void *p, int quanta, double beatsPerMinute);
+extern int MKMIDIFileWriteTempo(MKMIDIFileOut *p, int quanta, double beatsPerMinute);
 
-extern int MKMIDIFileWriteEvent(void *p, int quanta, int ndata, unsigned char *bytes);
+extern int MKMIDIFileWriteEvent(MKMIDIFileOut *p, int quanta, int ndata, unsigned char *bytes);
 
-extern int MKMIDIFileWriteSysExcl(void *p,int quanta, int ndata, unsigned char *bytes);
+/*!
+  @brief Assumes there's no MIDI_SYSEXCL at start and there is a MIDI_EOX at end. 
+ */
+extern int MKMIDIFileWriteSysExcl(MKMIDIFileOut *p, int quanta, int ndata, unsigned char *bytes);
 
 /*!
   @brief Write time sig or key sig. Specified in midifile format. 
  */
-extern int MKMIDIFileWriteSig(void *p, int quanta, short metaevent, unsigned data);
+extern int MKMIDIFileWriteSig(MKMIDIFileOut *p, int quanta, short metaevent, unsigned data);
 
-extern int MKMIDIFileWriteText(void *p, int quanta, short metaevent, NSString *data);
+extern int MKMIDIFileWriteText(MKMIDIFileOut *p, int quanta, short metaevent, NSString *data);
 
-extern int MKMIDIFileWriteSMPTEoffset(void *p,
+extern int MKMIDIFileWriteSMPTEoffset(MKMIDIFileOut *p,
 				      unsigned char hr,
 				      unsigned char min,
 				      unsigned char sec,
 				      unsigned char ff,
-				      unsigned char  fr);
+				      unsigned char fr);
 
-int MKMIDIFileWriteSequenceNumber(void *p,int data);
+int MKMIDIFileWriteSequenceNumber(MKMIDIFileOut *p, int data);
 
 #endif
