@@ -930,50 +930,46 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
     int fileFormatLevel;
     int trackCount;
     double timeFactor, t, prevT, lastTempoTime = -1;
-    id aPart;
+    MKPart *aPart;
     int i;
     register MKNote *aNote;
 #   define MIDIPARTS (16 + 1)
     _MKMidiInStruct *midiInPtr;
-    id *midiParts,*curPart;
+    id *midiParts, *curPart;
     BOOL trackInfoMidiChanWritten = NO;
-    void *fileStructP;
-    int *quanta;
-    BOOL *metaevent;
-    int *nData;
-    unsigned char **data;
+    MKMIDIFileIn *fileStructP;
     
-    if (!(fileStructP = MKMIDIFileBeginReading(aStream,&quanta,&metaevent,&nData,&data,[MKScore midifilesEvaluateTempo])))
+    if (!(fileStructP = MKMIDIFileBeginReading(aStream, [MKScore midifilesEvaluateTempo])))
 	return nil;
-#   define DATA (*data)
-    if (!MKMIDIFileReadPreamble(fileStructP,&fileFormatLevel,&trackCount))
+#   define DATA (fileStructP->data)
+    if (!MKMIDIFileReadPreamble(fileStructP, &fileFormatLevel, &trackCount))
 	return nil;
     if (fileFormatLevel == 0)
 	trackCount = MIDIPARTS;
-    else trackCount++; 	/* trackCount doesn't include the 'tempo' track so
-	we increment here */
+    else 
+	trackCount++; 	/* trackCount doesn't include the 'tempo' track so we increment here */
     if (!(midiInPtr = _MKInitMidiIn())) {
 	MKMIDIFileEndReading(fileStructP);
 	return nil;
     }
-    _MK_MALLOC(midiParts,id,trackCount);
+    _MK_MALLOC(midiParts, id, trackCount); // TODO Good candidate to be replaced with NSArray
     curPart = midiParts;
-    for (i=0; i<trackCount; i++) {
+    for (i = 0; i < trackCount; i++) {
 	aPart = [MKGetPartClass() new];
 	aNote = [MKGetNoteClass() new];
 	if ((fileFormatLevel == 0) && (i != 0))
-	    [aNote setPar:MK_midiChan toInt:i];
-	[aPart setInfoNote:aNote];
+	    [aNote setPar: MK_midiChan toInt: i];
+	[aPart setInfoNote: aNote];
 	[aNote release];
-	[self addPart:aPart];
+	[self addPart: aPart];
 	*curPart++ = aPart;
     }
     lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
-    timeFactor = 1.0/(double)MKMIDI_DEFAULTQUANTASIZE;
+    timeFactor = 1.0 / (double) MKMIDI_DEFAULTQUANTASIZE;
     /* In format 0 files, *curPart will be the _MK_MIDISYS part. */
     curPart = midiParts;
-#   define FIRSTTRACK (MKPart *)*midiParts
-#   define CURPART (MKPart *)*curPart
+#   define FIRSTTRACK (MKPart *) *midiParts
+#   define CURPART (MKPart *) *curPart
     prevT = -1;
     if (!info)
 	info = [MKGetNoteClass() new];
@@ -984,49 +980,46 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 #   define LEVEL1 (fileFormatLevel == 1)
 #   define LEVEL2 (fileFormatLevel == 2)
     if (LEVEL2) /* Sequences numbered consecutively from 0 by default. */
-	MKSetNoteParToInt([FIRSTTRACK infoNote],MK_sequence,0);
+	MKSetNoteParToInt([FIRSTTRACK infoNote], MK_sequence, 0);
     while (MKMIDIFileReadEvent(fileStructP)) {
-	if (*metaevent) {
+	if (fileStructP->metaeventFlag) {
 	    /* First handle meta-events that are MKPart or MKScore info
 	    parameters. We never want to skip these. */
 	    switch (DATA[0]) {
 		case MKMIDI_sequenceNumber:
-		    MKSetNoteParToInt(LEVEL2 ? [CURPART infoNote] : info,
-				      MK_sequence,SHORTDATA);
+		    MKSetNoteParToInt(LEVEL2 ? [CURPART infoNote] : info, MK_sequence, SHORTDATA);
 		    break;
 		case MKMIDI_smpteOffset:
-		    writeDataAsNumString(LEVEL2 ? [CURPART infoNote] : info,
-					 MK_smpteOffset,DATA,5);
+		    writeDataAsNumString(LEVEL2 ? [CURPART infoNote] : info, MK_smpteOffset, DATA, 5);
 		    break;
 		case MKMIDI_sequenceOrTrackName:
 		    /* Check if it is the first part. There is no MK_title in level 2 files, since
 		    the title is merely the name of the first sequence. */
 		    if ((curPart == midiParts) && !LEVEL2)
-			MKSetNoteParToString(info, MK_title, [NSString stringWithCString:STRINGDATA]);
+			MKSetNoteParToString(info, MK_title, [NSString stringWithCString: STRINGDATA]);
 		    /* In level 1 files, we name the current part with the
 		    title. Note that we do this even if the name is a
 		    sequence name rather than a track name. In level 0
 		    files, we do not name the part. */
 		    if(LEVEL1)
-			MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithCString:STRINGDATA]);
+			MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithCString: STRINGDATA]);
 			if (fileFormatLevel != 0)
-			    MKNameObject([NSString stringWithCString:STRINGDATA], *curPart);
+			    MKNameObject([NSString stringWithCString: STRINGDATA], *curPart);
 			    break;
 		case MKMIDI_copyright:
-		    MKSetNoteParToString(info,MK_copyright,[NSString stringWithCString:STRINGDATA]);
+		    MKSetNoteParToString(info, MK_copyright, [NSString stringWithCString: STRINGDATA]);
 		    break;
 		case MKMIDI_instrumentName:
 		    /* An instrument name is the sort of thing you need in a part info note, but the strict definition of
 		    the SMF spec allows you to rename the track at different time points, why? It would have been better
 		to define more tracks, each with a separate instrument. In that rather wierd case,
 		    this code is wrong as it will take the last instrument name used as the info note. */
-		    MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info,
-					 MK_instrumentName, [NSString stringWithCString:STRINGDATA]);
+		    MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info, MK_instrumentName, [NSString stringWithCString: STRINGDATA]);
 		default:
 		    break;
 	    }
 	}
-	t = *quanta * timeFactor;
+	t = fileStructP->quanta * timeFactor;
 	/* FIXME Should do something better here. (need to change
 	MKPart to allow ordering spec for simultaneous notes.) */
 	if (t < firstTimeTag)
@@ -1037,7 +1030,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 	    else
 		continue;
 	}
-	if (*metaevent) {
+	if (fileStructP->metaeventFlag) {
 	    /* Now handle meta-events that can be in regular notes. These
 	    are skipped when out of the time window, as are regular
 	    MIDI messages. */
@@ -1059,7 +1052,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    else if (LEVEL2) {
 			/* Assign ascending sequence number parameters */
 #define OLDNUM MKGetNoteParAsInt([(*(curPart-1)) infoNote], MK_sequence)
-			MKSetNoteParToInt([CURPART infoNote],MK_sequence, OLDNUM + 1);
+			MKSetNoteParToInt([CURPART infoNote], MK_sequence, OLDNUM + 1);
 		    }
 		    lastTempoTime = -1;
 		    prevT = -1;
@@ -1071,15 +1064,13 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    if (t == 0) {
 			if (lastTempoTime == 0) {
 			    /* Supress duplicate tempi, which can arise because of
-			    the way we duplicate tempo in info (do it by bypassing
-								the addNote, below) */
+			    the way we duplicate tempo in info (do it by bypassing the addNote, below) */
 			    break;
 			}
 			else { /* First setting of tempo for current track. */
 			    id theInfo = LEVEL2 ? [CURPART infoNote] : info;
 			    if (!MKIsNoteParPresent(theInfo, MK_tempo))
-				MKSetNoteParToDouble(theInfo, MK_tempo,
-						     [MKScore midifilesEvaluateTempo] ? 60 : 60000000.0 / LONGDATA);
+				MKSetNoteParToDouble(theInfo, MK_tempo, [MKScore midifilesEvaluateTempo] ? 60 : 60000000.0 / LONGDATA);
 			}
 		    }
 		    lastTempoTime = t;
@@ -1102,14 +1093,15 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
 		    break;
 		case MKMIDI_timeSig:
-		    writeDataAsNumString(aNote,MK_timeSignature,DATA,4);
+		    writeDataAsNumString(aNote, MK_timeSignature, DATA, 4);
 		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
 		    break;
 		case MKMIDI_keySig: {
 		    char str[5];
+		    
 		    /* Want sf signed, hence (char) cast  */
 		    int x = (int)((char) DATA[2]); /* sf */
-		    sprintf(&(str[0]), "%-2d ",x);
+		    sprintf(&(str[0]), "%-2d ", x);
 		    x = (int) DATA[3]; /* mi */
 		    sprintf(&(str[3]), "%d", x);
 		    str[4] = '\0';
@@ -1124,7 +1116,8 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 	}
 	else { /* Standard MIDI, not sys excl */
 	    NSAutoreleasePool *arp;
-	    switch (*nData) {
+	    
+	    switch (fileStructP->nData) {
 		case 3:
 		    midiInPtr->_dataByte2 = DATA[2];
 		    /* No break */
@@ -1136,21 +1129,21 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    break;
 		default: { /* Sys exclusive */
 		    unsigned j;
-		    char *str = (char *) _MKMalloc(*nData * 3); /* 3 chars per byte */
+		    char *str = (char *) _MKMalloc(fileStructP->nData * 3); /* 3 chars per byte */
 		    char *ptr = str;
-		    unsigned char *p = *data;
-		    unsigned char *endP = p + *nData;
+		    unsigned char *p = fileStructP->data;
+		    unsigned char *endP = p + fileStructP->nData;
 		    
-		    sprintf(ptr,"%-2x",j = *p++);
+		    sprintf(ptr, "%-2x", j = *p++);
 		    ptr += 2;
 		    while (p < endP) {
-			sprintf(ptr,",%-2x",j = *p++);
+			sprintf(ptr, ",%-2x", j = *p++);
 			ptr += 3;
 		    }
 		    *ptr = '\0';
-		    aNote = [[MKGetNoteClass() alloc] initWithTimeTag:t+timeShift];
-		    MKSetNoteParToString(aNote,MK_sysExclusive,[NSString stringWithCString:str]); /* copy */
-		    [CURPART addNote:aNote];
+		    aNote = [[MKGetNoteClass() alloc] initWithTimeTag: t + timeShift];
+		    MKSetNoteParToString(aNote, MK_sysExclusive, [NSString stringWithCString: str]); /* copy */
+		    [CURPART addNote: aNote];
 		    [aNote release];
 		    continue;
 		}
@@ -1166,7 +1159,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    if (midiInPtr->chan != _MK_MIDISYS) {
 			MKSetNoteParToInt(aNote, MK_midiChan, midiInPtr->chan);
 		    }
-		    [midiParts[midiInPtr->chan] addNote:aNote];
+		    [midiParts[midiInPtr->chan] addNote: aNote];
 		}
 		else {
 		    if (!trackInfoMidiChanWritten && midiInPtr->chan != _MK_MIDISYS) {
@@ -1175,9 +1168,9 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 			/* Set Part's chan to chan of first note in track. */
 		    }
 		    if (midiInPtr->chan != _MK_MIDISYS) {
-			MKSetNoteParToInt(aNote,MK_midiChan,midiInPtr->chan);
+			MKSetNoteParToInt(aNote, MK_midiChan, midiInPtr->chan);
 		    }
-		    [CURPART addNote:aNote];
+		    [CURPART addNote: aNote];
 		}
 	    }
 	    [arp release]; /* take care of autoreleased notes one at a time */

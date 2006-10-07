@@ -9,7 +9,7 @@
     These routines might eventually be in a MIDI library. Nowdays, they're
     public MusicKit functions.
 
-    The division of labor is as follows: All Music-Kit specifics are kept out
+    The division of labor is as follows: All MusicKit specifics are kept out
     of this file. The functions in this file read/write raw MIDI and meta-events.
 
   Original Author: David Jaffe
@@ -19,29 +19,7 @@
   Portions Copyright (c) 1994 Stanford University
 */
 /*
-Modification history:
-
-  $Log$
-  Revision 1.8  2005/04/15 04:35:06  leighsmith
-  Cleaned up for gcc 4.0's more stringent checking of ObjC types
-
-  Revision 1.7  2005/04/15 04:18:25  leighsmith
-  Cleaned up for gcc 4.0's more stringent checking of ObjC types
-
-  Revision 1.6  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.5  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.4  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2000/02/24 22:56:35  leigh
-  Added Davids bug fix for unused recognised meta events
-
-  Revision 1.2  1999/07/29 01:26:09  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history before commital to Subversion repository:
 
   12/21/89/daj - Fixed bug in writing level-1 files. last_write_time 
                  needs to be set to 0 when the track's incremented.
@@ -103,43 +81,14 @@ Modification history:
 /*
  * reading
  */
-
-typedef struct _midiFileInStruct {
-    double tempo;       /* in quarter notes per minute */
-    double timeScale;   /* timeScale * currentTime gives time in seconds */
-    int currentTrack;   /* Current track number */
-    int currentTime;    /* Current time in quanta. */
-    int currentOffset;	/* Added by dirk */
-    int division;       /* # of delta-time ticks per quarter. (See spec) */
-    short format;       /* Level 0, 1 or 2 */
-    int quantaSize;     /* In micro-seconds. */
-    unsigned char runningStatus; /* Current MIDI running status */
-    NSMutableData *midiStream;     /* Midifile stream */
-    int curBufSize;     /* Size of data buffer */
-    /* Info for current msg. These are passed up to caller */
-    int quanta;	        /* Time in quanta */
-    BOOL metaeventFlag; /* YES if this is a meta-event */
-    int nData;          /* Number of significant bytes in data */
-    unsigned char *data;/* Data bytes */
-    BOOL evaluateTempo;
-    unsigned int streamPos; /*sb: used to keep track of position within stream, for reading and writing. */
-} midiFileInStruct;
-
-#define REFERENCE **
-
-void *MKMIDIFileBeginReading(NSMutableData *midiStream,
-			      int REFERENCE quanta,
-			      BOOL REFERENCE metaeventFlag,
-			      int REFERENCE nData,
-			      unsigned char * REFERENCE data,
-			      BOOL evaluateTempo)
+MKMIDIFileIn *MKMIDIFileBeginReading(NSMutableData *midiStream, BOOL evaluateTempo)
 {
-    midiFileInStruct *rtn;
-    _MK_MALLOC(rtn,midiFileInStruct,1);
+    MKMIDIFileIn *rtn;
+    
+    _MK_MALLOC(rtn, MKMIDIFileIn, 1);
     rtn->tempo = DEFAULTTEMPO; 	    /* in beats per minute */
-    rtn->currentTrack = -1; /* We call the first or "tempo track" 
-			       "track 0". Therefore, we start counting at -1
-			       here. */ 
+    /* We call the first or "tempo track" "track 0". Therefore, we start counting at -1 here. */ 
+    rtn->currentTrack = -1; 
     rtn->currentTime = 0;
     rtn->currentOffset = 0;
     rtn->division = 0;
@@ -151,24 +100,18 @@ void *MKMIDIFileBeginReading(NSMutableData *midiStream,
 
     /* Malloc enough for SMPTEoffset metaevent. Realloc longer fields later */
     rtn->curBufSize = 6;
-    _MK_MALLOC(rtn->data,unsigned char,rtn->curBufSize);
-    /* Values are always returned indirectly in these fields. */
-    *nData = &rtn->nData;            
-    *data = &rtn->data;
-    *metaeventFlag = &rtn->metaeventFlag;
-    *quanta = &rtn->quanta;
+    _MK_MALLOC(rtn->data, unsigned char, rtn->curBufSize);
     return rtn;
 }
 
-#define IP ((midiFileInStruct *)p)
+#define IP ((MKMIDIFileIn *)p)
 
-void *MKMIDIFileEndReading(void *p)
+void MKMIDIFileEndReading(MKMIDIFileIn *p)
 {
     free(IP->data);
     IP->data = NULL;
     free(IP);
     p = NULL; 
-    return NULL;
 }
 
 enum {unrecognized = -1,endOfStream = 0,ok = 1,undefined,
@@ -276,7 +219,7 @@ static int readVariableQuantity(NSMutableData *midiStream, int *n, unsigned int 
     return endOfStream;
 }
 
-static int readTrackHeader(midiFileInStruct *p,unsigned int *streamPos)
+static int readTrackHeader(MKMIDIFileIn *p,unsigned int *streamPos)
 {
     char typebuf[8];
     int size;
@@ -292,14 +235,14 @@ static int readTrackHeader(midiFileInStruct *p,unsigned int *streamPos)
     return ok;
 }
 
-static void checkRealloc(midiFileInStruct *p,int newSize)
+static void checkRealloc(MKMIDIFileIn *p,int newSize)
 {
     if (p->curBufSize < newSize)
       _MK_REALLOC(p->data,unsigned char,newSize);
     p->curBufSize = newSize;
 }
 
-static int readMetaevent(midiFileInStruct *p,unsigned int *streamPos)
+static int readMetaevent(MKMIDIFileIn *p,unsigned int *streamPos)
 {
     unsigned char theByte = '\0';
     int temp;
@@ -412,7 +355,7 @@ static int readMetaevent(midiFileInStruct *p,unsigned int *streamPos)
    timings. When such a beast occurs, it is concatenated into a single
    event and the time stamp is that of the last piece of the event. */
 
-static int readSysExclEvent(midiFileInStruct *p,int oldState,unsigned int *streamPos)
+static int readSysExclEvent(MKMIDIFileIn *p,int oldState,unsigned int *streamPos)
 {
     int len;
     unsigned char *ptr;
@@ -435,7 +378,7 @@ static int readSysExclEvent(midiFileInStruct *p,int oldState,unsigned int *strea
 	    ((oldState == undefined) ? firstISysExcl : middleISysExcl));
 }
 
-static int readEscapeEvent(midiFileInStruct *p,unsigned int *streamPos)
+static int readEscapeEvent(MKMIDIFileIn *p,unsigned int *streamPos)
 {
     if (!readVariableQuantity(p->midiStream,&(p->nData),streamPos))
       return endOfStream;
@@ -444,13 +387,13 @@ static int readEscapeEvent(midiFileInStruct *p,unsigned int *streamPos)
 }
 
 #define SCALEQUANTA(_p,quanta) \
-  ((int)(0.5 + (((midiFileInStruct *)_p)->timeScale * (double)quanta)))
+  ((int)(0.5 + (((MKMIDIFileIn *)_p)->timeScale * (double)quanta)))
 
 /*
  * Exported routines
  */
 
-int MKMIDIFileReadPreamble(void *p,int *level,int *trackCount)
+int MKMIDIFileReadPreamble(MKMIDIFileIn *p,int *level,int *trackCount)
 {
     char typebuf[8];
     int size;
@@ -487,7 +430,7 @@ int MKMIDIFileReadPreamble(void *p,int *level,int *trackCount)
     return ok;
 }
 
-int MKMIDIFileReadEvent(register void *p)
+int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
     /* return endOfStream when EOS is reached, return 1 otherwise.
        Data should be an array of length 3. */
 {
