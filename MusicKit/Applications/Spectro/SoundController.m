@@ -4,39 +4,12 @@
 *	Last modified: 4/94
 */
 
-#import "SoundController.h"
-#import "SaveToController.h"
-#import "SoundDocument.h"
-
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
-static NSString *pathname;
-
-static NSString *getSavePath(NSString *defaultPath, NSView *accessory)
-{
-    id	savePanel;
-    BOOL		ok=NO;
-    
-    savePanel = [NSSavePanel savePanel];
-    [savePanel setAllowedFileTypes: [Snd soundFileExtensions]];
-    /* sbrandon, 23/11/2001 added extra retain to accessory view as it was
-	being released unexpectedly. I would have thought that because it's in
-	the nib file it would never be released fully, but looks like it was.
-	*/
-    [savePanel setAccessoryView:[accessory retain]];
-    if (defaultPath) if ([defaultPath length]) {
-        ok = [savePanel runModalForDirectory:[defaultPath stringByDeletingLastPathComponent]
-                                        file:[defaultPath lastPathComponent]];
-    }
-	else
-	    ok = [savePanel runModal];
-    if (ok) {
-        return [savePanel filename];
-    }
-    else
-        return NO;
-}
+#import "SoundController.h"
+#import "SaveToController.h"
+#import "SoundDocument.h"
 
 NSString *colorToString(NSColor *color)
 {
@@ -59,82 +32,48 @@ NSColor *StringToColor(NSString *buffer)
 
 - init
 {
-    [super init];
-    counter = 0;
-    return self;
-}
-
-+ (void)initialize
-{
-    NSMutableDictionary *SpectroDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
-	@"1024",	@"WindowSize",
-	@"2.0",	@"ZPFactor",
-	@"0.5",	@"HopRatio",
-	@"Hanning",	@"WindowType",
-	@"10000",	@"SpectrumMaxFreq",
-	@"-100",	@"dBLimit",
-	@"5000",	@"WFMaxFreq",
-	@"3.0",	@"WFPlotHeight",
-	@"0",	@"DisplayType",
-										   @"0:0:0",	@"SpectrumColor",
-										   @"1:0:0",	@"CursorColor",
-									      @"0.3333:0.3333:0.3333", @"WaterfallColor",
-									      @"0.6666:0.6666:0.6666", @"GridColor",
-	NULL,NULL] retain];
-    
-    [[NSUserDefaults standardUserDefaults] registerDefaults:SpectroDefaults];
-    
-    return;
-}
-
-- newSoundDoc:sender
-{
-    SoundDocument * newDocument;
-    NSString *filenamebuf;
-    if (!currentDir) currentDir = @"";
-    filenamebuf = [currentDir stringByAppendingPathComponent: @"/UNTITLED"];
-    newDocument = [self openDoc];
-    [newDocument setFileName:filenamebuf];
-    return self;
-}
-
-- open:sender
-{
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    NSArray *fileTypes = [Snd soundFileExtensions];
-    int opr;
-    
-    [pathname release];
-    pathname = nil;  // so if we fail to load, we have notice of this.
-    
-    opr = [openPanel runModalForDirectory: pathname file: @"" types: fileTypes];
-    if (opr == NSOKButton) {
-        pathname = [[openPanel filename] retain];
-        [self openFile: pathname];
+    self = [super init];
+    if(self != nil) {
+	counter = 0;	
     }
     return self;
 }
 
-- openFile:(NSString *)fileName
++ (void) initialize
 {
-    SoundDocument * newDocument;
-    newDocument = [self openDoc];
-    [newDocument setFileName:fileName];
-    [newDocument load:nil];
-    [newDocument setButtons];
-    return self;
+    NSMutableDictionary *SpectroDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
+	@"1024",	@"WindowSize",
+	@"2.0",		@"ZPFactor",
+	@"0.5",		@"HopRatio",
+	@"Hanning",	@"WindowType",
+	@"10000",	@"SpectrumMaxFreq",
+	@"-100",	@"dBLimit",
+	@"5000",	@"WFMaxFreq",
+	@"3.0",		@"WFPlotHeight",
+	@"0",		@"DisplayType",
+	@"0:0:0",	@"SpectrumColor",
+	@"1:0:0",	@"CursorColor",
+	@"0.3333:0.3333:0.3333", @"WaterfallColor",
+	@"0.6666:0.6666:0.6666", @"GridColor",
+	NULL, NULL] retain];
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:SpectroDefaults];
+    
 }
 
-- openDoc
-{
-    id newDoc;
-    newDoc = [[SoundDocument alloc] init];
-    [self setDocument:newDoc];
-    [documentList addObject:newDoc];
-    return newDoc;
-}
+#if 0
 
-- setDocument:aDocument
+// TODO set the file types for the document from Snd -soundFileExtensions
+// <key>CFBundleDocumentTypes</key>
+// <key>CFBundleTypeExtensions</key>
+// insert the fileTypes
+    NSArray *fileTypes = [Snd soundFileExtensions];
+    [Snd defaultFileExtension]    
+    pathname = nil;  // so if we fail to load, we have notice of this.
+
+#endif
+
+- setDocument: aDocument
 {
     currentDocument = aDocument;
     return self;
@@ -145,70 +84,19 @@ NSColor *StringToColor(NSString *buffer)
     return currentDocument;
 }
 
-- closeDoc:aDoc
-{
-    [documentList removeObject:aDoc];
-    return self;
-}
-
-- (void) save: (id) sender
-{
-    if (currentDocument) {
-        NSString *thename = [currentDocument fileName];
-	
-        if (thename)
-	    if ([thename isEqualToString:@"/UNTITLED"]) {
-		[self saveAs:sender];
-		return;
-	    }
-		else
-		    [currentDocument save:sender];
-    }
-}
-
-- saveAs:sender
-{
-    return [self saveAs:sender withAccessory:nil];
-}
-
-- saveAs:sender withAccessory:accessory
-{
-    NSString * mypathname;
-    SoundDocument * doc = currentDocument;
-    if (accessory)
-        [saveToController setSound:[doc sound]];
-    if (doc && (mypathname = getSavePath([doc fileName],accessory))) {
-        [pathname release];
-        pathname = [mypathname retain];
-        if (accessory)
-            [doc saveToFormat:[saveToController soundTemplate]
-                     fileName: pathname];
-        else {
-            [doc setFileName:pathname];
-            [doc save:sender];
-        }
-    }
-    return self;
-}
-
-- saveTo:(id)sender
-{
-    return [self saveAs:sender withAccessory:saveToAccessoryView];
-}
-
-- printSound:sender
+- printSound: sender
 {
     [currentDocument printTimeWindow];
     return self;
 }
 
-- printSpectrum:sender
+- printSpectrum: sender
 {
     [currentDocument printSpectrumWindow];
     return self;
 }
 
-- printWaterfall:sender
+- printWaterfall: sender
 {
     [currentDocument printWaterfallWindow];
     return self;
@@ -219,19 +107,13 @@ NSColor *StringToColor(NSString *buffer)
     [currentDocument sndInfo:sender];
 }
 
-- (IBAction) revertToSaved: (id) sender
-{
-    if (currentDocument)
-	[currentDocument revertToSaved:sender];
-}
-
-- showInfoPanel:sender
+- showInfoPanel: sender
 {
     [infoPanel makeKeyAndOrderFront:nil];
     return self;	
 }
 
-- showPreferences:sender
+- showPreferences: sender
 {
     if (!prefController) {
 	[NSBundle loadNibNamed:@"preferences.nib" owner:self];
@@ -240,12 +122,12 @@ NSColor *StringToColor(NSString *buffer)
     return self;
 }
 
-- (int)documentCount
+- (int) documentCount
 {
     return counter;
 }
 
-- setCounter:(int)count
+- setCounter: (int) count
 {
     counter = count;
     return self;
@@ -255,52 +137,16 @@ NSColor *StringToColor(NSString *buffer)
 
 @implementation SoundController(ApplicationDelegate)
 
-
-- (int)application:sender openFile:(NSString *)filename
-{
-    if (![[filename pathExtension] isEqualToString: [Snd defaultFileExtension]]) {
-        NSLog(@"Attempt to open file type %@\n", [filename pathExtension]);
-        return NO;
-    }
-    [pathname release];
-    pathname = [filename copy];
-    return ([self openFile:pathname] != nil);
-}
-
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    documentList = [NSMutableArray new];
     currentDocument = nil;
     [self showInfoPanel:self];
 }
 
-- (void)applicationDidHide:(NSNotification *)notification
+- (void) applicationDidHide: (NSNotification *) notification
 {
     if (currentDocument)
         [currentDocument stop:nil];
-}
-
-- (BOOL)applicationShouldTerminate:(id)sender
-{
-    int i, count, touched;
-    id doc;
-    
-    count = [documentList count];
-    touched = NO;
-    for (i = 0; i < count; i++) {
-	doc = [documentList objectAtIndex:i];
-	if ([doc touched]) touched = YES;
-    }
-    if (touched) {
-	i = NSRunAlertPanel(@"Quit",
-			    NSLocalizedStringFromTableInBundle(@"Sound Document(s) not saved", @"Spectro", [NSBundle mainBundle], "not saved button name"),
-			    NSLocalizedStringFromTableInBundle(@"Yes", @"Spectro", [NSBundle mainBundle], "Yes button name"),
-			    NSLocalizedStringFromTableInBundle(@"No", @"Spectro", [NSBundle mainBundle], "No button name"), nil); 
-	if (i == NSAlertAlternateReturn)
-	    return NO;
-    }
-    [documentList release];
-    return YES;
 }
 
 @end

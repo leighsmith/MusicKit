@@ -247,7 +247,7 @@
     if (!mySound)
 	return nil;
     srate = [mySound samplingRate];
-    [scrollSpectrum getWindowPoints: &start Size: &size];
+    [scrollSpectrum getWindowPoints: &start andSize: &size];
     startFreq = (float) start * srate / dataSize;
     freqDur = (float) size * srate / dataSize;
     for (i = 0; i < 5; i++) {

@@ -21,6 +21,7 @@
 
 #import <Foundation/Foundation.h>
 #import <SndKit/SndKit.h>
+#import "ScrollingSpectrum.h"
 #import "SpectrumView.h"
 #import "SignalProcessor.h"
 #import "WaterfallView.h"
@@ -28,12 +29,9 @@
 @interface SpectrumDocument: NSObject
 {
     IBOutlet id spectrumWindow;
-    IBOutlet id scrollSpectrum;
+    IBOutlet ScrollingSpectrum *scrollSpectrum;
     IBOutlet id waterfallWindow;
     IBOutlet WaterfallView *myWaterfallView;
-    SignalProcessor *mySignalProcessor;
-    Snd *mySound;
-    IBOutlet id delegate;
     IBOutlet id waterFallButton;
     IBOutlet id cursorFreq;
     IBOutlet id cursorAmp;
@@ -54,6 +52,9 @@
     IBOutlet id wfCurrentFrameCell;
     IBOutlet id wfCurrentFrameTime;
     IBOutlet id totalFramesCell;
+    SignalProcessor *mySignalProcessor;
+    Snd *mySound;
+    id delegate; // Probably should be removed.
     int dataSize;
     int windowSize;
     unsigned int firstSample;

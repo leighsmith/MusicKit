@@ -1,89 +1,77 @@
 /*	$Id$
-*	Originally from SoundEditor3.0.
-*	Modified for Spectro3.0 by Gary Scavone.
-*
-* Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
-*
-* Legal Statement Covering Additions by The MusicKit Project:
-*
-*   Permission is granted to use and modify this code for commercial and
-*   non-commercial purposes so long as the author attribution and copyright
-*   messages remain intact and accompany all relevant code.
-*
-*/
+ *	Originally from SoundEditor3.0.
+ *	Modified for Spectro3.0 by Gary Scavone.
+ *
+ * Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
+ *
+ * Legal Statement Covering Additions by The MusicKit Project:
+ *
+ *   Permission is granted to use and modify this code for commercial and
+ *   non-commercial purposes so long as the author attribution and copyright
+ *   messages remain intact and accompany all relevant code.
+ *
+ */
 
 #import <AppKit/AppKit.h>
-#import <SndKit/SndKit.h>
-
 #import "SoundDocument.h"
 #import "SoundController.h"
-#import "ScrollingSound.h"
-#import "SoundInfo.h"
-#import "SpectrumDocument.h"
 
 #define ZOOM_FACTOR 2.0
 #define WAVE_MODE 0
 #define OUTLINE_MODE 1
-#define PUTVAL(cell,f)	[cell setStringValue:[NSString stringWithCString:doFloat(f, 3, 3)]]
-
-extern int access();
-
-char *doFloat(float f, int x, int y)	/* Trims float values */
-{
-    static char *s = NULL;
-    if (!s) s = malloc(32);
-    
-    sprintf(s,"%*.*f", x, y, f);
-    return s;
-}
+#define PUTVAL(cell,f)	[cell setStringValue: [NSString stringWithFormat: @"%3.3f", f]]
 
 @implementation SoundDocument
 
 - init
 {
-    NSRect theFrame;
-    
-    [super init];
-    [NSBundle loadNibNamed: @"soundDocument.nib" owner: self];
-    [soundWindow setDelegate: self];
-    theFrame = [soundWindow frame];
-    [self newSoundLocation: &theFrame.origin];
-    [soundWindow setFrameOrigin: NSMakePoint(theFrame.origin.x, theFrame.origin.y)];
-//    [soundWindow makeKeyAndOrderFront:nil];
-    [scrollSound setDelegate: self];
-    mySoundView = [scrollSound soundView];
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"DisplayType"] floatValue] < 1.0)
-        [mySoundView setDisplayMode: SND_SOUNDVIEW_WAVE];
-    else
-        [mySoundView setDisplayMode: SND_SOUNDVIEW_MINMAX];
-    [mySoundView setDelegate: self];
-    [mySoundView setContinuousSelectionUpdates: YES];
-    [mySoundView setForegroundColor: [NSColor blueColor]];
-    soundInfo = [[SoundInfo alloc] init];
-    fresh = YES;
+    self = [super init];
+    if(self != nil) {
+	NSRect theFrame;
+
+	theSound = nil;
+	theFrame = [soundWindow frame];
+	[self newSoundLocation: &theFrame.origin];
+	soundInfo = [[SoundInfo alloc] init];
+	fresh = YES;
+    }
     return self;
+}
+
+- (void) dealloc
+{
+    [theSound release];
+    theSound = nil;
+    [super dealloc];
+}
+
+// Override returning the nib file name of the document
+// If you need to use a subclass of NSWindowController or if your document supports
+// multiple NSWindowControllers, you should remove this method and override -makeWindowControllers instead.
+- (NSString *) windowNibName
+{
+    return @"soundDocument";
 }
 
 - newSoundLocation: (NSPoint *) p
 {
     int count = [[NSApp delegate] documentCount];
-    
     int cnt = (count > 3)? count - 4 : count;
+    
     p->x += (20.0 * count);
     p->y -= (25.0 * cnt);
-    count = (count > 6)? 0 : count+1;
-    [[NSApp delegate] setCounter:count];
+    count = (count > 6)? 0 : count + 1;
+    [[NSApp delegate] setCounter: count];
     return self;
 }
 
-- setFileName:(NSString *)aName
+- (void) setFileName: (NSString *) aName
 {
     [fileName release];
     fileName = [aName copy];
-    return self;
 }
 
-- (NSString *)fileName
+- (NSString *) fileName
 {
     return fileName;
 }
@@ -92,48 +80,34 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 {
     NSString *title;
     
-    [soundInfo setSoundHeader:[self sound]];
+    [soundInfo setSoundHeader: [self sound]];
     if ([soundInfo getChannelCount] == 2)
-        title = [fileName stringByAppendingFormat:@" (%i Hz %@, Stereo)",[soundInfo getSrate],
+        title = [fileName stringByAppendingFormat: @" (%i Hz %@, Stereo)", [soundInfo getSrate],
             [soundInfo getSoundFormat]];
     else
-        title = [fileName stringByAppendingFormat:@" (%i Hz %@, Mono)",[soundInfo getSrate],
+        title = [fileName stringByAppendingFormat: @" (%i Hz %@, Mono)", [soundInfo getSrate],
             [soundInfo getSoundFormat]];
-    [soundWindow setTitleWithRepresentedFilename:title];
+    [soundWindow setTitleWithRepresentedFilename: title];
     return self;
-}
-
-// You can also choose to override -fileWrapperRepresentationOfType: or -writeToFile:ofType: instead.
-- (NSData *) dataRepresentationOfType: (NSString *) aType
-{
-    NSLog(@"write file of type: %@\n", aType);
-    return nil;
-}
-
-// You can also choose to override -loadFileWrapperRepresentation:ofType: or -readFromFile:ofType: instead.
-- (BOOL) loadDataRepresentation: (NSData *) data ofType: (NSString *) aType
-{
-    NSLog(@"loadDataRepresentation ofType: %@\n", aType);
-    return NO;
 }
 
 - (Snd *) sound
 {
-    return [mySoundView sound];
+    return [mySoundView sound]; // [[theSound retain] autorelease];
 }
 
 - (double) samplingRate
 {
-    Snd *sound;
+    Snd *sound = [self sound];
     
-    if (((sound = [self sound]) == nil) || [sound isEmpty])
+    if ((sound == nil) || [sound isEmpty])
 	return 0.0;
-    else return [sound samplingRate];
+    else 
+	return [sound samplingRate];
 }
 
 - printTimeWindow
 {
-    
     [soundWindow print:self];
     return self;
 }
@@ -152,10 +126,49 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     return self;
 }
 
-- (float)sampToSec:(int)samples rate: (float)srate
+- (float) sampToSec: (int) samples rate: (float) srate
 {
     if (srate == 0.0) return 0.0;
     return samples / srate;
+}
+
+// You can also choose to override -loadFileWrapperRepresentation:ofType:  instead.
+- (BOOL) readFromURL: (NSURL *) soundURL ofType: (NSString *) typeName error: (NSError **) outError
+{
+    theSound = [[Snd alloc] initFromSoundURL: soundURL]; // will retain.
+    
+    if (theSound) {
+	[self setFileName: [soundURL path]]; // kludged for now, can eventually be removed when fileName is no longer used.
+	fresh = NO;
+	return YES;
+    }
+    else
+	return NO;
+}
+
+- (void) windowControllerDidLoadNib: (NSWindowController *) windowController
+{
+    [soundWindow setDelegate: self];
+    // [soundWindow setFrameOrigin: theFrame.origin];
+    [soundWindow disableFlushWindow];
+    [soundWindow enableFlushWindow];
+    [soundWindow flushWindow];
+    
+    [scrollSound setDelegate: self];
+    [scrollSound setSound: theSound];
+
+    [mySpectrumDocument soundChanged]; /*sb */
+    [self zoomAll: self];
+    [self setButtons];
+
+    mySoundView = [scrollSound soundView];
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey: @"DisplayType"] floatValue] < 1.0)
+	[mySoundView setDisplayMode: SND_SOUNDVIEW_WAVE];
+    else
+	[mySoundView setDisplayMode: SND_SOUNDVIEW_MINMAX];
+    [mySoundView setDelegate: self];
+    [mySoundView setContinuousSelectionUpdates: YES];
+    [mySoundView setForegroundColor: [NSColor blueColor]];
 }
 
 - saveError:(NSString *)msg arg: (NSString *)arg
@@ -168,42 +181,29 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     return nil;
 }
 
-- saveToFormat:templateSound fileName:(NSString *)fn
+// Need to determine the format from the extension.
+- (BOOL) writeToURL: (NSURL *) absoluteURL ofType: (NSString *) typeName error: (NSError **) outError
 {
-    if (fn) if ([fn length]) {
-	int err;
-	Snd *theSound = [[mySoundView sound] copy];
-        
-	if (templateSound && theSound) {
-	    // [theSound copySound:theSound];
-	    err = [theSound convertToSampleFormat: [templateSound dataFormat]
-				     samplingRate: [templateSound samplingRate]
-				     channelCount: [templateSound channelCount]];
-	    if (err) {
-		/* The DSP is required for compression or decompression */
-		return [self saveError: 
-			@"Cannot do format conversion %@ (DSP busy?)" arg:@""];
-	    }
-	}
-        if ([[NSFileManager defaultManager] fileExistsAtPath: fn])
-            [[NSFileManager defaultManager] movePath: fn toPath: [fn stringByAppendingString: @"~"] handler: nil];
-	
-        err = [theSound writeSoundfile: fn];
+    NSLog(@"writeToURL %@ of type: %@\n", absoluteURL, typeName);
+    
+#if 0
+    if (templateSound && theSound) {
+	err = [theSound convertToSampleFormat: [templateSound dataFormat]
+				 samplingRate: [templateSound samplingRate]
+				 channelCount: [templateSound channelCount]];
 	if (err) {
-	    return [self saveError: @"Cannot write %@" arg: fn];
+	    /* The DSP is required for compression or decompression */
+	    // TODO assign outError
+	    [self saveError: @"Cannot do format conversion %@ (DSP busy?)" arg: @""];
+	    return NO;
 	}
-	else 
-	    [soundWindow setDocumentEdited:NO];
-	[theSound release];
     }
-	return self;
+#endif
+    
+    return ![theSound writeSoundfile: [absoluteURL path]];
 }
 
-- (void) save: (id) sender
-{
-    [self saveToFormat: nil fileName: fileName];
-}
-
+#if 0
 - (IBAction) revertToSaved: (id) sender
 {
     NSBundle *mainB = [NSBundle mainBundle];
@@ -216,56 +216,36 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 			    [mainB localizedStringForKey:@"Revert" value:@"Revert" table:nil],
 			    [mainB localizedStringForKey:@"Cancel" value:@"Cancel" table:nil],
 			    nil, fileName) == NSAlertDefaultReturn)
-            [self load:nil];
+            // [self load:nil];
+	    ;
     }
 }
+#endif
 
-- load: sender
-{	
-    if (fileName) {
-        Snd *newSound = [[Snd alloc] initFromSoundfile: fileName];
-	
-        if (newSound) {
-            [soundWindow disableFlushWindow];
-            [scrollSound setSound: newSound];
-            [mySpectrumDocument soundChanged]; /*sb */
-            [soundWindow enableFlushWindow];
-            [self zoomAll:self];
-            [soundWindow flushWindow];
-	    [soundWindow setDocumentEdited:NO];
-	    [self setWindowTitle];
-	    fresh = NO;
-	    /*sb: do this now, as new windows have not yet been displayed. */
-	    [soundWindow makeKeyAndOrderFront: self];
-        }
-    }
-    return self;
-}
-
-- (IBAction) play:sender
+- (IBAction) play: sender
 {
     if (![mySoundView isPlayable]) {
 	NSBeep();
 	return;
     }
-    [playButton setEnabled:NO];
-    [recordButton setEnabled:NO];
-    [stopButton setEnabled:YES];
-    [pauseButton setState:0];
-    [mySoundView play:sender];
+    [playButton setEnabled: NO];
+    [recordButton setEnabled: NO];
+    [stopButton setEnabled: YES];
+    [pauseButton setState: 0];
+    [mySoundView play: sender];
 }
 
-- (IBAction) stop:(id)sender
+- (IBAction) stop: (id) sender
 {
-    [mySoundView stop:sender];
-    [playButton setState:0];
-    [playButton setEnabled:YES];
-    [recordButton setState:0];
-    [recordButton setEnabled:([self isRecordable]? YES : NO)];
-    [pauseButton setState:0];
+    [mySoundView stop: sender];
+    [playButton setState: 0];
+    [playButton setEnabled: YES];
+    [recordButton setState: 0];
+    [recordButton setEnabled: ([self isRecordable]? YES : NO)];
+    [pauseButton setState: 0];
 }
 
-- (IBAction) pause:sender
+- (IBAction) pause: sender
 {
     if (![playButton state] && ![recordButton state]) {
 	[pauseButton setState: 0];
@@ -277,16 +257,16 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 	[mySoundView resume: sender];
 }
 
-- (IBAction) record:sender
+- (IBAction) record: sender
 {
-    [recordButton setEnabled:NO];
-    [playButton setEnabled:NO];
-    [stopButton setEnabled:YES];
-    [mySoundView record:sender];
-    [soundWindow setDocumentEdited:YES];
+    [recordButton setEnabled: NO];
+    [playButton setEnabled: NO];
+    [stopButton setEnabled: YES];
+    [mySoundView record: sender];
+    [soundWindow setDocumentEdited: YES];
 }
 
-- (IBAction) displayMode:sender
+- (IBAction) displayMode: sender
 {
     if ([[sender selectedCell] tag] == OUTLINE_MODE)
 	[mySoundView setDisplayMode: SND_SOUNDVIEW_MINMAX];
@@ -303,11 +283,11 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 	* them in the appropriate Forms
 	*/
     srate = [self samplingRate];
-    [scrollSound getWindowSamples:&start Size:&size];
+    [scrollSound getWindowSamples: &start Size: &size];
     [wStartSamp setIntValue:start];
-    PUTVAL(wStartSec,[self sampToSec:start rate:srate]);
-    [wDurSamp setIntValue:size];
-    PUTVAL(wDurSec,[self sampToSec:size rate:srate]);
+    PUTVAL(wStartSec, [self sampToSec: start rate: srate]);
+    [wDurSamp setIntValue: size];
+    PUTVAL(wDurSec, [self sampToSec: size rate: srate]);
     return self;
 }
 
@@ -330,7 +310,7 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     return self;
 }
 
-- windowMatrixChanged:sender
+- windowMatrixChanged: sender
 {
     id cell;
     int start, size, dur;
@@ -366,21 +346,21 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     if (startChanged) {
 	if (start > dur - size)
 	    size = dur - start;
-	[scrollSound setWindowSize:size];
-	[scrollSound setWindowStart:start];
+	[scrollSound setWindowSize: size];
+	[scrollSound setWindowStart: start];
     }
     if (sizeChanged) {
 	if (size > dur) size = dur;
 	if (start > dur - size)
 	    start = dur - size;
-	[scrollSound setWindowSize:size];
-	[scrollSound setWindowStart:start];
+	[scrollSound setWindowSize: size];
+	[scrollSound setWindowStart: start];
     }
     [self showDisplayTimes];
     return self;
 }
 
-- selectionMatrixChanged:sender
+- selectionMatrixChanged: sender
 {
     id cell;
     int start, size, end, dur;		/* Start/size/end of selection */
@@ -415,7 +395,7 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     if (end > dur) end = dur;		/* Can't select past EOF */
     if (start > end) start = end;
     size = end-start;
-    [mySoundView setSelection:start size:size];
+    [mySoundView setSelection: start size:size];
 
     /* If the new start time is outside the current view, scroll the view
     * so that the new start is in the center.  If the whole selection
@@ -428,7 +408,7 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 	    vstart = start - vsize/2;
 	if (vstart < 0)
 	    vstart = 0;
-	[scrollSound setWindowStart:vstart];
+	[scrollSound setWindowStart: vstart];
     }
 
     /* If the new end time is outside the current view, scroll the view
@@ -441,26 +421,21 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 	    vstart = end - vsize/2;
 	if (vstart < 0)
 	    vstart = 0;
-	[scrollSound setWindowStart:vstart];
+	[scrollSound setWindowStart: vstart];
     }
     return self;
 }
 
 - touch
 {
-    [soundWindow setDocumentEdited:YES];
+    [self updateChangeCount: NSChangeDone];        // Indicate the sound document has been changed.
     return self;
-}
-
-- (BOOL)touched
-{
-    return [soundWindow isDocumentEdited];
 }
 
 - setButtons
 {
-    [recordButton setEnabled:([self isRecordable]? YES : NO)];
-    [playButton setEnabled:YES];
+    [recordButton setEnabled: ([self isRecordable] ? YES : NO)];
+    [playButton setEnabled: YES];
     return self;
 }
 
@@ -494,18 +469,18 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     return self;
 }
 
-- zoom:(float)scale center:(int)sample
+- zoom: (float) scale center: (int) sample
 {
     if ([[mySoundView sound] isEmpty]) return self;
-    [scrollSound setReductionFactor:scale];
-    [scrollSound centerAt:sample];
+    [scrollSound setReductionFactor: scale];
+    [scrollSound centerAt: sample];
     return self;	
 }
 
-- (IBAction) zoomIn:sender
+- (IBAction) zoomIn: sender
 {
-    [self zoom:([scrollSound reductionFactor] / ZOOM_FACTOR)
-	center:[scrollSound centerSample]];
+    [self zoom: ([scrollSound reductionFactor] / ZOOM_FACTOR)
+	center: [scrollSound centerSample]];
 }
 
 - (IBAction) zoomOut:sender
@@ -518,9 +493,9 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 	return;
     maxRFactor = [[mySoundView sound] lengthInSampleFrames] / aRect.size.width;
     if (scale > maxRFactor)
-	[self zoomAll:sender];
+	[self zoomAll: sender];
     else
-	[self zoom:scale center:[scrollSound centerSample]];
+	[self zoom: scale center: [scrollSound centerSample]];
 }
 
 - (IBAction) zoomSelect:sender
@@ -543,9 +518,9 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 - (BOOL) isRecordable
 {
     SndSampleFormat format;
-    Snd *theSound = [mySoundView sound];
     
-    if (!theSound) return YES;
+    if (!theSound) 
+	return YES;
     format = [theSound dataFormat];
     if (format == SND_FORMAT_MULAW_8 &&
 	[theSound samplingRate] == (int) SND_RATE_CODEC &&
@@ -571,30 +546,30 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 
 - didPlay: sender;
 {
-    [playButton setState:0];
-    [playButton setEnabled:YES];
-    [recordButton setState:0];
-    [recordButton setEnabled:([self isRecordable]? YES : NO)];
-    [pauseButton setState:0];
+    [playButton setState: 0];
+    [playButton setEnabled: YES];
+    [recordButton setState: 0];
+    [recordButton setEnabled: ([self isRecordable] ? YES : NO)];
+    [pauseButton setState: 0];
     return self;
 }
 
 - didPlay: sender duringPerformance: (SndPerformance *) performance;
 {
-    return [self didPlay:sender];
+    return [self didPlay: sender];
 }
 
 - didRecord:sender
 {
-    [playButton setState:0];
-    [playButton setEnabled:YES];
-    [recordButton setState:0];
-    [recordButton setEnabled:YES];
-    [pauseButton setState:0];
+    [playButton setState: 0];
+    [playButton setEnabled: YES];
+    [recordButton setState: 0];
+    [recordButton setEnabled: YES];
+    [pauseButton setState: 0];
     return self;
 }
 
-- hadError:sender
+- hadError: sender
 {
     int err = [[sender soundBeingProcessed] processingError];
     NSBundle *mainB = [NSBundle mainBundle];
@@ -614,11 +589,11 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     return self;
 }
 
-- selectionChanged:sender
+- selectionChanged: sender
 {	
     if (fresh) { /* covers copy-new-paste situation */
 	fresh = NO; /* must do first to avoid infinite recursion */
-	[self zoomAll:self];
+	[self zoomAll: self];
     }
     [self showSelectionTimes];
     [mySpectrumDocument disableWFSlider];
@@ -638,30 +613,31 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 
 @implementation SoundDocument(WindowDelegate)
 
-- (void)windowDidBecomeMain:(NSNotification *)notification
+- (void)windowDidBecomeMain: (NSNotification *) notification
 {
-    [(SoundController *)[NSApp delegate] setDocument:self];
-    [soundWindow makeFirstResponder:mySoundView];
+    [(SoundController *)[NSApp delegate] setDocument: self];
+    [soundWindow makeFirstResponder: mySoundView];
     [mySoundView showCursor];
 }
 
-- (void)windowDidResignMain:(NSNotification *)notification
+- (void) windowDidResignMain: (NSNotification *) notification
 {
     SoundController *theController = [NSApp delegate];
     if ([theController document] == self)
-        [theController setDocument:nil];
+        [theController setDocument: nil];
     [mySoundView hideCursor];
 }
 
-- (void)windowDidMiniaturize:(NSNotification *)notification
+- (void) windowDidMiniaturize: (NSNotification *) notification
 {
     NSWindow *theWindow = [notification object];
-    [mySoundView stop:theWindow];
+    
+    [mySoundView stop: theWindow];
     [mySoundView hideCursor];
-    [soundWindow setMiniwindowImage:[NSImage imageNamed:@"Spectro.tiff"]];
+    [soundWindow setMiniwindowImage: [NSImage imageNamed: @"Spectro.tiff"]];
 }
 
-- (void)windowDidResize:(NSNotification *)notification
+- (void) windowDidResize: (NSNotification *) notification
 {
     double width;
     NSRect tempRect;
@@ -670,13 +646,14 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     width = tempRect.size.width;
     tempRect = [scrollSound documentVisibleRect];
     if (width < tempRect.size.width)
-	[self zoomAll:self];
+	[self zoomAll: self];
 }
 
-- (BOOL)windowShouldClose:(id)sender
+- (BOOL) windowShouldClose: (id) sender
 {
     int choice;
     NSBundle *mainB = [NSBundle mainBundle];
+    
     if ([soundWindow isDocumentEdited]) {
 	choice = NSRunAlertPanel(
 				 [mainB localizedStringForKey:@"Close" value:@"Close" table:nil],
@@ -695,11 +672,7 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 		return NO;
 	}
     }
-    [[NSApp delegate] closeDoc:self];
-//#warning This delegate message has changed to a notification.  If you are trying to simulate the sending of the delegate message, you may want to instead post a notification via [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidResignMainNotification object:nil]
-    [self windowDidResignMain:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidResignMainNotification object:self];
-    [soundWindow setDelegate:nil];
+    [soundWindow setDelegate: nil];
     [mySpectrumDocument closeWindows];
     [mySpectrumDocument release];
     [self release];

@@ -14,7 +14,8 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 #import <AppKit/NSDocument.h> // For some reason GnuStep doesn't include this
-#import <SndKit/SndView.h>
+#import <SndKit/SndKit.h>
+#import "SoundInfo.h"
 #import "SpectrumDocument.h"
 #import "ScrollingSound.h"
 
@@ -22,6 +23,7 @@ char *doFloat(float f, int a, int r);
 
 @interface SoundDocument: NSDocument
 {
+    Snd *theSound;
     IBOutlet id soundWindow;
     ScrollingSound *scrollSound;
     IBOutlet NSButton *playButton;
@@ -37,10 +39,8 @@ char *doFloat(float f, int a, int r);
     IBOutlet id sStartSec;
     IBOutlet id sDurSamp;
     IBOutlet id sDurSec;
-    IBOutlet id soundInfo;
-    // TODO determine difference between these.
-    IBOutlet id spectrumDocument;
-    SpectrumDocument *mySpectrumDocument;
+    IBOutlet SoundInfo *soundInfo;
+    IBOutlet SpectrumDocument *mySpectrumDocument;
     NSString *fileName;
     SndView *mySoundView;
     BOOL fresh;
@@ -50,20 +50,20 @@ char *doFloat(float f, int a, int r);
 - newSoundLocation:(NSPoint *)p;
 
 /*!
-  @method loadDataRepresentation:ofType:
-  @discussion Loads a file of the type given by aType from the NSData instance data.
+  @method readFromURL:ofType:error:
+  @discussion Loads a file of the type given by aType from the URL.
   @result 
 */
-- (BOOL) loadDataRepresentation: (NSData *) data ofType: (NSString *) aType;
+- (BOOL) readFromURL: (NSURL *) soundURL ofType: (NSString *) typeName error: (NSError **) outError;
 
 /*!
-  @method dataRepresentationOfType:
+  @method writeToURL:ofType:error:
   @discussion Writes a file of the type given by aType.
   @result
 */
-- (NSData *) dataRepresentationOfType: (NSString *) aType;
+- (BOOL) writeToURL: (NSURL *) absoluteURL ofType: (NSString *) typeName error: (NSError **) outError;
 
-- setFileName: (NSString *) aName;
+- (void) setFileName: (NSString *) aName;
 - (NSString *) fileName;
 - setWindowTitle;
 
@@ -79,10 +79,6 @@ char *doFloat(float f, int a, int r);
 - printWaterfallWindow;
 - (float)sampToSec:(int)samples rate: (float)srate;
 - saveError:(NSString *)msg arg: (NSString *)arg;
-- saveToFormat:templateSound fileName:(NSString *)fileName;
-- (void) save: (id) sender;
-- (IBAction) revertToSaved:sender;
-- load:sender;
 - (IBAction) play:sender;
 - (void) stop: (id) sender;
 - (IBAction) pause:sender;
@@ -93,7 +89,6 @@ char *doFloat(float f, int a, int r);
 - windowMatrixChanged:sender;
 - selectionMatrixChanged:sender;
 - touch;
-- (BOOL) touched;
 - setButtons;
 - (IBAction) sndInfo:sender;
 - (IBAction) spectrum: (id) sender;

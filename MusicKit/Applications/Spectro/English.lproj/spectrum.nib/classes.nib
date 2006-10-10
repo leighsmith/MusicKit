@@ -2,7 +2,7 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {reflectScroll = id; }; 
+            ACTIONS = {reflectScrolledClipView = id; }; 
             CLASS = ScrollingSpectrum; 
             LANGUAGE = ObjC; 
             OUTLETS = {delegate = id; spectrumView = id; }; 
@@ -25,9 +25,6 @@
                 spectrumMoved = id; 
                 wfFrameSliderMoved = id; 
                 wfPlotHeightChanged = id; 
-                windowDidBecomeMain = id; 
-                windowDidDeminiaturize = id; 
-                windowDidMiniaturize = id; 
             }; 
             CLASS = SpectrumDocument; 
             LANGUAGE = ObjC; 
@@ -40,14 +37,11 @@
                 frameSlider = id; 
                 freqRangeMatrix = id; 
                 hopRatioCell = id; 
-                mySignalProcessor = id; 
-                mySound = id; 
-                myWaterfallView = id; 
+                myWaterfallView = WaterfallView; 
                 peakFreqCell = id; 
-                scrollSpectrum = id; 
+                scrollSpectrum = ScrollingSpectrum; 
                 sineError = id; 
                 spectrumWindow = id; 
-                stringTable = id; 
                 totalFramesCell = id; 
                 waterFallButton = id; 
                 waterfallWindow = id; 
