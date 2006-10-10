@@ -1594,17 +1594,12 @@ readScorefile(MKScore *self,
     return newScore;
 }
 
--copy
-{
-  return [self copyWithZone:[self zone]];
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-  /* You never send this message directly.
+/* You never send this message directly.
   Should be invoked with NXWriteRootObject().
   Archives MKParts, MKNotes and info. */
+- (void) encodeWithCoder: (NSCoder *) aCoder
 {
-  [aCoder encodeValuesOfObjCTypes: "@@", &parts, &info];
+    [aCoder encodeValuesOfObjCTypes: "@@", &parts, &info];
 }
 
 static BOOL isUnarchiving = NO;

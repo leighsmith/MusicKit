@@ -3,40 +3,21 @@
   Defined In: The MusicKit
 
   Description:
-    A MKScore is a collection of MKPart objects.  MKScores can be read from and
-    written to a scorefile or midifile, performed with a MKScorePerformer,
-    and an be used to record MKNotes from a MKScoreRecorder.
-
-    Each MKScore has an info MKNote (a mute) that defines, in its parameters,
-    information that can be useful in performing or otherwise interpreting
-    the MKScore.  Typical information includes tempo, DSP headroom (see the
-    MKOrchestra class), and sampling rate (the parameters MK_tempo,
-    MK_headroom, and MK_samplingRate are provided to accommodate this
-    utility).
-
-    When you read a scorefile into a MKScore, a MKPart object is created and
-    added to the MKScore for each MKPart name in the file's part statement.
-    If the MKScore already contains a MKPart with the same name as a MKPart in
-    the file, the MKNotes from the two sources are merged together in the
-    existing MKPart in the MKScore.
-
-    MKScoreFile print statements are printed as the scorefile is read into a
-    MKScore. You can set the stream on which the messages are printed by
-    invoking setScorefilePrintStream:.
-
+    See class documentation below.
+    
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2006, The MusicKit Project.
 */
 /*!
-@class MKScore
+  @class MKScore
 
-@brief A MKScore is a collection of MKPart objects.  MKScores can be read from and
-  written to a scorefile or midifile, performed with a MKScorePerformer,
-	  and can be used to record MKNotes from a MKScoreRecorder.
+  @brief A MKScore is a collection of MKPart objects.  MKScores can be read from and
+    written to a scorefile or midifile, performed with a MKScorePerformer,
+    and can be used to record MKNotes from a MKScoreRecorder.
 
 A MKScore is a collection of MKPart objects.  MKScores can be read from
 and written to a <b>.score</b> or <b>.playscore </b> scorefile or a
@@ -86,13 +67,13 @@ printed by invoking <b>setScorefilePrintStream:</b>.
     MK_MUSICXML
 } MKScoreFormat;
 
-@interface MKScore : NSObject
+@interface MKScore: NSObject
 {
-/*! @var parts The object's collection of MKParts. */
+    /*! @var parts The object's collection of MKParts. */
     NSMutableArray *parts;
-/*! @var scorefilePrintStream The stream used by scorefile <b>print</b> statements. */
+    /*! @var scorefilePrintStream The stream used by scorefile <b>print</b> statements. */
     NSMutableData *scorefilePrintStream;    
-/*! @var info The object's info MKNote. */
+    /*! @var info The object's info MKNote. */
     MKNote *info;
 }
  
@@ -454,46 +435,46 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 - (unsigned) noteCount; 
 
 /*!
-  @param  oldPart is an id.
-  @param  newPart is an id.
-  @return Returns <i>newPart</i>.
   @brief Removes <i>oldPart</i> from the receiver and replaces it with <i>newPart</i>.
  
   If <i>oldPart</i> is not a
-  member of this score, returns <b>nil</b>and doesn't add <i>newPart</i>.
+  member of this score, returns <b>nil</b> and doesn't add <i>newPart</i>.
   If <i>oldPart</i> is <b>nil</b>, or if <i>newPart</i> is already a
   member of this score, or if <i>oldPart</i> is not a kind of MKPart,
   returns <b>nil</b>.
+  @param  oldPart is an id.
+  @param  newPart is an id.
+  @return Returns <i>newPart</i>.
 */
 - (MKPart *) replacePart: (MKPart *) oldPart with: (MKPart *) newPart;
 
 /*!
-  @param  aPart is an MKPart instance.
-  @return Returns <i>self</i>, or <b>nil</b> if it's already a member of the receiver.
   @brief Adds <i>aPart</i> to the receiver.
  
   The MKPart is first removed from the MKScore that it's presently a member of, if any.  
+  @param  aPart is an MKPart instance.
+  @return Returns <i>self</i>, or <b>nil</b> if it's already a member of the receiver.
 */
 - addPart: (MKPart *) aPart; 
 
 /*!
+  @brief Removes <i>aPart</i> from the receiver.  
   @param  aPart is an MKPart instance.
   @return Returns <i>self</i> or <b>nil</b> if it wasn't a member of the receiver.
-  @brief Removes <i>aPart</i> from the receiver.  
 */
 - removePart: (MKPart *) aPart;
 
 /*!
+  @brief Shifts the timeTags of all receiver's MKNotes by <i>shift</i> beats.
   @param  shift is a double.
   @return Returns the receiver.
-  @brief Shifts the timeTags of all receiver's MKNotes by <i>shift</i> beats.
 */
 - shiftTime: (double) shift; 
 
 /*!
+  @brief Scales the timeTags and durations of all receiver's MKNotes by <i>scale</i> beats. 
   @param  scale is a double.
   @return Returns the receiver.
-  @brief Scales the timeTags and durations of all receiver's MKNotes by <i>scale</i> beats. 
 */
 - scaleTime: (double) scale;
 
@@ -506,35 +487,35 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 - (double) earliestNoteTime;
 
 /*!
+  @brief Returns <b>YES</b> if <i>aPart</i> has been added to the receiver, otherwise returns <b>NO</b>.
   @param  aPart is an MKPart instance.
   @return Returns a BOOL.
-  @brief Returns <b>YES</b> if <i>aPart</i> has been added to the receiver, otherwise returns <b>NO</b>.
 */
 - (BOOL) isPartPresent: (MKPart *) aPart; 
 
 /*!
-  @param  aChan is an int.
-  @return Returns an MKPart instance.
   @brief Returns the first MKPart object that represents MIDI Channel <i>aChan</i>
   by checking the MK_midiChan info parameter.
  
   There are 17 MIDI Channels: 0 represents the channel for MIDI
   System and Channel Mode messages and 1 through 16 represent the
   Voice Channels.
+  @param  aChan is an int.
+  @return Returns an MKPart instance.
 */
 - (MKPart *) midiPart: (int) aChan; 
 
 /*!
-  @return Returns an unsigned.
   @brief Returns the number of MKPart contained in the receiver.
+  @return Returns an unsigned.
 */
 - (unsigned) partCount;
 
 /*!
-  @return Returns an id.
   @brief Creates and returns a NSMutableArray containing the receiver's MKParts.
  
   The MKParts themselves aren't copied.
+  @return Returns an id.
 */
 - (NSMutableArray *) parts;
 
@@ -543,56 +524,50 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 */
 - combineNotes;
 
- /* 
-   Creates and returns a new MKScore as a copy of the receiver in the
-   nominated NSZone..
-   The receiver's MKPart, MKNotes, and info MKNote are all copied.
-   */
+/*!
+  @brief Creates and returns a new MKScore as a copy of the receiver in the
+  nominated NSZone.
+  
+  The receiver's MKPart, MKNotes, and info MKNote are all copied.
+  @return Returns an id.
+ */
 - copyWithZone: (NSZone *) zone;
 
 /*!
-  @return Returns an id.
-  @brief Creates and returns a new MKScore as a copy of the receiver.  The
-  receiver's MKPart, MKNotes, and info MKNote are all
-  copied.
-*/
-- copy;
-
-/*!
-  @param  aNote is an MKNote.
-  @return Returns an id.
   @brief Sets the receiver's info MKNote to a copy of <i>aNote</i>.
  
   The receiver's previous info MKNote is removed and released.
+  @param  aNote is an MKNote.
+  @return Returns an id.
 */
 - setInfoNote: (MKNote *) aNote;
 
 /*!
-  @return Returns an MKNote.
   @brief Returns the receiver's info MKNote.
+  @return Returns an MKNote.
 */
 - (MKNote *) infoNote;
 
 /*!
+  @brief Sets the stream used by ScoreFile <b>print</b> statements to <b>aStream</b>.  
   @param  aStream is a NSMutableData instance.
   @return Returns the receiver.
-  @brief Sets the stream used by ScoreFile <b>print</b> statements to <b>aStream</b>.  
 */
 - setScorefilePrintStream: (NSMutableData *) aStream;
 
 /*!
-  @return Returns a NSMutableData instance.
   @brief Returns the receiver's ScoreFile <b>print</b> statement stream.
+  @return Returns a NSMutableData instance.
 */
 - (NSMutableData *) scorefilePrintStream;
 
- /* 
+/* 
    You never send this message directly.  
    Archives MKNotes and info.
-  */
+ */
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 
- /* 
+/* 
    You never send this message directly.  
    Note that -init is not sent to newly unarchived objects.
    See write:.
@@ -605,8 +580,6 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 - (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
   @brief Sets the class variable <i>midifilesEvaluateTempo</i>, which
   specifies how tempo is interpreted when reading or writing MIDI
   files.
@@ -636,58 +609,60 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   
   The default value of <i>midifilesEvaluateTempo</i> is
   YES. When so, when writing to a MIDIfile, tempo is factored into the timestamps. 
+  @param  yesOrNo is a BOOL.
+  @return Returns an id.
 */
 + setMidifilesEvaluateTempo: (BOOL) yesOrNo;
 
 /*!
-  @return Returns a BOOL.
   @brief Returns the value of the class variable <i>midifilesEvaluateTempo.</i> 
 
   @see +<b>setMidifilesEvaluateTempo:</b>.
+  @return Returns a BOOL.
 */
 + (BOOL) midifilesEvaluateTempo;
 
 /*!
-  @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions used in writing and
   reading MIDI files appropriate for the native operating system.
+  @return Returns an NSArray of NSStrings.
 */
 + (NSArray *) midifileExtensions;
 
 /*!
-  @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions used in writing and
   reading scorefiles files appropriate for the native operating system.
+  @return Returns an NSArray of NSStrings.
 */
 + (NSArray *) scorefileExtensions;
 
 /*!
-  @return Returns an NSArray of NSStrings.
   @brief This method allows overriding the file extensions used in writing and
   reading scorefiles files returned by <i>scorefileExtensions</i>.
+  @return Returns an NSArray of NSStrings.
  */
 + (void) setAlternativeScorefileExtensions: (NSArray *) otherScoreFileExtensions;
 
 /*!
-  @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions used in writing and
   reading scorefiles and MIDI files appropriate for the
   native operating system.
+  @return Returns an NSArray of NSStrings.
 */
 + (NSArray *) fileExtensions;
 
 /*!
-  @return Returns an NSArray of NSStrings.
   @brief Returns the possible file extensions supported by any available plugins. 
  
   It does not make a distinction between extensions supported for reading and those for writing,
   so query each plugin in turn to see what it supports.
+  @return Returns an NSArray of NSStrings.
  */
 + (NSArray *) bundleExtensions;
 
 /*!
-  @return Returns a newly allocated MKScore instance.
   @brief Creates and returns an allocated, initialised and autoreleased MKScore instance.
+  @return Returns a newly allocated MKScore instance.
 */
 + (MKScore *) score;
 
@@ -706,75 +681,71 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 + (MKScoreFormat) scoreFormatOfFile: (NSString *) filename;
 
 /*!
+  @brief The same as <b>writeScorefile:</b>, but only those
+  MKNotes with timeTags in the specified range are written
+  to the file.  
   @param  aFileName is a NSString instance.
   @param  firstTimeTag is a double.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
-  @brief The same as <b>writeScorefile:</b>, but only those
-  MKNotes with timeTags in the specified range are written
-  to the file.  
 */
 - writeScorefile: (NSString *) aFileName 
     firstTimeTag: (double) firstTimeTag 
      lastTimeTag: (double) lastTimeTag;
 
 /*!
+  @brief The same as <b>writeScorefileStream:</b>, but only those
+	  MKNotes with timeTags in the specified range are written
+	  to the file. 
   @param  aStream is a NSMutableData instance.
   @param  firstTimeTag is a double.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
-  @brief The same as <b>writeScorefileStream:</b>, but only those
-	  MKNotes with timeTags in the specified range are written
-	  to the file. 
 */
 - writeScorefileStream: (NSMutableData *) aStream 
           firstTimeTag: (double) firstTimeTag 
            lastTimeTag: (double) lastTimeTag;
 
 /*!
+  @brief The same as <b>readScorefile:</b>, but only those
+	  MKNotes with timeTags in the specified range are added
+	  to the receiver.
   @param  fileName is a NSString instance.
   @param  firstTimeTag is a double.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be read.
-  @brief The same as <b>readScorefile:</b>, but only those
-	  MKNotes with timeTags in the specified range are added
-	  to the receiver.
 */
 - readScorefile: (NSString *) fileName 
    firstTimeTag: (double) firstTimeTag 
     lastTimeTag: (double) lastTimeTag;
 
 /*!
+  @brief The same as <b>readScorefileStream:</b>, but only those
+	  MKNotes with timeTags in the specified range are added
+	  to the receiver.
   @param  stream is a NSMutableData instance.
   @param  firstTimeTag is a double.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be read.
-  @brief The same as <b>readScorefileStream:</b>, but only those
-	  MKNotes with timeTags in the specified range are added
-	  to the receiver.
 */
 - readScorefileStream: (NSMutableData *) stream 
          firstTimeTag: (double) firstTimeTag 
           lastTimeTag: (double) lastTimeTag;
 
 /*!
+  @brief The same as <b>writeOptimizedScorefile:</b>, but only
+	  those MKNotes with timeTags in the specified range are
+	  written to the file. 
   @param  aFileName is a NSString instance.
   @param  firstTimeTag is a double.
   @param  lastTimeTag is a double.
   @return Returns the receiver or <b>nil</b> if the file couldn't be written.
-  @brief The same as <b>writeOptimizedScorefile:</b>, but only
-	  those MKNotes with timeTags in the specified range are
-	  written to the file. 
 */
 - writeOptimizedScorefile: (NSString *) aFileName 
              firstTimeTag: (double) firstTimeTag 
               lastTimeTag: (double) lastTimeTag;
 
 /*!
-  @param  aFileName is a NSString instance.
-  @param  firstTimeTag is a double.
-  @param  lastTimeTag is a double.
-  @return Returns an id.
   @brief Reads the midifile <i>aFileName</i> into the receiver.
  
   The MKNotes that are created are retained in the
@@ -782,63 +753,67 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   boundaries.
   
   @see  -<b>readMidiFileStream:</b> for a discussion of MIDI to MKNote conversion.  
+  @param  aFileName is a NSString instance.
+  @param  firstTimeTag is a double.
+  @param  lastTimeTag is a double.
+  @return Returns an id.
 */
 - readMidifile: (NSString *) aFileName 
   firstTimeTag: (double) firstTimeTag
    lastTimeTag: (double) lastTimeTag;
 
 /*!
-  @param  aStream is a NSMutableData instance.
-  @param  firstTimeTag is a double.
-  @param  lastTimeTag is a double.
-  @return Returns an id.
   @brief Reads the midifile from <i>aStream</i> into the receiver.  
  
   Only the MKNote objects that have timeTags within the
   given boundaries are retained in the receiver.
+  @param  aStream is a NSMutableData instance.
+  @param  firstTimeTag is a double.
+  @param  lastTimeTag is a double.
+  @return Returns an id.
 */
 - readMidifileStream: (NSMutableData *) aStream 
         firstTimeTag: (double) firstTimeTag
          lastTimeTag: (double) lastTimeTag;
 
 /*!
-  @param  aFileName is a NSString instance.
-  @param  firstTimeTag is a double.
-  @param  lastTimeTag is a double.
-  @return Returns an id.
   @brief Writes the receiver's MKNotes, within the given
   timeTag range, as a midifile named <i>aFileName</i>.
  
   @see -<b>writeMidifile:</b> for conversion details.
+  @param  aFileName is a NSString instance.
+  @param  firstTimeTag is a double.
+  @param  lastTimeTag is a double.
+  @return Returns an id.
 */
 - writeMidifile: (NSString *) aFileName
    firstTimeTag: (double) firstTimeTag
     lastTimeTag: (double) lastTimeTag;
 
 /*!
+  @brief Write the receiver, as a midifile, to <i>aStream</i>.
+ 
+  Only the MKNotes within the given timeTag boundaries are written. 
   @param  aStream is a NSMutableData instance.
   @param  firstTimeTag is a double.
   @param  lastTimeTag is a double.
   @return Returns an id.
-  @brief Write the receiver, as a midifile, to <i>aStream</i>.
- 
-  Only the MKNotes within the given timeTag boundaries are written. 
 */
 - writeMidifileStream: (NSMutableData *) aStream 
          firstTimeTag: (double) firstTimeTag
           lastTimeTag: (double) lastTimeTag;
 
 /*!
-  @param  partTitleToFind
   @brief Returns the MKPart whose info note has an MK_title parameter
   equal to partTitleToFind, nil if it couldn't be found.
+  @param  partTitleToFind
   @return Returns the MKPart, nil if it couldn't be found.
 */
 - (MKPart *) partTitled: (NSString *) partTitleToFind;
 
 /*!
-  @param  partNameToFind
   @brief Returns the MKPart named partNameToFind, nil if it couldn't be found.
+  @param  partNameToFind
   @return Returns the MKPart named partNameToFind, nil if it couldn't be found.
  */
 - (MKPart *) partNamed: (NSString *) partNameToFind;
