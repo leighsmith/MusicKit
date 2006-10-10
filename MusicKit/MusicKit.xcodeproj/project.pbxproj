@@ -452,6 +452,7 @@
 		D85E282606FA0FAF00385C32 /* SysExReceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = D88C504E06C7E4C900D33D99 /* SysExReceiver.m */; };
 		D85E282706FA0FC100385C32 /* MIDISysExSynth.h in Sources */ = {isa = PBXBuildFile; fileRef = D88C504306C7E4C800D33D99 /* MIDISysExSynth.h */; };
 		D85E282806FA0FC100385C32 /* MIDISysExSynth.m in Sources */ = {isa = PBXBuildFile; fileRef = D88C504406C7E4C800D33D99 /* MIDISysExSynth.m */; };
+		D85E74820AD00B460078D3B5 /* stop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D85E74810AD00B460078D3B5 /* stop.tiff */; };
 		D85F909F07DFE883009DC57B /* Add2UG.h in Headers */ = {isa = PBXBuildFile; fileRef = D85F905A07DFE882009DC57B /* Add2UG.h */; };
 		D85F90A007DFE883009DC57B /* Add2UG.m in Sources */ = {isa = PBXBuildFile; fileRef = D85F905B07DFE882009DC57B /* Add2UG.m */; };
 		D85F90A107DFE883009DC57B /* Allpass1UG.h in Headers */ = {isa = PBXBuildFile; fileRef = D85F905C07DFE882009DC57B /* Allpass1UG.h */; };
@@ -1497,6 +1498,7 @@
 		D85E281206FA0DF000385C32 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/ScorePlayer/English.lproj/SSAD64x.nib; sourceTree = "<group>"; };
 		D85E281406FA0DF000385C32 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/ScorePlayer/English.lproj/StealthDAI2400.nib; sourceTree = "<group>"; };
 		D85E281E06FA0E1200385C32 /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = Applications/ScorePlayer/English.lproj/ScorePlayer.strings; sourceTree = "<group>"; };
+		D85E74810AD00B460078D3B5 /* stop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = stop.tiff; path = Applications/ScorePlayer/Images/stop.tiff; sourceTree = "<group>"; };
 		D85F905207DFE7D4009DC57B /* MKUnitGenerators.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MKUnitGenerators.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D85F905307DFE7D7009DC57B /* MKUnitGenerators-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "MKUnitGenerators-Info.plist"; path = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D85F905A07DFE882009DC57B /* Add2UG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Add2UG.h; path = Frameworks/MKUnitGenerators/Add2UG.h; sourceTree = "<group>"; };
@@ -2577,6 +2579,7 @@
 		D828F9A50780C3EA00215EB9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				D85E74810AD00B460078D3B5 /* stop.tiff */,
 				D828F9AC0780C46700215EB9 /* play.tiff */,
 				D828F9AD0780C46700215EB9 /* playH.tiff */,
 				D8C6E3410ACC4AC4004978A9 /* music.tiff */,
@@ -3288,9 +3291,9 @@
 			isa = PBXGroup;
 			children = (
 				D85E280006FA0D2E00385C32 /* ScorePlayerController.h */,
+				D85E280106FA0D2E00385C32 /* ScorePlayerController.m */,
 				D828F99A0780C24B00215EB9 /* MKAlert.h */,
 				D828F99B0780C24B00215EB9 /* MKAlert.m */,
-				D85E280106FA0D2E00385C32 /* ScorePlayerController.m */,
 				D880FD1F0780AC2A00FD03CC /* ErrorLog.h */,
 				D880FD200780AC2A00FD03CC /* ErrorLog.m */,
 			);
@@ -4758,10 +4761,10 @@
 			children = (
 				D86D239D06F2293A003565CB /* TwoWaves */,
 				D8AE7A6A061A1636009D0112 /* Spectro */,
-				D88C4FF206C7E0DE00D33D99 /* PatchCord */,
-				D880FD290780ACE000FD03CC /* PianoRoll */,
 				D85E27DC06FA0B8800385C32 /* ScorePlayer */,
 				D880FD2D0780ACF000FD03CC /* EnvelopeEd */,
+				D88C4FF206C7E0DE00D33D99 /* PatchCord */,
+				D880FD290780ACE000FD03CC /* PianoRoll */,
 			);
 			name = Applications;
 			sourceTree = "<group>";
@@ -6272,6 +6275,7 @@
 				D828F9AF0780C46700215EB9 /* playH.tiff in Resources */,
 				D828F9B90780C52400215EB9 /* ScorePlayer.sgml in Resources */,
 				D8C6E3420ACC4AC4004978A9 /* music.tiff in Resources */,
+				D85E74820AD00B460078D3B5 /* stop.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
