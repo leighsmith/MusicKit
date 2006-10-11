@@ -19,8 +19,6 @@
 #import "SpectrumDocument.h"
 #import "ScrollingSound.h"
 
-char *doFloat(float f, int a, int r);
-
 @interface SoundDocument: NSDocument
 {
     Snd *theSound;

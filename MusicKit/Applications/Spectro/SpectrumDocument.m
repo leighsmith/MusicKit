@@ -24,7 +24,7 @@
 #import <SndKit/SndKit.h>
 
 #define SWAP(int) NSSwapBigShortToHost(int)
-#define PUTVAL(cell,f)	[cell setStringValue:[NSString stringWithCString:doFloat(f, 2, 3)]]
+#define PUTVAL(cell,f)	[cell setStringValue: [NSString stringWithFormat: @"%2.3f", f]]
 #define M 32768
 
 @implementation SpectrumDocument
@@ -497,8 +497,8 @@
     SndAudioBuffer *windowOfSound;
     
     if ((windowSize != [windowSizeCell intValue]) ||
-        (![[NSString stringWithCString:doFloat(hopRatio, 2, 3)] isEqualToString:[hopRatioCell stringValue]]) ||
-        (![[NSString stringWithCString:doFloat(zpFactor, 2, 3)] isEqualToString:[zpFactorCell stringValue]]))
+        (![[NSString stringWithFormat: @"%2.3f", hopRatio] isEqualToString: [hopRatioCell stringValue]]) ||
+        (![[NSString stringWithFormat: @"%2.3f", zpFactor] isEqualToString: [zpFactorCell stringValue]]))
         [self changeWindowSize: self];
     [self setTotalFrames];
     if (!totalFrames) {
@@ -562,9 +562,9 @@
 	return;
     }
     if ((windowSize != [windowSizeCell intValue]) ||
-	(![[NSString stringWithCString:doFloat(hopRatio, 2, 3)] isEqualToString:[hopRatioCell stringValue]]) ||
-	(![[NSString stringWithCString:doFloat(zpFactor, 2, 3)] isEqualToString:[zpFactorCell stringValue]]))
-	[self changeWindowSize:self];
+	(![[NSString stringWithFormat: @"%2.3f", hopRatio] isEqualToString: [hopRatioCell stringValue]]) ||
+	(![[NSString stringWithFormat: @"%2.3f", zpFactor] isEqualToString: [zpFactorCell stringValue]]))
+	[self changeWindowSize: self];
     [self setTotalFrames];
     if (!totalFrames) {
 	NSRunAlertPanel(
