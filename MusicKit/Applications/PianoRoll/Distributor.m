@@ -121,18 +121,18 @@
 	[[aDoc whatName] release]; 
 }
 
-- (void)showInfo:sender
+- (void) showInfo: sender
 {
-	if (!infoPanel) /* or some reason the info panel does not load as simply "Info" */
-		[NSBundle loadNibNamed:@"Info-macosx" owner:self];
-	[infoPanel makeKeyAndOrderFront:self]; 
+    if (!infoPanel) /* or some reason the info panel does not load as simply "Info" */
+	    [NSBundle loadNibNamed: @"Info-macosx" owner: self];
+    [infoPanel makeKeyAndOrderFront: self]; 
 }
 
-- (void)showHelp:sender
+- (void) showHelp: sender
 {
-	if (!helpPanel)
-		[NSBundle loadNibNamed:@"Help.nib" owner:self];
-	[helpPanel makeKeyAndOrderFront:self]; 
+    if (!helpPanel)
+	    [NSBundle loadNibNamed: @"Help-macosx" owner: self];
+    [helpPanel makeKeyAndOrderFront: self]; 
 }
 
 - (Document *) findCurrent

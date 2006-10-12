@@ -23,7 +23,7 @@
                 scorePlayer = id; 
                 tadList = id; 
             }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
