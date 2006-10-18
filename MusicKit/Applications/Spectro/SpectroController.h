@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: SoundController.h 3388 2006-10-10 20:27:56Z leighsmith $
   
   Part of Spectro.app
   Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
@@ -19,8 +19,7 @@
 NSString *colorToString(NSColor  *color);
 NSColor  *StringToColor(NSString *buf);
 
-// Should be renamed SpectroController
-@interface SoundController: NSObject
+@interface SpectroController: NSObject
 {
     id currentDocument;
     IBOutlet id infoPanel;
@@ -31,22 +30,22 @@ NSColor  *StringToColor(NSString *buf);
 
 - init;
 + (void) initialize;
-- setDocument:aDocument;
+- setDocument: aDocument;
 - document;
-- printSound:sender;
-- printSpectrum:sender;
-- printWaterfall:sender;
+- printSound: sender;
+- printSpectrum: sender;
+- printWaterfall: sender;
 - (IBAction) sndInfo: (id) sender;
-- showInfoPanel:sender;
-- showPreferences:sender;
-- (int)documentCount;
-- setCounter:(int)count;
+- showInfoPanel: sender;
+- showPreferences: sender;
+- (int) documentCount;
+- setCounter: (int) count;
 
 @end
 
-@interface SoundController(ApplicationDelegate)
+@interface SpectroController(ApplicationDelegate)
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification;
-- (void)applicationDidHide:(NSNotification *)notification;
+- (void) applicationDidFinishLaunching: (NSNotification *) notification;
+- (void) applicationDidHide: (NSNotification *) notification;
 
 @end

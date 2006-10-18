@@ -1,4 +1,4 @@
-/*	$Id$
+/*	$Id: SoundController.m 3388 2006-10-10 20:27:56Z leighsmith $
 *	Originally from SoundEditor3.0.
 *	Modified for Spectro3 by Gary Scavone.
 *	Last modified: 4/94
@@ -7,7 +7,7 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
-#import "SoundController.h"
+#import "SpectroController.h"
 #import "SaveToController.h"
 #import "SoundDocument.h"
 
@@ -28,7 +28,7 @@ NSColor *StringToColor(NSString *buffer)
     return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
 }
 
-@implementation SoundController
+@implementation SpectroController
 
 - init
 {
@@ -135,9 +135,9 @@ NSColor *StringToColor(NSString *buffer)
 
 @end
 
-@implementation SoundController(ApplicationDelegate)
+@implementation SpectroController(ApplicationDelegate)
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification
+- (void) applicationDidFinishLaunching: (NSNotification *) notification
 {
     currentDocument = nil;
     [self showInfoPanel:self];
