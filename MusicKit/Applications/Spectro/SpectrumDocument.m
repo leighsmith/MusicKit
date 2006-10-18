@@ -11,7 +11,7 @@
  *
  */
 
-#import "SoundController.h"
+#import "SpectroController.h"
 #import "SoundDocument.h"
 #import "SpectrumDocument.h"
 #import "SpectrumView.h"
@@ -134,7 +134,7 @@
 - (void)setDelegate:(id)anObject
 {
     delegate = anObject;
-    [(SoundController *)[NSApp delegate] setDocument:delegate];
+    [(SpectroController *)[NSApp delegate] setDocument:delegate];
 }
 
 - delegate
@@ -818,7 +818,7 @@
 - (void)windowDidBecomeMain:(NSNotification *)notification
 {
     [spectrumWindow makeFirstResponder:mySpectrumView];
-    [(SoundController *)[NSApp delegate] setDocument:delegate];
+    [(SpectroController *)[NSApp delegate] setDocument:delegate];
 }
 
 - (void)windowDidMiniaturize:(NSNotification *)notification

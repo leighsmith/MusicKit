@@ -10,33 +10,16 @@
         }, 
         {
             ACTIONS = {
-                appDidHide = id; 
-                appDidInit = id; 
-                appWillTerminate = id; 
-                newSoundDoc = id; 
-                open = id; 
                 printSound = id; 
                 printSpectrum = id; 
                 printWaterfall = id; 
-                revertToSaved = id; 
-                save = id; 
-                saveAs = id; 
-                saveTo = id; 
                 showInfoPanel = id; 
                 showPreferences = id; 
                 sndInfo = id; 
             }; 
-            CLASS = SoundController; 
+            CLASS = SpectroController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {
-                currentDocument = id; 
-                documentList = id; 
-                infoPanel = id; 
-                prefController = id; 
-                saveToAccessoryView = id; 
-                saveToController = id; 
-                stringTable = id; 
-            }; 
+            OUTLETS = {currentDocument = id; infoPanel = id; saveToAccessoryView = id; }; 
             SUPERCLASS = NSObject; 
         }
     ); 

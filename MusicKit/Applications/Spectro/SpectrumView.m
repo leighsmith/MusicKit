@@ -14,7 +14,7 @@
 #import <AppKit/NSColor.h>
 #import "SpectrumView.h"
 #import "SpectrumDocument.h"
-#import "SoundController.h"
+#import "SpectroController.h"
 
 #define SPECTRUM_WIDTH [self bounds].size.width		/* Width of view in pixels */
 #define VERT_GRID_VIEWABLE 4				/* number of vertical grid lines we want in the window */

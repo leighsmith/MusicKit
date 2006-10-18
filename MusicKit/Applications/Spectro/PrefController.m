@@ -3,7 +3,7 @@
 
 */
 #import "PrefController.h"
-#import "SoundController.h"
+#import "SpectroController.h"
 #import "SoundDocument.h"
 #import <AppKit/AppKit.h>
 #import <Foundation/NSUserDefaults.h>

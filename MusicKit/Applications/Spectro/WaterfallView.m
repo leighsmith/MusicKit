@@ -13,9 +13,8 @@
 
 #import "WaterfallView.h"
 #import "SpectrumDocument.h"
-#import "SoundController.h"
+#import "SpectroController.h"
 #import <AppKit/AppKit.h>
-//#import <AppKit/NSColor.h>
 
 #define WIDTH     [self bounds].size.width		/* Width of view in pixels */
 #define HEIGHT    [self bounds].size.height		/* Height of view in pixels */

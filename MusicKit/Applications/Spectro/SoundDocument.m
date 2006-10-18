@@ -14,7 +14,7 @@
 
 #import <AppKit/AppKit.h>
 #import "SoundDocument.h"
-#import "SoundController.h"
+#import "SpectroController.h"
 
 #define ZOOM_FACTOR 2.0
 #define WAVE_MODE 0
@@ -93,7 +93,7 @@
 
 - (Snd *) sound
 {
-    return [mySoundView sound]; // [[theSound retain] autorelease];
+    return [[theSound retain] autorelease];
 }
 
 - (double) samplingRate
@@ -224,7 +224,7 @@
 
 - (IBAction) play: sender
 {
-    if (![mySoundView isPlayable]) {
+    if (![theSound isPlayable]) {
 	NSBeep();
 	return;
     }
@@ -232,12 +232,12 @@
     [recordButton setEnabled: NO];
     [stopButton setEnabled: YES];
     [pauseButton setState: 0];
-    [mySoundView play: sender];
+    [theSound play: sender];
 }
 
 - (IBAction) stop: (id) sender
 {
-    [mySoundView stop: sender];
+    [theSound stop: sender];
     [playButton setState: 0];
     [playButton setEnabled: YES];
     [recordButton setState: 0];
@@ -252,9 +252,9 @@
 	return;
     } 
     else if ([pauseButton state])
-	[mySoundView pause: sender];
+	[theSound pause: sender];
     else
-	[mySoundView resume: sender];
+	[theSound resume: sender];
 }
 
 - (IBAction) record: sender
@@ -262,7 +262,7 @@
     [recordButton setEnabled: NO];
     [playButton setEnabled: NO];
     [stopButton setEnabled: YES];
-    [mySoundView record: sender];
+    [theSound record: sender];
     [soundWindow setDocumentEdited: YES];
 }
 
@@ -303,7 +303,7 @@
     [mySoundView getSelection: &start size: &size];
     [sStartSamp setIntValue: start];
     PUTVAL(sStartSec, [self sampToSec: start rate: srate]);
-    if (size > ([[mySoundView sound] lengthInSampleFrames] - start))
+    if (size > ([theSound lengthInSampleFrames] - start))
 	return self;
     [sDurSamp setIntValue: size];
     PUTVAL(sDurSec, [self sampToSec: size rate: srate]);
@@ -320,7 +320,7 @@
     cell = [sender selectedCell];
     start = [wStartSamp intValue];
     size = [wDurSamp intValue];
-    dur = [[mySoundView sound] lengthInSampleFrames];
+    dur = [theSound lengthInSampleFrames];
     rate = [self samplingRate];
     startChanged = sizeChanged = NO;
     switch ([cell tag]) {
@@ -370,7 +370,7 @@
     cell = [sender selectedCell];
     start = [sStartSamp intValue];
     size = [sDurSamp intValue];
-    dur = [[mySoundView sound] lengthInSampleFrames];
+    dur = [theSound lengthInSampleFrames];
     rate = [self samplingRate];
     switch ([cell tag]) {
 	case 0:	start = [cell intValue];
@@ -443,15 +443,15 @@
 {
     NSString *title;
     
-    if ([[mySoundView sound] isEmpty])
+    if ([theSound isEmpty])
 	return;
     title = [[self fileName] lastPathComponent];
-    [soundInfo displaySound: [self sound] title: title];
+    [soundInfo displaySound: theSound title: title];
 }
 
 - (IBAction) spectrum: (id) sender
 {	
-    if ([[mySoundView sound] isEmpty]) 
+    if ([theSound isEmpty]) 
 	return;
     if (mySpectrumDocument == nil) {
 	mySpectrumDocument = [[SpectrumDocument alloc] init];
@@ -471,7 +471,8 @@
 
 - zoom: (float) scale center: (int) sample
 {
-    if ([[mySoundView sound] isEmpty]) return self;
+    if ([theSound isEmpty])
+	return self;
     [scrollSound setReductionFactor: scale];
     [scrollSound centerAt: sample];
     return self;	
@@ -491,7 +492,7 @@
     
     if (NSIsEmptyRect(aRect = [scrollSound documentVisibleRect])) 
 	return;
-    maxRFactor = [[mySoundView sound] lengthInSampleFrames] / aRect.size.width;
+    maxRFactor = [theSound lengthInSampleFrames] / aRect.size.width;
     if (scale > maxRFactor)
 	[self zoomAll: sender];
     else
@@ -511,7 +512,7 @@
     
     size = [scrollSound contentSize];
     width = size.width;
-    count = [[mySoundView sound] lengthInSampleFrames];
+    count = [theSound lengthInSampleFrames];
     [self zoom: (((float) count) / width) center: (count / 2)];
 }
 
@@ -615,14 +616,14 @@
 
 - (void)windowDidBecomeMain: (NSNotification *) notification
 {
-    [(SoundController *)[NSApp delegate] setDocument: self];
+    [(SpectroController *)[NSApp delegate] setDocument: self];
     [soundWindow makeFirstResponder: mySoundView];
     [mySoundView showCursor];
 }
 
 - (void) windowDidResignMain: (NSNotification *) notification
 {
-    SoundController *theController = [NSApp delegate];
+    SpectroController *theController = [NSApp delegate];
     if ([theController document] == self)
         [theController setDocument: nil];
     [mySoundView hideCursor];
