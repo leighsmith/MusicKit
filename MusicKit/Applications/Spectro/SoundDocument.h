@@ -108,7 +108,7 @@
 
 @interface SoundDocument(SoundViewDelegate)
 
-- didPlay: sender duringPerformance: (SndPerformance *) performance;
+- (void) didPlay: (Snd *) sender duringPerformance: (SndPerformance *) performance;
 - didRecord: sender;
 - hadError: sender;
 - selectionChanged: sender;

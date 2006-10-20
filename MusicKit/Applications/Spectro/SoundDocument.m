@@ -139,6 +139,7 @@
     
     if (theSound) {
 	[self setFileName: [soundURL path]]; // kludged for now, can eventually be removed when fileName is no longer used.
+	[theSound setDelegate: self]; // to receive notices of playing/recording completion.
 	fresh = NO;
 	return YES;
     }
@@ -226,23 +227,21 @@
 {
     if (![theSound isPlayable]) {
 	NSBeep();
-	return;
+	NSLog(@"Sound %@ is not playable\n", theSound);
     }
-    [playButton setEnabled: NO];
-    [recordButton setEnabled: NO];
-    [stopButton setEnabled: YES];
-    [pauseButton setState: 0];
-    [theSound play: sender];
+    else {
+	[playButton setEnabled: NO];
+	[recordButton setEnabled: NO];
+	[stopButton setEnabled: YES];
+	[pauseButton setState: 0];
+	[theSound play: sender];	
+    }
 }
 
 - (IBAction) stop: (id) sender
 {
     [theSound stop: sender];
-    [playButton setState: 0];
-    [playButton setEnabled: YES];
-    [recordButton setState: 0];
-    [recordButton setEnabled: ([self isRecordable]? YES : NO)];
-    [pauseButton setState: 0];
+    // All the updates of the play and record buttons are done in the didPlay:duringPerformance: delegate message below.
 }
 
 - (IBAction) pause: sender
@@ -545,22 +544,16 @@
 
 @implementation SoundDocument(SoundViewDelegate)
 
-- didPlay: sender;
+- (void) didPlay: (Snd *) soundThatPlayed duringPerformance: (SndPerformance *) endingPerformance
 {
     [playButton setState: 0];
     [playButton setEnabled: YES];
     [recordButton setState: 0];
-    [recordButton setEnabled: ([self isRecordable] ? YES : NO)];
-    [pauseButton setState: 0];
-    return self;
+    [recordButton setEnabled: ([self isRecordable]? YES : NO)];
+    [pauseButton setState: 0];    
 }
 
-- didPlay: sender duringPerformance: (SndPerformance *) performance;
-{
-    return [self didPlay: sender];
-}
-
-- didRecord:sender
+- didRecord: sender
 {
     [playButton setState: 0];
     [playButton setEnabled: YES];
