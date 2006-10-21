@@ -412,8 +412,6 @@
 		D85A2F6F061F34E80065380E /* ScrollingSpectrum.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F59061F34E70065380E /* ScrollingSpectrum.m */; };
 		D85A2F70061F34E80065380E /* SignalProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F5A061F34E70065380E /* SignalProcessor.h */; };
 		D85A2F71061F34E80065380E /* SignalProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F5B061F34E70065380E /* SignalProcessor.m */; };
-		D85A2F72061F34E80065380E /* SoundController.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F5C061F34E70065380E /* SoundController.h */; };
-		D85A2F73061F34E80065380E /* SoundController.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F5D061F34E70065380E /* SoundController.m */; };
 		D85A2F74061F34E80065380E /* SoundDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F5E061F34E70065380E /* SoundDocument.h */; };
 		D85A2F75061F34E80065380E /* SoundDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F5F061F34E70065380E /* SoundDocument.m */; };
 		D85A2F76061F34E80065380E /* SoundInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F60061F34E70065380E /* SoundInfo.h */; };
@@ -596,6 +594,10 @@
 		D880FE470780AF2200FD03CC /* ScorePlayerApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = D880FE420780AF2200FD03CC /* ScorePlayerApp.icns */; };
 		D880FE480780AF2200FD03CC /* Sound.icns in Resources */ = {isa = PBXBuildFile; fileRef = D880FE430780AF2200FD03CC /* Sound.icns */; };
 		D882794507008F510060CAFE /* MKOrchestra.m in Sources */ = {isa = PBXBuildFile; fileRef = D882794407008F510060CAFE /* MKOrchestra.m */; };
+		D8831D310AE6BA6C00201B3D /* SpectroController.h in Headers */ = {isa = PBXBuildFile; fileRef = D8831D2F0AE6BA6C00201B3D /* SpectroController.h */; };
+		D8831D320AE6BA6C00201B3D /* SpectroController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8831D300AE6BA6C00201B3D /* SpectroController.m */; };
+		D8831D380AE6D50500201B3D /* TwoWaves.icns in Resources */ = {isa = PBXBuildFile; fileRef = D8831D360AE6D50500201B3D /* TwoWaves.icns */; };
+		D8831D390AE6D50500201B3D /* TwoWaves.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8831D370AE6D50500201B3D /* TwoWaves.tiff */; };
 		D88C505106C7E4C900D33D99 /* Bank.h in Headers */ = {isa = PBXBuildFile; fileRef = D88C503F06C7E4C800D33D99 /* Bank.h */; };
 		D88C505206C7E4C900D33D99 /* Bank.m in Sources */ = {isa = PBXBuildFile; fileRef = D88C504006C7E4C800D33D99 /* Bank.m */; };
 		D88C505306C7E4C900D33D99 /* InfoPanelController.h in Headers */ = {isa = PBXBuildFile; fileRef = D88C504106C7E4C800D33D99 /* InfoPanelController.h */; };
@@ -1459,8 +1461,6 @@
 		D85A2F59061F34E70065380E /* ScrollingSpectrum.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ScrollingSpectrum.m; path = Applications/Spectro/ScrollingSpectrum.m; sourceTree = "<group>"; };
 		D85A2F5A061F34E70065380E /* SignalProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SignalProcessor.h; path = Applications/Spectro/SignalProcessor.h; sourceTree = "<group>"; };
 		D85A2F5B061F34E70065380E /* SignalProcessor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SignalProcessor.m; path = Applications/Spectro/SignalProcessor.m; sourceTree = "<group>"; };
-		D85A2F5C061F34E70065380E /* SoundController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SoundController.h; path = Applications/Spectro/SoundController.h; sourceTree = "<group>"; };
-		D85A2F5D061F34E70065380E /* SoundController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SoundController.m; path = Applications/Spectro/SoundController.m; sourceTree = "<group>"; };
 		D85A2F5E061F34E70065380E /* SoundDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SoundDocument.h; path = Applications/Spectro/SoundDocument.h; sourceTree = "<group>"; };
 		D85A2F5F061F34E70065380E /* SoundDocument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SoundDocument.m; path = Applications/Spectro/SoundDocument.m; sourceTree = "<group>"; };
 		D85A2F60061F34E70065380E /* SoundInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SoundInfo.h; path = Applications/Spectro/SoundInfo.h; sourceTree = "<group>"; };
@@ -1649,6 +1649,10 @@
 		D880FE420780AF2200FD03CC /* ScorePlayerApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ScorePlayerApp.icns; path = Applications/ScorePlayer/Images/ScorePlayerApp.icns; sourceTree = "<group>"; };
 		D880FE430780AF2200FD03CC /* Sound.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Sound.icns; path = Applications/ScorePlayer/Images/Sound.icns; sourceTree = "<group>"; };
 		D882794407008F510060CAFE /* MKOrchestra.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MKOrchestra.m; path = Frameworks/MusicKit/MKOrchestra.m; sourceTree = "<group>"; };
+		D8831D2F0AE6BA6C00201B3D /* SpectroController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SpectroController.h; path = Applications/Spectro/SpectroController.h; sourceTree = "<group>"; };
+		D8831D300AE6BA6C00201B3D /* SpectroController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SpectroController.m; path = Applications/Spectro/SpectroController.m; sourceTree = "<group>"; };
+		D8831D360AE6D50500201B3D /* TwoWaves.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = TwoWaves.icns; path = Applications/TwoWaves/TwoWaves.icns; sourceTree = "<group>"; };
+		D8831D370AE6D50500201B3D /* TwoWaves.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = TwoWaves.tiff; path = Applications/TwoWaves/TwoWaves.tiff; sourceTree = "<group>"; };
 		D88C502906C7E37100D33D99 /* PatchCord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PatchCord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88C502B06C7E37200D33D99 /* PatchCord-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "PatchCord-Info.plist"; path = "Applications/PatchCord/PatchCord-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D88C503F06C7E4C800D33D99 /* Bank.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Bank.h; path = Applications/PatchCord/Bank.h; sourceTree = "<group>"; };
@@ -3165,6 +3169,8 @@
 		D85A2F21061F33C10065380E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D8831D2F0AE6BA6C00201B3D /* SpectroController.h */,
+				D8831D300AE6BA6C00201B3D /* SpectroController.m */,
 				D85A2F52061F34E70065380E /* PrefController.h */,
 				D85A2F53061F34E70065380E /* PrefController.m */,
 				D85A2F54061F34E70065380E /* SaveToController.h */,
@@ -3175,8 +3181,6 @@
 				D85A2F59061F34E70065380E /* ScrollingSpectrum.m */,
 				D85A2F5A061F34E70065380E /* SignalProcessor.h */,
 				D85A2F5B061F34E70065380E /* SignalProcessor.m */,
-				D85A2F5C061F34E70065380E /* SoundController.h */,
-				D85A2F5D061F34E70065380E /* SoundController.m */,
 				D85A2F5E061F34E70065380E /* SoundDocument.h */,
 				D85A2F5F061F34E70065380E /* SoundDocument.m */,
 				D85A2F60061F34E70065380E /* SoundInfo.h */,
@@ -3490,6 +3494,7 @@
 		D86D23A906F22979003565CB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D8831D350AE6D2A200201B3D /* Images */,
 				D86D23CE06F22BE8003565CB /* Interfaces */,
 			);
 			name = Resources;
@@ -4277,6 +4282,15 @@
 				D828F9D80780CCDF00215EB9 /* TadPole.m */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		D8831D350AE6D2A200201B3D /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				D8831D360AE6D50500201B3D /* TwoWaves.icns */,
+				D8831D370AE6D50500201B3D /* TwoWaves.tiff */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 		D88C4FF206C7E0DE00D33D99 /* PatchCord */ = {
@@ -5231,12 +5245,12 @@
 				D85A2F6C061F34E80065380E /* ScrollingSound.h in Headers */,
 				D85A2F6E061F34E80065380E /* ScrollingSpectrum.h in Headers */,
 				D85A2F70061F34E80065380E /* SignalProcessor.h in Headers */,
-				D85A2F72061F34E80065380E /* SoundController.h in Headers */,
 				D85A2F74061F34E80065380E /* SoundDocument.h in Headers */,
 				D85A2F76061F34E80065380E /* SoundInfo.h in Headers */,
 				D85A2F78061F34E80065380E /* SpectrumDocument.h in Headers */,
 				D85A2F7A061F34E80065380E /* SpectrumView.h in Headers */,
 				D85A2F7C061F34E80065380E /* WaterfallView.h in Headers */,
+				D8831D310AE6BA6C00201B3D /* SpectroController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6301,6 +6315,8 @@
 			files = (
 				D86D23C106F22BA4003565CB /* Controller.h in Resources */,
 				D86D23CB06F22BD7003565CB /* TwoWaves.nib in Resources */,
+				D8831D380AE6D50500201B3D /* TwoWaves.icns in Resources */,
+				D8831D390AE6D50500201B3D /* TwoWaves.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6671,13 +6687,13 @@
 				D85A2F6D061F34E80065380E /* ScrollingSound.m in Sources */,
 				D85A2F6F061F34E80065380E /* ScrollingSpectrum.m in Sources */,
 				D85A2F71061F34E80065380E /* SignalProcessor.m in Sources */,
-				D85A2F73061F34E80065380E /* SoundController.m in Sources */,
 				D85A2F75061F34E80065380E /* SoundDocument.m in Sources */,
 				D85A2F77061F34E80065380E /* SoundInfo.m in Sources */,
 				D85A2F79061F34E80065380E /* SpectrumDocument.m in Sources */,
 				D85A2F7B061F34E80065380E /* SpectrumView.m in Sources */,
 				D85A2F7D061F34E80065380E /* WaterfallView.m in Sources */,
 				D85A2F99061F353C0065380E /* Spectro_main.m in Sources */,
+				D8831D320AE6BA6C00201B3D /* SpectroController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
