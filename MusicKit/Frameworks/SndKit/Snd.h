@@ -322,8 +322,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
  */
 - initWithData: (NSData *) soundData;
 
-- (void) dealloc;
-
 /*!
   @param  stream is a NSData instance.
   @return Returns a BOOL.  Returns YES if the sound was read successfully, NO otherwise.
@@ -625,11 +623,17 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (SndFormat) format;
 
 /*!
+  @brief Returns a string describing the data format in a textual description.
+  @brief Returns a NSString instance.
+ */
+- (NSString *) formatDescription;
+
+/*!
   @return Returns a SndSoundStruct *.
   @brief Returns a pointer to the Snd's SndSoundStruct structure that holds
               the object's sound data.
  
-  TODO This will be changed to soundData and return an NSData instance.
+  TODO This will be changed to -soundData and return an NSData instance.
 */
 - (SndSoundStruct *) soundStruct;
 

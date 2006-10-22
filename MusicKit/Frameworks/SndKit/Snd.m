@@ -261,6 +261,11 @@
     // TODO SndFormatDescription(format)
 }
 
+- (NSString *) formatDescription
+{
+    return SndFormatName([self dataFormat], NO);
+}
+
 // TODO Assumes all data is formatted as .au only.
 // TODO We should move this inside -initWithData and remove.
 - (BOOL) readSoundFromData: (NSData *) soundData
