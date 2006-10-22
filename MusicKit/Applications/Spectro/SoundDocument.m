@@ -79,14 +79,13 @@
 - setWindowTitle
 {
     NSString *title;
+    int channelCount = [theSound channelCount];
     
     [soundInfo setSoundHeader: [self sound]];
-    if ([soundInfo getChannelCount] == 2)
-        title = [fileName stringByAppendingFormat: @" (%i Hz %@, Stereo)", [soundInfo getSrate],
-            [soundInfo getSoundFormat]];
-    else
-        title = [fileName stringByAppendingFormat: @" (%i Hz %@, Mono)", [soundInfo getSrate],
-            [soundInfo getSoundFormat]];
+    title = [fileName stringByAppendingFormat: @" (%i Hz %@, %s)", 
+	(int) [theSound samplingRate],
+	[theSound formatDescription],
+	channelCount == 1 ? "Mono" : channelCount == 2 ? "Stereo" : "Mult-channel"];
     [soundWindow setTitleWithRepresentedFilename: title];
     return self;
 }
@@ -128,8 +127,7 @@
 
 - (float) sampToSec: (int) samples rate: (float) srate
 {
-    if (srate == 0.0) return 0.0;
-    return samples / srate;
+    return (srate == 0.0) ? 0.0 : samples / srate;
 }
 
 // You can also choose to override -loadFileWrapperRepresentation:ofType:  instead.
@@ -170,6 +168,7 @@
     [mySoundView setDelegate: self];
     [mySoundView setContinuousSelectionUpdates: YES];
     [mySoundView setForegroundColor: [NSColor blueColor]];
+    [self setWindowTitle];
 }
 
 - saveError:(NSString *)msg arg: (NSString *)arg
@@ -262,7 +261,7 @@
     [playButton setEnabled: NO];
     [stopButton setEnabled: YES];
     [theSound record: sender];
-    [soundWindow setDocumentEdited: YES];
+    [self updateChangeCount: NSChangeDone];
 }
 
 - (IBAction) displayMode: sender
@@ -607,7 +606,7 @@
 
 @implementation SoundDocument(WindowDelegate)
 
-- (void)windowDidBecomeMain: (NSNotification *) notification
+- (void) windowDidBecomeMain: (NSNotification *) notification
 {
     [(SpectroController *)[NSApp delegate] setDocument: self];
     [soundWindow makeFirstResponder: mySoundView];
@@ -628,7 +627,7 @@
     
     [mySoundView stop: theWindow];
     [mySoundView hideCursor];
-    [soundWindow setMiniwindowImage: [NSImage imageNamed: @"Spectro.tiff"]];
+    // [soundWindow setMiniwindowImage: [NSImage imageNamed: @"Spectro.tiff"]];
 }
 
 - (void) windowDidResize: (NSNotification *) notification
@@ -643,33 +642,10 @@
 	[self zoomAll: self];
 }
 
-- (BOOL) windowShouldClose: (id) sender
+- (BOOL) windowWillClose: (id) sender
 {
-    int choice;
-    NSBundle *mainB = [NSBundle mainBundle];
-    
-    if ([soundWindow isDocumentEdited]) {
-	choice = NSRunAlertPanel(
-				 [mainB localizedStringForKey:@"Close" value:@"Close" table:nil],
-				 [mainB localizedStringForKey:@"Sound is modified.\nSave it?"
-							value:@"Sound is modified.\nSave it?" table:nil],
-				 [mainB localizedStringForKey:@"Yes" value:@"Yes" table:nil],
-				 [mainB localizedStringForKey:@"No" value:@"No" table:nil],
-				 [mainB localizedStringForKey:@"Cancel" value:@"Cancel" table:nil]); 
-	switch (choice) {
-	    case NSAlertAlternateReturn:
-		break;
-	    case NSAlertDefaultReturn:
-		[[NSApp delegate] save:nil];
-		break;
-	    case NSAlertOtherReturn:
-		return NO;
-	}
-    }
     [soundWindow setDelegate: nil];
     [mySpectrumDocument closeWindows];
-    [mySpectrumDocument release];
-    [self release];
     return YES;
 }
 

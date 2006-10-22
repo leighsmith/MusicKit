@@ -21,9 +21,7 @@
 
 @interface SoundDocument: NSDocument
 {
-    Snd *theSound;
     IBOutlet id soundWindow;
-    ScrollingSound *scrollSound;
     IBOutlet NSButton *playButton;
     IBOutlet NSButton *recordButton;
     IBOutlet NSButton *stopButton;
@@ -39,6 +37,8 @@
     IBOutlet id sDurSec;
     IBOutlet SoundInfo *soundInfo;
     IBOutlet SpectrumDocument *mySpectrumDocument;
+    Snd *theSound;
+    ScrollingSound *scrollSound;
     NSString *fileName;
     SndView *mySoundView;
     BOOL fresh;
@@ -122,6 +122,6 @@
 - (void) windowDidResignMain: (NSNotification *) notification;
 - (void) windowDidMiniaturize: (NSNotification *) notification;
 - (void) windowDidResize: (NSNotification *) notification;
-- (BOOL) windowShouldClose: (id) sender;
+- (BOOL) windowWillClose: (id) sender;
 
 @end
