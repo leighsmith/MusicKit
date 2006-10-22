@@ -45,29 +45,30 @@
 }
 
 - init;
-- newSoundLocation:(NSPoint *)p;
+- newSoundLocation: (NSPoint *) p;
 
 /*!
-  @method readFromURL:ofType:error:
-  @discussion Loads a file of the type given by aType from the URL.
-  @result 
+  @brief Loads a file of the type given by aType from the URL.
+  @returns YES if file successfully read.
 */
 - (BOOL) readFromURL: (NSURL *) soundURL ofType: (NSString *) typeName error: (NSError **) outError;
 
 /*!
-  @method writeToURL:ofType:error:
-  @discussion Writes a file of the type given by aType.
-  @result
+  @brief Writes a file of the type given by aType.
+  @returns YES if file successfully written.
 */
 - (BOOL) writeToURL: (NSURL *) absoluteURL ofType: (NSString *) typeName error: (NSError **) outError;
 
 - (void) setFileName: (NSString *) aName;
 - (NSString *) fileName;
-- setWindowTitle;
 
 /*!
-  @method sound
-  @abstract Returns the Snd instance currently being displayed.
+  @brief Assigns the title of the window from the sound format.
+ */
+- (void) setWindowTitle;
+
+/*!
+  @brief Returns the Snd instance currently being displayed.
  */
 - (Snd *) sound;
 
@@ -106,7 +107,7 @@
 
 @end
 
-@interface SoundDocument(SoundViewDelegate)
+@interface SoundDocument(SoundDelegate)
 
 - (void) didPlay: (Snd *) sender duringPerformance: (SndPerformance *) performance;
 - didRecord: sender;

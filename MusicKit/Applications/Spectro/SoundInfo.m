@@ -1,9 +1,10 @@
-/* SoundInfo.m
+/* 
+ * $Id:$
+ *
  * Originally from SoundEditor2.1
  * Modified by Gary Scavone for Spectro3.0
  * Last modified: 2/94
  */
-
 
 #import <AppKit/AppKit.h>
 #import "SoundInfo.h"
@@ -12,63 +13,43 @@
 
 - init
 {
-	[super init];
-	[NSBundle loadNibNamed:@"soundInfo.nib" owner:self];
-	ssize = 0;
-	return self;
+    [super init];
+    [NSBundle loadNibNamed:@"soundInfo.nib" owner:self];
+    ssize = 0;
+    return self;
 }
 
-- displaySound:sound title:(NSString *)title
+- displaySound: (Snd *) sound title: (NSString *) title
 {
-	sndhdr = [sound retain];
-	[self display:title];
-	return self;
+    sndhdr = [sound retain];
+    [self display:title];
+    return self;
 }
 
-- setSoundHeader:sound
+- setSoundHeader: (Snd *) sound
 {
-	sndhdr = [sound retain];
-	return self;
+    sndhdr = [sound retain];
+    return self;
 }
 
-- (int)getSrate
+- (void) display: (NSString *) title
 {
-	return [sndhdr samplingRate];
-}
-
-- (int)getChannelCount
-{
-	return [sndhdr channelCount];
-}
-
-- (NSString *)getSoundFormat
-{
-	return SndFormatName([sndhdr dataFormat], NO);
-}
-
-- (void)display:(NSString *)title
-{
-	int channels, frames, hours, minutes;
-	float seconds;
-//	char time[32];
-	
-        [siPanel setTitle:title];
-	[siSize setIntValue: [sndhdr dataSize]];
-	[siRate setIntValue:[self getSrate]];
-	channels = [self getChannelCount];
-	[siChannels setIntValue:channels];
-	if (channels < 1) channels = 1;
-        [siFormat setStringValue:[self getSoundFormat]];
-	frames = [sndhdr lengthInSampleFrames];
-	[siFrames setIntValue:frames];
-	seconds = [sndhdr duration];
-	hours = (int) (seconds / 3600);
-	minutes = (int) ((seconds - hours * 3600) / 60);
-	seconds = seconds - hours * 3600 - minutes * 60;
-//	sprintf (time, "%02d:%02d:%05.2f", hours, minutes, seconds);
-        [siTime setStringValue:[NSString stringWithFormat:@"%02d:%02d:%05.2f", hours, minutes, seconds]];
-	[siPanel makeKeyAndOrderFront:self];
-	[NSApp runModalForWindow:siPanel];
+    int hours, minutes;
+    float seconds;
+    
+    [siPanel setTitle: title];
+    [siSize setIntValue: [sndhdr dataSize]];
+    [siRate setIntValue: [sndhdr samplingRate]];
+    [siChannels setIntValue: [sndhdr channelCount]];
+    [siFormat setStringValue: [sndhdr formatDescription]];
+    [siFrames setIntValue: [sndhdr lengthInSampleFrames]];
+    seconds = [sndhdr duration];
+    hours = (int) (seconds / 3600);
+    minutes = (int) ((seconds - hours * 3600) / 60);
+    seconds = seconds - hours * 3600 - minutes * 60;
+    [siTime setStringValue: [NSString stringWithFormat: @"%02d:%02d:%05.2f", hours, minutes, seconds]];
+    [siPanel makeKeyAndOrderFront: self];
+    [NSApp runModalForWindow: siPanel];
 }
 
 - setSiPanel:anObject
@@ -125,10 +106,10 @@
     return self;
 }
 
-- (BOOL)windowShouldClose:(id)sender
+- (BOOL) windowShouldClose: (id) sender
 {
-	[NSApp stopModal];
-	return YES;
+    [NSApp stopModal];
+    return YES;
 }
 
 @end

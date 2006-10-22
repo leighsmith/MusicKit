@@ -76,18 +76,15 @@
     return fileName;
 }
 
-- setWindowTitle
+- (void) setWindowTitle
 {
-    NSString *title;
     int channelCount = [theSound channelCount];
-    
-    [soundInfo setSoundHeader: [self sound]];
-    title = [fileName stringByAppendingFormat: @" (%i Hz %@, %s)", 
-	(int) [theSound samplingRate],
-	[theSound formatDescription],
-	channelCount == 1 ? "Mono" : channelCount == 2 ? "Stereo" : "Mult-channel"];
+    NSString *title = [fileName stringByAppendingFormat: @" (%i Hz %@, %s)", 
+			(int) [theSound samplingRate],
+			[theSound formatDescription],
+			channelCount == 1 ? "Mono" : channelCount == 2 ? "Stereo" : "Mult-channel"];
+
     [soundWindow setTitleWithRepresentedFilename: title];
-    return self;
 }
 
 - (Snd *) sound
@@ -541,7 +538,7 @@
 
 @end
 
-@implementation SoundDocument(SoundViewDelegate)
+@implementation SoundDocument(SoundDelegate)
 
 - (void) didPlay: (Snd *) soundThatPlayed duringPerformance: (SndPerformance *) endingPerformance
 {
