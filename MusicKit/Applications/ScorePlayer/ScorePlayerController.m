@@ -65,7 +65,7 @@ static BOOL isLate = NO;
 static BOOL wasLate = NO;
 // MIDI management
 static NSMutableDictionary *midis;
-static MKSamplerInstrument *sampleInstrument = nil;
+static MKSamplerInstrument *nonSynthInstrument = nil;
 static int midiOffset;
 // MTC sync
 static BOOL synchToTimeCode = NO;
@@ -548,7 +548,7 @@ static int fileType(NSString *name)
 
 static BOOL setUpFile(NSString *workspaceFileName);
 
-- endOfTime	// called by the musickit thread
+- endOfTime	// called by the MusicKit thread
 {
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
@@ -609,11 +609,11 @@ void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
 #endif
 
 /* TODO make this more encompassing of all MIDI device namings */
-static BOOL isMidiClassName(NSString *className)
+static BOOL isMIDIInstrumentName(NSString *synthPatchName)
 {
-    return (className && ([className isEqualToString:@"midi"] ||
-                          [className isEqualToString:@"midi0"] ||
-                          [className isEqualToString:@"midi1"]));
+    return (synthPatchName && ([synthPatchName isEqualToString:@"midi"] ||
+                          [synthPatchName isEqualToString:@"midi0"] ||
+                          [synthPatchName isEqualToString:@"midi1"]));
 }
 
 #if SOUND_OUT_PAUSE_BUG
@@ -630,7 +630,7 @@ static BOOL checkForMidi(MKScore *obj)
     for (i = 0; i < cnt; i++) {
 	info = [(MKPart *)[subobjs objectAtIndex: i] infoNote];
 	if ([info isParPresent: MK_synthPatch] &&
-	    (isMidiClassName([info parAsStringNoCopy: MK_synthPatch]))) {
+	    (isMIDIInstrumentName([info parAsStringNoCopy: MK_synthPatch]))) {
 	    return YES;
 	}
     }
@@ -656,21 +656,18 @@ static double getUntempo(float tempoVal)
 #define ANIMATE_DIFF_THRESHOLD 1.0
 #define ANIMATE_INCREMENT 0.3
 
-- (void) playIt
+- (void) startPlay
 {
     int partCount, synthPatchCount, voices, i, midiChan;
-    NSString *className;
+    NSString *synthPatchName;
+    NSString *instrumentClassName;
     NSString *msg = nil;
     double actualSrate;  
     NSArray *partPerformers;
     MKPartPerformer *partPerformer;
-    Class synthPatchClass;
-    MKSynthInstrument *anIns;
     MKNote *partInfo;
     MKPart *aPart;
     NSString *writeMsg = nil;
-    NSEnumerator *midiDevEnumerator;
-    MKMidi *midiDev;
     
     /* Could keep these around, in repeat-play cases: */ 
     [scorePerformer release];
@@ -752,37 +749,41 @@ static double getUntempo(float tempoVal)
         if(![partInfo isParPresent: MK_synthPatch] && scoreForm == MIDI_FILE) {
             [partInfo setPar: MK_synthPatch toString: @"midi"];
         }
-        className = [partInfo parAsStringNoCopy: MK_synthPatch];
-	if (isMidiClassName(className)) {
+        synthPatchName = [partInfo parAsStringNoCopy: MK_synthPatch];
+	instrumentClassName = [NSString stringWithFormat: @"MK%@Instrument", synthPatchName]; 
+	if (isMIDIInstrumentName(synthPatchName)) {
             MKMidi *newMIDI = nil;
             
 	    midiChan = [partInfo parAsInt: MK_midiChan];
 	    if ((midiChan == MAXINT) || (midiChan > 16))
 		midiChan = 0;
-            if ([className isEqualToString: @"midi"])  // set the default MIDI device.
-		className = @"midi0"; /* Was "midi1" -- changed 9/30/94 */
+            if ([synthPatchName isEqualToString: @"midi"])  // set the default MIDI device.
+		synthPatchName = @"midi0"; /* Was "midi1" -- changed 9/30/94 */
 	    
-	    if ((newMIDI = [midis objectForKey: className]) == nil) {
-                newMIDI = [MKMidi midiOnDevice: className];
+	    if ((newMIDI = [midis objectForKey: synthPatchName]) == nil) {
+                newMIDI = [MKMidi midiOnDevice: synthPatchName];
                 // Check that newMIDI is not nil, i.e midiOnDevice did initialise
                 if(newMIDI != nil)
-                    [midis setObject: newMIDI forKey: className];
+                    [midis setObject: newMIDI forKey: synthPatchName];
             }
             if(newMIDI != nil)
                 [[partPerformer noteSender] connect: [newMIDI channelNoteReceiver: midiChan]];
 	}
-        else if([className isEqualToString: @"Samples"]) {
-            sampleInstrument = [[MKSamplerInstrument alloc] init];
-            [[partPerformer noteSender] connect: [sampleInstrument noteReceiver]];
-        }
+        else if(NSClassFromString(instrumentClassName) != nil) { // TODO should be "SamplePlayer" and MKSamplePlayerInstrument
+	    // TODO need an NSArray of these
+	    nonSynthInstrument = [[NSClassFromString(instrumentClassName) alloc] init];
+            [[partPerformer noteSender] connect: [nonSynthInstrument noteReceiver]];
+	}
 	else {
-	    synthPatchClass = ([className length]) ? [MKSynthPatch findPatchClass: className] : nil;
+	    MKSynthInstrument *anIns;
+	    Class synthPatchClass = ([synthPatchName length]) ? [MKSynthPatch findPatchClass: synthPatchName] : nil;
+	    
 	    if (!synthPatchClass) {         /* Class not loaded in program? */
-                errMsg = [NSString stringWithFormat: STR_NO_SYNTHPATCH, className];
+                errMsg = [NSString stringWithFormat: STR_NO_SYNTHPATCH, synthPatchName];
                 [errorLog addText: errMsg];
 		if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, nil))
 		    return;
-		/* We would prefer to do dynamic loading here. */
+		/* TODO We would prefer to dynamically load the class here. */
 		continue;
 	    }
 	    anIns = [MKSynthInstrument new];      
@@ -796,7 +797,7 @@ static double getUntempo(float tempoVal)
                                           patchTemplate: [synthPatchClass patchTemplateFor: partInfo]];
 	    if (synthPatchCount < voices) {
                 errMsg = [NSString stringWithFormat: STR_TOO_MANY_SYNTHPATCHES,
-                    synthPatchCount, voices, className, MKGetObjectName(aPart)];
+                    synthPatchCount, voices, synthPatchName, MKGetObjectName(aPart)];
 		
                 [errorLog addText: errMsg];
 		if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, NULL))
@@ -828,18 +829,21 @@ static double getUntempo(float tempoVal)
 						    selector: @selector(animateTempo:)
 						    userInfo: nil
 						     repeats: YES] retain];
-
-    midiDevEnumerator = [midis objectEnumerator];
-    while ((midiDev = [midiDevEnumerator nextObject])) {
-	if ([midiDev openOutputOnly]) {	// set the localDeltaT time offset, negative values are for orchestras
-	    if (midiOffset > 0) 
-		[midiDev setLocalDeltaT: midiOffset];
-	    else if (midiOffset < 0)
-		[theOrch setLocalDeltaT: -midiOffset];
-	    [midiDev run];
-	}
-	else {
-	    mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
+    {
+	NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+	MKMidi *midiDev;
+	
+	while ((midiDev = [midiDevEnumerator nextObject])) {
+	    if ([midiDev openOutputOnly]) {	// set the localDeltaT time offset, negative values are for orchestras
+		if (midiOffset > 0) 
+		    [midiDev setLocalDeltaT: midiOffset];
+		else if (midiOffset < 0)
+		    [theOrch setLocalDeltaT: -midiOffset];
+		[midiDev run];
+	    }
+	    else {
+		mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
+	    }
 	}
     }
     [theOrch run];
@@ -1014,8 +1018,8 @@ static void abortNow()
             [midiDev allNotesOff];
             [midiDev abort];
         }
-        if(sampleInstrument)
-            [sampleInstrument abort];
+        if(nonSynthInstrument)
+            [nonSynthInstrument abort];
 	[theOrch abort];
 	[MKConductor finishPerformance];
 	[MKConductor unlockPerformance];
@@ -1056,7 +1060,7 @@ static void abortNow()
             NSLog(@"File has changed, re-reading\n");
 	    [self setFile];
 	}
-        [self playIt];
+        [self startPlay];
     }
     return;
 }
