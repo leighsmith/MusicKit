@@ -8,24 +8,23 @@
 #import <Foundation/Foundation.h>
 
 #import "SpectroController.h"
-#import "SaveToController.h"
 #import "SoundDocument.h"
 
 NSString *colorToString(NSColor *color)
 {
     float r, g, b;
-    NSString *ret;
+
     [[color colorUsingColorSpaceName: NSCalibratedRGBColorSpace] getRed: &r green: &g blue: &b alpha: NULL];
-    ret = [[NSString stringWithFormat:@"%f:%f:%f:",r,g,b] retain];
-    return ret;
+    return [NSString stringWithFormat:@"%f:%f:%f:", r, g, b];
 }
 
-NSColor *StringToColor(NSString *buffer)
+NSColor *stringToColor(NSString *buffer)
 {
     float r, g, b;
     const char *buf = [buffer cString];
+    
     sscanf(buf, "%f:%f:%f", &r, &g, &b);
-    return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.0];
+    return [NSColor colorWithCalibratedRed: r green: g blue: b alpha: 1.0];
 }
 
 @implementation SpectroController
@@ -41,24 +40,25 @@ NSColor *StringToColor(NSString *buffer)
 
 + (void) initialize
 {
-    NSMutableDictionary *SpectroDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
-	@"1024",	@"WindowSize",
-	@"2.0",		@"ZPFactor",
-	@"0.5",		@"HopRatio",
-	@"Hanning",	@"WindowType",
-	@"10000",	@"SpectrumMaxFreq",
-	@"-100",	@"dBLimit",
-	@"5000",	@"WFMaxFreq",
-	@"3.0",		@"WFPlotHeight",
-	@"0",		@"DisplayType",
-	@"0:0:0",	@"SpectrumColor",
-	@"1:0:0",	@"CursorColor",
-	@"0.3333:0.3333:0.3333", @"WaterfallColor",
-	@"0.6666:0.6666:0.6666", @"GridColor",
-	NULL, NULL] retain];
+    [super initialize];    
     
-    [[NSUserDefaults standardUserDefaults] registerDefaults:SpectroDefaults];
-    
+    // register our defaults
+    [[NSUserDefaults standardUserDefaults] registerDefaults: [NSDictionary dictionaryWithObjectsAndKeys:
+	@"1024", @"WindowSize",
+	@"2.0", @"ZPFactor",
+	@"0.5", @"HopRatio",
+	@"Hanning", @"WindowType",
+	@"10000", @"SpectrumMaxFreq",
+	@"-100", @"dBLimit",
+	@"5000", @"WFMaxFreq",
+	@"3.0", @"WFPlotHeight",
+	@"0", @"DisplayType",
+	colorToString([NSColor blackColor]), @"SpectrumColor",
+	colorToString([NSColor greenColor]), @"WaterfallColor",
+	colorToString([NSColor redColor]), @"CursorColor",
+	colorToString([NSColor lightGrayColor]), @"GridColor",
+	colorToString([NSColor blueColor]), @"AmplitudeColor",
+	nil, nil]];	
 }
 
 #if 0
@@ -104,21 +104,21 @@ NSColor *StringToColor(NSString *buffer)
 
 - (IBAction) sndInfo: (id) sender
 {
-    [currentDocument sndInfo:sender];
+    [currentDocument sndInfo: sender];
 }
 
 - showInfoPanel: sender
 {
-    [infoPanel makeKeyAndOrderFront:nil];
+    [infoPanel makeKeyAndOrderFront: nil];
     return self;	
 }
 
 - showPreferences: sender
 {
     if (!prefController) {
-	[NSBundle loadNibNamed:@"preferences.nib" owner:self];
+	[NSBundle loadNibNamed: @"preferences.nib" owner: self];
     }
-    [[prefController window] makeKeyAndOrderFront:sender];
+    [[prefController window] makeKeyAndOrderFront: sender];
     return self;
 }
 
@@ -140,13 +140,13 @@ NSColor *StringToColor(NSString *buffer)
 - (void) applicationDidFinishLaunching: (NSNotification *) notification
 {
     currentDocument = nil;
-    [self showInfoPanel:self];
+    [self showInfoPanel: self];
 }
 
 - (void) applicationDidHide: (NSNotification *) notification
 {
     if (currentDocument)
-        [currentDocument stop:nil];
+        [currentDocument stop: nil];
 }
 
 @end

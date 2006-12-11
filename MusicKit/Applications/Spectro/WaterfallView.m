@@ -188,9 +188,9 @@
     [waterfallColor release];
     [cursorColor release];
     
-    spectrumColor = [StringToColor([[NSUserDefaults standardUserDefaults] objectForKey:@"SpectrumColor"]) retain];
-    waterfallColor = [StringToColor([[NSUserDefaults standardUserDefaults] objectForKey:@"WaterfallColor"]) retain];
-    cursorColor = [StringToColor([[NSUserDefaults standardUserDefaults] objectForKey:@"CursorColor"]) retain];
+    spectrumColor = [stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"SpectrumColor"]) retain];
+    waterfallColor = [stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"WaterfallColor"]) retain];
+    cursorColor = [stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"CursorColor"]) retain];
     
     [self setNeedsDisplay: YES];
 }

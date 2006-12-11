@@ -30,7 +30,7 @@
 	NSRect theFrame;
 
 	theSound = nil;
-	theFrame = [soundWindow frame];
+	theFrame = [[self windowForSheet] frame];
 	[self newSoundLocation: &theFrame.origin];
 	soundInfo = [[SoundInfo alloc] init];
 	fresh = YES;
@@ -56,11 +56,11 @@
 - newSoundLocation: (NSPoint *) p
 {
     int count = [[NSApp delegate] documentCount];
-    int cnt = (count > 3)? count - 4 : count;
+    int cnt = (count > 3) ? count - 4 : count;
     
     p->x += (20.0 * count);
     p->y -= (25.0 * cnt);
-    count = (count > 6)? 0 : count + 1;
+    count = (count > 6) ? 0 : count + 1;
     [[NSApp delegate] setCounter: count];
     return self;
 }
@@ -84,7 +84,7 @@
 			[theSound formatDescription],
 			channelCount == 1 ? "Mono" : channelCount == 2 ? "Stereo" : "Mult-channel"];
 
-    [soundWindow setTitleWithRepresentedFilename: title];
+    [[self windowForSheet] setTitleWithRepresentedFilename: title];
 }
 
 - (Snd *) sound
@@ -104,7 +104,7 @@
 
 - printTimeWindow
 {
-    [soundWindow print:self];
+    [[self windowForSheet] print:self];
     return self;
 }
 
@@ -144,11 +144,7 @@
 
 - (void) windowControllerDidLoadNib: (NSWindowController *) windowController
 {
-    [soundWindow setDelegate: self];
-    // [soundWindow setFrameOrigin: theFrame.origin];
-    [soundWindow disableFlushWindow];
-    [soundWindow enableFlushWindow];
-    [soundWindow flushWindow];
+    [[self windowForSheet] setDelegate: self];
     
     [scrollSound setDelegate: self];
     [scrollSound setSound: theSound];
@@ -164,8 +160,8 @@
 	[mySoundView setDisplayMode: SND_SOUNDVIEW_MINMAX];
     [mySoundView setDelegate: self];
     [mySoundView setContinuousSelectionUpdates: YES];
-    [mySoundView setForegroundColor: [NSColor blueColor]];
-    [self setWindowTitle];
+    [mySoundView setForegroundColor: stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"AmplitudeColor"])];
+    // [self setWindowTitle];
 }
 
 - saveError:(NSString *)msg arg: (NSString *)arg
@@ -204,7 +200,7 @@
 - (IBAction) revertToSaved: (id) sender
 {
     NSBundle *mainB = [NSBundle mainBundle];
-    if([soundWindow isDocumentEdited] && fileName
+    if([[self windowForSheet] isDocumentEdited] && fileName
        && ![[fileName lastPathComponent] isEqualToString:@"/UNTITLED"]) {
         if (NSRunAlertPanel(
 			    [mainB localizedStringForKey:@"Revert" value:@"Revert" table:nil],
@@ -222,7 +218,6 @@
 - (IBAction) play: sender
 {
     if (![theSound isPlayable]) {
-	NSBeep();
 	NSLog(@"Sound %@ is not playable\n", theSound);
     }
     else {
@@ -413,7 +408,7 @@
 	if (size <= vsize)
 	    vstart = start + size/2 - vsize/2;
 	else
-	    vstart = end - vsize/2;
+	    vstart = end - vsize / 2;
 	if (vstart < 0)
 	    vstart = 0;
 	[scrollSound setWindowStart: vstart];
@@ -606,7 +601,7 @@
 - (void) windowDidBecomeMain: (NSNotification *) notification
 {
     [(SpectroController *)[NSApp delegate] setDocument: self];
-    [soundWindow makeFirstResponder: mySoundView];
+    [[self windowForSheet] makeFirstResponder: mySoundView];
     [mySoundView showCursor];
 }
 
@@ -624,7 +619,7 @@
     
     [mySoundView stop: theWindow];
     [mySoundView hideCursor];
-    // [soundWindow setMiniwindowImage: [NSImage imageNamed: @"Spectro.tiff"]];
+    // [[self windowForSheet] setMiniwindowImage: [NSImage imageNamed: @"Spectro.tiff"]];
 }
 
 - (void) windowDidResize: (NSNotification *) notification
@@ -641,7 +636,7 @@
 
 - (BOOL) windowWillClose: (id) sender
 {
-    [soundWindow setDelegate: nil];
+    [[self windowForSheet] setDelegate: nil];
     [mySpectrumDocument closeWindows];
     return YES;
 }

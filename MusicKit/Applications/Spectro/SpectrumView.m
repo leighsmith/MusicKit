@@ -234,17 +234,13 @@
     [[self window] setAcceptsMouseMovedEvents:NO];
 }
 
-- setColors
+- (void) setColors
 {
-    spectrumColor = [StringToColor([[NSUserDefaults standardUserDefaults] objectForKey:@"SpectrumColor"]) retain];
-	
-    cursorColor = [StringToColor([[NSUserDefaults standardUserDefaults] objectForKey:@"CursorColor"]) retain];
-	
-    gridColor = [StringToColor([[NSUserDefaults standardUserDefaults] objectForKey:@"GridColor"]) retain];
+    spectrumColor = [stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"SpectrumColor"]) retain];
+    cursorColor = [stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"CursorColor"]) retain];	
+    gridColor = [stringToColor([[NSUserDefaults standardUserDefaults] objectForKey: @"GridColor"]) retain];
 
-    [self setNeedsDisplay:YES];
-	
-    return self;
+    [self setNeedsDisplay: YES];
 }
 
 @end

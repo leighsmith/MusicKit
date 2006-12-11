@@ -17,7 +17,7 @@
 #import "PrefController.h"
 
 NSString *colorToString(NSColor  *color);
-NSColor  *StringToColor(NSString *buf);
+NSColor  *stringToColor(NSString *buf);
 
 @interface SpectroController: NSObject
 {

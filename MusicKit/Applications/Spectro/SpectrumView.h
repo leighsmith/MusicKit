@@ -32,18 +32,18 @@
     BOOL frames;
 }
 
-- initWithFrame:(NSRect)theFrame;
-- (void)setDelegate:(id)anObject;
+- initWithFrame: (NSRect) theFrame;
+- (void) setDelegate: (id) anObject;
 - delegate;
-- frames:(BOOL)value;
-- setDataFactor:(double)dFactor;
-- (double)dataFactor;
-- getCursorLocation:(float *)cursorPoint;
-- setCursor:(float)cursorPoint;
-- drawSpectrum:(int)npoints array:(float *)f;
-- (void)drawRect:(NSRect)rects;
-- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
-- (void)mouseDown:(NSEvent *)event;
-- setColors;
+- frames: (BOOL) value;
+- setDataFactor: (double) dFactor;
+- (double) dataFactor;
+- getCursorLocation: (float *) cursorPoint;
+- setCursor: (float) cursorPoint;
+- drawSpectrum: (int) npoints array: (float *) f;
+- (void) drawRect: (NSRect) rects;
+- (BOOL) acceptsFirstMouse: (NSEvent *) theEvent;
+- (void) mouseDown: (NSEvent *) event;
+- (void) setColors;
 
 @end

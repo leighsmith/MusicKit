@@ -3,15 +3,16 @@
 
 @interface PrefController:NSObject
 {
+    IBOutlet NSColorWell *spectrumColorWell;
+    IBOutlet NSColorWell *waterfallColorWell;
+    IBOutlet NSColorWell *cursorColorWell;
+    IBOutlet NSColorWell *gridColorWell;
+    IBOutlet NSColorWell *amplitudeColorWell;
     id colorView;
     id fftView;
     id spectrumDisplayView;
     id soundDisplayView;
     id multiView;
-    IBOutlet NSColorWell *spectrumColorWell;
-    IBOutlet NSColorWell *waterfallColorWell;
-    IBOutlet NSColorWell *cursorColorWell;
-    IBOutlet NSColorWell *gridColorWell;
     id window;
     id windowSizeCell;
     id hopRatioCell;
@@ -25,10 +26,9 @@
 }
 
 - window;
-- (void)awakeFromNib;
-- setUpWell:well tag:(int)aTag;
-- okay:sender;
-- defaults:sender;
-- setPref:sender;
-- setPrefToView:theView;
+- (void) awakeFromNib;
+- okay: sender;
+- defaults: sender;
+- setPref: sender;
+- setPrefToView: theView;
 @end

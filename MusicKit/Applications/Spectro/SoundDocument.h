@@ -21,7 +21,6 @@
 
 @interface SoundDocument: NSDocument
 {
-    IBOutlet id soundWindow;
     IBOutlet NSButton *playButton;
     IBOutlet NSButton *recordButton;
     IBOutlet NSButton *stopButton;
@@ -35,10 +34,10 @@
     IBOutlet id sStartSec;
     IBOutlet id sDurSamp;
     IBOutlet id sDurSec;
-    IBOutlet SoundInfo *soundInfo;
-    IBOutlet SpectrumDocument *mySpectrumDocument;
+    IBOutlet ScrollingSound *scrollSound;
+    SoundInfo *soundInfo;
+    SpectrumDocument *mySpectrumDocument;
     Snd *theSound;
-    ScrollingSound *scrollSound;
     NSString *fileName;
     SndView *mySoundView;
     BOOL fresh;
@@ -58,9 +57,6 @@
   @returns YES if file successfully written.
 */
 - (BOOL) writeToURL: (NSURL *) absoluteURL ofType: (NSString *) typeName error: (NSError **) outError;
-
-- (void) setFileName: (NSString *) aName;
-- (NSString *) fileName;
 
 /*!
   @brief Assigns the title of the window from the sound format.
