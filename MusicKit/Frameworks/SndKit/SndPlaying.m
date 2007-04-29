@@ -119,16 +119,22 @@
 #if 0
 // mirroring the playback 
 - (SndCapture *) recordInFuture: (double) inSeconds
-     beginSample: (unsigned long) begin
+     beginSample: (unsigned long) recordBegin
      sampleCount: (unsigned long) count 
 {
     
     return [[SndRecorder defaultSndRecorder] recordSnd: self 
                                   withTimeOffset: inSeconds 
-                                    beginAtIndex: playBegin 
-                                      endAtIndex: playEnd];
+                                    beginAtIndex: recordBegin 
+                                      endAtIndex: recordEnd];
     
 }
+
+- (SndCapture *) recordInFuture: (double) inSeconds
+{
+    return [self recordInFuture: inSeconds beginSample: 0 sampleCount: SND_RECORD_CONTINUOUSLY];
+}
+
 #endif
 
 - record: sender

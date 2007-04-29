@@ -513,13 +513,15 @@ static SndPlayer *defaultSndPlayer;
     
     // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
+    // -cuePerformancesForPlaying: (NSArray *) toBePlayed
     {
-	double bufferDur     = [currentSynthOutputBuffer duration];
+	double bufferDur     = [currentSynthOutputBuffer duration]; // [[self synthOutputBuffer] duration];
 	double bufferEndTime = [self synthesisTime] + bufferDur;
 	int numberToBePlayed = [toBePlayed count];
         
 	for (i = 0; i < numberToBePlayed; i++) {
 	    SndPerformance *performance = [toBePlayed objectAtIndex: i];
+	    
 	    if ([performance playTime] < bufferEndTime) {
 		float timeOffset  = ([performance playTime] - [self synthesisTime]);
 		long thePlayIndex = [performance playIndex] - [[performance snd] samplingRate] * timeOffset;
@@ -533,13 +535,14 @@ static SndPlayer *defaultSndPlayer;
 	[removalArray removeAllObjects];
     }
 
-#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
-    NSLog(@"[SndPlayer][SYNTH THREAD] playing zone...\n");
-#endif
     // The playing-sounds-mixing-zone.
 
     numberPlaying = [playing count];
 
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+    NSLog(@"[SndPlayer][SYNTH THREAD] playing zone, playing %d performances...\n", numberPlaying);
+#endif
+    
     if (numberPlaying > 0) {
         long synthOutputBufferLength = [currentSynthOutputBuffer lengthInSampleFrames];
 	
@@ -556,7 +559,8 @@ static SndPlayer *defaultSndPlayer;
 	    synthOutputBufferLength = [performance retrievePerformBuffer: nativelyFormattedStreamingBuffer
 								ofLength: synthOutputBufferLength];
 #if SNDPLAYER_DEBUG
-	    NSLog(@"[SndPlayer] retrieved from performance %d, buffer %@ at clock %ld\n", i, nativelyFormattedStreamingBuffer, clock());
+	    NSLog(@"[SndPlayer] retrieved %d frames from performance %d, buffer %@ at clock %ld\n", 
+		  synthOutputBufferLength, i, nativelyFormattedStreamingBuffer, clock());
 #endif
 	    [currentSynthOutputBuffer mixWithBuffer: nativelyFormattedStreamingBuffer
 					  fromStart: 0
@@ -611,7 +615,7 @@ static SndPlayer *defaultSndPlayer;
 	}
     }
 #if SNDPLAYER_DEBUG
-    NSLog(@"[SndPlayer] synthOutputBuffer: %@\n", currentSynthOutputBuffer);
+    NSLog(@"[SndPlayer] currentSynthOutputBuffer: %@\n", currentSynthOutputBuffer);
 #endif
 
     [playingLock unlock];

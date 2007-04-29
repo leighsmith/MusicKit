@@ -142,9 +142,9 @@ int main (int argc, const char * argv[])
     int       shoutcastPortNumber     = 0;
 #endif
 #if USE_SNDEXPT
-    Snd *s = [SndExpt new];
+    Snd *soundToPlay = [SndExpt new];
 #else
-    Snd *s = [Snd new];
+    Snd *soundToPlay = [Snd new];
 #endif
     NSString          *extension = nil;
     NSFileManager     *fm       = [NSFileManager defaultManager];
@@ -248,11 +248,7 @@ int main (int argc, const char * argv[])
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
 	SndError error;
 
-//        SndAudioProcessorRecorder *rec = nil;
-//        long b1, b2;
-	
-//        b1 = clock();
-	error = [s readSoundfile: soundFileName];
+	error = [soundToPlay readSoundfile: soundFileName];
         if(error != SND_ERR_NONE) {
             //printError(-2, "Can't read sound file %s\n", [fm fileSystemRepresentationWithPath: soundFileName]);
             printError(-2, "Can't read sound file %s, error %d\n", [soundFileName UTF8String], error);
@@ -260,35 +256,20 @@ int main (int argc, const char * argv[])
         }
 
 #if !USE_SNDEXPT
-        [s convertToSampleFormat: SND_FORMAT_FLOAT];
+        [soundToPlay convertToSampleFormat: SND_FORMAT_FLOAT];
 #endif
-	/*
-	    s = [[Snd alloc] initWithFormat: SND_FORMAT_FLOAT
-			    channels: 2
-			      frames: 100000
-			samplingRate: 44100];
-	 {
-	     int i;
-	     float *f = [s data];
-	     for (i=0;i<200000;i+=2) {
-		 f[i]   = 0.5 + 0.25 * sin (100 *  i / 100000.0);
-		 f[i+1] = -0.5 - 0.25 * cos (100 *  i / 100000.0);
-	     }
-	 }
-	 */
         if (showInfo) {
-	    NSLog([s description]);
-	    [s release];
+	    NSLog([soundToPlay description]);
+	    [soundToPlay release];
 	    return 0;
         }
 	
-//        b2 = clock();
-//        printf("Readtime: %li\n",b2-b1);
-
-        if (durationInSamples == -1)
-	    maxWait = [s duration] + 5 + timeOffset + 1;
+        if (durationInSamples == -1) {
+	    durationInSamples = [soundToPlay lengthInSampleFrames];
+	    maxWait = [soundToPlay duration] + 5 + timeOffset + 1;
+	}
         else
-	    maxWait = durationInSamples / [s samplingRate] + 5 + 1;
+	    maxWait = durationInSamples / [soundToPlay samplingRate] + 5 + timeOffset + 1;
 
         maxWait /= deltaTime;
 
@@ -299,29 +280,18 @@ int main (int argc, const char * argv[])
             [rv setActive: TRUE];
             [[player audioProcessorChain] addAudioProcessor: rv];
         }
-#if 0
-        {
-	    rec = [SndAudioProcessorRecorder new];
-	    [rec setActive: TRUE];
-	    [[player audioProcessorChain] addAudioProcessor: rec];
-	    [rec startRecordingToFile: @"/Local/Users/skot/test.wav"
-		withDataFormat: SND_FORMAT_LINEAR_16
-		  channelCount: 2
-		  samplingRate: 44100];
-        }
-#endif
         if (bMP3Shoutcast) {
 	    bMP3Shoutcast = playsnd_init_shoutcast(shoutcastServerAddress, shoutcastPortNumber, shoutcastSourcePassword);
         }
         {
 	    SndPerformance *perf;
 	    
-	    perf = [s playInFuture: timeOffset
+	    perf = [soundToPlay playInFuture: timeOffset
 	               beginSample: startTimeInSamples
 		       sampleCount: durationInSamples];
 	    [perf setDeltaTime: deltaTime];
         }
-        if (bTimeOutputFlag) printf("Sound duration: %.3f\n", [s duration]);
+        if (bTimeOutputFlag) printf("Sound duration: %.3f\n", [soundToPlay duration]);
 	
         // Wait for stream manager to go inactive, signalling the sound has finished playing
         while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
@@ -329,13 +299,9 @@ int main (int argc, const char * argv[])
 	    waitCount++;
 	    if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
         }
-#if 0
-        [rec stopRecording];
-        [rec closeRecordFile];
-#endif
         if (waitCount >= maxWait) {
 	    fprintf(stderr, "Aborting wait for stream manager shutdown - taking too long.\n");
-	    fprintf(stderr, "(snd dur:%.3f, maxwait:%i)\n", [s duration], maxWait);
+	    fprintf(stderr, "(snd dur:%.3f, maxwait:%i)\n", [soundToPlay duration], maxWait);
         }
         if (bMP3Shoutcast)
 	    playsnd_close_shoutcast();

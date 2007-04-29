@@ -354,7 +354,7 @@ static SndStreamManager *defaultStreamManager = nil;
     
     bg_active = TRUE;
     isStopping = FALSE;
-    [self retain];
+    //[self retain]; // I presume this is to register the retain on the local autorelease pool?
     
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"SndManager::entering bg thread\n");
@@ -403,7 +403,7 @@ static SndStreamManager *defaultStreamManager = nil;
     }
     bg_active = FALSE;
     [bg_threadLock unlockWithCondition:BG_threadStopped];
-    [self release];
+    //[self release];
     [localPool release];
     
 #if SNDSTREAMMANAGER_DEBUG

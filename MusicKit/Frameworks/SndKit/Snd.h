@@ -404,8 +404,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 
 /*!
   @return Returns an int.
-  @brief Returns the number of sample frames, or channel count-independent
-              samples, in the Snd.
+  @brief Returns the number of sample frames, or channel count-independent samples, in the Snd.
 */
 - (unsigned long) lengthInSampleFrames;
 
