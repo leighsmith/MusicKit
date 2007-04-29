@@ -903,7 +903,7 @@ BOOL setOutputDevice(AudioDeviceID outputDeviceID, BOOL setTheBufferSize)
 BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
 {
 #if DEBUG_DESCRIPTION
-    NSLog(@"INPUT ===========\n");
+    NSLog(@"INPUT =========== inputDeviceID = %d\n", inputDeviceID);
 #endif
 
     if (inputDeviceID == kAudioDeviceUnknown) {
@@ -968,8 +968,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 				getCoreAudioErrorStr(CAstatus));
 		return FALSE;
 	}
-	CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultInputDevice,
-											&propertySize, &propertyWritable);
+	CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultInputDevice, &propertySize, &propertyWritable);
 	if (CAstatus) {
 		NSLog(@"SNDInit() Input: AudioHardwareGetPropertyInfo kAudioHardwarePropertyDefaultInputDevice returned %s\n",
 		getCoreAudioErrorStr(CAstatus));
@@ -1001,7 +1000,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     if(!setOutputDevice(outputDeviceID, !guessTheDevice))
         return FALSE;
 
-    inputInit = setInputDevice(inputDeviceID, TRUE);
+    inputInit = setInputDevice(inputDeviceID, YES);
 
     return TRUE;
 }
@@ -1142,8 +1141,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 
     CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendOutputBuffersToStreamManagerIOProc, NULL);
     if (CAstatus) {
-        NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
-                getCoreAudioErrorStr(CAstatus));
+        NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s for output\n", getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
     if(!getAudioStreamsToVend(outputDeviceID, &outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
@@ -1169,8 +1167,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     if (inputInit) {
         CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc, NULL);
         if (CAstatus) {
-            NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
-         				getCoreAudioErrorStr(CAstatus));
+            NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s for input\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
 	if(!getAudioStreamsToVend(inputDeviceID, &inputStreamIOProcUsage, vendInputBuffersToStreamManagerIOProc, YES))
@@ -1179,15 +1176,13 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     if (r) { // all is well so far...
         CAstatus = AudioDeviceStart(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
         if (CAstatus) {
-            NSLog(@"SNDStartStreaming: AudioDeviceStart returned %s\n",
-                    getCoreAudioErrorStr(CAstatus));
+            NSLog(@"SNDStartStreaming: AudioDeviceStart returned %s\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
         if (inputInit) {
             CAstatus = AudioDeviceStart(inputDeviceID, vendInputBuffersToStreamManagerIOProc);
             if (CAstatus) {
-                NSLog(@"SNDStartStreaming: AudioDeviceStart returned %s\n", 
-                        getCoreAudioErrorStr(CAstatus));
+                NSLog(@"SNDStartStreaming: AudioDeviceStart returned %s\n", getCoreAudioErrorStr(CAstatus));
                 r = FALSE;
             }
         }
@@ -1208,23 +1203,29 @@ PERFORM_API BOOL SNDStreamStop(void)
     BOOL r = TRUE;
     OSStatus CAstatus = 0;
 
-    // Must close input first !
+    // Close input stream before closing the output streams.
     if (inputInit) {
-        CAstatus = AudioDeviceStop(inputDeviceID, vendOutputBuffersToStreamManagerIOProc);
+        CAstatus = AudioDeviceStop(inputDeviceID, vendInputBuffersToStreamManagerIOProc);
         if (CAstatus) {
-            NSLog(@"SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
+            NSLog(@"SNDStreamStop() input device stop returned: %s\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
+	// Disable the input IOProc
+	// CAstatus = AudioDeviceRemoveIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc);  
+        // if (CAstatus) {
+        //    NSLog(@"SNDStreamStop() input IOProc removal returned: %s\n", getCoreAudioErrorStr(CAstatus));
+        //    r = FALSE;
+        // }
     }
 
-    CAstatus =  AudioDeviceStop(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
+    CAstatus = AudioDeviceStop(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
 
 #if DEBUG_STARTSTOPMSG    
     NSLog(@"[SND] Begining stream shutdown...\n");
 #endif    
     
     if (CAstatus) {
-        NSLog(@"SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"SNDStreamStop() output device stop returned %s\n", getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
     firstSampleTime = -1.0;  
