@@ -12,8 +12,8 @@
 #import <SndKit/SndKit.h>
 #include <unistd.h>
 
-static char* versionString   = "1.0.0"; 
-static char* versionDate     = "Sept 2001";  
+static char* versionString   = "5.5.3"; 
+static char* versionDate     = "April 2007";  
 static char* defaultFilename = "temp.wav";
 static BOOL  bSilent         = FALSE;
 
@@ -55,9 +55,7 @@ void doRecord(const char* recordFilename, double recordDuration)
     SndStreamRecorder *recorder = [[SndStreamRecorder alloc] init];
     NSString *fileName = [[NSFileManager defaultManager] stringWithFileSystemRepresentation: recordFilename
 										     length: strlen(recordFilename)];
-    
-    [[SndStreamManager defaultStreamManager] addClient: [recorder autorelease]];
-    
+        
     [recorder startRecordingToFile: fileName];
     
     if (recordDuration >= 0.0) {
@@ -117,14 +115,14 @@ int main (int argc, const char * argv[])
 			fprintf(stderr,"No record duration specified after -d option! Aborting.\n");
 			return BAD_DURATION;
 		    }
-			else {
-			    recordDuration = atof(argv[i]);
-			    if (recordDuration < 0.0) {
-				fprintf(stderr,"Record durations must be positive! Aborting.\n");
-				return BAD_DURATION;
-			    }
+		    else {
+			recordDuration = atof(argv[i]);
+			if (recordDuration < 0.0) {
+			    fprintf(stderr,"Record durations must be positive! Aborting.\n");
+			    return BAD_DURATION;
 			}
-			break;
+		    }
+		    break;
 		default:
 		    fprintf(stderr,"Ignoring unknown option '%s'.\n",argv[i]);
 	    }
