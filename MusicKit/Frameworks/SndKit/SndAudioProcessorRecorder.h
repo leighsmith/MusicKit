@@ -66,7 +66,9 @@ enum SndRecorderParam {
     /*! @var fileFormat The format of the data to be stored in the file. */
     SndFormat fileFormat;
     /*! @var isRecording Indicates if recording is currently active. */
-    BOOL isRecording; 
+    BOOL isRecording;
+    /*! @var writingFileHandle Holds the file handle used in writing. */
+    NSFileHandle *writingFileHandle;
     /*! @var framesRecorded Number of sample frames written */
     unsigned long framesRecorded;  
     /*! @var recordFile The libsndfile handle referring to the open file. NULL if not open. */

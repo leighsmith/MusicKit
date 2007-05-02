@@ -55,6 +55,7 @@
 	// This is to keep the time spent in processReplacingInputBuffer:outputBuffer: to a minimum avoiding
 	// file writing latencies interrupting the stream processing.
 	writingQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 32] retain];
+	writingFileHandle = nil;
     }
     return self;
 }
@@ -70,6 +71,8 @@
     writingQueue = nil;
     [recordFileName release];
     recordFileName = nil;
+    [writingFileHandle release];
+    writingFileHandle = nil;
     [super dealloc];
 }
 
@@ -150,7 +153,6 @@
 	      withFormat: (SndFormat) format
 {
     SF_INFO sfinfo;
-    NSFileHandle *writingFileHandle;
     NSString *expandedFilename = [filename stringByExpandingTildeInPath];
     
     sfinfo.frames = 0;
@@ -170,8 +172,8 @@
 	return NO;
     }
     else {
-	writingFileHandle = [NSFileHandle fileHandleForWritingAtPath: expandedFilename];
-	//NSLog(@"writingFileHandle = %@\n", writingFileHandle);
+	[writingFileHandle release];
+	writingFileHandle = [[NSFileHandle fileHandleForWritingAtPath: expandedFilename] retain];
 	if((recordFile = sf_open_fd([writingFileHandle fileDescriptor], SFM_WRITE, &sfinfo, TRUE)) != NULL) {
 	    [recordFileName release];
 	    recordFileName = [expandedFilename copy];
