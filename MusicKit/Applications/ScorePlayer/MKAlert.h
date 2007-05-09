@@ -14,11 +14,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@interface MKAlert : NSObject
+@interface MKAlert: NSObject
 {
-    id	msg;
-    id	panel;
-    id	title;
+    IBOutlet NSTextField *msg;
+    IBOutlet NSPanel *panel;
+    IBOutlet NSTextField *title;
+    IBOutlet NSButton *panelIconButton;
     id  first,second,third;
 //    NSCoord buttonHeight, buttonSpacing;
     NSSize defaultPanelSize;
@@ -26,10 +27,14 @@
 
 - init;
 
-- (void)buttonPressed:sender;
+- (void) buttonPressed: sender;
 
-int mkRunAlertPanel(NSString *title, NSString *s, NSString *first, NSString *second, NSString *third);
+- (void) setIcon: (NSImage *) icon;
+
+- (void) setMessageText: (NSString *) message;
 
 @end
+
+int mkRunAlertPanel(NSString *title, NSString *s, NSString *first, NSString *second, NSString *third);
 
 #endif

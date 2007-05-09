@@ -105,7 +105,6 @@ static NSDate *lastModifyTime;
 static ErrorLog *errorLog;
 static BOOL errorDuringPlayback = NO;
 
-#define PLAYING ([MKConductor inPerformance])
 #if m68k
 #define SOUND_OUT_PAUSE_BUG 1 /* Workaround for problem synching MIDI to DSP */
 #endif
@@ -172,35 +171,35 @@ static BOOL errorDuringPlayback = NO;
 
 - showConductorDidSeek
 {
-    [timeCodeTextField setStringValue:@"Time code running"];
+    [timeCodeTextField setStringValue: @"Time code running"];
     return self;
 }
 
 - showConductorWillSeek
 {
-    [timeCodeTextField setStringValue:@"Time code starting..."];
+    [timeCodeTextField setStringValue: @"Time code starting..."];
     return self;
 }
 
 - showConductorDidReverse
 {
-    [timeCodeTextField setStringValue:@"Time code running backwards"];
+    [timeCodeTextField setStringValue: @"Time code running backwards"];
     return self;
 }
 
 - showConductorDidPause
 {
-    [timeCodeTextField setStringValue:@"Time code stopped.  Waiting for time code to start"];
+    [timeCodeTextField setStringValue: @"Time code stopped.  Waiting for time code to start"];
     return self;
 }
 
 - showConductorDidResume
-{
-    [timeCodeTextField setStringValue:@"Time code running"];
+{ 
+    [timeCodeTextField setStringValue: @"Time code running"];
     return self;
 }
 
-- (void)showErrorLog:sender
+- (void) showErrorLog: sender
 {
     [errorLog show]; 
 }
@@ -215,9 +214,9 @@ static BOOL errorDuringPlayback = NO;
 
 static void handleMKError(NSString *msg)
 {
-    if (!PLAYING) {
+    if (![MKConductor inPerformance]) {
         [errorLog addText: msg];
-	if (!mkRunAlertPanel(STR_SCOREPLAYER_ERROR,msg,STR_OK,STR_CANCEL,NULL)) {
+	if (!mkRunAlertPanel(STR_SCOREPLAYER_ERROR, msg, STR_OK, STR_CANCEL, NULL)) {
             MKSetScorefileParseErrorAbort(0);
             userCancelFileRead = YES;         /* A kludge for now. */
         }
@@ -232,6 +231,7 @@ static void handleMKError(NSString *msg)
 static void setFileTime(void)
 {
     NSDictionary *fattrs;
+    
     if (scoreForm == PLAYSCORE_FILE)
         return;
     fattrs = [[NSFileManager defaultManager] fileAttributesAtPath: fileName
@@ -1010,7 +1010,7 @@ static void abortNow()
     NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
     MKMidi *midiDev;
     
-    if (PLAYING) {
+    if ([MKConductor inPerformance]) {
 	[MKConductor lockPerformance];
         while ((midiDev = [midiDevEnumerator nextObject])) {
             // This is tricky. allNotesOff sends note offs to all channels immediately,
@@ -1053,7 +1053,7 @@ static void abortNow()
         [self selectFile: self];
     if (!fileName || ![fileName length])
         return;
-    if (PLAYING)
+    if ([MKConductor inPerformance])
         abortNow();
     else {
 	if (needToReread()) {
@@ -1139,7 +1139,7 @@ static void adjustTempo(double slowDown)
     double val = [sender doubleValue];
     desiredTempo = getTempo(val);
     // LMS it's unclear if this was only able to happen when not playing due to earlier MK limitations.
-    //    if (!PLAYING) {  
+    //    if (![MKConductor inPerformance]) {  
     [[MKConductor defaultConductor] setTempo: desiredTempo];
     [tempoTextField setFloatValue: desiredTempo];
     lastTempo = desiredTempo;
@@ -1280,7 +1280,7 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     /* Save the score, always prompting for a file name first.
        This is what the SaveAs: menu item calls. */
 {
-    if (PLAYING)
+    if ([MKConductor inPerformance])
         abortNow();
     if (saveType == -1) 
 	[self setSaveType: SCORE_FILE];

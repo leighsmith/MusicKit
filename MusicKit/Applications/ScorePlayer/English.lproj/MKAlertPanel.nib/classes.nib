@@ -10,7 +10,15 @@
             ACTIONS = {buttonPressed = id; }; 
             CLASS = MKAlert; 
             LANGUAGE = ObjC; 
-            OUTLETS = {first = id; msg = id; panel = id; second = id; third = id; title = id; }; 
+            OUTLETS = {
+                first = id; 
+                msg = NSTextField; 
+                panel = NSPanel; 
+                panelIconButton = NSButton; 
+                second = id; 
+                third = id; 
+                title = NSTextField; 
+            }; 
             SUPERCLASS = NSObject; 
         }
     ); 
