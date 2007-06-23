@@ -36,8 +36,8 @@ static void handleMKError(NSString *msg) {
 	[NSApp terminate:NSApp];
 }
 
+/* This method sets things up and begins the performance. */
 - start
-    /* This method sets things up and begins the performance. */
 {
     NSArray *partRecorders;
     MKPart *aPart;
