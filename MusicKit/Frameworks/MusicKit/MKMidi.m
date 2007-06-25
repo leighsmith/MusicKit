@@ -184,7 +184,7 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 // TODO This should be able to be removed.
 #define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 
 
-#define DEFAULT_SOFT_NAME @"midi0"
+#define DEFAULT_SOFT_NAME @"midi0" // TODO This should be changed to "midi" or "midiDefault"
 
 #define NO_UNIT (-1)
 
@@ -1149,11 +1149,11 @@ static unsigned ignoreBit(unsigned param)
    MK_NAME.  However, in case we ever support others, I want to support
    the general API.  And since this code was already written for the DSP
    case, I thought I'd just grab it from there.
-   LMS: The day is rapidly approaching when we may need all of David's functionality
+   LMS: The day has arrived where we need all of David's functionality
    with Win32 named ports, MacOS X CoreMIDI USB devices etc.
  */
 
-// This retieves MIDI drivers via MKPerformSndMIDI framework based drivers.
+// This retrieves MIDI drivers via MKPerformSndMIDI framework based drivers.
 // Return YES if able to retrieve lists of names of input, output and bidirectional MIDI drivers.
 // A driver is considered here to be a named service providing 16 channels of MIDI in or out.
 // Bidirectional drivers are determined to be those drivers which are the intersection of the input and 
@@ -1222,7 +1222,6 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 {
     NSScanner *scanner = [NSScanner scannerWithString: deviceName];
     BOOL gotInt;
-    NSRange softDevPrefixRange = {0, 4};
     
     [scanner scanUpToCharactersFromSet: [NSCharacterSet decimalDigitCharacterSet] intoString: NULL]; 
     gotInt = [scanner scanInt: unitNum];
@@ -1231,9 +1230,7 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
         return NO;
     }
     else {
-        return [deviceName compare: @"midi" 
-			   options: NSAnchoredSearch
-			     range: softDevPrefixRange] == NSOrderedSame;
+        return [deviceName hasPrefix: @"midi"];
     }
 }
 
@@ -1289,23 +1286,20 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 // Returns autoreleased copies of all available input driver names as an NSArray
 + (NSArray *) getDriverNamesForInput
 {
-    [[self class] getAllAvailableMidiDevices];
-    return [[inputDriverNames copy] autorelease];
+    return [[self class] getAllAvailableMidiDevices] ? [[inputDriverNames copy] autorelease] : nil;
 }
 
 // Returns autoreleased copies of all available output driver names as an NSArray
 + (NSArray *) getDriverNamesForOutput
 {
-    [[self class] getAllAvailableMidiDevices];
-    return [[outputDriverNames copy] autorelease];
+    return [[self class] getAllAvailableMidiDevices] ? [[outputDriverNames copy] autorelease] : nil;
 }
 
 // Just return the bidirectional drivers for applications which only want those drivers (ports) which are both
 // input and output.
 + (NSArray *) getDriverNames
 {
-    [[self class] getAllAvailableMidiDevices];
-    return [[bidirectionalDriverNames copy] autorelease];
+    return [[self class] getAllAvailableMidiDevices] ? [[bidirectionalDriverNames copy] autorelease] : nil;
 }
 
 - (NSString *) driverName 
