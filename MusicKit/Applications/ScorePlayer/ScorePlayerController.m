@@ -64,7 +64,8 @@ static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
 // MIDI management
-static NSMutableDictionary *midis;
+static NSString *defaultMidiDevice;
+static NSMutableDictionary *playingMidiDevices;
 static MKSamplerInstrument *nonSynthInstrument = nil;
 static int midiOffset;
 // MTC sync
@@ -74,7 +75,7 @@ static MKMidi *timeCodeMIDIDevice = nil;
 
 static unsigned capabilities;
 static double samplingRate;
-static id mySelf;
+static id mySelf; // Keeps self available for C functions.
 static NSTimer *tempoAnimator = nil;
 
 static NSString *outputFilePath; /* Complete output file path */
@@ -257,6 +258,7 @@ static BOOL needToReread(void)
     return reread;
 }
 
+// All should be replaced with sound output device names list determined dynamically.
 #define  NEXT_SOUND 0
 #define  DAI2400 1
 #define  AD64x 2
@@ -276,7 +278,7 @@ static NSArray *soundOutputTagToName;
     for (i = 1; i < GENERIC; i++)
         if ([[soundOutputTagToName objectAtIndex: i] isEqualToString: s])
             tag = i;
-    [serialPortDeviceMatrix selectCellWithTag: tag];
+    [soundOutputDevicePopUp selectItemWithTag: tag];
     return tag;
 }
 
@@ -305,7 +307,7 @@ static NSArray *soundOutputTagToName;
 }
 
 /* Invoked by U.I. */
-- (void) setSoundOutFrom: sender
+- (IBAction) setSoundOutFrom: sender
 {
     int tag = [[sender selectedCell] tag];
     
@@ -313,7 +315,7 @@ static NSArray *soundOutputTagToName;
 	return;
     if (tag == NEXT_SOUND && (!([theOrch capabilities] & MK_hostSoundOut))) {
 	NSRunAlertPanel(STR_SCOREPLAYER, @"NeXT sound not supported on this architecture", STR_OK, nil, nil);
-	[serialPortDeviceMatrix selectCellWithTag: soundOutType];
+	[soundOutputDevicePopUp selectItemWithTag: soundOutType];
 	return;
     }
     [self setSoundOutDeviceTag: tag];
@@ -343,7 +345,7 @@ static NSArray *soundOutputTagToName;
             [[NSUserDefaults standardUserDefaults] removePersistentDomainForName: NSGlobalDomain];
             [[NSUserDefaults standardUserDefaults] setPersistentDomain: pdm forName: NSGlobalDomain]; 
         }
-	    [[NSUserDefaults standardUserDefaults] synchronize];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void) deviceSpecificSettings: sender
@@ -550,7 +552,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
 
 - endOfTime	// called by the MusicKit thread
 {
-    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    NSEnumerator *midiDevEnumerator = [playingMidiDevices objectEnumerator];
     MKMidi *midiDev;
     
     [theOrch close]; /* This will block! */
@@ -608,12 +610,10 @@ void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
 }
 #endif
 
-/* TODO make this more encompassing of all MIDI device namings */
+/* Accepts all MIDI device namings */
 static BOOL isMIDIInstrumentName(NSString *synthPatchName)
 {
-    return (synthPatchName && ([synthPatchName isEqualToString:@"midi"] ||
-                          [synthPatchName isEqualToString:@"midi0"] ||
-                          [synthPatchName isEqualToString:@"midi1"]));
+    return synthPatchName && [synthPatchName hasPrefix: @"midi"];
 }
 
 #if SOUND_OUT_PAUSE_BUG
@@ -621,7 +621,7 @@ static BOOL isMIDIInstrumentName(NSString *synthPatchName)
 static BOOL checkForMidi(MKScore *obj)
 {
     NSArray *subobjs = [obj parts];
-    int i,cnt;
+    int i, cnt;
     MKNote *info;
     
     if (!subobjs)
@@ -656,17 +656,32 @@ static double getUntempo(float tempoVal)
 #define ANIMATE_DIFF_THRESHOLD 1.0
 #define ANIMATE_INCREMENT 0.3
 
+- (void) startMidi
+{
+    NSEnumerator *midiDevEnumerator = [playingMidiDevices objectEnumerator];
+    MKMidi *midiDev;
+    
+    while ((midiDev = [midiDevEnumerator nextObject])) {
+	if ([midiDev openOutputOnly]) {	// set the localDeltaT time offset, negative values are for orchestras
+	    if (midiOffset > 0) 
+		[midiDev setLocalDeltaT: midiOffset];
+	    else if (midiOffset < 0)
+		[theOrch setLocalDeltaT: -midiOffset];
+	    // NSLog(@"About to run %@\n", midiDev);
+	    [midiDev run];
+	}
+	else {
+	    mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
+	}
+    }
+}
+
 - (void) startPlay
 {
-    int partCount, synthPatchCount, voices, i, midiChan;
-    NSString *synthPatchName;
-    NSString *instrumentClassName;
+    int partCount, synthPatchCount, voices, i;
     NSString *msg = nil;
     double actualSrate;  
     NSArray *partPerformers;
-    MKPartPerformer *partPerformer;
-    MKNote *partInfo;
-    MKPart *aPart;
     NSString *writeMsg = nil;
     
     /* Could keep these around, in repeat-play cases: */ 
@@ -735,9 +750,12 @@ static double getUntempo(float tempoVal)
     partCount = [partPerformers count];
     synthInstruments = [[NSMutableArray array] retain];
     for (i = 0; i < partCount; i++) {
-	partPerformer = [partPerformers objectAtIndex: i];
-	aPart = [partPerformer part]; 
-	partInfo = [aPart infoNote];
+	MKPartPerformer *partPerformer = [partPerformers objectAtIndex: i];
+	MKPart *aPart = [partPerformer part]; 
+	MKNote *partInfo = [aPart infoNote];
+	NSString *synthPatchName;
+	NSString *instrumentClassName;
+	
 	if (!partInfo) {
             errMsg = [NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)];
             [errorLog addText: errMsg];
@@ -753,18 +771,17 @@ static double getUntempo(float tempoVal)
 	instrumentClassName = [NSString stringWithFormat: @"MK%@Instrument", synthPatchName]; 
 	if (isMIDIInstrumentName(synthPatchName)) {
             MKMidi *newMIDI = nil;
-            
-	    midiChan = [partInfo parAsInt: MK_midiChan];
+	    int midiChan = [partInfo parAsInt: MK_midiChan];
+	    
 	    if ((midiChan == MAXINT) || (midiChan > 16))
 		midiChan = 0;
             if ([synthPatchName isEqualToString: @"midi"])  // set the default MIDI device.
-		synthPatchName = @"midi0"; /* Was "midi1" -- changed 9/30/94 */
-	    
-	    if ((newMIDI = [midis objectForKey: synthPatchName]) == nil) {
+		synthPatchName = defaultMidiDevice;	    
+	    if ((newMIDI = [playingMidiDevices objectForKey: synthPatchName]) == nil) {
                 newMIDI = [MKMidi midiOnDevice: synthPatchName];
                 // Check that newMIDI is not nil, i.e midiOnDevice did initialise
                 if(newMIDI != nil)
-                    [midis setObject: newMIDI forKey: synthPatchName];
+                    [playingMidiDevices setObject: newMIDI forKey: synthPatchName];
             }
             if(newMIDI != nil)
                 [[partPerformer noteSender] connect: [newMIDI channelNoteReceiver: midiChan]];
@@ -829,51 +846,29 @@ static double getUntempo(float tempoVal)
 						    selector: @selector(animateTempo:)
 						    userInfo: nil
 						     repeats: YES] retain];
-    {
-	NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
-	MKMidi *midiDev;
-	
-	while ((midiDev = [midiDevEnumerator nextObject])) {
-	    if ([midiDev openOutputOnly]) {	// set the localDeltaT time offset, negative values are for orchestras
-		if (midiOffset > 0) 
-		    [midiDev setLocalDeltaT: midiOffset];
-		else if (midiOffset < 0)
-		    [theOrch setLocalDeltaT: -midiOffset];
-		[midiDev run];
-	    }
-	    else {
-		mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
-	    }
-	}
-    }
+    [self startMidi];
     [theOrch run];
     [MKConductor startPerformance];     
 }
 
-- setTempoAdjustment: sender
+- (IBAction) setTempoAdjustment: sender
 {
     [MKConductor setDelegate: ([[sender selectedCell] tag] == 0) ? self : nil];
-    return self;
 }
 
-- (void) setMidiDriverName: (id) sender
+- (IBAction) setMidiDriverName: (id) driverPopup
 {
-    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
-    MKMidi *midiDev;
-    
-    while ((midiDev = [midiDevEnumerator nextObject])) {
-        NSLog([midiDev driverName]);
-//      [midiDev close];
-//      [midiDev release];
-//      midiDev = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
-//      [midiDev retain];
-    }
+    [defaultMidiDevice release];
+    defaultMidiDevice = [[driverPopup titleOfSelectedItem] retain];
+    // NSLog(@"defaultMidiDevice = %@\n", defaultMidiDevice);
 }
 
 + (void) initialize
 {
     NSDictionary *scorePlayerDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"NeXTsound", @"SoundOutput", NULL, NULL];
+        @"NeXTsound", @"DefaultSoundOutput",
+	[[MKMidi midi] driverName], @"DefaultMIDIOutput", // Naturally the application should use the systems idea of a default.
+	NULL, NULL];
     [[NSUserDefaults standardUserDefaults] registerDefaults: scorePlayerDefaults];
 }
 
@@ -924,7 +919,7 @@ static void abortNow();
 #endif
     MKSetErrorProc(handleMKError);
 
-    midis = [[NSMutableDictionary dictionaryWithCapacity: 8] retain]; // heaps!
+    playingMidiDevices = [[NSMutableDictionary dictionaryWithCapacity: 8] retain]; // heaps!
     [MKOrchestra setAbortNotification: self]; 
     theOrch = [[MKOrchestra alloc] init];
     capabilities = [theOrch capabilities];
@@ -938,34 +933,36 @@ static void abortNow();
             s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
 	    [self setSoundOutDeviceTag: [self _soundOutputNameToTag: s]];
 	}
-    } else {
+    } 
+    else {
 	if ((capabilities & MK_nextCompatibleDSPPort)) {
             s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
 	    [self setSoundOutDeviceTag: [self _soundOutputNameToTag: s]];
 	}
 	else {
 	    [self setSoundOutDeviceTag: GENERIC];
-	    [serialPortDeviceMatrix selectCellWithTag: GENERIC];
-	    [serialPortDeviceMatrix setEnabled: NO];
+	    [soundOutputDevicePopUp selectItemWithTag: GENERIC];
+	    [soundOutputDevicePopUp setEnabled: NO];
 	}
     }
     
-    // initialise the device list for selecting MIDI drivers with the default.
-    // [driverPopup removeAllItems];
-    // [driverPopup addItemsWithTitles: [MKMidi getDriverNames]];
-    // [driverPopup selectItemWithTitle: [[MKMidi midi] driverName]]; 
-    
+    // initialise the device list for selecting MIDI drivers to be used as the default "midi" instrument.
+    [defaultMidiPopUp removeAllItems];
+    [defaultMidiPopUp addItemsWithTitles: [MKMidi getDriverNames]];
+    defaultMidiDevice = [[scorePlayerDefaults stringForKey: @"DefaultMIDIOutput"] retain];
+    [defaultMidiPopUp selectItemWithTitle: defaultMidiDevice];
 }
 
 static BOOL setUpFile(NSString *workspaceFileName)
 {
-    int success;
     // Look for a score in a default place if this is the first time this has been run
     BOOL firstTime = [[NSUserDefaults standardUserDefaults] objectForKey: @"NSDefaultOpenDirectory"] == nil;
     
     if (!openPanel)
         openPanel = [NSOpenPanel new];    
     if (!workspaceFileName) {
+	BOOL success = NO;
+
 	if (firstTime) {
             NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
 	    
@@ -1007,7 +1004,7 @@ static BOOL setUpFile(NSString *workspaceFileName)
 
 static void abortNow()
 {
-    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    NSEnumerator *midiDevEnumerator = [playingMidiDevices objectEnumerator];
     MKMidi *midiDev;
     
     if ([MKConductor inPerformance]) {
@@ -1134,7 +1131,7 @@ static void adjustTempo(double slowDown)
     return self;
 }
 
-- (void) setTempoFrom: sender	// currently called by slider only
+- (IBAction) setTempoFrom: sender	// currently called by slider only
 {
     double val = [sender doubleValue];
     desiredTempo = getTempo(val);
@@ -1146,13 +1143,14 @@ static void adjustTempo(double slowDown)
 //    }
 }
 
-- (void) setTimeCodeSynch: sender
+- (IBAction) setTimeCodeSynch: sender
 {
     synchToTimeCode = [sender intValue];
     [timeCodeTextField setStringValue: (synchToTimeCode) ? @"Press Play, then start time code" : @"Press button above to enable time code"]; 
 }
 
-- (void) setTimeCodeSerialPort: sender
+// TODO rename to setTimeCodeMidiDevice:
+- (IBAction) setTimeCodeSerialPort: sender
 {
     /* 0 for portA, 1 for portB */
     timeCodeDevice = [[sender selectedCell] title]; 
@@ -1183,7 +1181,7 @@ static void adjustTempo(double slowDown)
 
 - conductorDidPause: sender
 {
-    NSEnumerator *midiDevEnumerator = [midis objectEnumerator];
+    NSEnumerator *midiDevEnumerator = [playingMidiDevices objectEnumerator];
     MKMidi *midiDev;
     
     [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidPause) to: self argCount: 0];
