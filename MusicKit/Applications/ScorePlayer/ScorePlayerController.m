@@ -706,7 +706,8 @@ static double getUntempo(float tempoVal)
 		msg = STR_BAD_SRATE;
 		actualSrate = [theOrch defaultSamplingRate];
 	    }
-	    else actualSrate = samplingRate;
+	    else 
+		actualSrate = samplingRate;
 	    break;
 	case GENERIC:
 	    actualSrate = samplingRate;
@@ -716,7 +717,8 @@ static double getUntempo(float tempoVal)
 		msg = STR_BAD_SSI_SRATE;
 		actualSrate = [theOrch defaultSamplingRate];
 	    }
-	    else actualSrate = samplingRate;
+	    else 
+		actualSrate = samplingRate;
 	    break;
     }
     if (msg && !warnedAboutSrate) {	
@@ -753,8 +755,8 @@ static double getUntempo(float tempoVal)
 	MKPartPerformer *partPerformer = [partPerformers objectAtIndex: i];
 	MKPart *aPart = [partPerformer part]; 
 	MKNote *partInfo = [aPart infoNote];
-	NSString *synthPatchName;
-	NSString *instrumentClassName;
+	NSString *synthPatchName = nil;
+	NSString *instrumentClassName = nil;
 	
 	if (!partInfo) {
             errMsg = [NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)];
@@ -763,12 +765,15 @@ static double getUntempo(float tempoVal)
                 return;
 	    continue;
 	}		
-        // If it's a SMF, all parts are MKMidi synthPatches.
-        if(![partInfo isParPresent: MK_synthPatch] && scoreForm == MIDI_FILE) {
-            [partInfo setPar: MK_synthPatch toString: @"midi"];
+        if([partInfo isParPresent: MK_synthPatch]) {
+	    synthPatchName = [partInfo parAsStringNoCopy: MK_synthPatch];	    
+	    instrumentClassName = [NSString stringWithFormat: @"MK%@Instrument", synthPatchName]; 
+	}
+	else if(scoreForm == MIDI_FILE) {
+	    // If it's a SMF, all parts are default MKMidi synthPatches.
+	    synthPatchName = @"midi";
+            [partInfo setPar: MK_synthPatch toString: synthPatchName];
         }
-        synthPatchName = [partInfo parAsStringNoCopy: MK_synthPatch];
-	instrumentClassName = [NSString stringWithFormat: @"MK%@Instrument", synthPatchName]; 
 	if (isMIDIInstrumentName(synthPatchName)) {
             MKMidi *newMIDI = nil;
 	    int midiChan = [partInfo parAsInt: MK_midiChan];
