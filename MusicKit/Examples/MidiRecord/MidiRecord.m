@@ -33,31 +33,29 @@
 
 static void handleMKError(NSString *msg) {
     if (!NSRunAlertPanel(@"MidiRecord", msg, @"OK", @"Quit", nil, NULL))
-	[NSApp terminate:NSApp];
+	[NSApp terminate: NSApp];
 }
 
 /* This method sets things up and begins the performance. */
 - start
 {
     NSArray *partRecorders;
-    MKPart *aPart;
-    MKNote *info;
     int i;
 
     needsUpdate = YES;
     [saveAsMenuItem setEnabled: YES]; /* Something to save now. */
     [score release];                  /* Free old score, parts and notes. */
-    score = [[MKScore alloc] init];   /* Make a new Score to store Notes */
+    score = [[MKScore alloc] init];   /* Make a new MKScore to store Notes */
     for (i = 0; i < 17; i++) {        /* 16 channels and one for system msgs */
-	aPart =[[MKPart alloc] init]; /* Make a new Part for each channel */
-
+	MKPart *aPart = [[[MKPart alloc] init] autorelease]; /* Make a new MKPart for each channel */
 	/* Each MKPart has an 'info' MKNote which contains some special info
 	   for that MKPart. In this case we put the midiChan there. */
-	info = [[MKNote alloc] init];
+	MKNote *info = [[[MKNote alloc] init] autorelease];
+	
 	if (i != 0)  {               /* The 0th 'channel' is our 'sys' MKPart */
 	    [info setPar: MK_midiChan toInt: i]; 
-	    [info setPar: MK_synthPatch toString: @"midi"]; 
 	}
+	[info setPar: MK_synthPatch toString: @"midi"]; 
 	[aPart setInfoNote: info];
 	[score addPart: aPart];     /* Add the MKPart to the MKScore. */
     }
@@ -72,8 +70,7 @@ static void handleMKError(NSString *msg) {
 
     /* Connect the outputs of the MKMidi object to the inputs of each of the MKPartRecorders. */
     for (i = 0; i < [partRecorders count]; i++)         
-	[[midiIn channelNoteSender: i] connect:
-	 [[partRecorders objectAtIndex: i] noteReceiver]];
+	[[midiIn channelNoteSender: i] connect: [[partRecorders objectAtIndex: i] noteReceiver]];
       
     [midiIn setUseInputTimeStamps: YES];   /* We want MIDI driver's time stamps */
     [midiIn openInputOnly];                /* We don't need MIDI output so we specify 'input only' */
@@ -81,7 +78,7 @@ static void handleMKError(NSString *msg) {
     [MKConductor setFinishWhenEmpty: NO];  /* Tell MKConductor not to quit when it has no more scheduled events.
 					      Instead, tell it to wait until finishPerformance is received */
     [MKConductor useSeparateThread: YES];
-    [midiIn run];                          /* Start midi clock */
+    [midiIn run];                          /* Start MIDI clock */
     [MKConductor startPerformance];        /* Start the performance */
     return self;
 }
@@ -101,7 +98,7 @@ static void handleMKError(NSString *msg) {
     [midiIn release];
     midiIn = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
     [midiIn retain];
-    NSLog(@"setting the driver to %@\n", [midiIn driverName]);
+    // NSLog(@"setting the driver to %@\n", [midiIn driverName]);
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *) aNotification 
