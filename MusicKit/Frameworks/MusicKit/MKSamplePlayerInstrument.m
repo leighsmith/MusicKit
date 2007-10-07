@@ -4,7 +4,7 @@
 
   Description:
     Rewritten from original code by Michael McNabb as part of the Ensemble open source program.
-    Each MKSamplerInstrument holds a collection of performances of sound files indexed by noteTag.
+    Each MKSamplePlayerInstrument holds a collection of performances of sound files indexed by noteTag.
     There is a SndPerformance for each note which indicates which sound file to play and when.
     A MKNote has a MK_filename parameter which is the soundfile to be played, together with any
     particular tuning deviation to be applied to it using a keynumber or frequency which forms a ratio
@@ -21,52 +21,55 @@
 */
 
 #import "_musickit.h"
-#import "MKSamplerInstrument.h"
+#import "MKSamplePlayerInstrument.h"
 #import "MKConductor.h"
 
 #define UNASSIGNED_SAMPLE_KEYNUM (-1)
 
-@implementation MKSamplerInstrument
+@implementation MKSamplePlayerInstrument
 
 - reset
 {
-  //int i;
-  // this should be taken from the note parameter
-  //	amp = (double)strtol([ampField stringValue], NULL, 10);
-  linearAmp = MKdB(amp);
-  // this should be taken from the note parameter
-  //	bearing = [bearingField doubleValue];
-  keyNum = c4k;
-  testKey = keyNum;
-  voiceCount = 3;
-  volume = 1.0;
-  pitchBend = 0.0;
-  pitchbendSensitivity = 0.0;
-  pbSensitivity = (pitchbendSensitivity / 12.0) / 8192.0;
-  recordModeController = UNASSIGNED_SAMPLE_KEYNUM;  // LMS probably wrong definition
-  volume = 1.0;
-  pitchBend = 1.0;
-//  for (i = 0; i < MAX_PERFORMERS; i++) {
-//    if (playingSamples[i]) {
-//      [MKConductor lockPerformance];
-//      [playingSamples[i] reset];
-//      [playingSamples[i] setAmp:linearAmp volume:volume bearing:bearing/45.0];
-//      [MKConductor unlockPerformance];
-//    }
-//  }
-  return self;
+    //int i;
+    // this should be taken from the note parameter
+    //	amp = (double)strtol([ampField stringValue], NULL, 10);
+    linearAmp = MKdB(amp);
+    // this should be taken from the note parameter
+    //	bearing = [bearingField doubleValue];
+    keyNum = c4k;
+    testKey = keyNum;
+    voiceCount = 3;
+    volume = 1.0;
+    pitchBend = 0.0;
+    pitchbendSensitivity = 0.0;
+    pbSensitivity = (pitchbendSensitivity / 12.0) / 8192.0;
+    recordModeController = UNASSIGNED_SAMPLE_KEYNUM;  // LMS probably wrong definition
+    volume = 1.0;
+    pitchBend = 1.0;
+    //  for (i = 0; i < MAX_PERFORMERS; i++) {
+    //    if (playingSamples[i]) {
+    //      [MKConductor lockPerformance];
+    //      [playingSamples[i] reset];
+    //      [playingSamples[i] setAmp:linearAmp volume:volume bearing:bearing/45.0];
+    //      [MKConductor unlockPerformance];
+    //    }
+    //  }
+    return self;
 }
 
 // Initialize the sound objects.
 - init
 {
-    [super init];
-    [self addNoteReceiver:[MKNoteReceiver new]];
-
-    playingNotes = [[NSMutableDictionary dictionaryWithCapacity: 20] retain]; 
-    // since we update the playingNotes queue (actually a dictionary) via an abort/stop routine from
-    // the application and from the asynchronous didPlay: delegate message, we protect it with a lock.
-    [self reset];
+    self = [super init];
+    if(self != nil) {
+	[self addNoteReceiver: [[MKNoteReceiver alloc] init]];
+	
+	playingNotes = [[NSMutableDictionary dictionaryWithCapacity: 20] retain]; 
+	// since we update the playingNotes queue (actually a dictionary) via an abort/stop routine from
+	// the application and from the asynchronous didPlay: delegate message, we protect it with a lock.
+	[self reset];
+	
+    }
     return self;
 }
 
@@ -108,6 +111,7 @@
 
     // Not loaded, load it now. Read soundfile, for now loading it into a Snd object, eventually 
     // priming the buffers for play direct from disk.
+    // NSLog(@"wasn't already loaded, loading the sound file %@ and adding to the Snd\n", filePath);
     if ((newSound = [Snd addName: filePath fromSoundfile: filePath]) == nil) {
         MKErrorCode(MK_cantOpenFileErr, filePath);
         return nil;
@@ -181,6 +185,7 @@
 
 
 /*
+ Eventually should be just:
 - playSampleNote: (MKNote *) aNote
 {
     return [self playSampleNote: aNote inFuture: 0.0];
@@ -299,7 +304,7 @@
 - deactivate:(int)noteTag
 {
     
-    NSLog(@"in MKSamplerInstrument deactivate:\n");
+    NSLog(@"in MKSamplePlayerInstrument deactivate:\n");
 #if 0 // only needed when we are recording.
     if (noteTag == recordTag) {	
 	[recorder stopRecording];
@@ -477,7 +482,7 @@ NSInvocation *untimedMessage = [NSInvocation invocationWithMethodSignature:(NSMe
   /* Unarchive the instrument from a typed stream. */
 {
   [super initWithCoder: decoder];
-  if ([decoder versionForClassName: @"MKSamplerInstrument"] == 1) {
+  if ([decoder versionForClassName: @"MKSamplePlayerInstrument"] == 1) {
     [decoder decodeValuesOfObjCTypes:"iiiccci", &keyNum, &testKey,
 	     &voiceCount, &diatonic, &tieRepeats, &preloadingEnabled, &recordModeController];
   }

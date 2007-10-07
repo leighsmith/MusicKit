@@ -6,6 +6,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>TwoWaves</string>
+	<key>CFBundleIconFile</key>
+	<string>TwoWaves</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.musickit.TwoWaves</string>
 	<key>CFBundleInfoDictionaryVersion</key>

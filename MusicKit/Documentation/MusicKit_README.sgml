@@ -2155,7 +2155,7 @@ Simple note playing.
 	  <term><application>MidiFilePlayback</application></term>
 	  <listitem>
 	    <para>
-Play MIDI files with samples using <classname>MKSamplerInstrument</classname>.
+Play MIDI files with samples using <classname>MKSamplePlayerInstrument</classname>.
 </para>
 	  </listitem>
 	</varlistentry>

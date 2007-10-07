@@ -59,7 +59,7 @@ Modification history before commit to CVS:
 {
     isSquelched = YES;
     // This shuts down any sounding notes, otherwise it can be very annoying when
-    // the instrument such as an MKSamplerInstrument is playing a long sounding note.
+    // the instrument such as an MKSamplePlayerInstrument is playing a long sounding note.
     [owner allNotesOff];  
     return self;
 }

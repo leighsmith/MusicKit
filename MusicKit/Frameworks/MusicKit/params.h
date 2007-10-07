@@ -365,7 +365,7 @@ typedef enum _MKPars {
 				   states.)
 				 */
     MK_orchestraIndex,   /*!< MKOrchestra number for multiple DSP performances */
-    MK_filename,	 /*!< Name of sound file for MKSamplerInstrument */
+    MK_filename,	 /*!< Name of sound file for MKSamplePlayerInstrument */
     MK_privatePars,      /*!< Marker for private MusicKit parameter block.
                            Parameters MK_privatePars to MK_appPars are reserved. */
     MK_appPars  = 192    /*!< End marker. Must be evenly divisible by 32. */

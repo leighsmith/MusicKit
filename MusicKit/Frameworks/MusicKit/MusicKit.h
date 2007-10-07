@@ -63,7 +63,7 @@ extern "Objective-C" {
 #import "MKPerformer.h"
 #import "MKPlugin.h"
 #import "MKTimbre.h"
-#import "MKSamplerInstrument.h"
+#import "MKSamplePlayerInstrument.h"
 #import "MKSamples.h"
 #import "MKScore.h"
 #import "MKScorePerformer.h"

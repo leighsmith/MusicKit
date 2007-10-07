@@ -7,7 +7,7 @@
     MKMidi *midiInstrument;
     MKScorePerformer *aScorePerformer;
     MKPartPerformer *samplePartPerformer;
-    MKSamplerInstrument *sampleInstrument;
+    MKSamplePlayerInstrument *sampleInstrument;
     NSString *midiPathName;	
     NSString *soundPathName;
     NSString *keymapPathName;

@@ -178,9 +178,7 @@ PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 }
 
 /* Routine MKMDBecomeOwner */
-PERFORM_API MKMDReturn MKMDBecomeOwner (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port)
+PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port)
 {
     // create client and ports
     NSString *executable;
@@ -188,7 +186,7 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
 
 #if FUNCLOG
     if(debug == NULL) {
-        // create a means to see where we are without having to tiptoe around the MS debugger.
+        // create a means to see where we are without having to tiptoe around the debugger.
         if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
             return MKMD_ERROR_UNKNOWN_ERROR;
     }
@@ -199,12 +197,16 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
     }
 
 #if FUNCLOG
-    fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", [executable cString]);
+    fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", [executable UTF8String]);
+#else
+    NSLog(@"in MKMDBecomeOwner before MIDIClientCreate, appname: %@\n", executable);
 #endif
     if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr)
 	return MKMD_ERROR_UNKNOWN_ERROR;
+    NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
     if((result = MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort)) != noErr)
 	return MKMD_ERROR_UNKNOWN_ERROR;
+    NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
     if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr)
        return MKMD_ERROR_UNKNOWN_ERROR;
 
@@ -212,14 +214,14 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
 }
 
 /* Routine MKMDReleaseOwnership */
-PERFORM_API MKMDReturn MKMDReleaseOwnership (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port)
+PERFORM_API MKMDReturn MKMDReleaseOwnership(MKMDPort mididriver_port, MKMDOwnerPort owner_port)
 {
 #if FUNCLOG
     // TODO check the ports properly
     fprintf(debug, "MKMDReleaseOwnership called\n");
     fclose(debug); // hopefully save what we did.
+#else
+    NSLog(@"MKMDReleaseOwnership called\n");
 #endif
     if(MIDIPortDispose(outPort) != noErr)
         return MKMD_ERROR_BUSY;

@@ -106,7 +106,7 @@ Modification history prior to commit to CVS:
                  Flushed superfluous setting of timeTag when creating MKNote
 		 in sysex method.
   09/06/91/daj - Switched to new driver.  Need to release unit and driver.
-  01/07/92/daj - Added break out of my_data_reply when the response
+  01/07/92/daj - Added break out of midi_data_reply when the response
                  to the incoming MKNote is to abort.
   06/04/92/daj - Added settable conductor.
   10/20/92/daj - Set table name to _MK_ERRTAB so that localization will work.
@@ -187,6 +187,8 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 #define DEFAULT_SOFT_NAME @"midi0" // TODO This should be changed to "midi" or "midiDefault"
 
 #define NO_UNIT (-1)
+
+#define DEFAULT_SYSEX_MSGLEN 256
 
 // class variables
 static int addedPortsCount = 0;
@@ -336,7 +338,7 @@ void handleCallBack(void *midiObj);
 
 NSString *midiDriverErrorString(int errorCode)
 {
-    return [NSString stringWithCString: MKMDErrorString(errorCode)];
+    return [NSString stringWithUTF8String: MKMDErrorString(errorCode)];
 }
 
 - (BOOL) unitHasMTC
@@ -439,7 +441,7 @@ NSString *midiDriverErrorString(int errorCode)
     if (OUTPUTENABLED(ioMode))
 	outputUnit = [outputDriverNames indexOfObject: midiDevName];
     
-    driverDevicePort = MKMDGetMIDIDeviceOnHost([hostname cString]);
+    driverDevicePort = MKMDGetMIDIDeviceOnHost([hostname UTF8String]);
 
     if (driverDevicePort == (MKMDPort) NULL) {
         MKErrorCode(MK_machErr, NETNAME_ERROR, @"Unable to find devicePort", @"MIDI Port Server lookup");
@@ -571,13 +573,13 @@ NSString *midiDriverErrorString(int errorCode)
 
 static void waitForRoom(MKMidi *self, int elements, int timeOut)
 {
-    MKMDReturn r;
     MKMDReplyFunctions recvStruct = {0};
-    r = MKMDRequestQueueNotification((MKMDPort) [self->devicePort machPort],
-				     (MKMDOwnerPort) [self->ownerPort machPort],
-				     self->outputUnit,
-				     (MKMDReplyPort) [self-> queuePort machPort],
-				     elements);
+    MKMDReturn r = MKMDRequestQueueNotification((MKMDPort) [self->devicePort machPort],
+						(MKMDOwnerPort) [self->ownerPort machPort],
+						self->outputUnit,
+						(MKMDReplyPort) [self-> queuePort machPort],
+						elements);
+
     if (r != MKMD_SUCCESS)
         MKErrorCode(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r),
                     @"waitForRoom queue notification request");
@@ -587,8 +589,8 @@ static void waitForRoom(MKMidi *self, int elements, int timeOut)
 		  @"waitForRoom MKMDAwaitReply");
 }
 
+/* Wait until Midi is done and then return */
 static void awaitMidiOutDone(MKMidi *self,int timeOut)
-    /* Wait until Midi is done and then return */
 {
     // NSLog(@"waiting for room of %d, with timeOut = %d\n", self->queueSize, timeOut);
     waitForRoom(self, self->queueSize, timeOut);
@@ -597,6 +599,7 @@ static void awaitMidiOutDone(MKMidi *self,int timeOut)
 static int stopMidiClock(MKMidi *self)
 {
     MKMDReturn r;
+    
     if (self->synchConductor) {
 	r = MKMDRequestExceptions((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], MKMD_PORT_NULL);
 	if (r != MKMD_SUCCESS)
@@ -652,8 +655,8 @@ static int resetAndStopMidiClock(MKMidi *self)
     return r;
 }
 
+/* Get rid of enqueued outgoing midi messages */
 static int emptyMidi(MKMidi *self)
-    /* Get rid of enqueued outgoing midi messages */
 {
     MKMDReturn r;
     r = MKMDClearQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->outputUnit);
@@ -663,8 +666,8 @@ static int emptyMidi(MKMidi *self)
     return r;
 }
 
+/* Tell driver to ignore particular incoming MIDI system messages */
 static int setMidiSysIgnore(MKMidi *self,unsigned bits)
-    /* Tell driver to ignore particular incoming MIDI system messages */
 {
 #if FCC_DID_NOT_APPROVE_DRIVER_CHANGE
     int r = MKMDSetSystemIgnores((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->inputUnit, bits);
@@ -696,7 +699,7 @@ static int setMidiSysIgnore(MKMidi *self,unsigned bits)
 #define MIDIBUFSIZE MKMD_MAX_EVENT
 
 static MKMDRawEvent midiBuf[MIDIBUFSIZE];
-static MKMDRawEvent *bufPtr = &(midiBuf[0]);
+static MKMDRawEvent *bufPtr = midiBuf;
 
 static void putTimedByte(unsigned curTime, unsigned char aByte)
     /* output a MIDI byte */
@@ -711,15 +714,15 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 {
     MKMDReturn r;
     MKMidi *midiObj;
-    int nBytes;
-    nBytes = bufPtr - &(midiBuf[0]);
+    int nBytes = bufPtr - midiBuf;
+    
     if (nBytes == 0)
 	return;
     midiObj = ((MKMidi *) ptr->_owner);
     for (; ;) {
 	r = MKMDSendData((MKMDPort) [midiObj->devicePort machPort],
 	                 (MKMDOwnerPort) [midiObj->ownerPort machPort],
-                         midiObj->outputUnit, &(midiBuf[0]), nBytes);
+                         midiObj->outputUnit, midiBuf, nBytes);
 	if (r == MKMD_ERROR_QUEUE_FULL) 
 	    waitForRoom(midiObj, nBytes, MKMD_NO_TIMEOUT);
 	else
@@ -727,64 +730,64 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     }
     if (r != MKMD_SUCCESS) 
 	MKErrorCode(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"sendBufferedData");
-    bufPtr = &(midiBuf[0]);
+    bufPtr = midiBuf;
 }
 
+/* Same as putMidi, but checks for full buffer */
 static void putTimedByteWithCheck(struct __MKMidiOutStruct *ptr, unsigned curTime, unsigned char aByte)
-    /* Same as above, but checks for full buffer */
 {
-    if ((&(midiBuf[MIDIBUFSIZE])) == bufPtr) 
+    if (midiBuf + MIDIBUFSIZE == bufPtr) 
         sendBufferedData(ptr);
     putTimedByte(curTime, aByte);
 }
 
-
+/* Adds a complete MIDI message to the output buffer */
 static void putMidi(struct __MKMidiOutStruct *ptr)
-    /* Adds a complete MIDI message to the output buffer */
 {
     unsigned int curTime = .5 + ptr->_timeTag * _MK_MIDI_QUANTUM;
-    if (((&(midiBuf[MIDIBUFSIZE])) - bufPtr) < ptr->_outBytes)
-      sendBufferedData(ptr);
-    putTimedByte(curTime,ptr->_bytes[0]);
+    
+    if ((midiBuf + MIDIBUFSIZE - bufPtr) < ptr->_outBytes)
+	sendBufferedData(ptr);
+    putTimedByte(curTime, ptr->_bytes[0]);
     if (ptr->_outBytes >= 2)
-      putTimedByte(curTime,ptr->_bytes[1]);
+	putTimedByte(curTime, ptr->_bytes[1]);
     if (ptr->_outBytes == 3)
-      putTimedByte(curTime,ptr->_bytes[2]);
+	putTimedByte(curTime, ptr->_bytes[2]);
 }
 
+/* sysExStr is a string. The string consists of system exclusive bytes
+ * separated by any non-digit delimiter. The musickit uses the 
+ * delimiter ','. E.g. "f8,13,f7".  This function converts each ASCII
+ * byte into the corresponding number and sends it to serial port.
+ * Note that if you want to give each sysex byte a different
+ * delay, you need to do a separate call to this function.
+ * On a higher level, this means that you need to put each
+ * byte in a different MKNote object. 
+ * The string may but need not begin with MIDI_SYSEXCL and end with MIDI_EOX. 
+*/
 static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
 {
-    /* sysExStr is a string. The string consists of system exclusive bytes
-	separated by any non-digit delimiter. The musickit uses the 
-	delimiter ','. E.g. "f8,13,f7".  This function converts each ASCII
-	byte into the corresponding number and sends it to serial port.
-       Note that if you want to give each sysex byte a different
-       delay, you need to do a separate call to this function.
-       On a higher level, this means that you need to put each
-       byte in a different MKNote object. 
-	The string may but need not begin with MIDI_SYSEXCL and end with
-	MIDI_EOX. 
-       */
     /* note we cast to char* not const char* because although we're not
      * going to alter the contents of the string, we are going to need to
      * alter the *sysExclStr pointer (in _MKGetSysExByte).
      */
-    char *sysExclStr = (char *)[sysExclString cString];
+    char *sysExclStr = (char *)[sysExclString UTF8String];
     unsigned char c;
     unsigned int curTime = .5 + ptr->_timeTag * _MK_MIDI_QUANTUM;
+    
     sendBufferedData(ptr);
     c = _MKGetSysExByte(&sysExclStr);
     if (c == MIDI_EOX)
         return;
     if (c != MIDI_SYSEXCL) 
-        putTimedByte(curTime, MIDI_SYSEXCL);
-    putTimedByte(curTime, c);
+        putTimedByteWithCheck(ptr, curTime, MIDI_SYSEXCL);
+    putTimedByteWithCheck(ptr, curTime, c);
     while (*sysExclStr) {
         c = _MKGetSysExByte(&sysExclStr);
 	putTimedByteWithCheck(ptr, curTime, c);
         // Add an inter-byte delay of 300mS to avoid overflow problems in slow synthesisers.
         // TODO this should actually be a note parameter: MK_interByteDelay
-//        curTime += 300 * _MK_MIDI_QUANTUM;
+        curTime += 300 * _MK_MIDI_QUANTUM;
 //        curTime += 300;
     }
     if (c != MIDI_EOX) 
@@ -903,11 +906,10 @@ static id handleSysExclbyte(_MKMidiInStruct *ptr,unsigned char midiByte)
      * and we know we don't need the autorelease
      */
 {
-#   define DEFAULTLEN 256
     if (midiByte == MIDI_SYSEXCL) {  /* It's a new one. */
 	if (!ptr->_sysExBuf) {
-	    _MK_MALLOC(ptr->_sysExBuf,unsigned char,DEFAULTLEN);
-	    ptr->_sysExSize = DEFAULTLEN;
+	    _MK_MALLOC(ptr->_sysExBuf,unsigned char,DEFAULT_SYSEX_MSGLEN);
+	    ptr->_sysExSize = DEFAULT_SYSEX_MSGLEN;
 	} 
 	ptr->_endOfSysExBuf = ptr->_sysExBuf + ptr->_sysExSize;
 	ptr->_sysExP = ptr->_sysExBuf;
@@ -973,16 +975,14 @@ static void sendIncomingNote(short chan, MKNote *aNote, MKMidi *sendingMidi, int
     }
 }
 
-static int incomingDataCount = 0; /* We use a static here to allow us to
-				   * break out of my_data_reply.  Note that
-				   * my_data_reply can never be called
-				   * recursively so there's no danger in doing
-				   * this. 
-				   */
+/* We use a static here to allow us to break out of midi_data_reply.  Note that
+ * midi_data_reply can never be called recursively so there's no danger in doing this. 
+ */
+static int incomingDataCount = 0; 
 
-// my_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply.
+// midi_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply.
 // It may be called multiple times successively with events from the MKMDHandleReply mechanism.
-static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
+static void midi_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
     unsigned char statusByte;
@@ -1011,7 +1011,7 @@ static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *ev
 	    }
 	}
     }
-    // since my_data_reply can be called several times successively, we let the 
+    // since midi_data_reply can be called several times successively, we let the 
     // handleMachMessage/handleCallback routines reset receivingMidi to nil.
 }
 
@@ -1031,8 +1031,8 @@ static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *ev
     NSString *errorMessage;
     MKMDReturn r;
     /* Tells driver funcs to call: */ 
-    // MKMDReplyFunctions recvStruct = { my_data_reply, my_alarm_reply, my_exception_reply, 0};
-    MKMDReplyFunctions recvStruct = { my_data_reply, 0, 0, 0};
+    // MKMDReplyFunctions recvStruct = { midi_data_reply, my_alarm_reply, my_exception_reply, 0};
+    MKMDReplyFunctions recvStruct = { midi_data_reply, 0, 0, 0};
 
     // determine what the port is that called this method, then set the appropriate my_*_reply function
     // and error message.
@@ -1041,7 +1041,7 @@ static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *ev
 
     receivingMidi = self;
     // Eventually MKMDHandleReply should be unnecessary, when we receive the MIDI data direct into handlePortMessage
-    // Then we can merge this method and my_data_reply into a single handlePortMessage. 
+    // Then we can merge this method and midi_data_reply into a single handlePortMessage. 
     r = MKMDHandleReply(msg, &recvStruct);        /* This gets data */
     if (r != MKMD_SUCCESS) {
       MKErrorCode(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
@@ -1057,8 +1057,8 @@ void handleCallBack(void *midiObj)
     NSString *errorMessage;
     MKMDReturn result;
     /* Tells driver funcs to call: */ 
-    // TODO MKMDReplyFunctions recvStruct = { my_data_reply, my_alarm_reply, my_exception_reply, 0};
-    MKMDReplyFunctions recvStruct = { my_data_reply, 0, 0, 0};
+    // TODO MKMDReplyFunctions recvStruct = { midi_data_reply, my_alarm_reply, my_exception_reply, 0};
+    MKMDReplyFunctions recvStruct = { midi_data_reply, 0, 0, 0};
     // since the callback is coming in from the cold harsh world of C, not cozy ObjC:
     NSAutoreleasePool *handlerPool = [[NSAutoreleasePool alloc] init]; 
 

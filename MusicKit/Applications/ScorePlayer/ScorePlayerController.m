@@ -64,9 +64,9 @@ static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
 // MIDI management
-static NSString *defaultMidiDevice;
+static NSString *defaultMidiDeviceName;
 static NSMutableDictionary *playingMidiDevices;
-static MKSamplerInstrument *nonSynthInstrument = nil;
+static MKSamplePlayerInstrument *nonSynthInstrument = nil;
 static int midiOffset;
 // MTC sync
 static BOOL synchToTimeCode = NO;
@@ -781,7 +781,7 @@ static double getUntempo(float tempoVal)
 	    if ((midiChan == MAXINT) || (midiChan > 16))
 		midiChan = 0;
             if ([synthPatchName isEqualToString: @"midi"])  // set the default MIDI device.
-		synthPatchName = defaultMidiDevice;	    
+		synthPatchName = defaultMidiDeviceName;	    
 	    if ((newMIDI = [playingMidiDevices objectForKey: synthPatchName]) == nil) {
                 newMIDI = [MKMidi midiOnDevice: synthPatchName];
                 // Check that newMIDI is not nil, i.e midiOnDevice did initialise
@@ -863,9 +863,11 @@ static double getUntempo(float tempoVal)
 
 - (IBAction) setMidiDriverName: (id) driverPopup
 {
-    [defaultMidiDevice release];
-    defaultMidiDevice = [[driverPopup titleOfSelectedItem] retain];
-    // NSLog(@"defaultMidiDevice = %@\n", defaultMidiDevice);
+    [defaultMidiDeviceName release];
+    defaultMidiDeviceName = [[driverPopup titleOfSelectedItem] retain];
+    // NSLog(@"defaultMidiDeviceName = %@\n", defaultMidiDeviceName);
+    [[NSUserDefaults standardUserDefaults] setObject: defaultMidiDeviceName forKey: @"DefaultMIDIOutput"];
+
 }
 
 + (void) initialize
@@ -954,8 +956,9 @@ static void abortNow();
     // initialise the device list for selecting MIDI drivers to be used as the default "midi" instrument.
     [defaultMidiPopUp removeAllItems];
     [defaultMidiPopUp addItemsWithTitles: [MKMidi getDriverNames]];
-    defaultMidiDevice = [[scorePlayerDefaults stringForKey: @"DefaultMIDIOutput"] retain];
-    [defaultMidiPopUp selectItemWithTitle: defaultMidiDevice];
+    defaultMidiDeviceName = [[scorePlayerDefaults stringForKey: @"DefaultMIDIOutput"] retain];
+    // if the default device name is no longer in the available drivers, we'll default to the first.
+    [defaultMidiPopUp selectItemWithTitle: defaultMidiDeviceName]; 
 }
 
 static BOOL setUpFile(NSString *workspaceFileName)
@@ -1000,7 +1003,7 @@ static BOOL setUpFile(NSString *workspaceFileName)
     }
     if ([shortFileName isEqualToString:@"Jungle.score"] ||
         [shortFileName isEqualToString:@"Jungle.playscore"])
-        tempoExponent = 1.3;  /* A real hack to make the demos play ok. */
+        tempoExponent = 1.3;  /* TODO A real hack to make the demos play ok.  Probably redundant */
     else
         tempoExponent = 1.5;
     firstTime = NO;

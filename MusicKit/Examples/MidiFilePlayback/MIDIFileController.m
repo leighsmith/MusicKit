@@ -36,7 +36,7 @@
     self = [super init];
     if(self != nil) {
 	currentTempo = [tempoSlider doubleValue];
-	sampleInstrument = [[MKSamplerInstrument alloc] init];
+	sampleInstrument = [[MKSamplePlayerInstrument alloc] init];
 	[sampleInstrument retain];
 
 	/* Get the Midi object for the default MIDI serial port. */
@@ -142,7 +142,7 @@
             chan = 1;
         else
             chan = [partInfo parAsInt:MK_midiChan];
-        // don't connect the sampler parts to MIDI, they need to be connected to the MKSamplerInstrument
+        // don't connect the sampler parts to MIDI, they need to be connected to the MKSamplePlayerInstrument
         if(keymap != nil && [self convertPartToSamples: aPart]) {
             // NSLog([aPart description]);
             [aNoteSender connect:[sampleInstrument noteReceiver]];

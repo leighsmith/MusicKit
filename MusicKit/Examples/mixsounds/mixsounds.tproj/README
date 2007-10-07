@@ -42,7 +42,7 @@ note.
 
 Mixsounds recognizes the following parameters:
 
-        soundFile      - The sound file to be read, specified as a string.
+        filename       - The sound file to be read, specified as a string.
         timeOffset     - Time offset into the file to begin reading. E.g.
                                 a time offset of 1 means begin 1 second into
                                 the file. Note that timeOffset is computed 

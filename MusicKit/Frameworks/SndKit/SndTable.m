@@ -36,12 +36,12 @@ static SndTable* defaultSndTable = nil;
 
 - init
 {
-  self = [super init];
-  if (self) {
-    if (nameTable != nil)
-      nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
-  }
-  return self;
+    self = [super init];
+    if (self) {
+	if (nameTable == nil)
+	    nameTable = [[NSMutableDictionary alloc] initWithCapacity: 10];
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,9 +50,10 @@ static SndTable* defaultSndTable = nil;
 
 - (void) dealloc
 {
-  if (nameTable)
-    [nameTable release];
-  [super dealloc];
+    if (nameTable)
+	[nameTable release];
+    nameTable = nil;
+    [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +66,7 @@ static SndTable* defaultSndTable = nil;
     NSMutableArray *libraryDirs = [NSMutableArray arrayWithObject: @"."];
     NSArray *sndFileExtensions = [Snd soundFileExtensions];
     unsigned int directoryIndex;
-    id retSnd = [nameTable objectForKey: aName];
+    Snd *retSnd = [nameTable objectForKey: aName];
     
     if (retSnd)
 	return [[retSnd retain] autorelease];

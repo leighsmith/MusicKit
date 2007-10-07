@@ -210,8 +210,8 @@
 		D82556E305A2142800B0192B /* MKPerformer.m in Sources */ = {isa = PBXBuildFile; fileRef = D825569505A2142800B0192B /* MKPerformer.m */; };
 		D82556E405A2142800B0192B /* MKPerformerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825569605A2142800B0192B /* MKPerformerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D82556E505A2142800B0192B /* MKPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = D825569705A2142800B0192B /* MKPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D82556E605A2142800B0192B /* MKSamplerInstrument.h in Headers */ = {isa = PBXBuildFile; fileRef = D825569805A2142800B0192B /* MKSamplerInstrument.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D82556E705A2142800B0192B /* MKSamplerInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = D825569905A2142800B0192B /* MKSamplerInstrument.m */; };
+		D82556E605A2142800B0192B /* MKSamplePlayerInstrument.h in Headers */ = {isa = PBXBuildFile; fileRef = D825569805A2142800B0192B /* MKSamplePlayerInstrument.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D82556E705A2142800B0192B /* MKSamplePlayerInstrument.m in Sources */ = {isa = PBXBuildFile; fileRef = D825569905A2142800B0192B /* MKSamplePlayerInstrument.m */; };
 		D82556E805A2142800B0192B /* MKSamples.h in Headers */ = {isa = PBXBuildFile; fileRef = D825569A05A2142800B0192B /* MKSamples.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D82556E905A2142800B0192B /* MKSamples.m in Sources */ = {isa = PBXBuildFile; fileRef = D825569B05A2142800B0192B /* MKSamples.m */; };
 		D82556EA05A2142800B0192B /* MKScore.h in Headers */ = {isa = PBXBuildFile; fileRef = D825569C05A2142800B0192B /* MKScore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1229,8 +1229,8 @@
 		D825569505A2142800B0192B /* MKPerformer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MKPerformer.m; path = Frameworks/MusicKit/MKPerformer.m; sourceTree = "<group>"; };
 		D825569605A2142800B0192B /* MKPerformerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKPerformerDelegate.h; path = Frameworks/MusicKit/MKPerformerDelegate.h; sourceTree = "<group>"; };
 		D825569705A2142800B0192B /* MKPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKPlugin.h; path = Frameworks/MusicKit/MKPlugin.h; sourceTree = "<group>"; };
-		D825569805A2142800B0192B /* MKSamplerInstrument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKSamplerInstrument.h; path = Frameworks/MusicKit/MKSamplerInstrument.h; sourceTree = "<group>"; };
-		D825569905A2142800B0192B /* MKSamplerInstrument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MKSamplerInstrument.m; path = Frameworks/MusicKit/MKSamplerInstrument.m; sourceTree = "<group>"; };
+		D825569805A2142800B0192B /* MKSamplePlayerInstrument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKSamplePlayerInstrument.h; path = Frameworks/MusicKit/MKSamplePlayerInstrument.h; sourceTree = "<group>"; };
+		D825569905A2142800B0192B /* MKSamplePlayerInstrument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MKSamplePlayerInstrument.m; path = Frameworks/MusicKit/MKSamplePlayerInstrument.m; sourceTree = "<group>"; };
 		D825569A05A2142800B0192B /* MKSamples.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKSamples.h; path = Frameworks/MusicKit/MKSamples.h; sourceTree = "<group>"; };
 		D825569B05A2142800B0192B /* MKSamples.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MKSamples.m; path = Frameworks/MusicKit/MKSamples.m; sourceTree = "<group>"; };
 		D825569C05A2142800B0192B /* MKScore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKScore.h; path = Frameworks/MusicKit/MKScore.h; sourceTree = "<group>"; };
@@ -2418,8 +2418,8 @@
 				D825569305A2142800B0192B /* MKPatchTemplate.m */,
 				D825569405A2142800B0192B /* MKPerformer.h */,
 				D825569505A2142800B0192B /* MKPerformer.m */,
-				D825569805A2142800B0192B /* MKSamplerInstrument.h */,
-				D825569905A2142800B0192B /* MKSamplerInstrument.m */,
+				D825569805A2142800B0192B /* MKSamplePlayerInstrument.h */,
+				D825569905A2142800B0192B /* MKSamplePlayerInstrument.m */,
 				D825569A05A2142800B0192B /* MKSamples.h */,
 				D825569B05A2142800B0192B /* MKSamples.m */,
 				D825569C05A2142800B0192B /* MKScore.h */,
@@ -5100,7 +5100,7 @@
 				D82556E205A2142800B0192B /* MKPerformer.h in Headers */,
 				D82556E405A2142800B0192B /* MKPerformerDelegate.h in Headers */,
 				D82556E505A2142800B0192B /* MKPlugin.h in Headers */,
-				D82556E605A2142800B0192B /* MKSamplerInstrument.h in Headers */,
+				D82556E605A2142800B0192B /* MKSamplePlayerInstrument.h in Headers */,
 				D82556E805A2142800B0192B /* MKSamples.h in Headers */,
 				D82556EA05A2142800B0192B /* MKScore.h in Headers */,
 				D82556EC05A2142800B0192B /* MKScorefileObject.h in Headers */,
@@ -6555,7 +6555,7 @@
 				D82556DF05A2142800B0192B /* MKPatchEntry.m in Sources */,
 				D82556E105A2142800B0192B /* MKPatchTemplate.m in Sources */,
 				D82556E305A2142800B0192B /* MKPerformer.m in Sources */,
-				D82556E705A2142800B0192B /* MKSamplerInstrument.m in Sources */,
+				D82556E705A2142800B0192B /* MKSamplePlayerInstrument.m in Sources */,
 				D82556E905A2142800B0192B /* MKSamples.m in Sources */,
 				D82556EB05A2142800B0192B /* MKScore.m in Sources */,
 				D82556EE05A2142800B0192B /* MKScorefilePerformer.m in Sources */,
