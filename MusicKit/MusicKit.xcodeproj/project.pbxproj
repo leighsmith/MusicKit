@@ -763,6 +763,7 @@
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
+		D8A786160CC8E33300D5A812 /* metronome-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */; };
 		D8AE7A4406194279009D0112 /* SndViewPalette.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8AE7A4306194279009D0112 /* SndViewPalette.tiff */; };
 		D8C274F705A73A88008ABA16 /* ArielQPMix.h in Sources */ = {isa = PBXBuildFile; fileRef = D8C2748405A739CB008ABA16 /* ArielQPMix.h */; };
 		D8C274F805A73A88008ABA16 /* ArielQPMix.m in Sources */ = {isa = PBXBuildFile; fileRef = D8C2748505A739CB008ABA16 /* ArielQPMix.m */; };
@@ -1886,7 +1887,7 @@
 		D8C2755505A73B28008ABA16 /* globals.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = globals.m; path = Frameworks/MKSynthPatches/globals.m; sourceTree = "<group>"; };
 		D8C6E3410ACC4AC4004978A9 /* music.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = music.tiff; path = Applications/ScorePlayer/Images/music.tiff; sourceTree = "<group>"; };
 		D8CFD2490B5D66DF003AB3C3 /* Metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "metronome-Info.plist"; sourceTree = "<group>"; };
+		D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "metronome-Info.plist"; path = "Examples/metronome/metronome-Info.plist"; sourceTree = "<group>"; };
 		D8CFD2690B5D6743003AB3C3 /* metronome_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = metronome_main.m; path = Examples/metronome/metronome_main.m; sourceTree = "<group>"; };
 		D8CFD26A0B5D6743003AB3C3 /* Metronome.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Metronome.h; path = Examples/metronome/Metronome.h; sourceTree = "<group>"; };
 		D8CFD26B0B5D6743003AB3C3 /* Metronome.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Metronome.m; path = Examples/metronome/Metronome.m; sourceTree = "<group>"; };
@@ -3192,6 +3193,14 @@
 			name = Help;
 			sourceTree = "<group>";
 		};
+		D85833920CC8E1CD0028DD68 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		D85A2F21061F33C10065380E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -3569,6 +3578,7 @@
 		D86D248E06F2AA7E003565CB /* Metronome */ = {
 			isa = PBXGroup;
 			children = (
+				D85833920CC8E1CD0028DD68 /* Supporting Files */,
 				D866D4610B5D65CB00C71741 /* Documentation */,
 				D80D48720B5D6523002E9A64 /* Classes */,
 				D866D45B0B5D657500C71741 /* Other Sources */,
@@ -4806,7 +4816,6 @@
 				D8DB4E5E059FA0C900624233 /* Applications */,
 				D8DB4E61059FA0D100624233 /* Documentation */,
 				D84395EA059FAA450054BEEE /* Products */,
-				D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */,
 			);
 			comments = "This is the main MacOS X Xcode project file which will build the MusicKit and SndKit frameworks, Palettes, Tools, Examples, and Applications.\n\nNot all applications are able to be compiled at the moment since the unit generators are still to be converted from 56001 DSP assembly language. This is an ongoing project.\n\nThe entire project should build without warnings.\n\nSee http://www.musickit.org for most up to date info on the MusicKit.";
 			sourceTree = "<group>";
@@ -6496,6 +6505,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8CFD27B0B5D67DD003AB3C3 /* metronome.nib in Resources */,
+				D8A786160CC8E33300D5A812 /* metronome-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
