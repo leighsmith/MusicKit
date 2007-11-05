@@ -577,7 +577,6 @@
 		D879C3DD05A2B506005DB251 /* palette.table in Resources */ = {isa = PBXBuildFile; fileRef = D879C3DC05A2B506005DB251 /* palette.table */; };
 		D879C42105A2B577005DB251 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879C41E05A2B577005DB251 /* AppKit.framework */; };
 		D879C42205A2B577005DB251 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879C41F05A2B577005DB251 /* Foundation.framework */; };
-		D879C42305A2B577005DB251 /* InterfaceBuilder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879C42005A2B577005DB251 /* InterfaceBuilder.framework */; };
 		D880FBC7077FD9B700FD03CC /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D880FBCE077FDD4A00FD03CC /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D880FBE4077FDD7E00FD03CC /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -760,6 +759,7 @@
 		D88FEDD605A110B60024FD88 /* libdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDD405A110B60024FD88 /* libdsp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FEDDA05A110D20024FD88 /* smsrc_dependencies.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */; };
 		D88FEDF105A112CF0024FD88 /* MKDSPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D89260530CDFA9590059DB8B /* InterfaceBuilder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D892603B0CDFA9590059DB8B /* InterfaceBuilder.framework */; };
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
@@ -1168,6 +1168,8 @@
 		D80032570819F0C600E47C6C /* MidiEcho.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MidiEcho.icns; path = Examples/MidiEcho/MidiEcho.icns; sourceTree = "<group>"; };
 		D800325C0819F52E00E47C6C /* midi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = midi.icns; path = Examples/MidiFilePlayback/midi.icns; sourceTree = "<group>"; };
 		D804E063063DB32C0098E73C /* SndPlaying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPlaying.m; path = Frameworks/SndKit/SndPlaying.m; sourceTree = "<group>"; };
+		D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsCore.framework; path = Library/PrivateFrameworks/DevToolsCore.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
+		D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsSupport.framework; path = Library/PrivateFrameworks/DevToolsSupport.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D81B12FF0628D9FF009058DB /* SndStretchableScroller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndStretchableScroller.h; path = Frameworks/SndKit/SndStretchableScroller.h; sourceTree = "<group>"; };
 		D81B13000628D9FF009058DB /* SndStretchableScroller.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndStretchableScroller.m; path = Frameworks/SndKit/SndStretchableScroller.m; sourceTree = "<group>"; };
 		D81D7E3C059FA8ED00BCE725 /* PerformMIDI.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PerformMIDI.h; path = Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/PerformMIDI.h; sourceTree = "<group>"; };
@@ -1644,7 +1646,6 @@
 		D879C3DC05A2B506005DB251 /* palette.table */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = palette.table; path = Palettes/SndView/palette.table; sourceTree = "<group>"; };
 		D879C41E05A2B577005DB251 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		D879C41F05A2B577005DB251 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		D879C42005A2B577005DB251 /* InterfaceBuilder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilder.framework; path = /System/Library/Frameworks/InterfaceBuilder.framework; sourceTree = "<absolute>"; };
 		D880FD1F0780AC2A00FD03CC /* ErrorLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ErrorLog.h; path = Applications/ScorePlayer/ErrorLog.h; sourceTree = "<group>"; };
 		D880FD200780AC2A00FD03CC /* ErrorLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ErrorLog.m; path = Applications/ScorePlayer/ErrorLog.m; sourceTree = "<group>"; };
 		D880FE3F0780AF2200FD03CC /* Midi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Midi.icns; path = Applications/ScorePlayer/Images/Midi.icns; sourceTree = "<group>"; };
@@ -1824,6 +1825,7 @@
 		D88FEDD405A110B60024FD88 /* libdsp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = libdsp.h; path = Frameworks/MKDSP_Native/libdsp.h; sourceTree = "<group>"; };
 		D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = smsrc_dependencies.h; path = Frameworks/MKDSP_Native/smsrc_dependencies.h; sourceTree = "<group>"; };
 		D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKDSPDefines.h; path = Frameworks/MKDSP_Native/MKDSPDefines.h; sourceTree = "<group>"; };
+		D892603B0CDFA9590059DB8B /* InterfaceBuilder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilder.framework; path = Library/Frameworks/InterfaceBuilder.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D8A1DC0209F64B3E0094B3F5 /* mixscorefiles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mixscorefiles; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = mixscorefiles_main.m; path = Examples/mixscorefiles/mixscorefiles_main.m; sourceTree = "<group>"; };
 		D8A1DC1909F64BC90094B3F5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README.txt; path = Examples/mixscorefiles/README.txt; sourceTree = "<group>"; };
@@ -2239,7 +2241,7 @@
 				D880FC23077FE25900FD03CC /* SndKit.framework in Frameworks */,
 				D879C42105A2B577005DB251 /* AppKit.framework in Frameworks */,
 				D879C42205A2B577005DB251 /* Foundation.framework in Frameworks */,
-				D879C42305A2B577005DB251 /* InterfaceBuilder.framework in Frameworks */,
+				D89260530CDFA9590059DB8B /* InterfaceBuilder.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4208,7 +4210,7 @@
 			children = (
 				D879C41E05A2B577005DB251 /* AppKit.framework */,
 				D879C41F05A2B577005DB251 /* Foundation.framework */,
-				D879C42005A2B577005DB251 /* InterfaceBuilder.framework */,
+				D892603B0CDFA9590059DB8B /* InterfaceBuilder.framework */,
 			);
 			name = "External Frameworks";
 			sourceTree = "<group>";
@@ -4808,6 +4810,8 @@
 		D8DB4E48059FA05500624233 = {
 			isa = PBXGroup;
 			children = (
+				D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */,
+				D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */,
 				D8DB4E5B059FA0AA00624233 /* Frameworks */,
 				D8DB4E6F059FA12B00624233 /* Palettes */,
 				D8DB4E69059FA0E800624233 /* Plugins */,
@@ -7837,6 +7841,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Developer/Library/Frameworks,
+					/Developer/Library/PrivateFrameworks,
+				);
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -7847,10 +7855,18 @@
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
+					"-dylib_file",
+					"@loader_path/../../../../PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient:/Developer/Library/PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient",
+					"-dylib_file",
+					"@loader_path/../../../../PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsSupport.framework/Versions/A/DevToolsSupport:/Developer/Library/PrivateFrameworks/DevToolsSupport.framework/Versions/A/DevToolsSupport",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsCore.framework/Versions/A/DevToolsCore:/Developer/Library/PrivateFrameworks/DevToolsCore.framework/Versions/A/DevToolsCore",
+					"-dylib_file",
+					"@loader_path/../../../JavaKit.framework/Versions/A/JavaKit:/Developer/Library/PrivateFrameworks/JavaKit.framework/Versions/A/JavaKit",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -7858,7 +7874,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 				WRAPPER_EXTENSION = palette;
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
 			name = "Intel Development";
 		};
@@ -8858,6 +8874,7 @@
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				PREBINDING = NO;
 			};
 			name = "Intel Development";
 		};
@@ -9702,6 +9719,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9734,7 +9758,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DSTROOT)/$(INSTALL_PATH)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -9766,6 +9796,13 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -9795,6 +9832,13 @@
 		D8B44F3A099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
