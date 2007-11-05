@@ -239,32 +239,11 @@ float _DSPGetFloatStr(s)		/* get float from string */
 # define NSTR 100
 # define NCMDS 5	/* Number of commands available */
 
-static char cmd[NSTR], ctkl[27];
-static char val[NSTR], vtkl[40];
-
 # define SETINT(name) \
     {	if(_DSPGetField(Ffile, val, vtkl,NSTR)==EOF) \
 	    COMPLAIN("Dangling parameter (no value): %s\n", cmd); \
 	*name = atoi(val); \
     }
-
-static int sp_fillc(c,ncP,Ffile)
-    float *c;
-    int *ncP;
-    FILE *Ffile;
-{
-    int i;
-    for (i = 0; i < *ncP; i++)
-    {
-	if(_DSPGetField(Ffile, &(val[0]), vtkl, (int) NSTR)==EOF) {
-	    fprintf(stderr,
-		    "_DSPGetFilter: coefficient array truncated to %d\n",i);
-	    return(TRUE);
-	}
-	sscanf(&(val[0]),"%f",&(c[i]));
-    }
-    return(0);
-}
 
 /* Used by _DSPGetFilter() and _DSPIndexS() */
 typedef struct _strarr { char string[_DSP_MAX_CMD]; } strarr;
@@ -392,34 +371,6 @@ FILE **ipp; char *din;
 /* _DSPGETINTHEXSTR */
 
 /* #include "dsp/_dsputilities.h" */
-
-int _DSPGetIntHexStr(s)		/* get integer from hex string */
-    char **s;			/* input string is chopped to int++ */
-{
-    unsigned int ui;
-    char *p,*t;
-/*  t = *s; */
-#if 0
-    while (!isxdigit(*t)&&*t!='-'&&*t) t++; /* skip to beginning of hex int */
-#endif
-
-    /* skip to beginning of hex int */
-    for (t = *s; !isxdigit(*t) && *t!='-' && *t; t++) 
-      if (!isspace(*t) && *t != '$') {
-	  printf("_DSPGetIntHexStr: *** Found spurious character ");
-	  printf("%c scanning for hex integer in string:\n\t%s\n",*t,*s);
-      }
-    if (!*t) {
-	*s=t;			/* no token */
-	return _DSP_NOT_AN_INT; /* no token */
-    }
-    p=t;
-    while (isxdigit(*p)||*p=='-') p++;	/* t->token, p->token++ */
-    *s = p;			/* remainder string */
-    t = _DSPMakeStr(p-t+1,t);	/* finished token */
-    sscanf(t,"%X",&((unsigned int)ui));
-    return (int)ui;
-}
 
 /*%-**$$$ BagItem $$$**-%*/
 /* _DSPGetIntStr.c */
@@ -1143,71 +1094,5 @@ DSPLocationCounter _DSPGetMemStr(s,type) /* get DSP memory type from string or D
     DSP_FREE(saveT);
     /* detect mem spec and return proper enum */
     return(m);
-}
-
-/*%-**$$$ BagItem $$$**-%*/
-/* _DSPGetDSPIntStr.c */
-/*#################### _DSPGetDSPIntStr.c ######################*/
-/* _DSPGETDSPINTSTR */
-
-int _DSPGetDSPIntStr(s)		/* get integer from string in DSP format */
-    char **s;			/* input string is chopped to int++ */
-{
-    int i,sgn;
-    unsigned int ui;
-    char *p,*t,r,*tsave,*tsave2;
-    t = *s;
-    while (!isdigit(*t) && *t!='-' && *t!='%' && *t!='`' && *t!='$' && *t) 
-      t++; /* skip to beginning of <int> || %<int> || `<int> || $<int> */
-    if (!*t) {
-	*s=t;			/* no token */
-	return _DSP_NOT_AN_INT;
-    }
-    sgn = 1;
-    if (*t=='-') {		/* minus sign appears before radix indicator */
-	sgn = -1;
-	t++;
-    }
-    if (!isdigit(*t)) {
-	r = *t++;		/* radix spec */
-	if (sgn == -1)
-	  *--t = '-';		/* install minus sign for sscanf use */
-    }
-    else r='`';			/* default radix is decimal */
-    p=t;			/* t will point to token, p to token "++" */
-    if (r == '$')		/* hexadecimal number */
-      while (isxdigit(*p)) p++;
-    else if (r == '`')		/* decimal number */
-      while (isdigit(*p)) p++;
-    else if (r == '%')		/* binary number */
-      while (*p == '1' || *p == '0') p++;
-    *s = p;			/* remainder string */
-    t = _DSPMakeStr(p-t+1,t);	/* finished token */
-    t = _DSPToUpperStr(t);		/* upper casify */
-    tsave2 = t;
-    tsave = _DSPCopyStr(t);
-
-    if (r == '$') {		/* hexadecimal number */
-	sscanf(t,"%X",&((unsigned int)ui));
-	i = ui;
-    }
-    else if (r == '`') {	/* decimal number */
-	sscanf(t,"%d",&i);
-    }
-    else if (r == '%') {	/* binary number */
-	i=0;
-	if (sgn<0) t++;
-	do {
-	    i <<= 1;
-	    if (*t == '1') i += 1; 
-	    else if (*t != '0') 
-	      fprintf(stderr,"_DSPGetDSPIntStr: bogus binary number: %s",
-		      tsave);
-	} while (*++t);
-	if (sgn<0) i = ~i + 1;	/* two's complement */
-    }
-    DSP_FREE(t);
-    DSP_FREE(tsave2);
-    return i;
 }
 
