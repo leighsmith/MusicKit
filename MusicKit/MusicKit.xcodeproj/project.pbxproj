@@ -1888,7 +1888,7 @@
 		D8C2755405A73B28008ABA16 /* _MKList.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = _MKList.m; path = Frameworks/MKSynthPatches/_MKList.m; sourceTree = "<group>"; };
 		D8C2755505A73B28008ABA16 /* globals.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = globals.m; path = Frameworks/MKSynthPatches/globals.m; sourceTree = "<group>"; };
 		D8C6E3410ACC4AC4004978A9 /* music.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = music.tiff; path = Applications/ScorePlayer/Images/music.tiff; sourceTree = "<group>"; };
-		D8CFD2490B5D66DF003AB3C3 /* Metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8CFD2490B5D66DF003AB3C3 /* metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "metronome-Info.plist"; path = "Examples/metronome/metronome-Info.plist"; sourceTree = "<group>"; };
 		D8CFD2690B5D6743003AB3C3 /* metronome_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = metronome_main.m; path = Examples/metronome/metronome_main.m; sourceTree = "<group>"; };
 		D8CFD26A0B5D6743003AB3C3 /* Metronome.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Metronome.h; path = Examples/metronome/Metronome.h; sourceTree = "<group>"; };
@@ -2975,7 +2975,7 @@
 				D844A7C907C827CD0086A55B /* playsndfaders */,
 				D8D1B6A90812492700D9156A /* playscorefilemidi */,
 				D8E1DDFA07CA78B40018F8F3 /* MultipleSoundPlayer.app */,
-				D8CFD2490B5D66DF003AB3C3 /* Metronome.app */,
+				D8CFD2490B5D66DF003AB3C3 /* metronome.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6140,7 +6140,7 @@
 			);
 			name = Metronome;
 			productName = metronome;
-			productReference = D8CFD2490B5D66DF003AB3C3 /* Metronome.app */;
+			productReference = D8CFD2490B5D66DF003AB3C3 /* metronome.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D8D1B6A80812492700D9156A /* playscorefilemidi */ = {
@@ -7874,7 +7874,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 				WRAPPER_EXTENSION = palette;
-				ZERO_LINK = NO;
+				ZERO_LINK = YES;
 			};
 			name = "Intel Development";
 		};
@@ -9739,10 +9739,18 @@
 					"-maltivec",
 				);
 				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
+					"-dylib_file",
+					"@loader_path/../../../../PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient:/Developer/Library/PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient",
+					"-dylib_file",
+					"@loader_path/../../../../PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsSupport.framework/Versions/A/DevToolsSupport:/Developer/Library/PrivateFrameworks/DevToolsSupport.framework/Versions/A/DevToolsSupport",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsCore.framework/Versions/A/DevToolsCore:/Developer/Library/PrivateFrameworks/DevToolsCore.framework/Versions/A/DevToolsCore",
+					"-dylib_file",
+					"@loader_path/../../../JavaKit.framework/Versions/A/JavaKit:/Developer/Library/PrivateFrameworks/JavaKit.framework/Versions/A/JavaKit",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -9778,10 +9786,18 @@
 					"-maltivec",
 				);
 				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
+					"-dylib_file",
+					"@loader_path/../../../../PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient:/Developer/Library/PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient",
+					"-dylib_file",
+					"@loader_path/../../../../PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsSupport.framework/Versions/A/DevToolsSupport:/Developer/Library/PrivateFrameworks/DevToolsSupport.framework/Versions/A/DevToolsSupport",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsCore.framework/Versions/A/DevToolsCore:/Developer/Library/PrivateFrameworks/DevToolsCore.framework/Versions/A/DevToolsCore",
+					"-dylib_file",
+					"@loader_path/../../../JavaKit.framework/Versions/A/JavaKit:/Developer/Library/PrivateFrameworks/JavaKit.framework/Versions/A/JavaKit",
+					"-dylib_file",
+					"@loader_path/../../../DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
 				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SndViewP;
