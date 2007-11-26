@@ -30,19 +30,24 @@
 /*!
   @class Allpass1UG
   @brief <b>Allpass1UG</b> is a first-order all-pass filter, useful for phase modifications.
+  @discussion
 
 Allpass1UG is a one-pole, one-zero filter.  The value of the filter coefficient
 is set directly.  The filter's transfer function is given as
 
-  bb0 + 1/z	
+<PRE>
+        bb0 + 1/z	
 H(z) =  ---------	
-  1 + bb0/z
+        1 + bb0/z
+</PRE>
 
 where bb0 is the filter coefficient.  Thus, the pole is at -bb0 and the zero is
 at -1/bb0.  The difference equation used to implement the filter in the DSP
 is
 
+<PRE>
 y(n) = bb0 * x(n) + x(n-1) - bb0 * y(n-1); 
+</PRE>
 
 where x(n) denotes the input signal at time n, and y(n) is the output signal. 
 This is the so-called &ldquo;direct-form-1&rdquo; digital filter structure.  It
@@ -70,45 +75,29 @@ are used.
 @interface Allpass1UG: MKUnitGenerator
 
 /*!
+  @brief Specifies that all arguments are to be optimized if possible except the state variable.
   @param arg is an unsigned.
   @return Returns an BOOL.
-  @brief Specifies that all arguments are to be optimized if possible except the
-  state variable.
-
-  
 */
-+(BOOL)shouldOptimize:(unsigned) arg;
++(BOOL) shouldOptimize: (unsigned) arg;
 
 /*!
-  @param  aPatchPoint is an id.
-  @return Returns an id.
-  @brief Sets the input patchpoint to <i>aPatchPoint</i>.
-
-  Returns
-  <b>self</b>, or <b>nil</b> if the argument isn't a
-  patchpoint.
-*/
--setInput: (id) aPatchPoint;
-/* Sets input of filter. */
+  @brief Sets the input patchpoint of filter to <i>aPatchPoint</i>.
+  @param aPatchPoint is an id.
+  @return Returns an id. Returns <b>self</b>, or <b>nil</b> if the argument isn't a patchpoint.
+  */
+- setInput: (id) aPatchPoint;
 
 /*!
-  @param  aPatchPoint is an id.
-  @return Returns an id.
-  @brief Sets the output patchpoint to <i>aPatchPoint</i>.
-
-  Returns
-  <b>self</b>, or <b>nil</b> if the argument isn't a
-  patchpoint.
+  @brief Sets the output patchpoint of filter to <i>aPatchPoint</i>.
+  @param aPatchPoint is an id.
+  @return Returns an id. Returns <b>self</b>, or <b>nil</b> if the argument isn't a patchpoint.
 */
 -setOutput: (id) aPatchPoint;
-/* Sets output of filter. */
 
 /*!
   @brief Sets the filter coefficient to <i>bb0</i>.
-
-  For stability, the coefficient should be within the bounds:
-  	
-  -1.0 &lt; <i>bb0</i> &lt; 1.0
+  @discussion For stability, the coefficient should be within the bounds: -1.0 &lt; <i>bb0</i> &lt; 1.0
   @param bb0 is an double.
   @return Returns <b>self</b>.
 */
