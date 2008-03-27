@@ -121,8 +121,7 @@ $(INSTALL_DIR):
 define create-html
 	mkdir -p $(dir $@)/Images
 	cp $(CSS) $(dir $@)
-	-cp -r $(dir $<)/Images/*.gif $(dir $@)/Images
-	cp -r $(ADMONIMAGESDIR)/*.gif $(dir $@)/Images
+	-cp $(wildcard $(dir $<)/Images/*.gif) $(wildcard $(ADMONIMAGESDIR)/*.gif) $(dir $@)/Images
 	root=`pwd`; cd $(dir $@); \
 	$(SGMLTRANS) -t sgml -ihtml -d $$root/$(MK_STYLESHEET)\#html $$root/$< 
 endef
@@ -155,9 +154,7 @@ define create-pdf
 	$(SGMLTRANS) -t tex -d $(MK_STYLESHEET)\#print -o $(BUILDDIR)/epsversion.tex $<
 	# ugly hack to swap .eps files for .pdfs for pdfjadetex to work
 	sed -e "s/\.eps/\.pdf/g" < $(BUILDDIR)/epsversion.tex > $(basename $@).tex
-	cp $(MK_STYLEDIR)/Images/*.pdf $(dir $@)/Images
-	-cp -r $(dir $<)/Images/*.pdf $(dir $@)/Images
-	cp $(ADMONIMAGESDIR)/*.pdf $(dir $@)/Images
+	-cp $(ADMONIMAGESDIR)/*.pdf $(MK_STYLEDIR)/Images/*.pdf $(wildcard $(dir $<)/Images/*.pdf) $(dir $@)/Images
 	cd $(dir $@); \
 	pdfjadetex $(basename $@).tex; \
 	pdfjadetex $(basename $@).tex; \
