@@ -71,7 +71,6 @@
 			);
 			dependencies = (
 				D879C36105A2B0C7005DB251 /* PBXTargetDependency */,
-				D879C57805A2B93D005DB251 /* PBXTargetDependency */,
 				D8708DFF05B31C970074C18D /* PBXTargetDependency */,
 				D8708F8805B49B360074C18D /* PBXTargetDependency */,
 				D84AE071062324B300A477FA /* PBXTargetDependency */,
@@ -162,6 +161,7 @@
 		D80DA5C90764E3D00052DFAF /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = D81B12FF0628D9FF009058DB /* SndStretchableScroller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D81B13020628D9FF009058DB /* SndStretchableScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = D81B13000628D9FF009058DB /* SndStretchableScroller.m */; };
+		D81E396C0D999767008826EE /* SndViewPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D81E396B0D999767008826EE /* SndViewPlugin.m */; };
 		D82556B505A2142800B0192B /* MKConductor.h in Headers */ = {isa = PBXBuildFile; fileRef = D825566705A2142800B0192B /* MKConductor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D82556B605A2142800B0192B /* MKConductor.m in Sources */ = {isa = PBXBuildFile; fileRef = D825566805A2142800B0192B /* MKConductor.m */; };
 		D82556B705A2142800B0192B /* MKConductorDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825566905A2142800B0192B /* MKConductorDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -571,8 +571,7 @@
 		D870944F05B5E0460074C18D /* MIDIFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = D870944B05B5E0460074C18D /* MIDIFileController.m */; };
 		D870945005B5E0460074C18D /* MIDIFilePlayback_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D870944C05B5E0460074C18D /* MIDIFilePlayback_main.m */; };
 		D870946C05B5E1100074C18D /* MIDIFilePlayback.nib in Resources */ = {isa = PBXBuildFile; fileRef = D870946A05B5E1100074C18D /* MIDIFilePlayback.nib */; };
-		D879C3C705A2B4B6005DB251 /* SndViewP.h in Headers */ = {isa = PBXBuildFile; fileRef = D879C3C505A2B4B6005DB251 /* SndViewP.h */; };
-		D879C3C805A2B4B6005DB251 /* SndViewP.m in Sources */ = {isa = PBXBuildFile; fileRef = D879C3C605A2B4B6005DB251 /* SndViewP.m */; };
+		D879C3C705A2B4B6005DB251 /* SndViewPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = D879C3C505A2B4B6005DB251 /* SndViewPlugin.h */; };
 		D879C3D405A2B4E1005DB251 /* SndViewP.nib in Resources */ = {isa = PBXBuildFile; fileRef = D879C3D205A2B4E0005DB251 /* SndViewP.nib */; };
 		D879C3DD05A2B506005DB251 /* palette.table in Resources */ = {isa = PBXBuildFile; fileRef = D879C3DC05A2B506005DB251 /* palette.table */; };
 		D879C42105A2B577005DB251 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879C41E05A2B577005DB251 /* AppKit.framework */; };
@@ -1053,13 +1052,6 @@
 			remoteGlobalIDString = D879C3BF05A2B47F005DB251;
 			remoteInfo = "SndView Palette (Bundle)";
 		};
-		D879C57705A2B93D005DB251 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D879C56905A2B8F1005DB251;
-			remoteInfo = "Palettes Only";
-		};
 		D880FD0B0780880E00FD03CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
@@ -1182,6 +1174,7 @@
 		D81D7E45059FA93400BCE725 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		D81D7E46059FA93400BCE725 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		D81D7E47059FA93400BCE725 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		D81E396B0D999767008826EE /* SndViewPlugin.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndViewPlugin.m; path = Palettes/SndView/SndViewPlugin.m; sourceTree = "<group>"; };
 		D825564A05A211B400B0192B /* MusicKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MusicKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D825564B05A211B400B0192B /* MusicKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "MusicKit-Info.plist"; path = "Frameworks/MusicKit/MusicKit-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D825566705A2142800B0192B /* MKConductor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKConductor.h; path = Frameworks/MusicKit/MKConductor.h; sourceTree = "<group>"; };
@@ -1640,8 +1633,7 @@
 		D879C15B05A22C4F005DB251 /* SndKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SndKit.framework; path = /Library/Frameworks/SndKit.framework; sourceTree = "<absolute>"; };
 		D879C3C005A2B47F005DB251 /* SndViewP.palette */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SndViewP.palette; sourceTree = BUILT_PRODUCTS_DIR; };
 		D879C3C105A2B47F005DB251 /* SndViewPalette-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "SndViewPalette-Info.plist"; path = "Palettes/SndView/SndViewPalette-Info.plist"; sourceTree = SOURCE_ROOT; };
-		D879C3C505A2B4B6005DB251 /* SndViewP.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndViewP.h; path = Palettes/SndView/SndViewP.h; sourceTree = "<group>"; };
-		D879C3C605A2B4B6005DB251 /* SndViewP.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndViewP.m; path = Palettes/SndView/SndViewP.m; sourceTree = "<group>"; };
+		D879C3C505A2B4B6005DB251 /* SndViewPlugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndViewPlugin.h; path = Palettes/SndView/SndViewPlugin.h; sourceTree = "<group>"; };
 		D879C3D305A2B4E0005DB251 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Palettes/SndView/English.lproj/SndViewP.nib; sourceTree = "<group>"; };
 		D879C3DC05A2B506005DB251 /* palette.table */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = palette.table; path = Palettes/SndView/palette.table; sourceTree = "<group>"; };
 		D879C41E05A2B577005DB251 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -4182,8 +4174,8 @@
 		D879C38505A2B393005DB251 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D879C3C505A2B4B6005DB251 /* SndViewP.h */,
-				D879C3C605A2B4B6005DB251 /* SndViewP.m */,
+				D81E396B0D999767008826EE /* SndViewPlugin.m */,
+				D879C3C505A2B4B6005DB251 /* SndViewPlugin.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -5428,7 +5420,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D879C3C705A2B4B6005DB251 /* SndViewP.h in Headers */,
+				D879C3C705A2B4B6005DB251 /* SndViewPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6947,7 +6939,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D879C3C805A2B4B6005DB251 /* SndViewP.m in Sources */,
+				D81E396C0D999767008826EE /* SndViewPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7226,11 +7218,6 @@
 			isa = PBXTargetDependency;
 			target = D879C3BF05A2B47F005DB251 /* SndView Palette (Bundle) */;
 			targetProxy = D879C57405A2B92E005DB251 /* PBXContainerItemProxy */;
-		};
-		D879C57805A2B93D005DB251 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D879C56905A2B8F1005DB251 /* Palettes Only (Aggregate) */;
-			targetProxy = D879C57705A2B93D005DB251 /* PBXContainerItemProxy */;
 		};
 		D880FD0C0780880E00FD03CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13801,6 +13788,7 @@
 			buildSettings = {
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Development;
 		};
@@ -13809,6 +13797,7 @@
 			buildSettings = {
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Deployment;
 		};
@@ -13817,6 +13806,7 @@
 			buildSettings = {
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Embedded;
 		};
@@ -13825,6 +13815,7 @@
 			buildSettings = {
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Default;
 		};
