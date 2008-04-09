@@ -20,13 +20,18 @@ PROJECT = -project MusicKit.xcodeproj
 XCODEBUILD = xcodebuild $(PROJECT)
 # This allows overriding this on the command line.
 DSTROOT=/
+# This is for building with "sudo make install" and allows overriding on the command line.
+OBJROOT=/tmp
+# This is for building with "sudo make install" and allows overriding on the command line.
+SYMROOT=/tmp/build
+
 VERSION=0.0.0
 
 all:
 	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Development build DSTROOT=$(DSTROOT) $(CONFIG)
 
 install:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) VERSION=$(VERSION) $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
 
 frameworks:
 	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration Embedded install DSTROOT=$(DSTROOT) $(CONFIG)
