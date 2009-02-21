@@ -888,6 +888,7 @@
 	    case SND_FORMAT_LINEAR_24:
 	    case SND_FORMAT_DSP_DATA_24:
 		// theSampleValue = ((short *) pcmData)[frameIndex];
+		// TODO this makes assumptions about the endian order and size of an int.
 		theSampleValue += *((int *) ((char *) pcmData + sampleIndex * 3)) >> 8;
 		break;
 	    case SND_FORMAT_LINEAR_32:
@@ -907,6 +908,60 @@
 	}	
     }
     return (averageOverChannels > 1) ? theSampleValue / averageOverChannels : theSampleValue;
+}
+
+- (BOOL) setSample: (float) sampleValue atFrameIndex: (unsigned long) frameIndex channel: (int) channelNumber
+{
+    unsigned long sampleIndex = frameIndex * format.channelCount + channelNumber;
+    const void *pcmData = [data mutableBytes];
+    
+    if(frameIndex < 0 || frameIndex >= [self lengthInSampleFrames]) {
+	NSLog(@"SndAudioBuffer -setSample:atFrameIndex:channel: frameIndex %ld out of range [0,%ld]\n", frameIndex, [self lengthInSampleFrames]);
+	return NO;
+    }
+    if(channelNumber < 0 || channelNumber > format.channelCount) {
+	NSLog(@"SndAudioBuffer -setSample:atFrameIndex:channel: channel %d out of range [0,%d]\n", channelNumber, format.channelCount);
+	return NO;
+    }
+    
+    switch (format.dataFormat) {
+	case SND_FORMAT_LINEAR_8:
+	    ((unsigned char *) pcmData)[sampleIndex] = (unsigned char) (sampleValue * SndMaximumAmplitude(format.dataFormat));
+	    break;
+	case SND_FORMAT_MULAW_8:
+	    ((unsigned char *) pcmData)[sampleIndex] = SndLinearToMuLaw(sampleValue * SndMaximumAmplitude(SND_FORMAT_LINEAR_16));
+	    break;
+	case SND_FORMAT_EMPHASIZED:
+	case SND_FORMAT_COMPRESSED:
+	case SND_FORMAT_COMPRESSED_EMPHASIZED:
+	case SND_FORMAT_DSP_DATA_16:
+	case SND_FORMAT_LINEAR_16:
+	    ((short *) pcmData)[sampleIndex] = (short) (sampleValue * SndMaximumAmplitude(format.dataFormat));
+	    break;
+	case SND_FORMAT_LINEAR_24:
+	case SND_FORMAT_DSP_DATA_24: {
+		int intRepresentationOfSample = (sampleValue * SndMaximumAmplitude(format.dataFormat));
+		// TODO shift up to the top of the integer, assuming the first byte is the msb. This is problematic for little-endians
+		int alignedSample = intRepresentationOfSample << 8;
+		memcpy((unsigned char *) pcmData + sampleIndex * 3, (unsigned char *) &alignedSample, 3);
+	    }
+	    break;
+	case SND_FORMAT_LINEAR_32:
+	case SND_FORMAT_DSP_DATA_32:
+	    ((int *) pcmData)[sampleIndex] = (int) (sampleValue * SndMaximumAmplitude(format.dataFormat));
+	    break;
+	case SND_FORMAT_FLOAT:
+	    ((float *) pcmData)[sampleIndex] = sampleValue;
+	    break;
+	case SND_FORMAT_DOUBLE:
+	    ((double *) pcmData)[sampleIndex] = sampleValue;
+	    break;
+	default: /* just in case */
+	    ((short *) pcmData)[sampleIndex] = (short) (sampleValue * SndMaximumAmplitude(format.dataFormat));
+	    NSLog(@"SndAudioBuffer -setSample:atFrameIndex:channel: unhandled format %d\n", format.dataFormat);
+	    break;
+    }
+    return YES;
 }
 
 @end
