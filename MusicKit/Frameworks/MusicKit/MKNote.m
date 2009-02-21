@@ -246,17 +246,19 @@ static id noteClass = nil;
 static void initNoteClass()
 {
     noteClass = [MKNote class];
+    // initialize the tuning system to ensure we have a set of key numbers.
+    [MKTuningSystem tuningSystem]; 
     if (!parClassInited)
-      parClassInited = _MKParInit();
-    dummyPar = _MKNewIntPar(0,MK_noPar);
+	parClassInited = _MKParInit();
+    dummyPar = _MKNewIntPar(0, MK_noPar);
 }
 
-+ (void)initialize
++ (void) initialize
 {
     if (!noteClass)
-      initNoteClass();
+	initNoteClass();
     if (self != [MKNote class])
-      return;
+	return;
     [MKNote setVersion:VERSION4];
     /* Changed to version 3, 10/23/92-DAJ */
     /* Changed to version 4, 11/9/94-DAJ */

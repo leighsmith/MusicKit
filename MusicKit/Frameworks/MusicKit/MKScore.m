@@ -189,11 +189,7 @@ static NSArray *scoreFileExtensions = nil;
 static id readScorefile(MKScore *self, NSData *stream,
                         double firstTimeTag, double lastTimeTag, double timeShift, NSString *fileName);
 
--readScorefile:(NSString *)fileName
-  firstTimeTag:(double)firstTimeTag
-   lastTimeTag:(double)lastTimeTag
-     timeShift:(double)timeShift
-  /* Read from scoreFile to receiver, creating new MKParts as needed
+/* Read from scoreFile to receiver, creating new MKParts as needed
   and including only those notes between times firstTimeTag to
   time lastTimeTag, inclusive. Note that the TimeTags of the
   notes are not altered from those in the file. I.e.
@@ -202,42 +198,44 @@ static id readScorefile(MKScore *self, NSData *stream,
   Merges contents of file with current MKParts when the MKPart
   name found in the file is the same as one of those in the
   receiver.
-  Returns self or nil if file not found or the parse was aborted
-  due to errors. */
+  Returns self or nil if file not found or the parse was aborted due to errors. 
+ */
+- readScorefile: (NSString *) fileName
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag
+      timeShift: (double) timeShift
 {
-  NSData *stream;
-  id rtnVal;
-  int i,count;
-  id e = [fileName pathExtension];
-  MKLoadAllBundlesOneOff();
-  count=[plugins count];
-  if ([[MKScore bundleExtensions] containsObject:e]) {
-      for (i = 0 ; i < count ; i++) {
-          id<MusicKitPlugin> p = [plugins objectAtIndex:i];
-          if ([[p fileOpeningSuffixes] containsObject:e]) {
-              id s = [p openFileName:fileName forScore:self];
-              if (s) return s;
-              else NSLog(@"Plugin failed to read file, though it should have managed");
-          }
-      }
-  }
-  
-  stream = _MKOpenFileStreamForReading(fileName,
-                                       _MK_BINARYSCOREFILEEXT,NO);
-  if (!stream)
-    stream = _MKOpenFileStreamForReading(fileName,_MK_SCOREFILEEXT, YES);
-  if (!stream)
-    return nil;
-  rtnVal = readScorefile(self, stream, firstTimeTag, lastTimeTag, timeShift, fileName);
-  //    [stream release]; //sb: no. The above functions are autoreleased.
-  return rtnVal;
+    NSData *stream;
+    id rtnVal;
+    int i,count;
+    id e = [fileName pathExtension];
+    
+    MKLoadAllBundlesOneOff();
+    count=[plugins count];
+    if ([[MKScore bundleExtensions] containsObject: e]) {
+	for (i = 0 ; i < count; i++) {
+	    id<MusicKitPlugin> p = [plugins objectAtIndex: i];
+	    if ([[p fileOpeningSuffixes] containsObject: e]) {
+		id s = [p openFileName: fileName forScore: self];
+		
+		if (s)
+		    return s;
+		else 
+		    NSLog(@"Plugin failed to read file, though it should have managed");
+	    }
+	}
+    }
+
+    stream = _MKOpenFileStreamForReading(fileName, _MK_BINARYSCOREFILEEXT, NO);
+    if (!stream)
+	stream = _MKOpenFileStreamForReading(fileName, _MK_SCOREFILEEXT, YES);
+    if (!stream)
+	return nil;
+    rtnVal = readScorefile(self, stream, firstTimeTag, lastTimeTag, timeShift, fileName);
+    return rtnVal;
 }
 
--readScorefileStream:(NSData *)stream
-        firstTimeTag:(double)firstTimeTag
-         lastTimeTag:(double)lastTimeTag
-           timeShift:(double)timeShift
-  /* Read from scoreFile to receiver, creating new MKParts as needed
+/* Read from scoreFile to receiver, creating new MKParts as needed
   and including only those notes between times firstTimeTag to
   time lastTimeTag, inclusive. Note that the TimeTags of the
   notes are not altered from those in the file. I.e.
@@ -247,21 +245,24 @@ static id readScorefile(MKScore *self, NSData *stream,
   name found in the file is the same as one of those in the
   receiver.
   Returns self or nil if the parse was aborted due to errors.
-  It is the application's responsibility to close the stream after calling
-  this method.
-  */
+  It is the application's responsibility to close the stream after calling this method.
+ */
+- readScorefileStream: (NSData *) stream
+	 firstTimeTag: (double) firstTimeTag
+	  lastTimeTag: (double) lastTimeTag
+	    timeShift: (double) timeShift
 {
   return readScorefile(self, stream, firstTimeTag, lastTimeTag, timeShift, NULL);
 }
 
 /* Scorefile reading "convenience" methods  --------------------------- */
 
--readScorefile:(NSString *)fileName
-  firstTimeTag:(double)firstTimeTag
-   lastTimeTag:(double)lastTimeTag
+- readScorefile: (NSString *) fileName
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag
 {
-  return [self readScorefile:fileName firstTimeTag:firstTimeTag
-                 lastTimeTag:lastTimeTag timeShift:0.0];
+  return [self readScorefile: fileName firstTimeTag: firstTimeTag
+                 lastTimeTag: lastTimeTag timeShift: 0.0];
 }
 
 - readScorefileStream: (NSMutableData *) stream
@@ -274,22 +275,22 @@ static id readScorefile(MKScore *self, NSData *stream,
 			   timeShift: 0.0];
 }
 
--readScorefile:(NSString *)fileName
+- readScorefile: (NSString *) fileName
 {
-  return [self readScorefile:fileName firstTimeTag:0.0
-                 lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+  return [self readScorefile: fileName firstTimeTag: 0.0
+                 lastTimeTag: MK_ENDOFTIME timeShift: 0.0];
 }
 
--readScorefileStream:(NSData *)stream
+- readScorefileStream: (NSData *) stream
 {
-  return [self readScorefileStream:stream firstTimeTag:0.0
-                       lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+  return [self readScorefileStream: stream firstTimeTag: 0.0
+                       lastTimeTag: MK_ENDOFTIME timeShift: 0.0];
 }
 
 /* Writing Scorefiles --------------------------------------------------- */
 
--_noteTagRangeLowP:(int *)lowTag highP:(int *)highTag
-  /* Returns by reference the lowest and highest noteTags in receiver. */
+/* Returns by reference the lowest and highest noteTags in receiver. */
+- _noteTagRangeLowP: (int *) lowTag highP: (int *) highTag
 {
   int noteTag,ht,lt;
   id notes;
@@ -1457,72 +1458,49 @@ static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruc
     }
 }
 
-static id
-readScorefile(MKScore *self,
-              NSData *stream,
-              double firstTimeTag, double lastTimeTag, double timeShift,
-              NSString *fileName)
+/* Read from scoreFile to receiver, creating new MKParts as needed
+ and including only those notes between times firstTimeTag to
+ time lastTimeTag, inclusive. Note that the TimeTags of the
+ notes are not altered from those in the file. I.e.
+ the first note's TimeTag will be greater than or equal to
+ firstTimeTag.
+ Merges contents of file with current MKParts when the MKPart
+ name found in the file is the same as one of those in the
+ receiver.
+ Returns self or nil if error abort.  */
+static id readScorefile(MKScore *self, NSData *stream,
+			double firstTimeTag, double lastTimeTag, double timeShift,
+			NSString *fileName)
 {
-  /* Read from scoreFile to receiver, creating new MKParts as needed
-  and including only those notes between times firstTimeTag to
-  time lastTimeTag, inclusive. Note that the TimeTags of the
-  notes are not altered from those in the file. I.e.
-  the first note's TimeTag will be greater than or equal to
-  firstTimeTag.
-  Merges contents of file with current MKParts when the MKPart
-  name found in the file is the same as one of those in the
-  receiver.
-  Returns self or nil if error abort.  */
-  register _MKScoreInStruct *p;
-  register id aNote;
-  IMP noteCopy, partAddNote;
-  id rtnVal;
-  unsigned int readPosition = 0;   // this is the top level.
-
-  partAddNote = [MKGetPartClass() instanceMethodForSelector:@selector(addNote:)];
-  noteCopy = [MKGetNoteClass() instanceMethodForSelector:@selector(copy)];
-  p = _MKNewScoreInStruct(stream, self, self->scorefilePrintStream, NO, fileName, &readPosition);
-  if (!p)
-    return nil;
-  _MKParseScoreHeader(p);
-  lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
-  firstTimeTag = MIN(firstTimeTag, MK_ENDOFTIME);
-  do {
-    aNote = _MKParseScoreNote(p); /* not retained or autoreleased - so go careful */
-  } while (p->timeTag < firstTimeTag);
-
-#if 0
-  /* sbrandon, 22/01/2002
-    * this warning is ancient - I'm going to risk adding the MKNotes as they are.
-    */
-  /* Believe it or not, is actually better to copy the note here!
-    I'm not sure why.  Maybe the hashtable has some hysteresis and
-    it gets reallocated each time. */
-  while (p->timeTag <= lastTimeTag) {
-    if (aNote) {
-      aNote = (id)(*noteCopy)(aNote, @selector(copy));
-      _MKNoteShiftTimeTag(aNote, timeShift);
-      (*partAddNote)(p->part, @selector(addNote:), aNote);
+    register _MKScoreInStruct *p;
+    register id aNote;
+    id rtnVal;
+    unsigned int readPosition = 0;   // this is the top level.
+    IMP partAddNote = [MKGetPartClass() instanceMethodForSelector: @selector(addNote:)];
+    
+    p = _MKNewScoreInStruct(stream, self, self->scorefilePrintStream, NO, fileName, &readPosition);
+    if (!p)
+	return nil;
+    _MKParseScoreHeader(p);
+    lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
+    firstTimeTag = MIN(firstTimeTag, MK_ENDOFTIME);
+    do {
+	aNote = _MKParseScoreNote(p); /* not retained or autoreleased - so go careful */
+    } while (p->timeTag < firstTimeTag);
+    
+    while (p->timeTag <= lastTimeTag) {
+	if (aNote) {
+	    _MKNoteShiftTimeTag(aNote, timeShift);
+	    (*partAddNote)(p->part, @selector(addNote:), aNote);
+	}
+	aNote = _MKParseScoreNote(p);/* not retained or autoreleased - so go careful */
+	if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
+	    break;
     }
-    aNote = _MKParseScoreNote(p);
-    if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
-      break;
-  }
-#endif
-  while (p->timeTag <= lastTimeTag) {
-    if (aNote) {
-      _MKNoteShiftTimeTag(aNote, timeShift);
-      (*partAddNote)(p->part, @selector(addNote:), aNote);
-    }
-    aNote = _MKParseScoreNote(p);/* not retained or autoreleased - so go careful */
-    if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
-      break;
-  }
-
-
-  rtnVal = (p->_errCount == MAXINT) ? nil : self;
-  _MKFinishScoreIn(p);
-  return rtnVal;
+    
+    rtnVal = (p->_errCount == MAXINT) ? nil : self;
+    _MKFinishScoreIn(p);
+    return rtnVal;
 }
 
 -setScorefilePrintStream:(NSMutableData *)aStream

@@ -11,7 +11,7 @@
     to write a Midifile.
 
     A MKFileWriter is associated with a file, either by the
-    file's name or with a file pointer.  If you assoicate
+    file's name or with a file pointer.  If you associate
     a MKFileWriter with a file name (through the setFile:
     method) the object will take care of opening and closing
     the file for you:  the file is opened for writing when the
@@ -141,8 +141,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   @return Returns a NSString.
   @brief Returns the file extension used by the object.
 
-  The default
-  implementation returns the value of the <b>fileExtension</b> class
+  The default implementation returns the value of the <b>fileExtension</b> class
   method.  A subclass can implement this method to allow different
   default file extensions for different instances.
 */
@@ -153,8 +152,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   @return Returns an id.
   @brief Associates the object with the file <i>aName</i>.
 
-  The file is
-  opened when the first MKNote is realized (written to the file) and
+  The file is opened when the first MKNote is realized (written to the file) and
   closed at the end of the performance.  If the object is already in a
   performance, this does nothing and returns <b>nil</b>, otherwise
   returns the object.
@@ -166,8 +164,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   @return Returns an id.
   @brief Points the object's <b>stream</b> pointer to <i>aStream</i>.
 
-  You
-  must open and close the <i>aStream</i> yourself.  If the object is
+  You must open and close the <i>aStream</i> yourself.  If the object is
   already in a performance, this does nothing and returns <b>nil</b>,
   otherwise returns the object.
 */
