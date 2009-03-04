@@ -1014,14 +1014,13 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return [[info retain] autorelease];
 }
 
-- setInfoNote: (MKNote *) aNote
-  /* Sets 'header note', a collection of info associated with each MKPart,
+/* Sets 'header note', a collection of info associated with each MKPart,
   which may be used by the App in any way it wants. aNote is copied.
   The old info, if any, is freed. */
+- (void) setInfoNote: (MKNote *) aNote
 {
     [info release];
     info = [aNote copy];
-    return self;
 }
 
 - (NSString *) partName

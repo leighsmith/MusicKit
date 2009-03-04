@@ -95,12 +95,10 @@ or MKNoteReceiver) during a performance involving a MKScorefileWriter.
 /*!
   @brief Sets the receiver's info MKNote, freeing a previously set info MKNote, if any.
 
-  The MKNote is written, in the scorefile, as a MKScore info
-  statement.  Returns the receiver.
+  The MKNote is written, in the scorefile, as a MKScore info statement. 
   @param  aNote is an MKNote.
-  @return Returns an id.
 */
-- setInfoNote: (MKNote *) aNote;
+- (void) setInfoNote: (MKNote *) aNote;
 
 /*!
   @brief Returns the receiver's info MKNote, as set through <b>setInfo:</b>.

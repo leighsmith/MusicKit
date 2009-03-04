@@ -197,14 +197,13 @@ Modification history prior to CVS commit.
     return self;
 }
 
-- setInfoNote: (MKNote *) aNote
-  /* Sets info, overwriting any previous info. aNote is copied. The info is 
-     written out in the initializeFile method. The old info, if any, is freed. 
-     */
+/* Sets info, overwriting any previous info. aNote is copied. The info is 
+   written out in the initializeFile method. The old info, if any, is freed. 
+ */
+- (void) setInfoNote: (MKNote *) aNote
 {
     [info autorelease];
     info = [aNote copy];
-    return self;
 }
 
 -(MKNote *) infoNote

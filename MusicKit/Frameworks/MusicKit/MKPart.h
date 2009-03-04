@@ -610,10 +610,8 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 - (MKNote *) infoNote; 
 
 /*!
-  @param  aNote is an MKNote.
-  @return Returns an id.
-  @brief Sets the MKPart's info MKNote to a copy of <i>aNote</i> and returns
-  <b>self</b>.
+  @param aNote is an MKNote.
+  @brief Sets the MKPart's info MKNote to a copy of <i>aNote</i>.
  
   The info MKNote can be given information (as
   parameters) that helps define how the MKPart should be interpreted;
@@ -663,7 +661,7 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   
   @see -<b>infoNote</b>
 */
-- setInfoNote: (MKNote *) aNote;
+- (void) setInfoNote: (MKNote *) aNote;
 
 /*!
   @brief Return the name of the receiver.

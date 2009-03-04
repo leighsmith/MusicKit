@@ -109,8 +109,7 @@ Modification history prior to CVS commit:
   /* Deallocates receiver and frees synthpatch of which it's a member, if any. 
    */
 {
-    _MKDeallocSynthElementSafe(self,ISDATA);
-    return;
+    _MKDeallocSynthElementSafe(self, ISDATA);
 }
 
 -(int)instanceNumber

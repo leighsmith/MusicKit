@@ -185,9 +185,45 @@ static NSArray *scoreFileExtensions = nil;
 
 /* Reading Scorefiles ------------------------------------------------ */
 
-/* forward ref */
-static id readScorefile(MKScore *self, NSData *stream,
-                        double firstTimeTag, double lastTimeTag, double timeShift, NSString *fileName);
+/*
+ Read from scoreFile to receiver, creating new MKParts as needed and including only those
+ notes between times firstTimeTag to time lastTimeTag, inclusive. Note that the TimeTags of the
+ notes are not altered from those in the file. I.e. the first note's TimeTag will be greater than or equal to
+ firstTimeTag. Merges contents of file with current MKParts when the MKPart name found in the
+ file is the same as one of those in the receiver.
+ Returns self or nil if error abort.  */
+static id readScorefile(MKScore *self, NSData *stream, double firstTimeTag, double lastTimeTag, double timeShift, NSString *fileName)
+{
+    register _MKScoreInStruct *p;
+    register id aNote;
+    id rtnVal;
+    unsigned int readPosition = 0;   // this is the top level.
+    IMP partAddNote = [MKGetPartClass() instanceMethodForSelector: @selector(addNote:)];
+    
+    p = _MKNewScoreInStruct(stream, self, self->scorefilePrintStream, NO, fileName, &readPosition);
+    if (!p)
+	return nil;
+    _MKParseScoreHeader(p);
+    lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
+    firstTimeTag = MIN(firstTimeTag, MK_ENDOFTIME);
+    do {
+	aNote = _MKParseScoreNote(p); /* not retained or autoreleased - so go careful */
+    } while (p->timeTag < firstTimeTag);
+    
+    while (p->timeTag <= lastTimeTag) {
+	if (aNote) {
+	    _MKNoteShiftTimeTag(aNote, timeShift);
+	    (*partAddNote)(p->part, @selector(addNote:), aNote);
+	}
+	aNote = _MKParseScoreNote(p);/* not retained or autoreleased - so go careful */
+	if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
+	    break;
+    }
+    
+    rtnVal = (p->_errCount == MAXINT) ? nil : self;
+    _MKFinishScoreIn(p);
+    return rtnVal;
+}
 
 /* Read from scoreFile to receiver, creating new MKParts as needed
   and including only those notes between times firstTimeTag to
@@ -313,36 +349,97 @@ static id readScorefile(MKScore *self, NSData *stream,
   return self;
 }
 
-static void writeNotes();
+// Returns an array of all the notes in the score which have a time tag between the bounds.
+- (NSArray *) notesBetweenFirstTimeTag: (double) firstTimeTag
+			   lastTimeTag: (double) lastTimeTag
+{
+    BOOL timeBounds = (firstTimeTag != 0) || (lastTimeTag != MK_ENDOFTIME);
+    unsigned numOfParts = [parts count], partIndex;
+    NSMutableArray *allNotes = [NSMutableArray arrayWithCapacity: [self noteCount]];
 
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	MKPart *currentPart = [parts objectAtIndex: partIndex];
+	NSArray *notes;
+	
+	if (timeBounds)
+	    notes = [currentPart firstTimeTag: firstTimeTag lastTimeTag: lastTimeTag];
+	else {
+	    [currentPart sort];
+	    notes = [currentPart notesNoCopy];
+	}
+	if (notes) {
+	    [allNotes addObjectsFromArray: notes]; 
+	}
+    }
+    return [NSArray arrayWithArray: allNotes]; // returns an immutable, autoreleased version
+}
+
+// Returns an array of all the notes in the score which have a valid time tag.
+- (NSArray *) notes
+{
+    return [self notesBetweenFirstTimeTag: 0 lastTimeTag: MK_ENDOFTIME];
+}
+
+/* Write score body on aStream. Assumes p is a valid _MKScoreOutStruct. */
+- (void) writeNotesToStream: (NSMutableData *) aStream
+	     scoreOutStruct: (_MKScoreOutStruct *) p
+	       firstTimeTag: (double) firstTimeTag
+		lastTimeTag: (double) lastTimeTag
+		  timeShift: (double) timeShift
+{
+    unsigned numOfParts = [parts count], partIndex;
+    unsigned noteIndex; 
+    NSArray *allNotes = [self notesBetweenFirstTimeTag: firstTimeTag lastTimeTag: lastTimeTag];
+    unsigned numOfNotes = [allNotes count];
+
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	MKPart *currentPart = [parts objectAtIndex: partIndex];
+
+	_MKWritePartDecl(currentPart, p, [currentPart infoNote]);
+    }
+    p->_timeShift = timeShift;
+    
+    for (noteIndex = 0; noteIndex < numOfNotes; noteIndex++) {
+	MKNote *currentNote = [allNotes objectAtIndex: noteIndex];
+	
+	_MKWriteNote(currentNote, [currentNote part], p);
+    }
+}
+
+/* Same as writeScorefileStream: but only writes notes within specified time bounds. */
 - writeScorefileStream: (NSMutableData *) aStream
           firstTimeTag: (double) firstTimeTag
            lastTimeTag: (double) lastTimeTag
              timeShift: (double) timeShift
                 binary: (BOOL) isBinary
-/* Same as writeScorefileStream: but only writes notes within specified
-  time bounds. */
 {
-  _MKScoreOutStruct * p;
-  int lowTag, highTag;
-  if (!aStream)
-    return nil;
-  p = _MKInitScoreOut(aStream,self,info,timeShift,NO,isBinary);
-  [self _noteTagRangeLowP:&lowTag highP:&highTag];
-  if (lowTag <= highTag) {
-    if (isBinary) {
-      _MKWriteShort(aStream,_MK_noteTagRange);
-      _MKWriteInt(aStream,lowTag);
-      _MKWriteInt(aStream,highTag);
+    _MKScoreOutStruct * p;
+    int lowTag, highTag;
+
+    if (!aStream)
+	return nil;
+    p = _MKInitScoreOut(aStream, self, info, timeShift, NO, isBinary);
+    [self _noteTagRangeLowP: &lowTag highP:&highTag];
+    if (lowTag <= highTag) {
+	if (isBinary) {
+	    _MKWriteShort(aStream, _MK_noteTagRange);
+	    _MKWriteInt(aStream, lowTag);
+	    _MKWriteInt(aStream, highTag);
+	}
+	else {
+	    [aStream appendData:[[NSString stringWithFormat: @"%s = %d %s %d;\n",
+					   _MKTokNameNoCheck(_MK_noteTagRange), lowTag,
+					   _MKTokNameNoCheck(_MK_to), highTag] 
+				    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+	}
     }
-    else
-      [aStream appendData:[[NSString stringWithFormat:@"%s = %d %s %d;\n",
-        _MKTokNameNoCheck(_MK_noteTagRange), lowTag,
-		      _MKTokNameNoCheck(_MK_to), highTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-  }
-  writeNotes(aStream, self, p, firstTimeTag, lastTimeTag, timeShift);
-  _MKFinishScoreOut(p,YES);            /* Doesn't close aStream. */
-  return self;
+    [self writeNotesToStream: aStream 
+	      scoreOutStruct: p 
+	        firstTimeTag: firstTimeTag
+                 lastTimeTag: lastTimeTag
+	           timeShift: timeShift];
+    _MKFinishScoreOut(p, YES);            /* Doesn't close aStream. */
+    return self;
 }
 
 - writeScorefile: (NSString *) aFileName
@@ -1362,162 +1459,20 @@ outOfLoop:
 /* Manipulating notes. ------------------------------- */
 
 
-static void merge(NSMutableArray *listOfLists, NSMutableArray *allNotes)
-/* ListOfLists is an NSArray containing NSArray objects, one per MKPart.
-AllNotes is an empty NSArray big enough to hold all the MKNotes of all the
-MKParts.
-*/
+/* Sets the stream to be used for Scorefile 'print' statement output. */
+- (void) setScorefilePrintStream: (NSMutableData *) aStream
 {
-  int *counts,*maxcounts;
-  int listCount;
-  int i,j,k;
-  double t;
-  MKNote *aNote,*theNote;
-  id aList;
-  int theList = 0; /* Give it a value to shut up compiler warnings */
-  int max=0;
-  IMP addMethod;
-  listCount = [listOfLists count];
-  _MK_CALLOC(counts,int,listCount);
-  _MK_CALLOC(maxcounts,int,listCount);
-  addMethod = [allNotes methodForSelector:@selector(addObject:)];
-
-  for (k = 0; k < listCount; k++)
-    maxcounts[max++] = [[listOfLists objectAtIndex:k] count];
-
-  while (listCount > 0) {
-    t = MK_ENDOFTIME + 1;
-    theNote = nil;
-    i = 0;
-    while (i < listCount) {
-      aList = [listOfLists objectAtIndex:i]; //sb: was NX_ADDRESS(listOfLists)[i];
-      if (counts[i] < maxcounts[i])  // LMS changed from <= on Hamels recommendation & I agree.
-        aNote = [aList objectAtIndex:counts[i]];
-      else aNote = nil;
-      if (!aNote) {  /* No more notes. */
-        [listOfLists removeObjectAtIndex:i]; /* Pushes others down.       */
-        for (j = i+1; j<listCount; j++) { /* Push counts down          */
-          counts[j-1] = counts[j];
-          maxcounts[j-1] = maxcounts[j];
-        }
-        listCount--;                    /* One less list             */
-      }
-      else if ([aNote timeTag] < t) {   /* Candidate                 */
-        t = [aNote timeTag];
-        theNote = aNote;
-        theList = i;
-        i++;
-      }
-      else
-        i++;
-    }
-    if (theNote) {
-      (*addMethod)(allNotes,@selector(addObject:),theNote);
-      counts[theList]++;
-    }
-  }
-  if (counts)
-    free(counts);
-  if (maxcounts)
-    free(maxcounts);
+    scorefilePrintStream = aStream;
 }
 
-static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruct *p,
-                       double firstTimeTag, double lastTimeTag, double timeShift)
+/* Returns the stream used for Scorefile 'print' statement output. */
+- (NSMutableData *) scorefilePrintStream
 {
-    /* Write score body on aStream. Assumes p is a valid _MKScoreOutStruct. */
-    MKPart *currentPart;
-    unsigned numOfParts = [aScore->parts count], partIndex;
-    unsigned numOfNotes, noteIndex; 
-    BOOL timeBounds = ((firstTimeTag != 0) || (lastTimeTag != MK_ENDOFTIME));
-    NSMutableArray *allNotes = [NSMutableArray arrayWithCapacity: [aScore noteCount]];
-    NSMutableArray *notesInEachPart = [NSMutableArray arrayWithCapacity: numOfParts];
-    NSArray *notes;
-    MKNote *currentNote;
-    
-    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
-	currentPart = [aScore->parts objectAtIndex: partIndex];
-	if (timeBounds)
-	    notes = [currentPart firstTimeTag: firstTimeTag lastTimeTag: lastTimeTag];
-	else {
-	    [currentPart sort];
-	    notes = [currentPart notesNoCopy];
-	}
-	if (notes)
-	    [notesInEachPart addObject: notes];
-	_MKWritePartDecl(currentPart, p, [currentPart infoNote]);
-    }
-    merge(notesInEachPart, allNotes);
-    
-    numOfNotes = [allNotes count];
-    p->_timeShift = timeShift;
-    
-    for (noteIndex = 0; noteIndex < numOfNotes; noteIndex++) {
-	currentNote = [allNotes objectAtIndex: noteIndex];
-	_MKWriteNote(currentNote, [currentNote part], p);
-    }
+    return scorefilePrintStream;
 }
 
-/* Read from scoreFile to receiver, creating new MKParts as needed
- and including only those notes between times firstTimeTag to
- time lastTimeTag, inclusive. Note that the TimeTags of the
- notes are not altered from those in the file. I.e.
- the first note's TimeTag will be greater than or equal to
- firstTimeTag.
- Merges contents of file with current MKParts when the MKPart
- name found in the file is the same as one of those in the
- receiver.
- Returns self or nil if error abort.  */
-static id readScorefile(MKScore *self, NSData *stream,
-			double firstTimeTag, double lastTimeTag, double timeShift,
-			NSString *fileName)
-{
-    register _MKScoreInStruct *p;
-    register id aNote;
-    id rtnVal;
-    unsigned int readPosition = 0;   // this is the top level.
-    IMP partAddNote = [MKGetPartClass() instanceMethodForSelector: @selector(addNote:)];
-    
-    p = _MKNewScoreInStruct(stream, self, self->scorefilePrintStream, NO, fileName, &readPosition);
-    if (!p)
-	return nil;
-    _MKParseScoreHeader(p);
-    lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
-    firstTimeTag = MIN(firstTimeTag, MK_ENDOFTIME);
-    do {
-	aNote = _MKParseScoreNote(p); /* not retained or autoreleased - so go careful */
-    } while (p->timeTag < firstTimeTag);
-    
-    while (p->timeTag <= lastTimeTag) {
-	if (aNote) {
-	    _MKNoteShiftTimeTag(aNote, timeShift);
-	    (*partAddNote)(p->part, @selector(addNote:), aNote);
-	}
-	aNote = _MKParseScoreNote(p);/* not retained or autoreleased - so go careful */
-	if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
-	    break;
-    }
-    
-    rtnVal = (p->_errCount == MAXINT) ? nil : self;
-    _MKFinishScoreIn(p);
-    return rtnVal;
-}
-
--setScorefilePrintStream:(NSMutableData *)aStream
-  /* Sets the stream to be used for Scorefile 'print' statement output. */
-{
-  scorefilePrintStream = aStream;
-  return self;
-}
-
--(NSMutableData *)scorefilePrintStream
-  /* Returns the stream used for Scorefile 'print' statement output. */
-{
-  return scorefilePrintStream;
-}
-
+/* Needed by scorefile parser  TODO should merge with setInfoNote: */
 -_setInfo:aInfo
-  /* Needed by scorefile parser  */
 {
   if (!info)
     info = [aInfo copy];
@@ -1526,13 +1481,11 @@ static id readScorefile(MKScore *self, NSData *stream,
   return self;
 }
 
-- setInfoNote: (MKNote *) aNote
-    /* Sets info, overwriting any previous info. aNote is copied. The old info,
-    if any, is freed. */
+/* Sets info, overwriting any previous info. aNote is copied. The old info, if any, is freed. */
+- (void) setInfoNote: (MKNote *) aNote
 {
     [info release];
     info = [aNote copy];
-    return self;
 }
 
 - (MKNote *) infoNote
@@ -1540,8 +1493,8 @@ static id readScorefile(MKScore *self, NSData *stream,
     return info;
 }
 
+/* combine notes into noteDurs for all MKParts */
 - combineNotes
-    /* combine notes into noteDurs for all MKParts */
 {
     unsigned numOfParts = [parts count], partIndex;
     
@@ -1551,10 +1504,11 @@ static id readScorefile(MKScore *self, NSData *stream,
     return self;
 }
 
+/* Returns a copy of the Array of MKParts in the receiver. The MKParts themselves are not copied.
+   Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
+   [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  
+ */
 - (NSMutableArray *) parts;
-    /* Returns a copy of the Array of MKParts in the receiver. The MKParts themselves are not copied.
-    Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
-    [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  */
 {
     return _MKLightweightArrayCopy(parts);
 }
@@ -1582,23 +1536,20 @@ static id readScorefile(MKScore *self, NSData *stream,
 
 static BOOL isUnarchiving = NO;
 
-- (id)initWithCoder:(NSCoder *)aDecoder
-  /* You never send this message directly.
-  Should be invoked via NXReadObject().
-          See write:. */
+/* You never send this message directly. Should be invoked via NXReadObject(). See write:. */
+- (id) initWithCoder: (NSCoder *) aDecoder
 {
-  NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
-  isUnarchiving = YES; /* Inhibit MKParts' mapping of noteTags. */
-
-  
-  if ([aDecoder versionForClassName: @"MKScore"] == VERSION2)
-    [aDecoder decodeValuesOfObjCTypes: "@@", &parts, &info];
-  /* Maps noteTags as represented in the archive file onto a set that is
-    unused in the current application. This insures that the integrity
-    of the noteTag is maintained. */
-  [parts makeObjectsPerformSelector:@selector(_mapTags:) withObject:tagTable];
-  isUnarchiving = NO;
-  return self;
+    NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
+    isUnarchiving = YES; /* Inhibit MKParts' mapping of noteTags. */
+    
+    if ([aDecoder versionForClassName: @"MKScore"] == VERSION2)
+	[aDecoder decodeValuesOfObjCTypes: "@@", &parts, &info];
+    /* Maps noteTags as represented in the archive file onto a set that is
+     unused in the current application. This insures that the integrity
+     of the noteTag is maintained. */
+    [parts makeObjectsPerformSelector: @selector(_mapTags:) withObject: tagTable];
+    isUnarchiving = NO;
+    return self;
 }
 
 - (NSString *) description

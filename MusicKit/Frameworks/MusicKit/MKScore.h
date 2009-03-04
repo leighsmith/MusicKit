@@ -520,6 +520,20 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 - (NSMutableArray *) parts;
 
 /*!
+  @brief Returns an NSArray of all MKNotes in all MKParts in the receiver.
+  @return Returns an autoreleased NSArray instance.
+ */
+- (NSArray *) notes;
+
+/*!
+  @brief Returns an NSArray of all the notes in the score which have a time tag between
+  the bounds.
+  @return Returns an autoreleased NSArray instance.
+*/
+- (NSArray *) notesBetweenFirstTimeTag: (double) firstTimeTag
+			   lastTimeTag: (double) lastTimeTag;
+
+/*!
  @brief Combine notes into noteDurs for all MKParts 
 */
 - combineNotes;
@@ -538,9 +552,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
  
   The receiver's previous info MKNote is removed and released.
   @param  aNote is an MKNote.
-  @return Returns an id.
 */
-- setInfoNote: (MKNote *) aNote;
+- (void) setInfoNote: (MKNote *) aNote;
 
 /*!
   @brief Returns the receiver's info MKNote.
@@ -551,9 +564,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 /*!
   @brief Sets the stream used by ScoreFile <b>print</b> statements to <b>aStream</b>.  
   @param  aStream is a NSMutableData instance.
-  @return Returns the receiver.
 */
-- setScorefilePrintStream: (NSMutableData *) aStream;
+- (void) setScorefilePrintStream: (NSMutableData *) aStream;
 
 /*!
   @brief Returns the receiver's ScoreFile <b>print</b> statement stream.
@@ -639,7 +651,6 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 /*!
   @brief This method allows overriding the file extensions used in writing and
   reading scorefiles files returned by <i>scorefileExtensions</i>.
-  @return Returns an NSArray of NSStrings.
  */
 + (void) setAlternativeScorefileExtensions: (NSArray *) otherScoreFileExtensions;
 
