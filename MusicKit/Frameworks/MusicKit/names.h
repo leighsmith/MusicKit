@@ -82,12 +82,13 @@ extern BOOL MKNameObject(NSString * name,id object);
   the same name.  However, a single object can have but one name at a
   time.  
    
-   <b>MKGetObjectName()</b> returns its argument's name, or NULL if it
+  <b>MKGetObjectName()</b> returns its argument's name, or NULL if it
   isn't named.  The returned value is read-only and shouldn't be freed by
   the caller.  
    
   @param  object is an id.
   @return Returns an NSString instance. If object is not found, returns NULL.
+  @see MKNameObject().
   @ingroup ObjNameFns
 */
 extern NSString *MKGetObjectName(id object);
@@ -105,11 +106,12 @@ extern NSString *MKGetObjectName(id object);
   @param  object is an id.
   @return Returns an id.
   @ingroup ObjNameFns
+  @see <b>MKNameObject()</b>.
 */
 extern id MKRemoveObjectName(id object);
 
 /*!
-  @brief Returns the first object in the name table that has the name <i>name.</i>  
+  @brief Returns the first object in the name table that has the name <i>name</i>. 
 
   The MusicKit provides a global naming mechanism that lets you identify
   and locate objects by name.  While names are primarily used in reading
@@ -120,6 +122,7 @@ extern id MKRemoveObjectName(id object);
    
   @param  name is an NSString instance.
   @return Returns an id.
+  @see MKNameObject().
   @ingroup ObjNameFns
 */
 extern id MKGetNamedObject(NSString *name);
@@ -182,8 +185,8 @@ extern void MKWritePitchNames(BOOL usePitchNames);
 
   <b>MKWriteKeyNumNames</b> controls how keyNum
   values are written to a scorefile.  If the argument is YES, the
-  parameter values are written as keyNum name constants such as "a4k".  If
-  it's NO,  key numbers are written as integers.
+  parameter values are written as keyNum name constants such as &ldquo;a4k&rdquo;.
+  If it's NO,  key numbers are written as integers.
   @param  useKeyNums is a BOOL.
   @see MKWritePitchNames().
   @ingroup ScorefileFns

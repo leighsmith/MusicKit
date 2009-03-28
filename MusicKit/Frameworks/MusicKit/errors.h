@@ -66,18 +66,68 @@
   messages that print to <b>stderr</b> if but asked.The trace messages are
   divided into eight categories, represented by the following codes:
      
-   <b>	Code	Value	Meaning</b>
-   	MK_TRACEORCHALLOC	1	DSP resource allocation
-   	MK_TRACEPARS	2	Application-defined parameters
-   	MK_TRACEDSP	4	DSP manipulation
-   	MK_TRACEMIDI	8	MIDI manipulation
-   	MK_TRACEPREEMPT	16	MKSynthPatch preemption
-   	MK_TRACESYNTHINS	32	MKSynthInstrument mechanations
-     	MK_TRACESYNTHPATCH	64	MKSynthPatch library messages
-     	MK_TRACEUNITGENERATOR	128	MKUnitGenerator library messages
-     	MK_TRACECONDUCTOR	256	Conductor time setting messages
-     	MK_TRACEDSPARRAYS	512	DSP array-setting messages
-     
+ <table border=1 cellspacing=2 cellpadding=0 align=center>
+ <thead>
+ <tr>
+ <th align=left>Code</th>
+ <th align=left>Value</th>
+ <th align=left>Meaning</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td align=left>MK_TRACEORCHALLOC</td>
+ <td align=left>1</td>
+ <td align=left>DSP resource allocation</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEPARS</td>
+ <td align=left>2</td>
+ <td align=left>Application-defined parameters</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEDSP</td>
+ <td align=left>4</td>
+ <td align=left>DSP manipulation</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEMIDI</td>
+ <td align=left>8</td>
+ <td align=left>MIDI manipulation</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEPREEMPT</td>
+ <td align=left>16</td>
+ <td align=left>MKSynthPatch preemption</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACESYNTHINS</td>
+ <td align=left>32</td>
+ <td align=left>MKSynthInstrument mechanations</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACESYNTHPATCH</td>
+ <td align=left>64</td>
+ <td align=left>MKSynthPatch library messages</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEUNITGENERATOR</td>
+ <td align=left>128</td>
+ <td align=left>MKUnitGenerator library messages</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACECONDUCTOR</td>
+ <td align=left>256</td>
+ <td align=left>Conductor time setting messages</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEDSPARRAYS</td>
+ <td align=left>512</td>
+ <td align=left>DSP array-setting messages</td>
+ </tr>
+ </tbody>
+ </table>
+ 
    To enable a set of messages, you pass a trace code to the
   <b>MKSetTrace()</b> function.  You can enable more than one set with a
   single function call by bitwise-or'ing the codes.   Clearing a trace is
@@ -323,21 +373,71 @@ extern unsigned MKSetTrace(int traceCode);
   @brief Turns off specified trace bit.
 
   To aid in debugging, the MusicKit is peppered with activity-tracing
-  messages that print to <b>stderr</b> if but asked.The trace messages are
+  messages that print to <b>stderr</b> if but asked. The trace messages are
   divided into eight categories, represented by the following codes:
      
-   <b>	Code	Value	Meaning</b>
-   	MK_TRACEORCHALLOC	1	DSP resource allocation
-   	MK_TRACEPARS	2	Application-defined parameters
-   	MK_TRACEDSP	4	DSP manipulation
-   	MK_TRACEMIDI	8	MIDI manipulation
-   	MK_TRACEPREEMPT	16	MKSynthPatch preemption
-   	MK_TRACESYNTHINS	32	MKSynthInstrument mechanations
-     	MK_TRACESYNTHPATCH	64	MKSynthPatch library messages
-     	MK_TRACEUNITGENERATOR	128	MKUnitGenerator library messages
-     	MK_TRACECONDUCTOR	256	Conductor time setting messages
-     	MK_TRACEDSPARRAYS	512	DSP array-setting messages
-     
+<table border=1 cellspacing=2 cellpadding=0 align=center>
+<thead>
+<tr>
+<th align=left>Code</th>
+<th align=left>Value</th>
+<th align=left>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align=left>MK_TRACEORCHALLOC</td>
+<td align=left>1</td>
+<td align=left>DSP resource allocation</td>
+</tr>
+<tr>
+<td align=left>MK_TRACEPARS</td>
+<td align=left>2</td>
+<td align=left>Application-defined parameters</td>
+</tr>
+<tr>
+<td align=left>MK_TRACEDSP</td>
+<td align=left>4</td>
+<td align=left>DSP manipulation</td>
+</tr>
+<tr>
+<td align=left>MK_TRACEMIDI</td>
+<td align=left>8</td>
+<td align=left>MIDI manipulation</td>
+</tr>
+<tr>
+<td align=left>MK_TRACEPREEMPT</td>
+<td align=left>16</td>
+<td align=left>MKSynthPatch preemption</td>
+</tr>
+<tr>
+<td align=left>MK_TRACESYNTHINS</td>
+<td align=left>32</td>
+<td align=left>MKSynthInstrument mechanations</td>
+</tr>
+<tr>
+<td align=left>MK_TRACESYNTHPATCH</td>
+<td align=left>64</td>
+<td align=left>MKSynthPatch library messages</td>
+</tr>
+<tr>
+<td align=left>MK_TRACEUNITGENERATOR</td>
+<td align=left>128</td>
+<td align=left>MKUnitGenerator library messages</td>
+</tr>
+<tr>
+<td align=left>MK_TRACECONDUCTOR</td>
+<td align=left>256</td>
+<td align=left>Conductor time setting messages</td>
+</tr>
+<tr>
+<td align=left>MK_TRACEDSPARRAYS</td>
+<td align=left>512</td>
+<td align=left>DSP array-setting messages</td>
+</tr>
+</tbody>
+</table>
+
    To enable a set of messages, you pass a trace code to the
   <b>MKSetTrace()</b> function.  You can enable more than one set with a
   single function call by bitwise-or'ing the codes.   Clearing a trace is
@@ -357,21 +457,71 @@ extern unsigned MKClearTrace(int traceCode);
   @brief Returns whether specified trace bit is on.
 
   To aid in debugging, the MusicKit is peppered with activity-tracing
-  messages that print to <b>stderr</b> if but asked.The trace messages are
+  messages that print to <b>stderr</b> if but asked. The trace messages are
   divided into eight categories, represented by the following codes:
      
-   <b>	Code	Value	Meaning</b>
-   	MK_TRACEORCHALLOC	1	DSP resource allocation
-   	MK_TRACEPARS	2	Application-defined parameters
-   	MK_TRACEDSP	4	DSP manipulation
-   	MK_TRACEMIDI	8	MIDI manipulation
-   	MK_TRACEPREEMPT	16	MKSynthPatch preemption
-   	MK_TRACESYNTHINS	32	MKSynthInstrument mechanations
-     	MK_TRACESYNTHPATCH	64	MKSynthPatch library messages
-     	MK_TRACEUNITGENERATOR	128	MKUnitGenerator library messages
-     	MK_TRACECONDUCTOR	256	Conductor time setting messages
-     	MK_TRACEDSPARRAYS	512	DSP array-setting messages
-     
+ <table border=1 cellspacing=2 cellpadding=0 align=center>
+ <thead>
+ <tr>
+ <th align=left>Code</th>
+ <th align=left>Value</th>
+ <th align=left>Meaning</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td align=left>MK_TRACEORCHALLOC</td>
+ <td align=left>1</td>
+ <td align=left>DSP resource allocation</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEPARS</td>
+ <td align=left>2</td>
+ <td align=left>Application-defined parameters</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEDSP</td>
+ <td align=left>4</td>
+ <td align=left>DSP manipulation</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEMIDI</td>
+ <td align=left>8</td>
+ <td align=left>MIDI manipulation</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEPREEMPT</td>
+ <td align=left>16</td>
+ <td align=left>MKSynthPatch preemption</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACESYNTHINS</td>
+ <td align=left>32</td>
+ <td align=left>MKSynthInstrument mechanations</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACESYNTHPATCH</td>
+ <td align=left>64</td>
+ <td align=left>MKSynthPatch library messages</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEUNITGENERATOR</td>
+ <td align=left>128</td>
+ <td align=left>MKUnitGenerator library messages</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACECONDUCTOR</td>
+ <td align=left>256</td>
+ <td align=left>Conductor time setting messages</td>
+ </tr>
+ <tr>
+ <td align=left>MK_TRACEDSPARRAYS</td>
+ <td align=left>512</td>
+ <td align=left>DSP array-setting messages</td>
+ </tr>
+ </tbody>
+ </table>
+ 
    To enable a set of messages, you pass a trace code to the
   <b>MKSetTrace()</b> function.  You can enable more than one set with a
   single function call by bitwise-or'ing the codes.   Clearing a trace is
@@ -382,7 +532,7 @@ extern unsigned MKClearTrace(int traceCode);
 
   @param  traceCode is an int.
   @return Returns a BOOL.
-  @see MKSetTrace().
+  @see <b>MKSetTrace()</b>.
   @ingroup Tracing
 */
 extern BOOL MKIsTraced(int traceCode);
@@ -412,6 +562,9 @@ extern void MKSetScorefileParseErrorAbort(int threshholdCount);
   @brief Sets function to be used when MKError() and MKErrorCode() are called.
 
   These functions define the MusicKit's error handling mechanism. 
+  Due to the requirements of real-time, the MusicKit uses a different 
+  mechanism from that of the Application Kit to do error handling. The 
+  following functions implement that mechanism.
   <b>MKError()</b> is used to signal an error.  It calls the current Music
   Kit error function, set through <b>MKSetErrorProc()</b>, to which it
   passes the single argument <i>msg</i>.  If the user hasn't declared an
@@ -421,34 +574,28 @@ extern void MKSetScorefileParseErrorAbort(int threshholdCount);
   pointer to the current MusicKit error stream.  Note that you
   <i>shouldn't</i> use <b>stderr</b> as the error stream if you're running
   a separate-threaded performance.
+  
+  Note that it is not guaranteed to be safe to NS_RAISE an error in any 
+  performance-oriented class. 
    
    A number of error codes represented by integer constants are provided
   by the MusicKit and listed in <b>&lt;MusicKit/errors.h&gt;</b>.  If the
   MusicKit itself generates an error, the global system variable
   <b>errno</b> is set to one of these error codes.  If you call
   <b>MKError()</b> from your application, <b>errno</b> isn't set. 
-  
+
+  If errProc is NULL, uses the default error proc, which writes to the 
+  MusicKit error NSMutableData (see MKSetErrorStream()). 
+  errProc takes one string argument. 
+  When the *errProc is called in response to a MusicKit error, errno is 
+  set to the MKErrno corresponding to the error. If *errProc is invoked in
+  response to an application-defined error (see MKError), errno is not
+  set; it's up to the application to set it, if desired. 
+
   @param errProc is a pointer to a function taking an NSString instance.
   @ingroup ErrorFns
 */
- /* Due to the requirements of real-time The MusicKit uses a different 
-    mechanism from that of the Application Kit to do error handling. The 
-    following functions implement that mechanism. 
-
-    Note that it is not guaranteed to be safe to NS_RAISE an error in any 
-    performance-oriented class. 
-   */
 extern void MKSetErrorProc(void (*errProc)(NSString *msg));
-    /*  
-       If errProc is NULL, uses the default error proc, which writes to the 
-       MusicKit error NSMutableData (see MKSetErrorStream()). 
-       errProc takes one string argument. 
-       When the *errProc is called in response to a MusicKit error, errno is 
-       set to the MKErrno corresponding to the error. If *errProc is invoked in
-       response to an application-defined error (see MKError), errno is not
-       set; it's up to the application to set it, if desired. 
-       */
-
 
 /*!
   @brief Calls the user's error procedure (aka function, set with MKSetErrorProc), if any, with 
@@ -465,7 +612,7 @@ extern void MKSetErrorProc(void (*errProc)(NSString *msg));
   <i>shouldn't</i> use <b>stderr</b> as the error stream if you're running
   a separate-threaded performance.
    
-   A number of error codes represented by integer constants are provided
+  A number of error codes represented by integer constants are provided
   by the MusicKit and listed in <b>&lt;MusicKit/errors.h&gt;</b>.  If the
   MusicKit itself generates an error, the global system variable
   <b>errno</b> is set to one of these error codes.  If you call
@@ -491,7 +638,7 @@ extern void MKError(NSString *msg);
   <i>shouldn't</i> use <b>stderr</b> as the error stream if you're running
   a separate-threaded performance.
    
-   A number of error codes represented by integer constants are provided
+  A number of error codes represented by integer constants are provided
   by the MusicKit and listed in <b>&lt;MusicKit/errors.h&gt;</b>.  If the
   MusicKit itself generates an error, the global system variable
   <b>errno</b> is set to one of these error codes.  If you call
@@ -504,12 +651,14 @@ extern void MKError(NSString *msg);
  
   @param  aStream is a NSMutableData instance. nil means stderr.
   @ingroup ErrorFns
+  @see <b>MKError()</b>.
 */
 extern void MKSetErrorStream(NSMutableData *aStream);
 
 /*!
   @brief Returns the MusicKit error stream. This is, by default, stderr.
   @return Returns an NSMutableData instance.
+  @see <b>MKError()</b>.
   @ingroup ErrorFns
 */
 extern NSMutableData *MKErrorStream(void);

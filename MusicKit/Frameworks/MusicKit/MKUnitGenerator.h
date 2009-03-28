@@ -590,23 +590,16 @@ typedef struct _MKUGArgStruct {
   MKUnitGenerator subclass.  The arguments to all four functions are
   similar:
    
-   &#183;	<i>ug</i> is the MKUnitGenerator object that represents the
-  DSP unit generator; because of the nature of these functions, <i>ug</i>
-  can only be <b>self</b>.
-   
-   &#183;	<i>argNum</i> is the integer that identifies the unit
-  generator argument that you wish to affect. 
-   
-   <i>&#183;</i>	The final argument<i> </i>is (or gives the address of)
-  the value that you wish to set the unit generator argument to.
-     
-   <b>MKSetUGAddressArg()</b> and <b>MKSetUGAddressArgToInt()</b> are
-  used to set address-valued unit generator arguments.  The former sets
-  the argument to the DSP address of <i>obj</i>, which must be a SynthData
-  object.  The latter function sets it directly as the value of its
-  <i>address</i> argument.  The DSPAddress data type is defined as an
-  <b>int</b>.
-   
+ <ul>
+ <li><i>ug</i> is the MKUnitGenerator object that represents the
+ DSP unit generator; because of the nature of these functions, <i>ug</i>
+ can only be <b>self</b>.</li>
+ <li><i>argNum</i> is the integer that identifies the unit
+ generator argument that you wish to affect.</li>
+ <li>The final argument is (or gives the address of)
+ the value that you wish to set the unit generator argument to.</li>
+ </ul>
+    
    <b>MKSetUGDatumArg()</b> and <b>MKSetUGDatumArgLong()</b> set
   data-valued unit generator arguments.  The former takes a DSPDatum
   (<b>int</b>) directly and sets the unit generator argument to the
@@ -614,10 +607,12 @@ typedef struct _MKUGArgStruct {
   values; it takes, as the <i>value</i> argument, a pointer to a
   DSPLongDatum value.  DSPLongDatum is defined as a DSPFix48 structure:
      
-   <tt>	typedef struct _DSPFix48 {</tt>
-   <tt>		int high24;		     // High order 24 bits, right justified</tt>
-   <tt>		int low24;		     // Low order 24 bits, right justified</tt>
-   <tt>	} DSPFix48;</tt>
+<pre>
+   typedef struct _DSPFix48 {
+   	int high24;		     // High order 24 bits, right justified
+   	int low24;		     // Low order 24 bits, right justified
+   } DSPFix48;
+</pre>
    
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
@@ -625,7 +620,10 @@ typedef struct _MKUGArgStruct {
   @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  value is a DSPDatum.
-  @return Returns an id.
+  @return If <i>argNum</i> is out of bounds, or if
+ an address-setting function is used to set a data argument (or vice versa), an
+ error is generated and nil is returned; otherwise the <i>ug</i> argument,
+ which is always self, is returned.
 */
 id MKSetUGDatumArg(MKUnitGenerator *ug, unsigned argNum, DSPDatum value);
 
@@ -637,23 +635,16 @@ id MKSetUGDatumArg(MKUnitGenerator *ug, unsigned argNum, DSPDatum value);
   MKUnitGenerator subclass.  The arguments to all four functions are
   similar:
    
-   &#183;	<i>ug</i> is the MKUnitGenerator object that represents the
-  DSP unit generator; because of the nature of these functions, <i>ug</i>
-  can only be <b>self</b>.
-   
-   &#183;	<i>argNum</i> is the integer that identifies the unit
-  generator argument that you wish to affect. 
-   
-   <i>&#183;</i>	The final argument<i> </i>is (or gives the address of)
-  the value that you wish to set the unit generator argument to.
-     
-   <b>MKSetUGAddressArg()</b> and <b>MKSetUGAddressArgToInt()</b> are
-  used to set address-valued unit generator arguments.  The former sets
-  the argument to the DSP address of <i>obj</i>, which must be a SynthData
-  object.  The latter function sets it directly as the value of its
-  <i>address</i> argument.  The DSPAddress data type is defined as an
-  <b>int</b>.
-   
+ <ul>
+ <li><i>ug</i> is the MKUnitGenerator object that represents the
+ DSP unit generator; because of the nature of these functions, <i>ug</i>
+ can only be <b>self</b>.</li>
+ <li><i>argNum</i> is the integer that identifies the unit
+ generator argument that you wish to affect.</li>
+ <li>The final argument is (or gives the address of)
+ the value that you wish to set the unit generator argument to.</li>
+ </ul>
+ 
    <b>MKSetUGDatumArg()</b> and <b>MKSetUGDatumArgLong()</b> set
   data-valued unit generator arguments.  The former takes a DSPDatum
   (<b>int</b>) directly and sets the unit generator argument to the
@@ -661,10 +652,12 @@ id MKSetUGDatumArg(MKUnitGenerator *ug, unsigned argNum, DSPDatum value);
   values; it takes, as the <i>value</i> argument, a pointer to a
   DSPLongDatum value.  DSPLongDatum is defined as a DSPFix48 structure:
      
-   <tt>	typedef struct _DSPFix48 {</tt>
-   <tt>		int high24;		     // High order 24 bits, right justified</tt>
-   <tt>		int low24;		     // Low order 24 bits, right justified</tt>
-   <tt>	} DSPFix48;</tt>
+<pre>
+   typedef struct _DSPFix48 {
+   	int high24;		     // High order 24 bits, right justified
+   	int low24;		     // Low order 24 bits, right justified
+   } DSPFix48;
+</pre>
    
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
@@ -672,7 +665,10 @@ id MKSetUGDatumArg(MKUnitGenerator *ug, unsigned argNum, DSPDatum value);
   @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  value is a DSPLongDatum *.
-  @return Returns an id.
+  @return If <i>argNum</i> is out of bounds, or if
+ an address-setting function is used to set a data argument (or vice versa), an
+ error is generated and nil is returned; otherwise the <i>ug</i> argument,
+ which is always self, is returned.
 */
 id MKSetUGDatumArgLong(MKUnitGenerator *ug, unsigned argNum, DSPLongDatum *value);
 
@@ -684,42 +680,33 @@ id MKSetUGDatumArgLong(MKUnitGenerator *ug, unsigned argNum, DSPLongDatum *value
   MKUnitGenerator subclass.  The arguments to all four functions are
   similar:
    
-   &#183;	<i>ug</i> is the MKUnitGenerator object that represents the
+  <ul>
+  <li><i>ug</i> is the MKUnitGenerator object that represents the
   DSP unit generator; because of the nature of these functions, <i>ug</i>
-  can only be <b>self</b>.
-   
-   &#183;	<i>argNum</i> is the integer that identifies the unit
-  generator argument that you wish to affect. 
-   
-   <i>&#183;</i>	The final argument<i> </i>is (or gives the address of)
-  the value that you wish to set the unit generator argument to.
-     
+  can only be <b>self</b>.</li>
+  <li><i>argNum</i> is the integer that identifies the unit
+  generator argument that you wish to affect.</li>
+  <li>The final argument is (or gives the address of)
+  the value that you wish to set the unit generator argument to.</li>
+  </ul>
+
    <b>MKSetUGAddressArg()</b> and <b>MKSetUGAddressArgToInt()</b> are
   used to set address-valued unit generator arguments.  The former sets
   the argument to the DSP address of <i>obj</i>, which must be a SynthData
   object.  The latter function sets it directly as the value of its
   <i>address</i> argument.  The DSPAddress data type is defined as an
   <b>int</b>.
-   
-   <b>MKSetUGDatumArg()</b> and <b>MKSetUGDatumArgLong()</b> set
-  data-valued unit generator arguments.  The former takes a DSPDatum
-  (<b>int</b>) directly and sets the unit generator argument to the
-  rightmost 24 bits of this value.  The latter is used to set 48-bit DSP
-  values; it takes, as the <i>value</i> argument, a pointer to a
-  DSPLongDatum value.  DSPLongDatum is defined as a DSPFix48 structure:
-     
-   <tt>	typedef struct _DSPFix48 {</tt>
-   <tt>		int high24;		     // High order 24 bits, right justified</tt>
-   <tt>		int low24;		     // Low order 24 bits, right justified</tt>
-   <tt>	} DSPFix48;</tt>
-   
+    
    If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
   taken as the value .
   @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  memoryObj is an MKSynthData.
-  @return Returns an id.
+  @return If <i>argNum</i> is out of bounds, or if
+ an address-setting function is used to set a data argument (or vice versa), an
+ error is generated and nil is returned; otherwise the <i>ug</i> argument,
+ which is always self, is returned.
 */
 id MKSetUGAddressArg(MKUnitGenerator *ug, unsigned argNum, id memoryObj);
 
@@ -731,16 +718,16 @@ id MKSetUGAddressArg(MKUnitGenerator *ug, unsigned argNum, id memoryObj);
   MKUnitGenerator subclass.  The arguments to all four functions are
   similar:
    
-   &#183;	<i>ug</i> is the MKUnitGenerator object that represents the
-  DSP unit generator; because of the nature of these functions, <i>ug</i>
-  can only be <b>self</b>.
-   
-   &#183;	<i>argNum</i> is the integer that identifies the unit
-  generator argument that you wish to affect. 
-   
-   <i>&#183;</i>	The final argument<i> </i>is (or gives the address of)
-  the value that you wish to set the unit generator argument to.
-     
+ <ul>
+ <li><i>ug</i> is the MKUnitGenerator object that represents the
+ DSP unit generator; because of the nature of these functions, <i>ug</i>
+ can only be <b>self</b>.</li>
+ <li><i>argNum</i> is the integer that identifies the unit
+ generator argument that you wish to affect.</li>
+ <li>The final argument is (or gives the address of)
+ the value that you wish to set the unit generator argument to.</li>
+ </ul>
+ 
    <b>MKSetUGAddressArg()</b> and <b>MKSetUGAddressArgToInt()</b> are
   used to set address-valued unit generator arguments.  The former sets
   the argument to the DSP address of <i>obj</i>, which must be a SynthData
@@ -748,25 +735,15 @@ id MKSetUGAddressArg(MKUnitGenerator *ug, unsigned argNum, id memoryObj);
   <i>address</i> argument.  The DSPAddress data type is defined as an
   <b>int</b>.
    
-   <b>MKSetUGDatumArg()</b> and <b>MKSetUGDatumArgLong()</b> set
-  data-valued unit generator arguments.  The former takes a DSPDatum
-  (<b>int</b>) directly and sets the unit generator argument to the
-  rightmost 24 bits of this value.  The latter is used to set 48-bit DSP
-  values; it takes, as the <i>value</i> argument, a pointer to a
-  DSPLongDatum value.  DSPLongDatum is defined as a DSPFix48 structure:
-     
-   <tt>	typedef struct _DSPFix48 {</tt>
-   <tt>		int high24;		     // High order 24 bits, right justified</tt>
-   <tt>		int low24;		     // Low order 24 bits, right justified</tt>
-   <tt>	} DSPFix48;</tt>
-   
-   If the argument identifed by <i>argNum</i> isn't allocated in the
+  If the argument identifed by <i>argNum</i> isn't allocated in the
   DSP's long memory, then only the <b>high24</b> field of the structure is
   taken as the value .
   @param  ug is a MKUnitGenerator instance.
   @param  argNum is an unsigned.
   @param  address is a DSPAddress.
-  @return Returns an id.
+  @return If <i>argNum</i> is out of bounds, or if an address-setting function is used to
+  set a data argument (or vice versa), an error is generated and nil is returned; otherwise
+  the <i>ug</i> argument, which is always self, is returned. 
 */
 id MKSetUGAddressArgToInt(MKUnitGenerator *ug, unsigned argNum, DSPAddress address);
 

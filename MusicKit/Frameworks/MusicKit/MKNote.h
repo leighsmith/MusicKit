@@ -1295,6 +1295,7 @@ extern unsigned MKNoteTag(void);
   @param n is an unsigned.
   @return Returns MAXINT (the maximum note tag value) if a sufficient number of
    note tags aren't available, an unlikely occurrence.
+  @see MKNoteTag().
 */
 extern unsigned MKNoteTags(unsigned n);
 
@@ -1306,7 +1307,8 @@ extern unsigned MKNoteTags(unsigned n);
   can be used to set a MKUnitGenerator's amplitude, for example.  The
   value is converted using the following formula:
    
-   	<i>amplitude</i> = 10.0 <i>dB</i>/20.0 
+   	<i>amplitude</i> = 10.0 <i>dB</i> / 20.0 
+
   For example, MKdB(-60) returns ca. .001 and MKdB(0.0) returns 1.0. 
   @param  dB is a double.
   @return Returns a double.
@@ -1327,7 +1329,7 @@ extern double MKdB(double dB);
   values and vice versa. This is primarily designed for scaling
   amplitude by a value derived from MIDI velocity.
    
-   <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
+  <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
   complementary<b></b> functions that provide a non-linear mapping of
   amplitude to MIDI values, as described below:
    
@@ -1356,6 +1358,7 @@ extern double MKdB(double dB);
 
   @param  midiValue is an int.
   @return Returns a double.
+  @see <b>MKAmpToMidi()</b>.
 */
 extern double MKMidiToAmp(int midiValue);
 
@@ -1366,14 +1369,14 @@ extern double MKMidiToAmp(int midiValue);
   These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa.
    
-   <b>MKMidiToAmpWithSensitivity()</b> and
-   <b>MKMidiToAmpAttenuationWithSensitivity()</b> are modifications of
-   the similarly named MIDI-to-amp and MIDI-to-ampAttenuation
-   functions in which an additional sensitivity value, nominally in
-   the range 0.0 to 1.0, is used to scale the product of the
-   conversion.
-   
-   The multiplicity of conversion functions is provided in deference
+  <b>MKMidiToAmpWithSensitivity()</b> and
+  <b>MKMidiToAmpAttenuationWithSensitivity()</b> are modifications of
+  the similarly named MKMidiToAmp and MKMidiToAmpAttenuation
+  functions in which an additional sensitivity value, nominally in
+  the range 0.0 to 1.0, is used to scale the product of the
+  conversion.
+  
+  The multiplicity of conversion functions is provided in deference
   to the nature of MIDI volume computation: Unlike DSP-bound amplitude
   values (specifically, the value of the MK_amp parameter), effective
   MIDI volume is a combination of a number of parameters, the primary
@@ -1386,6 +1389,7 @@ extern double MKMidiToAmp(int midiValue);
   value from or to be applied to one of MIDI controller parameters.
   @param midiValue is an int.  @param sensitivity is a double.
   @return Returns a double.
+  @see <b>MKAmpToMidi()</b>.
 */
 extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
 
@@ -1396,14 +1400,14 @@ extern double MKMidiToAmpWithSensitivity(int midiValue, double sensitivity);
   <b>These functions help you convert MusicKit amplitude values to MIDI
   values and vice versa.</b>
    
-   <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
+  <b>MKAmpToMidi()</b> and <b>MKMidiToAmp()</b> are
   complementary<b></b> functions that provide a non-linear mapping of
   amplitude to MIDI values, as described below:
    
  <b>MKAmpToMidi(</b>double <i>amp</i><b>)</b> returns 64 + (64 * log10 <i>amp</i>)
  <b>MKMidiToAmp(</b>int <i>midiValue</i><b>)</b> returns 10.0 (<i>midiValue</i> - 64) / 64
    
-   This provides a scale in which an amp of 0.0 yields a MIDI value of
+  This provides a scale in which an amp of 0.0 yields a MIDI value of
   0, 1.0 produces 64, and 10.0 gives 127.  
    
   The multiplicity of conversion functions is provided in deference to
@@ -1448,7 +1452,7 @@ extern int MKAmpToMidi(double amp);
 
   @param  midiValue is an int.
   @return Returns a double.
-  @see MKMidiToAmp(), MKAmpToMidi().
+  @see <b>MKMidiToAmp()</b>, <b>MKAmpToMidi()</b>, <b>MKAmpToMidi()</b>.
 */
 extern double MKMidiToAmpAttenuation(int midiValue);
 
@@ -1471,15 +1475,15 @@ extern double MKMidiToAmpAttenuation(int midiValue);
    	<b>MKMidiToAmp(</b>int <i>midiValue</i><b>)</b>	returns 
   10.0(<i>midiValue</i>-64)/64
    
-   This provides a scale in which an amp of 0.0 yields a MIDI value of
+  This provides a scale in which an amp of 0.0 yields a MIDI value of
   0, 1.0 produces 64, and 10.0 gives 127.  
    
-   <b>MKMidiToAmpWithSensitivity()</b> and <b>MKMidiToAmpAttenuationWithSensitivity()</b> 
-   are modifications of the similarly named MIDI-to-amp and MIDI-to-ampAttenuation
-   functions in which an additional sensitivity value, nominally in the range
-   0.0 to 1.0, is used to scale the product of the conversion. 
-   
-   The multiplicity of conversion functions is provided in deference to
+  <b>MKMidiToAmpWithSensitivity()</b> and <b>MKMidiToAmpAttenuationWithSensitivity()</b> 
+  are modifications of the similarly named MKMidiToAmp and MKMidiToAmpAttenuation
+  functions in which an additional sensitivity value, nominally in the range
+  0.0 to 1.0, is used to scale the product of the conversion. 
+  
+  The multiplicity of conversion functions is provided in deference to
   the nature of MIDI volume computation:  Unlike DSP-bound amplitude
   values (specifically, the value of the MK_amp parameter), effective MIDI
   volume is a combination of a number of parameters, the primary ones
@@ -1493,6 +1497,7 @@ extern double MKMidiToAmpAttenuation(int midiValue);
   @param  midiValue is an int.
   @param  sensitivity is a double.
   @return Returns a double.
+  @see <b>MKAmpToMidi()</b>.
 */
 extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensitivity);
 
@@ -1514,20 +1519,20 @@ extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensit
    	<b>MKMidiToAmp(</b>int <i>midiValue</i><b>)</b>	returns 
   10.0(<i>midiValue</i>-64)/64
    
-   This provides a scale in which an amp of 0.0 yields a MIDI value of
+  This provides a scale in which an amp of 0.0 yields a MIDI value of
   0, 1.0 produces 64, and 10.0 gives 127.  
    
-   <b>MKAmpAttenuationToMidi()</b> and <b>MKMidiToAmpAttenuation()</b>
+  <b>MKAmpAttenuationToMidi()</b> and <b>MKMidiToAmpAttenuation()</b>
   are similarly complementary, and the curve of the mapping is the same as
   in the foregoing, but the scale is attenuated by a factor of ten:  0.0
   maps to 0, 0.1 to 64, and 1.0 to 127. 
    
-   <b>MKMidiToAmpWithSensitivity()</b> and <b>MKMidiToAmpAttenuationWithSensitivity()</b>
-   are modifications of the similarly named MIDI-to-amp and MIDI-to-ampAttenuation functions
-   in which an additional sensitivity value, nominally in the range 0.0 to 1.0, is used to 
-   scale the product of the conversion. 
+  <b>MKMidiToAmpWithSensitivity()</b> and <b>MKMidiToAmpAttenuationWithSensitivity()</b>
+  are modifications of the similarly named MKMidiToAmp and MKMidiToAmpAttenuation functions
+  in which an additional sensitivity value, nominally in the range 0.0 to 1.0, is used to 
+  scale the product of the conversion. 
    
-   The multiplicity of conversion functions is provided in deference to
+  The multiplicity of conversion functions is provided in deference to
   the nature of MIDI volume computation:  Unlike DSP-bound amplitude
   values (specifically, the value of the MK_amp parameter), effective MIDI
   volume is a combination of a number of parameters, the primary ones
@@ -1539,6 +1544,7 @@ extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensit
   generate a value from or to be applied to one of MIDI controller parameters.
   @param  amp is a double.
   @return Returns an int.
+  @see MKAmpToMidi().
 */
 extern int MKAmpAttenuationToMidi(double amp);
 
@@ -1552,8 +1558,8 @@ extern int MKAmpAttenuationToMidi(double amp);
      printf([MKNote parNameForTag: i]);
 </pre>
   @return Returns an int.
-  @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
-  <b>MKIsNoDVal()</b>
+  @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, 
+  <b>MKIsNoDVal()</b>, <b>MKIsNoteParPresent()</b>, etc.
   @ingroup ParameterFns
  */
 extern int MKHighestPar(void);
@@ -1613,7 +1619,7 @@ while ((par = MKNextParameter(aNote, aState)) != MK_noPar) {
    
   @param  aNote is a MKNote instance.
   @return Returns a NSHashEnumerator.
-  @see <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
+  @see <b>MKIsNoteParPresent()</b>, <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
   <b>MKIsNoDVal()</b>
   @ingroup ParameterFns
 */
@@ -1639,7 +1645,7 @@ extern NSHashEnumerator *MKInitParameterIteration(MKNote *aNote);
   @param  aNote is a Note.
   @param  iterationState is a NSHashEnumerator *.
   @return Returns an int.
-  @see <b>MKInitParameterIteration()</b>, <b>MKGetNoteParAsDouble()</b>, 
+  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>, <b>MKGetNoteParAsDouble()</b>, 
        <b>MKGetNoteParAsInt()</b>, etc., <b>MKIsNoDVal()</b>
   @ingroup ParameterFns
 */
@@ -1677,22 +1683,52 @@ extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
    if either <i>aNote</i> is <b>nil</b> or <i>par</i> isn't a valid
    parameter identifier. 
 
-The <b>MKGetParAs...()</b> functions
+   The <b>MKGetParAs...()</b> functions
    return the<i></i> requested value, or <b>nil</b> if either <i>aNote</i>
    is <b>nil</b> of <i>par</i> isn't a valid parameter identifier.  If the
    parameter value hasn't been set, an indicative value is
    returned:
 
-  <b>Function	No-set return value</b>
-  MKGetNoteParAsInt()           MAXINT
-  MKGetNoteParAsDouble()	MK_NODVAL (check with <b>MKIsNoDVal()</b>)
-  MKGetNoteParAsString()	""
-  MKGetNoteParAsStringNoCopy()	""
-  MKGetNoteParAsEnvelope()	<b>nil</b>
-  MKGetNoteParAsWaveTable()	<b>nil</b>
-  MKGetNoteParAsObject()	<b>nil</b>
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
-  <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
+<table border=1 cellspacing=2 cellpadding=0 align=center>
+<thead>
+<tr>
+<th align=left>Function</th>
+<th align=left>No-set return value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align=left>MKGetNoteParAsInt()</td>
+<td align=left>MAXINT</td>
+</tr>
+<tr>
+<td align=left>MKGetNoteParAsDouble()</td>
+<td align=left>MK_NODVAL (check with <b>MKIsNoDVal()</b>)</td>
+</tr>
+<tr>
+<td align=left>MKGetNoteParAsString()</td>
+<td align=left>""</td>
+</tr>
+<tr>
+<td align=left>MKGetNoteParAsStringNoCopy()</td>
+<td align=left>""</td>
+</tr>
+<tr>
+<td align=left>MKGetNoteParAsEnvelope()</td>
+<td align=left><b>nil</b></td>
+</tr>
+<tr>
+<td align=left>MKGetNoteParAsWaveTable()</td>
+<td align=left><b>nil</b></td>
+</tr>
+<tr>
+<td align=left>MKGetNoteParAsObject()</td>
+<td align=left><b>nil</b></td>
+</tr>
+</tbody>
+</table>
+
+  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>, <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>.
 */
 extern id MKSetNoteParToDouble(MKNote *aNote, int par, double value);
 
@@ -1718,7 +1754,7 @@ extern id MKSetNoteParToDouble(MKNote *aNote, int par, double value);
   @param  aNote is a MKNote isntance.
   @param  par is an int.
   @param  value is an int.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKSetNoteParToInt(MKNote *aNote, int par, int value);
@@ -1745,7 +1781,7 @@ extern id MKSetNoteParToInt(MKNote *aNote, int par, int value);
   @param  aNote is a MKNote instance.
   @param  par is an int.
   @param  value is a NSString.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKSetNoteParToString(MKNote *aNote, int par, NSString *value);
@@ -1772,7 +1808,7 @@ extern id MKSetNoteParToString(MKNote *aNote, int par, NSString *value);
   @param  aNote is an MKNote instance.
   @param  par is an int.
   @param  envObj is an MKEnvelope instance.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKSetNoteParToEnvelope(MKNote *aNote, int par, id envObj);
@@ -1799,7 +1835,7 @@ extern id MKSetNoteParToEnvelope(MKNote *aNote, int par, id envObj);
   @param  aNote is an MKNote instance.
   @param  par is an int.
   @param  waveObj is a MKWaveTable instance.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKSetNoteParToWaveTable(MKNote *aNote, int par, id waveObj);
@@ -1826,7 +1862,7 @@ extern id MKSetNoteParToWaveTable(MKNote *aNote, int par, id waveObj);
   @param  aNote is a MKNote instance.
   @param  par is an int.
   @param  anObj is an id.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
@@ -1868,6 +1904,7 @@ extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
   MKGetNoteParAsObject()	<b>nil</b>
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
+  @see MKSetNoteParToDouble().
 */
 extern double MKGetNoteParAsDouble(MKNote *aNote, int par);
 
@@ -1893,7 +1930,7 @@ extern double MKGetNoteParAsDouble(MKNote *aNote, int par);
   @param  aNote is a MKNote instance.
   @param  par is an int.
   @return Returns an integer.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern int MKGetNoteParAsInt(MKNote *aNote, int par);
@@ -1909,7 +1946,7 @@ extern int MKGetNoteParAsInt(MKNote *aNote, int par);
      
    is the same as the message:
    
-   <tt><b>[aNote setPar:MK_freq toDouble:440.0] </b></tt>
+   <tt><b>[aNote setPar:MK_freq toDouble:440.0]</b></tt>
      
    As ever, calling a function is somewhat faster than sending a
   message, thus you may want to use these functions, rather than the
@@ -1920,7 +1957,7 @@ extern int MKGetNoteParAsInt(MKNote *aNote, int par);
   @param  aNote is a Note.
   @param  par is an int.
   @return Returns an NSString instance.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern NSString *MKGetNoteParAsString(MKNote *aNote, int par);
@@ -1946,7 +1983,7 @@ extern NSString *MKGetNoteParAsString(MKNote *aNote, int par);
   regarding the operations of these functions.
   @param  aNote is a MKNote instance.
   @param  par is an int.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote, int par);
@@ -2000,7 +2037,7 @@ extern id MKGetNoteParAsEnvelope(MKNote *aNote, int par);
   @param  aNote is a MKNote instance.
   @param  par is an int.
   @return Returns an MKWaveTable instance.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKGetNoteParAsWaveTable(MKNote *aNote, int par);
@@ -2027,7 +2064,7 @@ extern id MKGetNoteParAsWaveTable(MKNote *aNote, int par);
   @param  aNote is a Note.
   @param  par is an int.
   @return Returns an id.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
   <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
 */
 extern id MKGetNoteParAsObject(MKNote *aNote, int par);

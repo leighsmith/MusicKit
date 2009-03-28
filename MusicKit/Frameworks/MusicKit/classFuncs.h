@@ -58,6 +58,7 @@ extern id MKGetNoteClass(void);
   @param  partSubclass is a MKPart instance.
   @return <b>MKSet<i>Class</i>Class()</b> returns NO if the argument isn't a
    subclass of <b><i>Class</i></b>; otherwise it returns YES.
+  @see <b>MKSetNoteClass()</b>.
 */
 extern BOOL MKSetPartClass(id partSubclass);
 
@@ -74,8 +75,8 @@ extern BOOL MKSetPartClass(id partSubclass);
      
   @param  envelopeSubclass is a MKEnvelope instance.
   @return <b>MKSet<i>Class</i>Class()</b> returns NO if the argument isn't a
- subclass of <b><i>Class</i></b>; otherwise it returns YES.
-
+  subclass of <b><i>Class</i></b>; otherwise it returns YES.
+  @see <b>MKSetNoteClass()</b>.
 */
 extern BOOL MKSetEnvelopeClass(id envelopeSubclass);
 
@@ -93,6 +94,7 @@ extern BOOL MKSetEnvelopeClass(id envelopeSubclass);
   @param  aPartialsSubclass is a MKPartials instance.
   @return <b>MKSet<i>Class</i>Class()</b> returns NO if the argument isn't a
   subclass of <b><i>Class</i></b>; otherwise it returns YES.
+  @see <b>MKSetNoteClass()</b>.
 */
 extern BOOL MKSetPartialsClass(id aPartialsSubclass);
 
@@ -110,6 +112,7 @@ extern BOOL MKSetPartialsClass(id aPartialsSubclass);
   @param  aSamplesSubclass is a MKSamples.
   @return <b>MKSet<i>Class</i>Class()</b> returns NO if the argument isn't a
   subclass of <b><i>Class</i></b>; otherwise it returns YES.
+  @see <b>MKSetNoteClass()</b>.
 */
 extern BOOL MKSetSamplesClass(id aSamplesSubclass);
 
@@ -127,6 +130,7 @@ extern BOOL MKSetSamplesClass(id aSamplesSubclass);
  The <b>MKGet<i>Class</i>Class()</b> functions return the requested
   classes as set through the functions above.
  @return Returns an id.
+ @see MKSetNoteClass().
  */
 extern id MKGetPartClass(void);
 
@@ -143,6 +147,7 @@ extern id MKGetPartClass(void);
  
  The <b>MKGet<i>Class</i>Class()</b> functions return the requested
  classes as set through the functions above.
+ @see MKSetNoteClass().
  @return Returns an id.
  */
 extern id MKGetEnvelopeClass(void);
@@ -161,6 +166,7 @@ extern id MKGetEnvelopeClass(void);
  The <b>MKGet<i>Class</i>Class()</b> functions return the requested
  classes as set through the functions above.
  @return Returns an id.
+ @see <b>MKSetNoteClass()</b>.
  */
 extern id MKGetPartialsClass(void);
 
@@ -178,6 +184,7 @@ extern id MKGetPartialsClass(void);
  The <b>MKGet<i>Class</i>Class()</b> functions return the requested
  classes as set through the functions above.
  @return Returns an id.
+ @see <b>MKSetNoteClass()</b>.
  */
 extern id MKGetSamplesClass(void);
 

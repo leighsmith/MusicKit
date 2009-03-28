@@ -48,7 +48,7 @@
 /*!
   @brief Returns the special NaN that the MusicKit uses to signal "no value".
 
-  <b>A number of MusicKit functions and methods</b> query for and return
+  A number of MusicKit functions and methods query for and return
   <b>double</b>-valued quantities, such as the values of parameters and
   time tags.  By convention, the value MK_NODVAL is returned if the
   queried-for value hasn't been set; however, you can't test for this
@@ -62,6 +62,7 @@
   <b>double</b>-valued quantity hasn't been set.  For convenience,
   MK_NODVAL is defined as this function.  
   @return Returns an int.
+  @see MKIsNoDVal().
   @ingroup NoDValFns
 */
 extern inline double MKGetNoDVal(void)
@@ -75,7 +76,7 @@ extern inline double MKGetNoDVal(void)
 /*!
   @brief Compares value to see if it is the special NaN that the MusicKit uses to signal "no value".
 
-  <b>A number of MusicKit functions and methods</b> query for and return
+  A number of MusicKit functions and methods query for and return
   <b>double</b>-valued quantities, such as the values of parameters and
   time tags.  By convention, the value MK_NODVAL is returned if the
   queried-for value hasn't been set; however, you can't test for this

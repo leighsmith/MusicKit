@@ -400,6 +400,7 @@ typedef enum {
   application; it's current value is retrieved through
   <b>MKGetPreemptDuration()</b>. 
   @return Returns the preempt duration.
+  @see <b>MKSetPreemptDuration()</b>.
 */
 extern double MKGetPreemptDuration(void);
 

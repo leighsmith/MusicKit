@@ -120,8 +120,7 @@ configure the MIDI instrument).
   pitch arguments.
   @param  keyNum is an int.
   @return Returns an NSString object containing the pitch name or an empty string
-   if the key number argument  is outside its legitimate
-   range.
+   if the key number argument  is outside its legitimate range.
   @see <b>MKWritePitchNames()</b>, <b>MKWriteKeyNumNames()</b>
 */
 + (NSString *) pitchNameForKeyNum: (int) keyNum;
@@ -132,10 +131,10 @@ configure the MIDI instrument).
   Returns the frequency that corresponds to the given key number,
   based upon the mapping of key numbers to frequencies
   in the <i>installed tuning system</i> (see the MKTuningSystem class
-  description for more information on the instralled tuning system).  
+  description for more information on the installed tuning system).  
 
-  If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
-  to check for MK_NODVAL).  The value returned by this method is the same
+  If <i>aKeyNum</i> is out of bounds (less than 0 or greater than 127), returns MK_NODVAL
+  (Use MKIsNoDVal() to check for MK_NODVAL).  The value returned by this method is the same
   value as <i>aKeyNum</i>'s analogous pitch variable.
  @param  aKeyNum is a MKKeyNum.
  @return Returns a double.
@@ -160,6 +159,18 @@ configure the MIDI instrument).
 /*!
   @brief Returns keyNum (pitch index) of closest pitch variable to the specified frequency.
   
+  Returns the key number that most closely corresponds to the given frequency.  The amount of
+  pitch bend needed to temper the pitch of the key number in order to match the
+  actual frequency is returned by reference in <i>bendPtr</i>.  This value is
+  computed using the <i>sensitivity</i> argument as the number of semitones by
+  which the key number is tempered given a maximum pitch bend; in other words, you
+  supply the maximum pitch bend by passing in a <i>sensitivity</i> value, and the
+  function returns, in <i>bendPtr</i>, the amount of the bend that's needed.  The
+  value of <i>bendPtr</i> is a 14-bit MIDI pitch bend number; you would use it to
+  set the value of a MKNote's MK_pitchBend parameter (assuming that you use
+  <i>sensitivity</i> as value of the MKNote's MK_pitchBendSensitivity
+  parameter).
+
   Sensitivity is interpreted such that with a sensitivity of 1.0, 
   a pitch bend of 0 gives a maximum negative displacement of a semitone
   and a bend of 0x3fff gives a maximum positive displacement of a semitone.
@@ -169,6 +180,7 @@ configure the MIDI instrument).
   @param bendPtr If bendPtr is not NULL, *bendPtr is set to the bend needed to 
    get <i>freq</i> in the context of the specified pitch bend sensitivity.
   @param sensitivity The pitch bend sensitivity.
+  @see <b>+freqForKeyNum:</b>.
  */
 + (MKKeyNum) keyNumForFreq: (double) freq
 	       pitchBentBy: (int *) bendPtr
@@ -279,19 +291,20 @@ configure the MIDI instrument).
 /*!
   @brief Transpose a frequency up by the specified number of semitones. 
 
-   <b>MKTranspose()</b> returns the frequency that results from
+  <b>MKTranspose()</b> returns the frequency that results from
   transposing <i>freq</i> by the specified number of semitones.  A
   negative <i>semitones</i> value transposes down; a fractional value can
   be used to transpose by less than a semitone.  The transposition
   afforded by this function is always in twelve-tone equal-temperament,
   regardless of the installed tuning system, as computed by the formula
      
-   	result = <i>freq</i> * 2 <i>semitones</i>/12.0 
+   	result = <i>freq</i> * 2 <i>semitones</i> / 12.0 
    
   @param freq Starting frequency in Hz.
   @param semiTonesUp The number of 12 tone equal tempered semitones to transpose freq upwards.
   A negative value will transpose the note down.
   @return Returns a double.
+  @see <b>+freqForKeyNum:</b>.
 */
 double MKTranspose(double freq, double semiTonesUp);
 
@@ -308,6 +321,7 @@ double MKTranspose(double freq, double semiTonesUp);
   @param pitchBend A MIDI pitch bend value, interpreted according to sensitivity.
   @param sensitivity Sensitivity is in semitones.
   @return Returns the new frequency in Hertz.
+  @see MKKeyNumToFreq().
  */
 double MKAdjustFreqWithPitchBend(double freq, int pitchBend, double sensitivity);
 
