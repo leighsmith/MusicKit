@@ -13,31 +13,10 @@
 #  purposes so long as the author attribution and this copyright message remains intact
 #  and accompanies all derived code.
 
-# Modification history:
-# $Log$
-# Revision 1.5  2003/06/01 20:36:16  leighsmith
-# Added changes suggested by Matt Rice
-#
-# Revision 1.4  2002/05/09 12:01:56  sbrandon
-# added support for rpm creation
-#
-# Revision 1.3  2001/11/08 21:40:27  sbrandon
-# added the new DSPerror_gnustep.m
-#
-# Revision 1.2  2001/11/07 13:47:38  sbrandon
-# - A number of changes to support GNUstep compilation on Win32. Primary change
-#   is that it now compiles as a library rather than a framework due to
-#   inclomplete framework support in GNUstep on Win32.
-#
-# Revision 1.1  2001/05/12 09:05:25  sbrandon
-# - basic makefile for GNUstep platforms. Note that framework.make in GNUstep
-#   currently needs a small patch to allow the making of frameworks with no
-#   ObjC classes - this should be fixed soon (e-mail me for patch if necessary)
-#
 #
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
+GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 #GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 

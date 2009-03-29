@@ -16,7 +16,7 @@
 # See the public CVS logs for the modification history via http://www.musickit.org
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
+GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 

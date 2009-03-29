@@ -1,30 +1,18 @@
- 
 #
-#  examples makefile for the GNUstep Base Library
+#   $Id$
+#   Defined In: The MusicKit
 #
-#  Copyright (C) 1997 Free Software Foundation, Inc.
+#  Description:
+#    Makefile for example1
 #
-#  Written by:	Scott Christley <scottc@net-community.com>
+#  Original Author: Leigh M. Smith
 #
-#  This file is part of the GNUstep Base Library.
-#
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Library General Public
-#  License as published by the Free Software Foundation; either
-#  version 2 of the License, or (at your option) any later version.
-#
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
-#  Library General Public License for more details.
-#
-#  You should have received a copy of the GNU Library General Public
-#  License along with this library; if not, write to the Free
-#  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-#
+#  Permission is granted to use and modify this code for commercial and non-commercial
+#  purposes so long as the author attribution and this copyright message remains intact
+#  and accompanies all derived code.
 
 # Install into the system root by default
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
+GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 

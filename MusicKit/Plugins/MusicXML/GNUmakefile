@@ -13,7 +13,7 @@
 #  commercial purposes so long as the author attribution and this copyright
 #  message remains intact and accompanies all derived code.
 
-GNUSTEP_INSTALLATION_DIR=$(GNUSTEP_LOCAL_ROOT)
+GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
