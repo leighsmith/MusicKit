@@ -1601,6 +1601,9 @@ extern void MKSetPreemptDuration(double seconds);
 */
 - setDefaultSoundOut;
 
+/*!
+ @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities </b>method.
+ */
 #define MK_nextCompatibleDSPPort 1
 #define MK_hostSoundOut (1<<1)
 #define MK_serialSoundOut (1<<2)

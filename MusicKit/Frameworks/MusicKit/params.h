@@ -74,16 +74,16 @@ typedef enum _MKPars {
                            synthesis as a substitute for freq. Takes a 
                            MKKeyNum value. */
                   
-    MK_velocitySensitivity,
-    MK_afterTouchSensitivity,
-    MK_modWheelSensitivity,
-    MK_breathSensitivity,
-    MK_footSensitivity,
-    MK_portamentoSensitivity,
-    MK_balanceSensitivity,
-    MK_panSensitivity,
-    MK_expressionSensitivity,
-    MK_pitchBendSensitivity,
+    MK_velocitySensitivity,   /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_afterTouchSensitivity, /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_modWheelSensitivity,   /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_breathSensitivity,     /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_footSensitivity,       /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_portamentoSensitivity, /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_balanceSensitivity,    /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_panSensitivity,        /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_expressionSensitivity, /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
+    MK_pitchBendSensitivity,  /*!< Specifies sensitivity of SynthPatches to various MIDI parameters. */
 
     /* The following are basic synthesis parameters, which should be 
        supported by all MKSynthPatch classes, if possible.  */ 
@@ -182,12 +182,14 @@ typedef enum _MKPars {
        supported by some MKSynthPatch classes.  Note that there are several
        alternative ways to use envelopes, among them:
        
-       * Specify the desired values directly as the y values of the envelope.  
-       * Do the same, scaling by a normalized constant scaler
-       * Do the same, adding a constant to the results.
-       * Normalize the envelope values, and multiply times a constant scaler.
-       * Do the same, adding a constant to the results. 
-       * Use the envelope to interpolate between two specific values.
+     <ul>
+       <li>Specify the desired values directly as the y values of the envelope.</li>  
+       <li>Do the same, scaling by a normalized constant scaler.</li>
+       <li>Do the same, adding a constant to the results.</li>
+       <li>Normalize the envelope values, and multiply times a constant scaler.</li>
+       <li>Do the same, adding a constant to the results.</li>
+       <li>Use the envelope to interpolate between two specific values.</li>
+     </ul>
       
        The MKSynthPatches provided with the MusicKit allow all of the above 
        situations for parameters which support envelopes, depending on what

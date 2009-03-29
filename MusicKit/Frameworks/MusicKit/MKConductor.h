@@ -425,7 +425,7 @@ extern int MKGetDeltaTMode(void);
 extern double MKSetTime(double newTime);
 
 /*!
-  @defgroup Create and manipulate MKConductor message requests.
+  @defgroup ConductorFns Create and manipulate MKConductor message requests.
  */
 /*@{*/
 /*!
@@ -446,6 +446,7 @@ extern double MKSetTime(double newTime);
   @param  destinationObject is the recipient of the message.
   @param  argCount is the number of arguments to the selector followed by the arguments themselves separated by commas.
   @return Return <i>NULL</i> if argCount is greater than 2.
+  @ingroup ConductorFns
 */
 extern MKMsgStruct 
   *MKNewMsgRequest(double timeOfMsg, SEL whichSelector, id destinationObject, int argCount, ...);
@@ -477,6 +478,7 @@ extern MKMsgStruct
   @param  aMsgStructPtr is a MKMsgStruct.
   @param  conductor is an id.
   @see <b>MKNewMsgRequest()</b>.
+  @ingroup ConductorFns
 */
 extern void MKScheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor);
 
@@ -504,6 +506,7 @@ extern void MKScheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor);
   @param  aMsgStructPtr is a MKMsgStruct *.
   @return Always returns NULL.
   @see MKNewMsgRequest().
+  @ingroup ConductorFns
 */
 extern MKMsgStruct *MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr);
 
@@ -529,6 +532,7 @@ extern MKMsgStruct *MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr);
   @param  argCount is an int.
   @return Returns <i>NULL if argCount</i> is greater than 2.
   @see <b>MKNewMsgRequest()</b>.
+  @ingroup ConductorFns
 */
 extern MKMsgStruct *
   MKRescheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor,
@@ -569,6 +573,7 @@ extern MKMsgStruct *
   @param  newTimeOfMsg is a double.
   @return Returns a MKMsgStruct *.
   @see <b>MKNewMsgRequest()</b>.
+  @ingroup ConductorFns
 */
 extern MKMsgStruct *MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr, double newTimeOfMsg);
 /*@}*/

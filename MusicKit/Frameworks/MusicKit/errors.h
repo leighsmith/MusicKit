@@ -63,7 +63,7 @@
   @brief Turns on specified trace bit.
 
   To aid in debugging, the MusicKit is peppered with activity-tracing
-  messages that print to <b>stderr</b> if but asked.The trace messages are
+  messages that print to <b>stderr</b> if but asked. The trace messages are
   divided into eight categories, represented by the following codes:
      
  <table border=1 cellspacing=2 cellpadding=0 align=center>
@@ -163,14 +163,13 @@
   insufficient DSP resources.  As a MKSynthPatch's MKUnitGenerators are
   connected, the following message is printed:
    
-   	<tt>"allocSynthPatch connectsContents of <i>MKSynthPatchClass_SynthPatchId</i></tt>"
+    <tt>"allocSynthPatch connectsContents of <i>MKSynthPatchClass_SynthPatchId</i>"</tt>
    
    When a MKSynthPatch is deallocated and when it's freed, respectively,
   the following are printed:
    
-   	<tt>"Returning <i>MKSynthPatchClass_SynthPatchId</i> to avail
-  pool."</tt>
-   <tt>	"Freeing <i>MKSynthPatchClass_SynthPatchId</i>"</tt>
+    <tt>"Returning <i>MKSynthPatchClass_SynthPatchId</i> to avail pool."</tt>
+    <tt>"Freeing <i>MKSynthPatchClass_SynthPatchId</i>"</tt>
      
    A MKUnitGenerator can be allocated without reference to other
   MKUnitGenerators, or it can be positioned before, after, or between
@@ -186,12 +185,11 @@
   allocated DSP resources are given:
    
   <tt>"Reloc: pLoop <i>address</i>, xArg <i>address</i>, yArg <i>address</i>, lArg <i>address</i>,</tt>
-   <tt>		xData <i>address</i>, yData <i>address</i>, pSubr <i>address</i>"</tt>
-   <tt>	"Reso: pLoop <i>size</i>, xArg <i>size</i>, yArg <i>size</i>, lArg <i>size</i>, xData <i>size</i>,</tt>
-   <tt>		yData <i>size</i>, pSubr <i>size</i>, time <i>orchestraLoopDuration</i>"</tt>
+  <tt>		xData <i>address</i>, yData <i>address</i>, pSubr <i>address</i>"</tt>
+  <tt>"Reso: pLoop <i>size</i>, xArg <i>size</i>, yArg <i>size</i>, lArg <i>size</i>, xData <i>size</i>,</tt>
+  <tt>		yData <i>size</i>, pSubr <i>size</i>, time <i>orchestraLoopDuration</i>"</tt>
    
-   As the MKUnitGenerator search (or allocation) succeeds or fails, one
-  of the following is printed:
+   As the MKUnitGenerator search (or allocation) succeeds or fails, one of the following is printed:
    
    <tt>"allocUnitGenerator returns</tt> <tt><i>UGClass_UGid</i>"</tt>
    <tt>"Allocation failure: Can't allocate before specified ug."</tt>
@@ -225,6 +223,7 @@
    <tt>"No unreferenced shared data found."</tt>
    
    <b>MK_TRACEDSP</b>
+ 
    The DSP-trace messages give you details of how the DSP is being used.
    For example, when a MKUnitGenerator is allocated, the following message
   is printed among the search-build-return messages given above:
@@ -281,7 +280,7 @@
    
    Clearing a SynthData's memory produces the following:
      
-   <tt>	"Clearing <i>memorySegment</i> <i>memNum</i> [<i>lowAddr-highAddr</i>]."</tt>
+   <tt>"Clearing <i>memorySegment</i> <i>memNum</i> [<i>lowAddr-highAddr</i>]."</tt>
    
    DSP manipulations that are performed as an atomic unit are bracketed
   by the messages:
@@ -290,6 +289,7 @@
    <tt>"end orchestra atomic unit.&gt;&gt;&gt; "</tt>
    
    <b>MK_TRACESYNTHINS</b>
+ 
    The MKSynthInstrument messages are printed when a MKSynthInstrument
   object receives MKNotes, and as it finds or creates MKSynthPatches to
   realize these MKNotes.  
@@ -317,10 +317,11 @@
   be allocated, an alternative is used; barring that, the MKSynthInstrument
   omits the MKNote:
    
-   <tt>	"No patch of requested template was available. Using alternative template."</tt>
-   <tt>	"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>."</tt>
+   <tt>"No patch of requested template was available. Using alternative template."</tt>
+   <tt>"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>."</tt>
    
    <b>MK_TRACEPREEMPT</b>
+ 
    These are a subset of the MKSynthInstrument messages that deal with
    MKSynthPatch preemption and MKNote omission:
    
@@ -328,6 +329,7 @@
    <tt>	"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>.</tt>
    
    <b>MK_TRACEMIDI</b>
+ 
    The following are printed as ill-formed MKNote objects are converted
   to MIDI messages: 
    
@@ -337,10 +339,12 @@
    <tt>"PolyKeyPressure with invalid noteTag or missing keyNum: time <i>time</i>;"</tt>
    
    <b>MK_TRACESYNTHPATCH</b>
+ 
    This referes to MKSynthPatch Library messages.  When debugging
   MKSynthPatches, you may also want to turn on TRACEUNITGENERATOR.
      
    <b>MK_TRACEUNITGENERATOR</b>
+ 
    This refers to MKUnitGenerator library messages.  f the sine ROM,
   which resides in Y memory, is requested by a MKUnitGenerator's X-space
   memory argument, the following appears:
@@ -350,19 +354,20 @@
    If insufficient DSP memory is available to load a WaveTable of the
   requested length, the following is printed:
    
-  <tt>"Insufficient wavetable memory at time <i>time</i>. Using smaller table length <i>newLength</i>."</tt>
+   <tt>"Insufficient wavetable memory at time <i>time</i>. Using smaller table length <i>newLength</i>."</tt>
      
    <b>MK_TRACEPARS</b>
-   By tracing MK_TRACEPARS, you're informed when an application-defined
-  parameter is created:
+   By tracing MK_TRACEPARS, you're informed when an application-defined parameter is created:
    
    <tt>"Adding new parameter <i>parameterName</i>"</tt>
      
    <b>MK_TRACECONDUCTOR</b>
+ 
    By tracing MK_TRACECONDUCTOR, a message giving the time in seconds is
   printed whenever time advances:
    
    <tt>"t 4.1"</tt>
+ 
   @param  traceCode is an int.
   @return Return the value of the new (cumulative) trace code.
   @ingroup Tracing
@@ -750,6 +755,7 @@ typedef enum _MKErrno {
     MK_sfBadNoteTypeErr,
     /*! Illegal (non-integer) note tag. */
     MK_sfBadNoteTagErr,
+    /*! Missing backslash. */
     MK_sfMissingBackslashErr,
     /*! Missing semicolon. */
     MK_sfMissingSemicolonErr,

@@ -417,7 +417,7 @@ typedef enum _MKDataType {
     MK_string,
     /*! C int value. */
     MK_int,
-    /*! Generic object value.  Object must implement scorefile object protocol) */
+    /*! Generic object value.  Object must implement scorefile object protocol. */
     MK_object,
     /*! MKEnvelope object value.  Object must implement MKEnvelope protocol. */
     MK_envelope, 
@@ -1261,11 +1261,9 @@ the section entitled Music Tables
 
 @end
 
-/*!
-  @defgroup ParameterFns Query for a MKNote's parameters.
+/*! 
+ @defgroup NoteTagFns Create note tags. 
  */
-
-/* NoteTag allocation. */
 
 /*!
   @brief Create note tags. <b>MKNoteTag()</b> returns a note tag value
@@ -1278,7 +1276,8 @@ the section entitled Music Tables
    
   You should never create note tag values except through these functions.
   @return Returns MAXINT (the maximum note tag value) if a sufficient number of
-   note tags aren't available, an unlikely occurrence. 
+   note tags aren't available, an unlikely occurrence.
+  @ingroup NoteTagFns
 */
 extern unsigned MKNoteTag(void);
 
@@ -1296,8 +1295,13 @@ extern unsigned MKNoteTag(void);
   @return Returns MAXINT (the maximum note tag value) if a sufficient number of
    note tags aren't available, an unlikely occurrence.
   @see MKNoteTag().
+  @ingroup NoteTagFns
 */
 extern unsigned MKNoteTags(unsigned n);
+
+/*!
+ @defgroup AmplitudeFns Convert amplitude to and from MIDI values.
+ */
 
 /*!
   @brief Convert decibels to amplitude.
@@ -1312,12 +1316,9 @@ extern unsigned MKNoteTags(unsigned n);
   For example, MKdB(-60) returns ca. .001 and MKdB(0.0) returns 1.0. 
   @param  dB is a double.
   @return Returns a double.
+  @ingroup AmplitudeFns
 */
 extern double MKdB(double dB);          
-
-/*!
-  @defgroup AmplitudeFns Convert amplitude to and from MIDI values.
-*/
 
 /*!
   @ingroup AmplitudeFns
@@ -1549,6 +1550,10 @@ extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, double sensit
 extern int MKAmpAttenuationToMidi(double amp);
 
 /*!
+ @defgroup ParameterFns Query for a MKNote's parameters.
+ */
+
+/*!
   @brief Returns the parameter tag of the highest numbered parameter.
  
   This can be used, for example, to print the names of all known parameters as follows:
@@ -1658,6 +1663,7 @@ extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
 /*@{*/
 
 /*!
+  @ingroup NoteParameterFns
   @brief Set a MKNote's parameter to a double value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1668,7 +1674,7 @@ extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
      
    is the same as the message:
    
-   <tt><b>[aNote setPar:MK_freq toDouble:440.0] </b></tt>
+   <tt><b>[aNote setPar:MK_freq toDouble:440.0]</b></tt>
      
    As ever, calling a function is somewhat faster than sending a
   message, thus you may want to use these functions, rather than the
@@ -1760,6 +1766,7 @@ extern id MKSetNoteParToDouble(MKNote *aNote, int par, double value);
 extern id MKSetNoteParToInt(MKNote *aNote, int par, int value);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Set a MKNote's parameter to a NSString value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1787,6 +1794,7 @@ extern id MKSetNoteParToInt(MKNote *aNote, int par, int value);
 extern id MKSetNoteParToString(MKNote *aNote, int par, NSString *value);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Set a MKNote's parameter to a MKEnvelope value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1814,6 +1822,7 @@ extern id MKSetNoteParToString(MKNote *aNote, int par, NSString *value);
 extern id MKSetNoteParToEnvelope(MKNote *aNote, int par, id envObj);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Set a MKNote's parameter to a MKWaveTable value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1841,6 +1850,7 @@ extern id MKSetNoteParToEnvelope(MKNote *aNote, int par, id envObj);
 extern id MKSetNoteParToWaveTable(MKNote *aNote, int par, id waveObj);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Set a MKNote's parameter to an Object value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1868,6 +1878,7 @@ extern id MKSetNoteParToWaveTable(MKNote *aNote, int par, id waveObj);
 extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as a double value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1894,21 +1905,52 @@ extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
    parameter value hasn't been set, an indicative value is
    returned:
 
-  <b>Function	No-set return value</b>
-  MKGetNoteParAsInt()           MAXINT
-  MKGetNoteParAsDouble()	MK_NODVAL (check with <b>MKIsNoDVal()</b>)
-  MKGetNoteParAsString()	""
-  MKGetNoteParAsStringNoCopy()	""
-  MKGetNoteParAsEnvelope()	<b>nil</b>
-  MKGetNoteParAsWaveTable()	<b>nil</b>
-  MKGetNoteParAsObject()	<b>nil</b>
-  @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
-  <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>
-  @see MKSetNoteParToDouble().
+ <table border=1 cellspacing=2 cellpadding=0 align=center>
+ <thead>
+ <tr>
+ <th align=left>Function</th>
+ <th align=left>No-set return value</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td align=left>MKGetNoteParAsInt()</td>
+ <td align=left>MAXINT</td>
+ </tr>
+ <tr>
+ <td align=left>MKGetNoteParAsDouble()</td>
+ <td align=left>MK_NODVAL (check with <b>MKIsNoDVal()</b>)</td>
+ </tr>
+ <tr>
+ <td align=left>MKGetNoteParAsString()</td>
+ <td align=left>""</td>
+ </tr>
+ <tr>
+ <td align=left>MKGetNoteParAsStringNoCopy()</td>
+ <td align=left>""</td>
+ </tr>
+ <tr>
+ <td align=left>MKGetNoteParAsEnvelope()</td>
+ <td align=left><b>nil</b></td>
+ </tr>
+ <tr>
+ <td align=left>MKGetNoteParAsWaveTable()</td>
+ <td align=left><b>nil</b></td>
+ </tr>
+ <tr>
+ <td align=left>MKGetNoteParAsObject()</td>
+ <td align=left><b>nil</b></td>
+ </tr>
+ </tbody>
+ </table>
+
+  @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,
+  <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>.
 */
 extern double MKGetNoteParAsDouble(MKNote *aNote, int par);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as an integer value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1936,6 +1978,7 @@ extern double MKGetNoteParAsDouble(MKNote *aNote, int par);
 extern int MKGetNoteParAsInt(MKNote *aNote, int par);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as a NSString value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1963,6 +2006,7 @@ extern int MKGetNoteParAsInt(MKNote *aNote, int par);
 extern NSString *MKGetNoteParAsString(MKNote *aNote, int par);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as a NSString value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -1989,17 +2033,18 @@ extern NSString *MKGetNoteParAsString(MKNote *aNote, int par);
 extern NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote, int par);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as an MKEnvelope value.
 
   These functions set and retrieve the values of a MKNote's parameters,
   one parameter at a time. They're equivalent to the similarly named
   MKNote methods<b>; for example, the function call </b>
      
-   <tt><b>MKSetNoteParToDouble(aNote, MK_freq, 440.0) </b></tt>
+   <tt><b>MKSetNoteParToDouble(aNote, MK_freq, 440.0)</b></tt>
      
    is the same as the message:
    
-   <tt><b>[aNote setPar:MK_freq toDouble:440.0] </b></tt>
+   <tt><b>[aNote setPar: MK_freq toDouble: 440.0]</b></tt>
      
    As ever, calling a function is somewhat faster than sending a
   message, thus you may want to use these functions, rather than the
@@ -2016,6 +2061,7 @@ extern NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote, int par);
 extern id MKGetNoteParAsEnvelope(MKNote *aNote, int par);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as an MKWaveTable value.
 
   These functions set and retrieve the values of a MKNote's parameters,
@@ -2043,6 +2089,7 @@ extern id MKGetNoteParAsEnvelope(MKNote *aNote, int par);
 extern id MKGetNoteParAsWaveTable(MKNote *aNote, int par);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Retrieve an MKNote's parameter as an object value.
 
   These functions set and retrieve the values of a MKNote's parameters,
