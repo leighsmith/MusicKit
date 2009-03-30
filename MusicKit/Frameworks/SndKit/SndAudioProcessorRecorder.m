@@ -22,6 +22,7 @@
 
 #if HAVE_LIBSNDFILE
 
+#import <math.h>
 #import "SndFunctions.h"
 #import "SndAudioBuffer.h"
 #import "SndAudioBufferQueue.h"

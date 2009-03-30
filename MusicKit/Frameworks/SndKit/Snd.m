@@ -766,7 +766,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 		return SND_ERR_CANNOT_ALLOC;
 	    }
 	}
-	(SndSoundStruct **)((*toSound)->dataLocation) = newssList;
+	(*toSound)->dataLocation = (int) newssList; // cast to an int to store it correctly.
 	(*toSound)->dataSize = fromSound->dataSize;
 	(*toSound)->dataFormat = SND_FORMAT_INDIRECT;
 	return SND_ERR_NONE;

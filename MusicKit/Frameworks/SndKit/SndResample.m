@@ -91,21 +91,13 @@
 
 #define IBUFFSIZE 4096                         /* Input buffer size */
 
-#ifdef GNUSTEP
-# include "SndResample.h"
-# include "_Sndsmallfilter.h"
-# include "_Sndlargefilter.h"
-# include "_Sndfilterkit.h"
-# include "SndFunctions.h"
-# include <stdarg.h>
-#else
-# import "SndResample.h"
-# import "_Sndsmallfilter.h"
-# import "_Sndlargefilter.h"
-# import "_Sndfilterkit.h"
-# import "SndFunctions.h"
-# import "SndMuLaw.h"
-#endif
+#import <Foundation/Foundation.h>
+#include "SndResample.h"
+#include "_Sndsmallfilter.h"
+#include "_Sndlargefilter.h"
+#include "_Sndfilterkit.h"
+#include "SndFunctions.h"
+#import "SndMuLaw.h"
 
 /* Read sound data inData of format inSndFormat, starting from beginFrom into a resampling buffer outPtrs
  * of nChans channels upto sampleArraySizeInFrames number of frames long, but store data between Xoff and

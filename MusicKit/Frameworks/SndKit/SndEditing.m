@@ -293,7 +293,7 @@ static int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromS
   }
   else free(oldNewssList);
   
-  (SndSoundStruct **)(toSound->dataLocation) = newssList;
+  toSound->dataLocation = (int) newssList;
   return SND_ERR_NONE;
 }
 
@@ -413,7 +413,7 @@ static int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
 		charLength);
 	newssList[ssPointer - firstFrag] = newStruct;
     }
-    (SndSoundStruct **)((*toSound)->dataLocation) = newssList;
+    (*toSound)->dataLocation = (int) newssList;
     return SND_ERR_NONE;
 }
 
@@ -656,7 +656,7 @@ static int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
 	newssList[ssPointer++] = NULL;
 	free(ssList); /* old list */
 	if (newssList[0]) 
-	    (SndSoundStruct **)(soundStruct->dataLocation) = newssList;
+	    soundStruct->dataLocation = (int) newssList;
 	else { /* we have deleted all samples. Free new list. Check dataLocation. */
 	    free(newssList);
 	    soundStruct->dataFormat = olddf;
