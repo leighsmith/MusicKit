@@ -46,7 +46,7 @@ $(MY_NAME)_OBJC_FILES = \
           MKPartPerformer.m MKPartRecorder.m MKPartials.m\
           MKPartialsWaveshapingTable.m MKPatchConnection.m\
           MKPatchEntry.m MKPatchTemplate.m MKPerformer.m\
-          MKSamplerInstrument.m MKSamples.m MKScore.m\
+          MKSamplePlayerInstrument.m MKSamples.m MKScore.m\
           MKScorePerformer.m MKScoreRecorder.m MKScorefilePerformer.m\
           MKScorefileWriter.m MKSynthData.m MKSynthInstrument.m\
           MKSynthPatch.m MKTimbre.m MKTuningSystem.m MKUnitGenerator.m\
@@ -69,7 +69,7 @@ $(MY_NAME)_HEADER_FILES = \
          MKNoteFilter.h MKNoteReceiver.h MKNoteSender.h MKOrchestra.h\
          MKPart.h MKPartPerformer.h MKPartRecorder.h MKPartials.h\
          MKPatchConnection.h MKPatchEntry.h MKPatchTemplate.h\
-         MKPerformer.h MKPerformerDelegate.h MKSamplerInstrument.h\
+         MKPerformer.h MKPerformerDelegate.h MKSamplePlayerInstrument.h\
          MKSamples.h MKScore.h MKScorePerformer.h MKScoreRecorder.h\
          MKScorefileObject.h MKScorefilePerformer.h MKScorefileWriter.h\
          MKSynthData.h MKSynthInstrument.h MKSynthPatch.h MKTimbre.h\
