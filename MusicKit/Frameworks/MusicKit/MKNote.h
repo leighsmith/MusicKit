@@ -233,13 +233,10 @@ if the parameter is actually set by comparing its value to the
 appropriate parameter-not-set value, as given below:
 	
 <table border=1 cellspacing=2 cellpadding=0 align=center>
-<thead>
 <tr>
-<th align=left>Retrieval type</th>
-<th align=left>No-set value</th>
+<td align=left>Retrieval type</td>
+<td align=left>No-set value</td>
 </tr>
-</thead>
-<tbody>
 <tr>
 <td align=left>int</td>
 <td align=left>MAXINT</td>
@@ -256,7 +253,6 @@ appropriate parameter-not-set value, as given below:
 <td align=left>id</td>
 <td align=left><b>nil</b></td>
 </tr>
-</tbody>
 </table>
 
 Unfortunately, you can't use MK_NODVAL in a simple comparison
@@ -589,9 +585,8 @@ typedef enum _MKDataType {
   @param  newConductor is an MKConductor instance.
   @brief Sets <i>conductor</i> instance variable.
 
-  Note that <i>newConductor</i>
-  is not archived, nor is it saved when a MKNote is added to a MKPart
-  - it is used only in performance.   Note that -<b>setConductor:</b>
+  Note that <i>newConductor</i> is not archived, nor is it saved when a MKNote 
+  is added to a MKPart - it is used only in performance.   Note that -<b>setConductor:</b>
   is called implicitly when a MKNote is copied with the <b>copy</b>
   method. Be careful not to release a MKConductor while leaving a
   dangling reference to it in a MKNote!
@@ -1063,13 +1058,10 @@ typedef enum _MKDataType {
   constants listed below, depends on which method you used to set it:
   
  <table border=1 cellspacing=2 cellpadding=0 align=center>
- <thead>
  <tr>
- <th align=left>Method</th>
- <th align=left>Data type</th>
+ <td align=left>Method</td>
+ <td align=left>Data type</td>
  </tr>
- </thead>
- <tbody>
  <tr>
  <td align=left>setPar:toInt:</td>
  <td align=left>MK_int</td>
@@ -1094,7 +1086,6 @@ typedef enum _MKDataType {
  <td align=left>setPar:toObject:</td>
  <td align=left>MK_object</td>
  </tr>
- </tbody>
  </table>
  
   If the parameter's value hasn't been set, MK_noType is returned.
@@ -1696,13 +1687,10 @@ extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
    returned:
 
 <table border=1 cellspacing=2 cellpadding=0 align=center>
-<thead>
 <tr>
-<th align=left>Function</th>
-<th align=left>No-set return value</th>
+<td align=left>Function</td>
+<td align=left>No-set return value</td>
 </tr>
-</thead>
-<tbody>
 <tr>
 <td align=left>MKGetNoteParAsInt()</td>
 <td align=left>MAXINT</td>
@@ -1731,7 +1719,6 @@ extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
 <td align=left>MKGetNoteParAsObject()</td>
 <td align=left><b>nil</b></td>
 </tr>
-</tbody>
 </table>
 
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>, <b>MKNextParameter()</b>, <b>MKIsNoDVal()</b>.
@@ -1906,13 +1893,10 @@ extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
    returned:
 
  <table border=1 cellspacing=2 cellpadding=0 align=center>
- <thead>
  <tr>
- <th align=left>Function</th>
- <th align=left>No-set return value</th>
+ <td align=left>Function</td>
+ <td align=left>No-set return value</td>
  </tr>
- </thead>
- <tbody>
  <tr>
  <td align=left>MKGetNoteParAsInt()</td>
  <td align=left>MAXINT</td>
@@ -1941,7 +1925,6 @@ extern id MKSetNoteParToObject(MKNote *aNote, int par, id anObj);
  <td align=left>MKGetNoteParAsObject()</td>
  <td align=left><b>nil</b></td>
  </tr>
- </tbody>
  </table>
 
   @see <b>MKSetNoteParToDouble()</b>, <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>,

@@ -67,65 +67,61 @@
   divided into eight categories, represented by the following codes:
      
  <table border=1 cellspacing=2 cellpadding=0 align=center>
- <thead>
  <tr>
- <th align=left>Code</th>
- <th align=left>Value</th>
- <th align=left>Meaning</th>
+ <td align=left>Code</td>
+ <td align=left>Value</td>
+ <td align=left>Meaning</td>
  </tr>
- </thead>
- <tbody>
  <tr>
  <td align=left>MK_TRACEORCHALLOC</td>
- <td align=left>1</td>
+ <td align=right>1</td>
  <td align=left>DSP resource allocation</td>
  </tr>
  <tr>
  <td align=left>MK_TRACEPARS</td>
- <td align=left>2</td>
+ <td align=right>2</td>
  <td align=left>Application-defined parameters</td>
  </tr>
  <tr>
  <td align=left>MK_TRACEDSP</td>
- <td align=left>4</td>
+ <td align=right>4</td>
  <td align=left>DSP manipulation</td>
  </tr>
  <tr>
  <td align=left>MK_TRACEMIDI</td>
- <td align=left>8</td>
+ <td align=right>8</td>
  <td align=left>MIDI manipulation</td>
  </tr>
  <tr>
  <td align=left>MK_TRACEPREEMPT</td>
- <td align=left>16</td>
+ <td align=right>16</td>
  <td align=left>MKSynthPatch preemption</td>
  </tr>
  <tr>
  <td align=left>MK_TRACESYNTHINS</td>
- <td align=left>32</td>
+ <td align=right>32</td>
  <td align=left>MKSynthInstrument mechanations</td>
  </tr>
  <tr>
  <td align=left>MK_TRACESYNTHPATCH</td>
- <td align=left>64</td>
+ <td align=right>64</td>
  <td align=left>MKSynthPatch library messages</td>
  </tr>
  <tr>
  <td align=left>MK_TRACEUNITGENERATOR</td>
- <td align=left>128</td>
+ <td align=right>128</td>
  <td align=left>MKUnitGenerator library messages</td>
  </tr>
  <tr>
  <td align=left>MK_TRACECONDUCTOR</td>
- <td align=left>256</td>
+ <td align=right>256</td>
  <td align=left>Conductor time setting messages</td>
  </tr>
  <tr>
  <td align=left>MK_TRACEDSPARRAYS</td>
- <td align=left>512</td>
+ <td align=right>512</td>
  <td align=left>DSP array-setting messages</td>
  </tr>
- </tbody>
  </table>
  
    To enable a set of messages, you pass a trace code to the
@@ -153,10 +149,12 @@
   MKUnitGenerator, and Synth Data allocation.  When a MKSynthPatch is
   allocated, one of the following messages is printed:
      
-  <tt>"allocSynthPatch returns <i>MKSynthPatchClass_SynthPatchId</i></tt>"
-  <tt>"allocSynthPatch building <i>MKSynthPatchClass_SynthPatchId</i>..."</tt>
-  <tt>"allocSynthPatch can't allocate <i>MKSynthPatchClass</i>"</tt>
-     
+  <ul>
+  <li><tt>"allocSynthPatch returns <i>MKSynthPatchClass_SynthPatchId</i>"</tt>
+  <li><tt>"allocSynthPatch building <i>MKSynthPatchClass_SynthPatchId</i>..."</tt>
+  <li><tt>"allocSynthPatch can't allocate <i>MKSynthPatchClass</i>"</tt>
+  </ul>    
+ 
    The first of these signifies that an appropriate MKSynthPatch object
   was found.  The second means that a new object was created.  The third
   denotes an inability to construct the requested object because of
@@ -168,41 +166,51 @@
    When a MKSynthPatch is deallocated and when it's freed, respectively,
   the following are printed:
    
-    <tt>"Returning <i>MKSynthPatchClass_SynthPatchId</i> to avail pool."</tt>
-    <tt>"Freeing <i>MKSynthPatchClass_SynthPatchId</i>"</tt>
+    <ul>
+    <li><tt>"Returning <i>MKSynthPatchClass_SynthPatchId</i> to avail pool."</tt>
+    <li><tt>"Freeing <i>MKSynthPatchClass_SynthPatchId</i>"</tt>
+    </ul>    
      
    A MKUnitGenerator can be allocated without reference to other
   MKUnitGenerators, or it can be positioned before, after, or between
   other objects.  Examples:
    
-   <tt>"allocUnitGenerator looking for a <i>UGClass</i>."</tt>
-   <tt>"allocUnitGenerator looking for a <i>UGClass</i> before <i>UGClass_UGid</i>"</tt>
-   <tt>"allocUnitGenerator looking for a <i>UGClass</i> after <i>UGClass_UGid</i>"</tt>
-   <tt>"allocUnitGenerator looking for a <i>UGClass</i> after <i>UGClass_UGid</i> and before <i>UGClass_UGid</i>"</tt>
+ <ul>
+   <li><tt>"allocUnitGenerator looking for a <i>UGClass</i>."</tt>
+   <li><tt>"allocUnitGenerator looking for a <i>UGClass</i> before <i>UGClass_UGid</i>"</tt>
+   <li><tt>"allocUnitGenerator looking for a <i>UGClass</i> after <i>UGClass_UGid</i>"</tt>
+   <li><tt>"allocUnitGenerator looking for a <i>UGClass</i> after <i>UGClass_UGid</i> and before <i>UGClass_UGid</i>"</tt>
+ </ul>    
    
    If a new MKUnitGenerator is built, the addresses (relocation or
   &ldquo;Reloc&rdquo;) and sizes (resources or &ldquo;Reso&rdquo;) of the
   allocated DSP resources are given:
    
-  <tt>"Reloc: pLoop <i>address</i>, xArg <i>address</i>, yArg <i>address</i>, lArg <i>address</i>,</tt>
-  <tt>		xData <i>address</i>, yData <i>address</i>, pSubr <i>address</i>"</tt>
-  <tt>"Reso: pLoop <i>size</i>, xArg <i>size</i>, yArg <i>size</i>, lArg <i>size</i>, xData <i>size</i>,</tt>
-  <tt>		yData <i>size</i>, pSubr <i>size</i>, time <i>orchestraLoopDuration</i>"</tt>
+ <ul>
+  <li><tt>"Reloc: pLoop <i>address</i>, xArg <i>address</i>, yArg <i>address</i>, lArg <i>address</i>,</tt>
+  <li><tt>		xData <i>address</i>, yData <i>address</i>, pSubr <i>address</i>"</tt>
+  <li><tt>"Reso: pLoop <i>size</i>, xArg <i>size</i>, yArg <i>size</i>, lArg <i>size</i>, xData <i>size</i>,</tt>
+  <li><tt>		yData <i>size</i>, pSubr <i>size</i>, time <i>orchestraLoopDuration</i>"</tt>
+ </ul>    
    
    As the MKUnitGenerator search (or allocation) succeeds or fails, one of the following is printed:
    
-   <tt>"allocUnitGenerator returns</tt> <tt><i>UGClass_UGid</i>"</tt>
-   <tt>"Allocation failure: Can't allocate before specified ug."</tt>
-   <tt>"Allocation failure. DSP error."</tt>
-   <tt>"Allocation failure. Not enough computeTime."</tt>
-   <tt>"Allocation failure. Not enough <i>memorySegment</i> memory."</tt>
+ <ul>
+   <li><tt>"allocUnitGenerator returns <i>UGClass_UGid</i>"</tt>
+   <li><tt>"Allocation failure: Can't allocate before specified ug."</tt>
+   <li><tt>"Allocation failure. DSP error."</tt>
+   <li><tt>"Allocation failure. Not enough computeTime."</tt>
+   <li><tt>"Allocation failure. Not enough <i>memorySegment</i> memory."</tt>
+ </ul>    
    
    Allocating a MKSynthData generates the first and then either the second
   or third of these messages:
    
-  <tt>"allocSynthData: looking in segment <i>memorySegment</i> for size <i>size</i>."</tt>
-  <tt>"allocSynthData returns <i>memorySegment</i> address of length <i>size</i>."</tt>
-  <tt>"Allocation failure: No more offchip data memory."</tt>
+ <ul>
+  <li><tt>"allocSynthData: looking in segment <i>memorySegment</i> for size <i>size</i>."</tt>
+  <li><tt>"allocSynthData returns <i>memorySegment</i> address of length <i>size</i>."</tt>
+  <li><tt>"Allocation failure: No more offchip data memory."</tt>
+ </ul>    
      
    When you install shared data, the following is printed: 
      
@@ -213,14 +221,16 @@
   MKUnitGenerators and unreferenced shared data to be garbage collected,
   and active MKUnitGenerators to be relocated:
    
-   <tt>"Compacting stack."</tt>
-   <tt>"Copying arguments."</tt>
-   <tt>"Copying p memory."</tt>
-   <tt>"Garbage collecting freed unit generator UGClass_UGid"</tt>
-   <tt>"Moving <i>UGClass_UGid</i>."</tt>
-   <tt>"NewReloc: pLoop <i>address</i>, xArg <i>address</i>, yArg <i>address</i>, lArg <i>address</i>."</tt>
-   <tt>"Garbage collecting unreferenced shared data."</tt>
-   <tt>"No unreferenced shared data found."</tt>
+ <ul>
+   <li><tt>"Compacting stack."</tt>
+   <li><tt>"Copying arguments."</tt>
+   <li><tt>"Copying p memory."</tt>
+   <li><tt>"Garbage collecting freed unit generator UGClass_UGid"</tt>
+   <li><tt>"Moving <i>UGClass_UGid</i>."</tt>
+   <li><tt>"NewReloc: pLoop <i>address</i>, xArg <i>address</i>, yArg <i>address</i>, lArg <i>address</i>."</tt>
+   <li><tt>"Garbage collecting unreferenced shared data."</tt>
+   <li><tt>"No unreferenced shared data found."</tt>
+ </ul>    
    
    <b>MK_TRACEDSP</b>
  
@@ -250,27 +260,33 @@
   arguments.  The following messages are printed as the
   &ldquo;correct&rdquo; function is used to set an argument's value:
      
-   <tt>	"Setting <i>argName</i> of <i>UGugNum_Class</i> to datum <i>value</i>."</tt>
-   <tt>	"Setting <i>argName</i> of <i>UGugNum_Class</i> to long: <i>hi wd value</i> and <i>low wd value</i>."</tt>
+ <ul>
+   <li><tt>"Setting <i>argName</i> of <i>UGugNum_Class</i> to datum <i>value</i>."</tt>
+   <li><tt>"Setting <i>argName</i> of <i>UGugNum_Class</i> to long: <i>hi wd value</i> and <i>low wd value</i>."</tt>
+ </ul>    
    
    A 24-bit argument that's set with the long-setting function and vice
   versa produce these messages, respectively:
    
-   <tt>	"Setting (L-just, 0-filled) <i>argName</i> of <i>UGugNum_Class</i> to datum <i>value</i>."</tt>
-   <tt>	"Setting <i>argName</i> of <i>UGugNum_Class</i> to: <i>value</i>"</tt>
+ <ul>
+   <li><tt>"Setting (L-just, 0-filled) <i>argName</i> of <i>UGugNum_Class</i> to datum <i>value</i>."</tt>
+   <li><tt>"Setting <i>argName</i> of <i>UGugNum_Class</i> to: <i>value</i>"</tt>
+ </ul>    
    
    If an argument is declared as optimizable, the following is printed
   when the optimization obtains:
    
-   "<tt>Optimizing away poke of <i>argName</i> of <i>UGugNum_Class</i>."</tt>
+   <tt>"Optimizing away poke of <i>argName</i> of <i>UGugNum_Class</i>."</tt>
    
    MKSynthData allocation doesn't actually involve the DSP; the address of
   the memory that will be allocated on the DSP is computed, but the state
   of the DSP itself doesn't change until data is loaded into the
   MKSynthData:
    
-  <tt>"Loading array into <i>memorySegment</i> <i>memNum</i> [<i>lowAddr-highAddr</i>]."</tt>
-  <tt>"Loading constant value into <i>memorySegement</i> <i>memNum</i> [<i>lowAddr-highAddr</i>]."</tt>
+ <ul>
+  <li><tt>"Loading array into <i>memorySegment</i> <i>memNum</i> [<i>lowAddr-highAddr</i>]."</tt>
+  <li><tt>"Loading constant value into <i>memorySegement</i> <i>memNum</i> [<i>lowAddr-highAddr</i>]."</tt>
+ </ul>    
    
    Here <i>memNum</i> is an integer assigned for debugging purposes. 
   <i>memorySegment</i> if one of xData, yData, xPatch or yPatch.  When an
@@ -285,8 +301,10 @@
    DSP manipulations that are performed as an atomic unit are bracketed
   by the messages:
    
-   <tt>"&lt;&lt;&lt; Begin orchestra atomic unit "</tt>
-   <tt>"end orchestra atomic unit.&gt;&gt;&gt; "</tt>
+ <ul>
+   <li><tt>"&lt;&lt;&lt; Begin orchestra atomic unit "</tt>
+   <li><tt>"end orchestra atomic unit.&gt;&gt;&gt; "</tt>
+ </ul>    
    
    <b>MK_TRACESYNTHINS</b>
  
@@ -297,9 +315,11 @@
    If a received MKNote's note tag is active or inactive, or if its note
   type is mute, the following are printed, respectively:
      
-   <tt>"MKSynthInstrument receives note for active notetag stream <i>noteTag</i> at time <i>time</i>."</tt>
-   <tt>"MKSynthInstrument receives note for new notetag stream <i>noteTag</i> at time <i>time</i>."</tt>
-   <tt>"MKSynthInstrument receives mute MKNote at time <i>time</i>."</tt>
+ <ul>
+   <li><tt>"MKSynthInstrument receives note for active notetag stream <i>noteTag</i> at time <i>time</i>."</tt>
+   <li><tt>"MKSynthInstrument receives note for new notetag stream <i>noteTag</i> at time <i>time</i>."</tt>
+   <li><tt>"MKSynthInstrument receives mute MKNote at time <i>time</i>."</tt>
+ </ul>    
      
    MKSynthPatch allocation is noted <i>only</i> if the MKSynthInstrument
   is in auto-allocation mode:
@@ -310,33 +330,41 @@
   messages, respectively, regardless of the MKSynthInstrument's allocation
   mode:
    
-   <tt>"MKSynthInstrument uses patch <i>synthPatchId</i> at time <i>time</i> for tag <i>noteTag</i>."</tt>
-   <tt>"MKSynthInstrument preempts patch <i>synthPatchId</i> at time <i>time</i> for tag <i>noteTag</i>."</tt>
+ <ul>
+   <li><tt>"MKSynthInstrument uses patch <i>synthPatchId</i> at time <i>time</i> for tag <i>noteTag</i>."</tt>
+   <li><tt>"MKSynthInstrument preempts patch <i>synthPatchId</i> at time <i>time</i> for tag <i>noteTag</i>."</tt>
+ </ul>    
    
    If a MKSynthPatch of the correct MKPatchTemplate isn't found and can't
   be allocated, an alternative is used; barring that, the MKSynthInstrument
   omits the MKNote:
    
-   <tt>"No patch of requested template was available. Using alternative template."</tt>
-   <tt>"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>."</tt>
+ <ul>
+   <li><tt>"No patch of requested template was available. Using alternative template."</tt>
+   <li><tt>"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>."</tt>
+ </ul>    
    
    <b>MK_TRACEPREEMPT</b>
  
    These are a subset of the MKSynthInstrument messages that deal with
    MKSynthPatch preemption and MKNote omission:
    
-   <tt>	"MKSynthInstrument preempts patch <i>synthPatchId</i> at time <i>time</i> for tag noteTag."</tt>
-   <tt>	"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>.</tt>
+ <ul>
+   <li><tt>	"MKSynthInstrument preempts patch <i>synthPatchId</i> at time <i>time</i> for tag noteTag."</tt>
+   <li><tt>	"MKSynthInstrument omits note at time <i>time</i> for tag <i>noteTag</i>.</tt>
+ </ul>    
    
    <b>MK_TRACEMIDI</b>
  
    The following are printed as ill-formed MKNote objects are converted
   to MIDI messages: 
    
-   <tt>"MKNoteOn missing a noteTag at time <i>time</i>"</tt>
-   <tt>"MKNoteOff missing a note tag at time <i>time</i>"</tt>
-   <tt>"MKNoteOff for noteTag which is already off at time <i>time</i>"</tt>
-   <tt>"PolyKeyPressure with invalid noteTag or missing keyNum: time <i>time</i>;"</tt>
+ <ul>
+   <li><tt>"MKNoteOn missing a noteTag at time <i>time</i>"</tt>
+   <li><tt>"MKNoteOff missing a note tag at time <i>time</i>"</tt>
+   <li><tt>"MKNoteOff for noteTag which is already off at time <i>time</i>"</tt>
+   <li><tt>"PolyKeyPressure with invalid noteTag or missing keyNum: time <i>time</i>;"</tt>
+ </ul>    
    
    <b>MK_TRACESYNTHPATCH</b>
  
@@ -378,72 +406,9 @@ extern unsigned MKSetTrace(int traceCode);
   @brief Turns off specified trace bit.
 
   To aid in debugging, the MusicKit is peppered with activity-tracing
-  messages that print to <b>stderr</b> if but asked. The trace messages are
-  divided into eight categories, represented by the following codes:
-     
-<table border=1 cellspacing=2 cellpadding=0 align=center>
-<thead>
-<tr>
-<th align=left>Code</th>
-<th align=left>Value</th>
-<th align=left>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align=left>MK_TRACEORCHALLOC</td>
-<td align=left>1</td>
-<td align=left>DSP resource allocation</td>
-</tr>
-<tr>
-<td align=left>MK_TRACEPARS</td>
-<td align=left>2</td>
-<td align=left>Application-defined parameters</td>
-</tr>
-<tr>
-<td align=left>MK_TRACEDSP</td>
-<td align=left>4</td>
-<td align=left>DSP manipulation</td>
-</tr>
-<tr>
-<td align=left>MK_TRACEMIDI</td>
-<td align=left>8</td>
-<td align=left>MIDI manipulation</td>
-</tr>
-<tr>
-<td align=left>MK_TRACEPREEMPT</td>
-<td align=left>16</td>
-<td align=left>MKSynthPatch preemption</td>
-</tr>
-<tr>
-<td align=left>MK_TRACESYNTHINS</td>
-<td align=left>32</td>
-<td align=left>MKSynthInstrument mechanations</td>
-</tr>
-<tr>
-<td align=left>MK_TRACESYNTHPATCH</td>
-<td align=left>64</td>
-<td align=left>MKSynthPatch library messages</td>
-</tr>
-<tr>
-<td align=left>MK_TRACEUNITGENERATOR</td>
-<td align=left>128</td>
-<td align=left>MKUnitGenerator library messages</td>
-</tr>
-<tr>
-<td align=left>MK_TRACECONDUCTOR</td>
-<td align=left>256</td>
-<td align=left>Conductor time setting messages</td>
-</tr>
-<tr>
-<td align=left>MK_TRACEDSPARRAYS</td>
-<td align=left>512</td>
-<td align=left>DSP array-setting messages</td>
-</tr>
-</tbody>
-</table>
-
-   To enable a set of messages, you pass a trace code to the
+  messages that print to <b>stderr</b> if but asked.
+ 
+  To enable a set of messages, you pass a trace code to the
   <b>MKSetTrace()</b> function.  You can enable more than one set with a
   single function call by bitwise-or'ing the codes.   Clearing a trace is
   done similarly, by passing codes to <b>MKClearTrace()</b>.  The
@@ -453,7 +418,7 @@ extern unsigned MKSetTrace(int traceCode);
      
   @param  traceCode is an int.
   @return Return the value of the new (cumulative) trace code. 
-  @see MKSetTrace().
+  @see <b>MKSetTrace()</b>.
   @ingroup Tracing
 */
 extern unsigned MKClearTrace(int traceCode);
@@ -462,72 +427,9 @@ extern unsigned MKClearTrace(int traceCode);
   @brief Returns whether specified trace bit is on.
 
   To aid in debugging, the MusicKit is peppered with activity-tracing
-  messages that print to <b>stderr</b> if but asked. The trace messages are
-  divided into eight categories, represented by the following codes:
-     
- <table border=1 cellspacing=2 cellpadding=0 align=center>
- <thead>
- <tr>
- <th align=left>Code</th>
- <th align=left>Value</th>
- <th align=left>Meaning</th>
- </tr>
- </thead>
- <tbody>
- <tr>
- <td align=left>MK_TRACEORCHALLOC</td>
- <td align=left>1</td>
- <td align=left>DSP resource allocation</td>
- </tr>
- <tr>
- <td align=left>MK_TRACEPARS</td>
- <td align=left>2</td>
- <td align=left>Application-defined parameters</td>
- </tr>
- <tr>
- <td align=left>MK_TRACEDSP</td>
- <td align=left>4</td>
- <td align=left>DSP manipulation</td>
- </tr>
- <tr>
- <td align=left>MK_TRACEMIDI</td>
- <td align=left>8</td>
- <td align=left>MIDI manipulation</td>
- </tr>
- <tr>
- <td align=left>MK_TRACEPREEMPT</td>
- <td align=left>16</td>
- <td align=left>MKSynthPatch preemption</td>
- </tr>
- <tr>
- <td align=left>MK_TRACESYNTHINS</td>
- <td align=left>32</td>
- <td align=left>MKSynthInstrument mechanations</td>
- </tr>
- <tr>
- <td align=left>MK_TRACESYNTHPATCH</td>
- <td align=left>64</td>
- <td align=left>MKSynthPatch library messages</td>
- </tr>
- <tr>
- <td align=left>MK_TRACEUNITGENERATOR</td>
- <td align=left>128</td>
- <td align=left>MKUnitGenerator library messages</td>
- </tr>
- <tr>
- <td align=left>MK_TRACECONDUCTOR</td>
- <td align=left>256</td>
- <td align=left>Conductor time setting messages</td>
- </tr>
- <tr>
- <td align=left>MK_TRACEDSPARRAYS</td>
- <td align=left>512</td>
- <td align=left>DSP array-setting messages</td>
- </tr>
- </tbody>
- </table>
+  messages that print to <b>stderr</b> if but asked. 
  
-   To enable a set of messages, you pass a trace code to the
+  To enable a set of messages, you pass a trace code to the
   <b>MKSetTrace()</b> function.  You can enable more than one set with a
   single function call by bitwise-or'ing the codes.   Clearing a trace is
   done similarly, by passing codes to <b>MKClearTrace()</b>.  The

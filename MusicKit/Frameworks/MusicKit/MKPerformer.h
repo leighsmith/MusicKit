@@ -75,13 +75,10 @@ A MKPerformer has a status, represented as one of the following
 <b>MKPerformerStatus</b> values:
 
 <table border=1 cellspacing=2 cellpadding=0 align=center>
-<thead>
 <tr>
-<th align=left>Status</th>
-<th align=left>Meaning</th>
+<td align=left>Status</td>
+<td align=left>Meaning</td>
 </tr>
-</thead>
-<tbody>
 <tr>
 <td align=left>MK_inactive</td>
 <td align=left>A deactivated or not-yet-activated MKPerformer.</td>
@@ -94,7 +91,6 @@ A MKPerformer has a status, represented as one of the following
 <td align=left>MK_paused</td>
 <td align=left>The MKPerformer is activated but currently paused.</td>
 </tr>
-</tbody>
 </table>
 
 Some messages can only be sent to an inactive (MK_inactive) MKPerformer.  A

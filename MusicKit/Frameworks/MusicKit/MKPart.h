@@ -625,14 +625,11 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
   containing only these parameters:
 
 <table border=1 cellspacing=2 cellpadding=0 align=center>
-<thead>
 <tr>
-<th align=center>Parameter Tag</th>
-<th align=center>Expected Value</th>
-<th align=left>Typical Use</th>
+<td align=center>Parameter Tag</td>
+<td align=center>Expected Value</td>
+<td align=left>Typical Use</td>
 </tr>
-</thead>
-<tbody>
 <tr>
 <td align=center>MK_synthPatch</td>
 <td align=center>MKSynthPatch subclass</td>
@@ -653,7 +650,6 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 <td align=center>integer</td>
 <td align=left>Automatically set when a midifile is read into a MKScore.</td>
 </tr>
-</tbody>
 </table>
 
   The info MKNote is stored separately from the MKPart's main body of MKNotes; 

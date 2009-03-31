@@ -78,13 +78,10 @@
   following MKDeviceStatus values:
 
  <table border=1 cellspacing=2 cellpadding=0 align=center>
- <thead>
  <tr>
- <th align=left>MKDeviceStatus</th>
- <th align=left>Description</th>
+ <td align=left>MKDeviceStatus</td>
+ <td align=left>Description</td>
  </tr>
- </thead>
- <tbody>
  <tr>
  <td align=left>MK_devOpen</td>
  <td align=left>The MKOrchestra is open but not running.</td>
@@ -101,7 +98,6 @@
  <td align=left>MK_devClosed</td>
  <td align=left>The MKOrchestra is closed.</td>
  </tr>
- </thead>
  </table>
 
   You can query an MKOrchestra's status through the <b>deviceStatus</b>
