@@ -16,16 +16,14 @@
 #  Modification history is contained in the CVS log
 #
 
+# Disabled
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME = MKPerformSndMIDI
-VERSION = 5.5.3
-
-#include ../Version
-#include ../config.mak
+VERSION = 5.6.0
 
 srcdir = .
 

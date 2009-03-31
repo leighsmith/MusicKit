@@ -29,8 +29,8 @@ static NSString *findFilenameForClassname(NSString *className)
     /* Returns filename or nil if failure. Assumes name is non-NULL. */
 {
     NSString *filename;
-    NSString *ext;
-    ext = [className pathExtension];
+    NSString *ext = [className pathExtension];
+
     if ([ext length])  {
         if (![ext isEqualToString: MK_PATCH_EXTENSION])
             filename = [className stringByAppendingPathExtension: MK_PATCH_EXTENSION];

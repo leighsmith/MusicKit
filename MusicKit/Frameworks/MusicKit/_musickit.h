@@ -84,14 +84,14 @@ extern _MK_GLOBAL _MKClassLoaded _MKSamplesClass;
 extern _MK_GLOBAL _MKClassLoaded _MKPartialsClass;
 extern _MK_GLOBAL _MKClassLoaded _MKConductorClass;
 
-extern id _MKCheckClassNote() ;
-extern id _MKCheckClassMidi() ;
-extern id _MKCheckClassOrchestra() ;
-extern id _MKCheckClassWaveTable() ;
-extern id _MKCheckClassEnvelope() ;
-extern id _MKCheckClassSamples();
-extern id _MKCheckClassPartials();
-extern id _MKCheckClassConductor();
+extern Class _MKCheckClassNote() ;
+extern Class _MKCheckClassMidi() ;
+extern Class _MKCheckClassOrchestra() ;
+extern Class _MKCheckClassWaveTable() ;
+extern Class _MKCheckClassEnvelope() ;
+extern Class _MKCheckClassSamples();
+extern Class _MKCheckClassPartials();
+extern Class _MKCheckClassConductor();
 
 #define _MKClassNote() \
   ((_MKNoteClass.alreadyChecked) ? _MKNoteClass.aClass : \

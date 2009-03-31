@@ -16,14 +16,12 @@
 #
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
-
-#GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME = MKDSP
-VERSION = 5.4.1
+VERSION = 5.6.0
 
 srcdir = .
 

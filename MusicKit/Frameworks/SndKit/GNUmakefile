@@ -16,13 +16,13 @@
 # See the public CVS logs for the modification history via http://www.musickit.org
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
 # For use in rpm generation:
 PACKAGE_NAME = SndKit
-VERSION = 5.5.3
+VERSION = 5.6.0
 
 srcdir = .
 

@@ -15,9 +15,11 @@
 
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
+
+VERSION = 5.6.0
 
 srcdir = .
 

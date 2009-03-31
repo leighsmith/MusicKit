@@ -26,55 +26,7 @@
   Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.16  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.15  2002/04/08 17:36:23  sbrandon
-  changed _rescheduleMsgRequest: reference to _rescheduleMsgRequestWithObjectArgs:
-
-  Revision 1.14  2002/04/03 03:59:42  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.13  2002/01/23 15:33:02  sbrandon
-  The start of a major cleanup of memory management within the MK. This set of
-  changes revolves around MKNote allocation/retain/release/autorelease.
-
-  Revision 1.12  2002/01/15 10:50:55  sbrandon
-  tightened up type casting on NSNextMapEnumeratorPair() to prevent compiler
-  warning
-
-  Revision 1.11  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.10  2001/08/31 21:01:59  skotmcdonald
-  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
-
-  Revision 1.9  2001/01/31 21:32:56  leigh
-  Typed note parameters
-
-  Revision 1.8  2000/10/01 06:49:35  leigh
-  Replaced HashTable with NSMapTable functions.
-
-  Revision 1.7  2000/07/22 00:29:11  leigh
-  Typed _MKGetNoteOns
-
-  Revision 1.6  2000/06/09 03:29:46  leigh
-  Typed aList to reduce warnings
-
-  Revision 1.5  2000/05/06 00:54:33  leigh
-  Parenthetised to remove warnings
-
-  Revision 1.4  2000/04/07 18:33:06  leigh
-  Unified tracing to the function for data hiding
-
-  Revision 1.3  2000/04/07 18:16:16  leigh
-  Upgraded logging to NSLog
-
-  Revision 1.2  1999/07/29 01:26:19  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to version control:
 
   11/15/89/daj - Fixed bug involving noteDurs without tags (see bug 4031)
   12/20/89/daj - Added feature: If the chan parameter passed to 
@@ -187,12 +139,12 @@ static void freeMidiOutNode(NSMapTable *table, void *aNode)
         free(aNode);
 }
 
-static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
-    /* Enqueues a noteOff corresponding to a noteDur's dur. */
+/* Enqueues a noteOff corresponding to a noteDur's dur. */
+static void midiOutNodeNoteDur(midiOutNode *node, id aNoteDur, id msgReceiver)
 {
-    id cond;
     double time;
-    cond = [aNoteDur conductor];
+    MKConductor *cond = [aNoteDur conductor];
+
     [node->noteDurOff release];
     node->noteDurOff = [[aNoteDur _noteOffForNoteDur] retain];      
     time = [cond timeInBeats] + [aNoteDur dur]; 
@@ -200,19 +152,23 @@ static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
        be written in beats or seconds depending on how the caller of 
        _MKMidiOut passes the time. */
     /* See comment in MKSynthPatch. */
-    node->noteDurMsgPtr = 
-      [cond _rescheduleMsgRequestWithObjectArgs:node->noteDurMsgPtr atTime:
-       (time - _MK_TINYTIME) sel:@selector(receiveNote:) to:
-       msgReceiver argCount:1 arg1:node->noteDurOff retain:TRUE arg2:nil retain:FALSE];
+    node->noteDurMsgPtr = [cond _rescheduleMsgRequestWithObjectArgs: node->noteDurMsgPtr
+				                             atTime: (time - _MK_TINYTIME)
+				                                sel: @selector(receiveNote:)
+ 				                                 to: msgReceiver 
+				                           argCount: 1 
+				                               arg1: node->noteDurOff 
+				                             retain: TRUE 
+				                               arg2: nil 
+				                             retain: FALSE];
 }
 
 static void cancelMidiOutNoteDurMsg(midiOutNode *node)
     /* Cancel request for noteOff that was derived from a noteDur MKNote. */
 {
     if (!node->noteDurOff)
-      return;
-    node->noteDurMsgPtr = [_MKClassConductor()
-			   _cancelMsgRequest:node->noteDurMsgPtr]; 
+	return;
+    node->noteDurMsgPtr = [_MKClassConductor() _cancelMsgRequest: node->noteDurMsgPtr]; 
     [node->noteDurOff release];
     node->noteDurOff = nil;
 }

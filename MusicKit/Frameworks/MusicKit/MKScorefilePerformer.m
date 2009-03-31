@@ -224,7 +224,7 @@ Modification history:
      returns nil. */
 {
     id owner = [aNoteSender owner];
-    return (owner == self) ? [((id)[aNoteSender _getData]) infoNote] : nil;
+    return (owner == self) ? [((id)[aNoteSender _getData]) infoNote] : (MKNote *) nil;
 }
 
 /* Returns the first MKNoteSender whose corresponding MKPart has 

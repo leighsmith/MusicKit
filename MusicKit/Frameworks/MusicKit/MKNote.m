@@ -1848,16 +1848,6 @@ int MKNextParameter(MKNote *aNote, NSHashEnumerator *aState)
     }
 }
 
-/* FIXME Needed due to a compiler bug */
-static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aConductor)
-{
-    aNoteOff->noteTag = aNoteTag;
-    aNoteOff->performer = nil;
-    aNoteOff->conductor = aPerformer ? [aPerformer conductor] : aConductor;
-    aNoteOff->part = nil;
-    aNoteOff->noteType = MK_noteOff;
-}
-
 // for debugging
 - (NSString *) description
 {
@@ -1913,11 +1903,10 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     return self;
 }
 
+/* If the receiver isn't a noteDur, returns nil. Otherwise, returns
+ * the noteOff created according to the rules described in -split::.
+ */
 -_noteOffForNoteDur
-  /* If the receiver isn't a noteDur, returns nil. Otherwise, returns
-   * the noteOff created according to the rules described in
-   * -split::.
-   */
 {
     MKNote *aNoteOff;
 
@@ -1928,8 +1917,12 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     aNoteOff = [noteClass noteWithTimeTag: timeTag + getNoteDur(self)];
     if (noteTag == MAXINT)
         noteTag = MKNoteTag(); 
-    setNoteOffFields(aNoteOff, noteTag, performer, conductor);
-    if (isParPresent(self,MK_relVelocity))
+    aNoteOff->noteTag = noteTag;
+    aNoteOff->performer = nil;
+    aNoteOff->conductor = performer ? [performer conductor] : conductor;
+    aNoteOff->part = nil;
+    aNoteOff->noteType = MK_noteOff;
+    if (isParPresent(self, MK_relVelocity))
         MKSetNoteParToInt(aNoteOff, MK_relVelocity, MKGetNoteParAsInt(self, MK_relVelocity));
     if ([self isParPresent: MK_midiChan])   /* This is needed by _MKWriteMidiOut */
         MKSetNoteParToInt(aNoteOff, MK_midiChan, MKGetNoteParAsInt(self, MK_midiChan));

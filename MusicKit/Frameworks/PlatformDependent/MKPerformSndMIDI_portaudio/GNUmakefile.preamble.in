@@ -1,4 +1,4 @@
-# -*- make -*-
+# -*- Makefile -*-
 #  $Id$
 #
 # @configure_input@

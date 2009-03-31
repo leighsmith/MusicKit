@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 #  $Id$
 #  Defined In: The MusicKit
 #  Description:
@@ -10,15 +11,6 @@
 #  Permission is granted to use and modify this code for commercial and
 #  non-commercial purposes so long as the author attribution and this copyright
 #  message remains intact and accompanies all derived code.
-
-#  Modification history:
-#
-#  $Log$
-#  Revision 1.1  2001/11/07 13:21:54  sbrandon
-#  - rule for parseScore.m to remove optimisation (breaks on Win32)
-#  - rule to help create the defs file required for Win32 dll creation
-#
-#
 
 #   GNUmakefile.postamble
 #

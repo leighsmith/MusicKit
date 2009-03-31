@@ -220,7 +220,7 @@ static id readScorefile(MKScore *self, NSData *stream, double firstTimeTag, doub
 	    break;
     }
     
-    rtnVal = (p->_errCount == MAXINT) ? nil : self;
+    rtnVal = (p->_errCount == MAXINT) ? (MKScore *) nil : self;
     _MKFinishScoreIn(p);
     return rtnVal;
 }

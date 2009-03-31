@@ -233,7 +233,7 @@ the note's MKConductor for time coordination. Then free the note. */
     if (_ownerIsAPerformer)
 	[aNote _setPerformer: nil];
     isSending--;
-    return (isSquelched) ? nil : self;
+    return (isSquelched) ? (MKNoteSender *) nil : self;
 }
 
 /* Creates a new MKNoteSender as a copy of the receiver.

@@ -1133,7 +1133,7 @@ static unsigned ignoreBit(unsigned param)
 
 - (MKConductor *) conductor
 {
-    return conductor ? conductor : [_MKClassConductor() clockConductor];
+    return conductor ? conductor : (MKConductor *) [_MKClassConductor() clockConductor];
 }
 
 - setConductor: (MKConductor *) aConductor

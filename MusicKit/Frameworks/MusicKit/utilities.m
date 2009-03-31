@@ -76,7 +76,7 @@ void _MKLinkUnreferencedClasses()
 }
 /* The following mechanism is to make it so it's fast to check if a class
    is loaded. See the macros in _musickit.h */ 
-static id checkClass(_MKClassLoaded *cl, NSString *className)
+static Class checkClass(_MKClassLoaded *cl, NSString *className)
     /* Gets and initializes class. There are macros that only invoke
        this when the class isn't initialized yet. */
 {
@@ -86,48 +86,48 @@ static id checkClass(_MKClassLoaded *cl, NSString *className)
     return cl->aClass;
 }
 
-id _MKCheckClassMidi() 
+Class _MKCheckClassMidi() 
 {
     return checkClass(&_MKMidiClass,@"MKMidi");
 }
 
-id _MKCheckClassNote() 
+Class _MKCheckClassNote() 
 {
     return checkClass(&_MKNoteClass,@"MKNote");
 }
 
-id _MKCheckClassPartials() 
+Class _MKCheckClassPartials() 
 {
     return checkClass(&_MKPartialsClass,@"MKPartials");
 }
 
-id _MKCheckClassOrchestra() 
+Class _MKCheckClassOrchestra() 
 {
     return checkClass(&_MKOrchestraClass,@"MKOrchestra");
 }
 
-id _MKCheckClassWaveTable() 
+Class _MKCheckClassWaveTable() 
 {
     return checkClass(&_MKWaveTableClass,@"MKWaveTable");
 }
 
-id _MKCheckClassEnvelope() 
+Class _MKCheckClassEnvelope() 
 {
     return checkClass(&_MKEnvelopeClass,@"MKEnvelope");
 }
 
-id _MKCheckClassSamples()
+Class _MKCheckClassSamples()
 {
     return checkClass(&_MKSamplesClass,@"MKSamples");
 }
 
-id _MKCheckClassConductor()
+Class _MKCheckClassConductor()
 {
     return checkClass(&_MKConductorClass,@"MKConductor");
 }
 
 
-/* Music Kit malloc functions */
+/* MusicKit malloc functions */
 char *_MKCalloc(unsigned nelem, unsigned elsize)
 {
     void *rtn = calloc(nelem, elsize);

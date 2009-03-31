@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 #
 # $Id$
 #
@@ -16,10 +17,9 @@
 #
 PLATFORM=portaudio
 
-all: 
-	$(MAKE) -C PlatformDependent/MKPerformSndMIDI_$(PLATFORM)
-	$(MAKE) -C SndKit
-	$(MAKE) -C MKDSP_Native
-	$(MAKE) -C MusicKit
-	# $(MAKE) -C MKUnitGenerators
-	# $(MAKE) -C MKSynthPatches
+SUBPROJECTS = PlatformDependent/MKPerformSndMIDI_$(PLATFORM) SndKit MKDSP_Native MusicKit
+# TODO: MKUnitGenerators MKSynthPatches
+
+include $(GNUSTEP_MAKEFILES)/common.make
+include $(GNUSTEP_MAKEFILES)/aggregate.make
+
