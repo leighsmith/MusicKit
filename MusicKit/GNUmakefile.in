@@ -16,24 +16,9 @@
 #
 
 CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
+SUBPROJECTS = Frameworks 
+# TODO: Palettes Utilities Examples Applications Documentation
 
-# palettes utilities examples applications
-all: frameworks 
+include $(GNUSTEP_MAKEFILES)/common.make
+include $(GNUSTEP_MAKEFILES)/aggregate.make
 
-frameworks:
-	$(MAKE) -C Frameworks
-
-palettes:
-	$(MAKE) -C Palettes
-
-utilities:
-	$(MAKE) -C Utilities
-
-examples:
-	$(MAKE) -C Examples
-
-applications:
-	$(MAKE) -C Applications
-
-documentation:
-	$(MAKE) -C Documentation
