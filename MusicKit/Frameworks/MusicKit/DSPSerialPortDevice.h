@@ -13,30 +13,6 @@
   Portions Copyright (c) 1994 CCRMA, Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.8  2005/05/22 07:34:06  leighsmith
-  Corrected and updated headerdoc
-
-  Revision 1.7  2005/05/14 03:27:26  leighsmith
-  Clean up of parameter names to correct doxygen warnings
-
-  Revision 1.6  2005/05/09 15:52:49  leighsmith
-  Converted headerdoc comments to doxygen comments
-
-  Revision 1.5  2001/09/07 00:11:46  leighsmith
-  Correctly added headerdoc comments
-
-  Revision 1.4  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2001/03/12 01:56:54  leigh
-  Typed orch to avoid warnings
-
-  Revision 1.2  1999/07/29 01:25:42  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class DSPSerialPortDevice
   @brief
@@ -344,10 +320,10 @@ Solutions AD64x ADC &amp; DAT interface.
 }
 
 /*!
-  @param  isPro is a BOOL.
+  @param  yesOrNo is a BOOL.
   @return Returns an id.
-  @brief Sets the <i>professional</i> instance variable to <i>isPro.</i>Then,
-  when <b>setUpSerialPort: </b>   is invoked, the AD64x will be set to
+  @brief Sets the <i>professional</i> instance variable to <i>yesOrNo</i>. Then,
+  when <b>setUpSerialPort:</b> is invoked, the AD64x will be set to
   professional (AES/EBU) or consumer (SPDIF) mode, according to the
   value of <i>professional.</i>
 */
@@ -422,14 +398,12 @@ Stealth DAI2400 DAT interface.
 }
 
 /*!
-  @param  setCopyProhibit is a BOOL.
+  @param  yesOrNo is a BOOL.
   @return Returns an id.
   @brief Sets the <i>copyProhibit</i> instance variable to
-  <i>setCopyProhibit.</i>   Then, when <b>applySettings:</b> is
+  <i>yesOrNo</i>.  Then, when <b>applySettings:</b> is
   invoked, the StealthDAI2400 will be told to set or clear the copy
   prohibit flag.
-
-  
 */
 -setCopyProhibit:(BOOL)yesOrNo;
 
@@ -477,15 +451,14 @@ Ariel ProPort ADC/DAC interface.
 {}
 
 /*!
-  @param  rates is a double.
+  @param  rates is a double **.
   @return Returns an int.
   @brief Returns 7 and sets *<i>rates</i> to a malloc'ed array containing 
   96000, 48000, 44100, 32000, 16000, 11025 or 8000.
 
-  Note that 96000
-  is supported by the ProPort for input only.
+  Note that 96000 is supported by the ProPort for input only.
 */
--(int)hardwareSupportedSamplingRates:(double **)ar;
+- (int) hardwareSupportedSamplingRates: (double **) rates;
 
 /*!
   @param  orchestra is an id.

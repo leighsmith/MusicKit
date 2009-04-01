@@ -1617,13 +1617,13 @@ extern void MKSetPreemptDuration(double seconds);
   are provided by the DSP device corresponding to the MKOrchestra.
 
   Possible values (defined in MKOrchestra.h) are as follows:
-<tt>
-#define MK_nextCompatibleDSPPort 1
-#define MK_hostSoundOut (1<<1)
-#define MK_serialSoundOut (1<<2)
-#define MK_soundIn (1<<3)
-#define MK_soundfileOut (1<<4)
-</tt> 
+<pre>
+\#define MK_nextCompatibleDSPPort 1
+\#define MK_hostSoundOut (1<<1)
+\#define MK_serialSoundOut (1<<2)
+\#define MK_soundIn (1<<3)
+\#define MK_soundfileOut (1<<4)
+</pre> 
 */
 - (unsigned) capabilities;
 

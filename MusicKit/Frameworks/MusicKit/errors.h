@@ -132,7 +132,7 @@
   or isn't currently traced.  These functions should only be used while
   you're debugging and fine-tuning your application.  
      
-   You should note that the codes given above are <b>#define</b>'d as
+  You should note that the codes given above are <b>\#define</b>'d as
   their corresponding values and so can be used only when you call one of
   these functions within an application - they can't be used in a symbolic
   debugger such as <b>gdb</b>.  For this reason, the integer values

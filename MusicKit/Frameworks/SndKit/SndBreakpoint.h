@@ -89,11 +89,11 @@
 /*!
   @brief   Allows easy array sorting according to x (time) value
   
-  Example of use: [arrayOfBreakpoints sortUsingSelector:&#64;selector(compare:)]
+  Example of use: <tt>[arrayOfBreakpoints sortUsingSelector: \@selector(compare:)]</tt>
   @param      other another SndBreakpoint
   @return     NSComparisonResult
 */
-- (NSComparisonResult) compare:(SndBreakpoint *)other;
+- (NSComparisonResult) compare: (SndBreakpoint *) other;
 
 @end
 

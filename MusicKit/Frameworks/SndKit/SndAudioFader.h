@@ -187,7 +187,7 @@ movements, then insert it into the SndAudioProcessorChain later.
  
   Defaults to SndEnvelope. Note that this method does not check the class of its
   envelopes directly, but returns the stored class object used for creating future envelopes.
-  @return <SndEnveloping> (a class conforming to the SndEnveloping protocol)
+  @return instance&lt;SndEnveloping&gt; (a class conforming to the SndEnveloping protocol)
 */
 - (id) envelopeClass;
 

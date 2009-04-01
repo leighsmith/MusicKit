@@ -152,9 +152,9 @@ When using this MKSynthPatch in an interactive real-time context, such as playin
 /*!
   @brief Returns a default template.
 
-  <i>aNote </i>is ignored.
-  @param aNote is a MKNote instance.
-  @return A (id).
+  <i>currentNote</i> is ignored.
+  @param currentNote is a MKNote instance.
+  @return An (id).
 */
 + patchTemplateFor: (MKNote *) currentNote;
 

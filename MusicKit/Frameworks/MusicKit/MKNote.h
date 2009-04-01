@@ -170,11 +170,11 @@ or string-valued parameter as any of these three types, regardless of
 the actual type of the value.  For example, you can set the frequency
 of a MKNote as a <b>double</b>, thus:
 	
-	<tt>[aNote setPar:MK_freq toDouble:440.0]</tt>
+	<tt>[aNote setPar: MK_freq toDouble: 440.0]</tt>
 
 and then retrieve it as an <b>int</b>:
 	
-	<tt>int freq = [aNote parAsInt:MK_freq]</tt>
+	<tt>int freq = [aNote parAsInt: MK_freq]</tt>
 
 The type conversion is done automatically.  
 
@@ -222,7 +222,7 @@ parameter's tag:
 int parVector = [aNote parVector: (MK_amp / 32)];
 	
 // If MK_amp is present, the predicate will be true.
-if (parVector &amp; (1 &lt;&lt; (MK_amp &percent; 32)))
+if (parVector &amp; (1 &lt;&lt; (MK_amp \% 32)))
 </pre>
 </li>
  
@@ -247,7 +247,7 @@ appropriate parameter-not-set value, as given below:
 </tr>
 <tr>
 <td align=left>NSString</td>
-<td align=left>&at;&ldquo;&rdquo; (this needs checking - LMS)</td>
+<td align=left>\@&ldquo;&rdquo;</td>
 </tr>
 <tr>
 <td align=left>id</td>

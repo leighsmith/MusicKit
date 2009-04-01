@@ -274,13 +274,14 @@ noteTag.
 /* The methods are all explained in the class description for MKSynthPatch */
 
 /*!
-  @param  aNote is an id.
+  @param  currentNote is an id.
   @return Returns an id.
   @brief Returns a default template.
 
-  <i>aNote </i>is ignored.
+  <i>currentNote</i> is ignored.
 */
-+patchTemplateFor:currentNote;
++patchTemplateFor: (id) currentNote;
+
 -init;
 -controllerValues:controllers;
 

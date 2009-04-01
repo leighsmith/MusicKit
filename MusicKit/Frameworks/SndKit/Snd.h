@@ -217,7 +217,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 
   First the named Snd
               table is searched; if the sound isn't found, then the method looks
-              for <i>&#ldquo;aName</i>.snd&#rdquo; in the sound segment of the
+              for <i>&ldquo;aName</i>.snd&rdquo; in the sound segment of the
               application's executable file. Finally, <i>the file</i> is searched
               for in the following directories (in order):
 
@@ -640,7 +640,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @return Returns an int.
   @brief Returns a constant that represents the last error that was generated.
 
-  The sound error codes are listed in &#ldquo;Types and Constants.&#rdquo;
+  The sound error codes are listed in &ldquo;Types and Constants.&rdquo;
 */
 - (int) processingError;
 

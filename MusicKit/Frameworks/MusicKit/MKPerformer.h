@@ -151,16 +151,16 @@ Here is an example of a simple, but complete, Time
 Code-conforming MKPerfomer.  This example is a simplified version of
 the MusicKit MKPartPerformer:
 
-<tt>
-#import &lt;MusicKit/MusicKit.h&gt;<br>
-#import "MyPartPerformer.h"<br>
-&#64;implementation MyPartPerformer:MKPerformer<br>
-{<br>
-  id part;             // MKPart over which we're sequencing.<br>
-  double firstTimeTag; // Required by Time Code Protocol.<br>
-  int currentIndex;    // Index of nextNote<br>
-}<br>
-</tt>
+<pre>
+\#import &lt;MusicKit/MusicKit.h&gt;
+\#import "MyPartPerformer.h"
+\@implementation MyPartPerformer: MKPerformer
+{
+  id part;             // MKPart over which we're sequencing.
+  double firstTimeTag; // Required by Time Code Protocol.
+  int currentIndex;    // Index of nextNote
+}
+</pre>
 
   @see MKConductor, MKNoteSender 
 */

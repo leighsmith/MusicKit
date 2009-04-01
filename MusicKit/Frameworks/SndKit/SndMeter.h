@@ -49,9 +49,9 @@
 
 A SndMeter is a view that displays the amplitude level of a sound as
 it's being recorded or played back. There are two working parts to the
-meter: A continuously-updated &#ldquo;running bar&#rdquo; that lengthens
-ands shrinks to depict the current amplitude level, and a &#ldquo;peak
-bubble&#rdquo; that displays and holds the greatest amplitude that was
+meter: A continuously-updated &ldquo;running bar&rdquo; that lengthens
+ands shrinks to depict the current amplitude level, and a &ldquo;peak
+bubble&rdquo; that displays and holds the greatest amplitude that was
 detected within the last few samples. An optional bezeled border is
 drawn around the object's frame.
 
@@ -104,7 +104,10 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
   The object's attributes are initialized as follows:
 
 <table border=1 cellspacing=2 cellpadding=0 align=center>
- <b>Attribute</b>	<b>Value</b><br>
+<tr>
+ <td><b>Attribute</b></td>
+ <td><b>Value</b></td>
+</tr>
 <tr>
  <td>Peak hold time</td>
  <td>0.7 seconds</td>

@@ -30,7 +30,6 @@
 /*!
   @class Allpass1UG
   @brief <b>Allpass1UG</b> is a first-order all-pass filter, useful for phase modifications.
-  @discussion
 
 Allpass1UG is a one-pole, one-zero filter.  The value of the filter coefficient
 is set directly.  The filter's transfer function is given as
@@ -96,10 +95,11 @@ are used.
 -setOutput: (id) aPatchPoint;
 
 /*!
-  @brief Sets the filter coefficient to <i>bb0</i>.
-  @discussion For stability, the coefficient should be within the bounds: -1.0 &lt; <i>bb0</i> &lt; 1.0
   @param bb0 is an double.
   @return Returns <b>self</b>.
+  @brief Sets the filter coefficient to <i>bb0</i>.
+
+  For stability, the coefficient should be within the bounds: -1.0 &lt; <i>bb0</i> &lt; 1.0
 */
 - setBB0: (double) bb0;
 
