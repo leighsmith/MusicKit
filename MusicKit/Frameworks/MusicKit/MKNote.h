@@ -525,24 +525,6 @@ typedef enum _MKDataType {
   @return Returns an id.
  */
 - split: (id *) aNoteOn : (id *) aNoteOff; 
- /* 
-  * If receiver isn't a noteDur, returns nil.  Otherwise, creates a noteOn
-  * and a noteOff, splits the information in the receiver between the two
-  * of them (as explained below), and returns the new MKNotes by reference
-  * in the arguments.  The method itself returns the receiver, which is
-  * neither freed nor otherwise affected.
-  * 
-  * All the receiver's parameters are copied into the noteOn except for
-  * MK_relVelocity which, if present, is copied into the noteOff.  The
-  * noteOn takes the receiver's timeTag while the noteOff's timeTag is
-  * that of the receiver plus its duration.  If the receiver has a
-  * noteTag, it's copied into both new MKNotes; otherwise a new noteTag is
-  * generated for them.  The new MKNotes are added to the receiver's MKPart,
-  * if any.
-  * 
-  * The new noteOn shares the receiver's object-valued parameters.
-  */
-
 
 /*!
   @return Returns an MKPerformer instance.
@@ -622,26 +604,16 @@ typedef enum _MKDataType {
   @param  newTimeTag is a double.
   @return Returns a double.
   @brief Sets the MKNote's time tag to <i>newTimeTag</i> or 0.0, whichever is
-  greater (a time tag can't be negative) .
+  greater (a time tag can't be negative).
 
-  The old time tag value is
-  returned; a return value of MK_ENDOFTIME indicates that the time tag
-  hadn't been set.  Time tags are used to sort the MKNotes within a
-  MKPart; if you change the time tag of a MKNote that's been added to
-  a MKPart, the MKNote is automatically resorted.
+  The old time tag value is returned; a return value of MK_ENDOFTIME indicates that the
+  time tag hadn't been set. If newTimeTag is negative, it is clipped to 0.0.  Time tags
+  are used to sort the MKNotes within a MKPart; if you change the time tag of a MKNote
+  that's been added to a MKPart, the MKNote is automatically resorted.
   
   @see -<b>timeTag</b>, -<b>addToPart:</b>, -<b>sort</b> (MKPart)
 */
 - (double) setTimeTag: (double) newTimeTag; 
- /* 
-  * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
-  * or MK_ENDOFTIME if none.  If newTimeTag is negative, it is clipped to
-  * 0.0.
-  * 
-  * If the receiver is a member of a MKPart, it's first removed from the
-  * MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
-  * ensures that the receiver's position within its MKPart is correct.  
-  */
 
 /*!
   @param newTimeTag
@@ -680,6 +652,8 @@ typedef enum _MKDataType {
   <li>	0 is returned if the receiving MKNote and <i>aNote</i> are the same object.</li>
   </ul>
   
+  If the timeTags are equal, the comparison is by order in the part.
+   
   Keep in mind that the two MKNotes needn't actually be
   members of the same MKPart, nor must they be members of
   MKParts at all.  Naturally, the comparison is judged
@@ -687,21 +661,13 @@ typedef enum _MKDataType {
   tags; changing one or both of the MKNotes' time tags
   invalidates the result of a previous invocation of this
   method.
-  @param  aNote is an id.
+  @param  aNote is an MKNote instance.
   @return Returns an int.
 */
 -(int) compare: (MKNote *) aNote; 
  /* 
-  * Compares the receiver with aNote and returns a value as follows:
-  * 
-  * * If the receiver's timeTag < aNote's timeTag, returns -1.
-  * * If the receiver's timeTag > aNote's timeTag, returns 1.
-  * 
-  * If the timeTags are equal, the comparison is by order in the part.
-  * 
   * If the MKNotes are both not in parts or are in different parts, the
   * result is indeterminate.
-  * 
   */
 
 
@@ -931,13 +897,16 @@ typedef enum _MKDataType {
   messages isn't a prerequisite for an object to be used
   as the argument to this method, if you try to write a
   MKNote that contains a parameter that doesn't respond to
-  <b>writeASCIIStream:</b>, an error is generated.
+  <b>writeASCIIStream:</b>, an error is generated. An object's ASCII representation
+  shouldn't contain the character ']'.
   
   Note that unless you really need to write your object to
   a Scorefile, you are better off saving your object using
   the NXTypedStream archiving mechanism.
   
-  If you're setting the value as an MKEnvelope or MKWaveTable
+  None of the MusicKit classes implement <b>readASCIIStream:</b> or
+  <b>writeASCIIStream:</b> so you can't use this method to set a parameter to a
+  MusicKit object. If you're setting the value as an MKEnvelope or MKWaveTable
   object, you should use the <b>setPar:toEnvelope:</b> or
   <b>setPar:toWaveTable:</b> method, respectively.
   @param  parameterTag is an int.
@@ -946,20 +915,6 @@ typedef enum _MKDataType {
   @see +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsObject:</b> 
 */
 - setPar: (int) parameterTag toObject: (id) anObject; 
- /* 
-  * Sets the parameter par to the object anObj.  The object's class must
-  * implement the methods writeASCIIStream: and readASCIIStream: (in order
-  * to be written to a scorefile).  An object's ASCII representation
-  * shouldn't contain the character ']'.  Returns the receiver.
-  * 
-  * None of the MusicKit classes implement readASCIIStream: or
-  * writeASCIIStream: so you can't use this method to set a parameter to a
-  * MusicKit object (you should invoke the setPar:toEnvelope: or
-  * setPar:toWaveTable: to set the value of a parameter to an MKEnvelope or
-  * MKWaveTable object).  This method is provided to support extensions to the 
-  * MusicKit allowing you to set the value of a parameter to an instance of 
-  * your own class.
-  */
 
 /*!
   @brief Returns a <b>double</b> value converted from the value of the
@@ -1209,7 +1164,8 @@ the section entitled Music Tables
   	
   <tt>[aNote parVector: (parameterTag / 32)] &amp; (1 &lt;&lt; (parameterTag % 32))</tt>
   
-  In this formula, <i>parameterTag </i>identifies the parameter that you're interested in.<i></i>Keep in mind<i>   </i>that the parameter bit vectors only indicate the presence of a parameter, not its value.
+  In this formula, <i>parameterTag</i> identifies the parameter that you're interested
+  in. Keep in mind that the parameter bit vectors only indicate the presence of a parameter, not its value.
   @param  index is an unsigned.
   @return Returns an unsigned.
   @see  -<b>parVectorCount</b>, -<b>isParPresent:</b>
@@ -1563,7 +1519,7 @@ extern int MKHighestPar(void);
 /*!
   @brief Query for a MKNote's parameters
 
-   <b>MKInitParameterIteration()</b> and <b>MKNextParameter()</b> work
+  <b>MKInitParameterIteration()</b> and <b>MKNextParameter()</b> work
   together to return, one by one, the full complement of a MKNote's
   parameter identifiers.  <b>MKInitParameterIteration()</b> primes its
   MKNote argument for successive calls to <b>MKNextParameter()</b>, each

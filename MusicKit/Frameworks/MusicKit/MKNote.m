@@ -493,27 +493,27 @@ static unsigned int nAppBitVects(MKNote *self)
     return oldPart;
 }
 
+/* TYPE: Timing; Returns the receiver's timeTag.
+ * Returns the receiver's timeTag.  If the timeTag isn't set, 
+ * returns MK_ENDOFTIME.
+ */
 - (double) timeTag
-  /* TYPE: Timing; Returns the receiver's timeTag.
-   * Returns the receiver's timeTag.  If the timeTag isn't set, 
-   * returns MK_ENDOFTIME.
-   */
 { 
     return timeTag;
 }
 
+/* TYPE: Timing; Sets the receiver's timeTag.
+ * Sets the receiver's timeTag to newTimeTag and returns the old 
+ * timeTag, or MK_ENDOFTIME if none. 
+ * If newTimeTag is negative, it's clipped to 0.0.
+ *
+ * Note:  If the receiver is a member of a MKPart, 
+ * it's first removed from the MKPart,
+ * the timeTag is set, and then it's
+ * re-added in order to ensure that its ordinal position within the
+ * MKPart is correct.
+ */
 - (double) setTimeTag:(double)newTimeTag    
-  /* TYPE: Timing; Sets the receiver's timeTag.
-   * Sets the receiver's timeTag to newTimeTag and returns the old 
-   * timeTag, or MK_ENDOFTIME if none. 
-   * If newTimeTag is negative, it's clipped to 0.0.
-   *
-   * Note:  If the receiver is a member of a MKPart, 
-   * it's first removed from the MKPart,
-   * the timeTag is set, and then it's
-   * re-added in order to ensure that its ordinal position within the
-   * MKPart is correct.
-   */
 { 
     double time = timeTag;
     MKPart *aPart = part;    /* Save it because remove causes it to be set to nil */

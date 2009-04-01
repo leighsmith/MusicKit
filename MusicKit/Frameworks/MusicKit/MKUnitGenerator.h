@@ -61,7 +61,7 @@
  
 Each MKUnitGenerator subclass represents a modular DSP program (a <i>unit
 generator</i>) that provides a particular synthesis operation, such as waveform
-generation, filtering, and mixing.  Sound is synthesized by dowloading unit
+generation, filtering, and mixing.  Sound is synthesized by downloading unit
 generators to the DSP, interconnecting them, and making them run. 
 
 To download a copy of a particular unit generator to the DSP, you send the

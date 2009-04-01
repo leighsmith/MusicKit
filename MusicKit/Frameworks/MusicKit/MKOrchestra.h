@@ -264,7 +264,7 @@ pass word. It will tell you driver was successfully installed. Click
 OK.
 You've now "installed" the driver.
 
-2. In<b> Configure.app</b>, Click Other. Click Add... Click Add.  Select the
+2. In <b>Configure.app</b>, Click Other. Click Add... Click Add.  Select the
 driver (from the "other" category) and make sure that the I/O port corresponds
 to your hardware configuration.  From Menu/Configuration, select Save.   You've
 now "added the driver".	
@@ -421,15 +421,20 @@ extern void MKSetPreemptDuration(double seconds);
  
 @interface MKOrchestra : SndStreamClient
 {
-    double computeTime;      /* Runtime of orchestra loop in seconds. */
-    double samplingRate;     /* Sampling rate. */
-    /* Stack of MKUnitGenerator instances in the order they appear in DSP memory. 
+    /*! @var computeTime Runtime of orchestra loop in seconds. */
+    double computeTime; 
+    /*! @var samplingRate Sampling rate. */     
+    double samplingRate;
+    /*! @var unitGeneratorStack Stack of MKUnitGenerator instances in the order they appear in DSP memory. 
     MKSynthData instances are not on this unitGeneratorStack. */
     NSMutableArray *unitGeneratorStack;      
-    NSString *outputSoundfile; /* For output sound samples. */
+    /*! @var outputSoundfile For output sound samples. */
+    NSString *outputSoundfile;
     id outputSoundDelegate;
-    NSString *inputSoundfile; /* For output sound samples. */ /* READ DATA */
-    NSString *outputCommandsFile; /* For output DSP commands. */
+    /*! @var inputSoundfile For input sound samples. READ DATA */
+    NSString *inputSoundfile;
+    /*! @var outputCommandsFile For output DSP commands. */
+    NSString *outputCommandsFile;
     id xZero;         /* Special pre-allocated x patch-point that always holds
                          0 and to which nobody ever writes, by convention.  */
     id yZero;         /* Special pre-allocated y patch-point that always holds
@@ -457,8 +462,8 @@ extern void MKSetPreemptDuration(double seconds);
     BOOL soundIn;
     BOOL isLoopOffChip; /* YES if loop has overflowed off chip. */
     BOOL fastResponse;  /* YES if response latency should be minimized */
-    double localDeltaT; /* positive offset in seconds added to out-going
-                           time-stamps */
+    /*! @var localDeltaT positive offset in seconds added to out-going time-stamps */
+    double localDeltaT;
     short onChipPatchPoints;
     int release;
     char version;
