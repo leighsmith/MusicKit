@@ -631,6 +631,14 @@ extern void MKFinishPerformance(void);
     unsigned char delegateFlags;
 }
  
+/*!
+ @name Creating and Freeing a Conductor
+*/
+/*@{*/
+/*!
+  @return Returns an id.
+  @brief Allocates memory for a new MKConductor, from specified zone, if not in performance.
+*/
 + allocWithZone: (NSZone *) zone;
 
 /*!
@@ -638,8 +646,7 @@ extern void MKFinishPerformance(void);
   @brief Creates and returns a new MKConductor object with a tempo of 60.0
   beats per minute, allocated from the default zone.
 
-  You must send
-  <b>init </b>to the new instance.  If a performance is currently in
+  You must send <b>init </b>to the new instance.  If a performance is currently in
   progress, this does nothing and returns <b>nil</b>.
 */
 + alloc;
@@ -655,25 +662,17 @@ extern void MKFinishPerformance(void);
 - init;
 
 /*!
-  @return Returns an id.
-  @brief <i>This method is superceded by <b>+lockPerformance </b>and
-  <b>+unlockPerformance</b>.</i>  
-  
-  Updates every MKConductor's notion of time.
+ @return Returns an id.
+ @brief Returns a new MKConductor created through <b>[MKConductor new]</b>.
+ */
+- copyWithZone: (NSZone *) zone;
 
-  This method
-  may be invoked just before you send a message or call a
-  C function that affects the performance.  Typical
-  examples include methods that are in response to the
-  user's actions, methods that send MKNotes directly to
-  MKInstruments, and methods, such as <b>pause</b> and
-  <b>resume</b>, that are sent to a MKConductor object or
-  to the MKConductor class.  You do not need to send this
-  message if you are invoked in response to MKConductor or
-  MKMidi messages.  Returns the receiver.
-*/
-+ adjustTime; 
+/*@}*/
 
+/*!
+  @name Controlling a Performance
+ */
+/*@{*/
 /*!
   @brief Starts a performance.
   @return Returns an id.
@@ -686,23 +685,6 @@ extern void MKFinishPerformance(void);
   the performance is over.
 */
 + startPerformance;
-
-/*!
-  @return Returns an MKConductor.
-  @brief Returns the defaultConductor.
-
-  
-*/
-+ (MKConductor *) defaultConductor; 
-
-/*!
-  @return Returns a BOOL.
-  @brief Returns <b>YES</b> if a performance is currently taking place (even
-  if it's paused), otherwise returns <b>NO</b>.
-
-  
-*/
-+(BOOL) inPerformance; 
 
 /*!
   @return Returns an id.
@@ -733,15 +715,6 @@ extern void MKFinishPerformance(void);
 + pausePerformance; 
 
 /*!
-  @return Returns a BOOL.
-  @brief Returns <b>YES</b> if the performance is paused, otherwise returns
-  <b>NO</b>.
-
-  
-*/
-+ (BOOL) isPaused; 
-
-/*!
   @return Returns an id.
   @brief Resumes a  performance, allowing it to continue from where it was
   paused.
@@ -750,112 +723,6 @@ extern void MKFinishPerformance(void);
   otherwise returns the receiver.
 */
 + resumePerformance; 
-
-/*!
-  @return Returns an id.
-  @brief Returns the MKConductor instance that's currently sending a message,
-  or <b>nil</b> if no message is being sent.
-
-  
-*/
-+ currentConductor; 
-
-/*!
-  @return Returns an id.
-  @brief Returns the clockConductor.
-
-  
-*/
-+ clockConductor;
-
-/*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
-  @brief If <i>yesOrNo</i> is <b>YES</b> (the default), the MKConductors
-  dispatches each message at the specified time, waiting if necessary.
-
-  
-  If <b>NO</b>, messages are sent as quickly as possible.  In an
-  unclocked performance, a subsequent startPerformance message doesn't
-  return until the performance is over, thus effectively disabling the
-  user interface.  Does nothing and returns <b><i>nil</i></b><i></i>
-  if a performance is in progress, otherwise returns the
-  receiver.<i></i>   Unclocked performances involving MIDI time code
-  conductors are not supported.   
-*/
-+ setClocked: (BOOL) yesOrNo; 
-
-/*!
-  @return Returns a BOOL.
-  @brief Returns <b>YES</b> if the performance is clocked, <b>NO</b> if it
-  isn't.
-
-  By default, a performance is clocked.
-*/
-+ (BOOL) isClocked; 
-
-/*!
-  @param  yesOrNo is a BOOL.
-  @return Returns an id.
-  @brief If <i>yesOrNo</i> is <b>YES</b> (the default), the performance is
-  terminated when all the MKConductors' message queues are empty.
-
-  If
-  <b>NO</b>, the performance continues until the
-	  <b>finishPerformance</b> message is sent to the MKConductor class.
-*/
-+ setFinishWhenEmpty: (BOOL) yesOrNo; 
-
-/*!
-  @return Returns a BOOL.
-  @brief Returns <b>YES</b> if a performance is in progress and all the
-  MKConductor instances' message request queues are are empty,
-  otherwise returns <b>NO.</b>
-*/
-+ (BOOL) isEmpty;
-
-/*!
-  @return Returns a BOOL.
-  @brief Returns <b>YES</b> if the performance will finish when all
-  MKConductors' message queues are empty, <b>otherwise returns
-  NO</b>.
-
-  
-*/
-+ (BOOL) finishWhenEmpty;
-
-/*!
-  @param  newDeltaT is a double.
-  @brief Set the delta time in seconds.
-
-  
-  @see <b>MKSetDeltaT()</b>
-*/
-+ (void) setDeltaT: (double) newDeltaT;
-
-/*!
-  @return Returns a double.
-  @brief Returns the delta time in seconds.
-
-  
-*/
-+ (double) deltaT;
-
-/*!
-  @return Returns an id.
-  @brief Returns a new MKConductor created through <b>[MKConductor new]</b>.
-
-  
-*/
-- copyWithZone: (NSZone *) zone;
-
-/*!
-  @return Returns a BOOL.
-  @brief Returns <b>YES</b> if the receiver is paused.
-
-  
-*/
-- (BOOL) isPaused; 
 
 /*!
   @return Returns an id.
@@ -895,10 +762,252 @@ extern void MKFinishPerformance(void);
   @return Returns an id.
   @brief Resumes the receiver's performance and returns the receiver.
 
-  If the
-  receiver isn't currently paused, this has no effect.
+  If the receiver isn't currently paused, this has no effect.
 */
 - resume; 
+
+/*@}*/
+
+/*!
+  @name Querying the Object
+ */
+/*@{*/
+/*!
+  @return Returns an MKConductor.
+  @brief Returns the defaultConductor.
+*/
++ (MKConductor *) defaultConductor; 
+
+/*!
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if a performance is currently taking place (even
+  if it's paused), otherwise returns <b>NO</b>.
+*/
++(BOOL) inPerformance; 
+
+/*!
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the performance is paused, otherwise returns <b>NO</b>.
+*/
++ (BOOL) isPaused; 
+
+/*!
+  @return Returns an id.
+  @brief Returns the MKConductor instance that's currently sending a message,
+  or <b>nil</b> if no message is being sent.  
+*/
++ currentConductor; 
+
+/*!
+  @return Returns an id.
+  @brief Returns the clockConductor.
+*/
++ clockConductor;
+
+/*!
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the performance is clocked, <b>NO</b> if it isn't.
+
+  By default, a performance is clocked.
+*/
++ (BOOL) isClocked; 
+
+/*!
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if a performance is in progress and all the
+  MKConductor instances' message request queues are are empty,
+  otherwise returns <b>NO.</b>
+*/
++ (BOOL) isEmpty;
+
+/*!
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the performance will finish when all
+  MKConductors' message queues are empty, <b>otherwise returns
+  NO</b>.
+*/
++ (BOOL) finishWhenEmpty;
+
+/*!
+  @return Returns a BOOL.
+  @brief Returns <b>YES</b> if the receiver is paused.
+*/
+- (BOOL) isPaused; 
+
+/*!
+  @return Returns a double.
+  @brief Returns the size of the receiver's beat in seconds.
+*/
+- (double) beatSize; 
+
+/*!
+  @return Returns a double.
+  @brief Returns the receiver's tempo in beats per minute.
+*/
+- (double) tempo; 
+
+/*!
+  @brief Same as <tt>[[MKConductor clockConductor] time]</tt>.
+  
+  Returns the current performance time, in seconds.  This doesn't
+  include time that the performance has been paused, nor does it
+  include the performance's delta time.  If a performance isn't in
+  progress, MK_NODVAL is returned .  Use <b>MKIsNoDVal()</b> to check
+  for this return value.
+ @return Returns a double.
+*/
++ (double) timeInSeconds; 
+
+/*!
+  @brief Returns the receiver's notion of the current time in
+  beats.
+  @return Returns a double.
+*/
+- (double) timeInBeats; 
+
+/*!
+  @return Returns a double.
+  @brief Returns the receiver's performance time offset in seconds.
+*/
+- (double) timeOffset; 
+
+/*!
+  @brief Returns <b>YES</b> if the receiver is currently sending a message
+  from its message request queue.
+ @return Returns a BOOL.
+*/
+- (BOOL) isCurrentConductor;
+
+/*!
+ @return Returns a double.
+ @brief Returns the delta time in seconds.
+ */
++ (double) deltaT;
+
+/*!
+ @brief Returns the receiver's delegate object, as set through the <b>setDelegate:</b> method.
+ @return Returns an id.
+ */
+- delegate;
+
+/*!
+ @brief Returns the receiver's delegate object, as set through the
+ <b>setDelegate:</b> method.
+ @return Returns an id.
+ */
++ delegate;
+
+/*!
+  @brief Returns a List of currently active Performers that are assigned to
+  this MKConductor.
+
+  The NSMutableArray is <i>not</i> copied and
+  should not be freed or altered.
+ @return Returns an id.
+*/
+- activePerformers;
+
+/*@}*/
+
+/*!
+  @name Modifying the Object
+ */
+
+/*@{*/
+/*!
+  @param  yesOrNo is a BOOL.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i> is <b>YES</b> (the default), the MKConductors
+  dispatches each message at the specified time, waiting if necessary.
+
+  
+  If <b>NO</b>, messages are sent as quickly as possible.  In an
+  unclocked performance, a subsequent startPerformance message doesn't
+  return until the performance is over, thus effectively disabling the
+  user interface.  Does nothing and returns <b><i>nil</i></b><i></i>
+  if a performance is in progress, otherwise returns the
+  receiver.<i></i>   Unclocked performances involving MIDI time code
+  conductors are not supported.   
+*/
++ setClocked: (BOOL) yesOrNo; 
+
+/*!
+  @param  yesOrNo is a BOOL.
+  @return Returns an id.
+  @brief If <i>yesOrNo</i> is <b>YES</b> (the default), the performance is
+  terminated when all the MKConductors' message queues are empty.
+
+  If <b>NO</b>, the performance continues until the <b>finishPerformance</b> message is sent to the MKConductor class.
+*/
++ setFinishWhenEmpty: (BOOL) yesOrNo; 
+
+/*!
+ @brief Removes all message requests from the receiver's message request
+ queue and returns the receiver.
+ 
+ Doesn't send any of the messages.
+ @return Returns an id.
+ */
+- emptyQueue; 
+
+/*!
+  @param  newDeltaT is a double.
+  @brief Set the delta time in seconds.
+
+  @see <b>MKSetDeltaT()</b>
+*/
++ (void) setDeltaT: (double) newDeltaT;
+
+/*!
+  @brief Sets the receiver's delegate object to <i>delegate</i> and returns
+  the receiver.
+
+  The delegate is sent <b>hasPaused:</b> and
+  <b>hasResumed:</b> as the receiver is paused and resumed,
+  respectively. 
+ @param  delegate is an id.
+ @return Returns an id.
+*/
+- (void) setDelegate: (id) delegate;
+
+/*!
+  @brief Sets the receiver's delegate object to <i>delegate</i> and returns
+  the receiver.
+
+  The delegate is sent <b>hasPaused:</b> and
+  <b>hasResumed:</b> as the receiver is paused and resumed,
+  respectively. 
+  @param  delegate is an id.
+  @return Returns an id.
+*/
++ (void) setDelegate: (id) delegate;
+
+/*@}*/
+
+/*!
+  @name Manipulating Time
+ */
+/*@{*/
+
+/*!
+  @return Returns an id.
+  @brief <i>This method is superceded by <b>+lockPerformance </b>and
+  <b>+unlockPerformance</b>.</i>  
+  
+  Updates every MKConductor's notion of time.
+
+  This method
+  may be invoked just before you send a message or call a
+  C function that affects the performance.  Typical
+  examples include methods that are in response to the
+  user's actions, methods that send MKNotes directly to
+  MKInstruments, and methods, such as <b>pause</b> and
+  <b>resume</b>, that are sent to a MKConductor object or
+  to the MKConductor class.  You do not need to send this
+  message if you are invoked in response to MKConductor or
+  MKMidi messages.  Returns the receiver.
+*/
++ adjustTime; 
 
 /*!
   @param  newBeatSize is a double.
@@ -913,14 +1022,6 @@ extern void MKFinishPerformance(void);
 - (double) setBeatSize: (double) newBeatSize; 
 
 /*!
-  @return Returns a double.
-  @brief Returns the size of the receiver's beat in seconds.
-
-  
-*/
-- (double) beatSize; 
-
-/*!
   @param  newTempo is a double.
   @return Returns a double.
   @brief Sets the receiver's tempo to <i>newTempo</i>, measured in beats per
@@ -932,16 +1033,7 @@ extern void MKFinishPerformance(void);
 -(double) setTempo: (double) newTempo; 
 
 /*!
-  @return Returns a double.
-  @brief Returns the receiver's tempo in beats per minute.
-
-  
-*/
-- (double) tempo; 
-
-/*!
-  @brief Sets the receiver's performance time offset to <i>newTimeOffset</i>
-  seconds.
+  @brief Sets the receiver's performance time offset to <i>newTimeOffset</i> seconds.
 
   Keep in mind that since the offset is measured in seconds,
   it's not affected by the receiver's tempo.  Attempts to set the
@@ -952,11 +1044,16 @@ extern void MKFinishPerformance(void);
 */
 - (double) setTimeOffset: (double) newTimeOffset; 
 
+/* Obsolete methods */
+- (double) predictTime:(double)beatTime; 
+
+/*@}*/
+
 /*!
-  @return Returns a double.
-  @brief Returns the receiver's performance time offset in seconds.
-*/
-- (double) timeOffset; 
+  @name Requesting Messages
+ */
+
+/*@{*/
 
 /*!
   @brief Places, in the receiver's message request queue, a request for
@@ -1044,8 +1141,7 @@ extern void MKFinishPerformance(void);
  @param  arg2 is an object or any 4-byte type
  @param  retainArg2 is a BOOL
  @return Returns an id.
- 
- */
+*/
 -    sel: (SEL) aSelector 
       to: (id) toObject 
   atTime: (double) time
@@ -1054,40 +1150,6 @@ argCount: (int) argCount
   retain: (BOOL) retainArg1
     arg2: (id) arg2 
   retain: (BOOL) retainArg2;
-/*!
-  @brief Same as <tt>[[MKConductor clockConductor] time]</tt>.
-  
-  Returns the current performance time, in seconds.  This doesn't
-  include time that the performance has been paused, nor does it
-  include the performance's delta time.  If a performance isn't in
-  progress, MK_NODVAL is returned .  Use <b>MKIsNoDVal()</b> to check
-  for this return value.
- @return Returns a double.
-*/
-+ (double) timeInSeconds; 
-
-/*!
-  @brief Returns the receiver's notion of the current time in
-  beats.
-  @return Returns a double.
-*/
-- (double) timeInBeats; 
-
-/*!
-  @brief Removes all message requests from the receiver's message request
-  queue and returns the receiver.
-
-  Doesn't send any of the messages.
- @return Returns an id.
-*/
-- emptyQueue; 
-
-/*!
-  @brief Returns <b>YES</b> if the receiver is currently sending a message
-  from its message request queue.
- @return Returns a BOOL.
-*/
-- (BOOL) isCurrentConductor;
 
 /*!
   @param  aSelector is a SEL.
@@ -1190,59 +1252,11 @@ argCount: (int) argCount
 				  arg2: (id) arg2
 				retain: (BOOL) retainArg2;
 
-/*!
-  @brief Sets the receiver's delegate object to <i>delegate</i> and returns
-  the receiver.
-
-  The delegate is sent <b>hasPaused:</b> and
-  <b>hasResumed:</b> as the receiver is paused and resumed,
-  respectively. 
- @param  delegate is an id.
- @return Returns an id.
-*/
-- (void) setDelegate: (id) delegate;
-
-/*!
-  @brief Returns the receiver's delegate object, as set through the <b>setDelegate:</b> method.
-  @return Returns an id.
-*/
-- delegate;
-
-/*!
-  @brief Sets the receiver's delegate object to <i>delegate</i> and returns
-  the receiver.
-
-  The delegate is sent <b>hasPaused:</b> and
-  <b>hasResumed:</b> as the receiver is paused and resumed,
-  respectively. 
-  @param  delegate is an id.
-  @return Returns an id.
-*/
-+ (void) setDelegate: (id) delegate;
-
-/*!
-  @brief Returns the receiver's delegate object, as set through the
-  <b>setDelegate:</b> method.
- @return Returns an id.
-*/
-+ delegate;
-
-/*!
-  @brief Returns a List of currently active Performers that are assigned to
-  this MKConductor.
-
-  The NSMutableArray is <i>not</i> copied and
-  should not be freed or altered.
- @return Returns an id.
-*/
-- activePerformers;
+/*@}*/
 
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 - (id) initWithCoder: (NSCoder *) aDecoder;
 - awakeAfterUsingCoder: (NSCoder *) aDecoder;
-
-/* Obsolete methods */
-- (double) predictTime:(double)beatTime; 
 
 @end
 
