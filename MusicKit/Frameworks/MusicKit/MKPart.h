@@ -184,15 +184,15 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 
 @interface MKPart : NSObject
 {
-/*! @var score The score to which this MKPart belongs. */
+/*! The score to which this MKPart belongs. */
     MKScore *score;
-/*! @var notes NSArray of MKNotes. */
+/*! NSArray of MKNotes. */
     NSMutableArray *notes;  
- /*! @var info A MKNote used to store an arbitrary collection of info associated with the MKPart. */
+ /*! A MKNote used to store an arbitrary collection of info associated with the MKPart. */
     MKNote *info;      
-/*! @var noteCount Number of MKNotes in the MKPart. */
+/*! Number of MKNotes in the MKPart. */
     unsigned int noteCount;          
-/*! @var isSorted YES if the receiver is sorted. */
+/*! YES if the receiver is sorted. */
     BOOL isSorted;          
 
 @private

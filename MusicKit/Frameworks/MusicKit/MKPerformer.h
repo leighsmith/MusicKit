@@ -193,24 +193,24 @@ typedef enum _MKPerformerStatus {
 
 @interface MKPerformer : NSObject
 {
-    /*! @var conductor The object's MKConductor. */
+    /*! The object's MKConductor. */
     MKConductor *conductor;
-    /*! @var status The object's status. */
+    /*! The object's status. */
     MKPerformerStatus status;
-    /*! @var performCount Number of times the object has received perform messages. */
+    /*! Number of times the object has received perform messages. */
     int performCount;
-    /*! @var timeShift Performance offset time in beats. */
+    /*! Performance offset time in beats. */
     double timeShift;
-    /*! @var duration Maximum performance duration in beats. */
+    /*! Maximum performance duration in beats. */
     double duration;
-    /*! @var time The object's notion of the current time.
+    /*! The object's notion of the current time.
 	The time in beats of the current invocation of perform, if any, otherwise, the time in beats of the last invocation of perform. */
     double time;
-    /*! @var nextPerform The next time in beats until the object will send a MKNote by sending a perform message. */
+    /*! The next time in beats until the object will send a MKNote by sending a perform message. */
     double nextPerform;
-    /*! @var noteSenders The object's collection of MKNoteSenders. */
+    /*! The object's collection of MKNoteSenders. */
     NSMutableArray *noteSenders;
-    /*! @var delegate The object's delegate, if any. */
+    /*! The object's delegate, if any. */
     id delegate;
 
 @private

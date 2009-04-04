@@ -104,22 +104,22 @@ non-integer resampling is not currently supported.
 
 @interface MKSamples : MKWaveTable
 {
-    /*! @var sound The object's Snd object. */
+    /*! The object's Snd object. */
     Snd *sound;
-    /*! @var soundfile The name of the soundfile, if the Snd was set through readSoundfile:. */
+    /*! The name of the soundfile, if the Snd was set through readSoundfile:. */
     NSString *soundfile;
-    /*! @var audioProcessorChain Used for signal processing including amplitude modifying the sound. */
+    /*! Used for signal processing including amplitude modifying the sound. */
     SndAudioProcessorChain *audioProcessorChain;
     int tableType;
-    /*! @var curLoc Index into current sample in soundfile */
+    /*! Index into current sample in soundfile */
     int curLoc;
-    /*! @var amplitude Amplitude scaling of soundfile in floating point */
+    /*! Amplitude scaling of soundfile in floating point */
     double amplitude;
-    /*! @var panBearing Panning between stereo sounds, expressed as a bearing in degrees from centre. */
+    /*! Panning between stereo sounds, expressed as a bearing in degrees from centre. */
     double panBearing;
-    /*! @var startSampleLoc Starting sample to be processed */
+    /*! Starting sample to be processed */
     unsigned int startSampleLoc;
-    /*! @var lastSampleLoc Ending sample to be processed, defining the portion of sound to be used. */
+    /*! Ending sample to be processed, defining the portion of sound to be used. */
     unsigned int lastSampleLoc;
 }
 

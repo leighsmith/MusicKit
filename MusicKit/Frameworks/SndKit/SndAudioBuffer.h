@@ -50,11 +50,11 @@ typedef enum {
 */
 @interface SndAudioBuffer : NSObject
 {
-    /*! @var format Holds sound parameters (sample rate, data format, channel count, frame count). */
+    /*! Holds sound parameters (sample rate, data format, channel count, frame count). */
     SndFormat format;
-    /*! @var data The audio sample data. */
+    /*! The audio sample data. */
     NSMutableData *data;
-    /*! @var speakerConfiguration Holds the association of channels to speakers. 
+    /*! Holds the association of channels to speakers. 
         Each element holds a channel number (0 - format.channelCount), -1 for unused and silent. 
         Elements are arranged as described by SndSpeakerPosition above.
      */

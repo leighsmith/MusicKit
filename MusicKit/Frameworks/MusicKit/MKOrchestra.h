@@ -381,6 +381,10 @@ typedef enum {
 } MKOrchestraTiming;
 
 /*!
+  @defgroup PreemptionFns Set the SynthPatch preemption time.
+ */
+/*!
+  @ingroup PreemptionFns
   @brief Get the MKSynthPatch preemption time
 
   During a performance, DSP resources can become scarce; it's sometimes
@@ -401,6 +405,7 @@ typedef enum {
 extern double MKGetPreemptDuration(void);
 
 /*!
+  @ingroup PreemptionFns
   @brief Set the MKSynthPatch preemption time.
 
   During a performance, DSP resources can become scarce; it's sometimes
@@ -421,19 +426,18 @@ extern void MKSetPreemptDuration(double seconds);
  
 @interface MKOrchestra : SndStreamClient
 {
-    /*! @var computeTime Runtime of orchestra loop in seconds. */
+    /*! Runtime of orchestra loop in seconds. */
     double computeTime; 
-    /*! @var samplingRate Sampling rate. */     
+    /*! Sampling rate. */     
     double samplingRate;
-    /*! @var unitGeneratorStack Stack of MKUnitGenerator instances in the order they appear in DSP memory. 
-    MKSynthData instances are not on this unitGeneratorStack. */
+    /*! Stack of MKUnitGenerator instances in the order they appear in DSP memory. MKSynthData instances are not on this unitGeneratorStack. */
     NSMutableArray *unitGeneratorStack;      
-    /*! @var outputSoundfile For output sound samples. */
+    /*! For output sound samples. */
     NSString *outputSoundfile;
     id outputSoundDelegate;
-    /*! @var inputSoundfile For input sound samples. READ DATA */
+    /*! For input sound samples. READ DATA */
     NSString *inputSoundfile;
-    /*! @var outputCommandsFile For output DSP commands. */
+    /*! For output DSP commands. */
     NSString *outputCommandsFile;
     id xZero;         /* Special pre-allocated x patch-point that always holds
                          0 and to which nobody ever writes, by convention.  */
@@ -451,18 +455,18 @@ extern void MKSetPreemptDuration(double seconds);
                       the SineROM. */
     id muLawROM;   /* Special read-only MKSynthData object used to represent
                       the Mu-law ROM. */
-    /*! @var deviceStatus Status of MKOrchestra. */
+    /*! Status of MKOrchestra. */
     MKDeviceStatus deviceStatus;
-    /*! @var orchIndex Index of the DSP resource managed by this instance. */
+    /*! Index of the DSP resource managed by this instance. */
     unsigned short orchIndex;
     char isTimed;    /* Determines whether DSP commands go out timed or not. */
     BOOL useDSP;     /* YES if running on an actual DSP (Default is YES) */
     BOOL hostSoundOut;   /* YES if sound is going to the DACs. */
-    /*! @var soundIn Indicates if this orchestra will process incoming sound. */
+    /*! Indicates if this orchestra will process incoming sound. */
     BOOL soundIn;
     BOOL isLoopOffChip; /* YES if loop has overflowed off chip. */
     BOOL fastResponse;  /* YES if response latency should be minimized */
-    /*! @var localDeltaT positive offset in seconds added to out-going time-stamps */
+    /*! positive offset in seconds added to out-going time-stamps */
     double localDeltaT;
     short onChipPatchPoints;
     int release;
@@ -1603,12 +1607,24 @@ extern void MKSetPreemptDuration(double seconds);
 - setDefaultSoundOut;
 
 /*!
- @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities </b>method.
+ @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
  */
 #define MK_nextCompatibleDSPPort 1
+/*!
+ @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ */
 #define MK_hostSoundOut (1<<1)
+/*!
+ @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ */
 #define MK_serialSoundOut (1<<2)
+/*!
+ @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ */
 #define MK_soundIn (1<<3)
+/*!
+ @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ */
 #define MK_soundfileOut (1<<4)
 
 /*!

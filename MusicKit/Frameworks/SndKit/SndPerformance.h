@@ -33,27 +33,27 @@
 */
 @interface SndPerformance : NSObject
 {
-    /*! @var snd The sound being performed. */
+    /*! The sound being performed. */
     Snd    *snd;
-    /*! @var playTime The time when to initiate playing. */
+    /*! The time when to initiate playing. */
     double  playTime;
-    /*! @var startIndex The index where the sound will begin playing from at the start of a sound performance. */
+    /*! The index where the sound will begin playing from at the start of a sound performance. */
     long    startAtIndex;
-    /*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>). */
+    /*! The index where the sound will next play from (using <i>retrievePerformBuffer:</i>). */
     long  playIndex;
-    /*! @var endAtIndex The index where the sound will stop <B>before</B>. This marks the sample after the last
+    /*! The index where the sound will stop <B>before</B>. This marks the sample after the last
 			one to be played, the sample at endAtIndex is <B>not</B> played. */
     long    endAtIndex;
-    /*! @var paused Controls whether performance of the Snd is occuring. */
+    /*! Controls whether performance of the Snd is occuring. */
     BOOL    paused;
-    /*! @var audioProcessorChain Effects applied to this particular performance. */
+    /*! Effects applied to this particular performance. */
     SndAudioProcessorChain *audioProcessorChain;
 
-    /*! @var looping Indicates whether to loop during performance. */
+    /*! Indicates whether to loop during performance. */
     BOOL looping;
-    /*! @var loopStartIndex The sample the loop begins at. This sample is included in the loop. */
+    /*! The sample the loop begins at. This sample is included in the loop. */
     long loopStartIndex;
-    /*! @var loopEndIndex The sample the loop ends at. This sample is included in the loop. */
+    /*! The sample the loop ends at. This sample is included in the loop. */
     long loopEndIndex;
 
     // ivars for variable speed playback - TODO needs fixing and documenting

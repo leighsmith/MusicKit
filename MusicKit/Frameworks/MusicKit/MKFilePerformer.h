@@ -127,15 +127,15 @@ Creation of a MKFilePerformer's MKNoteSender(s) is a subclass responsibility.
 
 @interface MKFilePerformer : MKPerformer
 {
-    /*! @var filename File name or nil if the file pointer is specifed directly. */
+    /*! File name or nil if the file pointer is specifed directly. */
     NSString *filename;
-    /*! @var fileTime The current time in the file (in beats). */
+    /*! The current time in the file (in beats). */
     double fileTime;
-    /*! @var stream Pointer to the MKFilePerformer's file, either NSMutableData or NSData */
+    /*! Pointer to the MKFilePerformer's file, either NSMutableData or NSData */
     id stream;
-    /*! @var firstTimeTag The smallest timeTag value considered for performance. */
+    /*! The smallest timeTag value considered for performance. */
     double firstTimeTag;
-    /*! @var lastTimeTag The greatest timeTag value considered for performance. */
+    /*! The greatest timeTag value considered for performance. */
     double lastTimeTag;
 }
  

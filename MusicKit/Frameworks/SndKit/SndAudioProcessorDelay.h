@@ -43,19 +43,19 @@ enum SndDelayParam {
 */
 @interface SndAudioProcessorDelay : SndAudioProcessor 
 {
-/*! @var  chanL temporary delay buffer (left channel) */
+/*! chanL temporary delay buffer (left channel) */
   float  *chanL;
-/*! @var  chanR temporary delay buffer (right channel) */
+/*! chanR temporary delay buffer (right channel) */
   float  *chanR;
-/*! @var  feedback The normalised amount of signal summed from earlier time. */
+/*! feedback The normalised amount of signal summed from earlier time. */
   float   feedback;
-/*! @var  length Delay length in samples. */
+/*! length Delay length in samples. */
   long    length;
-/*! @var  readPos The delayed sample to next read from. */
+/*! readPos The delayed sample to next read from. */
   long    readPos;
-/*! @var  writePos The delay sample to save. */
+/*! writePos The delay sample to save. */
   long    writePos;
-/*! @var  processingLock So we can't resize the delay lines whilst using them!*/
+/*! processingLock So we can't resize the delay lines whilst using them!*/
   NSLock *processingLock;
 }
 

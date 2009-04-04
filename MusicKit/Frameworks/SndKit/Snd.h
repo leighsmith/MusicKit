@@ -139,7 +139,8 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 @interface Snd : NSObject
 {
  @protected
-/*! @var soundStruct <p>The sound data structure.</p>
+/*! The sound data structure.
+ 
   <p>This is defined in the MKPerformSndMIDI framework as follows:</p>
   <pre>
   <b>typedef struct</b> {
@@ -155,52 +156,48 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   */
     // TODO this is in the process of phase-out in favour of soundFormat.
     SndSoundStruct *soundStruct; 
-    /*! @var soundStructSize the length of the structure in bytes */
+    /*! The length of the structure in bytes */
     int soundStructSize;
 
     // TODO NSArray *soundBuffers; /* An array of SndAudioBuffers, the number of elements will depend on the fragmentation. */
-    /*! @var soundFormat The parameters defining the format of the sound. */
+    /*! The parameters defining the format of the sound. */
     SndFormat soundFormat;
-    /*! @var info A descriptive information string read from a sound file. */
+    /*! A descriptive information string read from a sound file. */
     NSString *info;
 
-    /*! @var priority the priority of the sound - currently unused. */
+    /*! The priority of the sound - currently unused. */
     int priority;		 
-    /*! @var delegate the target of notification messages */
+    /*! The target of notification messages */
     id delegate;		 
-    /*! @var status what the object is currently doing */
+    /*! What the object is currently doing */
     int status;			 
-    /*! @var name The name of the sound, typically less verbose than the info string which can be descriptive. */
+    /*! The name of the sound, typically less verbose than the info string which can be descriptive. */
     NSString *name;
-    /*! @var currentError */
+    /*! The code of the most recently occurring error. Zero if no error. */
     int currentError;
-    /*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
+    /*! Determines quality of sampling rate conversion - see quality defines */
     SndConversionQuality conversionQuality;	 
 
-    /*! @var performancesArray An array of all active AND pending performances of this Snd */
+    /*! An array of all active AND pending performances of this Snd */
     NSMutableArray *performancesArray;
-    /*! @var performancesArrayLock An NSLock to protect the performancesArray when playing. */
+    /*! An NSLock to protect the performancesArray when playing. */
     NSLock *performancesArrayLock;
 
-    /*! @var editingLock An NSRecursiveLock to protect concurrent modifying of a sound. */
+    /*! An NSRecursiveLock to protect concurrent modifying of a sound. */
     NSRecursiveLock *editingLock;
     
-    /*! @var loopWhenPlaying Indicates whether the default behaviour is to loop when playing.
-	This is set from reading the sound file.
-     */
+    /*! Indicates whether the default behaviour is to loop when playing. This is set from reading the sound file. */
     BOOL loopWhenPlaying;
-    /*! @var loopStartIndex The sample the loop begins at. This is just the priming value for each performance. */
+    /*! The sample the loop begins at. This is just the priming value for each performance. */
     long loopStartIndex;
-    /*! @var loopEndIndex The sample the loop ends at. This is just the priming value for each performance. */
+    /*! The sample the loop ends at. This is just the priming value for each performance. */
     long loopEndIndex;
 
-    /*! @var audioProcessorChain Typically used to prime a performance of this Snd with a chain of audio effects
-	including volume and balance settings (via it's postFader). 
-     */
+    /*! Typically used to prime a performance of this Snd with a chain of audio effects including volume and balance settings (via it's postFader). */
     SndAudioProcessorChain *audioProcessorChain;
         
 @public
-    /*! @var tag A unique identifier tag for the Snd */
+    /*! A unique identifier tag for the Snd */
     int tag;
 }
 

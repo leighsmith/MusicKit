@@ -67,7 +67,7 @@ configure the MIDI instrument).
 
 @interface MKTuningSystem : NSObject
 {
-    /*! @var frequencies NSArray object of frequencies, indexed by keyNum. */
+    /*! NSArray object of frequencies, indexed by keyNum. */
     NSMutableArray *frequencies; 
 }
 
@@ -298,7 +298,7 @@ configure the MIDI instrument).
   afforded by this function is always in twelve-tone equal-temperament,
   regardless of the installed tuning system, as computed by the formula
      
-   	result = <i>freq</i> * 2 <i>semitones</i> / 12.0 
+  <tt>result = <i>freq</i> * 2 <i>semitones</i> / 12.0</tt>
    
   @param freq Starting frequency in Hz.
   @param semiTonesUp The number of 12 tone equal tempered semitones to transpose freq upwards.

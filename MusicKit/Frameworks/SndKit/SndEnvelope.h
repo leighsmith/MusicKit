@@ -218,9 +218,9 @@
 */
 @interface SndEnvelope : NSObject <SndEnveloping>
 {
-/*! @var lock locks changes to the envelope objects */
+/*! locks changes to the envelope objects */
   NSLock *lock;  
-/*! @var breakpoints SndBreakpoint objects */
+/*! SndBreakpoint objects */
   NSMutableArray *breakpoints; 
 }
 

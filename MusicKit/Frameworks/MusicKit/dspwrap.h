@@ -14,6 +14,8 @@
 #define __MK_dspwrap_H___
 
 /*!
+  @struct _MKMasterUGStruct
+  @typedef MKMasterUGStruct
   @brief The <b>MKMasterUGStruct</b> struct represents the DSP statistics of a
   "master" MKUnitGenerator class.  That is, it contains all the
   information common to the subclasses.  Its fields should not be altered.
@@ -22,15 +24,15 @@
 typedef struct _MKMasterUGStruct {
     /*! Number of memory arguments. */
     unsigned argCount;
-    /*! Number of symbols loaded in each space.  Needed for symbols that are not args.*/
+    /*! Number of symbols loaded in each space.  Needed for symbols that are not args. */
     int symCount[DSP_LC_NUM];
-    /*! Number of fixups in each P space.*/
+    /*! Number of fixups in each P space. */
     int fixupCount[DSP_LC_NUM_P];
-    /*! Symbol list for each DSP location counter.*/
+    /*! Symbol list for each DSP location counter. */
     DSPSymbol *symbols[DSP_LC_NUM];
-    /*! Array of symbols corresponding to memory arguments.*/
+    /*! Array of symbols corresponding to memory arguments. */
     DSPSymbol *argSymbols;
-    /*! Reserved.*/
+    /*! Reserved. */
     void *reserved;
 } MKMasterUGStruct;
 

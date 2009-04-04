@@ -41,17 +41,17 @@
 */
 @interface SndStreamArchitectureView : NSView 
 {
-/*! @var timer */ 
+/*! */ 
   NSTimer *timer;
-/*! @var displayObjectsArray */ 
+/*! */ 
   NSMutableArray *displayObjectsArray;
-/*! @var msg */ 
+/*! */ 
   NSMutableAttributedString *msg;
-/*! @var  currentSndArchObject */ 
+/*! currentSndArchObject */ 
   id      currentSndArchObject;
-/*! @var  objectArrayLock */ 
+/*! objectArrayLock */ 
   NSLock *objectArrayLock;
-/*! @var delegate */ 
+/*! */ 
   id      delegate;
 }
 

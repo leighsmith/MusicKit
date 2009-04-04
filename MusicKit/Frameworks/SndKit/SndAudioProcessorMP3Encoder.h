@@ -73,17 +73,17 @@ enum {
   float             *buffer_l;
   /*! @var buffer_r Right audio channel data (pre-encoding)                     */
   float             *buffer_r;
-  /*! @var bufferSizeInSamples Size of the audio buffers, in bytes.             */
+  /*! Size of the audio buffers, in bytes.             */
   long               bufferSizeInSamples;
   /*! @var mp3buff MP3 bitstream buffer (post-encoding)                         */
   unsigned char     *mp3buff;
   /*! @var mp3BufferSizeInBytes Size of the MP3 bitstream buffer, in bytes      */
   long               mp3BufferSizeInBytes;
-  /*! @var encodeNShoutcastLock Lock controlling access to icecasting code      */
+  /*! Lock controlling access to icecasting code      */
   NSLock            *encodeNShoutcastLock;
-  /*! @var lameGlobalFlags Data structure required for LAME encoding            */
+  /*! Data structure required for LAME encoding            */
   lame_global_flags *lameGlobalFlags;
-  /*! @var conn icecast 'shout-cast' server connection data structure           */
+  /*! icecast 'shout-cast' server connection data structure           */
   shout_t           *conn;
 }
 /*!

@@ -15,11 +15,13 @@
 // initialise and register oneself with the SysExMessage
 - (id) init
 {
-	[super init];
-	[SysExMessage registerSynth:self];
+    self = [super init];
+    if(self != nil) {
+	[SysExMessage registerSynth: self];
 	// set a random number seed
 	[self setBank: nil];
-	return self;
+    }
+    return self;
 }
 
 // Called from Bank where there is no data accompanying it.
@@ -51,17 +53,17 @@
 // Mix things up a bit (needs a random number seed)
 - (void) randomizePatch
 {
-	// randomize the instance variables pertaining to the patch parameters
-	// (and that's all)
-	// randomize a patch description of say 10 characters
+    // randomize the instance variables pertaining to the patch parameters
+    // (and that's all)
+    // randomize a patch description of say 10 characters
 	 
 }
 
 // Download current patch to synth
 - (void) sendPatch
 {
-	// get the patch (instance variables) and translate to a sys-ex message
-	[patch send]; 
+    // get the patch (instance variables) and translate to a sys-ex message
+    [patch send]; 
 }
 
 - (void) sendUpdate
@@ -72,33 +74,33 @@
 // The method used to provide new sysEx messages to the synth instance.
 - (BOOL) initWithSysEx: (SysExMessage *) msg
 {
-	if([self isParameterUpdate: msg])
-		[self parameterUpdate:msg];
-	else if ([self isNewPatch: msg])
-		[self acceptNewPatch:msg];
-	else if ([self isBulkDump: msg])
-		[self acceptBulkDump:msg];
-	else
-		return NO;
-	return YES;
+    if([self isParameterUpdate: msg])
+	    [self parameterUpdate:msg];
+    else if ([self isNewPatch: msg])
+	    [self acceptNewPatch:msg];
+    else if ([self isBulkDump: msg])
+	    [self acceptBulkDump:msg];
+    else
+	    return NO;
+    return YES;
 }
 
 // Given a sys-ex message, returns YES if it's updating a parameter.
 - (BOOL) isParameterUpdate: (SysExMessage *) msg
 {
-	return NO;
+    return NO;
 }
 
 // Check if the sys-ex message is a new patch message
 - (BOOL) isNewPatch: (SysExMessage *) msg
 {
-	return NO;
+    return NO;
 }
 
 // Check if the sys-ex message is a bulk patch dump message.
 - (BOOL) isBulkDump: (SysExMessage *) msg
 {
-	return NO;
+    return NO;
 }
 
 // Set and display a new patch.

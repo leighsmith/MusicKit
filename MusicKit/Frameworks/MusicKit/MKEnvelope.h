@@ -149,19 +149,19 @@ typedef enum _MKEnvStatus {
 
 @interface MKEnvelope : NSObject
 {
-    /*! @var defaultSmoothing If no Smoothing-array, this is time constant. */
+    /*! If no Smoothing-array, this is time constant. */
     double defaultSmoothing;
-    /*! @var samplingPeriod If no X-array, this is abcissa scale */
+    /*! If no X-array, this is abcissa scale */
     double samplingPeriod;
-    /*! @var xArray Array of x values, if any. */
+    /*! Array of x values, if any. */
     double *xArray;
-    /*! @var yArray Arrays of data values */
+    /*! Arrays of data values */
     double *yArray;
-    /*! @var smoothingArray Array of time constants. */
+    /*! Array of time constants. */
     double *smoothingArray;
-    /*! @var stickPoint Index of "steady-state", if any */
+    /*! Index of "steady-state", if any */
     int stickPoint;
-    /*! @var pointCount Number of points in envelope */
+    /*! Number of points in envelope */
     int pointCount;
 }
 

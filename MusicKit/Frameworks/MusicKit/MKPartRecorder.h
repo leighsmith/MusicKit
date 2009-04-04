@@ -59,11 +59,11 @@ to create a group of them for you.
 
 @interface MKPartRecorder : MKInstrument
 {
-    /*! @var timeUnit Enumerates possible methods of how time is interpreted. */
+    /*! Enumerates possible methods of how time is interpreted. */
     MKTimeUnit timeUnit;                
-    /*! @var noteReceiver The object's single NoteReceiver. */
+    /*! The object's single NoteReceiver. */
     MKNoteReceiver *noteReceiver;
-    /*! @var part The MKPartRecorder instance's MKPart. */
+    /*! The MKPartRecorder instance's MKPart. */
     MKPart *part; 
     BOOL compensatesDeltaT;
 

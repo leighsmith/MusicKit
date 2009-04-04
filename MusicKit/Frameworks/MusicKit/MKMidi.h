@@ -170,13 +170,13 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
 
 @interface MKMidi: NSObject
 {
-    NSMutableArray *noteSenders;         /*! @var noteSenders The object's collection of MKNoteSenders. */
-    NSMutableArray *noteReceivers;       /*! @var noteReceivers The object's collection of MKNoteReceivers. */
-    MKDeviceStatus deviceStatus;         /*! @var deviceStatus See MKDeviceStatus.h */
-    NSString *midiDevName;               /*! @var midiDevName Midi device port name. */
-    BOOL useInputTimeStamps;             /*! @var useInputTimeStamps YES if MKConductor's time updated from driver's time stamps. */
-    BOOL outputIsTimed;                  /*! @var outputIsTimed YES if the driver's clock is used for output */
-    double localDeltaT;                  /*! @var localDeltaT Offset added to MIDI-out time stamps.(see below) */
+    NSMutableArray *noteSenders;         /*! The object's collection of MKNoteSenders. */
+    NSMutableArray *noteReceivers;       /*! The object's collection of MKNoteReceivers. */
+    MKDeviceStatus deviceStatus;         /*! See MKDeviceStatus.h */
+    NSString *midiDevName;               /*! Midi device port name. */
+    BOOL useInputTimeStamps;             /*! YES if MKConductor's time updated from driver's time stamps. */
+    BOOL outputIsTimed;                  /*! YES if the driver's clock is used for output */
+    double localDeltaT;                  /*! Offset added to MIDI-out time stamps.(see below) */
 
 @private
     /* systemIgnoreBits A bit map indicating which MIDI system messages to ignore from input */
@@ -194,20 +194,20 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
     NSMachPort *queuePort;       // Port on which we notify when there is space on the playback queue.
     BOOL mergeInput;
     NSString *hostname;          // for MIDI communicated across hosts.
-    /*! @var inputUnit The index into the input drivers list */
+    /*! The index into the input drivers list */
     int inputUnit;
-    /*! @var outputUnit The index into the output drivers list */
+    /*! The index into the output drivers list */
     int outputUnit;
     int queueSize;
-    /*! @var conductor Holds a weak reference to the MKConductor controlled by and controlling MIDI I/O. */
+    /*! Holds a weak reference to the MKConductor controlled by and controlling MIDI I/O. */
     MKConductor *conductor;      // Used by conductor and setConductor: methods
-    /*! @var synchConductor If non-nil, time mode is synchronise to MIDI Time Code (MTC). */
+    /*! If non-nil, time mode is synchronise to MIDI Time Code (MTC). */
     MKConductor *synchConductor;
     NSMachPort *exceptionPort;   // Exception port.  Only one unit per device may have one.
     NSMachPort *alarmPort;       // Alarm port.  Only one unit per device may have one.
-    /*! @var mtcMidiObj Which unit is receiving MTC. */
+    /*! Which unit is receiving MTC. */
     MKMidi *mtcMidiObj;
-    /*! @var displayReceivedMIDI Controls display of debugging information. */
+    /*! Controls display of debugging information. */
     BOOL displayReceivedMIDI;
     double alarmTime;
     int intAlarmTime;

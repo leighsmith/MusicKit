@@ -50,37 +50,37 @@ enum {
   To come
 */
 @interface SndAudioProcessorFlanger : SndAudioProcessor {
-/*! @var fRate */  
+/*! */  
   float  fRate;
-/*! @var fMax */  
+/*! */  
   float  fMax;
-/*! @var fMin */  
+/*! */  
   float  fMin;
-/*! @var fSwapStereo */  
+/*! */  
   float  fSwapStereo;
-/*! @var fPhaseDiff */  
+/*! */  
   float  fPhaseDiff;
-/*! @var fFeedback */  
+/*! */  
   float  fFeedback;
 
   @private
-/*! @var m_pfBuff */  
+/*! */  
   float* m_pfBuff[2];
-/*! @var m_liBuffSize */  
+/*! */  
   long   m_liBuffSize;
-/*! @var m_liPtr */  
+/*! */  
   long   m_liPtr;
-/*! @var m_fOsc */  
+/*! */  
   float  m_fOsc[2];
-/*! @var m_oscSign */  
+/*! */  
   float  m_oscSign[2];
-/*! @var m_fOscStep */  
+/*! */  
   float  m_fOscStep;
-/*! @var m_fTargetMax */  
+/*! */  
   float  m_fTargetMax;
-/*! @var m_fTargetMin */  
+/*! */  
   float  m_fTargetMin;
-/*! @var m_fParamChangeRate */  
+/*! */  
   float  m_fParamChangeRate;  
 }
 

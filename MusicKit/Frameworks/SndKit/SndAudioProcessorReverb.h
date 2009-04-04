@@ -55,7 +55,7 @@ enum {
 */
 @interface SndAudioProcessorReverb : SndAudioProcessor {
 @private  
-/*! @var cppFreeReverbObj C++ object pointer for the FreeVerb model */
+/*! C++ object pointer for the FreeVerb model */
   void* cppFreeReverbObj; 
 }
 

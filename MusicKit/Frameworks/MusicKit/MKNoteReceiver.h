@@ -116,11 +116,11 @@ their assumption of the role of MKInstrument.
 
 @interface MKNoteReceiver: NSObject
 {
-    /*! @var noteSenders Array of connected MKNoteSenders. */
+    /*! Array of connected MKNoteSenders. */
     NSMutableArray *noteSenders;
-    /*! @var isSquelched YES if the object is currently squelched. */
+    /*! YES if the object is currently squelched. */
     BOOL isSquelched;
-    /*! @var owner MKInstrument that owns MKNoteReceiver. */
+    /*! MKInstrument that owns MKNoteReceiver. */
     MKInstrument *owner;
 
 @private

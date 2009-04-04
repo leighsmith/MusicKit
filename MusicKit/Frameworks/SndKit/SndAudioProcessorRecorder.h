@@ -61,25 +61,25 @@ enum SndRecorderParam {
 @interface SndAudioProcessorRecorder : SndAudioProcessor {
 
 @protected
-    /*! @var writingQueue A queue of buffers copied from those received by processReplacingInputBuffer: ready for writing. */
+    /*! A queue of buffers copied from those received by processReplacingInputBuffer: ready for writing. */
     SndAudioBufferQueue *writingQueue;
-    /*! @var fileFormat The format of the data to be stored in the file. */
+    /*! The format of the data to be stored in the file. */
     SndFormat fileFormat;
-    /*! @var isRecording Indicates if recording is currently active. */
+    /*! Indicates if recording is currently active. */
     BOOL isRecording;
-    /*! @var writingFileHandle Holds the file handle used in writing. */
+    /*! Holds the file handle used in writing. */
     NSFileHandle *writingFileHandle;
-    /*! @var framesRecorded Number of sample frames written */
+    /*! Number of sample frames written */
     unsigned long framesRecorded;  
-    /*! @var recordFile The libsndfile handle referring to the open file. NULL if not open. */
+    /*! The libsndfile handle referring to the open file. NULL if not open. */
     SNDFILE *recordFile;
-    /*! @var recordFileName Full pathname of the file being or about to be written. */
+    /*! Full pathname of the file being or about to be written. */
     NSString *recordFileName;
-    /*! @var startedRecording Indicates if a minimum threshold or time trigger has passed and recording has begun. */
+    /*! Indicates if a minimum threshold or time trigger has passed and recording has begun. */
     BOOL startedRecording;
-    /*! @var startTriggerThreshold A normalised absolute value threshold to begin the recording of sound. */
+    /*! A normalised absolute value threshold to begin the recording of sound. */
     float startTriggerThreshold;
-    /*! @var stopSignal A boolean variable to indicate that recording should stop and the file should be closed. */
+    /*! A boolean variable to indicate that recording should stop and the file should be closed. */
     BOOL stopSignal;
 }
 

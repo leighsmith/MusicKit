@@ -16,28 +16,50 @@
 
 @implementation SynthLoader
 
-// We load all the MIDISysExSynth objects from the bundles that we can find here to enable MIDI sysex reception. Priority increases
-// on each register so we load unhandled first.
-// MIDI reception of patches should only be enabled when a BankController has been
-// allocated. That means we should load the Nibs here and enable reception everytime we start up a
-// BankController.
+// We load all the MIDISysExSynth objects from the bundles that we can find here to enable MIDI sysex reception.
+// Priority increases on each register so we load unhandled first.
+// MIDI reception of patches should only be enabled when a BankController has been allocated.
+// That means we should load the Nibs here and enable reception everytime we start up a BankController.
 - (void) loadTheBundles
 {
-   MIDISysExSynth *respondantSynth1;
+    // TODO check NSUserDefault if we should load unhandled. If not loaded, we should just ignore unhandled SysEx.
+    // if ([[NSUserDefaults standardUserDefaults] boolForKey: ShouldRespondToUnhandledSynths])
+    {
+	MIDISysExSynth *respondantSynth1;
 
-   // We should always load unhandled.
-   // We load it first to ensure it has lowest priority registering as the default handler.
-   respondantSynth1 = [[UnhandledSynth alloc] init];
-      // Should extract out the name, the icon to create ourselves an array of tiles
+	// We load it first to ensure it has lowest priority registering as the default handler.
+	respondantSynth1 = [[UnhandledSynth alloc] init];
+    }
 
-   // Load our bundles for those synths found
-   // for now we kludge, eventually we should search and find them in Library/PatchCord
-
-   // For now just load the ones we need
-   [[Juno106 alloc] init];
-   [[QuadraverbGT alloc] init];
-   [[ProphetVS alloc] init];
-   [[AxonNGC77 alloc] init];
+    // Load our bundles for those synths found.
+    // search and find bundles for synths inside the main app, ~/Library/PatchCord, /Library/PatchCord etc.
+    // NSString *libraryPaths = @"~/Library";
+    // NSString *synthBundlesDirectory = [libraryPaths stringByAppendingPathComponent: @"SysExSynths"];
+    // NSLog(@"synthBundlesDirectory %@\n", synthBundlesDirectory);
+    // NSArray *synthBundlePaths = [NSBundle pathsForResourcesOfType: nil inDirectory: synthBundlesDirectory];
+    NSArray *synthBundlePaths = [[NSBundle mainBundle] pathsForResourcesOfType: nil inDirectory: @"SysExSynths"];
+    unsigned int pathIndex;
+       
+    // Should extract out the name, the icon to create ourselves an array of tiles
+    for(pathIndex = 0; pathIndex < [synthBundlePaths count]; pathIndex++) {
+	NSString *bundlePath = [synthBundlePaths objectAtIndex: pathIndex];
+	NSBundle *synthBundle = [NSBundle bundleWithPath: bundlePath];
+	
+	// allocate and initialise the synth object in each bundle.
+	// [synthBundle load];
+	Class synthClass = [synthBundle principalClass];
+	
+	if(synthClass != nil) {
+	    id synthInstance = [[synthClass alloc] init];
+	    NSLog(@"synthInstance %@\n", synthInstance);
+	}
+    }
+   
+    // For now just load the ones we need
+    //[[Juno106 alloc] init];
+    //[[QuadraverbGT alloc] init];
+    //[[ProphetVS alloc] init];
+    [[AxonNGC77 alloc] init];
 }
 
 // Determine what Synth bundles we find and load up.

@@ -40,26 +40,26 @@
   the newer NSValue styled parameter API shortly.
 */
 @interface SndAudioProcessorInspector : NSObject {
-/*! @var parameterTableView */  
+/*! */  
   IBOutlet NSTableView *parameterTableView;
-/*! @var parameterValueSilder */  
+/*! */  
   IBOutlet NSSlider *parameterValueSilder;
-/*! @var processorActive Checkbox */  
+/*! Checkbox */  
   IBOutlet NSButton *processorActive;
-/*! @var processorName */  
+/*! */  
   IBOutlet NSTextField *processorName;
-/*! @var sndArchView */  
+/*! */  
   IBOutlet SndStreamArchitectureView *sndArchView;
-/*! @var theAudProc The current target for inspection */  
+/*! The current target for inspection */  
   SndAudioProcessor *theAudProc;
 
-/*! @var addFxButton */  
+/*! */  
   IBOutlet NSButton *addFxButton;
-/*! @var delFxButton */  
+/*! */  
   IBOutlet NSButton *delFxButton;
-/*! @var fxChooser */  
+/*! */  
   IBOutlet NSComboBox *fxChooser;
-/*! @var window */  
+/*! */  
   IBOutlet NSPanel *window;
 }
 

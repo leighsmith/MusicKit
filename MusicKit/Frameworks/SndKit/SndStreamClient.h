@@ -77,52 +77,52 @@ enum {
 */
 @interface SndStreamClient : NSObject
 {
-    /*! @var exposedOutputBuffer The buffer in the output queue retrieved by the SndStreamMixer (driven by the output thread). */
+    /*! The buffer in the output queue retrieved by the SndStreamMixer (driven by the output thread). */
     SndAudioBuffer  *exposedOutputBuffer;
-    /*! @var synthOutputBuffer The buffer in the output queue modified by the synthesis thread. */
+    /*! The buffer in the output queue modified by the synthesis thread. */
     SndAudioBuffer  *synthOutputBuffer;
-    /*! @var synthInputBuffer The buffer in the input queue currently ready for retrieval. */
+    /*! The buffer in the input queue currently ready for retrieval. */
     SndAudioBuffer  *synthInputBuffer;
-    /*! @var outputQueue A FIFO queue of SndAudioBuffers holding those pending output and those processed. */
+    /*! A FIFO queue of SndAudioBuffers holding those pending output and those processed. */
     SndAudioBufferQueue *outputQueue;
-    /*! @var inputQueue  A FIFO queue of SndAudioBuffers holding those pending input and those processed. */
+    /*!  A FIFO queue of SndAudioBuffers holding those pending input and those processed. */
     SndAudioBufferQueue *inputQueue;
     
-    /*! @var synthThreadLock */
+    /*! */
     NSConditionLock *synthThreadLock;
-    /*! @var outputBufferLock Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
+    /*! Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
     NSConditionLock *outputBufferLock;
 
-    /*! @var active */
+    /*! */
     BOOL       active;
-    /*! @var needsInput Indicates this client processes audio data received from a SndStreamMixer instance by -startProcessingNextBufferWithInput:nowTime: */
+    /*! Indicates this client processes audio data received from a SndStreamMixer instance by -startProcessingNextBufferWithInput:nowTime: */
     BOOL       needsInput;
-    /*! @var generatesOutput Indicates this client generates audio output data, retrieved from this client using -? */
+    /*! Indicates this client generates audio output data, retrieved from this client using -? */
     BOOL       generatesOutput;
-    /*! @var processorChain A chain of SndAudioProcessors processing this stream clients output. */
+    /*! A chain of SndAudioProcessors processing this stream clients output. */
     SndAudioProcessorChain *processorChain;
-    /*! @var manager The stream clients manager. */
+    /*! The stream clients manager. */
     SndStreamManager *manager;
-    /*! @var delegate; */
+    /*! The delegate to receive messages from the client. */
     id         delegate;    
-    /*! @var clientNowTime The clients sense of time as used by subclasses for synthesis. */
+    /*! The clients sense of time as used by subclasses for synthesis. */
     double     clientNowTime;
-    /*! @var lastManagerTime The last time received from the calling SndStreamManager.
+    /*! The last time received from the calling SndStreamManager.
 	When streaming to non-interleaved buffers time does not monotonically advance. We check that using this.
      */
     double     lastManagerTime;
     
-    /*! @var clientName The descriptive name of the client. */
+    /*! The descriptive name of the client. */
     NSString  *clientName;
     
 @private
-    /*! @var delegateRespondsToOutputBufferSkipSelector A conditional speeding up delegation messaging. */
+    /*! A conditional speeding up delegation messaging. */
     BOOL       delegateRespondsToOutputBufferSkipSelector;
-    /*! @var delegateRespondsToInputBufferSkipSelector A conditional speeding up delegation messaging.*/
+    /*! A conditional speeding up delegation messaging.*/
     BOOL       delegateRespondsToInputBufferSkipSelector;
-    /*! @var delegateRespondsToDidProcessBufferSelector A conditional speeding up delegation messaging.*/
+    /*! A conditional speeding up delegation messaging.*/
     BOOL       delegateRespondsToDidProcessBufferSelector;
-    /*! @var bDisconnect */
+    /*! */
     BOOL       bDisconnect;
 }
 

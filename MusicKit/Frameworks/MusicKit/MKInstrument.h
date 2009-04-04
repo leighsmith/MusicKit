@@ -92,7 +92,7 @@ realize MKNotes on an external MIDI synthesizer.
 
 @interface MKInstrument: NSObject <NSCoding>
 {
-    /*! @var noteReceivers The object's array of MKNoteReceivers. */
+    /*! The object's array of MKNoteReceivers. */
     NSMutableArray *noteReceivers;
 
 @protected

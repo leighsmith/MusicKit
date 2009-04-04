@@ -1,24 +1,19 @@
 # -*- Makefile -*-
 #
-# $Id$
+# $Id: GNUmakefile.in 3444 2009-03-31 20:41:06Z leighsmith $
 #
-# @configure_input@
-#
-# Build script for the MusicKit on GNUstep systems.
+# Build script for the MusicKit Applications on GNUstep systems.
 # See Makefile.in for the build process on MacOS X systems.
 #
 # Leigh Smith <leigh@leighsmith.com>
 #
-# Copyright (c) 2005, The MusicKit Project.  All rights reserved.
+# Copyright (c) 2009, The MusicKit Project.  All rights reserved.
 #
 # Permission is granted to use and modify this code for commercial and 
 # non-commercial purposes so long as the author attribution and copyright 
 # messages remain intact and accompany all relevant code.
 #
-
-CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
-SUBPROJECTS = Frameworks Applications
-# TODO: Frameworks Palettes Utilities Examples Applications Documentation
+SUBPROJECTS = TwoWaves Spectro
 
 include $(GNUSTEP_MAKEFILES)/common.make
 include $(GNUSTEP_MAKEFILES)/aggregate.make

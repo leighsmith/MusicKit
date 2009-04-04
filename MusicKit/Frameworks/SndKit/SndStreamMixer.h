@@ -31,15 +31,15 @@
 */
 @interface SndStreamMixer : NSObject
 {
-    /*! @var streamClients A modifiable array of SndStreamClients currently being mixed. */
+    /*! A modifiable array of SndStreamClients currently being mixed. */
     NSMutableArray *streamClients;
-    /*! @var streamClientsLock Controls access to the clients preventing their addition or removal while being mixed. */
+    /*! Controls access to the clients preventing their addition or removal while being mixed. */
     NSLock *streamClientsLock;
-    /*! @var processorChain A chain of SndAudioProcessors that is applied after mixing all the stream clients together. */
+    /*! A chain of SndAudioProcessors that is applied after mixing all the stream clients together. */
     SndAudioProcessorChain *processorChain;
-    /*! @var nowTime The current time (in seconds) to mix up to, as updated from the SndStreamManager, passed into processInBuffer:outBuffer:nowTime. */
+    /*! The current time (in seconds) to mix up to, as updated from the SndStreamManager, passed into processInBuffer:outBuffer:nowTime. */
     double nowTime;
-    /*! @var lastNowTime The previous time of last update from SndStreamManager. */
+    /*! The previous time of last update from SndStreamManager. */
     double lastNowTime;
 }
 

@@ -69,8 +69,6 @@
   @class OscgafUGs
   @brief <b>OscgafUGs</b> is the superclass for <b>OscgafUG</b> and <b>OscgafiUG</b> oscillators.
   
-  
-
 <b>OscgafUGs</b> is the superclass for <b>OscgafUG</b> (non-interpolating or
 "drop-sample") and <b>OscgafiUG</b> (interpolating or "high-quality")
 oscillators.  They are, in turn, derived from dsp macros 
@@ -149,12 +147,8 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an BOOL.
   @brief Specifies that all arguments are to be optimized if possible
   except the phase.
-
-  
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
- /* Specifies that all arguments are to be optimized if possible except the
-    phase. */
 
 /*!
   @brief Returns a default table length determined by the type of subclass
@@ -178,8 +172,7 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an id.
   @brief Sets oscillator phase in degrees.
 
-  If wavetable has not yet been
-  set, stores the value for <b>-runSelf</b> to use to set the phase
+  If wavetable has not yet been set, stores the value for <b>-runSelf</b> to use to set the phase
   later. 
 */
 -setPhase:(double)aPhase;
@@ -189,33 +182,24 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an id.
   @brief Sets amplitude envelope input to specified patchPoint.
 
-  The signal
-  received via <i>aPatchPoint</i> serves as a multiplier on the output
+  The signal received via <i>aPatchPoint</i> serves as a multiplier on the output
   of the oscillator. 
 */
 -setAmpInput: (id) aPatchPoint;
- /* Sets amplitude envelope input to specified patchPoint. The signal received
-    via aPatchPoint serves as a multiplier on the output of the oscillator. */
-
 
 /*!
   @param  aPatchPoint is an id.
   @return Returns an id.
   @brief Set output patchPoint of the oscillator.
-
-  
 */
 -setOutput: (id) aPatchPoint;
- /* Set output patchPoint of the oscillator. */
-
 
 /*!
   @param  aPatchPoint is an id.
   @return Returns an id.
   @brief Set frequency envelope input to specified patchPoint.
 
-  Note that
-  <b>OscgafUGs</b>  implements a multiplicative frequency envelope. 
+  Note that <b>OscgafUGs</b> implements a multiplicative frequency envelope. 
   The actual phase increment  is the value of the signal received via
   <i>aPatchPoint</i> multiplied by the incScaler.  To get the proper
   increment value for a certain frequency, e.g,  for use in a
@@ -235,11 +219,9 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns a double.
   @brief Returns the phase increment for this unit generator based on aFreq.
 
-  
   This value is suitable for use as the amplitude to a unit generator
   whose output is being used as the <i>incEnvInput</i> of this unit
-  generator.  The lookup table must be set before sending this
-  message.  
+  generator.  The lookup table must be set before sending this message.  
 */
 -(double)incAtFreq:(double)aFreq;
 
@@ -248,22 +230,13 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an id.
   @brief This is an alternative to the <b>-setIncScaler:</b> method.
 
-  The
-  ratio specified here acts as a straight multiplier on the  increment
+  The ratio specified here acts as a straight multiplier on the increment
   scaler, and hence on the frequency.   For example, in an FM
   MKSynthPatch with one frequency envelope for both carrier and
-  modulator,  <b>setIncRatio:</b> sent to the modulator is the
-  modulator/carrier    specifies the frequency ratio.  The ratio
-  defaults to 1.0. 
+  modulator,  <b>setIncRatio:</b> sent to the modulator specifies
+  the frequency ratio of the modulator/carrier. The ratio defaults to 1.0. 
 */
 -setIncRatio:(double)aRatio;
- /* This is an alternative to the -setIncScaler: method. 
-   The ratio specified here acts as a straight multiplier on the 
-   increment scaler, and hence on the frequency.  For example, in an
-   FM SynthPatch with one frequency envelope for both carrier and modulator,
-   setIncRatio:aValue sent to the modulator is the modulator/carrier 
-   frequency ratio.  The ratio defaults to 1.0. */
-
 
 /*!
   @param  anObj is an id.
@@ -274,9 +247,22 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   <i>anObj</i> can be a
   MKSynthData object or a MKWaveTable (Partials or Samples).
   
-  This method first releases its claim on the locally-allocated MKSynthData, if any.  (see below).   Then, if <i>anObj</i> is a MKSynthData object, the MKSynthData object is used directly.   If <i>anObj</i> is a MKWaveTable, the receiver first searches in its Orchestra's shared object table to see if there is already an existing MKSynthData based  on the same MKWaveTable, of the same length, and in the required memory  space.  Otherwise, a local MKSynthData object is created and installed in the shared object table so that other unit generators running simultaneously  may share it.   If the requested size is too large, because there is not sufficient DSP memory, smaller sizes are tried.  You can determine what size was used by sending the tableLength message.  If <i>anObj</i> is nil, this method simply releases the locally-allocated MKSynthData, if any.   
+  This method first releases its claim on the locally-allocated MKSynthData, if any.  (see
+  below).  Then, if <i>anObj</i> is a MKSynthData object, the MKSynthData object is used
+  directly.  If <i>anObj</i> is a MKWaveTable, the receiver first searches in its
+  Orchestra's shared object table to see if there is already an existing MKSynthData based
+  on the same MKWaveTable, of the same length, and in the required memory space.
+  Otherwise, a local MKSynthData object is created and installed in the shared object
+  table so that other unit generators running simultaneously may share it.  If the
+  requested size is too large, because there is not sufficient DSP memory, smaller sizes
+  are tried.  You can determine what size was used by sending the tableLength message.  If
+  <i>anObj</i> is nil, this method simply releases the locally-allocated MKSynthData, if
+  any.
   
-  Note that altering the contents of a MKWaveTable will have no effect once it  has been installed, even if you call <b>setTable:length: </b>again after  modifying the MKWaveTable. The reason is that the Orchestra's shared data  mechanism finds the requested object based on its <b>id</b>, rather than its contents.
+  Note that altering the contents of a MKWaveTable will have no effect once it has been
+  installed, even if you call <b>setTable:length: </b>again after modifying the
+  MKWaveTable. The reason is that the Orchestra's shared data mechanism finds the
+  requested object based on its <b>id</b>, rather than its contents.
   
   You should not free WaveTables used as arguments to <b>OscgafUGs</b> until the performance is over.
   
@@ -325,14 +311,9 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an id.
   @brief Sets the lookup table to the DSP sine ROM, if address space is Y.
 
-  Otherwise generates an error.   Deallocates local wave table, if
-  any.
+  Otherwise generates an error. Deallocates local wave table, if any.
 */
 -setTableToSineROM;
- /* Sets the lookup table to the DSP sine ROM, if address space is Y. 
-   Otherwise generates an error. Deallocates local wave table, if any.
-  */
-
 
 /*!
   @param  anObj is an id.
@@ -341,16 +322,24 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an id.
   @brief This method is provided as a convenience.
 
-  It tries to do 'the right
-  thing' in cases where the table cannot be allocated.
+  It tries to do 'the right thing' in cases where the table cannot be allocated.
   
   
-  If the table can be allocated, it behaves like <b>setTable:length:</b>. If the table cannot be allocated, and the table memory space of the receiver is Y, sends <b>[self setTableToSineROM].</b> 
+  If the table can be allocated, it behaves like <b>setTable:length:</b>. If the table
+  cannot be allocated, and the table memory space of the receiver is Y, sends <b>[self
+  setTableToSineROM].</b>
   
-  A common use of this method is to pass YES as the argument <i>yesOrNo</i> only if the MKSynthPatch is beginning a new phrase (the assumtion is that it is better to keep the old wavetable than to use the sine ROM in this case).  Another use of this method is to specifically request the sine ROM by passing <b>nil</b> as <i>anObj</i>.  If the sine ROM is used, the <i>aLength</i> argument is ignored.
+  A common use of this method is to pass YES as the argument <i>yesOrNo</i> only if the
+  MKSynthPatch is beginning a new phrase (the assumtion is that it is better to keep the
+  old wavetable than to use the sine ROM in this case).  Another use of this method is to
+  specifically request the sine ROM by passing <b>nil</b> as <i>anObj</i>.  If the sine
+  ROM is used, the <i>aLength</i> argument is ignored.
   
-  If <i>anObj</i> is not <b>nil</b> and the sine ROM is used, generates the error <b>MK_spsSineROMSubstitutionErr</b>. If <i>yesOrNo</i> is YES but the receiver's table memory space is X, the error <b>MK_spsCantGetMemoryErr</b>  is generated.
+  If <i>anObj</i> is not <b>nil</b> and the sine ROM is used, generates the error
+  <b>MK_spsSineROMSubstitutionErr</b>. If <i>yesOrNo</i> is YES but the receiver's table
+  memory space is X, the error <b>MK_spsCantGetMemoryErr</b> is generated.  
 */
+
 -setTable:anObj length:(int)aLength defaultToSineROM:(BOOL)yesOrNo;
  /* This method is provided as a convenience. It tries to do 'the right thing'
    in cases where the table cannot be allocated. 
@@ -378,27 +367,19 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @param  anObj is an id.
   @param  yesOrNo is a BOOL.
   @return Returns an id.
-  @brief Like <b>setTable:length:defaultToSineROM:</b>, but uses a default
-  length.
-
-  
+  @brief Like <b>setTable:length:defaultToSineROM:</b>, but uses a default length.
 */
--setTable:anObj defaultToSineROM:(BOOL)yesOrNo;
- /* Like setTable:length:defaultToSineROM, but uses a default length. */
+-setTable: anObj defaultToSineROM:(BOOL)yesOrNo;
 
 /*!
   @return Returns an unsigned int.
   @brief Returns the length of the assigned table 0 if no table is assigned.
-
-  
 */
--(unsigned)tableLength;
+- (unsigned) tableLength;
 
 /*!
   @return Returns a double.
   @brief Returns incRatio.
-
-  
 */
 -(double)incRatio;
 
@@ -406,22 +387,15 @@ provide, ignoring MK_OSCFREQSCALE, incRatio, etc.
   @return Returns an id.
   @brief Invoked by <b>run </b>method.
 
-  Sets phase if  -<b>setPhase:</b> was
-  called before lookup table was set, and sets increment scaler if not
-  already set by a call to <b>-setIncRatio:</b>.   If wavetable has
-  not been set, and table space is Y, uses dsp sine
-  ROM.
+  Sets phase if  -<b>setPhase:</b> was called before lookup table was set,
+  and sets increment scaler if not already set by a call to <b>-setIncRatio:</b>.
+  If wavetable has not been set, and table space is Y, uses DSP sine ROM.
 */
 -runSelf;
- /* Sets phase if setPhase was called before lookup table was set, and
-   sets increment scaler if not already set by a call to -setIncRatio:.
-   If wavetable has not been set, and table space is Y, uses dsp sine ROM. */
 
 /*!
   @return Returns an id.
   @brief Deallocates local wave table memory, if any, and patches output to Sink.
-
-  
 */
 -idleSelf;
 

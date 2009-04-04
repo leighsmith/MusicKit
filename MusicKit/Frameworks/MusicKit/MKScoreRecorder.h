@@ -55,13 +55,13 @@ MKPartRecorders receives a MKNote until the performance is finished.
 
 @interface MKScoreRecorder : NSObject
 {
-    /*! @var partRecorders The object's collection of MKPartRecorders. */
+    /*! The object's collection of MKPartRecorders. */
     NSMutableArray *partRecorders;
-    /*! @var score The object's MKScore. */
+    /*! The object's MKScore. */
     MKScore *score;
-    /*! @var timeUnit The unit the object's MKPartRecorders use to measure time; one of MK_second or MK_beat. */
+    /*! The unit the object's MKPartRecorders use to measure time; one of MK_second or MK_beat. */
     MKTimeUnit timeUnit;
-    /*! @var partRecorderClass The MKPartRecorder subclass used. */
+    /*! The MKPartRecorder subclass used. */
     Class partRecorderClass;
     BOOL compensatesDeltaT;
 

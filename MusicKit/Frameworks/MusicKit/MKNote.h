@@ -423,17 +423,17 @@ typedef enum _MKDataType {
 
 @interface MKNote: NSObject
 {
-/*! @var noteType The MKNote's noteType. */
+/*! The MKNote's noteType. */
     MKNoteType noteType;
-/*! @var noteTag The MKNote's noteTag. */
+/*! The MKNote's noteTag. */
     int noteTag;
-/*! @var performer MKPerformer object that's currently sending the MKNote in performance, if any. */
+/*! MKPerformer object that's currently sending the MKNote in performance, if any. */
     MKPerformer *performer;   
-/*! @var part The MKPart that this MKNote is a member of, if any. */
+/*! The MKPart that this MKNote is a member of, if any. */
     MKPart *part;
-/*! @var timeTag Time tag, if any, else MK_ENDOFTIME. */
+/*! Time tag, if any, else MK_ENDOFTIME. */
     double timeTag;
-/*! @var conductor MKConductor to use if performer is nil. If performer is not nil, uses [performer conductor]. */
+/*! MKConductor to use if performer is nil. If performer is not nil, uses [performer conductor]. */
     MKConductor *conductor;  
 
 @private
@@ -1571,8 +1571,8 @@ while ((par = MKNextParameter(aNote, aState)) != MK_noPar) {
    
   @param  aNote is a MKNote instance.
   @return Returns a NSHashEnumerator.
-  @see <b>MKIsNoteParPresent()</b>, <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>, etc.,
-  <b>MKIsNoDVal()</b>
+  @see <b>MKIsNoteParPresent()</b>, <b>MKGetNoteParAsDouble()</b>, <b>MKGetNoteParAsInt()</b>,
+  <b>MKIsNoDVal()</b>, etc.
   @ingroup ParameterFns
 */
 extern NSHashEnumerator *MKInitParameterIteration(MKNote *aNote);
@@ -1598,7 +1598,7 @@ extern NSHashEnumerator *MKInitParameterIteration(MKNote *aNote);
   @param  iterationState is a NSHashEnumerator *.
   @return Returns an int.
   @see <b>MKIsNoteParPresent()</b>, <b>MKInitParameterIteration()</b>, <b>MKGetNoteParAsDouble()</b>, 
-       <b>MKGetNoteParAsInt()</b>, etc., <b>MKIsNoDVal()</b>
+       <b>MKGetNoteParAsInt()</b>, <b>MKIsNoDVal()</b>, etc.
   @ingroup ParameterFns
 */
 extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
@@ -1682,6 +1682,7 @@ extern int MKNextParameter(MKNote *aNote, NSHashEnumerator *iterationState);
 extern id MKSetNoteParToDouble(MKNote *aNote, int par, double value);
 
 /*!
+  @ingroup NoteParameterFns
   @brief Set a MKNote's parameter to an integer value.
 
   These functions set and retrieve the values of a MKNote's parameters,

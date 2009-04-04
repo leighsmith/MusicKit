@@ -40,13 +40,13 @@ OF THIS AGREEMENT.
 
 @interface SndDisplayData:NSObject
 {
-/*! @var pixelCount */  
+/*! */  
 	int pixelCount;
-/*! @var startPixel */  
+/*! */  
 	int startPixel;
-/*! @var maxArray  */  
+/*!  */  
 	float *maxArray;
-/*! @var minArray  */  
+/*!  */  
 	float *minArray;
 }
 /*!

@@ -123,7 +123,7 @@ You can examine the updates and controllerTable with the method
  </ul>
  */
 
-/*{*/
+/*@{*/
 
 /*! Automatic allocation from a global pool. */
 #define MK_AUTOALLOC 0
@@ -132,7 +132,7 @@ You can examine the updates and controllerTable with the method
 /*! Hybrid between AUTO and MANUAL. First tries local pool, then tries global pool. */
 #define MK_MIXEDALLOC 2
 
-/*}*/
+/*@}*/
 
 #import "MKInstrument.h"
 #import "MKNote.h"

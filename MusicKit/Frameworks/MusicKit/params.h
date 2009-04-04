@@ -201,7 +201,7 @@ typedef enum _MKPars {
        resulting values are the first value plus the difference of the two 
        values times the envelope values (i.e., interpolation).  In other words
        
-           frequency(t) == freq0 + (freq1 - freq0) * envelope(t)
+           <tt>frequency(t) == freq0 + (freq1 - freq0) * envelope(t)</tt>
       
        where freq0 defaults to 0, freq1 defaults to 1, and the envelope
        defaults to a constant value of 1.
@@ -435,8 +435,6 @@ typedef enum _MKPars {
   These are arguments for the parameter <b>MK_sysRealTime</b>.
  */
 typedef enum _MKMidiParVal {  /* The order of these is taken from MIDI spec. */
-    /* These correspond to MIDI channel mode message values. 
-       These are arguments for the parameter MK_chanMode. */
     /*! Reset controllers. */
     MK_resetControllers = 262,
     /*! Local control mode on. */
@@ -453,8 +451,6 @@ typedef enum _MKMidiParVal {  /* The order of these is taken from MIDI spec. */
     MK_monoMode,
     /*! Poly mode. */
     MK_polyMode,
-    /* These correspond to MIDI system realtime message values. 
-       These are arguments for the parameter MK_sysRealTime */
     /*! Clock tick. */
     MK_sysClock,
     /*! Undefined. */

@@ -30,15 +30,15 @@
 */
 @interface SndAudioUnitController : NSObject
 {
-    /*! @var carbonView The handle onto the AudioUnitCarbonView */
+    /*! The handle onto the AudioUnitCarbonView */
     AudioUnitCarbonView carbonView;
-    /*! @var auWindow The handle onto the Carbon window loaded from the Carbon nib file. */
+    /*! The handle onto the Carbon window loaded from the Carbon nib file. */
     WindowRef auWindow;
-    /*! @var cocoaAUWindow The NSWindow instance that will wrap a Carbon window if the nib file is Carbon or will
+    /*! The NSWindow instance that will wrap a Carbon window if the nib file is Carbon or will
 	be a Cocoa window that contains the Cocoa Audio Unit user interface instance.
      */
     NSWindow  *cocoaAUWindow;
-    /*! @var audioUnitProcessor The AudioUnit SndAudioProcessor instance this instance controls. */
+    /*! The AudioUnit SndAudioProcessor instance this instance controls. */
     SndAudioUnitProcessor *audioUnitProcessor;
 }
 

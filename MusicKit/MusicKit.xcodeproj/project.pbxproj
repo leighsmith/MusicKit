@@ -576,6 +576,11 @@
 		D879C3DD05A2B506005DB251 /* palette.table in Resources */ = {isa = PBXBuildFile; fileRef = D879C3DC05A2B506005DB251 /* palette.table */; };
 		D879C42105A2B577005DB251 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879C41E05A2B577005DB251 /* AppKit.framework */; };
 		D879C42205A2B577005DB251 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879C41F05A2B577005DB251 /* Foundation.framework */; };
+		D87BF78B0F097C740078AD51 /* InterfaceBuilderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D87BF78A0F097C740078AD51 /* InterfaceBuilderKit.framework */; };
+		D87BF8100F0985530078AD51 /* SndViewIBPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D87BF80F0F0985530078AD51 /* SndViewIBPlugin.m */; };
+		D87BF81B0F0985E40078AD51 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D87BF8150F0985E40078AD51 /* InfoPlist.strings */; };
+		D87BF81C0F0985E40078AD51 /* SndViewIBPluginInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D87BF8170F0985E40078AD51 /* SndViewIBPluginInspector.nib */; };
+		D87BF81D0F0985E40078AD51 /* SndViewIBPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = D87BF8190F0985E40078AD51 /* SndViewIBPluginLibrary.nib */; };
 		D880FBC7077FD9B700FD03CC /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D880FBCE077FDD4A00FD03CC /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D880FBE4077FDD7E00FD03CC /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -758,7 +763,6 @@
 		D88FEDD605A110B60024FD88 /* libdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDD405A110B60024FD88 /* libdsp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FEDDA05A110D20024FD88 /* smsrc_dependencies.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */; };
 		D88FEDF105A112CF0024FD88 /* MKDSPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D89260530CDFA9590059DB8B /* InterfaceBuilder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D892603B0CDFA9590059DB8B /* InterfaceBuilder.framework */; };
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
@@ -1592,7 +1596,7 @@
 		D8685005081CBBB600926058 /* NotePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePlayer.h; path = Examples/example2/NotePlayer.h; sourceTree = "<group>"; };
 		D86963C007C164F000785798 /* example1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example1; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86963C407C1653700785798 /* example1.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = example1.m; path = Examples/example1/example1.m; sourceTree = "<group>"; };
-		D86986A00ED9CA0E00E90F3F /* SndViewPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SndViewPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		D86986A00ED9CA0E00E90F3F /* SndViewPlugin.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SndViewPlugin.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86986A10ED9CA0E00E90F3F /* SndViewPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SndViewPlugin-Info.plist"; sourceTree = "<group>"; };
 		D86CBB8407ADAE9A00CB06E4 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/MidiEcho.nib"; sourceTree = "<group>"; };
 		D86CBB8B07ADAF6100CB06E4 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/Info.nib"; sourceTree = "<group>"; };
@@ -1654,6 +1658,12 @@
 		D879C3DC05A2B506005DB251 /* palette.table */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = palette.table; path = Palettes/SndView/palette.table; sourceTree = "<group>"; };
 		D879C41E05A2B577005DB251 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		D879C41F05A2B577005DB251 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		D87BF78A0F097C740078AD51 /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
+		D87BF80E0F0985530078AD51 /* SndViewIBPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndViewIBPlugin.h; path = Plugins/SndView/SndViewIBPlugin.h; sourceTree = "<group>"; };
+		D87BF80F0F0985530078AD51 /* SndViewIBPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndViewIBPlugin.m; path = Plugins/SndView/SndViewIBPlugin.m; sourceTree = "<group>"; };
+		D87BF8160F0985E40078AD51 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
+		D87BF8180F0985E40078AD51 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = SndViewIBPluginInspector.nib; sourceTree = "<group>"; };
+		D87BF81A0F0985E40078AD51 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = SndViewIBPluginLibrary.nib; sourceTree = "<group>"; };
 		D880FD1F0780AC2A00FD03CC /* ErrorLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ErrorLog.h; path = Applications/ScorePlayer/ErrorLog.h; sourceTree = "<group>"; };
 		D880FD200780AC2A00FD03CC /* ErrorLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ErrorLog.m; path = Applications/ScorePlayer/ErrorLog.m; sourceTree = "<group>"; };
 		D880FE3F0780AF2200FD03CC /* Midi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Midi.icns; path = Applications/ScorePlayer/Images/Midi.icns; sourceTree = "<group>"; };
@@ -1833,7 +1843,6 @@
 		D88FEDD405A110B60024FD88 /* libdsp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = libdsp.h; path = Frameworks/MKDSP_Native/libdsp.h; sourceTree = "<group>"; };
 		D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = smsrc_dependencies.h; path = Frameworks/MKDSP_Native/smsrc_dependencies.h; sourceTree = "<group>"; };
 		D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKDSPDefines.h; path = Frameworks/MKDSP_Native/MKDSPDefines.h; sourceTree = "<group>"; };
-		D892603B0CDFA9590059DB8B /* InterfaceBuilder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilder.framework; path = Library/Frameworks/InterfaceBuilder.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D8A1DC0209F64B3E0094B3F5 /* mixscorefiles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mixscorefiles; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = mixscorefiles_main.m; path = Examples/mixscorefiles/mixscorefiles_main.m; sourceTree = "<group>"; };
 		D8A1DC1909F64BC90094B3F5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README.txt; path = Examples/mixscorefiles/README.txt; sourceTree = "<group>"; };
@@ -2159,6 +2168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D87BF78B0F097C740078AD51 /* InterfaceBuilderKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2256,7 +2266,6 @@
 				D880FC23077FE25900FD03CC /* SndKit.framework in Frameworks */,
 				D879C42105A2B577005DB251 /* AppKit.framework in Frameworks */,
 				D879C42205A2B577005DB251 /* Foundation.framework in Frameworks */,
-				D89260530CDFA9590059DB8B /* InterfaceBuilder.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2991,7 +3000,7 @@
 				D8D1B6A90812492700D9156A /* playscorefilemidi */,
 				D8E1DDFA07CA78B40018F8F3 /* MultipleSoundPlayer.app */,
 				D8CFD2490B5D66DF003AB3C3 /* Metronome.app */,
-				D86986A00ED9CA0E00E90F3F /* SndViewPlugin.bundle */,
+				D86986A00ED9CA0E00E90F3F /* SndViewPlugin.ibplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3531,7 +3540,7 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
-		D86986AA0ED9CA4200E90F3F /* SndView */ = {
+		D86986AA0ED9CA4200E90F3F /* SndView IB Plugin */ = {
 			isa = PBXGroup;
 			children = (
 				D86986AD0ED9CA6C00E90F3F /* Classes */,
@@ -3540,12 +3549,14 @@
 				D86986B00ED9CAC000E90F3F /* Supporting Files */,
 				D86986B10ED9CADC00E90F3F /* External Frameworks */,
 			);
-			name = SndView;
+			name = "SndView IB Plugin";
 			sourceTree = "<group>";
 		};
 		D86986AD0ED9CA6C00E90F3F /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				D87BF80E0F0985530078AD51 /* SndViewIBPlugin.h */,
+				D87BF80F0F0985530078AD51 /* SndViewIBPlugin.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -3553,6 +3564,8 @@
 		D86986AE0ED9CA8600E90F3F /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				D87BF8170F0985E40078AD51 /* SndViewIBPluginInspector.nib */,
+				D87BF8190F0985E40078AD51 /* SndViewIBPluginLibrary.nib */,
 			);
 			name = Interfaces;
 			sourceTree = "<group>";
@@ -3567,6 +3580,7 @@
 		D86986B00ED9CAC000E90F3F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D87BF8150F0985E40078AD51 /* InfoPlist.strings */,
 				D86986A10ED9CA0E00E90F3F /* SndViewPlugin-Info.plist */,
 			);
 			name = "Supporting Files";
@@ -3575,6 +3589,7 @@
 		D86986B10ED9CADC00E90F3F /* External Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D87BF78A0F097C740078AD51 /* InterfaceBuilderKit.framework */,
 			);
 			name = "External Frameworks";
 			sourceTree = "<group>";
@@ -4274,7 +4289,6 @@
 			children = (
 				D879C41E05A2B577005DB251 /* AppKit.framework */,
 				D879C41F05A2B577005DB251 /* Foundation.framework */,
-				D892603B0CDFA9590059DB8B /* InterfaceBuilder.framework */,
 			);
 			name = "External Frameworks";
 			sourceTree = "<group>";
@@ -4940,7 +4954,7 @@
 		D8DB4E69059FA0E800624233 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				D86986AA0ED9CA4200E90F3F /* SndView */,
+				D86986AA0ED9CA4200E90F3F /* SndView IB Plugin */,
 			);
 			name = Plugins;
 			sourceTree = "<group>";
@@ -5955,7 +5969,7 @@
 			);
 			name = "SndView IB Plugin (Bundle)";
 			productName = SndViewPlugin;
-			productReference = D86986A00ED9CA0E00E90F3F /* SndViewPlugin.bundle */;
+			productReference = D86986A00ED9CA0E00E90F3F /* SndViewPlugin.ibplugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 		D86D23B406F229E6003565CB /* TwoWaves (Application) */ = {
@@ -6485,6 +6499,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D87BF81B0F0985E40078AD51 /* InfoPlist.strings in Resources */,
+				D87BF81C0F0985E40078AD51 /* SndViewIBPluginInspector.nib in Resources */,
+				D87BF81D0F0985E40078AD51 /* SndViewIBPluginLibrary.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6971,6 +6988,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D87BF8100F0985530078AD51 /* SndViewIBPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7685,6 +7703,33 @@
 				D879C3D305A2B4E0005DB251 /* English */,
 			);
 			name = SndViewP.nib;
+			sourceTree = "<group>";
+		};
+		D87BF8150F0985E40078AD51 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D87BF8160F0985E40078AD51 /* English */,
+			);
+			name = InfoPlist.strings;
+			path = Plugins/SndView/English.lproj;
+			sourceTree = "<group>";
+		};
+		D87BF8170F0985E40078AD51 /* SndViewIBPluginInspector.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D87BF8180F0985E40078AD51 /* English */,
+			);
+			name = SndViewIBPluginInspector.nib;
+			path = Plugins/SndView/English.lproj;
+			sourceTree = "<group>";
+		};
+		D87BF8190F0985E40078AD51 /* SndViewIBPluginLibrary.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D87BF81A0F0985E40078AD51 /* English */,
+			);
+			name = SndViewIBPluginLibrary.nib;
+			path = Plugins/SndView/English.lproj;
 			sourceTree = "<group>";
 		};
 		D88C50B806C7E9E900D33D99 /* Bank.nib */ = {
@@ -8990,6 +9035,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9015,6 +9065,11 @@
 		D86986A40ED9CA0E00E90F3F /* Intel Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9029,7 +9084,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = SndViewPlugin;
-				WRAPPER_EXTENSION = bundle;
+				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = YES;
 			};
 			name = "Intel Development";
@@ -9038,6 +9093,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
@@ -9061,6 +9121,11 @@
 		D86986A60ED9CA0E00E90F3F /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9083,6 +9148,11 @@
 		D86986A70ED9CA0E00E90F3F /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

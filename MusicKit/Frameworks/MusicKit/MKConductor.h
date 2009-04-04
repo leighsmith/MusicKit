@@ -279,7 +279,7 @@ extern "C" {
 
  /* The MKConductor message structure.  All fields are private and
   * shouldn't be altered directly from an application.
-  * LMS: should become an object named MKConductorMsg
+  * LMS: should become an object named MKConductorMessage
   */
 /*!
   @brief <b>MKMsgStruct</b> is the structure that represents a message the MKConductor will send to an object.
@@ -597,25 +597,25 @@ extern void MKFinishPerformance(void);
 
 @interface MKConductor: NSObject
 {
-  /*! @var time Current Time in beats, updated (for all instances) after timed entry fires off. */
+  /*! Current Time in beats, updated (for all instances) after timed entry fires off. */
     double time;       
-  /*! @var nextMsgTime Time, in seconds, when next message is scheduled to be sent by this MKConductor. */
+  /*! Time, in seconds, when next message is scheduled to be sent by this MKConductor. */
     double nextMsgTime;           // sb: relative to start of performance, I think.
     /* nextMsgTime = (nextbeat - time) * beatSize */
-  /*! @var beatSize The duration of a single beat in seconds. */
+  /*! The duration of a single beat in seconds. */
     double beatSize;    
-  /*! @var timeOffset Performance timeOffset in seconds. */
+  /*! Performance timeOffset in seconds. */
     double timeOffset;
-  /*! @var isPaused Set to YES if this instance is paused. Note that pausing
-    all MKConductors through the pause factory method doesn't set this
-    to YES. */ 
+  /*! Set to YES if this instance is paused. 
+   
+    Note that pausing all MKConductors through the pause factory method doesn't set this to YES.
+   */ 
     BOOL isPaused;      
-  /*! @var delegate The object's delegate. */
+  /*! The object's delegate. */
     id delegate;
-  /*! @var activePerformers An NSMutableArray object of active performers
-    using this conductor. Don't alter this NSMutableArray. */
+  /*! An NSMutableArray object of active performers using this conductor. Don't alter this NSMutableArray. */
     NSMutableArray *activePerformers;
-  /*! @var MTCSync MIDI Time Code synchronization object, if any. */
+  /*! MIDI Time Code synchronization object, if any. */
     id MTCSynch;
 
     /* Internal use only */

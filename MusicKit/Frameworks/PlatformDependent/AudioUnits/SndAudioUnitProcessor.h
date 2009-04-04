@@ -30,23 +30,23 @@
 
 @interface SndAudioUnitProcessor : SndAudioProcessor
 {
-    /*! @var audioUnit The AudioUnit handle used by the Apple AudioUnit API */
+    /*! The AudioUnit handle used by the Apple AudioUnit API */
     AudioUnit audioUnit;
-    /*! @var inputBusNumber The bus of the audio unit to supply audio data to. */
+    /*! The bus of the audio unit to supply audio data to. */
     int inputBusNumber;
-    /*! @var inputChannelCount The number of channels on the input bus. */
+    /*! The number of channels on the input bus. */
     unsigned int inputChannelCount;
-    /*! @var outputBusNumber The bus of the audio unit to retrieve audio data from. 
+    /*! The bus of the audio unit to retrieve audio data from. 
 	This could perhaps be determined by examining the bus characteristics of each audio unit.
      */
     int outputBusNumber;
-    /*! @var parameterListLength The number of parameters in this AudioUnit. */
+    /*! The number of parameters in this AudioUnit. */
     int parameterListLength;
-    /*! @var parameterIDList An array of AudioUnitParameterIDs used to refer to each AudioUnit parameter. */
+    /*! An array of AudioUnitParameterIDs used to refer to each AudioUnit parameter. */
     AudioUnitParameterID *parameterIDList;
-    /*! @var auIsNonInterleaved Indicates if the AudioUnit accepts data as non-interleaved buffers (YES), or as a single interleaved buffer (NO). */
+    /*! Indicates if the AudioUnit accepts data as non-interleaved buffers (YES), or as a single interleaved buffer (NO). */
     BOOL auIsNonInterleaved;
-    /*! @var interleavedInputSamples buffer holding audio data in interleaved format. */
+    /*! buffer holding audio data in interleaved format. */
     float *interleavedInputSamples;
 }
 

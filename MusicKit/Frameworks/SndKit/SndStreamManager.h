@@ -50,25 +50,25 @@
 */
 @interface SndStreamManager : NSObject <SndDelegateMessagePassing>
 { 
-/*! @var  mixer A stream client mixer. */
+/*! mixer A stream client mixer. */
     SndStreamMixer *mixer;
-/*! @var  active Stores the streaming state of the manager. */
+/*! active Stores the streaming state of the manager. */
     BOOL            active;
-/*! @var  bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
+/*! bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
     BOOL            bg_active;
-/*! @var  format SndFormat containing stream format information. */
+/*! format SndFormat containing stream format information. */
     SndFormat       format;
-/*! @var  nowTime Manager's conception of time, in seconds. */
+/*! nowTime Manager's conception of time, in seconds. */
     double          nowTime;
-/*! @var  bg_sem Semaphore to the background thread to start/stop streaming. */
+/*! bg_sem Semaphore to the background thread to start/stop streaming. */
     char            bg_sem;
-/*! @var  bgdm_sem Semaphore to the background delegate messaging thread to notify it of data
+/*! bgdm_sem Semaphore to the background delegate messaging thread to notify it of data
   being ready for it. */
     char            bgdm_sem;
-/*! @var  bg_threadLock used for signalling to background thread to start streaming,
+/*! bg_threadLock used for signalling to background thread to start streaming,
   stop streaming, or abort itself. */
     NSConditionLock *bg_threadLock;
-  /*! @var            bgdm_threadLock used for ? */
+  /*!           bgdm_threadLock used for ? */
     NSConditionLock *bgdm_threadLock;
     NSLock          *delegateMessageArrayLock;
     NSMutableArray  *delegateMessageArray;

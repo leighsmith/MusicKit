@@ -1,5 +1,5 @@
 /* 
- * $Id:$
+ * $Id$
  *
  * Originally from SoundEditor2.1
  * Modified by Gary Scavone for Spectro3.0

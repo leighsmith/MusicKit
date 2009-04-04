@@ -42,15 +42,15 @@ typedef enum {
 */
 @interface SndAudioBufferQueue : NSObject 
 {
-/*! @var pendingBuffers Array of buffers pending processing (to be consumed) */
+/*! Array of buffers pending processing (to be consumed) */
     NSMutableArray  *pendingBuffers;
-/*! @var processedBuffers Array of processed buffers (post consumption) */
+/*! Array of processed buffers (post consumption) */
     NSMutableArray  *processedBuffers;
-/*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
+/*! Lock for thread safety around pending buffers array */
     NSConditionLock *pendingBuffersLock;
-    /*! @var processedBuffersLock Lock for thread safety around processed buffers array */
+    /*! Lock for thread safety around processed buffers array */
     NSConditionLock *processedBuffersLock;
-/*! @var numBuffers Total number of buffers in the queue, both pending and processed */
+/*! Total number of buffers in the queue, both pending and processed */
     int              numBuffers;
 }
 

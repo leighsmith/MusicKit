@@ -1,4 +1,4 @@
-/* $Id:$ */
+/* $Id$ */
 
 #import "MyObject.h"
 #import <MusicKit/MusicKit.h>

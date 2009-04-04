@@ -69,7 +69,7 @@
 */
 @interface SndStreamRecorder : SndStreamClient 
 {
-    /*! @var recorder A stream recording FX processor */
+    /*! A stream recording FX processor */
     SndAudioProcessorRecorder *recorder;
 }
 

@@ -113,39 +113,39 @@ movements, then insert it into the SndAudioProcessorChain later.
 
 @interface SndAudioFader : SndAudioProcessor
 {
-  /*! @var envClass Class object used in initialising new envelopes*/  
+  /*! Class object used in initialising new envelopes*/  
   id     envClass; 
-  /*! @var ampEnv */  
+  /*! */  
   id     <SndEnveloping, NSObject> ampEnv;
-  /*! @var staticAmp */  
+  /*! */  
   float  staticAmp;
-  /*! @var balanceEnv */  
+  /*! */  
   id     <SndEnveloping,NSObject> balanceEnv;
-  /*! @var staticBalance */  
+  /*! */  
   float  staticBalance;
 
-  /*! @var uee Unified Envelope Entry */  
+  /*! Unified Envelope Entry */  
   SndUnifiedEnvelopeEntry *uee;
   
-  /*! @var envelopesLock Locks changes to both the envelope objects (?) */
+  /*! Locks changes to both the envelope objects (?) */
   NSLock *envelopesLock;
-  /*! @var balanceEnvLock */  
+  /*! */  
   NSLock *balanceEnvLock;
-  /*! @var ampEnvLock */
+  /*! */
   NSLock *ampEnvLock;
 
 @public
-  /*! @var bpBeforeOrEqual */
+  /*! */
   BpBeforeOrEqualIMP  bpBeforeOrEqual;
-  /*! @var bpAfter */
+  /*! */
   BpAfterIMP          bpAfter;
-  /*! @var flagsForBp */
+  /*! */
   FlagsForBpIMP       flagsForBp;
-  /*! @var yForBp */
+  /*! */
   YForBpIMP           yForBp;
-  /*! @var yForX */
+  /*! */
   YForXIMP            yForX;
-  /*! @var xForBp */
+  /*! */
   XForBpIMP           xForBp;
 }
 

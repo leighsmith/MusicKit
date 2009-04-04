@@ -25,6 +25,7 @@ OBJROOT=/tmp
 # This is for building with "sudo make install" and allows overriding on the command line.
 SYMROOT=/tmp/build
 
+# This allows overriding this on the command line.
 VERSION=0.0.0
 
 all:

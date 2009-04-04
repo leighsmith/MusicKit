@@ -117,11 +117,11 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
 
 @interface MKNoteSender: NSObject
 {
-    /*! @var noteReceivers Array of connected MKNoteReceivers. */
+    /*! Array of connected MKNoteReceivers. */
     NSMutableArray *noteReceivers;
-    /*! @var isSquelched YES if the object is squelched. */
+    /*! YES if the object is squelched. */
     BOOL isSquelched;
-    /*! @var owner MKPerformer (or MKNoteFilter) that owns this object. */
+    /*! MKPerformer (or MKNoteFilter) that owns this object. */
     id owner;
 
 @private

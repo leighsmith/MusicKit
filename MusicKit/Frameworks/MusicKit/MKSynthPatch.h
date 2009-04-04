@@ -117,19 +117,19 @@ typedef enum _MKPhraseStatus {
 
 @interface MKSynthPatch : MKPatch
 {
-    /*! @var synthElements Array of MKUnitGenerator and MKSynthData objects. */
+    /*! Array of MKUnitGenerator and MKSynthData objects. */
     NSMutableArray *synthElements;
-    /*! @var synthInstrument The MKSynthInstrument object currently in possession of the MKSynthPatch or nil if none. */
+    /*! The MKSynthInstrument object currently in possession of the MKSynthPatch or nil if none. */
     id synthInstrument;
-    /*! @var noteTag Tag of notes currently implemented by this MKSynthPatch. */
+    /*! Tag of notes currently implemented by this MKSynthPatch. */
     int noteTag;
-    /*! @var status Status of patch. One of MK_running, MK_finishing or MK_idle. You should never set it explicitly in your subclass. */
+    /*! Status of patch. One of MK_running, MK_finishing or MK_idle. You should never set it explicitly in your subclass. */
     MKSynthStatus status;
-    /*! @var patchTemplate MKPatchTemplate of this patch. */
+    /*! MKPatchTemplate of this patch. */
     id patchTemplate;
-    /*! @var isAllocated YES if the object is allocated. */
+    /*! YES if the object is allocated. */
     BOOL isAllocated;
-    /*! @var orchestra MKOrchestra instance on which the object is allocated and on which this MKSynthPatch is running. */
+    /*! MKOrchestra instance on which the object is allocated and on which this MKSynthPatch is running. */
     MKOrchestra *orchestra;
 
 @private

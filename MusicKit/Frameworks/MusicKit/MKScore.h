@@ -69,11 +69,11 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 
 @interface MKScore: NSObject
 {
-    /*! @var parts The object's collection of MKParts. */
+    /*! The object's collection of MKParts. */
     NSMutableArray *parts;
-    /*! @var scorefilePrintStream The stream used by scorefile <b>print</b> statements. */
+    /*! The stream used by scorefile <b>print</b> statements. */
     NSMutableData *scorefilePrintStream;    
-    /*! @var info The object's info MKNote. */
+    /*! The object's info MKNote. */
     MKNote *info;
 }
  

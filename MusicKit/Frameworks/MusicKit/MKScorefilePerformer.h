@@ -45,9 +45,9 @@
 
 @interface MKScorefilePerformer : MKFilePerformer
 {
-    /*! @var scorefilePrintStream The stream used for the scorefile's print statements. */
+    /*! The stream used for the scorefile's print statements. */
     NSMutableData *scorefilePrintStream;
-    /*! @var info MKScore info MKNote for the file. */
+    /*! MKScore info MKNote for the file. */
     MKNote *info;
 
 @private

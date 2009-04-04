@@ -32,35 +32,35 @@
 */
 @interface SndPlayer : SndStreamClient
 {
-/*! @var  toBePlayed An array of pending SndPerformance objects. */
+/*!  An array of pending SndPerformance objects. */
     NSMutableArray  *toBePlayed;
-/*! @var  playing An array of actively playing SndPerformance objects. */
+/*!  An array of actively playing SndPerformance objects. */
     NSMutableArray  *playing;
-/*! @var  playinglock Provides thread safety on the SndPerformance arrays.
+/*!  Provides thread safety on the SndPerformance arrays.
 	  It controls access to the toBePlayed and playing arrays.
  */
     NSRecursiveLock *playingLock;
-/*! @var  remainConnectedToManager Indicates the SndPlayer disconnection behaviour
+/*!  Indicates the SndPlayer disconnection behaviour
 	  when no sounds remain in the pending or play arrays.
 */
     BOOL             remainConnectedToManager;
-/*! @var  removalArray Holds those performances which will be removed after completing playback.
+/*!  Holds those performances which will be removed after completing playback.
 	  TODO I'm guessing this is an ivar rather than just a local variable to save time creating the object,
 	  by reusing it? Strikes me it would be efficient to simply release the damn thing than to actually
 	  empty it each time. This needs testing.
  */
     NSMutableArray  *removalArray;
-/*! @var  nativelyFormattedStreamingBuffer The audio buffer used to hold audio
+/*!  The audio buffer used to hold audio
 	  retrieved from a performance. As the name suggests, it will be in the
 	  format expected by the streaming hardware.
  */
     SndAudioBuffer  *nativelyFormattedStreamingBuffer;
 
-/*! @var  autoStartManager Indicates that the SndStreamManager should be automatically
+/*!  Indicates that the SndStreamManager should be automatically
 	  started when playing of sounds first begins.
  */
     BOOL autoStartManager;
-/*! @var	  preemptingPerformance Holds a performance that is causing preemption in the output queue.
+/*!  Holds a performance that is causing preemption in the output queue.
 	  This occurs when attempting to perform a sound immediately, causing cancellation of queued
 	  streaming buffers. The cancellation of the output queue forces all currently sounding performances
 	  to have their playIndexes reset <i>except</i> for the performance that caused the preemption

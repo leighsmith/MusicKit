@@ -48,17 +48,17 @@ enum {
 */
 @interface SndAudioProcessorToneGenerator : SndAudioProcessor
 {
-/*! @var  freq This is a dodgey one at the moment - range [0,1] logarithmically maps to [55,880] Hz*/
+/*! freq This is a dodgey one at the moment - range [0,1] logarithmically maps to [55,880] Hz*/
   float freq;
-/*! @var  amp  Yuckky linear scale [0,1] for the moment - be nice to have in dB */
+/*! amp  Yuckky linear scale [0,1] for the moment - be nice to have in dB */
   float amp;
-/*! @var  phase Phase offset */
+/*! phase Phase offset */
   float phase;
-/*! @var  waveform  (not currently used). */
+/*! waveform  (not currently used). */
   int   waveform;
   
 @private
-/*! @var  t */
+/*! t */
   double t;
 }
 

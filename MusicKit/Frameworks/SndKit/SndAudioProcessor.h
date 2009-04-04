@@ -32,15 +32,15 @@
   To come
 */
 @interface SndAudioProcessor : NSObject {
-    /*! @var numParams Number of parameters in the audio processor */
+    /*! Number of parameters in the audio processor */
     int numParams;
-    /*! @var audioProcessorChain The SndAudioProcessorChain hosting this processor */
+    /*! The SndAudioProcessorChain hosting this processor */
     SndAudioProcessorChain *audioProcessorChain;
-    /*! @var name */    
+    /*! */    
     NSString *name;
-    /*! @var active Indicates the processor instance will perform the processing. */
+    /*! Indicates the processor instance will perform the processing. */
     BOOL  active;
-    /*! @var parameterDelegate Delegate object informed when a parameters value is changed. */
+    /*! Delegate object informed when a parameters value is changed. */
     id parameterDelegate;
 }
 

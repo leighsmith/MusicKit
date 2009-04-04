@@ -100,12 +100,15 @@ method  to retrieve the database and then archiving that object.
 
 @interface MKTimbre : NSObject
 {
-    NSString *timbreName;               /* Name of this timbre */
-    NSMutableArray *freqs;              /* Array object of frequencies */
-    NSMutableArray *waveTables;         /* Array object of MKWaveTables */
+    /*! Name of this timbre */
+    NSString *timbreName;
+    /*! Array object of frequencies */
+    NSMutableArray *freqs;
+    /*! Array object of MKWaveTables */
+    NSMutableArray *waveTables;
 }
 
-/*! Maximum length of the name of a MKTimbre object. */
+/*! @def MK_MAXTIMBRENAMELEN Maximum length of the name of a MKTimbre object. */
 #define MK_MAXTIMBRENAMELEN 64
 
 /*!

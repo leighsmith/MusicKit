@@ -32,11 +32,11 @@
 
 @interface SndBreakpoint : NSObject
 {
-/*! @var flags holds flags pertaining to the state of the breakpoint, eg whether it is part of a ramp */
+/*! holds flags pertaining to the state of the breakpoint, eg whether it is part of a ramp */
   int    flags;
-/*! @var yVal the y value of the breakpoint, generally -1 to +1 for balance, or 0 to +1 for amplitude */
+/*! the y value of the breakpoint, generally -1 to +1 for balance, or 0 to +1 for amplitude */
   float  yVal;
-/*! @var xVal the x value of the breakpoint, a time value measured from the start of the stream */
+/*! the x value of the breakpoint, a time value measured from the start of the stream */
   double xVal;
 }
 

@@ -15,7 +15,7 @@ int main (int argc, const char *argv[])
         exit(1);
     }
     for (argumentIndex = 1; argumentIndex < argc; argumentIndex++) {
-	NSString *inFile = [NSString stringWithCString: argv[argumentIndex]];
+	NSString *inFile = [NSString stringWithUTF8String: argv[argumentIndex]];
 	snd = [[Snd alloc] init];
 	
         if ([snd readSoundfile: inFile] != SND_ERR_NONE) {

@@ -81,28 +81,28 @@ enum noisegate_eChanMode
   To come 
 */
 @interface SndAudioProcessorNoiseGate : SndAudioProcessor {
-/*! @var fThreshold  */
+/*!  */
   float fThreshold;
-/*! @var fHoldTime  */
+/*!  */
   float fHoldTime;
-/*! @var fAttackTime */
+/*! */
   float fAttackTime;
-/*! @var fDecayTime  */
+/*!  */
   float fDecayTime;
-/*! @var iChanMode  */
+/*!  */
   int   iChanMode;
 @private
-/*! @var m_g */
+/*! */
   float m_g[2];
-/*! @var m_t */
+/*! */
   float m_t[2];
-/*! @var m_iMode */
+/*! */
   int   m_iMode[2];
-/*! @var m_iAttackCount */
+/*! */
   int   m_iAttackCount[2];
-/*! @var m_iDecayCount */
+/*! */
   int   m_iDecayCount[2];
-/*! @var m_iHoldCount */
+/*! */
   int   m_iHoldCount[2];
 }
 

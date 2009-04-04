@@ -91,6 +91,7 @@
     MIDISysExSynth *candidateSynth;
     BOOL aSynthResponded = NO;
 
+    NSLog(@"responding to message %@\n", msg);
     if(enabled) {
 	[lastRespondantSynths release];
 	lastRespondantSynths = [[NSMutableArray alloc] init];

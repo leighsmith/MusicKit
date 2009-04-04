@@ -50,27 +50,27 @@
     NSData *mp3Data;
     /*! @var mp3DataDescription Preserves the state of the MP3 stream decoding used by HIP. */
     HIP_File mp3DataDescription;
-    /*! @var encodedFrameLocations An array of longs which give the locations in the MP3 bitstream data of the start of each MP3 frame. */
+    /*! An array of longs which give the locations in the MP3 bitstream data of the start of each MP3 frame. */
     long *encodedFrameLocations;
-    /*! @var encodedFrameLocationsCount The number of frame locations in encodedFrameLocations. */
+    /*! The number of frame locations in encodedFrameLocations. */
     long encodedFrameLocationsCount;
     /*! @var currentMP3FrameID The most recently decoded bitstream frame index into encodedFrameLocations. 
 	Keeps track of the which MP3 frame ID HIP is expecting next to identify when to backtrack decoding. */
     int currentMP3FrameID;
-    /*! @var decodedBufferCache Caches the n most recently decoded bitstream frames, when we are simultaneously accessing the same SndMP3.
+    /*! Caches the n most recently decoded bitstream frames, when we are simultaneously accessing the same SndMP3.
 	Each key is the MP3 frame ID, each object is a SndAudioBuffer in 16 bit PCM data (left and right channels) format. */
     NSMutableDictionary *decodedBufferCache;   /* TODO this should become SndAgedDictionary */
     
     NSMutableDictionary *decodedBufferAccessCount;
     int accessTime;
 	
-    /*! @var pcmBufferToAccess */
+    /*! */
     SndAudioBuffer *pcmBufferToAccess;
 	
-    /*! @var duration The duration of the sound (when decoded) in seconds. Necessary only as long as Snd uses SndSoundStructs. */
+    /*! The duration of the sound (when decoded) in seconds. Necessary only as long as Snd uses SndSoundStructs. */
     double duration;
 
-    /*! @var pcmDataLock Locks the decoding of a bitstream frame (and any preceding frames necessary to backtrack). */ 
+    /*! Locks the decoding of a bitstream frame (and any preceding frames necessary to backtrack). */ 
     NSLock *pcmDataLock;
 
     // Variables used in separate threaded predecoding.

@@ -29,15 +29,15 @@
 */
 @interface SndAudioProcessorChain : NSObject
 {
-/*! @var  audioProcessorArray The array (chain) of SndAudioProcessors */
+/*! audioProcessorArray The array (chain) of SndAudioProcessors */
     NSMutableArray *audioProcessorArray;
-/*! @var  bypassProcessing YES disables processing. */
+/*! bypassProcessing YES disables processing. */
     BOOL   bypassProcessing;
-/*! @var  processorOutputBuffer A buffer used to hold the result of one SndAudioProcessor */
+/*! processorOutputBuffer A buffer used to hold the result of one SndAudioProcessor */
     SndAudioBuffer *processorOutputBuffer; 
-/*! @var  postFader A SndAudioFader which modifies the chain of effects volume and pan, effectively it is an "FX return" control */
+/*! postFader A SndAudioFader which modifies the chain of effects volume and pan, effectively it is an "FX return" control */
     SndAudioFader *postFader;
-/*! @var  nowTime Time of processing a buffer in seconds. */
+/*! nowTime Time of processing a buffer in seconds. */
     double nowTime;
 }
 

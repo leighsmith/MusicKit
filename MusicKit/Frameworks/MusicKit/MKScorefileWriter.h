@@ -63,7 +63,7 @@ or MKNoteReceiver) during a performance involving a MKScorefileWriter.
 
 @interface MKScorefileWriter : MKFileWriter
 {
-    /*! @var info The info MKNote to be written to the file. */
+    /*! The info MKNote to be written to the file. */
     MKNote *info; 
     
 @private

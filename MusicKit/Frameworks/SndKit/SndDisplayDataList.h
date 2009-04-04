@@ -45,7 +45,7 @@ CONDITIONS OF THIS AGREEMENT.
 
 @interface SndDisplayDataList: NSObject
 {
-  /*! @var embeddedArray */
+  /*! */
     NSMutableArray *embeddedArray;
 }
 

@@ -45,15 +45,15 @@ enum {
   To come
 */
 @interface SndAudioProcessorDistortion : SndAudioProcessor {
-/*! @var  m_fBoostRange */
+/*! m_fBoostRange */
   float   m_fBoostRange;  // in range [1..?]
-/*! @var  m_fBoostAmount */
+/*! m_fBoostAmount */
   float   m_fBoostAmount;
-/*! @var  m_fBoost */
+/*! m_fBoost */
   float   m_fBoost;
-/*! @var  m_fKnee */
+/*! m_fKnee */
   float   m_fKnee;
-/*! @var  m_fHardness */
+/*! m_fHardness */
   float   m_fHardness;
 }
 /*!

@@ -21,6 +21,12 @@
  * of Asymp so that it may be used with other function handlers, such
  * as AsympenvUG.
  */
+
+/*!
+  TODO this should be in an header file somewhere...
+  @brief Apply a DSP-synthesis envelope during a performance.
+  @param
+ */
  
 void MKUpdateAsymp (id asymp, id envelope, double val0, double val1,
 		    double attDur, double relDur, double portamentoTime,

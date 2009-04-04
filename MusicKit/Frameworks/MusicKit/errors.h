@@ -35,8 +35,8 @@
   or isn't currently traced.  These functions should only be used while
   you're debugging and fine-tuning your application.  
  
-  For more information on the constants and their meaning, see
-  the trace function documentation.
+  @see <b>MKSetTrace()</b>.
+  @ingroup Tracing
  */
 /*! DSP (MKOrchestra) resource allocation */
 #define MK_TRACEORCHALLOC 1

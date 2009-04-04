@@ -14,7 +14,7 @@
 #  and accompanies all derived code.
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 

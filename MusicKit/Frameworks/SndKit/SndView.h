@@ -232,25 +232,25 @@ enum SndViewStereoMode {
 
 @interface SndView: NSView <NSCoding>
 {
-    /*! @var sound The sound to display. */
+    /*! The sound to display. */
     Snd       	*sound;
-    /*! @var pasteboardSound The region of the sound currently held on the pasteboard. */
+    /*! The region of the sound currently held on the pasteboard. */
     Snd		*pasteboardSound;
-    /*! @var The delegate receiving notification of SndView state changes. */
+    /*! delegate receiving notification of SndView state changes. */
     id 		delegate;
-    /*! @var selectedFrames The region of the sound (in frames) selected (and displayed highlighted) for copy/paste/drag operations. */
+    /*! The region of the sound (in frames) selected (and displayed highlighted) for copy/paste/drag operations. */
     NSRange	selectedFrames;
-    /*! @var displayMode The form of display, either SND_SOUNDVIEW_MINMAX or SND_SOUNDVIEW_WAVE */
+    /*! The form of display, either SND_SOUNDVIEW_MINMAX or SND_SOUNDVIEW_WAVE */
     int		displayMode;
-    /*! @var backgroundColour Colour used as a non image background. */
+    /*! Colour used as a non image background. */
     NSColor	*backgroundColour;
-    /*! @var foregroundColour Colour used when drawing the amplitude of each pixel. */
+    /*! Colour used when drawing the amplitude of each pixel. */
     NSColor	*foregroundColour;
-    /*! @var selectionColour Colour used when user selects a region of sound. */
+    /*! Colour used when user selects a region of sound. */
     NSColor	*selectionColour;
-    /*! @var reductionFactor Reduction in the horizontal time axis */
+    /*! Reduction in the horizontal time axis */
     float	reductionFactor;
-    /*! @var amplitudeZoom Zoom in the vertical amplitude axis */
+    /*! Zoom in the vertical amplitude axis */
     float       amplitudeZoom;
 
     /*! @struct svFlags 
@@ -277,29 +277,29 @@ enum SndViewStereoMode {
         unsigned int  notOptimizedForSpeed:1;
     } svFlags;
     
-    /*! @var cursorFlashTimer The NSTimer used for flashing the cursor. */
+    /*! The NSTimer used for flashing the cursor. */
     NSTimer 	*cursorFlashTimer;
-    /*! @var dragIcon The image used when dragging a selection from a SndView. If nil, then the visible region of a selection is used. */
+    /*! The image used when dragging a selection from a SndView. If nil, then the visible region of a selection is used. */
     NSImage     *dragIcon;
     
     int		optThreshold;
     int		optSkip;
     float	peakFraction;
 
-    /*! @var stereoMode of type SndViewStereoMode indicating to display a single channel or an average of all channels. */
+    /*! of type SndViewStereoMode indicating to display a single channel or an average of all channels. */
     int		stereoMode;
 
     int		defaultRecordFormat;
     int		defaultRecordChannelCount;
     double	defaultRecordSampleRate;
     float	defaultRecordSeconds;
-    /*! @var recordingSound A Snd instance holding the sound recorded from an input source. */
+    /*! A Snd instance holding the sound recorded from an input source. */
     Snd *recordingSound;
     
-    /*! @var cachedSelectionRect An NSRect holding the pixel region of the SndView which has been selected.
+    /*! An NSRect holding the pixel region of the SndView which has been selected.
 	Holds the previous selection after selectedFrames has been changed in order to redraw just that region now deselected. */
     NSRect	cachedSelectionRect;
-    /*! @var previousSelectedFrames An NSRange holding the range in frames previously selected. */
+    /*! An NSRange holding the range in frames previously selected. */
     NSRange     previousSelectedFrames;
 
     int		lastPasteCount;
@@ -308,15 +308,15 @@ enum SndViewStereoMode {
     BOOL	noSelectionDraw;
     BOOL	firstDraw; // flag indicating lack of initialisation within drawRect:
 
-    /*! @var dataList A SndDisplayDataList instance which holds all of the SndDisplayData instances caching drawn views. */
+    /*! A SndDisplayDataList instance which holds all of the SndDisplayData instances caching drawn views. */
     SndDisplayDataList *dataList;
     
 @private
     float ampScaler;
     float amplitudeDisplayHeight;
-    /*! @var validPasteboardSendTypes valid pasteboard types. */
+    /*! valid pasteboard types. */
     NSArray *validPasteboardSendTypes;
-    /*! @var validPasteboardReturnTypes valid pasteboard types. */
+    /*! valid pasteboard types. */
     NSArray *validPasteboardReturnTypes;
 }
 

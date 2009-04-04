@@ -46,19 +46,18 @@ extern "C" {
 #endif 
 
 /*!
-  @typedef SNDStreamBuffer
   @brief Describes the format and the data in a limited length buffer used for operating on a stream.
-  @field dataFormat The format describing the number of bytes for one sample and it's format, signed, float etc.
-  @field frameCount The number of sample frames (i.e channel independent) in the buffer.
-  @field channelCount The number of channels.
-  @field sampleRate The sampling rate in Hz.
-  @field streamData A pointer to the data itself. 
 */
 typedef struct SNDStreamBuffer {
+    /*! dataFormat The format describing the number of bytes for one sample and it's format, signed, float etc. */
     SndSampleFormat dataFormat;
+    /*! frameCount The number of sample frames (i.e channel independent) in the buffer. */
     long frameCount;
+    /*! channelCount The number of channels. */
     int channelCount;
+    /*! The sampling rate in Hz. */
     double sampleRate;
+    /*! A pointer to the data itself. */
     void *streamData;
 } SNDStreamBuffer;
 
