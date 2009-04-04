@@ -166,6 +166,11 @@ typedef enum _MKEnvStatus {
 }
 
 /*!
+  @name Creating and Freeing an Envelope
+ */
+/*@{*/
+
+/*!
   @return Returns an id.
   @brief Initializes the object by setting its default smoothing to 1.0, its
   sampling period to 1.0, and its stickpoint to MAXINT.
@@ -177,11 +182,16 @@ typedef enum _MKEnvStatus {
 */
 - init; 
 
+/*@}*/
+
+/*!
+  @name Querying the Object
+ */
+/*@{*/
+
 /*!
   @return Returns an int.
   @brief Returns the number of breakpoints in the object.
-
-  
 */
 - (int) pointCount;
 
@@ -190,8 +200,7 @@ typedef enum _MKEnvStatus {
   @brief Returns the object's default smoothing value, or MK_NODVAL if
   there's a smoothing array.
 
-  (Use <b>MKIsNoDVal()</b> to check for
-  MK_NODVAL.)
+  (Use <b>MKIsNoDVal()</b> to check for MK_NODVAL.)
 */
 - (double) defaultSmoothing;
 
@@ -207,10 +216,140 @@ typedef enum _MKEnvStatus {
 /*!
   @return Returns an int.
   @brief Returns the stickpoint, or MAXINT if none.
-
-  
 */
 - (int) stickPoint; 
+
+/*!
+  @return Returns a double *.
+  @brief Returns a pointer to the object's <i>y</i> array, or NULL if none.
+*/
+- (double *) yArray;
+
+/*!
+  @return Returns a double *.
+  @brief Returns a pointer to the object's <i>x</i> array, or NULL if
+  none.
+*/
+- (double *) xArray;
+
+/*!
+  @return Returns a double *.
+  @brief Returns a pointer to the object's smoothing array, or NULL if
+  none.
+*/
+- (double *) smoothingArray;
+
+/*!
+  @param  n is an int.
+  @param  xPtr is a double *.
+  @param  yPtr is a double *.
+  @param  smoothingPtr is a double *.
+  @return Returns a MKEnvStatus.
+  @brief Returns, by reference, the <i>x</i>, <i>y</i>, and smoothing values
+  for the <i>n</i>'th breakpoint in the object counting from breakpoint 0.
+
+  The method's return value is a constant that
+  describes the position of the <i>n</i>'th breakpoint:
+  
+ <table>
+ <tr>
+ <td><b>Position</b></td>
+ <td><b>Constant</b></td>
+ </tr>
+ <tr>
+ <td>last point in the object</td>
+ <td>MK_lastPoint</td>
+ </tr>
+ <tr>
+ <td>stickpoint</td>
+ <td>MK_stickPoint</td>
+ </tr>
+ <tr>
+ <td>point out of bounds</td>
+ <td>MK_noMorePoints</td>
+ </tr>
+ <tr>
+ <td>any other point</td>
+ <td>MK_noEnvError</td>
+ </tr>
+ </table>
+  
+  If the object's y array is <b>NULL,</b>or its <i>x</i> array is NULL
+  and its sampling period is 0.0, <b>MK_noMorePoints</b> is returned.
+*/
+- (MKEnvStatus) getNth: (int) n
+                     x: (double *) xPtr
+                     y: (double *) yPtr
+             smoothing: (double *) smoothingPtr; 
+
+/*!
+  @param  aStream is a NSMutableData instance.
+  @return Returns an id.
+  @brief Writes the object to the stream <i>aStream</i> in scorefile format.
+
+  The stream must already be open.  The object's breakpoints are
+  written, in order, as <b>(</b>x<b>,</b> y<b>,</b> smoothing<b>)</b>
+  with the stickpoint followed by a vertical bar.  For example, a
+  simple three-breakpoint MKEnvelope describing an arch might look like
+  this (the second breakpoint is the stickpoint):
+  
+  <tt>(0.0, 0.0, 0.0) (0.3, 1.0, 0.05) | (0.5, 0.0, 0.2)</tt>
+  
+  Returns <b>nil</b> if the object's y array is NULL.  Otherwise returns the object.
+*/
+- writeScorefileStream: (NSMutableData *) aStream; 
+
+/*!
+  @param  xVal is a double.
+  @return Returns a double.
+  @brief Returns the y value that corresponds to <i>xVal</i>.
+
+  If <i>xVal</i> doesn't fall exactly on one of the object's breakpoints, the return
+  value is computed as a linear interpolation between the y values of
+  the nearest breakpoints on either side of <i>xVal</i>.  If
+  <i>xVal</i> is out of bounds, this returns the first or last y
+  value, depending on which boundary was exceeded.  If the object's y
+  array is NULL, this returns MK_NODVAL.  (Use <b>MKIsNoDVal()</b> to
+  check for MK_NODVAL.)
+*/
+- (double) lookupYForX: (double) xVal;
+
+/*!
+  @param  xVal is a double.
+  @return Returns a double.
+  @brief Same as <b>lookupYForX</b>, but assumes an asymptotic envelope, such
+  as is produced by the AsympUG MKUnitGenerator.
+*/
+- (double) lookupYForXAsymptotic: (double) xVal;
+
+/*!
+  @return Returns a double.
+  @brief Returns the duration of the release portion of the object.
+
+  This is the difference between the <i>x</i> value of the stickpoint and the
+  <i>x</i> value of the final breakpoint.  Returns 0.0 if the object
+  doesn't have a stickpoint, or if the stickpoint is out of
+  bounds.
+*/
+- (double) releaseDur;
+
+/*!
+  @return Returns a double.
+  @brief Returns the duration of the attack portion of the object.
+
+  This is the difference between the <i>x</i> value of the first breakpoint
+  and the <i>x</i> value of the stickpoint.  If the object doesn't
+  have a stickpoint (or if the stickpoint is out of bounds), the
+  duration of the entire MKEnvelope is returned.
+*/
+- (double) attackDur;
+
+/*@}*/
+
+/*!
+ @name Modifying the Object
+ */
+/*@{*/
 
 /*!
   @brief Sets the object's stickpoint to the <i>stickPointIndex</i>'th breakpoint, counting from 0.
@@ -252,9 +391,8 @@ orDefaultSmoothing: (double) smoothing;
   @param  xPtr is a double *.
   @param  yPtr is a double *.
   @return Returns an id.
-  @brief This is a cover for the more complete <b>setPointCount:xArray:orSamplingPeriod:</b>...
+  @brief This is a cover for the more complete <b>setPointCount:xArray:orSamplingPeriod:</b>... method.
 
-  method.
   The object's smoothing specification is unchanged (keep in mind that smoothing is initialized
   to a constant 1.0).  If <i>xPtr</i> or <i>yPtr</i> is NULL, the object's <i>x</i> or <i>y</i>
   array is unchanged, respectively.  In either of these cases, it is the sender's responsibility
@@ -264,128 +402,8 @@ orDefaultSmoothing: (double) smoothing;
 - setPointCount: (int) n
          xArray: (double *) xPtr
          yArray: (double *) yPtr;
-         
-/*!
-  @return Returns a double *.
-  @brief Returns a pointer to the object's <i>y</i> array, or
-  NULL if none.
 
-  
-*/
-- (double *) yArray;
-
-/*!
-  @return Returns a double *.
-  @brief Returns a pointer to the object's <i>x</i> array, or NULL if
-  none.
-
-  
-*/
-- (double *) xArray;
-
-/*!
-  @return Returns a double *.
-  @brief Returns a pointer to the object's smoothing array, or NULL if
-  none.
-
-  
-*/
-- (double *) smoothingArray;
-
-/*!
-  @param  n is an int.
-  @param  xPtr is a double *.
-  @param  yPtr is a double *.
-  @param  smoothingPtr is a double *.
-  @return Returns a MKEnvStatus.
-  @brief Returns, by reference, the <i>x</i>, <i>y</i>, and smoothing values
-  for the <i>n</i>'th breakpoint in the object counting from
-  breakpoint 0.
-
-  The method's return value is a constant that
-  describes the position of the <i>n</i>'th breakpoint:
-  
-  <b>Position	Constant</b>
-  last point in the object	MK_lastPoint 
-  stickpoint	MK_stickPoint 
-  point out of bounds	MK_noMorePoints 
-  any other point	MK_noEnvError
-  
-  If the object's y array is <b>NULL,</b>or its <i>x</i> array is NULL
-  and its sampling period is 0.0, <b>MK_noMorePoints</b> is returned.
-*/
-- (MKEnvStatus) getNth: (int) n
-                     x: (double *) xPtr
-                     y: (double *) yPtr
-             smoothing: (double *) smoothingPtr; 
-
-/*!
-  @param  aStream is a NSMutableData instance.
-  @return Returns an id.
-  @brief Writes the object to the stream <i>aStream</i> in scorefile format.
-
-  
-  The stream must already be open.  The object's breakpoints are
-  written, in order, as <b>(</b>x<b>,</b> y<b>,</b> smoothing<b>)</b>
-  with the stickpoint followed by a vertical bar.  For example, a
-  simple three-breakpoint MKEnvelope describing an arch might look like
-  this (the second breakpoint is the stickpoint):
-  
-  <tt>(0.0, 0.0, 0.0) (0.3, 1.0, 0.05) | (0.5, 0.0, 0.2)</tt>
-  
-  Returns <b>nil</b> if the object's y array is NULL.  Otherwise returns the object.
-*/
-- writeScorefileStream: (NSMutableData *) aStream; 
-
-/*!
-  @param  xVal is a double.
-  @return Returns a double.
-  @brief Returns the y value that corresponds to <i>xVal</i>.
-
-  If <i>xVal</i>
-  doesn't fall exactly on one of the object's breakpoints, the return
-  value is computed as a linear interpolation between the y values of
-  the nearest breakpoints on either side of <i>xVal</i>.  If
-  <i>xVal</i> is out of bounds, this returns the first or last y
-  value, depending on which boundary was exceeded.  If the object's y
-  array is NULL, this returns MK_NODVAL.  (Use <b>MKIsNoDVal()</b> to
-  check for MK_NODVAL.)
-*/
-- (double) lookupYForX: (double) xVal;
-
-/*!
-  @param  xVal is a double.
-  @return Returns a double.
-  @brief Same as <b>lookupYForX</b>, but assumes an asymptotic envelope, such
-  as is produced by the AsympUG MKUnitGenerator.
-
-  
-*/
-- (double) lookupYForXAsymptotic: (double) xVal;
-
-/*!
-  @return Returns a double.
-  @brief Returns the duration of the release portion of the object.
-
-  This is
-  the difference between the <i>x</i> value of the stickpoint and the
-  <i>x</i> value of the final breakpoint.  Returns 0.0 if the object
-  doesn't have a stickpoint, or if the stickpoint is out of
-  bounds.
-*/
-- (double) releaseDur;
-
-/*!
-  @return Returns a double.
-  @brief Returns the duration of the attack portion of the object.
-
-  This is
-  the difference between the <i>x</i> value of the first breakpoint
-  and the <i>x</i> value of the stickpoint.  If the object doesn't
-  have a stickpoint (or if the stickpoint is out of bounds), the
-  duration of the entire MKEnvelope is returned.
-*/
-- (double) attackDur;
+/*@}*/
 
 @end
 
