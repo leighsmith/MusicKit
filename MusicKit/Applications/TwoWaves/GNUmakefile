@@ -18,8 +18,7 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
-APP_NAME = \
-	TwoWaves	
+APP_NAME = TwoWaves	
 ADDITIONAL_LIB_DIRS =
 
 PACKAGE_NAME=TwoWaves
@@ -28,7 +27,7 @@ PACKAGE_NAME=TwoWaves
 # a SndKit program. If you want to compile a MusicKit program,
 # use -lMusicKit instead. It doesn't matter if you do both.
 
-ADDITIONAL_TOOL_LIBS += -lSndKit
+ADDITIONAL_TOOL_LIBS += -lSndKit -lsndfile -lportaudio -lasound
 
 ADDITIONAL_CFLAGS += -g
 
@@ -37,7 +36,6 @@ ifeq (mingw32, $(GNUSTEP_HOST_OS))
   ADDITIONAL_FLAGS += -I/usr/local/include
 endif
 
-ADDITIONAL_FLAGS += -g
 ADDITIONAL_LDFLAGS += -g
 
 # The Objective-C source files to be compiled
@@ -54,10 +52,8 @@ TwoWaves_MAIN_MODEL_FILE = TwoWaves
 TwoWaves_RESOURCE_FILES = English.lproj
 
 
--include Makefile.preamble
-
--include GNUmakefile.local
+-include GNUmakefile.preamble
 
 include $(GNUSTEP_MAKEFILES)/application.make
 
--include Makefile.postamble
+-include GNUmakefile.postamble
