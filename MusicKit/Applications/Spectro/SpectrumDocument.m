@@ -22,6 +22,7 @@
 //#import <Foundation/NSUserDefaults.h>
 //#import <Foundation/NSByteOrder.h>
 #import <SndKit/SndKit.h>
+#import <math.h>
 
 #define SWAP(int) NSSwapBigShortToHost(int)
 #define PUTVAL(cell,f)	[cell setStringValue: [NSString stringWithFormat: @"%2.3f", f]]

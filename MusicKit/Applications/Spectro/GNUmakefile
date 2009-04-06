@@ -14,7 +14,7 @@
 #  and accompanies all derived code.
 
 # Install into the local root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
@@ -44,7 +44,7 @@ ADDITIONAL_LDFLAGS += -g
 # The Objective-C source files to be compiled
 Spectro_OBJC_FILES = Spectro_main.m \
 	PrefController.m     SignalProcessor.m  WaterfallView.m \
-	SaveToController.m   SoundController.m  SpectrumDocument.m \
+	SaveToController.m   SpectroController.m  SpectrumDocument.m \
 	ScrollingSound.m     SoundDocument.m    SpectrumView.m \
 	ScrollingSpectrum.m  SoundInfo.m        
 
