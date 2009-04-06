@@ -84,17 +84,13 @@ $(MY_NAME)_OBJC_FILES = \
          SndStreamRecorder.m \
          SndStretchableScroller.m \
          SndTable.m \
-         SndView.m
+         SndView.m \
+         SndReverbAllpassFilter.m \
+         SndReverbCombFilter.m
 
 $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c \
-         _Sndfilterkit.c \
-
-$(MY_NAME)_CC_FILES = \
-         allpass.cpp \
-         comb.cpp \
-         reverbBridge.cpp \
-         revmodel.cpp
+         _Sndfilterkit.c
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \
@@ -152,12 +148,10 @@ ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   $(MY_NAME)_OBJC_FILES += SndConditionLock.m
 endif
 
-SRCS = $(LIBRARY_NAME:=.m)
-HDRS = $(LIBRARY_NAME:=.h)
+# SRCS = $(LIBRARY_NAME:=.m)
+# HDRS = $(LIBRARY_NAME:=.h)
 
 -include GNUmakefile.preamble
-
--include GNUmakefile.local
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   include $(GNUSTEP_MAKEFILES)/library.make

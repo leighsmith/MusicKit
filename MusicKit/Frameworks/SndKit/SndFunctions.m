@@ -40,9 +40,10 @@ CONDITIONS OF THIS AGREEMENT.
 # endif
 #else
 # import <fcntl.h>
+# import <math.h>
+# import <arpa/inet.h>
 #endif
 
-#import <math.h>
 #import <Foundation/Foundation.h>
 
 #import "SndFunctions.h"
