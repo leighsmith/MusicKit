@@ -162,6 +162,10 @@
 		D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = D81B12FF0628D9FF009058DB /* SndStretchableScroller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D81B13020628D9FF009058DB /* SndStretchableScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = D81B13000628D9FF009058DB /* SndStretchableScroller.m */; };
 		D81E396C0D999767008826EE /* SndViewP.m in Sources */ = {isa = PBXBuildFile; fileRef = D81E396B0D999767008826EE /* SndViewP.m */; };
+		D8227E750F8B343100681ED5 /* SndReverbAllpassFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D8227E710F8B343100681ED5 /* SndReverbAllpassFilter.h */; };
+		D8227E760F8B343100681ED5 /* SndReverbAllpassFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = D8227E720F8B343100681ED5 /* SndReverbAllpassFilter.m */; };
+		D8227E770F8B343100681ED5 /* SndReverbCombFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D8227E730F8B343100681ED5 /* SndReverbCombFilter.h */; };
+		D8227E780F8B343100681ED5 /* SndReverbCombFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = D8227E740F8B343100681ED5 /* SndReverbCombFilter.m */; };
 		D82556B505A2142800B0192B /* MKConductor.h in Headers */ = {isa = PBXBuildFile; fileRef = D825566705A2142800B0192B /* MKConductor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D82556B605A2142800B0192B /* MKConductor.m in Sources */ = {isa = PBXBuildFile; fileRef = D825566805A2142800B0192B /* MKConductor.m */; };
 		D82556B705A2142800B0192B /* MKConductorDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825566905A2142800B0192B /* MKConductorDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -708,15 +712,7 @@
 		D88FE35005A0FC990024FD88 /* SndKit.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE34D05A0FC990024FD88 /* SndKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE35105A0FC990024FD88 /* SndKitConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE34E05A0FC990024FD88 /* SndKitConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE35605A0FCC00024FD88 /* SndFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE35505A0FCC00024FD88 /* SndFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D88FE37705A0FEB80024FD88 /* allpass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D88FE36D05A0FEB80024FD88 /* allpass.cpp */; };
-		D88FE37805A0FEB80024FD88 /* allpass.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE36E05A0FEB80024FD88 /* allpass.h */; };
-		D88FE37905A0FEB80024FD88 /* comb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D88FE36F05A0FEB80024FD88 /* comb.cpp */; };
-		D88FE37A05A0FEB80024FD88 /* comb.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE37005A0FEB80024FD88 /* comb.h */; };
 		D88FE37B05A0FEB80024FD88 /* denormals.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE37105A0FEB80024FD88 /* denormals.h */; };
-		D88FE37C05A0FEB80024FD88 /* reverbBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D88FE37205A0FEB80024FD88 /* reverbBridge.cpp */; };
-		D88FE37D05A0FEB80024FD88 /* reverbBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE37305A0FEB80024FD88 /* reverbBridge.h */; };
-		D88FE37E05A0FEB80024FD88 /* revmodel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D88FE37405A0FEB80024FD88 /* revmodel.cpp */; };
-		D88FE37F05A0FEB80024FD88 /* revmodel.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE37505A0FEB80024FD88 /* revmodel.h */; };
 		D88FE38005A0FEB80024FD88 /* tuning.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE37605A0FEB80024FD88 /* tuning.h */; };
 		D88FE38705A0FF940024FD88 /* SndAudioProcessorInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D88FE38505A0FF940024FD88 /* SndAudioProcessorInspector.nib */; };
 		D88FE39B05A101690024FD88 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FE39605A101690024FD88 /* AppKit.framework */; };
@@ -1193,6 +1189,10 @@
 		D81D7E46059FA93400BCE725 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		D81D7E47059FA93400BCE725 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		D81E396B0D999767008826EE /* SndViewP.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndViewP.m; path = Palettes/SndView/SndViewP.m; sourceTree = "<group>"; };
+		D8227E710F8B343100681ED5 /* SndReverbAllpassFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndReverbAllpassFilter.h; path = Frameworks/SndKit/SndReverbAllpassFilter.h; sourceTree = "<group>"; };
+		D8227E720F8B343100681ED5 /* SndReverbAllpassFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndReverbAllpassFilter.m; path = Frameworks/SndKit/SndReverbAllpassFilter.m; sourceTree = "<group>"; };
+		D8227E730F8B343100681ED5 /* SndReverbCombFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndReverbCombFilter.h; path = Frameworks/SndKit/SndReverbCombFilter.h; sourceTree = "<group>"; };
+		D8227E740F8B343100681ED5 /* SndReverbCombFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndReverbCombFilter.m; path = Frameworks/SndKit/SndReverbCombFilter.m; sourceTree = "<group>"; };
 		D825564A05A211B400B0192B /* MusicKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MusicKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D825564B05A211B400B0192B /* MusicKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MusicKit-Info.plist"; path = "Frameworks/MusicKit/MusicKit-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D825566705A2142800B0192B /* MKConductor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKConductor.h; path = Frameworks/MusicKit/MKConductor.h; sourceTree = "<group>"; };
@@ -1785,15 +1785,7 @@
 		D88FE34D05A0FC990024FD88 /* SndKit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndKit.h; path = Frameworks/SndKit/SndKit.h; sourceTree = "<group>"; };
 		D88FE34E05A0FC990024FD88 /* SndKitConfig.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndKitConfig.h; path = Frameworks/SndKit/SndKitConfig.h; sourceTree = "<group>"; };
 		D88FE35505A0FCC00024FD88 /* SndFormat.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndFormat.h; path = Frameworks/SndKit/SndFormat.h; sourceTree = "<group>"; };
-		D88FE36D05A0FEB80024FD88 /* allpass.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = allpass.cpp; path = Frameworks/SndKit/allpass.cpp; sourceTree = "<group>"; };
-		D88FE36E05A0FEB80024FD88 /* allpass.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = allpass.h; path = Frameworks/SndKit/allpass.h; sourceTree = "<group>"; };
-		D88FE36F05A0FEB80024FD88 /* comb.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = comb.cpp; path = Frameworks/SndKit/comb.cpp; sourceTree = "<group>"; };
-		D88FE37005A0FEB80024FD88 /* comb.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = comb.h; path = Frameworks/SndKit/comb.h; sourceTree = "<group>"; };
 		D88FE37105A0FEB80024FD88 /* denormals.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = denormals.h; path = Frameworks/SndKit/denormals.h; sourceTree = "<group>"; };
-		D88FE37205A0FEB80024FD88 /* reverbBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = reverbBridge.cpp; path = Frameworks/SndKit/reverbBridge.cpp; sourceTree = "<group>"; };
-		D88FE37305A0FEB80024FD88 /* reverbBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = reverbBridge.h; path = Frameworks/SndKit/reverbBridge.h; sourceTree = "<group>"; };
-		D88FE37405A0FEB80024FD88 /* revmodel.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = revmodel.cpp; path = Frameworks/SndKit/revmodel.cpp; sourceTree = "<group>"; };
-		D88FE37505A0FEB80024FD88 /* revmodel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = revmodel.h; path = Frameworks/SndKit/revmodel.h; sourceTree = "<group>"; };
 		D88FE37605A0FEB80024FD88 /* tuning.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tuning.h; path = Frameworks/SndKit/tuning.h; sourceTree = "<group>"; };
 		D88FE38605A0FF940024FD88 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Frameworks/SndKit/English.lproj/SndAudioProcessorInspector.nib; sourceTree = "<group>"; };
 		D88FE38A05A0FFB70024FD88 /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = README.rtf; path = Frameworks/SndKit/README.rtf; sourceTree = "<group>"; };
@@ -4571,15 +4563,11 @@
 		D88FE35905A0FCE80024FD88 /* FreeVerb */ = {
 			isa = PBXGroup;
 			children = (
-				D88FE36D05A0FEB80024FD88 /* allpass.cpp */,
-				D88FE36E05A0FEB80024FD88 /* allpass.h */,
-				D88FE36F05A0FEB80024FD88 /* comb.cpp */,
-				D88FE37005A0FEB80024FD88 /* comb.h */,
+				D8227E710F8B343100681ED5 /* SndReverbAllpassFilter.h */,
+				D8227E720F8B343100681ED5 /* SndReverbAllpassFilter.m */,
+				D8227E730F8B343100681ED5 /* SndReverbCombFilter.h */,
+				D8227E740F8B343100681ED5 /* SndReverbCombFilter.m */,
 				D88FE37105A0FEB80024FD88 /* denormals.h */,
-				D88FE37205A0FEB80024FD88 /* reverbBridge.cpp */,
-				D88FE37305A0FEB80024FD88 /* reverbBridge.h */,
-				D88FE37405A0FEB80024FD88 /* revmodel.cpp */,
-				D88FE37505A0FEB80024FD88 /* revmodel.h */,
 				D88FE37605A0FEB80024FD88 /* tuning.h */,
 			);
 			name = FreeVerb;
@@ -5314,14 +5302,12 @@
 				D88FE35005A0FC990024FD88 /* SndKit.h in Headers */,
 				D88FE35105A0FC990024FD88 /* SndKitConfig.h in Headers */,
 				D88FE35605A0FCC00024FD88 /* SndFormat.h in Headers */,
-				D88FE37805A0FEB80024FD88 /* allpass.h in Headers */,
-				D88FE37A05A0FEB80024FD88 /* comb.h in Headers */,
 				D88FE37B05A0FEB80024FD88 /* denormals.h in Headers */,
-				D88FE37D05A0FEB80024FD88 /* reverbBridge.h in Headers */,
-				D88FE37F05A0FEB80024FD88 /* revmodel.h in Headers */,
 				D88FE38005A0FEB80024FD88 /* tuning.h in Headers */,
 				D84CDEE0061F57D5007B002D /* SndPasteboard.h in Headers */,
 				D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */,
+				D8227E750F8B343100681ED5 /* SndReverbAllpassFilter.h in Headers */,
+				D8227E770F8B343100681ED5 /* SndReverbCombFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6787,14 +6773,12 @@
 				D88FE34405A0FBC10024FD88 /* _Sndfilterkit.c in Sources */,
 				D88FE34905A0FBC10024FD88 /* SndFunctions.m in Sources */,
 				D88FE34A05A0FBC10024FD88 /* SndFileIO.m in Sources */,
-				D88FE37705A0FEB80024FD88 /* allpass.cpp in Sources */,
-				D88FE37905A0FEB80024FD88 /* comb.cpp in Sources */,
-				D88FE37C05A0FEB80024FD88 /* reverbBridge.cpp in Sources */,
-				D88FE37E05A0FEB80024FD88 /* revmodel.cpp in Sources */,
 				D84CDEE1061F57D5007B002D /* SndPasteboard.m in Sources */,
 				D81B13020628D9FF009058DB /* SndStretchableScroller.m in Sources */,
 				D85C2F8A06308A2900E6397B /* SndEditing.m in Sources */,
 				D804E064063DB32C0098E73C /* SndPlaying.m in Sources */,
+				D8227E760F8B343100681ED5 /* SndReverbAllpassFilter.m in Sources */,
+				D8227E780F8B343100681ED5 /* SndReverbCombFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
