@@ -57,9 +57,8 @@ $(MY_NAME)_HEADER_FILES = PerformSound.h \
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = MKPerformSndMIDI
 
-SRCS = $(LIBRARY_NAME:=.m)
-HDRS = $(LIBRARY_NAME:=.h)
-
+# SRCS = $(LIBRARY_NAME:=.m)
+# HDRS = $(LIBRARY_NAME:=.h)
 
 -include GNUmakefile.preamble
 

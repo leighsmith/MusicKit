@@ -27,7 +27,7 @@ PACKAGE_NAME=TwoWaves
 # a SndKit program. If you want to compile a MusicKit program,
 # use -lMusicKit instead. It doesn't matter if you do both.
 
-ADDITIONAL_TOOL_LIBS += -lSndKit -lsndfile -lportaudio -lasound
+ADDITIONAL_TOOL_LIBS += -lSndKit
 
 ADDITIONAL_CFLAGS += -g
 

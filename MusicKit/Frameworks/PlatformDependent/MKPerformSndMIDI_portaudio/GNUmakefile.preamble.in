@@ -31,7 +31,7 @@ ADDITIONAL_LDFLAGS += @LDFLAGS@
 # all the libraries the target library depends upon.
 
 LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME) $(ADDITIONAL_DEPENDS) \
-                         @LIBS@ -lportmidi -lporttime
+                         @LIBS@ -lportaudio -lportmidi -lporttime
 
 # @LIBS@
 
@@ -41,4 +41,6 @@ endif
 ifeq ($(GNUSTEP_TARGET_OS),cygwin)
 LIBRARIES_DEPEND_UPON += -lwinmm -ldsound -lobjc -lole32 -lpmdll
 endif
-
+ifeq ($(GNUSTEP_TARGET_OS),linux-gnu)
+LIBRARIES_DEPEND_UPON += -lasound
+endif
