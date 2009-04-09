@@ -1,32 +1,67 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                help = id; 
-                runFrom = id; 
-                setAmpFromSlider = id; 
-                setFreqFromSlider = id; 
-                setPanFromSlider = id; 
-                setResGainFromSlider = id; 
-                showInfoPanel = id; 
-            }; 
-            CLASS = ResonController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                ampFieldBank = id; 
-                ampSliderBank = id; 
-                freqFieldBank = id; 
-                freqSliderBank = id; 
-                inputDevice = id; 
-                outputDevice = id; 
-                panFieldBank = id; 
-                panSliderBank = id; 
-                resGainFieldBank = id; 
-                resGainSliderBank = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>help</key>
+				<string>id</string>
+				<key>runFrom</key>
+				<string>id</string>
+				<key>setAmpFromSlider</key>
+				<string>id</string>
+				<key>setFreqFromSlider</key>
+				<string>id</string>
+				<key>setPanFromSlider</key>
+				<string>id</string>
+				<key>setResGainFromSlider</key>
+				<string>id</string>
+				<key>showInfoPanel</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ResonController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>ampFieldBank</key>
+				<string>id</string>
+				<key>ampSliderBank</key>
+				<string>id</string>
+				<key>freqFieldBank</key>
+				<string>id</string>
+				<key>freqSliderBank</key>
+				<string>id</string>
+				<key>inputDevice</key>
+				<string>id</string>
+				<key>outputDevice</key>
+				<string>id</string>
+				<key>panFieldBank</key>
+				<string>id</string>
+				<key>panSliderBank</key>
+				<string>id</string>
+				<key>resGainFieldBank</key>
+				<string>id</string>
+				<key>resGainSliderBank</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
