@@ -1,68 +1,148 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {reflectScrolledClipView = id; }; 
-            CLASS = ScrollingSpectrum; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; spectrumView = id; }; 
-            SUPERCLASS = NSScrollView; 
-        }, 
-        {
-            ACTIONS = {
-                changeFreqRange = id; 
-                changeHopRatio = id; 
-                changeWFFreqRange = id; 
-                changeWindowSize = id; 
-                changeWindowType = id; 
-                changeZPFactor = id; 
-                changedBLimits = id; 
-                cursorMoved = id; 
-                doWaterfall = id; 
-                frameSliderMoved = id; 
-                interpolatePeak = id; 
-                nextFrame = id; 
-                spectrumMoved = id; 
-                wfFrameSliderMoved = id; 
-                wfPlotHeightChanged = id; 
-            }; 
-            CLASS = SpectrumDocument; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                currentFrameCell = id; 
-                cursorAmp = id; 
-                cursorFreq = id; 
-                dBLimitsMatrix = id; 
-                delegate = id; 
-                frameSlider = id; 
-                freqRangeMatrix = id; 
-                hopRatioCell = id; 
-                myWaterfallView = WaterfallView; 
-                peakFreqCell = id; 
-                scrollSpectrum = ScrollingSpectrum; 
-                sineError = id; 
-                spectrumWindow = id; 
-                totalFramesCell = id; 
-                waterFallButton = id; 
-                waterfallWindow = id; 
-                wfCurrentFrameCell = id; 
-                wfCurrentFrameTime = id; 
-                wfFrameSlider = id; 
-                wfFreqRangeMatrix = id; 
-                wfPlotHeight = id; 
-                wfTimeRangeMatrix = id; 
-                windowSizeCell = id; 
-                windowTypeButton = id; 
-                zpFactorCell = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = WaterfallView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; frameHeight = id; }; 
-            SUPERCLASS = NSView; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>WaterfallView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>delegate</key>
+				<string>id</string>
+				<key>frameHeight</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>reflectScrolledClipView</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ScrollingSpectrum</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>delegate</key>
+				<string>id</string>
+				<key>spectrumView</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSScrollView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>changeFreqRange</key>
+				<string>id</string>
+				<key>changeHopRatio</key>
+				<string>id</string>
+				<key>changeWFFreqRange</key>
+				<string>id</string>
+				<key>changeWindowSize</key>
+				<string>id</string>
+				<key>changeWindowType</key>
+				<string>id</string>
+				<key>changeZPFactor</key>
+				<string>id</string>
+				<key>changedBLimits</key>
+				<string>id</string>
+				<key>cursorMoved</key>
+				<string>id</string>
+				<key>doWaterfall</key>
+				<string>id</string>
+				<key>frameSliderMoved</key>
+				<string>id</string>
+				<key>interpolatePeak</key>
+				<string>id</string>
+				<key>nextFrame</key>
+				<string>id</string>
+				<key>spectrumMoved</key>
+				<string>id</string>
+				<key>wfFrameSliderMoved</key>
+				<string>id</string>
+				<key>wfPlotHeightChanged</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>SpectrumDocument</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>currentFrameCell</key>
+				<string>id</string>
+				<key>cursorAmp</key>
+				<string>id</string>
+				<key>cursorFreq</key>
+				<string>id</string>
+				<key>dBLimitsMatrix</key>
+				<string>id</string>
+				<key>delegate</key>
+				<string>id</string>
+				<key>frameSlider</key>
+				<string>id</string>
+				<key>freqRangeMatrix</key>
+				<string>id</string>
+				<key>hopRatioCell</key>
+				<string>id</string>
+				<key>myWaterfallView</key>
+				<string>WaterfallView</string>
+				<key>peakFreqCell</key>
+				<string>id</string>
+				<key>scrollSpectrum</key>
+				<string>ScrollingSpectrum</string>
+				<key>sineError</key>
+				<string>id</string>
+				<key>spectrumWindow</key>
+				<string>id</string>
+				<key>totalFramesCell</key>
+				<string>id</string>
+				<key>waterFallButton</key>
+				<string>id</string>
+				<key>waterfallWindow</key>
+				<string>id</string>
+				<key>wfCurrentFrameCell</key>
+				<string>id</string>
+				<key>wfCurrentFrameTime</key>
+				<string>id</string>
+				<key>wfFrameSlider</key>
+				<string>id</string>
+				<key>wfFreqRangeMatrix</key>
+				<string>id</string>
+				<key>wfPlotHeight</key>
+				<string>id</string>
+				<key>wfTimeRangeMatrix</key>
+				<string>id</string>
+				<key>windowSizeCell</key>
+				<string>id</string>
+				<key>windowTypeButton</key>
+				<string>id</string>
+				<key>zpFactorCell</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

@@ -1,20 +1,44 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            CLASS = SoundInfo; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                siChannels = id; 
-                siFormat = id; 
-                siFrames = id; 
-                siPanel = id; 
-                siRate = id; 
-                siSize = id; 
-                siTime = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>SoundInfo</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>siChannels</key>
+				<string>id</string>
+				<key>siFormat</key>
+				<string>id</string>
+				<key>siFrames</key>
+				<string>id</string>
+				<key>siPanel</key>
+				<string>id</string>
+				<key>siRate</key>
+				<string>id</string>
+				<key>siSize</key>
+				<string>id</string>
+				<key>siTime</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

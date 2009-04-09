@@ -1,62 +1,131 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {defaults = id; okay = id; setPref = id; }; 
-            CLASS = PrefController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                amplitudeColorWell = NSColorWell; 
-                colorView = id; 
-                cursorColorWell = NSColorWell; 
-                dBLimitCell = id; 
-                displayMode = id; 
-                fftView = id; 
-                gridColorWell = NSColorWell; 
-                hopRatioCell = id; 
-                multiView = id; 
-                soundDisplayView = id; 
-                spectrumColorWell = NSColorWell; 
-                spectrumDisplayView = id; 
-                spectrumMaxFreqCell = id; 
-                waterfallColorWell = NSColorWell; 
-                wfMaxFreqCell = id; 
-                wfPlotHeightCell = id; 
-                window = id; 
-                windowSizeCell = id; 
-                windowTypeMatrix = id; 
-                zpFactorCell = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                appDidHide = id; 
-                appDidInit = id; 
-                appWillTerminate = id; 
-                newSoundDoc = id; 
-                open = id; 
-                revertToSaved = id; 
-                save = id; 
-                saveAs = id; 
-                saveTo = id; 
-                showInfoPanel = id; 
-                showPreferences = id; 
-                sndInfo = id; 
-            }; 
-            CLASS = SoundController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                currentDocument = id; 
-                documentList = id; 
-                infoPanel = id; 
-                prefController = id; 
-                saveToAccessoryView = id; 
-                saveToController = id; 
-                stringTable = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>appDidHide</key>
+				<string>id</string>
+				<key>appDidInit</key>
+				<string>id</string>
+				<key>appWillTerminate</key>
+				<string>id</string>
+				<key>newSoundDoc</key>
+				<string>id</string>
+				<key>open</key>
+				<string>id</string>
+				<key>revertToSaved</key>
+				<string>id</string>
+				<key>save</key>
+				<string>id</string>
+				<key>saveAs</key>
+				<string>id</string>
+				<key>saveTo</key>
+				<string>id</string>
+				<key>showInfoPanel</key>
+				<string>id</string>
+				<key>showPreferences</key>
+				<string>id</string>
+				<key>sndInfo</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>SoundController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>currentDocument</key>
+				<string>id</string>
+				<key>documentList</key>
+				<string>id</string>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>prefController</key>
+				<string>id</string>
+				<key>saveToAccessoryView</key>
+				<string>id</string>
+				<key>saveToController</key>
+				<string>id</string>
+				<key>stringTable</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>defaults</key>
+				<string>id</string>
+				<key>okay</key>
+				<string>id</string>
+				<key>setPref</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>PrefController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>amplitudeColorWell</key>
+				<string>NSColorWell</string>
+				<key>colorView</key>
+				<string>id</string>
+				<key>cursorColorWell</key>
+				<string>NSColorWell</string>
+				<key>dBLimitCell</key>
+				<string>id</string>
+				<key>displayMode</key>
+				<string>id</string>
+				<key>fftView</key>
+				<string>id</string>
+				<key>gridColorWell</key>
+				<string>NSColorWell</string>
+				<key>hopRatioCell</key>
+				<string>id</string>
+				<key>multiView</key>
+				<string>id</string>
+				<key>soundDisplayView</key>
+				<string>id</string>
+				<key>spectrumColorWell</key>
+				<string>NSColorWell</string>
+				<key>spectrumDisplayView</key>
+				<string>id</string>
+				<key>spectrumMaxFreqCell</key>
+				<string>id</string>
+				<key>waterfallColorWell</key>
+				<string>NSColorWell</string>
+				<key>wfMaxFreqCell</key>
+				<string>id</string>
+				<key>wfPlotHeightCell</key>
+				<string>id</string>
+				<key>window</key>
+				<string>id</string>
+				<key>windowSizeCell</key>
+				<string>id</string>
+				<key>windowTypeMatrix</key>
+				<string>id</string>
+				<key>zpFactorCell</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
