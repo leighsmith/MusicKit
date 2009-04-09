@@ -1,18 +1,40 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                StartAndStop = id; 
-                setCanon = id; 
-                setInterlock = id; 
-                setPhasing = id; 
-                setPulsing = id; 
-            }; 
-            CLASS = Reicher; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>StartAndStop</key>
+				<string>id</string>
+				<key>setCanon</key>
+				<string>id</string>
+				<key>setInterlock</key>
+				<string>id</string>
+				<key>setPhasing</key>
+				<string>id</string>
+				<key>setPulsing</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Reicher</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

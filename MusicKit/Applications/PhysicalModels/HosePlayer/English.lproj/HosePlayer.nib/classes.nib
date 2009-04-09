@@ -1,57 +1,115 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {changeAmps = id; changeLip = id; changeSlide = id; play = id; }; 
-            CLASS = Controller; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {lipFields = id; lipPots = id; myMidiHandler = id; }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {clear = id; draw = id; }; 
-            CLASS = FloatView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {clearButton = id; myMax = id; myMin = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {
-            CLASS = InsTwoWaves; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {ampEnv = id; freq2Env = id; freqEnv = id; }; 
-            SUPERCLASS = SynthPatch; 
-        }, 
-        {CLASS = Instrument; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                center = id; 
-                modWheel = id; 
-                pitchWheel = id; 
-                pressKey = id; 
-                volumePedal = id; 
-            }; 
-            CLASS = MidiController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                ampSliders = id; 
-                blackKeys1 = id; 
-                blackKeys2 = id; 
-                blackKeys3 = id; 
-                blackKeys4 = id; 
-                blackKeys5 = id; 
-                breathPressure = id; 
-                fastMode = id; 
-                lipSliders = id; 
-                modSliders = id; 
-                myHornController = id; 
-                noteReceiver = id; 
-                slide = id; 
-                whiteKeys = id; 
-            }; 
-            SUPERCLASS = NoteFilter; 
-        }, 
-        {CLASS = NoteFilter; LANGUAGE = ObjC; SUPERCLASS = Instrument; }, 
-        {CLASS = SynthPatch; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>NoteFilter</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>Instrument</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>Instrument</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>center</key>
+				<string>id</string>
+				<key>modWheel</key>
+				<string>id</string>
+				<key>pitchWheel</key>
+				<string>id</string>
+				<key>pressKey</key>
+				<string>id</string>
+				<key>volumePedal</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>MidiController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>ampSliders</key>
+				<string>id</string>
+				<key>blackKeys1</key>
+				<string>id</string>
+				<key>blackKeys2</key>
+				<string>id</string>
+				<key>blackKeys3</key>
+				<string>id</string>
+				<key>blackKeys4</key>
+				<string>id</string>
+				<key>blackKeys5</key>
+				<string>id</string>
+				<key>breathPressure</key>
+				<string>id</string>
+				<key>fastMode</key>
+				<string>id</string>
+				<key>lipSliders</key>
+				<string>id</string>
+				<key>modSliders</key>
+				<string>id</string>
+				<key>myHornController</key>
+				<string>id</string>
+				<key>noteReceiver</key>
+				<string>id</string>
+				<key>slide</key>
+				<string>id</string>
+				<key>whiteKeys</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NoteFilter</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>changeAmps</key>
+				<string>id</string>
+				<key>changeLip</key>
+				<string>id</string>
+				<key>changeSlide</key>
+				<string>id</string>
+				<key>play</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Controller</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>lipFields</key>
+				<string>id</string>
+				<key>lipPots</key>
+				<string>id</string>
+				<key>myMidiHandler</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSApplication</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
