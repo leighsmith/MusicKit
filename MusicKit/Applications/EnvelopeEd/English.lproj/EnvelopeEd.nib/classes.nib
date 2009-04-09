@@ -1,74 +1,137 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                addEnvelope = id; 
-                appDidInit = id; 
-                copy = id; 
-                helpPanel = id; 
-                infoPanel = id; 
-                nextPoint = id; 
-                paste = id; 
-                previousPoint = id; 
-                reScaleLimits = id; 
-                removeEnvelope = id; 
-                setDrawSegmentsState = id; 
-                setGraphType = id; 
-                setLinkX = id; 
-                setPoint = id; 
-                setSmoothFromSlider = id; 
-                setSmoothValue = id; 
-                setStickyPoint = id; 
-                setXMaxValue = id; 
-                setXMinValue = id; 
-                setXSnapValue = id; 
-                setXValue = id; 
-                setYMaxValue = id; 
-                setYMinValue = id; 
-                setYSnapValue = id; 
-                setYValue = id; 
-                setYrValue = id; 
-                unRemoveEnvelope = id; 
-                update = id; 
-                updateCoords = id; 
-            }; 
-            CLASS = Controller; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                helpPanel = id; 
-                infoPanel = id; 
-                lastDeleted = id; 
-                myListener = id; 
-                theEnvelope = id; 
-                theGraphType = id; 
-                theLinkX = id; 
-                theOutputTypes = id; 
-                thePoint = id; 
-                theSmoothSlider = id; 
-                theSmoothing = id; 
-                theSplitView = id; 
-                theStickyPoint = id; 
-                theWindow = id; 
-                theXCoord = id; 
-                theXMaxCoord = id; 
-                theXMinCoord = id; 
-                theXSnapCoord = id; 
-                theYCoord = id; 
-                theYMaxCoord = id; 
-                theYMinCoord = id; 
-                theYSnapCoord = id; 
-                theYrCoord = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {controllerIs = id; }; 
-            CLASS = EnvelopeView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {theController = id; theCross = id; theEnvelope = id; theFilledCross = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>addEnvelope</key>
+				<string>id</string>
+				<key>appDidInit</key>
+				<string>id</string>
+				<key>copy</key>
+				<string>id</string>
+				<key>helpPanel</key>
+				<string>id</string>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>nextPoint</key>
+				<string>id</string>
+				<key>paste</key>
+				<string>id</string>
+				<key>previousPoint</key>
+				<string>id</string>
+				<key>reScaleLimits</key>
+				<string>id</string>
+				<key>removeEnvelope</key>
+				<string>id</string>
+				<key>setDrawSegmentsState</key>
+				<string>id</string>
+				<key>setGraphType</key>
+				<string>id</string>
+				<key>setLinkX</key>
+				<string>id</string>
+				<key>setPoint</key>
+				<string>id</string>
+				<key>setSmoothFromSlider</key>
+				<string>id</string>
+				<key>setSmoothValue</key>
+				<string>id</string>
+				<key>setStickyPoint</key>
+				<string>id</string>
+				<key>setXMaxValue</key>
+				<string>id</string>
+				<key>setXMinValue</key>
+				<string>id</string>
+				<key>setXSnapValue</key>
+				<string>id</string>
+				<key>setXValue</key>
+				<string>id</string>
+				<key>setYMaxValue</key>
+				<string>id</string>
+				<key>setYMinValue</key>
+				<string>id</string>
+				<key>setYSnapValue</key>
+				<string>id</string>
+				<key>setYValue</key>
+				<string>id</string>
+				<key>setYrValue</key>
+				<string>id</string>
+				<key>unRemoveEnvelope</key>
+				<string>id</string>
+				<key>update</key>
+				<string>id</string>
+				<key>updateCoords</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Controller</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>helpPanel</key>
+				<string>id</string>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>lastDeleted</key>
+				<string>id</string>
+				<key>myListener</key>
+				<string>id</string>
+				<key>theEnvelope</key>
+				<string>id</string>
+				<key>theGraphType</key>
+				<string>id</string>
+				<key>theLinkX</key>
+				<string>id</string>
+				<key>theOutputTypes</key>
+				<string>id</string>
+				<key>thePoint</key>
+				<string>id</string>
+				<key>theSmoothSlider</key>
+				<string>id</string>
+				<key>theSmoothing</key>
+				<string>id</string>
+				<key>theSplitView</key>
+				<string>id</string>
+				<key>theStickyPoint</key>
+				<string>id</string>
+				<key>theWindow</key>
+				<string>id</string>
+				<key>theXCoord</key>
+				<string>id</string>
+				<key>theXMaxCoord</key>
+				<string>id</string>
+				<key>theXMinCoord</key>
+				<string>id</string>
+				<key>theXSnapCoord</key>
+				<string>id</string>
+				<key>theYCoord</key>
+				<string>id</string>
+				<key>theYMaxCoord</key>
+				<string>id</string>
+				<key>theYMinCoord</key>
+				<string>id</string>
+				<key>theYSnapCoord</key>
+				<string>id</string>
+				<key>theYrCoord</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
