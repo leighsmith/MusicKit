@@ -1,58 +1,86 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                decreaseDay = id; 
-                decreaseHour = id; 
-                decreaseMinute = id; 
-                decreaseSecond = id; 
-                increaseDay = id; 
-                increaseHour = id; 
-                increaseMinute = id; 
-                increaseSecond = id; 
-                startClock = id; 
-                stopClock = id; 
-            }; 
-            CLASS = Clock; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSView; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            CLASS = Layout; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {view = id; }; 
-            SUPERCLASS = Object; 
-        }, 
-        {
-            ACTIONS = {
-                clearMidiUnit = id; 
-                decDspNum = id; 
-                decMidiNum = id; 
-                incDspNum = id; 
-                incMidiNum = id; 
-                setDspNum = id; 
-                setMidiNum = id; 
-                setMidiUnit = id; 
-            }; 
-            CLASS = MusicKitPrefs; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                dspDriverPopUpButton = id; 
-                dspNumDec = id; 
-                dspNumField = id; 
-                dspNumInc = id; 
-                dspText = id; 
-                midiNumDec = id; 
-                midiNumField = id; 
-                midiNumInc = id; 
-                midiText = id; 
-                midiUnitNumField = id; 
-                serialPortDevicePopUpButton = id; 
-                window = id; 
-            }; 
-            SUPERCLASS = Layout; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>Layout</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>view</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>clearMidiUnit</key>
+				<string>id</string>
+				<key>decDspNum</key>
+				<string>id</string>
+				<key>decMidiNum</key>
+				<string>id</string>
+				<key>incDspNum</key>
+				<string>id</string>
+				<key>incMidiNum</key>
+				<string>id</string>
+				<key>setDspNum</key>
+				<string>id</string>
+				<key>setMidiNum</key>
+				<string>id</string>
+				<key>setMidiUnit</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>MusicKitPrefs</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>dspDriverPopUpButton</key>
+				<string>id</string>
+				<key>dspNumDec</key>
+				<string>id</string>
+				<key>dspNumField</key>
+				<string>id</string>
+				<key>dspNumInc</key>
+				<string>id</string>
+				<key>dspText</key>
+				<string>id</string>
+				<key>midiNumDec</key>
+				<string>id</string>
+				<key>midiNumField</key>
+				<string>id</string>
+				<key>midiNumInc</key>
+				<string>id</string>
+				<key>midiText</key>
+				<string>id</string>
+				<key>midiUnitNumField</key>
+				<string>id</string>
+				<key>serialPortDevicePopUpButton</key>
+				<string>id</string>
+				<key>window</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>Layout</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
