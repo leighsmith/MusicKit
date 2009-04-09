@@ -1,33 +1,67 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                StartAndStop = id; 
-                displaySpread = id; 
-                displayVibRate = id; 
-                displayVibWidth = id; 
-                setParams = id; 
-                terminate = id; 
-                trArnie = id; 
-                trBach = id; 
-                trDrone = id; 
-                trMorning = id; 
-                trOriginal = id; 
-            }; 
-            CLASS = Looching; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                inSpread = id; 
-                inVibRate = id; 
-                inVibWidth = id; 
-                outSpread = id; 
-                outVibRate = id; 
-                outVibWidth = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = Stopit; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>StartAndStop</key>
+				<string>id</string>
+				<key>displaySpread</key>
+				<string>id</string>
+				<key>displayVibRate</key>
+				<string>id</string>
+				<key>displayVibWidth</key>
+				<string>id</string>
+				<key>setParams</key>
+				<string>id</string>
+				<key>terminate</key>
+				<string>id</string>
+				<key>trArnie</key>
+				<string>id</string>
+				<key>trBach</key>
+				<string>id</string>
+				<key>trDrone</key>
+				<string>id</string>
+				<key>trMorning</key>
+				<string>id</string>
+				<key>trOriginal</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Looching</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>inSpread</key>
+				<string>id</string>
+				<key>inVibRate</key>
+				<string>id</string>
+				<key>inVibWidth</key>
+				<string>id</string>
+				<key>outSpread</key>
+				<string>id</string>
+				<key>outVibRate</key>
+				<string>id</string>
+				<key>outVibWidth</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
