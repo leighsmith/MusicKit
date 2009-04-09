@@ -1,65 +1,161 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                convolve = id; 
-                multiply = id; 
-                normalize = id; 
-                onOff = id; 
-                previous = id; 
-                restoreTable = id; 
-                save = id; 
-                saveAs = id; 
-                saveTable = id; 
-                setLogDisplay = id; 
-                storeCurrent = id; 
-                zoomIn = id; 
-                zoomOut = id; 
-            }; 
-            CLASS = FFTControl; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {convView = id; modView = id; phiView = id; waveView = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {draw = id; zoomIn = id; zoomOut = id; }; 
-            CLASS = FuncView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {scrollView = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {
-            CLASS = ModView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {FFTControler = id; }; 
-            SUPERCLASS = FuncView; 
-        }, 
-        {
-            CLASS = PhiView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {FFTControler = id; }; 
-            SUPERCLASS = FuncView; 
-        }, 
-        {
-            ACTIONS = {
-                sawTooth = id; 
-                sendAmp = id; 
-                sendFreq = id; 
-                sendPVib = id; 
-                sendPVibFreq = id; 
-                sendRVib = id; 
-                setSound = id; 
-                sine = id; 
-                square = id; 
-                triangle = id; 
-                vibOnOff = id; 
-            }; 
-            CLASS = Wave; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {aNote = id; aSP = id; anOrch = id; fftView = id; tableLook = id; }; 
-            SUPERCLASS = FuncView; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>ModView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>FFTControler</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>FuncView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>PhiView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>FFTControler</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>FuncView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>draw</key>
+				<string>id</string>
+				<key>zoomIn</key>
+				<string>id</string>
+				<key>zoomOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FuncView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>scrollView</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>convolve</key>
+				<string>id</string>
+				<key>multiply</key>
+				<string>id</string>
+				<key>normalize</key>
+				<string>id</string>
+				<key>onOff</key>
+				<string>id</string>
+				<key>previous</key>
+				<string>id</string>
+				<key>restoreTable</key>
+				<string>id</string>
+				<key>save</key>
+				<string>id</string>
+				<key>saveAs</key>
+				<string>id</string>
+				<key>saveTable</key>
+				<string>id</string>
+				<key>setLogDisplay</key>
+				<string>id</string>
+				<key>storeCurrent</key>
+				<string>id</string>
+				<key>zoomIn</key>
+				<string>id</string>
+				<key>zoomOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FFTControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>convView</key>
+				<string>id</string>
+				<key>modView</key>
+				<string>id</string>
+				<key>phiView</key>
+				<string>id</string>
+				<key>waveView</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>sawTooth</key>
+				<string>id</string>
+				<key>sendAmp</key>
+				<string>id</string>
+				<key>sendFreq</key>
+				<string>id</string>
+				<key>sendPVib</key>
+				<string>id</string>
+				<key>sendPVibFreq</key>
+				<string>id</string>
+				<key>sendRVib</key>
+				<string>id</string>
+				<key>setSound</key>
+				<string>id</string>
+				<key>sine</key>
+				<string>id</string>
+				<key>square</key>
+				<string>id</string>
+				<key>triangle</key>
+				<string>id</string>
+				<key>vibOnOff</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Wave</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>aNote</key>
+				<string>id</string>
+				<key>aSP</key>
+				<string>id</string>
+				<key>anOrch</key>
+				<string>id</string>
+				<key>fftView</key>
+				<string>id</string>
+				<key>tableLook</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>FuncView</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
