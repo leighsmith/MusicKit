@@ -1,27 +1,70 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {openInEdit = id; play = id; }; 
-            CLASS = ScoreInspector; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = WMInspector; 
-        }, 
-        {
-            ACTIONS = {ok = id; revert = id; textDidChange = id; touch = id; }; 
-            CLASS = WMInspector; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                dirNameField = id; 
-                dirTitleField = id; 
-                fileIconButton = id; 
-                fileNameField = id; 
-                okButton = id; 
-                revertButton = id; 
-                window = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>ok</key>
+				<string>id</string>
+				<key>revert</key>
+				<string>id</string>
+				<key>textDidChange</key>
+				<string>id</string>
+				<key>touch</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>WMInspector</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>dirNameField</key>
+				<string>id</string>
+				<key>dirTitleField</key>
+				<string>id</string>
+				<key>fileIconButton</key>
+				<string>id</string>
+				<key>fileNameField</key>
+				<string>id</string>
+				<key>okButton</key>
+				<string>id</string>
+				<key>revertButton</key>
+				<string>id</string>
+				<key>window</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>openInEdit</key>
+				<string>id</string>
+				<key>play</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ScoreInspector</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>WMInspector</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
