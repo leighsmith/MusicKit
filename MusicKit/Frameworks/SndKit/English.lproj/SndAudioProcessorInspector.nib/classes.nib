@@ -1,35 +1,76 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                onAddFxButton = id; 
-                onDelFxButton = id; 
-                onParameterValueSlider = id; 
-                onProcessorActive = id; 
-                parameterTableAction = id; 
-            }; 
-            CLASS = SndAudioProcessorInspector; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                addFxButton = id; 
-                delFxButton = id; 
-                fxChooser = id; 
-                parameterTableView = id; 
-                parameterValueSilder = id; 
-                processorActive = id; 
-                processorName = id; 
-                sndArchView = id; 
-            }; 
-            SUPERCLASS = NSDocumentController; 
-        }, 
-        {
-            CLASS = SndStreamArchitectureView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {currentSndArchObject = id; delegate = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {CLASS = SndStreamArchitectureViewDelegateProtocol; LANGUAGE = ObjC; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>SndStreamArchitectureView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>currentSndArchObject</key>
+				<string>id</string>
+				<key>delegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>onAddFxButton</key>
+				<string>id</string>
+				<key>onDelFxButton</key>
+				<string>id</string>
+				<key>onParameterValueSlider</key>
+				<string>id</string>
+				<key>onProcessorActive</key>
+				<string>id</string>
+				<key>parameterTableAction</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>SndAudioProcessorInspector</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>addFxButton</key>
+				<string>NSButton</string>
+				<key>delFxButton</key>
+				<string>NSButton</string>
+				<key>fxChooser</key>
+				<string>NSComboBox</string>
+				<key>parameterTableView</key>
+				<string>NSTableView</string>
+				<key>parameterValueSilder</key>
+				<string>NSSlider</string>
+				<key>processorActive</key>
+				<string>NSButton</string>
+				<key>processorName</key>
+				<string>NSTextField</string>
+				<key>sndArchView</key>
+				<string>SndStreamArchitectureView</string>
+				<key>window</key>
+				<string>NSPanel</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
