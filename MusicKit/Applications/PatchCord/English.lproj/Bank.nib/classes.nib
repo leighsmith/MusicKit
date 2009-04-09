@@ -1,46 +1,55 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                deletePatch = id; 
-                displayPatch = id; 
-                getFromSynth = id; 
-                newPatch = id; 
-                sendToSynth = id; 
-            }; 
-            CLASS = Bank; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                deleteSynthButton = id; 
-                patchIconButton = id; 
-                patchTableView = id; 
-                programNumList = id; 
-                sendToSynthButton = id; 
-                synthList = id; 
-            }; 
-            SUPERCLASS = NSDocument; 
-        }, 
-        {
-            ACTIONS = {getFromSynth = id; newPatch = id; sendToSynth = id; }; 
-            CLASS = BankController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                patchIconButton = id; 
-                patchTableView = id; 
-                programNumList = id; 
-                sendToSynthButton = id; 
-                synthList = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {newBank = id; newPatch = id; showInfo = id; }; 
-            CLASS = Controller; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {infoPanel = id; newPatch = id; window = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>deletePatch</key>
+				<string>id</string>
+				<key>displayPatch</key>
+				<string>id</string>
+				<key>getFromSynth</key>
+				<string>id</string>
+				<key>newPatch</key>
+				<string>id</string>
+				<key>sendToSynth</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Bank</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>deleteSynthButton</key>
+				<string>id</string>
+				<key>patchIconButton</key>
+				<string>id</string>
+				<key>patchTableView</key>
+				<string>id</string>
+				<key>programNumList</key>
+				<string>id</string>
+				<key>sendToSynthButton</key>
+				<string>id</string>
+				<key>synthList</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSDocument</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

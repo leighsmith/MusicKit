@@ -1,57 +1,78 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {newBank = id; newPatch = id; showInfo = id; }; 
-            CLASS = Controller; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {infoPanel = id; newPatch = id; window = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                updateHPF = id; 
-                updateMidiChannel = id; 
-                updateRangeAndChorus = id; 
-                updateSliders = id; 
-                updateSwitches = id; 
-            }; 
-            CLASS = Juno106; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                chorus = id; 
-                envDirection = id; 
-                hpf = id; 
-                midiChan = id; 
-                patchName = id; 
-                pulse = id; 
-                pwm = id; 
-                range = id; 
-                saw = id; 
-                sliderGroup = id; 
-                vca = id; 
-            }; 
-            SUPERCLASS = MIDISysExSynth; 
-        }, 
-        {
-            CLASS = MIDISysExSynth; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {window = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {moved = id; }; 
-            CLASS = MiscSliderCell; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {stringList = id; }; 
-            SUPERCLASS = NSTextFieldCell; 
-        }, 
-        {
-            CLASS = MiscSliderField; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {stringList = id; }; 
-            SUPERCLASS = NSTextField; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>updateHPF</key>
+				<string>id</string>
+				<key>updateMidiChannel</key>
+				<string>id</string>
+				<key>updateRangeAndChorus</key>
+				<string>id</string>
+				<key>updateSliders</key>
+				<string>id</string>
+				<key>updateSwitches</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Juno106</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>chorus</key>
+				<string>id</string>
+				<key>envDirection</key>
+				<string>id</string>
+				<key>hpf</key>
+				<string>id</string>
+				<key>midiChan</key>
+				<string>id</string>
+				<key>patchName</key>
+				<string>id</string>
+				<key>pulse</key>
+				<string>id</string>
+				<key>pwm</key>
+				<string>id</string>
+				<key>range</key>
+				<string>id</string>
+				<key>saw</key>
+				<string>id</string>
+				<key>sliderGroup</key>
+				<string>id</string>
+				<key>vca</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>MIDISysExSynth</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MIDISysExSynth</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>window</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
