@@ -1,34 +1,65 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                closeDoc = id; 
-                newDoc = id; 
-                openDoc = id; 
-                play = id; 
-                saveDoc = id; 
-                saveDocAs = id; 
-                showHelp = id; 
-                showInfo = id; 
-                stopPlay = id; 
-            }; 
-            CLASS = Distributor; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                docList = id; 
-                helpPanel = id; 
-                infoPanel = id; 
-                openPanel = id; 
-                savePanel = id; 
-                scorePlayer = id; 
-                tadList = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = Document; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = PartView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {CLASS = TadPole; LANGUAGE = ObjC; SUPERCLASS = NSView; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>closeDoc</key>
+				<string>id</string>
+				<key>newDoc</key>
+				<string>id</string>
+				<key>openDoc</key>
+				<string>id</string>
+				<key>play</key>
+				<string>id</string>
+				<key>saveDoc</key>
+				<string>id</string>
+				<key>saveDocAs</key>
+				<string>id</string>
+				<key>showHelp</key>
+				<string>id</string>
+				<key>showInfo</key>
+				<string>id</string>
+				<key>stopPlay</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Distributor</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>docList</key>
+				<string>id</string>
+				<key>helpPanel</key>
+				<string>id</string>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>openPanel</key>
+				<string>id</string>
+				<key>savePanel</key>
+				<string>id</string>
+				<key>scorePlayer</key>
+				<string>id</string>
+				<key>tadList</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
