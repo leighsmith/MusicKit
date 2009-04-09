@@ -1,26 +1,54 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {performResize = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {buttonPressed = id; }; 
-            CLASS = MKAlert; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                first = id; 
-                msg = NSTextField; 
-                panel = NSPanel; 
-                panelIconButton = NSButton; 
-                second = id; 
-                third = id; 
-                title = NSTextField; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>performResize</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>buttonPressed</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>MKAlert</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>first</key>
+				<string>id</string>
+				<key>msg</key>
+				<string>NSTextField</string>
+				<key>panel</key>
+				<string>NSPanel</string>
+				<key>panelIconButton</key>
+				<string>NSButton</string>
+				<key>second</key>
+				<string>id</string>
+				<key>third</key>
+				<string>id</string>
+				<key>title</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

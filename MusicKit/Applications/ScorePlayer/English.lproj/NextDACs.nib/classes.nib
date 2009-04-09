@@ -1,87 +1,105 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                deviceSpecificSettings = id; 
-                getNeXTDACCurrentValues = id; 
-                help = id; 
-                openEditFile = id; 
-                playStop = id; 
-                saveScoreAs = id; 
-                selectFile = id; 
-                setAD64xConsumer = id; 
-                setAD64xProfessional = id; 
-                setNeXTDACMute = id; 
-                setNeXTDACVolume = id; 
-                setSoundOutFrom = id; 
-                setTempoAdjustment = id; 
-                setTempoFrom = id; 
-                showErrorLog = id; 
-            }; 
-            CLASS = MyApp; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                NeXTDacMuteSwitch = id; 
-                NeXTDacVolumeSlider = id; 
-                button = id; 
-                dspCommandsSavePanel = id; 
-                editFileItem = id; 
-                saveAsFileItem = id; 
-                soundSavePanel = id; 
-                tempoSlider = id; 
-                tempoTextField = id; 
-                tempoTitle = id; 
-                theMainWindow = id; 
-                tooFastErrorMsg = id; 
-            }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {
-            ACTIONS = {
-                deviceSpecificSettings = id; 
-                getNeXTDACCurrentValues = id; 
-                help = id; 
-                openEditFile = id; 
-                playStop = id; 
-                saveAsDefaultDevice = id; 
-                saveScoreAs = id; 
-                selectFile = id; 
-                setAD64xConsumer = id; 
-                setAD64xProfessional = id; 
-                setDAI2400CopyProhibit = id; 
-                setDAI2400Emphasis = id; 
-                setNeXTDACMute = id; 
-                setNeXTDACVolume = id; 
-                setSoundOutFrom = id; 
-                setTempoFrom = id; 
-                setTimeCodeSerialPort = id; 
-                setTimeCodeSynch = id; 
-                showErrorLog = id; 
-            }; 
-            CLASS = ScorePlayerController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                NeXTDacMuteSwitch = id; 
-                NeXTDacVolumeSlider = id; 
-                button = id; 
-                dspCommandsSavePanel = id; 
-                editFileItem = id; 
-                saveAsFileItem = id; 
-                serialPortDeviceMatrix = id; 
-                serialPortDeviceNameField = id; 
-                soundSavePanel = id; 
-                tempoSlider = id; 
-                tempoTextField = id; 
-                tempoTitle = id; 
-                theMainWindow = id; 
-                timeCodeButton = id; 
-                timeCodePortMatrix = id; 
-                timeCodeTextField = id; 
-                tooFastErrorMsg = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>deviceSpecificSettings</key>
+				<string>id</string>
+				<key>getNeXTDACCurrentValues</key>
+				<string>id</string>
+				<key>help</key>
+				<string>id</string>
+				<key>openEditFile</key>
+				<string>id</string>
+				<key>playStop</key>
+				<string>id</string>
+				<key>saveAsDefaultDevice</key>
+				<string>id</string>
+				<key>saveScoreAs</key>
+				<string>id</string>
+				<key>selectFile</key>
+				<string>id</string>
+				<key>setAD64xConsumer</key>
+				<string>id</string>
+				<key>setAD64xProfessional</key>
+				<string>id</string>
+				<key>setDAI2400CopyProhibit</key>
+				<string>id</string>
+				<key>setDAI2400Emphasis</key>
+				<string>id</string>
+				<key>setNeXTDACMute</key>
+				<string>id</string>
+				<key>setNeXTDACVolume</key>
+				<string>id</string>
+				<key>setSoundOutFrom</key>
+				<string>id</string>
+				<key>setTempoFrom</key>
+				<string>id</string>
+				<key>setTimeCodeSerialPort</key>
+				<string>id</string>
+				<key>setTimeCodeSynch</key>
+				<string>id</string>
+				<key>showErrorLog</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ScorePlayerController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>NeXTDacMuteSwitch</key>
+				<string>id</string>
+				<key>NeXTDacVolumeSlider</key>
+				<string>id</string>
+				<key>button</key>
+				<string>id</string>
+				<key>dspCommandsSavePanel</key>
+				<string>id</string>
+				<key>editFileItem</key>
+				<string>id</string>
+				<key>saveAsFileItem</key>
+				<string>id</string>
+				<key>serialPortDeviceMatrix</key>
+				<string>id</string>
+				<key>serialPortDeviceNameField</key>
+				<string>id</string>
+				<key>soundSavePanel</key>
+				<string>id</string>
+				<key>tempoSlider</key>
+				<string>id</string>
+				<key>tempoTextField</key>
+				<string>id</string>
+				<key>tempoTitle</key>
+				<string>id</string>
+				<key>theMainWindow</key>
+				<string>id</string>
+				<key>timeCodeButton</key>
+				<string>id</string>
+				<key>timeCodePortMatrix</key>
+				<string>id</string>
+				<key>timeCodeTextField</key>
+				<string>id</string>
+				<key>tooFastErrorMsg</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
