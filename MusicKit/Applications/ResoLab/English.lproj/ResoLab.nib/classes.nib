@@ -1,67 +1,138 @@
-{
-    IBClasses = (
-        {CLASS = BiquadUG; LANGUAGE = ObjC; SUPERCLASS = UnitGenerator; }, 
-        {CLASS = BiquadUGx; LANGUAGE = ObjC; SUPERCLASS = BiquadUG; }, 
-        {CLASS = BiquadUGy; LANGUAGE = ObjC; SUPERCLASS = BiquadUG; }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                bumpFilter = id; 
-                changeFilter = id; 
-                changeHarmonics = id; 
-                changeMod = id; 
-                changePitch = id; 
-                changeSource = id; 
-                graph3D = id; 
-                makeNoise = id; 
-                makeVowel = id; 
-            }; 
-            CLASS = ResoController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                button = id; 
-                filterFields = id; 
-                filterZFields = id; 
-                linkSpectrum = id; 
-                my3DZPlane = id; 
-                mySpectrum = id; 
-                myZPlane = id; 
-                noiseLevel = id; 
-                numHarmonics = id; 
-                perLevel = id; 
-                pitchField = id; 
-                poleGains = id; 
-                pulseLevel = id; 
-                randLevel = id; 
-                sourceFader = id; 
-                theIns = id; 
-                theNote = id; 
-                theNoteUpdate = id; 
-                theOrch = id; 
-                theWave = id; 
-                theXform = id; 
-                vibField = id; 
-            }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {CLASS = SourceFilterIns; LANGUAGE = ObjC; SUPERCLASS = SynthPatch; }, 
-        {
-            CLASS = SpectrumView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {freqFields = id; logFreq = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {CLASS = SynthPatch; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = UnitGenerator; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = Xforms; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {updateGain = id; }; 
-            CLASS = Z3DPlaneView; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {gainField = id; gainSlid = id; }; 
-            SUPERCLASS = NSView; 
-        }, 
-        {CLASS = ZPlaneView; LANGUAGE = ObjC; SUPERCLASS = NSView; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>updateGain</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Z3DPlaneView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>gainField</key>
+				<string>id</string>
+				<key>gainSlid</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>SpectrumView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>freqFields</key>
+				<string>id</string>
+				<key>logFreq</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>ZPlaneView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>bumpFilter</key>
+				<string>id</string>
+				<key>changeFilter</key>
+				<string>id</string>
+				<key>changeHarmonics</key>
+				<string>id</string>
+				<key>changeMod</key>
+				<string>id</string>
+				<key>changePitch</key>
+				<string>id</string>
+				<key>changeSource</key>
+				<string>id</string>
+				<key>graph3D</key>
+				<string>id</string>
+				<key>makeNoise</key>
+				<string>id</string>
+				<key>makeVowel</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ResoController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>button</key>
+				<string>id</string>
+				<key>filterFields</key>
+				<string>id</string>
+				<key>filterZFields</key>
+				<string>id</string>
+				<key>linkSpectrum</key>
+				<string>id</string>
+				<key>my3DZPlane</key>
+				<string>id</string>
+				<key>mySpectrum</key>
+				<string>id</string>
+				<key>myZPlane</key>
+				<string>id</string>
+				<key>noiseLevel</key>
+				<string>id</string>
+				<key>numHarmonics</key>
+				<string>id</string>
+				<key>perLevel</key>
+				<string>id</string>
+				<key>pitchField</key>
+				<string>id</string>
+				<key>poleGains</key>
+				<string>id</string>
+				<key>pulseLevel</key>
+				<string>id</string>
+				<key>randLevel</key>
+				<string>id</string>
+				<key>sourceFader</key>
+				<string>id</string>
+				<key>theIns</key>
+				<string>id</string>
+				<key>theNote</key>
+				<string>id</string>
+				<key>theNoteUpdate</key>
+				<string>id</string>
+				<key>theOrch</key>
+				<string>id</string>
+				<key>theWave</key>
+				<string>id</string>
+				<key>theXform</key>
+				<string>id</string>
+				<key>vibField</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSApplication</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
