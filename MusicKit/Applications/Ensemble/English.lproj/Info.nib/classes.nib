@@ -1,66 +1,135 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                changeSaveType = id; 
-                closeDocument = id; 
-                help = id; 
-                info = id; 
-                mutePart = id; 
-                muteScore = id; 
-                newDocument = id; 
-                newScore = id; 
-                openDocument = id; 
-                openScoreFile = id; 
-                pageLayout = id; 
-                pause = id; 
-                play = id; 
-                preferences = id; 
-                printKeyWindow = id; 
-                record = id; 
-                recordEnable = id; 
-                reset = id; 
-                saveDocument = id; 
-                saveDocumentAs = id; 
-                saveScore = id; 
-                saveScoreAs = id; 
-                selectPart = id; 
-                setMidiTimeStamps = id; 
-                setSoftTimed = id; 
-                settings = id; 
-                showClavier = id; 
-                showHelpWindow = id; 
-                showTime = id; 
-                stop = id; 
-                synchDSP = id; 
-                takeTempoFrom = id; 
-                terminate = id; 
-            }; 
-            CLASS = EnsembleApp; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                helpPanel = id; 
-                infoPanel = id; 
-                numChansDisplayer = id; 
-                numPartsDisplayer = id; 
-                partSelectButtons = id; 
-                pauseButton = id; 
-                playButton = id; 
-                preferences = id; 
-                recordButton = id; 
-                recordButtons = id; 
-                scoreFileNameDisplayer = id; 
-                settings = id; 
-                soundFileNameDisplayer = id; 
-                stopButton = id; 
-                tempoDisplayer = id; 
-                tempoSlider = id; 
-                timeDisplayer = id; 
-                window = id; 
-            }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>changeSaveType</key>
+				<string>id</string>
+				<key>closeDocument</key>
+				<string>id</string>
+				<key>help</key>
+				<string>id</string>
+				<key>info</key>
+				<string>id</string>
+				<key>mutePart</key>
+				<string>id</string>
+				<key>muteScore</key>
+				<string>id</string>
+				<key>newDocument</key>
+				<string>id</string>
+				<key>newScore</key>
+				<string>id</string>
+				<key>openDocument</key>
+				<string>id</string>
+				<key>openScoreFile</key>
+				<string>id</string>
+				<key>pageLayout</key>
+				<string>id</string>
+				<key>pause</key>
+				<string>id</string>
+				<key>play</key>
+				<string>id</string>
+				<key>preferences</key>
+				<string>id</string>
+				<key>printKeyWindow</key>
+				<string>id</string>
+				<key>record</key>
+				<string>id</string>
+				<key>recordEnable</key>
+				<string>id</string>
+				<key>reset</key>
+				<string>id</string>
+				<key>saveDocument</key>
+				<string>id</string>
+				<key>saveDocumentAs</key>
+				<string>id</string>
+				<key>saveScore</key>
+				<string>id</string>
+				<key>saveScoreAs</key>
+				<string>id</string>
+				<key>selectPart</key>
+				<string>id</string>
+				<key>setMidiTimeStamps</key>
+				<string>id</string>
+				<key>setSoftTimed</key>
+				<string>id</string>
+				<key>settings</key>
+				<string>id</string>
+				<key>showClavier</key>
+				<string>id</string>
+				<key>showHelpWindow</key>
+				<string>id</string>
+				<key>showTime</key>
+				<string>id</string>
+				<key>stop</key>
+				<string>id</string>
+				<key>synchDSP</key>
+				<string>id</string>
+				<key>takeTempoFrom</key>
+				<string>id</string>
+				<key>terminate</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>EnsembleApp</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>helpPanel</key>
+				<string>id</string>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>numChansDisplayer</key>
+				<string>id</string>
+				<key>numPartsDisplayer</key>
+				<string>id</string>
+				<key>partSelectButtons</key>
+				<string>id</string>
+				<key>pauseButton</key>
+				<string>id</string>
+				<key>playButton</key>
+				<string>id</string>
+				<key>preferences</key>
+				<string>id</string>
+				<key>recordButton</key>
+				<string>id</string>
+				<key>recordButtons</key>
+				<string>id</string>
+				<key>scoreFileNameDisplayer</key>
+				<string>id</string>
+				<key>settings</key>
+				<string>id</string>
+				<key>soundFileNameDisplayer</key>
+				<string>id</string>
+				<key>stopButton</key>
+				<string>id</string>
+				<key>tempoDisplayer</key>
+				<string>id</string>
+				<key>tempoSlider</key>
+				<string>id</string>
+				<key>timeDisplayer</key>
+				<string>id</string>
+				<key>window</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSApplication</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

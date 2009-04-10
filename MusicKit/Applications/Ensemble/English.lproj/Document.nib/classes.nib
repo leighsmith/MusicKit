@@ -1,116 +1,159 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                muteInstrument = id; 
-                muteMidiInput = id; 
-                mutePartInput = id; 
-                selectInput = id; 
-                selectInstrument = id; 
-                sendTestNote = id; 
-                takeInstrumentFrom = id; 
-                takeInstrumentNumberFrom = id; 
-                takeMidiChannelFrom = id; 
-                takeNoteFilterFrom = id; 
-                takePartNumberFrom = id; 
-            }; 
-            CLASS = EnsembleDoc; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                commentPanel = id; 
-                commentText = id; 
-                filterButton0 = id; 
-                filterButton1 = id; 
-                filterButton2 = id; 
-                filterButton3 = id; 
-                inputSelectButtons = id; 
-                insNumButton0 = id; 
-                insNumButton1 = id; 
-                insNumButton2 = id; 
-                insNumButton3 = id; 
-                insSelectButtons = id; 
-                instrumentBox0 = id; 
-                instrumentBox1 = id; 
-                instrumentBox2 = id; 
-                instrumentBox3 = id; 
-                instrumentButton0 = id; 
-                instrumentButton1 = id; 
-                instrumentButton2 = id; 
-                instrumentButton3 = id; 
-                keyRangeFields = id; 
-                keyRangeSliders = id; 
-                midi = id; 
-                midiButton0 = id; 
-                midiButton1 = id; 
-                midiButton2 = id; 
-                midiButton3 = id; 
-                midiChanDisplayer = id; 
-                muteButton0 = id; 
-                muteButton1 = id; 
-                muteButton2 = id; 
-                muteButton3 = id; 
-                partNumDisplayer = id; 
-                scoreButton0 = id; 
-                scoreButton1 = id; 
-                scoreButton2 = id; 
-                scoreButton3 = id; 
-                transposeFields = id; 
-                transposeSliders = id; 
-            }; 
-            SUPERCLASS = GenericDocument; 
-        }, 
-        {
-            ACTIONS = {reset = id; toggleBypass = id; }; 
-            CLASS = EnsembleNoteFilter; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {bypassButton = id; inspectorPanel = id; menuCell = id; performer = id; }; 
-            SUPERCLASS = NoteFilter; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {revertToSaved = id; save = id; saveAs = id; saveTo = id; }; 
-            CLASS = GenericDocument; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {delegate = id; window = id; }; 
-            SUPERCLASS = NSResponder; 
-        }, 
-        {
-            ACTIONS = {
-                documentDidBecomeKey = id; 
-                documentDidInit = id; 
-                documentDidResignKey = id; 
-                documentWillClose = id; 
-            }; 
-            CLASS = GenericDocumentDelegate; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            CLASS = Instrument; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {noteReceivers = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {takeMaxKeyFrom = id; takeMinKeyFrom = id; takeTranspositionFrom = id; }; 
-            CLASS = KeyRange; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                maxKeySlider = id; 
-                minKeySlider = id; 
-                rangeField = id; 
-                tagTable = id; 
-                transpositionField = id; 
-                transpositionSlider = id; 
-            }; 
-            SUPERCLASS = EnsembleNoteFilter; 
-        }, 
-        {
-            CLASS = NoteFilter; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {noteSenders = id; }; 
-            SUPERCLASS = Instrument; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>revertToSaved</key>
+				<string>id</string>
+				<key>save</key>
+				<string>id</string>
+				<key>saveAs</key>
+				<string>id</string>
+				<key>saveTo</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>GenericDocument</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>delegate</key>
+				<string>id</string>
+				<key>window</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>muteInstrument</key>
+				<string>id</string>
+				<key>muteMidiInput</key>
+				<string>id</string>
+				<key>mutePartInput</key>
+				<string>id</string>
+				<key>selectInput</key>
+				<string>id</string>
+				<key>selectInstrument</key>
+				<string>id</string>
+				<key>sendTestNote</key>
+				<string>id</string>
+				<key>takeInstrumentFrom</key>
+				<string>id</string>
+				<key>takeInstrumentNumberFrom</key>
+				<string>id</string>
+				<key>takeMidiChannelFrom</key>
+				<string>id</string>
+				<key>takeNoteFilterFrom</key>
+				<string>id</string>
+				<key>takePartNumberFrom</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>EnsembleDoc</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>commentPanel</key>
+				<string>id</string>
+				<key>commentText</key>
+				<string>id</string>
+				<key>filterButton0</key>
+				<string>id</string>
+				<key>filterButton1</key>
+				<string>id</string>
+				<key>filterButton2</key>
+				<string>id</string>
+				<key>filterButton3</key>
+				<string>id</string>
+				<key>inputSelectButtons</key>
+				<string>id</string>
+				<key>insNumButton0</key>
+				<string>id</string>
+				<key>insNumButton1</key>
+				<string>id</string>
+				<key>insNumButton2</key>
+				<string>id</string>
+				<key>insNumButton3</key>
+				<string>id</string>
+				<key>insSelectButtons</key>
+				<string>id</string>
+				<key>instrumentBox0</key>
+				<string>id</string>
+				<key>instrumentBox1</key>
+				<string>id</string>
+				<key>instrumentBox2</key>
+				<string>id</string>
+				<key>instrumentBox3</key>
+				<string>id</string>
+				<key>instrumentButton0</key>
+				<string>id</string>
+				<key>instrumentButton1</key>
+				<string>id</string>
+				<key>instrumentButton2</key>
+				<string>id</string>
+				<key>instrumentButton3</key>
+				<string>id</string>
+				<key>keyRangeFields</key>
+				<string>id</string>
+				<key>keyRangeSliders</key>
+				<string>id</string>
+				<key>midi</key>
+				<string>id</string>
+				<key>midiButton0</key>
+				<string>id</string>
+				<key>midiButton1</key>
+				<string>id</string>
+				<key>midiButton2</key>
+				<string>id</string>
+				<key>midiButton3</key>
+				<string>id</string>
+				<key>midiChanDisplayer</key>
+				<string>id</string>
+				<key>muteButton0</key>
+				<string>id</string>
+				<key>muteButton1</key>
+				<string>id</string>
+				<key>muteButton2</key>
+				<string>id</string>
+				<key>muteButton3</key>
+				<string>id</string>
+				<key>partNumDisplayer</key>
+				<string>id</string>
+				<key>scoreButton0</key>
+				<string>id</string>
+				<key>scoreButton1</key>
+				<string>id</string>
+				<key>scoreButton2</key>
+				<string>id</string>
+				<key>scoreButton3</key>
+				<string>id</string>
+				<key>transposeFields</key>
+				<string>id</string>
+				<key>transposeSliders</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>GenericDocument</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

@@ -1,55 +1,126 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                takeControlValFrom = id; 
-                takeControllerFrom = id; 
-                takeKeyValueFrom = id; 
-                takeModWheelFrom = id; 
-                takeOctaveFrom = id; 
-                takePitchBendFrom = id; 
-                takeSostenutoFrom = id; 
-                takeSoundGroupFrom = id; 
-                takeVariationFrom = id; 
-            }; 
-            CLASS = Clavier; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                controlValSliders = id; 
-                controllerFields = id; 
-                controllerInterface = id; 
-                modWheelSlider = id; 
-                noteSender = id; 
-                octaveDisplayer = id; 
-                pianoOctave1 = id; 
-                pianoOctave2 = id; 
-                pianoOctave3 = id; 
-                pitchBendSlider = id; 
-                programChangeField = id; 
-                soundGroupDisplayer = id; 
-                soundGroupMatrix = id; 
-                variationDisplayer = id; 
-                variationMatrix = id; 
-                window = id; 
-            }; 
-            SUPERCLASS = Object; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = MySlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
-        {CLASS = MySliderCell; LANGUAGE = ObjC; SUPERCLASS = NSSliderCell; }, 
-        {
-            ACTIONS = {incrementValueFrom = id; takeValueFrom = id; }; 
-            CLASS = ParamInterface; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {sliders = id; textFields = id; }; 
-            SUPERCLASS = NSActionCell; 
-        }, 
-        {
-            CLASS = PianoOctave; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {target = id; }; 
-            SUPERCLASS = NSControl; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>MySlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSSlider</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>PianoOctave</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>target</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>takeControlValFrom</key>
+				<string>id</string>
+				<key>takeControllerFrom</key>
+				<string>id</string>
+				<key>takeKeyValueFrom</key>
+				<string>id</string>
+				<key>takeModWheelFrom</key>
+				<string>id</string>
+				<key>takeOctaveFrom</key>
+				<string>id</string>
+				<key>takePitchBendFrom</key>
+				<string>id</string>
+				<key>takeSostenutoFrom</key>
+				<string>id</string>
+				<key>takeSoundGroupFrom</key>
+				<string>id</string>
+				<key>takeVariationFrom</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Clavier</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>controlValSliders</key>
+				<string>id</string>
+				<key>controllerFields</key>
+				<string>id</string>
+				<key>controllerInterface</key>
+				<string>id</string>
+				<key>modWheelSlider</key>
+				<string>id</string>
+				<key>noteSender</key>
+				<string>id</string>
+				<key>octaveDisplayer</key>
+				<string>id</string>
+				<key>pianoOctave1</key>
+				<string>id</string>
+				<key>pianoOctave2</key>
+				<string>id</string>
+				<key>pianoOctave3</key>
+				<string>id</string>
+				<key>pitchBendSlider</key>
+				<string>id</string>
+				<key>programChangeField</key>
+				<string>id</string>
+				<key>soundGroupDisplayer</key>
+				<string>id</string>
+				<key>soundGroupMatrix</key>
+				<string>id</string>
+				<key>variationDisplayer</key>
+				<string>id</string>
+				<key>variationMatrix</key>
+				<string>id</string>
+				<key>window</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>Object</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>incrementValueFrom</key>
+				<string>id</string>
+				<key>takeValueFrom</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ParamInterface</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>sliders</key>
+				<string>id</string>
+				<key>textFields</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSActionCell</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
