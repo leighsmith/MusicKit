@@ -159,6 +159,12 @@
 		D80DA5C70764E1E70052DFAF /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D80DA5C80764E3D00052DFAF /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D80DA5C90764E3D00052DFAF /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D815897B0F90964D00E38A7D /* david.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D815897A0F90964D00E38A7D /* david.tiff */; };
+		D815897C0F90964D00E38A7D /* david.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D815897A0F90964D00E38A7D /* david.tiff */; };
+		D815897D0F90964D00E38A7D /* david.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D815897A0F90964D00E38A7D /* david.tiff */; };
+		D815897E0F90964D00E38A7D /* david.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D815897A0F90964D00E38A7D /* david.tiff */; };
+		D815897F0F90964D00E38A7D /* david.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D815897A0F90964D00E38A7D /* david.tiff */; };
+		D81589AC0F90EE1200E38A7D /* playscorefile.m in Sources */ = {isa = PBXBuildFile; fileRef = D81589AB0F90EE1200E38A7D /* playscorefile.m */; };
 		D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = D81B12FF0628D9FF009058DB /* SndStretchableScroller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D81B13020628D9FF009058DB /* SndStretchableScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = D81B13000628D9FF009058DB /* SndStretchableScroller.m */; };
 		D81E396C0D999767008826EE /* SndViewP.m in Sources */ = {isa = PBXBuildFile; fileRef = D81E396B0D999767008826EE /* SndViewP.m */; };
@@ -524,6 +530,16 @@
 		D85F90E107DFE884009DC57B /* TablookiUG.m in Sources */ = {isa = PBXBuildFile; fileRef = D85F909C07DFE883009DC57B /* TablookiUG.m */; };
 		D85F90E207DFE884009DC57B /* UnoiseUG.h in Headers */ = {isa = PBXBuildFile; fileRef = D85F909D07DFE883009DC57B /* UnoiseUG.h */; };
 		D85F90E307DFE884009DC57B /* UnoiseUG.m in Sources */ = {isa = PBXBuildFile; fileRef = D85F909E07DFE883009DC57B /* UnoiseUG.m */; };
+		D861CCC40F8E9392002F1A16 /* Go.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCBA0F8E9392002F1A16 /* Go.tiff */; };
+		D861CCC50F8E9392002F1A16 /* pausebutton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCBB0F8E9392002F1A16 /* pausebutton.tiff */; };
+		D861CCC60F8E9392002F1A16 /* pausebuttonH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCBC0F8E9392002F1A16 /* pausebuttonH.tiff */; };
+		D861CCC70F8E9392002F1A16 /* playbutton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCBD0F8E9392002F1A16 /* playbutton.tiff */; };
+		D861CCC80F8E9392002F1A16 /* playbuttonH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCBE0F8E9392002F1A16 /* playbuttonH.tiff */; };
+		D861CCC90F8E9392002F1A16 /* recordbutton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCBF0F8E9392002F1A16 /* recordbutton.tiff */; };
+		D861CCCA0F8E9392002F1A16 /* recordbuttonH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCC00F8E9392002F1A16 /* recordbuttonH.tiff */; };
+		D861CCCB0F8E9392002F1A16 /* Stop.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCC10F8E9392002F1A16 /* Stop.tiff */; };
+		D861CCCC0F8E9392002F1A16 /* stopbutton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCC20F8E9392002F1A16 /* stopbutton.tiff */; };
+		D861CCCD0F8E9392002F1A16 /* stopbuttonH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCC30F8E9392002F1A16 /* stopbuttonH.tiff */; };
 		D866B62F07447C97007AD17E /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D8684F60081CA74700926058 /* MyObject.h in Resources */ = {isa = PBXBuildFile; fileRef = D8684F5E081CA74700926058 /* MyObject.h */; };
 		D8684F61081CA74700926058 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8684F5F081CA74700926058 /* MyObject.m */; };
@@ -1176,6 +1192,10 @@
 		D804E063063DB32C0098E73C /* SndPlaying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPlaying.m; path = Frameworks/SndKit/SndPlaying.m; sourceTree = "<group>"; };
 		D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsCore.framework; path = Library/PrivateFrameworks/DevToolsCore.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsSupport.framework; path = Library/PrivateFrameworks/DevToolsSupport.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
+		D815897A0F90964D00E38A7D /* david.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = david.tiff; path = Examples/MidiLoop/david.tiff; sourceTree = "<group>"; };
+		D81589A10F90EDC200E38A7D /* playscorefile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playscorefile; sourceTree = BUILT_PRODUCTS_DIR; };
+		D81589AB0F90EE1200E38A7D /* playscorefile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playscorefile.m; path = Examples/playscorefile/playscorefile.m; sourceTree = "<group>"; };
+		D81589AF0F90EE2E00E38A7D /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Examples/playscorefile/README.txt; sourceTree = "<group>"; };
 		D81B12FF0628D9FF009058DB /* SndStretchableScroller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndStretchableScroller.h; path = Frameworks/SndKit/SndStretchableScroller.h; sourceTree = "<group>"; };
 		D81B13000628D9FF009058DB /* SndStretchableScroller.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndStretchableScroller.m; path = Frameworks/SndKit/SndStretchableScroller.m; sourceTree = "<group>"; };
 		D81D7E3C059FA8ED00BCE725 /* PerformMIDI.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PerformMIDI.h; path = Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/PerformMIDI.h; sourceTree = "<group>"; };
@@ -1587,6 +1607,16 @@
 		D85F909C07DFE883009DC57B /* TablookiUG.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = TablookiUG.m; path = Frameworks/MKUnitGenerators/TablookiUG.m; sourceTree = "<group>"; };
 		D85F909D07DFE883009DC57B /* UnoiseUG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = UnoiseUG.h; path = Frameworks/MKUnitGenerators/UnoiseUG.h; sourceTree = "<group>"; };
 		D85F909E07DFE883009DC57B /* UnoiseUG.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = UnoiseUG.m; path = Frameworks/MKUnitGenerators/UnoiseUG.m; sourceTree = "<group>"; };
+		D861CCBA0F8E9392002F1A16 /* Go.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Go.tiff; path = Applications/Spectro/Go.tiff; sourceTree = "<group>"; };
+		D861CCBB0F8E9392002F1A16 /* pausebutton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = pausebutton.tiff; path = Applications/Spectro/pausebutton.tiff; sourceTree = "<group>"; };
+		D861CCBC0F8E9392002F1A16 /* pausebuttonH.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = pausebuttonH.tiff; path = Applications/Spectro/pausebuttonH.tiff; sourceTree = "<group>"; };
+		D861CCBD0F8E9392002F1A16 /* playbutton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = playbutton.tiff; path = Applications/Spectro/playbutton.tiff; sourceTree = "<group>"; };
+		D861CCBE0F8E9392002F1A16 /* playbuttonH.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = playbuttonH.tiff; path = Applications/Spectro/playbuttonH.tiff; sourceTree = "<group>"; };
+		D861CCBF0F8E9392002F1A16 /* recordbutton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = recordbutton.tiff; path = Applications/Spectro/recordbutton.tiff; sourceTree = "<group>"; };
+		D861CCC00F8E9392002F1A16 /* recordbuttonH.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = recordbuttonH.tiff; path = Applications/Spectro/recordbuttonH.tiff; sourceTree = "<group>"; };
+		D861CCC10F8E9392002F1A16 /* Stop.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Stop.tiff; path = Applications/Spectro/Stop.tiff; sourceTree = "<group>"; };
+		D861CCC20F8E9392002F1A16 /* stopbutton.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = stopbutton.tiff; path = Applications/Spectro/stopbutton.tiff; sourceTree = "<group>"; };
+		D861CCC30F8E9392002F1A16 /* stopbuttonH.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = stopbuttonH.tiff; path = Applications/Spectro/stopbuttonH.tiff; sourceTree = "<group>"; };
 		D8684F4D081CA69900926058 /* example3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8684F4F081CA69900926058 /* example3-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "example3-Info.plist"; path = "Examples/example3/example3-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D8684F5E081CA74700926058 /* MyObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MyObject.h; path = Examples/example3/MyObject.h; sourceTree = "<group>"; };
@@ -1957,6 +1987,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D815899F0F90EDC200E38A7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D825564805A211B400B0192B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2356,6 +2393,22 @@
 				D8CFD26B0B5D6743003AB3C3 /* Metronome.m */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		D81589960F90ED5500E38A7D /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D81589AB0F90EE1200E38A7D /* playscorefile.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		D81589990F90ED6B00E38A7D /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				D81589AF0F90EE2E00E38A7D /* README.txt */,
+			);
+			name = Documentation;
 			sourceTree = "<group>";
 		};
 		D81D7E36059FA89E00BCE725 /* Sources */ = {
@@ -2993,6 +3046,7 @@
 				D8E1DDFA07CA78B40018F8F3 /* MultipleSoundPlayer.app */,
 				D8CFD2490B5D66DF003AB3C3 /* Metronome.app */,
 				D86986A00ED9CA0E00E90F3F /* SndViewPlugin.ibplugin */,
+				D81589A10F90EDC200E38A7D /* playscorefile */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3290,6 +3344,16 @@
 		D85A2FCE061F35D30065380E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				D861CCBA0F8E9392002F1A16 /* Go.tiff */,
+				D861CCBB0F8E9392002F1A16 /* pausebutton.tiff */,
+				D861CCBC0F8E9392002F1A16 /* pausebuttonH.tiff */,
+				D861CCBD0F8E9392002F1A16 /* playbutton.tiff */,
+				D861CCBE0F8E9392002F1A16 /* playbuttonH.tiff */,
+				D861CCBF0F8E9392002F1A16 /* recordbutton.tiff */,
+				D861CCC00F8E9392002F1A16 /* recordbuttonH.tiff */,
+				D861CCC10F8E9392002F1A16 /* Stop.tiff */,
+				D861CCC20F8E9392002F1A16 /* stopbutton.tiff */,
+				D861CCC30F8E9392002F1A16 /* stopbuttonH.tiff */,
 				D85A2FD4061F36080065380E /* blank.tiff */,
 				D85A2FD5061F36080065380E /* Spectro.icns */,
 				D85A2FD6061F36080065380E /* Spectro.ico */,
@@ -3749,6 +3813,8 @@
 		D86D24B506F2AB63003565CB /* playscorefile */ = {
 			isa = PBXGroup;
 			children = (
+				D81589990F90ED6B00E38A7D /* Documentation */,
+				D81589960F90ED5500E38A7D /* Other Sources */,
 			);
 			name = playscorefile;
 			sourceTree = "<group>";
@@ -4042,8 +4108,8 @@
 			isa = PBXGroup;
 			children = (
 				D86D24BD06F2AB83003565CB /* playscorefilemidi */,
-				D86D24BA06F2AB74003565CB /* playscorefile2 */,
 				D86D24B506F2AB63003565CB /* playscorefile */,
+				D86D24BA06F2AB74003565CB /* playscorefile2 */,
 				D86D24B206F2AB53003565CB /* playpart */,
 				D86D24AF06F2AB43003565CB /* PlayNote */,
 				D86D24AC06F2AB34003565CB /* PerformerExample */,
@@ -4115,6 +4181,7 @@
 		D87091F305B5D9B20074C18D /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				D815897A0F90964D00E38A7D /* david.tiff */,
 				D870921205B5DA9A0074C18D /* MidiLoop.icns */,
 			);
 			name = Images;
@@ -5592,6 +5659,22 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		D81589A00F90EDC200E38A7D /* playscorefile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D81589AA0F90EDEF00E38A7D /* Build configuration list for PBXNativeTarget "playscorefile" */;
+			buildPhases = (
+				D815899E0F90EDC200E38A7D /* Sources */,
+				D815899F0F90EDC200E38A7D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = playscorefile;
+			productName = playscorefile;
+			productReference = D81589A10F90EDC200E38A7D /* playscorefile */;
+			productType = "com.apple.product-type.tool";
+		};
 		D825564905A211B400B0192B /* MusicKit (Framework) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8B44F2C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MusicKit (Framework)" */;
@@ -6326,6 +6409,7 @@
 				D844A7AC07C7F1EE0086A55B /* recsnd */,
 				D844A7C807C827CD0086A55B /* playsndfaders */,
 				D8D1B6A80812492700D9156A /* playscorefilemidi */,
+				D81589A00F90EDC200E38A7D /* playscorefile */,
 				D8A1DC0109F64B3E0094B3F5 /* mixscorefiles */,
 				D8E1DDF907CA78B40018F8F3 /* MultipleSoundPlayer */,
 				D85A2F49061F347D0065380E /* Spectro (Application) */,
@@ -6402,6 +6486,7 @@
 				D84E1F5C05B5E4FC002B493F /* Info.nib in Resources */,
 				D84E1F5D05B5E4FC002B493F /* MidiEcho.nib in Resources */,
 				D80032580819F0C600E47C6C /* MidiEcho.icns in Resources */,
+				D815897B0F90964D00E38A7D /* david.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6411,6 +6496,7 @@
 			files = (
 				D86CBB8507ADAE9A00CB06E4 /* MidiEcho.nib in Resources */,
 				D86CBB8C07ADAF6100CB06E4 /* Info.nib in Resources */,
+				D815897C0F90964D00E38A7D /* david.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6429,6 +6515,16 @@
 				D85A2FDC061F36080065380E /* Spectro.tiff in Resources */,
 				D85A2FDD061F36080065380E /* WaterFall.tiff in Resources */,
 				D85A3023061F3A820065380E /* SpectroHelp.sgml in Resources */,
+				D861CCC40F8E9392002F1A16 /* Go.tiff in Resources */,
+				D861CCC50F8E9392002F1A16 /* pausebutton.tiff in Resources */,
+				D861CCC60F8E9392002F1A16 /* pausebuttonH.tiff in Resources */,
+				D861CCC70F8E9392002F1A16 /* playbutton.tiff in Resources */,
+				D861CCC80F8E9392002F1A16 /* playbuttonH.tiff in Resources */,
+				D861CCC90F8E9392002F1A16 /* recordbutton.tiff in Resources */,
+				D861CCCA0F8E9392002F1A16 /* recordbuttonH.tiff in Resources */,
+				D861CCCB0F8E9392002F1A16 /* Stop.tiff in Resources */,
+				D861CCCC0F8E9392002F1A16 /* stopbutton.tiff in Resources */,
+				D861CCCD0F8E9392002F1A16 /* stopbuttonH.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6508,6 +6604,7 @@
 			files = (
 				D8708F6D05B49AD30074C18D /* Info.nib in Resources */,
 				D8708F6E05B49AD30074C18D /* MidiRecord.nib in Resources */,
+				D815897F0F90964D00E38A7D /* david.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6518,6 +6615,7 @@
 				D870921305B5DA9A0074C18D /* MidiLoop.icns in Resources */,
 				D86CC06B07AFF5EE00CB06E4 /* Info.nib in Resources */,
 				D86CC07007AFF65600CB06E4 /* MidiLoop.nib in Resources */,
+				D815897E0F90964D00E38A7D /* david.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6527,6 +6625,7 @@
 			files = (
 				D86CBE1807AF1AD800CB06E4 /* MidiPlay.nib in Resources */,
 				D86CBE1D07AF1AF900CB06E4 /* Info.nib in Resources */,
+				D815897D0F90964D00E38A7D /* david.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6639,6 +6738,14 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D815899E0F90EDC200E38A7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D81589AC0F90EE1200E38A7D /* playscorefile.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D825564705A211B400B0192B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7815,6 +7922,112 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D81589A30F90EDC300E38A7D /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile;
+			};
+			name = Development;
+		};
+		D81589A40F90EDC300E38A7D /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile;
+			};
+			name = "Intel Development";
+		};
+		D81589A50F90EDC300E38A7D /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D81589A60F90EDC300E38A7D /* Embedded */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile;
+			};
+			name = Embedded;
+		};
+		D81589A70F90EDC300E38A7D /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile;
+			};
+			name = Default;
+		};
 		D854FDB909A525F300697E71 /* Intel Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9008,6 +9221,8 @@
 				ARCHS = i386;
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				HEADER_SEARCH_PATHS = /sw/include;
+				LIBRARY_SEARCH_PATHS = /sw/lib;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -14343,6 +14558,18 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D81589AA0F90EDEF00E38A7D /* Build configuration list for PBXNativeTarget "playscorefile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D81589A30F90EDC300E38A7D /* Development */,
+				D81589A40F90EDC300E38A7D /* Intel Development */,
+				D81589A50F90EDC300E38A7D /* Deployment */,
+				D81589A60F90EDC300E38A7D /* Embedded */,
+				D81589A70F90EDC300E38A7D /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
 		D86986A20ED9CA0E00E90F3F /* Build configuration list for PBXNativeTarget "SndView IB Plugin (Bundle)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
