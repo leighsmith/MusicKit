@@ -55,14 +55,12 @@ AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_FUNCS(random rand)
 
 # For Win32 DirectSound operation we need to link against a number of
-# other libraries. Unfortunately we can't just test for the libraries
-# presence using functions.
-#if [ mingw32 cygwin ]; then
-  WIN32LIBS="-lwinmm -ldsound -lole32"
-#fi
+# other libraries. We test for a function that is known to be used in the
+# portaudio Win32 port. 
+AC_CHECK_LIB(winmm, WdmGetPinPropertyMulti,,, -ldsound -lole32)
 
 # Check if we have portaudio installed, if so, use MKPerformSndMIDI_portaudio
-AC_CHECK_LIB(portaudio, Pa_Initialize, ,, [$WIN32LIBS])
+AC_CHECK_LIB(portaudio, Pa_Initialize)
 
 # separately check the portaudio header was installed.
 AC_CHECK_HEADERS(portaudio.h)
