@@ -1,41 +1,70 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {orderFrontNXColorPanel = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {go = id; save = id; saveAs = id; showInfoPanel = id; terminate = id; }; 
-            CLASS = MidiRecord; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                infoPanel = id; 
-                myWindow = id; 
-                saveAsMenuItem = id; 
-                saveMenuItem = id; 
-                score = id; 
-                scoreRecorder = id; 
-                stringTable = id; 
-                theButton = id; 
-            }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {
-            ACTIONS = {go = id; save = id; saveAs = id; showInfoPanel = id; terminate = id; }; 
-            CLASS = MyApp; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                infoPanel = id; 
-                myWindow = id; 
-                saveAsMenuItem = id; 
-                saveMenuItem = id; 
-                stringTable = id; 
-                theButton = id; 
-            }; 
-            SUPERCLASS = NSApplication; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>orderFrontNXColorPanel</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>go</key>
+				<string>id</string>
+				<key>save</key>
+				<string>id</string>
+				<key>saveAs</key>
+				<string>id</string>
+				<key>setDriverName</key>
+				<string>id</string>
+				<key>showInfoPanel</key>
+				<string>id</string>
+				<key>terminate</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>MidiRecord</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>driverPopup</key>
+				<string>NSPopUpButton</string>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>myWindow</key>
+				<string>id</string>
+				<key>recordButton</key>
+				<string>NSButton</string>
+				<key>saveAsMenuItem</key>
+				<string>id</string>
+				<key>saveMenuItem</key>
+				<string>id</string>
+				<key>score</key>
+				<string>id</string>
+				<key>scoreRecorder</key>
+				<string>id</string>
+				<key>stringTable</key>
+				<string>id</string>
+				<key>theButton</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
