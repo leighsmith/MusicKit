@@ -1,5 +1,5 @@
 #
-# $Id: GNUmakefile.in,v 1.1 2005/01/31 19:59:47 leighsmith Exp $
+# $Id$
 #
 # Build script for the MusicKit Examples on GNUstep systems.
 # See Makefile.in for the build process on MacOS X systems.
