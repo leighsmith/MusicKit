@@ -1,39 +1,19 @@
-{
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {
-                showInfoPanel = id; 
-                start = id; 
-                sweep = id; 
-                updateAttenuation = id; 
-                updateCenter = id; 
-                updateDuration = id; 
-                updateWidth = id; 
-            }; 
-            CLASS = SineGen; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                amp = id; 
-                attenuationSlider = id; 
-                attenuationTextField = id; 
-                centerSlider = id; 
-                centerTextField = id; 
-                durationSlider = id; 
-                durationTextField = id; 
-                inc = id; 
-                infoPanel = id; 
-                myAnimator = id; 
-                orch = id; 
-                osc = id; 
-                outl = id; 
-                outr = id; 
-                stringTable = id; 
-                widthSlider = id; 
-                widthTextField = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

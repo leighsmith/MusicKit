@@ -1,24 +1,52 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                appDidInit = id; 
-                bendPitch = id; 
-                playNote = id; 
-                showInfoPanel = id; 
-                terminate = id; 
-            }; 
-            CLASS = ExampApp; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {infoPanel = id; stringTable = id; }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {
-            ACTIONS = {orderFrontNXColorPanel = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>appDidInit</key>
+				<string>id</string>
+				<key>bendPitch</key>
+				<string>id</string>
+				<key>playNote</key>
+				<string>id</string>
+				<key>showInfoPanel</key>
+				<string>id</string>
+				<key>terminate</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ExampApp</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>stringTable</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSApplication</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>orderFrontNXColorPanel</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>
