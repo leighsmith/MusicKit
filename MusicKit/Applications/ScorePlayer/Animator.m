@@ -31,8 +31,8 @@
 
 #include <AppKit/AppKit.h>
 #include <sys/time.h>
-#include <objc/objc-runtime.h>
 #import "Animator.h"
+
 @implementation Animator
 
 - (void) timerFunc:(NSTimer *)teNum

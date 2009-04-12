@@ -1109,9 +1109,9 @@ static void adjustTempo(double slowDown)
 - animateTempo: sender
 {
     double diff;
-    BOOL forceAdjustment;
+    BOOL forceAdjustment = isLate;
     
-    if (forceAdjustment = isLate) 
+    if (forceAdjustment) 
         adjustTempo(SUBSEQUENT_SLOWDOWN_FACTOR);
     if ((isLate || wasLate) && !messageFlashed) {
 	[tooFastErrorMsg setTextColor: [NSColor blackColor]];
