@@ -7,8 +7,7 @@
     These routines emulate an internal SoundKit module.
     This is intended to hide all the operating system evil behind a banal C function interface.
     However, it is intended that developers will use the higher level 
-    Objective C SndKit interface rather this one...do yourself a favour, 
-    learn ObjC - it's simple, its fun, its better than Java..
+    Objective C SndKit interface rather this one...
 
   Original Author: Leigh M. Smith, <leigh@leighsmith.com>
 
@@ -40,7 +39,7 @@ extern "C" {
  * divisible by BYTES_PER_FRAME (which is 8 for stereo, 4 byte
  * floats).
  */
-#define DEFAULT_BUFFER_SIZE      (512)  // Frames
+#define DEFAULT_BUFFER_SIZE      (512)  // in Frames
 #define DEFAULT_DATA_FORMAT      (SND_FORMAT_FLOAT)
 #define BYTES_PER_FRAME          (sizeof(float) * DEFAULT_OUT_CHANNELS)
 
@@ -71,6 +70,7 @@ static BOOL retrieveDriverList(void)
     int driverIndex = 0;
     numOfDevices = Pa_GetDeviceCount();
 
+    NSLog(@"Number of portaudio devices %d\n", numOfDevices);
     if(numOfDevices < 0) { // Error getting devices.
         NSLog(@"PortAudio Error retrieving number of devices %s\n", Pa_GetErrorText(numOfDevices));
         return FALSE;
@@ -186,9 +186,19 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     PaError err = Pa_Initialize();
 
     if (err != paNoError) {
-        NSLog(@"PortAudio error: %s\n", Pa_GetErrorText(err));
+        NSLog(@"SNDInit: PortAudio initialisation error: %s\n", Pa_GetErrorText(err));
         return FALSE;
     }
+
+    // Debugging
+    { 
+	const PaHostApiInfo *hostAPIInfo;
+	NSLog(@"Default Host API index %d\n", Pa_GetDefaultHostApi());
+	
+	hostAPIInfo = Pa_GetHostApiInfo(Pa_GetDefaultHostApi());
+	NSLog(@"Host API named: %s\n", hostAPIInfo->name);
+    }
+
     if(!retrieveDriverList())
         return FALSE;
     if(!initialised)
@@ -200,30 +210,30 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     // defined in DEFAULT_BUFFER_SIZE.
     if(guessTheDevice) {
 #if 0
-        const PaStreamInfo *streamInfo;
+         const PaStreamInfo *streamInfo;
 
-        err = Pa_OpenDefaultStream(
-				   &stream,                         /* passes back stream pointer */
-				   DEFAULT_IN_CHANNELS,          /* stereo input */
-				   DEFAULT_OUT_CHANNELS,         /* stereo output */
-				   paFloat32,                       /* 32 bit floating point output paFloat32 */
-                                         /*  note: this value instructs portaudio
-                                          *  what sample size to expect, which
-                                          *  is a different constant to that used
-                                          *  to talk to the SndKit (SND_FORMAT_*)
-                                          */
-	DEFAULT_SAMPLE_RATE,          /* sample rate */
-        paFramesPerBufferUnspecified, /* frames per buffer */
-        vendBuffersToStreamManagerIOProc, /* specify our custom callback */
-        NULL);        /* pass our data through to callback */
+         err = Pa_OpenDefaultStream(
+ 				   &stream,                         /* passes back stream pointer */
+ 				   DEFAULT_IN_CHANNELS,          /* stereo input */
+ 				   DEFAULT_OUT_CHANNELS,         /* stereo output */
+ 				   paFloat32,                       /* 32 bit floating point output paFloat32 */
+                                          /*  note: this value instructs portaudio
+                                           *  what sample size to expect, which
+                                           *  is a different constant to that used
+                                           *  to talk to the SndKit (SND_FORMAT_*)
+                                           */
+ 	DEFAULT_SAMPLE_RATE,          /* sample rate */
+         paFramesPerBufferUnspecified, /* frames per buffer */
+         vendBuffersToStreamManagerIOProc, /* specify our custom callback */
+         NULL);        /* pass our data through to callback */
 
-	streamInfo = Pa_GetStreamInfo(stream);
-	bufferSizeInFrames = streamInfo->outputLatency * streamInfo->sampleRate;
+ 	streamInfo = Pa_GetStreamInfo(stream);
+ 	bufferSizeInFrames = streamInfo->outputLatency * streamInfo->sampleRate;
 
-	NSLog(@"outputLatency = %lf seconds, sample rate %lf, bufferSize in Frames = %ld\n",
-	      streamInfo->outputLatency, streamInfo->sampleRate, bufferSizeInFrames);
+ 	NSLog(@"outputLatency = %lf seconds, sample rate %lf, bufferSize in Frames = %ld\n",
+ 	      streamInfo->outputLatency, streamInfo->sampleRate, bufferSizeInFrames);
 
-	Pa_CloseStream(stream);
+ 	Pa_CloseStream(stream);
 	useNativeBufferSize = TRUE;
 #else
 	useNativeBufferSize = FALSE;
@@ -299,20 +309,24 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     streamUserData  = newUserData;
 
     err = Pa_OpenDefaultStream(
-        &stream,                         /* passes back stream pointer */
-        DEFAULT_IN_CHANNELS,          /* stereo input */
-        DEFAULT_OUT_CHANNELS,         /* stereo output */
-        paFloat32,                       /* 32 bit floating point output paFloat32 */
-                                         /*  note: this value instructs portaudio
-                                          *  what sample size to expect, which
-                                          *  is a different constant to that used
-                                          *  to talk to the SndKit (SND_FORMAT_*)
-                                          */
-        DEFAULT_SAMPLE_RATE,          /* sample rate */
-        useNativeBufferSize ? paFramesPerBufferUnspecified :
-	    bufferSizeInFrames, /* frames per buffer */
+        &stream,		/* passes back stream pointer */
+        DEFAULT_IN_CHANNELS,	/* stereo input */
+        DEFAULT_OUT_CHANNELS,	/* stereo output */
+        paFloat32,		/* 32 bit floating point output paFloat32 */
+				/* note: this value instructs portaudio
+                                   what sample size to expect, which
+                                   is a different constant to that used
+                                   to talk to the SndKit (SND_FORMAT_*)
+                                 */
+        DEFAULT_SAMPLE_RATE,	/* sample rate */
+        useNativeBufferSize ? paFramesPerBufferUnspecified : bufferSizeInFrames, /* frames per buffer */
         vendBuffersToStreamManagerIOProc, /* specify our custom callback */
-        &data );        /* pass our data through to callback */
+        &data);        /* pass our data through to callback */
+
+    if(err != paNoError) {
+        NSLog(@"SNDStreamStart: PortAudio Pa_OpenDefaultStream error: %s\n", Pa_GetErrorText(err));
+        return FALSE;
+    }
 
     if (inputInit) {
         long bufferSizeInBytes = bufferSizeInFrames * BYTES_PER_FRAME;
@@ -321,9 +335,9 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
         memset(lastRecvdInputBuffer, 0, bufferSizeInBytes);
     }
  
-    err = Pa_StartStream( stream );
-    if( err != paNoError ) {
-        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
+    err = Pa_StartStream(stream);
+    if(err != paNoError) {
+        NSLog(@"SNDStreamStart: PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText(err));
         r = FALSE;
     }
 

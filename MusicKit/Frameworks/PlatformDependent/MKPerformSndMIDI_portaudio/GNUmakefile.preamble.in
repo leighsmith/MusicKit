@@ -31,16 +31,12 @@ ADDITIONAL_LDFLAGS += @LDFLAGS@
 # all the libraries the target library depends upon.
 
 LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME) $(ADDITIONAL_DEPENDS) \
-                         @LIBS@ -lportaudio -lportmidi -lporttime
-
-# @LIBS@
+                         @LIBS@ -lportmidi -lporttime
 
 ifeq ($(GNUSTEP_TARGET_OS),mingw32)
-LIBRARIES_DEPEND_UPON += -lwinmm -ldsound -lobjc -lole32 -lpmdll
+LIBRARIES_DEPEND_UPON += -lobjc -lpmdll
 endif
+# TODO this should be redundant with autoconf.
 ifeq ($(GNUSTEP_TARGET_OS),cygwin)
 LIBRARIES_DEPEND_UPON += -lwinmm -ldsound -lobjc -lole32 -lpmdll
-endif
-ifeq ($(GNUSTEP_TARGET_OS),linux-gnu)
-LIBRARIES_DEPEND_UPON += -lasound
 endif

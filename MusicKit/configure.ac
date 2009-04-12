@@ -48,6 +48,9 @@ AC_CHECK_PROGS(SGMLTRANS, openjade)
 
 AC_HEADER_STDC
 
+# Check for rt (needed for portaudio)
+# AC_CHECK_LIB(rt, ?)
+
 # Check for pthreads (needed for portaudio)
 AC_CHECK_LIB(pthread, pthread_create)
 
@@ -58,6 +61,9 @@ AC_CHECK_FUNCS(random rand)
 # other libraries. We test for a function that is known to be used in the
 # portaudio Win32 port. 
 AC_CHECK_LIB(winmm, WdmGetPinPropertyMulti,,, -ldsound -lole32)
+
+# Check for ALSA library (needed for portaudio on Linux)
+AC_CHECK_LIB(asound, snd_pcm_open)
 
 # Check if we have portaudio installed, if so, use MKPerformSndMIDI_portaudio
 AC_CHECK_LIB(portaudio, Pa_Initialize)
