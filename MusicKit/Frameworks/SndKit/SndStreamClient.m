@@ -17,13 +17,14 @@
 #endif
 
 #if SET_THREAD_PRIORITY
- #include <sched.h>
  #if defined(__APPLE__)
   #include <mach/mach_init.h>
   #include <mach/task_policy.h>
   #include <mach/thread_act.h>
   #include <mach/thread_policy.h>
   #include <sys/sysctl.h>
+ #else
+  #include <sched.h>
  #endif
 #endif
 
@@ -283,24 +284,24 @@ enum {
 // welcomeClientWithBuffer:manager:
 ////////////////////////////////////////////////////////////////////////////////
 
-- welcomeClientWithBuffer: (SndAudioBuffer *) buff manager: (SndStreamManager *) m
+- welcomeClientWithBuffer: (SndAudioBuffer *) buffer manager: (SndStreamManager *) streamManager
 {
     // The client shouldn't be active when we are welcoming it with a new manager.
     if(!active) {
         [outputBufferLock lockWhenCondition: OB_notInit];
-        exposedOutputBuffer = [buff retain];
+        exposedOutputBuffer = [buffer retain];
         [outputBufferLock unlockWithCondition: OB_isInit];
 
         if (needsInput) {
-            [inputQueue prepareQueueAsType: audioBufferQueue_typeInput withBufferPrototype: buff];
+            [inputQueue prepareQueueAsType: audioBufferQueue_typeInput withBufferPrototype: buffer];
         }
         if (generatesOutput) {
-            [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: buff];
+            [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: buffer];
         }        
-        [self prepareToStreamWithBuffer: buff];
-        [self setManager: m];
+        [self prepareToStreamWithBuffer: buffer];
+        [self setManager: streamManager];
         
-        clientNowTime = [m nowTime]; // reset nowTime to the manager's sense of time
+        clientNowTime = [streamManager nowTime]; // reset nowTime to the manager's sense of time
 
         [NSThread detachNewThreadSelector: @selector(processingThread)
                                  toTarget: self
@@ -539,20 +540,35 @@ static void inline setThreadPriority()
     NSLog(@"bus speed = %d, period = %d, computation = %d, constraint = %d\n",
 	  get_bus_speed(), ttcpolicy.period, ttcpolicy.computation, ttcpolicy.constraint);
 #endif
-#else  /* POSIX_RT, must be running with root privileges */
+#else  
+/* POSIX_RT, must be running with root privileges, or with ulimit -r hard and soft limits set greater than zero. */
 #ifndef __MINGW32__
     struct sched_param sp;
     int theError;
 
+#if 0 // Debugging scheduling.
+    int policy;
+    struct rlimit rl;
+
+    policy = sched_getscheduler(0); // policy of current process.
+    NSLog(@"current scheduler policy %d\n", policy);
+    if(getrlimit(RLIMIT_RTPRIO, &rl) != 0)
+	NSLog(@"Unable to getrlimit\n");
+    else
+	NSLog(@"rlimit cur %d max %d\n", rl.rlim_cur, rl.rlim_max);
+#endif
+
     memset(&sp, 0, sizeof(struct sched_param));
-    sp.sched_priority = sched_get_priority_min(SCHED_FIFO);
+    sp.sched_priority = sched_get_priority_min(SCHED_RR);
+    // NSLog(@"Set real-time priority to min priority = %d\n", sp.sched_priority);
     theError = sched_setscheduler(0, SCHED_RR, &sp);
-    if (theError == -1)
-	NSLog(@"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
+    if (theError == -1) {
+	NSLog(@"Can't set real-time priority, errno = %d, min priority = %d\n", errno, sp.sched_priority);
+    }
 #else
     int theError = sched_setscheduler(getpid(), SCHED_RR);
     if (theError == -1)
-	NSLog(@"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
+	NSLog(@"Can't set real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
 #endif
 #endif
 }
@@ -568,10 +584,21 @@ static void inline setThreadPriority()
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
     NSAutoreleasePool *innerPool;
 
-    [self retain];
+    [self retain]; // Increase the retain count to avoid NSAutoreleasePool removing this while it's playing.
 
 #ifdef SET_THREAD_PRIORITY
+//#if defined(__APPLE__)
+// Currently we don't seem to be able to escalate the thread priority, so we do so using sched_setscheduler.
+#if 1 
     setThreadPriority();
+#else
+    // Do this for GNUstep only, for MacOS X, we retain the more fine grained specification of thread behaviour.
+    // Make this thread top priority to avoid sound breaking up.
+    [NSThread setThreadPriority: 1.0];
+    // GNUstep spec differs from Cocoa. Cocoa returns a BOOL indicating success, on
+    // GNUstep we have to check the final thread priority. 
+    NSLog(@"Current SndStreamClient thread priority %f\n", [NSThread threadPriority]);
+#endif
 #endif
     active = TRUE;
 #if SNDSTREAMCLIENT_DEBUG                  
@@ -631,7 +658,7 @@ static void inline setThreadPriority()
         [innerPool release];
     }
     bDisconnect = TRUE;
-    [self autorelease];
+    [self autorelease]; // Reduce the retain count now the thread is finishing.
     [localPool release];
 #if SNDSTREAMCLIENT_DEBUG
     NSLog(@"[%@] SndStreamClient: processing thread stopped\n", clientName);
@@ -648,7 +675,7 @@ static void inline setThreadPriority()
 
 - prepareToStreamWithBuffer: (SndAudioBuffer*) buff
 {
-  return self;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -659,7 +686,7 @@ static void inline setThreadPriority()
 
 - didFinishStreaming
 {
-  return self;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -685,7 +712,7 @@ static void inline setThreadPriority()
 
 - (void) processBuffers
 {
-  NSLog(@"SndStreamClient::processBuffers - Warn: base class method is being called - have you remembered to override this in your stream client?");
+    NSLog(@"SndStreamClient::processBuffers - Warn: base class method is being called - have you remembered to override this in your stream client?");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -782,7 +809,7 @@ static void inline setThreadPriority()
 
 - (SndAudioProcessorChain *) audioProcessorChain
 {
-  return [[processorChain retain] autorelease];
+    return [[processorChain retain] autorelease];
 }
 
 - (void) setAudioProcessorChain: (SndAudioProcessorChain *) newAudioProcessorChain
@@ -795,9 +822,9 @@ static void inline setThreadPriority()
 // delegate mutator/accessor methods
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setDelegate: (id) d
+- (void) setDelegate: (id) theNewDelegate
 {
-  delegate = d;
+  delegate = theNewDelegate;
   delegateRespondsToOutputBufferSkipSelector = ( delegate != nil && 
       [delegate respondsToSelector: @selector(outputBufferSkipped)] );
   delegateRespondsToInputBufferSkipSelector  = ( delegate != nil &&
@@ -808,7 +835,7 @@ static void inline setThreadPriority()
 
 - (id) delegate
 {
-  return delegate;
+    return delegate;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -817,12 +844,12 @@ static void inline setThreadPriority()
 
 - (int) inputBufferCount
 {
-  return [inputQueue bufferCount];
+    return [inputQueue bufferCount];
 }
 
 - (int) outputBufferCount
 {
-  return [outputQueue bufferCount];
+    return [outputQueue bufferCount];
 }
  
 ////////////////////////////////////////////////////////////////////////////////
@@ -831,22 +858,22 @@ static void inline setThreadPriority()
 
 - (BOOL) setInputBufferCount: (int) n
 {
-  if (active)
-    return FALSE;
-  if (n < 2)
-    return FALSE;
-  [inputQueue initQueueWithLength: n];
-  return TRUE;
+    if (active)
+	return FALSE;
+    if (n < 2)
+	return FALSE;
+    [inputQueue initQueueWithLength: n];
+    return TRUE;
 }
 
 - (BOOL) setOutputBufferCount: (int) n
 {
-  if (active)
-    return FALSE;
-  if (n < 2)
-    return FALSE;
-  [outputQueue initQueueWithLength: n];
-  return TRUE;
+    if (active)
+	return FALSE;
+    if (n < 2)
+	return FALSE;
+    [outputQueue initQueueWithLength: n];
+    return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -855,10 +882,10 @@ static void inline setThreadPriority()
 
 - (void) resetTime: (double) originTimeInSeconds
 {
-  [synthThreadLock lock];
-  // This assumes all buffers in the queue are the same length...
-  clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
-  [synthThreadLock unlock];
+    [synthThreadLock lock];
+    // This assumes all buffers in the queue are the same length...
+    clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
+    [synthThreadLock unlock];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -886,7 +913,6 @@ static void inline setThreadPriority()
     else
 	return 0;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
