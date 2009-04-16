@@ -551,7 +551,7 @@ static void inline setThreadPriority()
     struct rlimit rl;
 
     policy = sched_getscheduler(0); // policy of current process.
-    NSLog(@"current scheduler policy %d\n", policy);
+    NSLog(@"current process scheduler policy %d\n", policy);
     if(getrlimit(RLIMIT_RTPRIO, &rl) != 0)
 	NSLog(@"Unable to getrlimit\n");
     else
@@ -559,11 +559,14 @@ static void inline setThreadPriority()
 #endif
 
     memset(&sp, 0, sizeof(struct sched_param));
-    sp.sched_priority = sched_get_priority_min(SCHED_RR);
-    // NSLog(@"Set real-time priority to min priority = %d\n", sp.sched_priority);
-    theError = sched_setscheduler(0, SCHED_RR, &sp);
+    sp.sched_priority = sched_get_priority_max(SCHED_RR);
+    // Attempt to get the highest priority. This is probably excessive, but for now we'll
+    // do it like this. Probably we should set to half the priority range.
+    NSLog(@"Set thread real-time priority to max priority = %d\n", sp.sched_priority);
+    theError = pthread_setschedparam(pthread_self(), SCHED_RR, &sp);
     if (theError == -1) {
-	NSLog(@"Can't set real-time priority, errno = %d, min priority = %d\n", errno, sp.sched_priority);
+	NSLog(@"SndStreamClient: Can't set thread real-time priority, errno = %d, max priority = %d\n",
+	      errno, sp.sched_priority);
     }
 #else
     int theError = sched_setscheduler(getpid(), SCHED_RR);
@@ -589,7 +592,7 @@ static void inline setThreadPriority()
 #ifdef SET_THREAD_PRIORITY
 //#if defined(__APPLE__)
 // Currently we don't seem to be able to escalate the thread priority, so we do so using sched_setscheduler.
-#if 1 
+#if 1
     setThreadPriority();
 #else
     // Do this for GNUstep only, for MacOS X, we retain the more fine grained specification of thread behaviour.
