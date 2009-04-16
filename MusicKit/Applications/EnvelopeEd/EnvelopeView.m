@@ -963,105 +963,104 @@ int token(char *t)
     if (prs != nil) {                            // if ASCII in pasteboard...
 	length = [prs cStringLength];
 // TODO change calloc to object declaration.	
-        data = orig = calloc(length+16,sizeof(char));     // copy data to local buffer
+        data = orig = calloc(length + 16,sizeof(char));     // copy data to local buffer
         strncpy(data, [prs cString], length);
         
         point=0;                                      // start by converting point 0
         sticky=MAXINT;                                // no sticky point by default
         allocateTemp(64);                             // 64 points long by default
         
-        if ((symb=token(tk))=='(') {
-	    if (symb=token(tk)=='(') {
+        if ((symb = token(tk)) == '(') {
+	    if ((symb = token(tk)) == '(') {
 	    
     // parse a list of lists type envelope
     // accepted syntax: "((x0 y0)...(xn yn))" or "((x0,y0)...(xn,yn))"
 
-            while((symb!=')')&&(symb!=-1)) {
-	        symb=token(tk);                           // should be "x" component
-                if (symb!=NUMBER) {                   // must be x component
+            while((symb != ')') && (symb != -1)) {
+	        symb = token(tk);                       // should be "x" component
+                if (symb != NUMBER) {                   // must be x component
                     NSRunAlertPanel(@"Error", @"Expected x component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
-			@"Continue", data-1,orig);
+			@"Continue", data - 1, orig);
                     break;
                 }
                 else {
-                    temp->x[point]=atof(tk);           // convert "x" component!
-                    temp->y[point]=0.0;                // and set defaults
-                    temp->s[point]=defaultSmooth;
+                    temp->x[point] = atof(tk);           // convert "x" component!
+                    temp->y[point] = 0.0;                // and set defaults
+                    temp->s[point] = defaultSmooth;
                 }
 		symb=token(tk);
                 if (symb!=NUMBER) {
                     NSRunAlertPanel(@"Error", @"Expected y component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
-			@"Continue", data-1,orig);
+			@"Continue", data - 1, orig);
                     break;
                 }
                 else {
-                    temp->y[point]=atof(tk);          // convert "y" component
+                    temp->y[point] = atof(tk);        // convert "y" component
                     point++;                          // count a complete envelope node
-                    allocateTemp(point+1);
+                    allocateTemp(point + 1);
                 }
-                if (symb=token(tk)!=')') {
+                if ((symb = token(tk)) != ')') {
                     NSRunAlertPanel(@"Error", @"Expected closing parenthesis at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
-			@"Continue", data-1,orig);
+			@"Continue", data - 1, orig);
                     break;
                 }
-                else symb=token(tk);
+                else symb = token(tk);
             }
-            showSmooth = NO;                             // only MK shows smoothing by default
+            showSmooth = NO;                            // only MK shows smoothing by default
 	    }	
 	else {
 	
     // parse a CLM type envelope
     // accepted syntax: "(x0 y0 ... xn yn)" or "(x0,y0, ... xn,yn)"
             
-            while((symb!=')')&&(symb!=-1)) {
-                if (symb==',') symb=token(tk);        // ignore commas between xy pairs
-                if (symb!=NUMBER) {                   // must be x component
+            while((symb != ')') && (symb != -1)) {
+                if (symb == ',') symb = token(tk);      // ignore commas between xy pairs
+                if (symb != NUMBER) {                   // must be x component
                     NSRunAlertPanel(@"Error", @"Expected x component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
 			@"Continue", data-1,orig);
                     break;
                 }
                 else {
-                    temp->x[point]=atof(tk);           // convert "x" component!
-                    temp->y[point]=0.0;                // and set defaults
-                    temp->s[point]=defaultSmooth;
+                    temp->x[point] = atof(tk);          // convert "x" component!
+                    temp->y[point] = 0.0;               // and set defaults
+                    temp->s[point] = defaultSmooth;
                 }
-                if ((symb=token(tk))==',')             // ignore commas between values
-                    symb=token(tk);
-                if (symb!=NUMBER) {
+                if ((symb = token(tk)) == ',')          // ignore commas between values
+                    symb = token(tk);
+                if (symb != NUMBER) {
                     NSRunAlertPanel(@"Error", @"Expected y component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
-			@"Continue", data-1,orig);
+			@"Continue", data - 1, orig);
                     break;
                 }
                 else {
-                    temp->y[point]=atof(tk);          // convert "y" component
-                    point++;                          // count a complete envelope node
-                    allocateTemp(point+1);
+                    temp->y[point] = atof(tk);          // convert "y" component
+                    point++;                            // count a complete envelope node
+                    allocateTemp(point + 1);
                 }
-                symb=token(tk);
+                symb = token(tk);
             }
-            showSmooth = NO;                             // only MK shows smoothing by default
+            showSmooth = NO;                            // only MK shows smoothing by default
         }
 	}
-        else if (symb=='[')    {    
+        else if (symb == '[')    {    
         
-    // parse a MusicKit envelope
-    // uses normal MusicKit syntax
+            // parse a MusicKit envelope, uses normal MusicKit syntax
             
-            symb=token(tk);                            // should be starting '(' or '|'
-            while((symb=='(')||(symb=='|')) {
-                if (symb=='|') {
-                    sticky=point-1;                    // last point was the sticky point
-                    symb=token(tk);                    // should be '(' or the end
+            symb = token(tk);                           // should be starting '(' or '|'
+            while((symb == '(') || (symb == '|')) {
+                if (symb == '|') {
+                    sticky = point - 1;                 // last point was the sticky point
+                    symb = token(tk);                   // should be '(' or the end
                     continue;
                 }
-                if ((symb=token(tk))!=NUMBER) {        // break if not a number
+                if ((symb = token(tk)) != NUMBER) {     // break if not a number
                     NSRunAlertPanel(@"Error", @"Expected x component at:\n\"%s\"\nin:\n\"%s\"", @"", nil, @"Continue", data-1,orig);
                     break;
                 }
                 else {
-                    temp->x[point]=atof(tk);           // convert "x" component!
-                    temp->y[point]=0.0;
-                    temp->s[point]=defaultSmooth;
+                    temp->x[point] = atof(tk);         // convert "x" component!
+                    temp->y[point] = 0.0;
+                    temp->s[point] = defaultSmooth;
                 }
                 if ((symb=token(tk))==',')             // skip comma but also accept a space
                     symb=token(tk);
@@ -1070,93 +1069,93 @@ int token(char *t)
                     break;
                 }
                 else {
-                    temp->y[point]=atof(tk);           // convert "y" component
+                    temp->y[point] = atof(tk);           // convert "y" component
                 }
-                if ((symb=token(tk))==',')             // is there a smoothing component?
-                    if ((symb=token(tk))==NUMBER) {    // if number...
-                        temp->s[point]=atof(tk);       // convert smoothing component
-                        symb=token(tk);
+                if ((symb = token(tk)) == ',')             // is there a smoothing component?
+                    if ((symb = token(tk)) == NUMBER) {    // if number...
+                        temp->s[point] = atof(tk);       // convert smoothing component
+                        symb = token(tk);
                     }
                 point++;                               // count a complete envelope node
-                allocateTemp(point+1);
+                allocateTemp(point + 1);
 
-                if (symb!=')') {                       // must be point's closing parenthesis
+                if (symb != ')') {                       // must be point's closing parenthesis
                     NSRunAlertPanel(@"Error", @"Expected a ')' at:\n\"%s\"\nin:\n\"%s\"", @"", nil, @"Continue", data-1,orig);
                     break;
                 }
-                symb=token(tk);
+                symb = token(tk);
             }
             showSmooth = YES;
         }
-        else if (symb==NUMBER)    {
+        else if (symb == NUMBER) {
 
     // parse a x-y-<z> pair type envelope
     // accepted syntax: "x0 y0 ... xn yn" or "x0,y0, ... xn,yn" for xy pairs
     // accepted syntax: "x0,y0,z0 x1,y1,z1 ..." or " x0 y0 z0,x1 y1 z1, ..." for xyz sets
             
-            int commas=0;
-            double last_value=0.0;
-            int pending=0;
+            int commas = 0;
+            double last_value = 0.0;
+            int pending = 0;
 
-            while(symb!=-1) {
-                if (pending==0) {
-                    if (symb!=NUMBER) {                  // not a number!
+            while(symb != -1) {
+                if (pending == 0) {
+                    if (symb != NUMBER) {                  // not a number!
                         NSRunAlertPanel(@"Error", @"Expected x component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
 			    @"Continue", data-1,orig);
                         break;
                     }
                     else {
-                        temp->x[point]=atof(tk);        // convert "x" component!
-                        temp->y[point]=0;
-                        temp->s[point]=defaultSmooth;
+                        temp->x[point] = atof(tk);        // convert "x" component!
+                        temp->y[point] = 0;
+                        temp->s[point] = defaultSmooth;
                     }
-                    if ((symb=token(tk))==',') {
+                    if ((symb = token(tk)) == ',') {
                         commas++;
-                        symb=token(tk);
+                        symb = token(tk);
                     }
                 }
                 else {
-                    temp->x[point]=last_value;
-                    temp->y[point]=0.0;
-                    temp->s[point]=defaultSmooth;
-                    pending=0;
+                    temp->x[point] = last_value;
+                    temp->y[point] = 0.0;
+                    temp->s[point] = defaultSmooth;
+                    pending = 0;
                 }
                 if (symb!=NUMBER) {
                     NSRunAlertPanel(@"Error", @"Expected y component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
-			@"Continue", data-1,orig);
+			@"Continue", data - 1, orig);
                     break;
                 }
-                else temp->y[point]=atof(tk);        // convert "y" component
-                if ((symb=token(tk))==',') {
+                else temp->y[point] = atof(tk);        // convert "y" component
+                if ((symb = token(tk)) == ',') {
                     commas++;
-                    symb=token(tk);
+                    symb = token(tk);
                 }
-                if (symb==-1) {
+                if (symb == -1) {
                     point++;
-                    allocateTemp(point+1);
+                    allocateTemp(point + 1);
                     break;
                 }
                 else {
-                    if (symb!=NUMBER) {
+                    if (symb != NUMBER) {
                         NSRunAlertPanel(@"Error", @"Expected x or z component at:\n\"%s\"\nin:\n\"%s\"", @"", nil,
 			    @"Continue", data-1,orig);
                         break;
                     }
-                    else last_value=atof(tk);
-                    if ((((symb=token(tk))!=',')&&(commas==2)) ||
-                         ((symb==',')&&(commas==0))) {
-                        temp->s[point]=last_value;
-                        pending=0;
-                        commas=0;
+                    else last_value = atof(tk);
+                    if ((((symb = token(tk)) != ',') && (commas == 2)) ||
+                         ((symb == ',') && (commas == 0))) {
+                        temp->s[point] = last_value;
+                        pending = 0;
+                        commas = 0;
                     }
                     else {
-                        pending=1;
-                        commas=1;
+                        pending = 1;
+                        commas = 1;
                     }
                     point++;
-                    allocateTemp(point+1);
+                    allocateTemp(point + 1);
                 }
-                if (symb==',') symb=token(tk);
+                if (symb==',') symb = token(tk);
             }
             showSmooth = NO;                            // only MK shows smoothing by default
         }
@@ -1164,22 +1163,21 @@ int token(char *t)
             NSRunAlertPanel(@"Error", @"The envelope must start with '[','(' or a number:\n\"%s\"", @"", nil,
 		@"Continue", orig);
         
-        if (point<2) {                                // if envelope has less than 2 nodes
+        if (point < 2) {                                // if envelope has less than 2 nodes
             NSRunAlertPanel(@"Error", @"Less than 2 legal points in envelope:\n\"%s\"", @"", nil, @"Continue", orig);
         }
         else {
-            [theEnvelope
-                setPointCount: point
-                xArray: temp->x
-                orSamplingPeriod: 1.0
-                yArray: temp->y
-                smoothingArray: temp->s
-                orDefaultSmoothing: defaultSmooth];
+            [theEnvelope setPointCount: point
+                                xArray: temp->x
+                      orSamplingPeriod: 1.0
+                                yArray: temp->y
+                        smoothingArray: temp->s
+                    orDefaultSmoothing: defaultSmooth];
             [theEnvelope setStickPoint: sticky];      // update envelope object
             allocateDraw(temp->max); //(pointCount);                 // resize drawing arrays
             [self scaleLimits];                       // define drawing limits
         }
-        if (selected<pointCount)
+        if (selected < pointCount)
             [self selectPoint: selected];
         else
             [self selectPoint: 0];                    // display and update controller
