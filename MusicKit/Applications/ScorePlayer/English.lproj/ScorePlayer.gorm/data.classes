@@ -1,0 +1,68 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "deviceSpecificSettings:",
+	    "getNeXTDACCurrentValues:",
+	    "help:",
+	    "openEditFile:",
+	    "playStop:",
+	    "saveAsDefaultDevice:",
+	    "saveScoreAs:",
+	    "selectFile:",
+	    "setMidiDriverName:",
+	    "setNeXTDACMute:",
+	    "setNeXTDACVolume:",
+	    "setSoundOutFrom:",
+	    "setTempoAdjustment:",
+	    "setTempoFrom:",
+	    "setTimeCodeSerialPort:",
+	    "setTimeCodeSynch:",
+	    "showErrorLog:"
+	);
+	Super = NSObject;
+    };
+    ScorePlayerController = {
+	Actions = (
+	    "playStop:",
+	    "saveAsDefaultDevice:",
+	    "setMidiDriverName:",
+	    "setNeXTDACVolume:",
+	    "setTimeCodeSynch:",
+	    "setTempoAdjustment:",
+	    "setNeXTDACMute:",
+	    "help:",
+	    "selectFile:",
+	    "showErrorLog:",
+	    "setSoundOutFrom:",
+	    "setTimeCodeSerialPort:",
+	    "deviceSpecificSettings:",
+	    "getNeXTDACCurrentValues:",
+	    "openEditFile:",
+	    "saveScoreAs:",
+	    "setTempoFrom:"
+	);
+	Outlets = (
+	    soundSavePanel,
+	    playButton,
+	    soundOutputDevicePopUp,
+	    tempoTextField,
+	    tooFastErrorMsg,
+	    SSAD64xPanel,
+	    timeCodeButton,
+	    NeXTDacMuteSwitch,
+	    tempoTitle,
+	    StealthDAI2400Panel,
+	    timeCodePortMatrix,
+	    NeXTDacVolumeSlider,
+	    tempoSlider,
+	    timeCodeTextField,
+	    serialPortDeviceNameField,
+	    defaultMidiPopUp,
+	    NeXTDACPanel,
+	    theMainWindow,
+	    soundWriteMsg
+	);
+	Super = NSObject;
+    };
+}
