@@ -258,45 +258,20 @@ static BOOL needToReread(void)
     return reread;
 }
 
+// These are the class names.
 // All should be replaced with sound output device names list determined dynamically.
-#define  NEXT_SOUND 0
-#define  DAI2400 1
-#define  AD64x 2
-#define  PROPORT 3
-#define  GENERIC 4
-
-static int soundOutType;
+#define  NEXT_SOUND @"NeXT Sound"
+#define  DAI2400 @"StealthDAI2400"
+#define  AD64x @"SSAD64x"
+#define  PROPORT @"ArielProPort"
+#define  GENERIC @"Default sound device"  // @"DSPSerialPortDevice"
 
 /* Should figure a way to get rid of these case statements! */
 
-static NSArray *soundOutputTagToName;
-
--(int)_soundOutputNameToTag: (NSString *) s
+- (void) setSoundOutDevice: (NSString *) soundOutputName
 {
-    int tag = GENERIC;
-    int i;
-    for (i = 1; i < GENERIC; i++)
-        if ([[soundOutputTagToName objectAtIndex: i] isEqualToString: s])
-            tag = i;
-    [soundOutputDevicePopUp selectItemWithTag: tag];
-    return tag;
-}
-
-- (void) setSoundOutDeviceTag: (int) aTag
-{
-    NSString *soundOutputName;
-    
     warnedAboutSrate = NO;
-    soundOutType = aTag;
-    switch (aTag) {
-	default:
-	case GENERIC:
-	    soundOutputName = @"Default sound device";
-	    break;
-	case NEXT_SOUND:
-	    soundOutputName = @"NeXT Sound";
-	    break;
-    }
+    soundOutDeviceName = [soundOutputName retain];
     [serialPortDeviceNameField setStringValue: soundOutputName];
     /* Run alert panel here if we're playing? FIXME */
 }
@@ -309,16 +284,16 @@ static NSArray *soundOutputTagToName;
 /* Invoked by U.I. */
 - (IBAction) setSoundOutFrom: sender
 {
-    int tag = [[sender selectedCell] tag];
+    NSString *selectedDevice = [sender titleOfSelectedItem];
     
-    if (soundOutType == tag)
+    if ([soundOutDeviceName isEqualToString: selectedDevice])
 	return;
-    if (tag == NEXT_SOUND && (!([theOrch capabilities] & MK_hostSoundOut))) {
+    if ([selectedDevice isEqualToString: NEXT_SOUND] && (!([theOrch capabilities] & MK_hostSoundOut))) {
 	NSRunAlertPanel(STR_SCOREPLAYER, @"NeXT sound not supported on this architecture", STR_OK, nil, nil);
-	[soundOutputDevicePopUp selectItemWithTag: soundOutType];
+	[soundOutputDevicePopUp selectItemWithTitle: soundOutDeviceName];
 	return;
     }
-    [self setSoundOutDeviceTag: tag];
+    [self setSoundOutDevice: selectedDevice];
 }
 
 - (void) saveAsDefaultDevice: sender
@@ -329,19 +304,17 @@ static NSArray *soundOutputTagToName;
         [[NSUserDefaults standardUserDefaults] persistentDomainForName:NSGlobalDomain];
         NSMutableDictionary *pdm = [[pdi mutableCopy] autorelease];
         
-        [pdm setObject: (soundOutType == NEXT_SOUND) ? @"Host" : @"SSI"
-                forKey: @"MKOrchestraSoundOut"];
+        [pdm setObject: soundOutDeviceName forKey: @"MKOrchestraSoundOut"];
         [[NSUserDefaults standardUserDefaults] removePersistentDomainForName: NSGlobalDomain];
         [[NSUserDefaults standardUserDefaults] setPersistentDomain: pdm forName: NSGlobalDomain]; 
 	
     }
     if (caps & MK_nextCompatibleDSPPort)
-        if (soundOutType != NEXT_SOUND) {
+        if (![soundOutDeviceName isEqualToString: NEXT_SOUND]) {
             NSDictionary *pdi = [[NSUserDefaults standardUserDefaults] persistentDomainForName: NSGlobalDomain];
             NSMutableDictionary *pdm = [[pdi mutableCopy] autorelease];
 	    
-            [pdm setObject: [soundOutputTagToName objectAtIndex: soundOutType]
-                    forKey: @"MKDSPSerialPortDevice0"];
+            [pdm setObject: soundOutDeviceName forKey: @"MKDSPSerialPortDevice0"];
             [[NSUserDefaults standardUserDefaults] removePersistentDomainForName: NSGlobalDomain];
             [[NSUserDefaults standardUserDefaults] setPersistentDomain: pdm forName: NSGlobalDomain]; 
         }
@@ -350,40 +323,31 @@ static NSArray *soundOutputTagToName;
 
 - (void) deviceSpecificSettings: sender
 {
-    switch (soundOutType) {
-	case DAI2400:
-	    if (!StealthDAI2400Panel) {
-		[NSBundle loadNibNamed:@"StealthDAI2400.nib" owner:self];
-//#error ApplicationConversion:  NXGetNamedObject() is obsolete. Replace with nib file outlets.
-//	    StealthDAI2400Panel = NXGetNamedObject("StealthDAI2400Panel",self);
-	    }
-	    [StealthDAI2400Panel makeKeyAndOrderFront:self];
-	    break;
-	case AD64x:
-	    if (!SSAD64xPanel) {
-		[NSBundle loadNibNamed:@"SSAD64x.nib" owner:self];
-//#error ApplicationConversion:  NXGetNamedObject() is obsolete. Replace with nib file outlets.
-//	    SSAD64xPanel = NXGetNamedObject("SSAD64xPanel",self);
-	    }
-	    [SSAD64xPanel makeKeyAndOrderFront:self];
-	    break;
-	case NEXT_SOUND:
-	    if (!NeXTDACPanel) {
-		[NSBundle loadNibNamed:@"NextDACs.nib" owner:self];
-//#error ApplicationConversion:  NXGetNamedObject() is obsolete. Replace with nib file outlets.
-//	    NeXTDACPanel = NXGetNamedObject("NeXTDACPanel",self);
-	    }
-	    [NeXTDACPanel makeKeyAndOrderFront:self];
-	    break;
-	default:
-	case GENERIC:
-	    NSRunAlertPanel(STR_SCOREPLAYER, @"No special settings for this device", STR_OK, nil, nil);
-	    break;
+    if ([soundOutDeviceName isEqualToString: DAI2400]) {
+	if (!StealthDAI2400Panel) {
+	    [NSBundle loadNibNamed: @"StealthDAI2400.nib" owner: self];
+	}
+	[StealthDAI2400Panel makeKeyAndOrderFront: self];
+    }
+    else if ([soundOutDeviceName isEqualToString: AD64x]) {
+        if (!SSAD64xPanel) {
+	    [NSBundle loadNibNamed: @"SSAD64x.nib" owner: self];
+	}
+	[SSAD64xPanel makeKeyAndOrderFront: self];
+    }
+    else if ([soundOutDeviceName isEqualToString: NEXT_SOUND]) {
+	if (!NeXTDACPanel) {
+	    [NSBundle loadNibNamed:@"NextDACs.nib" owner:self];
+	}
+	[NeXTDACPanel makeKeyAndOrderFront:self];
+    }
+    else {
+	NSRunAlertPanel(STR_SCOREPLAYER, @"No special settings for this device", STR_OK, nil, nil);
     } 
 }
 
 // - (void) setOrchestraVolume: (id) sender
-- (void)setNeXTDACVolume:sender
+- (void) setNeXTDACVolume:sender
 {
     [[[theOrch audioProcessorChain] postFader] setAmp: [sender floatValue] clearingEnvelope: NO];
 }
@@ -508,7 +472,7 @@ static int fileType(NSString *name)
 	    initialTempo = [scoreInfo parAsDouble: MK_tempo];
 	    [[MKConductor defaultConductor] setTempo: initialTempo];
 	} 
-	if (soundOutType == NEXT_SOUND) {
+	if ([soundOutDeviceName isEqualToString: NEXT_SOUND]) {
 #if SOUND_OUT_PAUSE_BUG
 	    if (samplingRate == 22050)
                 midiOffset +=  .36363636363636/8.0;
@@ -567,7 +531,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
 	writeData = NO;
 	[theOrch setOutputSoundfile: NULL];
     }
-    [theOrch setHostSoundOut: (soundOutType == NEXT_SOUND)];
+    [theOrch setHostSoundOut: [soundOutDeviceName isEqualToString: NEXT_SOUND]];
     [tempoAnimator invalidate];
     [tempoAnimator release];
     tempoAnimator = nil;
@@ -700,26 +664,24 @@ static double getUntempo(float tempoVal)
     theOrch = [[MKOrchestra alloc] initOnDSP: 0]; /* A noop if it exists */
     
     [theOrch setHeadroom: headroom];    /* Must be reset for each play */ 
-    switch (soundOutType) {
-	case NEXT_SOUND:
-	    if (![theOrch supportsSamplingRate: samplingRate]) {
-		msg = STR_BAD_SRATE;
-		actualSrate = [theOrch defaultSamplingRate];
-	    }
-	    else 
-		actualSrate = samplingRate;
-	    break;
-	case GENERIC:
+    if ([soundOutDeviceName isEqualToString: NEXT_SOUND]) {
+	if (![theOrch supportsSamplingRate: samplingRate]) {
+	    msg = STR_BAD_SRATE;
+	    actualSrate = [theOrch defaultSamplingRate];
+	}
+	else 
 	    actualSrate = samplingRate;
-	    break;
-	default:
-	    if (![theOrch supportsSamplingRate: samplingRate]){
-		msg = STR_BAD_SSI_SRATE;
-		actualSrate = [theOrch defaultSamplingRate];
-	    }
-	    else 
-		actualSrate = samplingRate;
-	    break;
+    }
+    else if ([soundOutDeviceName isEqualToString: GENERIC]) {
+	actualSrate = samplingRate;
+    }
+    else {
+	if (![theOrch supportsSamplingRate: samplingRate]){
+	    msg = STR_BAD_SSI_SRATE;
+	    actualSrate = [theOrch defaultSamplingRate];
+	}
+	else 
+	    actualSrate = samplingRate;
     }
     if (msg && !warnedAboutSrate) {	
         [errorLog addText: msg];
@@ -736,7 +698,7 @@ static double getUntempo(float tempoVal)
 #endif
     [theOrch setOutputCommandsFile: (DSPCommands) ? outputFilePath : nil];
     [theOrch setOutputSoundfile: (writeData) ? outputFilePath : nil];
-    [theOrch setHostSoundOut: !writeData && (soundOutType == NEXT_SOUND)];
+    [theOrch setHostSoundOut: !writeData && [soundOutDeviceName isEqualToString: NEXT_SOUND]];
     
 #if 0 // LMS disabled until cross-platform orchestra opening works
     if (![theOrch open]) {
@@ -902,10 +864,6 @@ static void abortNow();
         @"score", @"playscore",@"midi", @"snd", @"snd",nil];
     fileIcons = [[NSArray alloc] initWithObjects:
         @"ScorePlayerDoc", @"ScorePlayerDoc2", @"Midi", @"Sound", @"Sound",nil];
-    /* These are the class names */
-    soundOutputTagToName = [[NSArray alloc] initWithObjects:
-	@"",@"StealthDAI2400",@"SSAD64x",@"ArielProPort",@"DSPSerialPortDevice",nil];
-    
     SSAD64xPanel = StealthDAI2400Panel = NeXTDACPanel = nil;
     openFileExtensions = [[MKScore fileExtensions] retain];  // accept both MIDI and Scorefiles.
     errorLog = [[ErrorLog alloc] init];
@@ -934,22 +892,24 @@ static void abortNow();
     if (capabilities & MK_hostSoundOut) {
         s = [scorePlayerDefaults stringForKey: @"MKOrchestraSoundOut"];
 	if ([s isEqual: @"Host"]) {
-	    [self setSoundOutDeviceTag: NEXT_SOUND];
+	    [self setSoundOutDevice: NEXT_SOUND];
 	}
 	else {
             s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
-	    [self setSoundOutDeviceTag: [self _soundOutputNameToTag: s]];
+	    [soundOutputDevicePopUp selectItemWithTitle: s];
+	    [self setSoundOutDevice: s];
 	}
     } 
     else {
 	if ((capabilities & MK_nextCompatibleDSPPort)) {
             s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
-	    [self setSoundOutDeviceTag: [self _soundOutputNameToTag: s]];
+	    [soundOutputDevicePopUp selectItemWithTitle: s];
+	    [self setSoundOutDevice: s];
 	}
 	else {
-	    [self setSoundOutDeviceTag: GENERIC];
-	    [soundOutputDevicePopUp selectItemWithTag: GENERIC];
+	    [soundOutputDevicePopUp selectItemWithTitle: GENERIC];
 	    [soundOutputDevicePopUp setEnabled: NO];
+	    [self setSoundOutDevice: GENERIC];
 	}
     }
     

@@ -27,6 +27,9 @@
     id SSAD64xPanel;
     id StealthDAI2400Panel;
     id NeXTDACPanel;
+
+    // Name of the sound output device.
+    NSString *soundOutDeviceName;
 }
 
 - (void) help: (id) sender;
