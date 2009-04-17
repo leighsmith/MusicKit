@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 #
-# $Id: GNUmakefile.in 3444 2009-03-31 20:41:06Z leighsmith $
+# $Id$
 #
 # Build script for the MusicKit Applications on GNUstep systems.
 # See Makefile.in for the build process on MacOS X systems.
@@ -13,7 +13,11 @@
 # non-commercial purposes so long as the author attribution and copyright 
 # messages remain intact and accompany all relevant code.
 #
-SUBPROJECTS = TwoWaves Spectro
+SUBPROJECTS = TwoWaves\
+	      Spectro\
+	      ScorePlayer\
+	      PianoRoll\
+	      EnvelopeEd
 
 include $(GNUSTEP_MAKEFILES)/common.make
 include $(GNUSTEP_MAKEFILES)/aggregate.make
