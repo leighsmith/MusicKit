@@ -1,0 +1,70 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "deviceSpecificSettings:",
+	    "getNeXTDACCurrentValues:",
+	    "help:",
+	    "openEditFile:",
+	    "playStop:",
+	    "saveAsDefaultDevice:",
+	    "saveScoreAs:",
+	    "selectFile:",
+	    "setAD64xConsumer:",
+	    "setAD64xProfessional:",
+	    "setDAI2400CopyProhibit:",
+	    "setDAI2400Emphasis:",
+	    "setNeXTDACMute:",
+	    "setNeXTDACVolume:",
+	    "setSoundOutFrom:",
+	    "setTempoFrom:",
+	    "setTimeCodeSerialPort:",
+	    "setTimeCodeSynch:",
+	    "showErrorLog:"
+	);
+	Super = NSObject;
+    };
+    ScorePlayerController = {
+	Actions = (
+	    "getNeXTDACCurrentValues:",
+	    "showErrorLog:",
+	    "help:",
+	    "setTimeCodeSynch:",
+	    "setNeXTDACVolume:",
+	    "deviceSpecificSettings:",
+	    "selectFile:",
+	    "saveAsDefaultDevice:",
+	    "setNeXTDACMute:",
+	    "setTempoFrom:",
+	    "setSoundOutFrom:",
+	    "setAD64xProfessional:",
+	    "playStop:",
+	    "setTimeCodeSerialPort:",
+	    "setAD64xConsumer:",
+	    "setDAI2400Emphasis:",
+	    "setDAI2400CopyProhibit:",
+	    "saveScoreAs:",
+	    "openEditFile:"
+	);
+	Outlets = (
+	    tempoTextField,
+	    serialPortDeviceMatrix,
+	    saveAsFileItem,
+	    NeXTDacMuteSwitch,
+	    tempoTitle,
+	    timeCodePortMatrix,
+	    theMainWindow,
+	    soundSavePanel,
+	    timeCodeTextField,
+	    dspCommandsSavePanel,
+	    tooFastErrorMsg,
+	    button,
+	    tempoSlider,
+	    serialPortDeviceNameField,
+	    editFileItem,
+	    timeCodeButton,
+	    NeXTDacVolumeSlider
+	);
+	Super = NSObject;
+    };
+}

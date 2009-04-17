@@ -1,0 +1,25 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "buttonPressed:",
+	    "performResize:"
+	);
+	Super = NSObject;
+    };
+    MKAlert = {
+	Actions = (
+	    "buttonPressed:"
+	);
+	Outlets = (
+	    title,
+	    third,
+	    second,
+	    panel,
+	    panelIconButton,
+	    first,
+	    msg
+	);
+	Super = NSObject;
+    };
+}
