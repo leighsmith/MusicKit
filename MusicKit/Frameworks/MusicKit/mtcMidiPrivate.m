@@ -74,7 +74,7 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     double t;
     if (deviceStatus == MK_devClosed)
         return 0;
-    r = MKMDGetClockTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], &theTime);
+    r = MKMDGetClockTime(devicePort, ownerPort, &theTime);
     if (r != MKMD_SUCCESS)
         MKErrorCode(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "_time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
@@ -89,7 +89,7 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     #define ISENDOFTIME(_x) (_x > (MK_ENDOFTIME - 1.0))
     if (ISENDOFTIME(requestedTime)) {
 	if (deviceStatus == MK_devRunning)
-            MKMDRequestAlarm((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], MKMD_PORT_NULL, 0);
+            MKMDRequestAlarm(devicePort, ownerPort, MKMD_PORT_NULL, 0);
 	self->alarmTimeValid = NO;
 	self->alarmPending = NO;
 	return self;
@@ -98,8 +98,8 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     if (deviceStatus == MK_devRunning) {
 	if (!self->alarmPending || 
 	    self->intAlarmTime != newIntTime) {
-            MKMDRequestAlarm((MKMDPort) [devicePort machPort], 
-			     (MKMDOwnerPort) [ownerPort machPort],
+            MKMDRequestAlarm(devicePort, 
+			     ownerPort,
 			     (MKMDReplyPort) [alarmPort machPort], newIntTime);
 	    self->alarmPending = YES;
 	}
@@ -162,31 +162,18 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     }
     alarmTimeValid = NO;
     alarmPending = NO;
-    // 2nd arg was midiAlarm, changed to self as it handleMachMessage - LMS
-#if MKMD_RECEPTION_USING_PORTS
-    _MKAddPort(alarmPort, self, 0, self, _MK_DPSPRIORITY);
-    // 2nd arg was midiException, changed to self as it handleMachMessage - LMS
-    _MKAddPort(exceptionPort, self, 0, self, _MK_DPSPRIORITY);
-#endif
     addedPortsCount += 2;
     return YES;
 }
 
 - (BOOL) tearDownMTC
 {
-    MKMDRequestExceptions((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], MKMD_PORT_NULL);
-#if MKMD_RECEPTION_USING_PORTS
-    _MKRemovePort(exceptionPort);
-#endif
+    MKMDRequestExceptions(devicePort, ownerPort, MKMD_PORT_NULL);
     [exceptionPort release];
     /* Could call MKMDStopClock here? */
-    MKMDRequestAlarm((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], MKMD_PORT_NULL, 0);
+    MKMDRequestAlarm(devicePort, ownerPort, MKMD_PORT_NULL, 0);
     alarmPending = NO;
     alarmTimeValid = NO;
-#if MKMD_RECEPTION_USING_PORTS
-    _MKRemovePort(alarmPort);
-    addedPortsCount -= 2;
-#endif
     [alarmPort release];
     return YES;
 }

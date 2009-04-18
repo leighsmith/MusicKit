@@ -36,7 +36,7 @@ static double mangleTime(MKMidi *self,double driverTime)
 	 * has been set, this time has deltaT added to it. 
 	 */
 {
-    MKMDReturn r = MKMDGetMTCTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], format, h, m, s, f);
+    MKMDReturn r = MKMDGetMTCTime(devicePort, ownerPort, format, h, m, s, f);
     double seconds;
     if (r != MKMD_SUCCESS) 
         MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"getMTCFormat:");
@@ -58,7 +58,7 @@ static double mangleTime(MKMidi *self,double driverTime)
     double t;
     if (deviceStatus == MK_devClosed)
         return 0;
-    r = MKMDGetClockTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], &theTime);
+    r = MKMDGetClockTime(devicePort, ownerPort, &theTime);
     if (r != MKMD_SUCCESS) 
         MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;

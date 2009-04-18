@@ -93,7 +93,7 @@ You can examine the updates and controllerTable with the method
 #define __MK_SynthInstrument_H___
 
 /*!
-  @defgroup SynthInstrumentAllocConsts MKSynthInstrument Allocation Constants
+  @name SynthInstrumentAllocConsts
   @brief MKSynthInstrument Allocation Constants.
 
   The steps performed by MKSynthInstrument for each of the allocation

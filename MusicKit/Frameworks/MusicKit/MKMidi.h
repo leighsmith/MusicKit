@@ -187,11 +187,11 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
     enum MKMidiDirection {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
     BOOL isOwner;
     // These are handles used to identify the MIDI communication channel.
-    // We pretend they are Mach ports even though they function only as references.
-    NSMachPort *devicePort;      // Device port
-    NSMachPort *ownerPort;       // Owner port, as for the device port.
-    NSMachPort *recvPort;        // Port on which we receive midiIn messages
-    NSMachPort *queuePort;       // Port on which we notify when there is space on the playback queue.
+    // We pretend they are Mach-like ports even though they function only as references.
+    MKMDPort devicePort;         // Device port
+    MKMDOwnerPort ownerPort;     // Owner port, as for the device port.
+    MKMDReplyPort recvPort;      // Port on which we receive midiIn messages
+    MKMDReplyPort queuePort;     // Port on which we notify when there is space on the playback queue.
     BOOL mergeInput;
     NSString *hostname;          // for MIDI communicated across hosts.
     /*! The index into the input drivers list */
