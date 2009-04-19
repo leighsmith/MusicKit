@@ -430,7 +430,6 @@ static int fileType(NSString *name)
     setFileTime();
     scoreObj = [MKScore score];
     [theMainWindow setTitle: [NSString stringWithFormat: STR_READING, shortFileName]];
-    [theMainWindow display];
     [playButton setEnabled: NO];
     tuningSys = [[MKTuningSystem alloc] init]; /* 12-tone equal tempered */
     [tuningSys install];
@@ -447,7 +446,6 @@ static int fileType(NSString *name)
 	fileName = @"";
 	[theMainWindow setTitle: STR_SCOREPLAYER];
 	[playButton setEnabled: YES];
-	[theMainWindow display];
 	return NO;
     }
     samplingRate = [theOrch defaultSamplingRate];
@@ -491,7 +489,6 @@ static int fileType(NSString *name)
     [tempoSlider setFloatValue: 0.0];
     [tempoTextField setFloatValue: initialTempo];
     [theMainWindow setTitle: shortFileName];
-    [theMainWindow display];
     [playButton setEnabled: YES];
     [scoreObj retain];  // yep, keep it.
     return YES;
@@ -545,7 +542,6 @@ static BOOL setUpFile(NSString *workspaceFileName);
     wasLate = NO;
     errorDuringPlayback = NO;
     [theMainWindow setTitle: shortFileName];
-    [theMainWindow display];
     [soundSavePanel close];
     [self _enableMTCControls: YES];
     return self;
@@ -566,7 +562,6 @@ void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
     wasLate = NO;
     errorDuringPlayback = NO;
     [myself->theMainWindow setTitle: shortFileName];
-    [myself->theMainWindow display];
     [myself->soundSavePanel close];
     [myself->dspCommandsSavePanel close];
     [myself _enableMTCControls: YES];
@@ -791,7 +786,6 @@ static double getUntempo(float tempoVal)
     }
     errorDuringPlayback = NO;
     [theMainWindow setTitle: [NSString stringWithFormat: STR_PLAYING, shortFileName]];
-    [theMainWindow display];
     MKSetDeltaT(.75);
     [MKOrchestra setTimed: YES];
     [MKConductor afterPerformanceSel: @selector(endOfTime) to: self argCount: 0];
