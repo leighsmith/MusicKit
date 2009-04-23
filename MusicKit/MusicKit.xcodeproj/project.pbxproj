@@ -8034,7 +8034,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -8066,7 +8066,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c";
@@ -8100,7 +8100,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
@@ -8132,7 +8132,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
@@ -8167,10 +8167,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -8233,10 +8230,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -8338,10 +8332,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -8841,10 +8832,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -9042,10 +9030,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -9067,10 +9052,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PATH = "/bin:/usr/local/bin:/usr/bin:/sw/bin";
@@ -9093,10 +9075,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -9117,7 +9096,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9126,10 +9105,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MKSynthPatches/MKSynthPatches-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9149,17 +9125,14 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9192,10 +9165,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "PatchCordFramework-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9221,6 +9191,7 @@
 				ARCHS = i386;
 				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_MODEL_TUNING = "";
 				HEADER_SEARCH_PATHS = /sw/include;
 				LIBRARY_SEARCH_PATHS = /sw/lib;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
@@ -9599,7 +9570,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9608,10 +9579,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98000000,
@@ -9634,7 +9602,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
@@ -9664,7 +9632,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
@@ -9672,10 +9640,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98000000,
@@ -9695,7 +9660,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -9737,10 +9702,7 @@
 					/usr/local/lib,
 					/sw/lib,
 				);
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98018000,
@@ -9762,7 +9724,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9797,7 +9759,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9810,10 +9772,7 @@
 					/usr/local/lib,
 					/sw/lib,
 				);
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					98018000,
@@ -9833,7 +9792,7 @@
 				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9865,7 +9824,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
@@ -9875,10 +9834,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9901,7 +9857,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9932,7 +9888,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9941,10 +9897,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MKDSP_Native/MKDSP-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -9964,7 +9917,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -9992,7 +9945,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
@@ -10002,10 +9955,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10030,7 +9980,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -10062,7 +10012,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -10071,10 +10021,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MusicKit/MusicKit-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10096,7 +10043,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_PFE_FILE_C_DIALECTS = "objective-c, objective-c++";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -10127,10 +10074,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -10152,10 +10096,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
@@ -10175,10 +10116,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
@@ -10227,10 +10165,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Palettes/SndView/SndViewPalette-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-dylib_file",
 					"@loader_path/../../../../PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient:/Developer/Library/PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient",
@@ -10274,10 +10209,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Palettes/SndView/SndViewPalette-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-dylib_file",
 					"@loader_path/../../../../PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient:/Developer/Library/PrivateFrameworks/DevToolsRemoteClient.framework/Versions/A/DevToolsRemoteClient",
@@ -10319,10 +10251,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Palettes/SndView/SndViewPalette-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10376,10 +10305,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -10401,10 +10327,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Palettes Only";
@@ -10424,10 +10347,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Palettes Only";
@@ -10468,10 +10388,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10499,10 +10416,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10527,10 +10441,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10578,10 +10489,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10608,10 +10516,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10635,10 +10540,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10684,10 +10586,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10715,10 +10614,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10743,10 +10639,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10790,10 +10683,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -10815,10 +10705,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Utilities (Aggregate)";
@@ -10838,10 +10725,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Utilities (Aggregate)";
@@ -10883,10 +10767,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiRecord/MidiRecord-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10915,10 +10796,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MidiRecord/MidiRecord-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10944,10 +10822,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiRecord/MidiRecord-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -10997,10 +10872,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiLoop/MidiLoop-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11029,10 +10901,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MidiLoop/MidiLoop-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11058,10 +10927,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiLoop/MidiLoop-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11111,10 +10977,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiPlay/MidiPlay-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11143,10 +11006,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MidiPlay/MidiPlay-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11172,10 +11032,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiPlay/MidiPlay-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11225,10 +11082,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiFilePlayback/MidiFilePlayback-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11257,10 +11111,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MidiFilePlayback/MidiFilePlayback-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11286,10 +11137,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiFilePlayback/MidiFilePlayback-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11339,10 +11187,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiEcho/MidiEcho-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11371,10 +11216,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MidiEcho/MidiEcho-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11400,10 +11242,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiEcho/MidiEcho-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11453,10 +11292,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiEcho-1-MIDI-Channel/MidiEcho-1-Channel-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11485,10 +11321,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MidiEcho-1-MIDI-Channel/MidiEcho-1-Channel-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11514,10 +11347,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Examples/MidiEcho-1-MIDI-Channel/MidiEcho-1-Channel-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11566,10 +11396,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11597,10 +11424,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11625,10 +11449,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11676,10 +11497,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11707,10 +11525,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11735,10 +11550,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11786,10 +11598,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11817,10 +11626,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11845,10 +11651,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11896,10 +11699,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11927,10 +11727,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -11955,10 +11752,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12004,10 +11798,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12037,10 +11828,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12067,10 +11855,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12122,10 +11907,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12155,10 +11937,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12185,10 +11964,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12240,10 +12016,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12273,10 +12046,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12303,10 +12073,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12359,10 +12126,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12393,10 +12157,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12424,10 +12185,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12480,10 +12238,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12513,10 +12268,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12543,10 +12295,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12598,10 +12347,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12631,10 +12377,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = .;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12661,10 +12404,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12717,10 +12457,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/example3/example3-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12751,10 +12488,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Examples/example3/example3-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12782,10 +12516,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/example3/example3-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12836,10 +12567,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -12861,10 +12589,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Examples (Aggregate)";
@@ -12884,10 +12609,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Examples (Aggregate)";
@@ -12929,10 +12651,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Applications/Spectro/Spectro-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12961,10 +12680,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Applications/Spectro/Spectro-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -12990,10 +12706,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Applications/Spectro/Spectro-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13043,10 +12756,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Applications/PatchCord/PatchCord-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13075,10 +12785,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Applications/PatchCord/PatchCord-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13104,10 +12811,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Applications/PatchCord/PatchCord-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13155,10 +12859,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13189,10 +12890,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13220,10 +12918,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13277,10 +12972,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13311,10 +13003,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13342,10 +13031,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13399,10 +13085,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13433,10 +13116,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13464,10 +13144,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13521,10 +13198,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13555,10 +13229,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
 				INSTALL_PATH = "$(LOCAL_APPS_DIR)/MusicKit";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13586,10 +13257,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13640,10 +13308,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -13665,10 +13330,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Applications Only (Aggregate)";
@@ -13688,10 +13350,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "Applications Only (Aggregate)";
@@ -13728,10 +13387,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PATH = "/bin:/usr/local/bin:/usr/bin:/sw/bin";
@@ -13754,10 +13410,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PATH = "/bin:/usr/local/bin:/usr/bin:/sw/bin";
@@ -13778,10 +13431,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PATH = "/bin:/usr/local/bin:/usr/bin:/sw/bin";
@@ -13820,10 +13470,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
@@ -13845,10 +13492,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				HEADER_SEARCH_PATHS = .;
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "MusicKit (Aggregate)";
@@ -13868,10 +13512,7 @@
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "MusicKit (Aggregate)";
@@ -13907,7 +13548,7 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -13916,10 +13557,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MKSynthPatches/MKSynthPatches-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13940,7 +13578,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -13949,10 +13587,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Frameworks/MKSynthPatches/MKSynthPatches-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -13971,7 +13606,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -13979,10 +13614,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				INFOPLIST_FILE = "Frameworks/MKSynthPatches/MKSynthPatches-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14000,7 +13632,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = 5.5;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -14025,17 +13657,14 @@
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14062,17 +13691,14 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14097,16 +13723,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14130,7 +13753,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_VERSION = 5.6;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
@@ -14166,10 +13789,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "PatchCordFramework-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14203,10 +13823,7 @@
 				HEADER_SEARCH_PATHS = .;
 				INFOPLIST_FILE = "PatchCordFramework-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14237,10 +13854,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "PatchCordFramework-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_CFLAGS = (
-					"-DHAVE_CONFIG_H",
-					"-maltivec",
-				);
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -14290,6 +13904,7 @@
 		D8B44FEB099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_MODEL_TUNING = "";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
@@ -14568,7 +14183,7 @@
 				D81589A70F90EDC300E38A7D /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D86986A20ED9CA0E00E90F3F /* Build configuration list for PBXNativeTarget "SndView IB Plugin (Bundle)" */ = {
 			isa = XCConfigurationList;
@@ -14580,7 +14195,7 @@
 				D86986A70ED9CA0E00E90F3F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8A1DC0F09F64B6F0094B3F5 /* Build configuration list for PBXNativeTarget "mixscorefiles" */ = {
 			isa = XCConfigurationList;
@@ -14592,7 +14207,7 @@
 				D8A1DC1409F64B6F0094B3F5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8A1DC4309F65B8A0094B3F5 /* Build configuration list for PBXNativeTarget "example4" */ = {
 			isa = XCConfigurationList;
@@ -14604,7 +14219,7 @@
 				D8A1DC4809F65B8A0094B3F5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F1D099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKPerformSndMIDI (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -14616,7 +14231,7 @@
 				D8B44F21099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F22099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "SndKit (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -14628,7 +14243,7 @@
 				D8B44F26099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F27099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKDSP (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -14640,7 +14255,7 @@
 				D8B44F2B099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F2C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MusicKit (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -14652,7 +14267,7 @@
 				D8B44F30099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F31099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Frameworks Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -14664,7 +14279,7 @@
 				D8B44F35099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F36099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "SndView Palette (Bundle)" */ = {
 			isa = XCConfigurationList;
@@ -14676,7 +14291,7 @@
 				D8B44F3A099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F3B099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Palettes Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -14688,7 +14303,7 @@
 				D8B44F3F099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F40099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "convertscore" */ = {
 			isa = XCConfigurationList;
@@ -14700,7 +14315,7 @@
 				D8B44F44099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F45099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "scorefile2stella" */ = {
 			isa = XCConfigurationList;
@@ -14712,7 +14327,7 @@
 				D8B44F49099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F4A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscore" */ = {
 			isa = XCConfigurationList;
@@ -14724,7 +14339,7 @@
 				D8B44F4E099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F4F099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Utilities Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -14736,7 +14351,7 @@
 				D8B44F53099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F54099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiRecord" */ = {
 			isa = XCConfigurationList;
@@ -14748,7 +14363,7 @@
 				D8B44F58099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F59099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiLoop" */ = {
 			isa = XCConfigurationList;
@@ -14760,7 +14375,7 @@
 				D8B44F5D099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F5E099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiPlay" */ = {
 			isa = XCConfigurationList;
@@ -14772,7 +14387,7 @@
 				D8B44F62099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F63099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiFilePlayback" */ = {
 			isa = XCConfigurationList;
@@ -14784,7 +14399,7 @@
 				D8B44F67099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F68099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiEcho" */ = {
 			isa = XCConfigurationList;
@@ -14796,7 +14411,7 @@
 				D8B44F6C099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F6D099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiEcho-1-Channel" */ = {
 			isa = XCConfigurationList;
@@ -14808,7 +14423,7 @@
 				D8B44F71099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F72099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "mixsounds" */ = {
 			isa = XCConfigurationList;
@@ -14820,7 +14435,7 @@
 				D8B44F76099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F77099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "maxamp" */ = {
 			isa = XCConfigurationList;
@@ -14832,7 +14447,7 @@
 				D8B44F7B099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F7C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "extractchannel" */ = {
 			isa = XCConfigurationList;
@@ -14844,7 +14459,7 @@
 				D8B44F80099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F81099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "sndinfo" */ = {
 			isa = XCConfigurationList;
@@ -14856,7 +14471,7 @@
 				D8B44F85099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F86099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsnd" */ = {
 			isa = XCConfigurationList;
@@ -14868,7 +14483,7 @@
 				D8B44F8A099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F8B099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "recsnd" */ = {
 			isa = XCConfigurationList;
@@ -14880,7 +14495,7 @@
 				D8B44F8F099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F90099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsndfaders" */ = {
 			isa = XCConfigurationList;
@@ -14892,7 +14507,7 @@
 				D8B44F94099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F95099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MultipleSoundPlayer" */ = {
 			isa = XCConfigurationList;
@@ -14904,7 +14519,7 @@
 				D8B44F99099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F9A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscorefilemidi" */ = {
 			isa = XCConfigurationList;
@@ -14916,7 +14531,7 @@
 				D8B44F9E099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44F9F099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example1" */ = {
 			isa = XCConfigurationList;
@@ -14928,7 +14543,7 @@
 				D8B44FA3099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FA4099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example3" */ = {
 			isa = XCConfigurationList;
@@ -14940,7 +14555,7 @@
 				D8B44FA8099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FA9099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Examples Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -14952,7 +14567,7 @@
 				D8B44FAD099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FAE099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "Spectro (Application)" */ = {
 			isa = XCConfigurationList;
@@ -14964,7 +14579,7 @@
 				D8B44FB2099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FB3099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PatchCord (Application)" */ = {
 			isa = XCConfigurationList;
@@ -14976,7 +14591,7 @@
 				D8B44FB7099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FB8099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "TwoWaves (Application)" */ = {
 			isa = XCConfigurationList;
@@ -14988,7 +14603,7 @@
 				D8B44FBC099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FBD099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "ScorePlayer (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15000,7 +14615,7 @@
 				D8B44FC1099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FC2099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PianoRoll (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15012,7 +14627,7 @@
 				D8B44FC6099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FC7099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "EnvelopeEd (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15024,7 +14639,7 @@
 				D8B44FCB099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FCC099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Applications Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15036,7 +14651,7 @@
 				D8B44FD0099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FD1099617E500B5C3A4 /* Build configuration list for PBXLegacyTarget "Documentation" */ = {
 			isa = XCConfigurationList;
@@ -15048,7 +14663,7 @@
 				D8B44FD5099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FD6099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "MusicKit (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15060,7 +14675,7 @@
 				D8B44FDA099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FDB099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKSynthPatches (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15072,7 +14687,7 @@
 				D8B44FDF099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FE0099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKUnitGenerators (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15084,7 +14699,7 @@
 				D8B44FE4099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FE5099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PatchCord (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15096,7 +14711,7 @@
 				D8B44FE9099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8B44FEA099617E500B5C3A4 /* Build configuration list for PBXProject "MusicKit" */ = {
 			isa = XCConfigurationList;
@@ -15108,7 +14723,7 @@
 				D8B44FEE099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8CFD2630B5D66E0003AB3C3 /* Build configuration list for PBXNativeTarget "Metronome" */ = {
 			isa = XCConfigurationList;
@@ -15120,7 +14735,7 @@
 				D8CFD2680B5D66E0003AB3C3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 		D8FD873709F6667C001E01B4 /* Build configuration list for PBXNativeTarget "example5" */ = {
 			isa = XCConfigurationList;
@@ -15132,7 +14747,7 @@
 				D8FD873C09F6667C001E01B4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = "Intel Development";
 		};
 /* End XCConfigurationList section */
 	};
