@@ -1472,17 +1472,17 @@
 		D84E1FAD05B5E5EC002B493F /* MidiEchoController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MidiEchoController.m; path = "Examples/MidiEcho-1-MIDI-Channel/MidiEchoController.m"; sourceTree = "<group>"; };
 		D84E1FAE05B5E5EC002B493F /* README */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README; path = "Examples/MidiEcho-1-MIDI-Channel/README"; sourceTree = "<group>"; };
 		D84E211605B70643002B493F /* mixsounds */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mixsounds; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84E212F05B706BD002B493F /* cm-part.lisp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "cm-part.lisp"; path = "Examples/mixsounds/mixsounds.tproj/cm-part.lisp"; sourceTree = "<group>"; };
-		D84E213005B706BD002B493F /* common-music-example.lisp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "common-music-example.lisp"; path = "Examples/mixsounds/mixsounds.tproj/common-music-example.lisp"; sourceTree = "<group>"; };
-		D84E213105B706BD002B493F /* mixsounds_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = mixsounds_main.m; path = Examples/mixsounds/mixsounds.tproj/mixsounds_main.m; sourceTree = "<group>"; };
-		D84E213205B706BD002B493F /* README */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README; path = Examples/mixsounds/mixsounds.tproj/README; sourceTree = "<group>"; };
-		D84E213305B706BD002B493F /* testMix.score */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = testMix.score; path = Examples/mixsounds/mixsounds.tproj/testMix.score; sourceTree = "<group>"; };
-		D84E213405B706BD002B493F /* testMix2.score */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = testMix2.score; path = Examples/mixsounds/mixsounds.tproj/testMix2.score; sourceTree = "<group>"; };
-		D84E213505B706BD002B493F /* testMix3.score */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = testMix3.score; path = Examples/mixsounds/mixsounds.tproj/testMix3.score; sourceTree = "<group>"; };
+		D84E212F05B706BD002B493F /* cm-part.lisp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "cm-part.lisp"; path = "Examples/mixsounds/cm-part.lisp"; sourceTree = "<group>"; };
+		D84E213005B706BD002B493F /* common-music-example.lisp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = "common-music-example.lisp"; path = "Examples/mixsounds/common-music-example.lisp"; sourceTree = "<group>"; };
+		D84E213105B706BD002B493F /* mixsounds_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = mixsounds_main.m; path = Examples/mixsounds/mixsounds_main.m; sourceTree = "<group>"; };
+		D84E213205B706BD002B493F /* README.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README.txt; path = Examples/mixsounds/README.txt; sourceTree = "<group>"; };
+		D84E213305B706BD002B493F /* testMix.score */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = testMix.score; path = Examples/mixsounds/testMix.score; sourceTree = "<group>"; };
+		D84E213405B706BD002B493F /* testMix2.score */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = testMix2.score; path = Examples/mixsounds/testMix2.score; sourceTree = "<group>"; };
+		D84E213505B706BD002B493F /* testMix3.score */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = testMix3.score; path = Examples/mixsounds/testMix3.score; sourceTree = "<group>"; };
 		D84E218005B707F2002B493F /* maxamp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = maxamp; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84E219405B7082E002B493F /* maxamp_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = maxamp_main.m; path = Examples/mixsounds/maxamp.tproj/maxamp_main.m; sourceTree = "<group>"; };
+		D84E219405B7082E002B493F /* maxamp_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = maxamp_main.m; path = Examples/maxamp/maxamp_main.m; sourceTree = "<group>"; };
 		D84E21BF05B7087A002B493F /* extractchannel */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = extractchannel; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84E21D205B708CF002B493F /* extractchannel_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = extractchannel_main.m; path = Examples/mixsounds/extractchannel.tproj/extractchannel_main.m; sourceTree = "<group>"; };
+		D84E21D205B708CF002B493F /* extractchannel_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = extractchannel_main.m; path = Examples/extractchannel/extractchannel_main.m; sourceTree = "<group>"; };
 		D84E221305B70AED002B493F /* sndinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sndinfo; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84E222505B70B28002B493F /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Examples/sndinfo/main.m; sourceTree = "<group>"; };
 		D84E223A05B70B7F002B493F /* sndinfo.1 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.man; name = sndinfo.1; path = Examples/sndinfo/sndinfo.1; sourceTree = "<group>"; };
@@ -3181,7 +3181,7 @@
 		D84E214605B706D1002B493F /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
-				D84E213205B706BD002B493F /* README */,
+				D84E213205B706BD002B493F /* README.txt */,
 			);
 			name = Documentation;
 			sourceTree = "<group>";
