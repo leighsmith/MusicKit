@@ -74,29 +74,33 @@ ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
 #
 INSTALL_DIR=$(DSTROOT)/Library/Documentation/MusicKit
 
-#
-# Check an SGML translator has been found in the autoconf configuration process.
-# If there isn't, we want to exit gracefully rather than causing an error which will stop
-# the entire MusicKit build process.
-#
-ifeq ($(SGMLTRANS),)
-check_sgmltrans:
-	$(warning DocBook SGML translator not found, building of documentation skipped.)
-	@exit 0
-endif
-
 # 
 # The highest level and default rule if there is an SGML translator, makes everything.
 # Generates the HTML tarball. The HTML tarball will create the PDF
 # before it copies them into the HTML directory.
 #
-all: $(DOC_TARBALL_PATH)
+.PHONY: all
+all: check_sgmltrans $(DOC_TARBALL_PATH)
 
+#
+# Check an SGML translator has been found in the autoconf configuration process.
+# If there isn't, we want to exit gracefully rather than causing an error which will stop
+# the entire MusicKit build process.
+#
+.PHONY: check_sgmltrans
+check_sgmltrans:
+ifeq ($(SGMLTRANS),)
+	$(error DocBook SGML translator not found, building of documentation skipped.)
+	@exit 0
+endif
+
+.PHONY: clean
 clean:
 	-rm -rf $(HTML_TMPDIR)
 	-rm -rf $(PDF_OUTPUT_DIR) 
 
-install:: $(DOC_TARBALL_PATH) $(INSTALL_DIR)
+.PHONY: install
+install:: check_sgmltrans $(DOC_TARBALL_PATH) $(INSTALL_DIR)
 	tar -x -j -C $(INSTALL_DIR) -p -f $(DOC_TARBALL_PATH)
 	-chmod -R go-w $(INSTALL_DIR)
 	-chmod -R ugo+r $(INSTALL_DIR)
@@ -104,6 +108,7 @@ install:: $(DOC_TARBALL_PATH) $(INSTALL_DIR)
 #
 # Automate the secure uploading of the MusicKit documentation tarball to the sourceforge website.
 #
+.PHONY: upload
 upload: $(DOC_TARBALL_PATH)
 	scp $(DOC_TARBALL_PATH) $(SITEUSER)@$(SITE):$(DOC_TARBALL_FILE)
 	ssh -l $(SITEUSER) $(SITE) "tar -x -j -C $(SITEHTMLDIR) -f ~/$(DOC_TARBALL_FILE)"
