@@ -40,9 +40,9 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
   /* Provides for a power-of-2 table length with a reasonable number of samples for
      the highest component. */
 {
-  if ([anObj isKindOf:[Samples class]])
+  if ([anObj isKindOfClass: [Samples class]])
     return [[anObj sound] sampleCount];
-  else if ([anObj isKindOf:[Partials class]]) {
+  else if ([anObj isKindOfClass: [Partials class]]) {
     switch ((int)ceil([anObj highestFreqRatio] * .0625)) { /* /16 */
       case 0: return 64;    /* no partials? */
       case 1: return 128;   /* 1 to 16 */
@@ -63,9 +63,9 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 +(int)defaultTableLength:anObj
   /* Provides for a power-of-2 table length */
 {
-  if ([anObj isKindOf:_MKClassPartials()])
+  if ([anObj isKindOfClass: _MKClassPartials()])
     return 128;
-  if ([anObj isKindOf:_MKClassSamples()])
+  if ([anObj isKindOfClass: _MKClassSamples()])
     return [[anObj sound] sampleCount];
   else if ([anObj respondsTo:@selector(length)])
     return (int)[anObj length];

@@ -884,6 +884,10 @@
 		D8E1DE1107CA7A880018F8F3 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D8E1DE1207CA7A880018F8F3 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D8E1DE4507CAC0290018F8F3 /* MultipleSoundPlayer.nib in Resources */ = {isa = PBXBuildFile; fileRef = D8E1DE4307CAC0290018F8F3 /* MultipleSoundPlayer.nib */; };
+		D8E31F100FA7A1680049DC04 /* _exportedPrivateMusickit.h in Headers */ = {isa = PBXBuildFile; fileRef = D8E31F0D0FA7A1680049DC04 /* _exportedPrivateMusickit.h */; };
+		D8E31F110FA7A1680049DC04 /* _unitGeneratorInclude.h in Headers */ = {isa = PBXBuildFile; fileRef = D8E31F0E0FA7A1680049DC04 /* _unitGeneratorInclude.h */; };
+		D8E31F120FA7A1680049DC04 /* timings.h in Headers */ = {isa = PBXBuildFile; fileRef = D8E31F0F0FA7A1680049DC04 /* timings.h */; };
+		D8E31F160FA7A1850049DC04 /* ugUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D8E31F150FA7A1850049DC04 /* ugUtilities.m */; };
 		D8E8D5C6078463D400AAE755 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = D8E8D5C0078463D400AAE755 /* Controller.m */; };
 		D8E8D5CA078463D400AAE755 /* EnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = D8E8D5C4078463D400AAE755 /* EnvelopeView.m */; };
 		D8E8D5CE078463FB00AAE755 /* EnvelopeEd_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8E8D5CD078463FB00AAE755 /* EnvelopeEd_main.m */; };
@@ -910,14 +914,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D886C3D40FA64809000AC7C4 /* playscorefile2 */;
+			remoteGlobalIDString = D886C3D40FA64809000AC7C4;
 			remoteInfo = playscorefile2;
 		};
 		D80151FF0FA79A6E002FB882 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D80151BE0FA64B24002FB882 /* playpart */;
+			remoteGlobalIDString = D80151BE0FA64B24002FB882;
 			remoteInfo = playpart;
 		};
 		D80DA5CA0764E4250052DFAF /* PBXContainerItemProxy */ = {
@@ -2013,6 +2017,10 @@
 		D8E1DE0007CA797C0018F8F3 /* SoundPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SoundPlayerController.m; path = Examples/MultipleSoundPlayer/SoundPlayerController.m; sourceTree = "<group>"; };
 		D8E1DE0507CA79950018F8F3 /* MultipleSoundPlayer_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MultipleSoundPlayer_main.m; path = Examples/MultipleSoundPlayer/MultipleSoundPlayer_main.m; sourceTree = "<group>"; };
 		D8E1DE4407CAC0290018F8F3 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Examples/MultipleSoundPlayer/English.lproj/MultipleSoundPlayer-macosx.nib"; sourceTree = "<group>"; };
+		D8E31F0D0FA7A1680049DC04 /* _exportedPrivateMusickit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _exportedPrivateMusickit.h; path = Frameworks/MKUnitGenerators/_exportedPrivateMusickit.h; sourceTree = "<group>"; };
+		D8E31F0E0FA7A1680049DC04 /* _unitGeneratorInclude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _unitGeneratorInclude.h; path = Frameworks/MKUnitGenerators/_unitGeneratorInclude.h; sourceTree = "<group>"; };
+		D8E31F0F0FA7A1680049DC04 /* timings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timings.h; path = Frameworks/MKUnitGenerators/timings.h; sourceTree = "<group>"; };
+		D8E31F150FA7A1850049DC04 /* ugUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ugUtilities.m; path = Frameworks/MKUnitGenerators/ugUtilities.m; sourceTree = "<group>"; };
 		D8E8D5BF078463D400AAE755 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Controller.h; path = Applications/EnvelopeEd/Controller.h; sourceTree = "<group>"; };
 		D8E8D5C0078463D400AAE755 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Controller.m; path = Applications/EnvelopeEd/Controller.m; sourceTree = "<group>"; };
 		D8E8D5C3078463D400AAE755 /* EnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = EnvelopeView.h; path = Applications/EnvelopeEd/EnvelopeView.h; sourceTree = "<group>"; };
@@ -3623,6 +3631,9 @@
 		D85F90E607DFE8A9009DC57B /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				D8E31F0D0FA7A1680049DC04 /* _exportedPrivateMusickit.h */,
+				D8E31F0E0FA7A1680049DC04 /* _unitGeneratorInclude.h */,
+				D8E31F0F0FA7A1680049DC04 /* timings.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -3630,6 +3641,7 @@
 		D85F90E907DFE8B1009DC57B /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D8E31F150FA7A1850049DC04 /* ugUtilities.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -5093,8 +5105,8 @@
 				D8DB4E77059FA17D00624233 /* SndKit */,
 				D8DB4E7C059FA18600624233 /* MKDSP */,
 				D8DB4E7F059FA19300624233 /* MusicKit */,
-				D8DB4E85059FA1C100624233 /* MKSynthPatches */,
 				D8DB4E82059FA1B700624233 /* MKUnitGenerators */,
+				D8DB4E85059FA1C100624233 /* MKSynthPatches */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -5628,6 +5640,9 @@
 				D85F90DE07DFE884009DC57B /* SnoiseUG.h in Headers */,
 				D85F90E007DFE884009DC57B /* TablookiUG.h in Headers */,
 				D85F90E207DFE884009DC57B /* UnoiseUG.h in Headers */,
+				D8E31F100FA7A1680049DC04 /* _exportedPrivateMusickit.h in Headers */,
+				D8E31F110FA7A1680049DC04 /* _unitGeneratorInclude.h in Headers */,
+				D8E31F120FA7A1680049DC04 /* timings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7227,6 +7242,7 @@
 				D85F90DF07DFE884009DC57B /* SnoiseUG.m in Sources */,
 				D85F90E107DFE884009DC57B /* TablookiUG.m in Sources */,
 				D85F90E307DFE884009DC57B /* UnoiseUG.m in Sources */,
+				D8E31F160FA7A1850049DC04 /* ugUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

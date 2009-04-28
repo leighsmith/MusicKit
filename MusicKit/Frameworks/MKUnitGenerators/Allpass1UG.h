@@ -41,8 +41,19 @@ H(z) =  ---------
 </PRE>
 
 where bb0 is the filter coefficient.  Thus, the pole is at -bb0 and the zero is
-at -1/bb0.  The difference equation used to implement the filter in the DSP
-is
+at -1/bb0.  
+ 
+In pseudo-C notation:
+
+ <PRE>
+ for (n = 0; n < I_NTICK; n++) {
+    t = sinp:ainp[n] - bb0 * s;
+    sout:aout[n] = bb0 * t + s;
+    s = t;
+ }
+ </PRE>
+ 
+The difference equation used to implement the filter in the DSP is:
 
 <PRE>
 y(n) = bb0 * x(n) + x(n-1) - bb0 * y(n-1); 

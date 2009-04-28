@@ -302,8 +302,8 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
     if (!aLength || (aLength==MAXINT)) 
       aLength = [[self class] defaultTableLength:anObj];
     /* Currently, Samples objects cannot do resampling on the fly. */
-    if ([anObj isKindOf:[MKWaveTable class]]) {
-	if ([anObj isKindOf:[MKSamples class]])
+    if ([anObj isKindOfClass: [MKWaveTable class]]) {
+	if ([anObj isKindOfClass: [MKSamples class]])
 	  aLength = [[anObj sound] sampleCount];
 	/* First see if memory with this table in it already exists. */
 	synthData = [orchestra sharedSynthDataFor:anObj segment:tableSegment 
@@ -337,7 +337,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	}
 	_table = synthData;
     }
-    else if ([anObj isKindOf:[MKSynthData class]]) {
+    else if ([anObj isKindOfClass: [MKSynthData class]]) {
 	synthData = anObj;
 	if (aLength > [synthData length])  /* Moved by DAJ */
 	  aLength = [synthData length];

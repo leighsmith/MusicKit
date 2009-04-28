@@ -372,7 +372,7 @@ an envelope, returns MK_NODVAL. */
   if (param->_uType == MK_envelope)
     env = param->_uVal.symbol;
   else return MK_NODVAL;
-  if ((![env isKindOfClass:_MKClassEnvelope()]) ||
+  if ((![env isKindOfClass: _MKClassEnvelope()]) ||
       ([env getNth:0 x:&dummy y:&rtn smoothing:&dummy2] <MK_noEnvError))
     return MK_NODVAL;
   return rtn;

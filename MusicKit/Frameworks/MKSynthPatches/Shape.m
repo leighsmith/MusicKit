@@ -150,7 +150,7 @@ static int
   [table dealloc];  /* Deallocate or release claim on previous, but
 		     * only if we allocated it
 		     */
-  if ([wt isKindOfClass:[MKWaveTable class]]) {  
+  if ([wt isKindOfClass: [MKWaveTable class]]) {  
       if (wt) {
 	  table = [orchestra sharedSynthDataFor:wt segment:MK_xData
 		 type:MK_waveshapingTable];

@@ -1360,7 +1360,7 @@ outOfLoop:
   if (i == NSNotFound)
       return nil;
   [self removePart: oldPart];
-  if ((!newPart) || ([newPart score] == self) || ![newPart isKindOfClass:[MKPart class]])
+  if ((!newPart) || ([newPart score] == self) || ![newPart isKindOfClass: [MKPart class]])
       return nil;
   [newPart _setScore: self];
   [parts insertObject: newPart atIndex: i];

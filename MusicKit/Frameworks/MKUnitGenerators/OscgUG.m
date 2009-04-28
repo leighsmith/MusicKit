@@ -197,9 +197,9 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 #if 0
 +(int)defaultTableLength:anObj
 {
-    if ([anObj isKindOf:[Samples class]])
+    if ([anObj isKindOfClass: [Samples class]])
       return [[anObj sound] sampleCount];
-    else if ([anObj isKindOf:[Partials class]]) {
+    else if ([anObj isKindOfClass: [Partials class]]) {
 	switch ((int)ceil([anObj highestFreqRatio]/16)) {
 	  case 0: return 64;    /* no partials? */
 	  case 1: return 256;   /* 1 to 16  */
@@ -216,9 +216,9 @@ enum _args { atab, mtab, amp, aout, inc, phs};
   /* Provides for a power-of-2 table length with a reasonable number 
      of samples for the highest component. */
 {
-    if ([anObj isKindOf:_MKClassPartials()]) 
+    if ([anObj isKindOfClass: _MKClassPartials()]) 
       return 256;
-    else if ([anObj isKindOf:_MKClassSamples()])
+    else if ([anObj isKindOfClass: _MKClassSamples()])
       return [[anObj sound] sampleCount];
     else if ([anObj respondsTo:@selector(length)])
       return (int)[anObj length];
@@ -267,8 +267,8 @@ enum _args { atab, mtab, amp, aout, inc, phs};
     if (!aLength || (aLength==MAXINT)) 
       aLength = [[self class] defaultTableLength:anObj];
     /* Currently, Samples objects cannot do resampling on the fly. */
-    if ([anObj isKindOf:[MKWaveTable class]]) {
-	if ([anObj isKindOf:[MKSamples class]])
+    if ([anObj isKindOfClass: [MKWaveTable class]]) {
+	if ([anObj isKindOfClass: [MKSamples class]])
 	  aLength = [[anObj sound] sampleCount];
 	/* First see if memory with this table in it already exists. */
 	synthData = [orchestra sharedSynthDataFor:anObj segment:tableSegment 
@@ -301,7 +301,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	}
 	_table = synthData;
     }
-    else if ([anObj isKindOf:[MKSynthData class]]) {
+    else if ([anObj isKindOfClass: [MKSynthData class]]) {
 	synthData = anObj;
 	if (aLength > [synthData length])  /* Moved by DAJ */
 	  aLength = [synthData length];

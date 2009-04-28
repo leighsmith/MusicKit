@@ -137,8 +137,8 @@ extern id MKGetNamedObject(NSString *name);
   If there is already a global scorefile object with the specified name, 
   does nothing and returns NO. Otherwise returns YES. 
   The type of the object in the scorefile is determined as follows:
-  If object -isKindOf:MKWaveTable, then the type is MK_waveTable.
-  If object -isKindOf:MKEnvelope, then the type is MK_envelope.
+  If object -isKindOfClass: MKWaveTable, then the type is MK_waveTable.
+  If object -isKindOfClass: MKEnvelope, then the type is MK_envelope.
   Otherwise, the type is MK_object.
   Note that the global scorefile table is independent of the MusicKit
   name table. Thus, an object can be named in one and unnamed in the other,

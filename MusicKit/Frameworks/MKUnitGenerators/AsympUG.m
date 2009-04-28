@@ -281,7 +281,7 @@ static id setT60(AsympUG *self,double seconds)
 	  [self abortEnvelope];
 	  return nil;
       }
-    if (![anEnvelope isKindOf:_MKClassEnvelope()])
+    if (![anEnvelope isKindOfClass: _MKClassEnvelope()])
       return nil;
     if (_msgPtr)
       _msgPtr = [_MKClassConductor() _cancelMsgRequest:_msgPtr];

@@ -245,8 +245,7 @@ static id findKeyObjFor(double yScale,double yOffset,double timeScale,
       keyHashTable = [[HashTable alloc] init];
     if (!lookupObj)
       lookupObj = [[_EnvKey alloc] init];
-    [lookupObj _setVals:yScale :yOffset :timeScale :releaseTimeScale 
-     :func :env];
+    [lookupObj _setVals:yScale :yOffset :timeScale :releaseTimeScale :func :env];
     valObj = [keyHashTable valueForKey:lookupObj];
     if (valObj) 
       return valObj;

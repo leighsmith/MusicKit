@@ -1621,7 +1621,7 @@ static void copyPars(toObj,fromObj,override)
        value from toObj takes priority. */
     _MKParameter *aPar;
     NSHashEnumerator state;
-    if ((!fromObj) || (!toObj) || (![fromObj isKindOfClass:noteClass]))
+    if ((!fromObj) || (!toObj) || (![fromObj isKindOfClass: noteClass]))
         return;
     if (!fromObj->_parameters)
         return;
@@ -1641,7 +1641,7 @@ static void copyPars(toObj,fromObj,override)
 -(BOOL)isEqual:aNote
    /* MKNotes are considered 'equal' if their noteTags are the same. */
 {
-   return [aNote isKindOfClass:noteClass] && (((MKNote *)aNote)->noteTag == noteTag);
+   return [aNote isKindOfClass: noteClass] && (((MKNote *)aNote)->noteTag == noteTag);
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

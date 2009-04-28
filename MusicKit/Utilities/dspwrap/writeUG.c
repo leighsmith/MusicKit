@@ -44,7 +44,7 @@ Modification history:
 
 #import <libc.h>
 #import <strings.h>
-#import <c.h>
+/* #import <c.h> */
 #import <ctype.h>
 #import <sys/file.h>
 #import <MKDSP/dsp.h>

@@ -92,11 +92,14 @@ extern MKEnvStatus _MKGetEnvelopeNth(id self,int n,double *xPtr,double *yPtr,
 #define _MK_ERRTAB _MKErrorStringFile()
 
 #import <Foundation/NSObject.h>
-@interface musickitprivatemsgs:Object
+
+@interface musickitprivatemsgs: NSObject
+
 +(MKMsgStruct *) _cancelMsgRequest:(MKMsgStruct *)aMsgStructPtr;
 +(MKMsgStruct *) _newMsgRequestAtTime:(double )timeOfMsg sel:(SEL )whichSelector to:destinationObject argCount:(int )argCount, ...;
 -(void ) _scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr;
 -(MKMsgStruct *) _rescheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr atTime:(double )timeOfNewMsg sel:(SEL )whichSelector to:destinationObject argCount:(int )argCount, ...;
+
 @end
 
 #endif

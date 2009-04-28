@@ -12,32 +12,8 @@ Modification history:
 #import <MusicKit/MusicKit.h>
 #import "_unitGeneratorInclude.h"
 #import "Allpass1UG.h"
-@implementation Allpass1UG:MKUnitGenerator
-{}
-  /* First order all pass filter.
-	You instantiate a subclass of the form 
-	Allpass1UG<a><b>, where 
-	<a> = space of output
-	<b> = space of input
 
-      The allpass1 unit-generator implements a one-pole, one-zero
-      allpass filter section in direct form. 
-
-	The transfer function implemented is
-
-		bb0 + 1/z
-	H(z) =	---------
-		1 + bb0/z
-
-	In pseudo-C notation:
-
-      for (n=0;n<I_NTICK;n++) {
-         t = sinp:ainp[n] - bb0*s;
-         sout:aout[n] = bb0*t + s;
-         s = t;
-      }
-
-      */
+@implementation Allpass1UG
 
 enum args { ainp, bb0, aout, s};
 

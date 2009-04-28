@@ -325,6 +325,7 @@ release notes for the latest information on supported drivers.
 #define __MK_Orchestra_H___
 
 #import <Foundation/Foundation.h>
+#import <SndKit/SndKit.h>
 #import "orch.h"
 #import "MKDeviceStatus.h"
 #import "MKSynthData.h"
@@ -1605,6 +1606,15 @@ extern void MKSetPreemptDuration(double seconds);
   @return Returns an id.
 */
 - setDefaultSoundOut;
+
+/*!
+  @brief Returns the version and release characters of the DSP monitor.
+ 
+  version is a pointer to a single character.  No NULL is appended.
+  release is a pointer to a single character.  No NULL is appended.
+  @return Returns nil if not open.
+ */
+- getMonitorVersion: (char *) versionP release: (int *) releaseP;
 
 /*!
  @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.

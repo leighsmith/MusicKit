@@ -462,8 +462,8 @@ BOOL MKAddGlobalScorefileObject(id object,NSString *name)
  * The object does not become visible to scorefiles unless they explicitly
  * do a call of getGlobal.
  * The type of the object in the scorefile is determined as follows:
- * * If object isKindOf:[MKWaveTable class], then the type is MK_waveTable.
- * * If object isKindOf:[MKEnvelope class], then the type is MK_envelope.
+ * * If object isKindOfClass: [MKWaveTable class], then the type is MK_waveTable.
+ * * If object isKindOfClass: [MKEnvelope class], then the type is MK_envelope.
  * * Otherwise, the type is MK_object.
  */
 {
@@ -471,8 +471,8 @@ BOOL MKAddGlobalScorefileObject(id object,NSString *name)
   if (!object || !name)
     return NO;
   if (![name length]) return NO;
-  type = ([object isKindOfClass:[MKEnvelope class]]) ? MK_envelope :
-    ([object isKindOfClass:[MKWaveTable class]]) ? MK_waveTable : MK_object;
+  type = ([object isKindOfClass: [MKEnvelope class]]) ? MK_envelope :
+    ([object isKindOfClass: [MKWaveTable class]]) ? MK_waveTable : MK_object;
   if (!globalParseNameTable)
     _MKCheckInit();
   _MKNameTableAddName(globalParseNameTable,name,nil,object, type | _MK_BACKHASHBIT,YES);
