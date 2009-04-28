@@ -57,9 +57,12 @@
 				D8E1DE1407CA7AAD0018F8F3 /* PBXTargetDependency */,
 				D8E1DE1607CA7AAD0018F8F3 /* PBXTargetDependency */,
 				D8D1B6B0081249CC00D9156A /* PBXTargetDependency */,
+				D834DA790FA6456300EEBC03 /* PBXTargetDependency */,
+				D80151B10FA64A37002FB882 /* PBXTargetDependency */,
 				D8D1B6A00812473C00D9156A /* PBXTargetDependency */,
 				D8684F6F081CA87700926058 /* PBXTargetDependency */,
 				D8A1DC1D09F64DCF0094B3F5 /* PBXTargetDependency */,
+				D80152000FA79A6E002FB882 /* PBXTargetDependency */,
 			);
 			name = "Examples Only (Aggregate)";
 			productName = "Examples (Aggregate)";
@@ -144,6 +147,21 @@
 		D800203E0763779300508A26 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D80032580819F0C600E47C6C /* MidiEcho.icns in Resources */ = {isa = PBXBuildFile; fileRef = D80032570819F0C600E47C6C /* MidiEcho.icns */; };
 		D800325D0819F52E00E47C6C /* midi.icns in Resources */ = {isa = PBXBuildFile; fileRef = D800325C0819F52E00E47C6C /* midi.icns */; };
+		D80151C60FA64B31002FB882 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
+		D80151C70FA64B31002FB882 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D80151C80FA64B31002FB882 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D80151C90FA64B31002FB882 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D80151CF0FA64B77002FB882 /* playpart.m in Sources */ = {isa = PBXBuildFile; fileRef = D80151CD0FA64B77002FB882 /* playpart.m */; };
+		D80151D00FA64B77002FB882 /* playpart_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D80151CE0FA64B77002FB882 /* playpart_main.m */; };
+		D80151D90FA64D26002FB882 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
+		D80151DA0FA64D26002FB882 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D80151DB0FA64D26002FB882 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D80151DC0FA64D26002FB882 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D80151DD0FA64D47002FB882 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
+		D80151DE0FA64D47002FB882 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D80151DF0FA64D47002FB882 /* MKUnitGenerators.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D85F905207DFE7D4009DC57B /* MKUnitGenerators.framework */; };
+		D80151E00FA64D47002FB882 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D80151E10FA64D47002FB882 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D804E064063DB32C0098E73C /* SndPlaying.m in Sources */ = {isa = PBXBuildFile; fileRef = D804E063063DB32C0098E73C /* SndPlaying.m */; };
 		D80DA57D0764C8A20052DFAF /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D80DA57E0764C8A20052DFAF /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -263,7 +281,7 @@
 		D825573D05A2163400B0192B /* PartRecorderPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572005A2163400B0192B /* PartRecorderPrivate.h */; };
 		D825573E05A2163400B0192B /* PatchTemplatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572105A2163400B0192B /* PatchTemplatePrivate.h */; };
 		D825573F05A2163400B0192B /* PerformerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572205A2163400B0192B /* PerformerPrivate.h */; };
-		D825574005A2163400B0192B /* pitches.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572305A2163400B0192B /* pitches.h */; };
+		D825574005A2163400B0192B /* pitches.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572305A2163400B0192B /* pitches.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D825574105A2163400B0192B /* ScorefilePerformerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572405A2163400B0192B /* ScorefilePerformerPrivate.h */; };
 		D825574205A2163400B0192B /* ScorePerformerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572505A2163400B0192B /* ScorePerformerPrivate.h */; };
 		D825574305A2163400B0192B /* ScorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D825572605A2163400B0192B /* ScorePrivate.h */; };
@@ -349,6 +367,10 @@
 		D828FA050780CDEF00215EB9 /* PianoRoll.icns in Resources */ = {isa = PBXBuildFile; fileRef = D828FA030780CDEF00215EB9 /* PianoRoll.icns */; };
 		D828FA060780CDEF00215EB9 /* PianoRoll.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828FA040780CDEF00215EB9 /* PianoRoll.tiff */; };
 		D828FA410780CFD200215EB9 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D834DA7C0FA6467000EEBC03 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
+		D834DA7D0FA6467000EEBC03 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D834DA7E0FA6467000EEBC03 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D834DA7F0FA6467000EEBC03 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D837AB8806C80F4F00A6CFEB /* Juno106.h in Headers */ = {isa = PBXBuildFile; fileRef = D837AB8606C80F4F00A6CFEB /* Juno106.h */; };
 		D837AB8906C80F4F00A6CFEB /* Juno106.m in Sources */ = {isa = PBXBuildFile; fileRef = D837AB8706C80F4F00A6CFEB /* Juno106.m */; };
 		D837AB9E06C80F8C00A6CFEB /* 24bitJunoSwitchDown.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D837AB9506C80F8B00A6CFEB /* 24bitJunoSwitchDown.tiff */; };
@@ -621,6 +643,11 @@
 		D8831D320AE6BA6C00201B3D /* SpectroController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8831D300AE6BA6C00201B3D /* SpectroController.m */; };
 		D8831D380AE6D50500201B3D /* TwoWaves.icns in Resources */ = {isa = PBXBuildFile; fileRef = D8831D360AE6D50500201B3D /* TwoWaves.icns */; };
 		D8831D390AE6D50500201B3D /* TwoWaves.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8831D370AE6D50500201B3D /* TwoWaves.tiff */; };
+		D886C3DC0FA64816000AC7C4 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
+		D886C3DD0FA64816000AC7C4 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D886C3DE0FA64816000AC7C4 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D886C3DF0FA64816000AC7C4 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D886C3E40FA64851000AC7C4 /* playscorefile2.m in Sources */ = {isa = PBXBuildFile; fileRef = D886C3E30FA64851000AC7C4 /* playscorefile2.m */; };
 		D88C505106C7E4C900D33D99 /* Bank.h in Headers */ = {isa = PBXBuildFile; fileRef = D88C503F06C7E4C800D33D99 /* Bank.h */; };
 		D88C505206C7E4C900D33D99 /* Bank.m in Sources */ = {isa = PBXBuildFile; fileRef = D88C504006C7E4C800D33D99 /* Bank.m */; };
 		D88C505306C7E4C900D33D99 /* InfoPanelController.h in Headers */ = {isa = PBXBuildFile; fileRef = D88C504106C7E4C800D33D99 /* InfoPanelController.h */; };
@@ -879,6 +906,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D80151B00FA64A37002FB882 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D886C3D40FA64809000AC7C4 /* playscorefile2 */;
+			remoteInfo = playscorefile2;
+		};
+		D80151FF0FA79A6E002FB882 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D80151BE0FA64B24002FB882 /* playpart */;
+			remoteInfo = playpart;
+		};
 		D80DA5CA0764E4250052DFAF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
@@ -892,6 +933,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D8D1B73B0817D2B000D9156A;
 			remoteInfo = Documentation;
+		};
+		D834DA780FA6456300EEBC03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D81589A00F90EDC200E38A7D;
+			remoteInfo = playscorefile;
 		};
 		D844A7B607C7F2AA0086A55B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1189,6 +1237,10 @@
 /* Begin PBXFileReference section */
 		D80032570819F0C600E47C6C /* MidiEcho.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MidiEcho.icns; path = Examples/MidiEcho/MidiEcho.icns; sourceTree = "<group>"; };
 		D800325C0819F52E00E47C6C /* midi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = midi.icns; path = Examples/MidiFilePlayback/midi.icns; sourceTree = "<group>"; };
+		D80151BF0FA64B24002FB882 /* playpart */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playpart; sourceTree = BUILT_PRODUCTS_DIR; };
+		D80151CD0FA64B77002FB882 /* playpart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playpart.m; path = Examples/playpart/playpart.m; sourceTree = "<group>"; };
+		D80151CE0FA64B77002FB882 /* playpart_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playpart_main.m; path = Examples/playpart/playpart_main.m; sourceTree = "<group>"; };
+		D80151D50FA64BAD002FB882 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Examples/playpart/README.txt; sourceTree = "<group>"; };
 		D804E063063DB32C0098E73C /* SndPlaying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPlaying.m; path = Frameworks/SndKit/SndPlaying.m; sourceTree = "<group>"; };
 		D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsCore.framework; path = Library/PrivateFrameworks/DevToolsCore.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsSupport.framework; path = Library/PrivateFrameworks/DevToolsSupport.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
@@ -1706,6 +1758,9 @@
 		D8831D300AE6BA6C00201B3D /* SpectroController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SpectroController.m; path = Applications/Spectro/SpectroController.m; sourceTree = "<group>"; };
 		D8831D360AE6D50500201B3D /* TwoWaves.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = TwoWaves.icns; path = Applications/TwoWaves/TwoWaves.icns; sourceTree = "<group>"; };
 		D8831D370AE6D50500201B3D /* TwoWaves.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = TwoWaves.tiff; path = Applications/TwoWaves/TwoWaves.tiff; sourceTree = "<group>"; };
+		D886C3D50FA64809000AC7C4 /* playscorefile2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playscorefile2; sourceTree = BUILT_PRODUCTS_DIR; };
+		D886C3E30FA64851000AC7C4 /* playscorefile2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playscorefile2.m; path = Examples/playscorefile2/playscorefile2.m; sourceTree = "<group>"; };
+		D886C3E70FA64871000AC7C4 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Examples/playscorefile2/README.txt; sourceTree = "<group>"; };
 		D88C502906C7E37100D33D99 /* PatchCord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PatchCord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D88C502B06C7E37200D33D99 /* PatchCord-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PatchCord-Info.plist"; path = "Applications/PatchCord/PatchCord-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D88C503F06C7E4C800D33D99 /* Bank.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Bank.h; path = Applications/PatchCord/Bank.h; sourceTree = "<group>"; };
@@ -1987,10 +2042,25 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D80151BD0FA64B24002FB882 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D80151C60FA64B31002FB882 /* MKDSP.framework in Frameworks */,
+				D80151C70FA64B31002FB882 /* MKPerformSndMIDI.framework in Frameworks */,
+				D80151C80FA64B31002FB882 /* MusicKit.framework in Frameworks */,
+				D80151C90FA64B31002FB882 /* SndKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D815899F0F90EDC200E38A7D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D834DA7C0FA6467000EEBC03 /* MKDSP.framework in Frameworks */,
+				D834DA7D0FA6467000EEBC03 /* MKPerformSndMIDI.framework in Frameworks */,
+				D834DA7E0FA6467000EEBC03 /* MusicKit.framework in Frameworks */,
+				D834DA7F0FA6467000EEBC03 /* SndKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2168,6 +2238,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D80151D90FA64D26002FB882 /* MKDSP.framework in Frameworks */,
+				D80151DA0FA64D26002FB882 /* MKPerformSndMIDI.framework in Frameworks */,
+				D80151DB0FA64D26002FB882 /* MusicKit.framework in Frameworks */,
+				D80151DC0FA64D26002FB882 /* SndKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2298,6 +2372,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D886C3D30FA64809000AC7C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D886C3DC0FA64816000AC7C4 /* MKDSP.framework in Frameworks */,
+				D886C3DD0FA64816000AC7C4 /* MKPerformSndMIDI.framework in Frameworks */,
+				D886C3DE0FA64816000AC7C4 /* MusicKit.framework in Frameworks */,
+				D886C3DF0FA64816000AC7C4 /* SndKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D88C502706C7E37100D33D99 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2338,6 +2423,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D80151DD0FA64D47002FB882 /* MKDSP.framework in Frameworks */,
+				D80151DE0FA64D47002FB882 /* MKPerformSndMIDI.framework in Frameworks */,
+				D80151DF0FA64D47002FB882 /* MKUnitGenerators.framework in Frameworks */,
+				D80151E00FA64D47002FB882 /* MusicKit.framework in Frameworks */,
+				D80151E10FA64D47002FB882 /* SndKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2384,6 +2474,23 @@
 				D80032570819F0C600E47C6C /* MidiEcho.icns */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		D80151B60FA64B00002FB882 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				D80151D50FA64BAD002FB882 /* README.txt */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+		D80151B90FA64B0D002FB882 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D80151CD0FA64B77002FB882 /* playpart.m */,
+				D80151CE0FA64B77002FB882 /* playpart_main.m */,
+			);
+			name = "Other Sources";
 			sourceTree = "<group>";
 		};
 		D80D48720B5D6523002E9A64 /* Classes */ = {
@@ -3047,6 +3154,8 @@
 				D8CFD2490B5D66DF003AB3C3 /* metronome.app */,
 				D86986A00ED9CA0E00E90F3F /* SndViewPlugin.bundle */,
 				D81589A10F90EDC200E38A7D /* playscorefile */,
+				D886C3D50FA64809000AC7C4 /* playscorefile2 */,
+				D80151BF0FA64B24002FB882 /* playpart */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3806,6 +3915,8 @@
 		D86D24B206F2AB53003565CB /* playpart */ = {
 			isa = PBXGroup;
 			children = (
+				D80151B60FA64B00002FB882 /* Documentation */,
+				D80151B90FA64B0D002FB882 /* Other Sources */,
 			);
 			name = playpart;
 			sourceTree = "<group>";
@@ -3822,6 +3933,8 @@
 		D86D24BA06F2AB74003565CB /* playscorefile2 */ = {
 			isa = PBXGroup;
 			children = (
+				D886C3CC0FA647E1000AC7C4 /* Documentation */,
+				D886C3CF0FA647EF000AC7C4 /* Other Sources */,
 			);
 			name = playscorefile2;
 			sourceTree = "<group>";
@@ -4485,6 +4598,22 @@
 				D8831D370AE6D50500201B3D /* TwoWaves.tiff */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		D886C3CC0FA647E1000AC7C4 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				D886C3E70FA64871000AC7C4 /* README.txt */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+		D886C3CF0FA647EF000AC7C4 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D886C3E30FA64851000AC7C4 /* playscorefile2.m */,
+			);
+			name = "Other Sources";
 			sourceTree = "<group>";
 		};
 		D88C4FF206C7E0DE00D33D99 /* PatchCord */ = {
@@ -5659,6 +5788,22 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		D80151BE0FA64B24002FB882 /* playpart */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D80151CC0FA64B6A002FB882 /* Build configuration list for PBXNativeTarget "playpart" */;
+			buildPhases = (
+				D80151BC0FA64B24002FB882 /* Sources */,
+				D80151BD0FA64B24002FB882 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = playpart;
+			productName = playpart;
+			productReference = D80151BF0FA64B24002FB882 /* playpart */;
+			productType = "com.apple.product-type.tool";
+		};
 		D81589A00F90EDC200E38A7D /* playscorefile */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D81589AA0F90EDEF00E38A7D /* Build configuration list for PBXNativeTarget "playscorefile" */;
@@ -6206,6 +6351,22 @@
 			productReference = D879C3C005A2B47F005DB251 /* SndViewP.palette */;
 			productType = "com.apple.product-type.bundle";
 		};
+		D886C3D40FA64809000AC7C4 /* playscorefile2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D886C3E20FA64847000AC7C4 /* Build configuration list for PBXNativeTarget "playscorefile2" */;
+			buildPhases = (
+				D886C3D20FA64809000AC7C4 /* Sources */,
+				D886C3D30FA64809000AC7C4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = playscorefile2;
+			productName = playscorefile2;
+			productReference = D886C3D50FA64809000AC7C4 /* playscorefile2 */;
+			productType = "com.apple.product-type.tool";
+		};
 		D88C502806C7E37100D33D99 /* PatchCord (Application) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8B44FB3099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PatchCord (Application)" */;
@@ -6410,6 +6571,8 @@
 				D844A7C807C827CD0086A55B /* playsndfaders */,
 				D8D1B6A80812492700D9156A /* playscorefilemidi */,
 				D81589A00F90EDC200E38A7D /* playscorefile */,
+				D886C3D40FA64809000AC7C4 /* playscorefile2 */,
+				D80151BE0FA64B24002FB882 /* playpart */,
 				D8A1DC0109F64B3E0094B3F5 /* mixscorefiles */,
 				D8E1DDF907CA78B40018F8F3 /* MultipleSoundPlayer */,
 				D85A2F49061F347D0065380E /* Spectro (Application) */,
@@ -6738,6 +6901,15 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D80151BC0FA64B24002FB882 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D80151CF0FA64B77002FB882 /* playpart.m in Sources */,
+				D80151D00FA64B77002FB882 /* playpart_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D815899E0F90EDC200E38A7D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7161,6 +7333,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D886C3D20FA64809000AC7C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D886C3E40FA64851000AC7C4 /* playscorefile2.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D88C502606C7E37100D33D99 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7302,6 +7482,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D80151B10FA64A37002FB882 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D886C3D40FA64809000AC7C4 /* playscorefile2 */;
+			targetProxy = D80151B00FA64A37002FB882 /* PBXContainerItemProxy */;
+		};
+		D80152000FA79A6E002FB882 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D80151BE0FA64B24002FB882 /* playpart */;
+			targetProxy = D80151FF0FA79A6E002FB882 /* PBXContainerItemProxy */;
+		};
 		D80DA5CB0764E4250052DFAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D84E221205B70AED002B493F /* sndinfo */;
@@ -7311,6 +7501,11 @@
 			isa = PBXTargetDependency;
 			target = D8D1B73B0817D2B000D9156A /* Documentation */;
 			targetProxy = D8306766082C5F2B00BCA5C1 /* PBXContainerItemProxy */;
+		};
+		D834DA790FA6456300EEBC03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D81589A00F90EDC200E38A7D /* playscorefile */;
+			targetProxy = D834DA780FA6456300EEBC03 /* PBXContainerItemProxy */;
 		};
 		D844A7B707C7F2AA0086A55B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7922,15 +8117,116 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		D81589A30F90EDC300E38A7D /* Development */ = {
+		D80151C10FA64B25002FB882 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playpart;
+			};
+			name = Development;
+		};
+		D80151C20FA64B25002FB882 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playpart;
+			};
+			name = "Intel Development";
+		};
+		D80151C30FA64B25002FB882 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playpart;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D80151C40FA64B25002FB882 /* Embedded */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playpart;
+			};
+			name = Embedded;
+		};
+		D80151C50FA64B25002FB882 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playpart;
+			};
+			name = Default;
+		};
+		D81589A30F90EDC300E38A7D /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = /usr/local/bin;
@@ -9339,6 +9635,111 @@
 				PRODUCT_NAME = SndViewPlugin;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
+			};
+			name = Default;
+		};
+		D886C3D70FA6480A000AC7C4 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile2;
+			};
+			name = Development;
+		};
+		D886C3D80FA6480A000AC7C4 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile2;
+			};
+			name = "Intel Development";
+		};
+		D886C3D90FA6480A000AC7C4 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile2;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D886C3DA0FA6480A000AC7C4 /* Embedded */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile2;
+			};
+			name = Embedded;
+		};
+		D886C3DB0FA6480A000AC7C4 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = playscorefile2;
 			};
 			name = Default;
 		};
@@ -12245,7 +12646,6 @@
 					"-framework",
 					AppKit,
 				);
-				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = playscorefilemidi;
 				SECTORDER_FLAGS = "";
@@ -14174,6 +14574,18 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D80151CC0FA64B6A002FB882 /* Build configuration list for PBXNativeTarget "playpart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D80151C10FA64B25002FB882 /* Development */,
+				D80151C20FA64B25002FB882 /* Intel Development */,
+				D80151C30FA64B25002FB882 /* Deployment */,
+				D80151C40FA64B25002FB882 /* Embedded */,
+				D80151C50FA64B25002FB882 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Intel Development";
+		};
 		D81589AA0F90EDEF00E38A7D /* Build configuration list for PBXNativeTarget "playscorefile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -14194,6 +14606,18 @@
 				D86986A50ED9CA0E00E90F3F /* Deployment */,
 				D86986A60ED9CA0E00E90F3F /* Embedded */,
 				D86986A70ED9CA0E00E90F3F /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Intel Development";
+		};
+		D886C3E20FA64847000AC7C4 /* Build configuration list for PBXNativeTarget "playscorefile2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D886C3D70FA6480A000AC7C4 /* Development */,
+				D886C3D80FA6480A000AC7C4 /* Intel Development */,
+				D886C3D90FA6480A000AC7C4 /* Deployment */,
+				D886C3DA0FA6480A000AC7C4 /* Embedded */,
+				D886C3DB0FA6480A000AC7C4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Intel Development";

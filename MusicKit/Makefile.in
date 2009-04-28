@@ -15,7 +15,7 @@
 # messages remain intact and accompany all relevant code.
 #
 
-CONFIG = OTHER_CFLAGS="@DEFS@ @CPPFLAGS@" LDFLAGS="@LDFLAGS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
+CONFIG = OTHER_CFLAGS="@DEFS@ @CFLAGS@ @CPPFLAGS@" LDFLAGS="@LDFLAGS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 PROJECT = -project MusicKit.xcodeproj
 XCODEBUILD = xcodebuild $(PROJECT)
 # This allows overriding this on the command line.

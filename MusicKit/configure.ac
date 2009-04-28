@@ -20,7 +20,7 @@
 # could be really tough to do, however, since so many other SndKit
 # classes depend on Snd.m.
 
-AC_INIT(MusicKit, 5.5.3, leigh@leighsmith.com)
+AC_INIT(MusicKit, 5.6.0, leigh@leighsmith.com)
 AC_REVISION($Id$)
 
 AC_CONFIG_SRCDIR([Frameworks/SndKit/Snd.h])

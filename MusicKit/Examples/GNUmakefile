@@ -30,8 +30,8 @@ SUBPROJECTS = \
 #	exampunitgenerator \
 	mixscorefiles \
 	mixsounds \
-#	maxamp \
-#	extractchannel \
+	maxamp \
+	extractchannel \
 #	process_soundfiles_dsp \
 #	ResonSound \
 #	QP

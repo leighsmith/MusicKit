@@ -1,191 +1,194 @@
 /* 
   playscorefile.
 
-  Author: David A. Jaffe.
+  Original Author: David A. Jaffe.
+  Converted to Cocoa by: Leigh M. Smith
   
-  See README for a description of this program.
+  playscorefile is an example of a MusicKit performance that "spools" a 
+  Score to the DSP. Since no real-time interaction is involved, all timing is
+  done on the DSP; thus, the MKOrchestra is set to timed mode and the
+  MKConductor is set to unclocked mode. In unclocked mode the MKConductor's
+  +startPerformance method initiates a tight loop that sends Notes as
+  fast as possible until all Notes have been sent, then returns.
+  See README for further description of this program.
 */
 
-/* playscorefile is an example of a Music Kit performance that "spools" a 
-   Score to the DSP. Since no real-time interaction is involved, all timing is
-   done on the DSP; thus, the Orchestra is set to timed mode and the
-   Conductor is set to unclocked mode. In unclocked mode the Conductor's
-   +startPerformance method initiates a tight loop that sends Notes as
-   fast as possible until all Notes have been sent, then returns.  */
+#import <MusicKit/MusicKit.h>
+//#import <MKSynthPatches/MKSynthPatches.h>
 
-#import <musickit/musickit.h>
-#import <musickit/synthpatches/synthpatches.h>
-
-main(ac, av)
-  int ac;
-  char * av[];
+int main(int ac, char *av[])
 {
     int i;
-    id aScorePerformer,anOrch;
+    MKScorePerformer *aScorePerformer;
+    MKOrchestra *anOrch;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    for (i=1; i<ac; i++) {  
+    for (i = 1; i < ac; i++) {  
 	/* Read command line arguments. Usage: [-t <num>  <  <file>] */
 	if (av[i][1] == 't') 
 	    MKSetTrace(atoi(av[++i]));
     }	
     if (isatty(0)) {
-	fprintf(stderr,"usage: playscorefile [-t] < scorefile\n");
+	fprintf(stderr, "usage: playscorefile [-t] < scorefile\n");
 	exit(1);
     }
-    else fprintf(stderr,"playscorefile reading scorefile...\n");
+    else 
+	fprintf(stderr, "playscorefile reading scorefile...\n");
     
-    anOrch = [Orchestra new];
-    {	/* Create a Score object and read a scorefile into it. Then create a 
-	   ScorePerformer to perform the Score and configure the performance 
-	   from the 'info' field of the scorefile . */
+    anOrch = [MKOrchestra new];
+    {	/* Create a MKScore object and read a scorefile into it. Then create a 
+	   MKScorePerformer to perform the MKScore and configure the performance 
+	   from the 'info' field of the scorefile. */
 
-	id scoreInfo;                                    /* Used for 'info' */
-	id aScore = [[Score alloc] init];
-	NXStream *stdinStream = NXOpenFile(stdin->_file,NX_READONLY);
-
+	MKNote *scoreInfo;                                    /* Used for 'info' */
+	MKScore *aScore = [[MKScore alloc] init];
+	/* Read file from stdin. */
+        NSFileHandle *stdinFileHandle = [NSFileHandle fileHandleWithStandardInput];
+        NSData *stdinStream = [stdinFileHandle availableData];
+	
 	/* Read scorefile from stdin. */
-	if (![aScore readScorefileStream:stdinStream]) { /* Error in file? */
-	    fprintf(stderr,"Fix scorefile errors and try again.\n");
+	if (![aScore readScorefileStream: stdinStream]) { /* Error in file? */
+	    fprintf(stderr, "Fix scorefile errors and try again.\n");
 	    exit(1);
 	}
 
 	/* Create a ScorePerformer to perform the Score and activate it. */
-	aScorePerformer = [[ScorePerformer alloc] init];
-	[aScorePerformer setScore:aScore];
+	aScorePerformer = [[MKScorePerformer alloc] init];
+	[aScorePerformer setScore: aScore];
 	[aScorePerformer activate]; 
 
-	scoreInfo = [aScore info];
+	scoreInfo = [aScore infoNote];
 	if (scoreInfo) { /* Configure performance as specified in info. */ 
 	    double samplingRate;
+	    
 	    /* "headroom" determines how close to the limit of the DSP we want
 	       to run. If headroom is 0 or negative, there is a higher risk
 	       of falling out of real time (interruptions will be heard).
 	       If headroom is positive (e.g. .25), it is unlikely you will
 	       fall out of real time. */
-	    if ([scoreInfo isParPresent:MK_headroom])
-		[Orchestra setHeadroom:[scoreInfo parAsDouble:MK_headroom]];
-	    /* Set sampling rate. The Sound hardware only functions at 
-	       44100 or 22050. */
+	    if ([scoreInfo isParPresent: MK_headroom])
+		[MKOrchestra setHeadroom: [scoreInfo parAsDouble: MK_headroom]];
+	    /* Set sampling rate. The Sound hardware only functions at 44100 or 22050. */
 	    samplingRate = [anOrch defaultSamplingRate];
 	    if ([anOrch prefersAlternativeSamplingRate] && 
-		[scoreInfo isParPresent:MK_alternativeSamplingRate])
-	      samplingRate = [scoreInfo parAsDouble:MK_alternativeSamplingRate];
-	    else if ([scoreInfo isParPresent:MK_samplingRate]) {
-		samplingRate = [scoreInfo parAsDouble:MK_samplingRate];
+		[scoreInfo isParPresent: MK_alternativeSamplingRate])
+		samplingRate = [scoreInfo parAsDouble: MK_alternativeSamplingRate];
+	    else if ([scoreInfo isParPresent: MK_samplingRate]) {
+		samplingRate = [scoreInfo parAsDouble: MK_samplingRate];
 	    }
-	    if ([anOrch supportsSamplingRate:samplingRate])
-	      [Orchestra setSamplingRate:samplingRate];
-	    else fprintf(stderr,"Unsupported sampling rate. %f\n",samplingRate);
+	    if ([anOrch supportsSamplingRate: samplingRate])
+	      [MKOrchestra setSamplingRate: samplingRate];
+	    else fprintf(stderr,"Unsupported sampling rate. %f\n", samplingRate);
 
-	    /* Get tempo and set the tempo of the default Conductor. */
-	    if ([scoreInfo isParPresent:MK_tempo]) {
-		double tempo = [scoreInfo parAsDouble:MK_tempo];
-		[[Conductor defaultConductor] setTempo:tempo];
+	    /* Get tempo and set the tempo of the default MKConductor. */
+	    if ([scoreInfo isParPresent: MK_tempo]) {
+		double tempo = [scoreInfo parAsDouble: MK_tempo];
+		[[MKConductor defaultConductor] setTempo: tempo];
 	    }
 	}
     }
-    fprintf(stderr,"...done\n");
+    fprintf(stderr, "...done\n");
 
-    /* Open the Orchestra. */
+    /* Open the MKOrchestra. */
     if (![anOrch open]) {
-	fprintf(stderr,"Can't open DSP.\n");
+	fprintf(stderr, "Can't open DSP.\n");
 	exit(1);
     }
 
-    { /* Create a SynthInstrument for each Part in the Score and set them
+    { /* Create a MKSynthInstrument for each MKPart in the MKScore and set them
 	 up as specified in the corresponding 'info'. */
 
-	int partCount,synthPatchCount,voices;
-	char *className;
-	id partPerformers,synthPatchClass,partPerformer,partInfo,anIns,aPart;
+	int partCount, synthPatchCount, voices;
+	NSString *className;
+	NSArray *partPerformers;
+	Class synthPatchClass;
+	MKPartPerformer *partPerformer;
+	MKNote *partInfo;
+	MKSynthInstrument *anIns;
+	MKPart *aPart;
 
 	partPerformers = [aScorePerformer partPerformers];
 	partCount = [partPerformers count];
 	for (i = 0; i < partCount; i++) {
-	    partPerformer = [partPerformers objectAt:i];
+	    partPerformer = [partPerformers objectAtIndex: i];
 	    aPart = [partPerformer part]; 
-	    partInfo = [aPart info];      /* Get info from Part. */
+	    partInfo = [aPart infoNote];      /* Get info note from MKPart. */
 	    if (!partInfo) {              /* Omit Parts with no info. */ 
-		fprintf(stderr,"%s info missing.\n",MKGetObjectName(aPart));
+		fprintf(stderr,"%s info missing.\n", [MKGetObjectName(aPart) UTF8String]);
 		continue;
 	    }		
 
-	    /* Look in the partInfo for a SynthPatch name. If none, omit
+	    /* Look in the partInfo for a MKSynthPatch name. If none, omit
 	       this Part. */
-	    if (![partInfo isParPresent:MK_synthPatch]) {
-		fprintf(stderr,"%s info missing synthPatch.\n",
-			MKGetObjectName(aPart));
+	    if (![partInfo isParPresent: MK_synthPatch]) {
+		fprintf(stderr,"%s info missing synthPatch.\n",	[MKGetObjectName(aPart) UTF8String]);
 		continue;
 	    }
 
-	    /* Now set the SynthPatch of this Part as specified in the info */
-	    className = [partInfo parAsStringNoCopy:MK_synthPatch];
-	    synthPatchClass = (strlen(className) ? 
-			       [SynthPatch findSynthPatchClass:className] : nil);
+	    /* Now set the MKSynthPatch of this MKPart as specified in the info */
+	    className = [partInfo parAsStringNoCopy: MK_synthPatch];
+	    synthPatchClass = ([className length] != 0 ? [MKSynthPatch findPatchClass: className] : nil);
 	    /* See comment in Makefile about dynamic loading requirements */
 	    if (!synthPatchClass) {         /* Class not loaded in program? */ 
-		fprintf(stderr,"Can't find SynthPatch class %s.\n",
-			className);
+		fprintf(stderr, "Can't find MKSynthPatch class %s.\n", [className UTF8String]);
 		continue;
 	    }
 
-	    /* Create a new SynthInstrument to manage the notes from
+	    /* Create a new MKSynthInstrument to manage the notes from
 	       aPart and connect the partPerformer to the SynthInsturment. */
-	    anIns = [[SynthInstrument alloc] init];
-	    [[partPerformer noteSender] connect:[anIns noteReceiver]];
+	    anIns = [[MKSynthInstrument alloc] init];
+	    [[partPerformer noteSender] connect: [anIns noteReceiver]];
 
-	    /* Set the new SynthInstrument to use the specified SynthPatch */
-	    [anIns setSynthPatchClass:synthPatchClass];
+	    /* Set the new MKSynthInstrument to use the specified MKSynthPatch */
+	    [anIns setSynthPatchClass: synthPatchClass];
 
 	    /* Look for the synthPatchCount for this part. */
-	    if (![partInfo isParPresent:MK_synthPatchCount])
+	    if (![partInfo isParPresent: MK_synthPatchCount])
 		continue;       /* Do allocation of voices from a common pool
 				   on the fly during performance. */
 
 	    /* Otherwise, use a number of voices specified by the part info */
-	    voices = [partInfo parAsInt:MK_synthPatchCount];
-	    synthPatchCount = 
-		[anIns setSynthPatchCount:voices patchTemplate:
-		 [synthPatchClass patchTemplateFor:partInfo]];
-	    /* A given SynthPatch can have several versions or 
+	    voices = [partInfo parAsInt: MK_synthPatchCount];
+	    synthPatchCount = [anIns setSynthPatchCount: voices
+					  patchTemplate: [synthPatchClass patchTemplateFor: partInfo]];
+	    /* A given MKSynthPatch can have several versions or 
 	       "PatchTemplates". For example, there may be one version
 	       that supports vibrato and another that does not.
-	       The SynthPatch class provides a method to
-	       determine the correct version for a given Note. In this case,
-	       we pass the SynthPatch class the Part info and allow it
+	       The MKSynthPatch class provides a method to
+	       determine the correct version for a given MKNote. In this case,
+	       we pass the MKSynthPatch class the MKPart info and allow it
 	       to customize based on the information contained therein. */
 
 	    if (synthPatchCount < voices) 
-		fprintf(stderr,
-			"Could only allocate %d instead of %d %ss for %s\n",
-			synthPatchCount,voices, 
-			[synthPatchClass name],MKGetObjectName(aPart));
+		fprintf(stderr, "Could only allocate %d instead of %d %ss for %s\n",
+			synthPatchCount, voices, [className UTF8String], [MKGetObjectName(aPart) UTF8String]);
 	}
     }
 
-    /* Prepare Conductor */
+    /* Prepare MKConductor */
     MKSetDeltaT(1.0);              /* Run at least one second ahead of DSP */
-    [Conductor setClocked:NO];     /* Conductor feeds DSP as fast as it can. */
-    [Conductor setThreadPriority:1.0];  /* Boost priority of performance. */ 
+    [MKConductor setClocked: NO];     /* MKConductor feeds DSP as fast as it can. */
+    [MKConductor setThreadPriority: 1.0];  /* Boost priority of performance. */ 
 
-    fprintf(stderr,"playing...\n");
+    fprintf(stderr, "playing...\n");
     [anOrch run];                  /* Start the DSP. */
-    [Conductor startPerformance];  /* Start sending Notes, loops till done.*/
+    [MKConductor startPerformance];  /* Start sending MKNotes, loops till done.*/
 
-    /* Here's where the music plays. Conductor's startPerformance method
+    /* Here's where the music plays. MKConductor's startPerformance method
        does not return until the performance is over.  Note, however, that
-       if the Conductor is in a different mode, startPerformance returns 
+       if the MKConductor is in a different mode, startPerformance returns 
        immediately (if it is in clocked mode or if you have specified that the 
-       performance is to occur in a separate thread).  See the Conductor 
+       performance is to occur in a separate thread).  See the MKConductor 
        documentation for details. 
        */
    
     /* Now clean up. */
     [anOrch close];                /* Releases DSP. */
-    fprintf(stderr,"...done\n");
-    exit(0);
+    fprintf(stderr, "...done\n");
+    [pool release];
+    exit(0);        // insure the process exit status is 0
+    return 0;       // ...and make main fit the ANSI spec.
 }
-
 
 
 

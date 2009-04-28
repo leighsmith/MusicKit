@@ -14,14 +14,15 @@
    fast as possible until all Notes have been sent, then returns.  */
 
 #import <MusicKit/MusicKit.h>
-// LMS #import <MKSynthPatches/synthpatches.h>
+// LMS #import <MKSynthPatches/MKSynthPatches.h>
 #import <MusicKit/pitches.h>
 
+/* Returns a random number between 0 and 1. */
 static double ranNum(void)
-    /* Returns a random number between 0 and 1. */
 {
     static double oldRanValue = 0;
     double newVal;
+    
 #   define   RANDOMMAX (double)((long)MAXINT)
     newVal =  ((double)random()) / RANDOMMAX;
     /* Low pass filter the noise for more coherency */
@@ -30,18 +31,18 @@ static double ranNum(void)
     return newVal;
 }
 
+/* Returns a randomly selected timbre from a set determined by the frequency range. */
 static char *ranTimbre(double freq)
-    /* Returns a randomly selected timbre from a set determined by the
-       frequency range. */
 {
     int i;
 #   define RANTIMBRE(_x) (_x[i = SIZEOF(_x) * ranNum()])
 #   define SIZEOF(_x) ((sizeof(_x) - 1) / sizeof(char *))
     static char *highTimbres[] = 
-	{"SA","SE","SI","SO","SU","TR","SS","CL","OB"};
+	{"SA", "SE", "SI", "SO", "SU", "TR", "SS", "CL", "OB"};
     static char *mediumTimbres[] = 
-	{"TR","CL","OB","TA","TE","TI","TO","TU","BN","AS","BC","EH"};	
-    static char *lowTimbres[] = {"BA","BE","BO","BU"};
+	{"TR", "CL", "OB", "TA", "TE", "TI", "TO", "TU", "BN", "AS", "BC", "EH"};	
+    static char *lowTimbres[] = {"BA", "BE", "BO", "BU"};
+    
     if (freq > f4) 
 	return RANTIMBRE(highTimbres);
     else if (freq > c3) 
@@ -60,29 +61,28 @@ int computeNotes(void)
     MKNote *aNote;
     MKSynthInstrument *aSynthInstrument;
     MKOrchestra *anOrch;
-    
 
     /* Make envelopes */
-    double xAmpArray[] = {0,.1,.2,.3}; 
-    double yAmpArray[] = {0,1,.1,0};
-    double xFreqArray[] = {0,.05,.1,.2};
-    double yFreqArray[] = {.99,1.1,1.0,.99};
+    double xAmpArray[] = {0, .1, .2, .3}; 
+    double yAmpArray[] = {0, 1, .1, 0};
+    double xFreqArray[] = {0, .05, .1, .2};
+    double yFreqArray[] = {.99, 1.1, 1.0, .99};
     ampEnvelope = [[MKEnvelope alloc] init];
-    [ampEnvelope setPointCount:4 xArray:xAmpArray yArray:yAmpArray];
-    [ampEnvelope setStickPoint:2];
+    [ampEnvelope setPointCount: 4 xArray: xAmpArray yArray: yAmpArray];
+    [ampEnvelope setStickPoint: 2];
     freqEnvelope = [[MKEnvelope alloc] init];
-    [freqEnvelope setPointCount:4 xArray:xFreqArray yArray:yFreqArray];
-    [freqEnvelope setStickPoint:1];
+    [freqEnvelope setPointCount: 4 xArray: xFreqArray yArray: yFreqArray];
+    [freqEnvelope setStickPoint: 1];
 
     /* We put all Note in one Part. */
     aPart = [[MKPart alloc] init];
 
     /* Make a no-tag noteUpdate used for parameters shared by all notes. */
-    aNote = [[MKNote alloc] initWithTimeTag:0];
-    [aNote setNoteType:MK_noteUpdate];
-    [aNote setPar:MK_ampEnv toEnvelope:ampEnvelope];
-    [aNote setPar:MK_freqEnv toEnvelope:freqEnvelope]; 
-    [aPart addNote:aNote];
+    aNote = [[MKNote alloc] initWithTimeTag: 0];
+    [aNote setNoteType: MK_noteUpdate];
+    [aNote setPar: MK_ampEnv toEnvelope: ampEnvelope];
+    [aNote setPar: MK_freqEnv toEnvelope: freqEnvelope]; 
+    [aPart addNote: aNote];
 
     fprintf(stderr,"computing notes...\n");
 
@@ -90,22 +90,22 @@ int computeNotes(void)
 #   define DUR .3
 
     for (i = 0; i < 100; i++) {
-	freqBase = pow(2.0,ranNum() * 4) * c2; /* Range is c2 to c6 */
+	freqBase = pow(2.0, ranNum() * 4) * c2; /* Range is c2 to c6 */
 	for (j = 0; j < NOTES_PER_ITERATION; j++) {
 	    curTime += DUR;
-	    aNote = [[MKNote alloc] initWithTimeTag:curTime];
-	    [aNote setDur:NOTES_PER_ITERATION * DUR]; 
-	    [aNote setPar:MK_velocity toInt:j * 5 + 50];
+	    aNote = [[MKNote alloc] initWithTimeTag: curTime];
+	    [aNote setDur: NOTES_PER_ITERATION * DUR]; 
+	    [aNote setPar: MK_velocity toInt: j * 5 + 50];
 	    /* Ascending whole tone scales */
-	    [aNote setPar:MK_freq toDouble:freqBase * pow(2.0,j/6.0)];
+	    [aNote setPar: MK_freq toDouble: freqBase * pow(2.0, j / 6.0)];
 	    /* A bunch of other parameters */
-	    [aNote setPar:MK_waveform toString: [NSString stringWithCString: ranTimbre(freqBase)]];
-	    [aNote setPar:MK_ampAtt toDouble:ranNum() * .3 + .1];
-	    [aNote setPar:MK_freqAtt toDouble:ranNum() * .3 + .1];
-	    [aNote setPar:MK_svibAmp toDouble:.015 * ranNum() + .005];
-	    [aNote setPar:MK_svibFreq toDouble:4.5 * ranNum() + 1];
-	    [aNote setPar:MK_rvibAmp toDouble:.01 * ranNum() + .005];
-	    [aPart addNote:aNote];
+	    [aNote setPar: MK_waveform toString: [NSString stringWithUTF8String: ranTimbre(freqBase)]];
+	    [aNote setPar: MK_ampAtt toDouble: ranNum() * .3 + .1];
+	    [aNote setPar: MK_freqAtt toDouble: ranNum() * .3 + .1];
+	    [aNote setPar: MK_svibAmp toDouble: .015 * ranNum() + .005];
+	    [aNote setPar: MK_svibFreq toDouble: 4.5 * ranNum() + 1];
+	    [aNote setPar: MK_rvibAmp toDouble: .01 * ranNum() + .005];
+	    [aPart addNote: aNote];
 	}
     }
 
@@ -129,16 +129,15 @@ int computeNotes(void)
        to the MKPartPerformer. */
     aSynthInstrument = [[MKSynthInstrument alloc] init];
 // LMS    [aSynthInstrument setSynthPatchClass:[DBWave1vi class]];
-    [aSynthInstrument setSynthPatchCount:10];
+    [aSynthInstrument setSynthPatchCount: 10];
     /* Connect the MKPartPerformer to the MKSynthInstrument */
     [[aPartPerformer noteSender] connect: [aSynthInstrument noteReceiver]];
 
     /* Prepare Conductor */
     MKSetDeltaT(1.0);              /* Run at least one second ahead of DSP */
-    [MKConductor setClocked:NO];     /* User process runs as fast as it can and
-				      loops until done. */
+    [MKConductor setClocked: NO];     /* User process runs as fast as it can and loops until done. */
 
-    fprintf(stderr,"playing...\n");
+    fprintf(stderr, "playing...\n");
     [anOrch run];                  /* Start the DSP. */
     [MKConductor startPerformance];  /* Start sending MKNotes, loops until done. */
 
@@ -152,13 +151,6 @@ int computeNotes(void)
 
     /* Now clean up. */
     [anOrch close];                /* Releases DSP. */
-    fprintf(stderr,"...done\n");
+    fprintf(stderr, "...done\n");
     return(0);
 }
-
-
-
-
-
-
-
