@@ -539,7 +539,7 @@ typedef enum _MKPhraseStatus {
   @param name Class name.
   @return Returns an id.
 */
-+ findPatchClass: (NSString *) name;
++ (Class) findPatchClass: (NSString *) name;
 
 @end
 

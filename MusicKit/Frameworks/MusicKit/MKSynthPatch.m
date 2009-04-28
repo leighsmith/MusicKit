@@ -43,70 +43,7 @@
   Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.21  2006/02/05 17:57:10  leighsmith
-  Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
-
-  Revision 1.20  2005/05/11 07:59:03  leighsmith
-  Cleaned up parameter types and doxygen docs
-
-  Revision 1.19  2005/04/15 04:18:25  leighsmith
-  Cleaned up for gcc 4.0's more stringent checking of ObjC types
-
-  Revision 1.18  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.17  2002/09/19 18:16:27  leighsmith
-  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
-
-  Revision 1.16  2002/04/08 17:35:25  sbrandon
-  changed _rescheduleMsgRequest reference to _rescheduleMsgRequestWithObjectArgs
-
-  Revision 1.15  2002/01/29 16:52:01  sbrandon
-  changed format string from %s to %@ (missed in last checkin)
-
-  Revision 1.14  2002/01/29 16:34:27  sbrandon
-  changed to use NSString args for _MKOrchTrace calls
-
-  Revision 1.13  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.12  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.11  2001/08/31 21:01:59  skotmcdonald
-  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
-
-  Revision 1.10  2001/07/02 16:44:07  sbrandon
-  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
-    compliant)
-  - added newline onto end of file
-
-  Revision 1.9  2001/03/06 21:47:33  leigh
-  Abstracted patch loading from MKSynthPatches into MKPatch
-
-  Revision 1.8  2000/11/25 22:37:52  leigh
-  Enabled NSBundle loading within findSynthPatchClass:
-
-  Revision 1.7  2000/07/22 00:32:21  leigh
-  Minor doco and typing cleanups.
-
-  Revision 1.6  2000/04/16 04:24:28  leigh
-  Removed assignment in condition warning
-
-  Revision 1.5  2000/03/24 21:11:35  leigh
-  Cleanups of doco, removed the objc_loadmodules include causing compilation probs on MOXS 1.2
-
-  Revision 1.4  1999/09/04 22:45:36  leigh
-  modules is now const char to stop warnings
-
-  Revision 1.3  1999/08/26 19:56:56  leigh
-  using new MKError prototype
-
-  Revision 1.2  1999/07/29 01:16:43  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to Subversion repository:
 
   10/08/89/mtm - Changed _noteEndAndScheduleOff: to work without a conductor.
   11/11/89/daj - Added supression of multiple noteOffs in -noteOff and
@@ -1234,7 +1171,7 @@ id _MKAddPatchToList(MKSynthPatch *self, MKSynthPatch **headP, MKSynthPatch **ta
 /*//////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
 
-+ findPatchClass: (NSString *) className
++ (Class) findPatchClass: (NSString *) className
 {
     // TODO [@"MKSynthPatches" stringByAppendingPathComponent: className]
     return [[self superclass] findPatchClass: className];
