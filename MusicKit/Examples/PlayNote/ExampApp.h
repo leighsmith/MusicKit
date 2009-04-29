@@ -9,9 +9,9 @@
  * timbre, and a slider to change its pitch.
  */
 
-#import <appkit/Application.h>
+#import <AppKit/AppKit.h>
 
-@interface ExampApp : Application
+@interface ExampApp : NSObject
 {
     id infoPanel;
     id stringTable;
@@ -24,6 +24,5 @@
 - showInfoPanel:sender;
 
 @end
-
 
 #endif

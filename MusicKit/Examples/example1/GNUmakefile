@@ -3,7 +3,7 @@
 #   Defined In: The MusicKit
 #
 #  Description:
-#    Makefile for example1
+#    GNUstep Makefile for example1
 #
 #  Original Author: Leigh M. Smith
 #
@@ -12,9 +12,7 @@
 #  and accompanies all derived code.
 
 # Install into the system root by default
-GNUSTEP_INSTALLATION_DOMAIN = LOCAL
-
-GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
+# GNUSTEP_INSTALLATION_DOMAIN = LOCAL
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
@@ -24,7 +22,7 @@ TOOL_NAME = \
 
 ADDITIONAL_LIB_DIRS =  
 
-ADDITIONAL_TOOL_LIBS += -lMKDSP -lMKPerformSndMIDI -lSndKit -lgnustep-base -lMusicKit
+ADDITIONAL_TOOL_LIBS += -lMusicKit
 
 ADDITIONAL_FLAGS += -g
 
@@ -43,4 +41,4 @@ DIST_FILES = $(SRCS) $(HDRS)
 
 include $(GNUSTEP_MAKEFILES)/tool.make
 
--include Makefile.postamble
+-include GNUmakefile.postamble

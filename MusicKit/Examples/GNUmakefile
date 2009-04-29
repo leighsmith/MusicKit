@@ -16,24 +16,34 @@
 SUBPROJECTS = \
 	MultipleSoundPlayer \
 	MidiEcho \
+	MidiEcho-1-MIDI-Channel \
 	MidiLoop \
 	MidiPlay \
 	MidiRecord \
+	MidiFilePlayback \
 #	PerformerExample \
 #	PlayNote \
-#	playpart \
-#	playscorefile \
-#	playscorefile2 \
-#	playscorefilemidi \
+	playpart \
+	playscorefile \
+	playscorefile2 \
+	playscorefilemidi \
 #	SineGen \
-#	exampsynthpatch \
-#	exampunitgenerator \
+	example1
+#	example2
+	example3
+#	example4
+#	example5
+#	exampleSynthPatch \
+#	exampleUnitGenerator \
 	mixscorefiles \
 	mixsounds \
 	maxamp \
 	extractchannel \
+#	recsnd
+#	playsnd
+#	playsndfaders
+#	sndinfo
 #	process_soundfiles_dsp \
-#	ResonSound \
 #	QP
 
 include $(GNUSTEP_MAKEFILES)/common.make

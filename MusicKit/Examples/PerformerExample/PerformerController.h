@@ -10,12 +10,14 @@
     id stringTable;
     id infoPanel;
 }
+
 - terminate:sender;
 - setOctave:sender;
 - setSpeed:sender;
 - appDidInit:sender;
 - pauseOrResume:sender;
 - showInfoPanel:sender;
+
 @end
 
 

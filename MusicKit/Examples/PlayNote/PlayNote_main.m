@@ -2,14 +2,8 @@
    NOTE: Do NOT change this file -- Project Builder maintains it.
 */
 
-#import "ExampApp.h"
+#import <AppKit/AppKit.h>
 
-void main(int argc, char *argv[]) {
-
-    [ExampApp new];
-    if ([NXApp loadNibSection:"PlayNote.nib" owner:NXApp withNames:NO])
-	    [NXApp run];
-	    
-    [NXApp free];
-    exit(0);
+int main(int argc, const char *argv[]) {
+    return NSApplicationMain(argc, argv);
 }
