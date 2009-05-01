@@ -68,9 +68,9 @@ static float transposition;     /* shift in semitones (units of 1/12 octave) */
 
 @implementation ExampApp
 
-static void handleMKError(char *msg) {
-    if (!NXRunAlertPanel("PlayNote",msg,"OK","Quit",NULL,NULL))
-	[NXApp terminate:NXApp];
+static void handleMKError(NSString *msg) {
+    if (!NSRunAlertPanel(@"PlayNote", msg, @"OK", @"Quit",NULL,NULL))
+	[NSApp terminate: NSApp];
 }
   
 - appDidInit: sender;
