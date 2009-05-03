@@ -3141,6 +3141,15 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
+		D83F2CB20FAB40A400B62A4F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D85755C70FA9042E00E5B905 /* Images */,
+				D85755D00FA9045300E5B905 /* Interfaces */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		D84395EA059FAA450054BEEE /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -3406,12 +3415,12 @@
 			name = Help;
 			sourceTree = "<group>";
 		};
-		D85755C70FA9042E00E5B905 /* Supporting Files */ = {
+		D85755C70FA9042E00E5B905 /* Images */ = {
 			isa = PBXGroup;
 			children = (
 				D8D2A3D40FA905E2008DBF68 /* dkeislar.tiff */,
 			);
-			name = "Supporting Files";
+			name = Images;
 			sourceTree = "<group>";
 		};
 		D85755CA0FA9043D00E5B905 /* Classes */ = {
@@ -3986,10 +3995,9 @@
 			isa = PBXGroup;
 			children = (
 				D85755D30FA9047C00E5B905 /* Documentation */,
-				D85755C70FA9042E00E5B905 /* Supporting Files */,
 				D85755CA0FA9043D00E5B905 /* Classes */,
 				D85755CD0FA9044A00E5B905 /* Other Sources */,
-				D85755D00FA9045300E5B905 /* Interfaces */,
+				D83F2CB20FAB40A400B62A4F /* Resources */,
 			);
 			name = PlayNote;
 			sourceTree = "<group>";
