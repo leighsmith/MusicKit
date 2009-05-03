@@ -3,7 +3,7 @@
 #   Defined In: The MusicKit
 #
 #  Description:
-#    Makefile for GNUstep
+#    Makefile for GNUstep version of EnvelopeEd
 #
 #  Original Author: Leigh M. Smith <leigh@leighsmith.com>
 #
@@ -21,24 +21,19 @@ APPICON = EnvelopeEd.tiff
 
 LANGUAGES = English
 
-English_RESOURCES = EnvelopeEd.nib Info.nib
-
 GLOBAL_RESOURCES = above.tiff above_alt.tiff below.tiff below_alt.tiff\
                    cross.tiff crossfill.tiff EnvelopeEd.tiff
 
-EnvelopeEd_OBJC_FILES = EnvelopeEd_main.m Controller.m EnvelopeView.m
+$(APP_NAME)_OBJC_FILES = EnvelopeEd_main.m Controller.m EnvelopeView.m
 
-EnvelopeEd_HEADER_FILES = Controller.h EnvelopeView.h
+$(APP_NAME)_HEADER_FILES = Controller.h EnvelopeView.h
 
-EnvelopeEd_MAIN_MODEL_FILE = ScorePlayer
-EnvelopeEd_RESOURCE_FILES = $(LANGUAGES).lproj
+$(APP_NAME)_MAIN_MODEL_FILE = EnvelopeEd
 
+$(APP_NAME)_RESOURCE_FILES = $(LANGUAGES).lproj
 
 # This is now the ONLY lib you have to include when compiling a MusicKit program.
 ADDITIONAL_TOOL_LIBS += -lMusicKit
-
-ADDITIONAL_CFLAGS += -g
-ADDITIONAL_LDFLAGS += -g
 
 -include GNUmakefile.preamble
 
