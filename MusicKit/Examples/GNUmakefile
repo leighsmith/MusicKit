@@ -30,7 +30,11 @@ SUBPROJECTS = \
 	mixscorefiles \
 	mixsounds \
 	maxamp \
-	extractchannel
+	extractchannel \
+	sndinfo \
+	playsnd \
+	recsnd \
+	playsndfaders
 #	PerformerExample \
 #	PlayNote \
 #	SineGen \
@@ -39,10 +43,6 @@ SUBPROJECTS = \
 #	example5
 #	exampleSynthPatch \
 #	exampleUnitGenerator \
-#	recsnd
-#	playsnd
-#	playsndfaders
-#	sndinfo
 #	process_soundfiles_dsp \
 #	QP
 
