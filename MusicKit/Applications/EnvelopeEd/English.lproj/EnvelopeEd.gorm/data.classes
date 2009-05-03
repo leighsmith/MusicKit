@@ -1,0 +1,178 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    Controller = {
+	Actions = (
+	    "waveChanged:",
+	    "setDrawSegmentsState:",
+	    "setYValue:",
+	    "setSmoothFromSlider:",
+	    "helpPanel:",
+	    "copy:",
+	    "setSmoothValue:",
+	    "setYMinValue:",
+	    "setYSnapValue:",
+	    "unRemoveEnvelope:",
+	    "updateCoords:",
+	    "previousPoint:",
+	    "setYMaxValue:",
+	    "reScaleLimits:",
+	    "setLinkX:",
+	    "addEnvelope:",
+	    "updateNums:",
+	    "paste:",
+	    "setXValue:",
+	    "infoPanel:",
+	    "setStickyPoint:",
+	    "playA:",
+	    "changeLength:",
+	    "setGraphType:",
+	    "playB:",
+	    "appDidInit:",
+	    "updateSliders:",
+	    "play:",
+	    "setXMinValue:",
+	    "setPoint:",
+	    "setYrValue:",
+	    "update:",
+	    "setXMaxValue:",
+	    "removeEnvelope:",
+	    "nextPoint:",
+	    "setXSnapValue:"
+	);
+	Outlets = (
+	    theOutputTypes,
+	    lastDeleted,
+	    volSlide1,
+	    theYMinCoord,
+	    waveType1,
+	    volSlide2,
+	    theYrCoord,
+	    theYSnapCoord,
+	    theStickyPoint,
+	    waveType2,
+	    helpPanel,
+	    sLength,
+	    freqNum1,
+	    freqNum2,
+	    theYMaxCoord,
+	    thePoint,
+	    mesgBox,
+	    theSmoothSlider,
+	    freqSlide1,
+	    myListener,
+	    freqSlide2,
+	    volNum1,
+	    volNum2,
+	    infoPanel,
+	    theSmoothing,
+	    theLinkX,
+	    theXMinCoord,
+	    theEnvelope,
+	    soundView1,
+	    theWindow,
+	    soundView2,
+	    theXMaxCoord,
+	    theGraphType,
+	    theXSnapCoord,
+	    soundView3,
+	    theXCoord,
+	    theSplitView,
+	    theYCoord
+	);
+	Super = NSObject;
+    };
+    Distributor = {
+	Actions = (
+	    "stopPlay:",
+	    "saveDoc:",
+	    "closeDoc:",
+	    "play:",
+	    "openDoc:",
+	    "showInfo:",
+	    "newDoc:",
+	    "saveDocAs:",
+	    "showHelp:"
+	);
+	Outlets = (
+	    openPanel,
+	    tadList,
+	    infoPanel,
+	    helpPanel,
+	    savePanel
+	);
+	Super = NSObject;
+    };
+    FirstResponder = {
+	Actions = (
+	    "addEnvelope:",
+	    "appDidInit:",
+	    "changeLength:",
+	    "closeDoc:",
+	    "didRecord:",
+	    "hadError:",
+	    "helpPanel:",
+	    "infoPanel:",
+	    "newDoc:",
+	    "nextPoint:",
+	    "openDoc:",
+	    "pause:",
+	    "play:",
+	    "playA:",
+	    "playB:",
+	    "previousPoint:",
+	    "reScaleLimits:",
+	    "record:",
+	    "removeEnvelope:",
+	    "resume:",
+	    "saveDoc:",
+	    "saveDocAs:",
+	    "setDrawSegmentsState:",
+	    "setGraphType:",
+	    "setLinkX:",
+	    "setPoint:",
+	    "setSmoothFromSlider:",
+	    "setSmoothValue:",
+	    "setStickyPoint:",
+	    "setXMaxValue:",
+	    "setXMinValue:",
+	    "setXSnapValue:",
+	    "setXValue:",
+	    "setYMaxValue:",
+	    "setYMinValue:",
+	    "setYSnapValue:",
+	    "setYValue:",
+	    "setYrValue:",
+	    "showInfo:",
+	    "stopPlay:",
+	    "unRemoveEnvelope:",
+	    "update:",
+	    "updateCoords:",
+	    "updateNums:",
+	    "updateSliders:",
+	    "waveChanged:",
+	    "willRecord:"
+	);
+	Super = NSObject;
+    };
+    SndView = {
+	Actions = (
+	    "record:",
+	    "cut:",
+	    "copy:",
+	    "resume:",
+	    "willRecord:",
+	    "pause:",
+	    "delete:",
+	    "hadError:",
+	    "paste:",
+	    "didRecord:",
+	    "selectAll:",
+	    "play:",
+	    "stop:"
+	);
+	Outlets = (
+	    delegate
+	);
+	Super = NSView;
+    };
+}
