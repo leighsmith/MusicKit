@@ -21,24 +21,24 @@ SUBPROJECTS = \
 	MidiPlay \
 	MidiRecord \
 	MidiFilePlayback \
-#	PerformerExample \
-#	PlayNote \
 	playpart \
 	playscorefile \
 	playscorefile2 \
 	playscorefilemidi \
+	example1 \
+	example3 \
+	mixscorefiles \
+	mixsounds \
+	maxamp \
+	extractchannel
+#	PerformerExample \
+#	PlayNote \
 #	SineGen \
-	example1
 #	example2
-	example3
 #	example4
 #	example5
 #	exampleSynthPatch \
 #	exampleUnitGenerator \
-	mixscorefiles \
-	mixsounds \
-	maxamp \
-	extractchannel \
 #	recsnd
 #	playsnd
 #	playsndfaders

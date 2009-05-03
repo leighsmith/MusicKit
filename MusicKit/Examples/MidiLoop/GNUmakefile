@@ -21,15 +21,15 @@ PACKAGE_NAME = MidiLoop
 
 APPICON = MidiLoop.tiff
 
-MidiLoop_MAIN_MODEL_FILE = MidiLoop
+$(APP_NAME)_MAIN_MODEL_FILE = MidiLoop
 
 LANGUAGES = English
 
-MidiLoop_RESOURCE_FILES = English.lproj
+$(APP_NAME)_RESOURCE_FILES = English.lproj
 
-MidiEcho_OBJC_FILES = MidiLoop_main.m MidiLoop.m
+$(APP_NAME)_OBJC_FILES = MidiLoop_main.m MidiLoop.m
 
-MidiEcho_HEADER_FILES = MidiLoop.h
+$(APP_NAME)_HEADER_FILES = MidiLoop.h
 
 ADDITIONAL_TOOL_LIBS += -lMusicKit
 

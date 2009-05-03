@@ -121,7 +121,7 @@ int main(int ac, char *av[])
 	    synthPatchClass = ([className length] ? [MKSynthPatch findPatchClass: className] : nil);
 	    /* See comment in Makefile about dynamic loading requirements */
 	    if (!synthPatchClass) {         /* Class not loaded in program? */ 
-		fprintf(stderr, "Can't find SynthPatch class %s.\n", className);
+		fprintf(stderr, "Can't find SynthPatch class %s.\n", [className UTF8String]);
 		continue;
 	    }
 
@@ -153,7 +153,7 @@ int main(int ac, char *av[])
 
 	    if (synthPatchCount < voices) 
 		fprintf(stderr,	"Could only allocate %d instead of %d %ss for %s\n",
-			synthPatchCount, voices, className, [MKGetObjectName(aNoteSender) UTF8String]);
+			synthPatchCount, voices, [className UTF8String], [MKGetObjectName(aNoteSender) UTF8String]);
 	}
     }
 
