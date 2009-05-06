@@ -90,7 +90,7 @@ $(MY_NAME)_OBJC_FILES = \
 
 $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c \
-         _Sndfilterkit.c
+         Sndfilterkit.c
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \
@@ -135,9 +135,9 @@ $(MY_NAME)_HEADER_FILES = \
          SndStreamRecorder.h \
          SndTable.h \
          SndView.h\
-         _Sndfilterkit.h \
-         _Sndlargefilter.h \
-         _Sndsmallfilter.h
+         Sndfilterkit.h \
+         Sndlargefilter.h \
+         Sndsmallfilter.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 

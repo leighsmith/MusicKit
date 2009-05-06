@@ -64,7 +64,7 @@
 #ifdef GNUSTEP
 #include <stdio.h>
 #include "SndResample.h"
-#include "_Sndfilterkit.h"
+#include "Sndfilterkit.h"
 #include <math.h>
 #if !defined(__FreeBSD__) || (defined(__FreeBSD_version) && (__FreeBSD_version < 500000))
 #include <malloc.h>
@@ -72,7 +72,7 @@
 #else
 
 #import "SndResample.h"
-#import "_Sndfilterkit.h"
+#import "Sndfilterkit.h"
 
 #ifndef WIN32
 #import <libc.h>

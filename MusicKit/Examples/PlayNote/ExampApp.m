@@ -1,61 +1,68 @@
 /* 
-   MusicKit programming example
+  $Id$
+  Example Application within the MusicKit
+ 
+  Description:
+    This example illustrates real-time DSP control. The interface has a button
+    for playing a note with a plucked-string timbre, and a slider to change its
+    pitch.
 
-   This example illustrates real-time DSP control. The interface has a button
-   for playing a note with a plucked-string timbre, and a slider to change its
-   pitch.
+    PlayNote is an example of an interactive MusicKit performance.
+    Therefore, the Conductor is clocked. The Conductor is also set to not 
+    'finishWhenEmpty' to ensure the performance will continue, whether or 
+    not the Conductor has any objective-c messages to send, 
+    until the user decides to terminate the performance.  In this case, we are 
+    interested in the fastest possible interactive response; therefore, we
+    set the delta time to a very small number (using MKSetDeltaT()). Beware
+    that using very small delta times can cause some unpredictability. You
+    can cause your performance to be more predictable at the expense of 
+    greater latency by increasing the delta time.
 
-
-   PlayNote is an example of an interactive MusicKit performance.
-   Therefore, the Conductor is clocked. The Conductor is also set to not 
-   'finishWhenEmpty' to ensure the performance will continue, whether or 
-   not the Conductor has any objective-c messages to send, 
-   until the user decides to terminate the performance.  In this case, we are 
-   interested in the fastest possible interactive response; therefore, we
-   set the delta time to a very small number (using MKSetDeltaT()). Beware
-   that using very small delta times can cause some unpredictability. You
-   can cause your performance to be more predictable at the expense of 
-   greater latency by increasing the delta time.
-
-     In this example, a MusicKit MKSynthPatch is used with a MKSynthInstrument.
+    In this example, a MusicKit MKSynthPatch is used with a MKSynthInstrument.
        
-       However, the SynthInstrument, the main purpose of which is to do voice 
-       allocation, is not really needed in this simple case. We could have 
-       done our own SynthPatch management. Here's how the above code could be 
-       changed if a SynthInstrument were NOT used:
+    However, the MKSynthInstrument, the main purpose of which is to do voice 
+    allocation, is not really needed in this simple case. We could have 
+    done our own MKSynthPatch management. Here's how the above code could be 
+    changed if a MKSynthInstrument were NOT used:
        
        1. Remove the variable theIns and add a variable called theSynthPatch.
        
        2. In the -init method, replace the lines 
        
-       theIns = [[SynthInstrument alloc] init];
+       theIns = [[MKSynthInstrument alloc] init];
        [theIns setSynthPatchClass:[Pluck class]];   
        [theIns setSynthPatchCount:1];	
        
        with the following:
        
-       theSynthPatch = [Orchestra allocSynthPatch:[Pluck class]];
+       theSynthPatch = [MKOrchestra allocSynthPatch: [Pluck class]];
        
        3. In the method -_sendNote:, replace the line
        
-       [[theIns noteReceiver] receiveNote:aNote]; 
+       [[theIns noteReceiver] receiveNote: aNote]; 
        
        with the following:
        
        if ([aNote noteType] == MK_noteOn)
-           [theSynthPatch noteOn:aNote];
-       else [theSynthPatch noteUpdate:aNote];
+           [theSynthPatch noteOn: aNote];
+       else [theSynthPatch noteUpdate: aNote];
        
-       4. In the method terminate:, before closing the Orchestra, add the line 
+       4. In the method terminate:, before closing the MKOrchestra, add the line 
        
        [theSynthPatch dealloc];
        
+  Original Author: Doug Keislar
+ 
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2009, The MusicKit Project.
 */
 
-#import <Appkit/Appkit.h>
+#import <AppKit/AppKit.h>
 #import <MusicKit/MusicKit.h>
 #import <MKSynthPatches/Pluck.h>
-#import <MusicKit/Pitches.h>
+#import <MusicKit/pitches.h>
 #import "ExampApp.h"
 
 #define DEFAULTFREQ 440
@@ -68,8 +75,9 @@ static float transposition;     /* shift in semitones (units of 1/12 octave) */
 
 @implementation ExampApp
 
-static void handleMKError(NSString *msg) {
-    if (!NSRunAlertPanel(@"PlayNote", msg, @"OK", @"Quit",NULL,NULL))
+static void handleMKError(NSString *msg)
+{
+    if (!NSRunAlertPanel(@"PlayNote", msg, @"OK", @"Quit", nil, NULL))
 	[NSApp terminate: NSApp];
 }
   
@@ -188,7 +196,7 @@ static void handleMKError(NSString *msg) {
     [MKConductor finishPerformance];       
     [MKConductor unlockPerformance];
     [theOrch close];     /* Free MKOrchestra resources and release the DSP. */ 
-    return [super terminate: self];
+    return [NSApp terminate: self];
 }
 
 - showInfoPanel: sender

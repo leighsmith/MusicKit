@@ -93,9 +93,9 @@
 
 #import <Foundation/Foundation.h>
 #include "SndResample.h"
-#include "_Sndsmallfilter.h"
-#include "_Sndlargefilter.h"
-#include "_Sndfilterkit.h"
+#include "Sndsmallfilter.h"
+#include "Sndlargefilter.h"
+#include "Sndfilterkit.h"
 #include "SndFunctions.h"
 #import "SndMuLaw.h"
 

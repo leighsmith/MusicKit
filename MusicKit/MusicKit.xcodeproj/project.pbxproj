@@ -349,6 +349,7 @@
 		D82557EB05A21B5900B0192B /* trigonometry.c in Sources */ = {isa = PBXBuildFile; fileRef = D82557E805A21B5900B0192B /* trigonometry.c */; };
 		D82557ED05A21B7F00B0192B /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557EC05A21B7F00B0192B /* utilities.m */; };
 		D82557F005A21BBF00B0192B /* Localized.strings in Resources */ = {isa = PBXBuildFile; fileRef = D82557EF05A21BBF00B0192B /* Localized.strings */; };
+		D828B0720FAE3A0F00B4DC3B /* PlayNote-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */; };
 		D828F99C0780C24B00215EB9 /* MKAlert.h in Resources */ = {isa = PBXBuildFile; fileRef = D828F99A0780C24B00215EB9 /* MKAlert.h */; };
 		D828F99D0780C24B00215EB9 /* MKAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D828F99B0780C24B00215EB9 /* MKAlert.m */; };
 		D828F9AE0780C46700215EB9 /* play.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828F9AC0780C46700215EB9 /* play.tiff */; };
@@ -745,10 +746,10 @@
 		D88FE33805A0F9E40024FD88 /* SndTable.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE31D05A0F9E40024FD88 /* SndTable.m */; };
 		D88FE33905A0F9E40024FD88 /* SndView.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE31E05A0F9E40024FD88 /* SndView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE33A05A0F9E40024FD88 /* SndView.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE31F05A0F9E40024FD88 /* SndView.m */; };
-		D88FE34405A0FBC10024FD88 /* _Sndfilterkit.c in Sources */ = {isa = PBXBuildFile; fileRef = D88FE33D05A0FBC10024FD88 /* _Sndfilterkit.c */; };
-		D88FE34505A0FBC10024FD88 /* _Sndfilterkit.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE33E05A0FBC10024FD88 /* _Sndfilterkit.h */; };
-		D88FE34605A0FBC10024FD88 /* _Sndlargefilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE33F05A0FBC10024FD88 /* _Sndlargefilter.h */; };
-		D88FE34705A0FBC10024FD88 /* _Sndsmallfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE34005A0FBC10024FD88 /* _Sndsmallfilter.h */; };
+		D88FE34405A0FBC10024FD88 /* Sndfilterkit.c in Sources */ = {isa = PBXBuildFile; fileRef = D88FE33D05A0FBC10024FD88 /* Sndfilterkit.c */; };
+		D88FE34505A0FBC10024FD88 /* Sndfilterkit.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE33E05A0FBC10024FD88 /* Sndfilterkit.h */; };
+		D88FE34605A0FBC10024FD88 /* Sndlargefilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE33F05A0FBC10024FD88 /* Sndlargefilter.h */; };
+		D88FE34705A0FBC10024FD88 /* Sndsmallfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE34005A0FBC10024FD88 /* Sndsmallfilter.h */; };
 		D88FE34805A0FBC10024FD88 /* SndFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE34105A0FBC10024FD88 /* SndFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE34905A0FBC10024FD88 /* SndFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE34205A0FBC10024FD88 /* SndFunctions.m */; };
 		D88FE34A05A0FBC10024FD88 /* SndFileIO.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE34305A0FBC10024FD88 /* SndFileIO.m */; };
@@ -1870,10 +1871,10 @@
 		D88FE31D05A0F9E40024FD88 /* SndTable.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndTable.m; path = Frameworks/SndKit/SndTable.m; sourceTree = "<group>"; };
 		D88FE31E05A0F9E40024FD88 /* SndView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndView.h; path = Frameworks/SndKit/SndView.h; sourceTree = "<group>"; };
 		D88FE31F05A0F9E40024FD88 /* SndView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndView.m; path = Frameworks/SndKit/SndView.m; sourceTree = "<group>"; };
-		D88FE33D05A0FBC10024FD88 /* _Sndfilterkit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = _Sndfilterkit.c; path = Frameworks/SndKit/_Sndfilterkit.c; sourceTree = "<group>"; };
-		D88FE33E05A0FBC10024FD88 /* _Sndfilterkit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = _Sndfilterkit.h; path = Frameworks/SndKit/_Sndfilterkit.h; sourceTree = "<group>"; };
-		D88FE33F05A0FBC10024FD88 /* _Sndlargefilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = _Sndlargefilter.h; path = Frameworks/SndKit/_Sndlargefilter.h; sourceTree = "<group>"; };
-		D88FE34005A0FBC10024FD88 /* _Sndsmallfilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = _Sndsmallfilter.h; path = Frameworks/SndKit/_Sndsmallfilter.h; sourceTree = "<group>"; };
+		D88FE33D05A0FBC10024FD88 /* Sndfilterkit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Sndfilterkit.c; path = Frameworks/SndKit/Sndfilterkit.c; sourceTree = "<group>"; };
+		D88FE33E05A0FBC10024FD88 /* Sndfilterkit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sndfilterkit.h; path = Frameworks/SndKit/Sndfilterkit.h; sourceTree = "<group>"; };
+		D88FE33F05A0FBC10024FD88 /* Sndlargefilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sndlargefilter.h; path = Frameworks/SndKit/Sndlargefilter.h; sourceTree = "<group>"; };
+		D88FE34005A0FBC10024FD88 /* Sndsmallfilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sndsmallfilter.h; path = Frameworks/SndKit/Sndsmallfilter.h; sourceTree = "<group>"; };
 		D88FE34105A0FBC10024FD88 /* SndFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndFunctions.h; path = Frameworks/SndKit/SndFunctions.h; sourceTree = "<group>"; };
 		D88FE34205A0FBC10024FD88 /* SndFunctions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndFunctions.m; path = Frameworks/SndKit/SndFunctions.m; sourceTree = "<group>"; };
 		D88FE34305A0FBC10024FD88 /* SndFileIO.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndFileIO.m; path = Frameworks/SndKit/SndFileIO.m; sourceTree = "<group>"; };
@@ -2017,7 +2018,7 @@
 		D8D1B7590817D44B00D9156A /* MusicKitClass5.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = MusicKitClass5.sgml; path = Documentation/TutorialClasses/MusicKitClass5.sgml; sourceTree = "<group>"; };
 		D8D1B75A0817D44B00D9156A /* MusicKitTutorials.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = MusicKitTutorials.sgml; path = Documentation/TutorialClasses/MusicKitTutorials.sgml; sourceTree = "<group>"; };
 		D8D2A3C70FA90537008DBF68 /* PlayNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlayNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PlayNote-Info.plist"; sourceTree = "<group>"; };
+		D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PlayNote-Info.plist"; path = "Examples/PlayNote/PlayNote-Info.plist"; sourceTree = "<group>"; };
 		D8D2A3D40FA905E2008DBF68 /* dkeislar.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = dkeislar.tiff; path = Examples/PlayNote/dkeislar.tiff; sourceTree = "<group>"; };
 		D8D2A3D50FA905E2008DBF68 /* ExampApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExampApp.h; path = Examples/PlayNote/ExampApp.h; sourceTree = "<group>"; };
 		D8D2A3D60FA905E2008DBF68 /* ExampApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExampApp.m; path = Examples/PlayNote/ExampApp.m; sourceTree = "<group>"; };
@@ -2814,6 +2815,14 @@
 			name = Performance;
 			sourceTree = "<group>";
 		};
+		D828B06D0FAE39AE00B4DC3B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		D828F9A50780C3EA00215EB9 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -2884,8 +2893,8 @@
 				D88FE2B505A0F8430024FD88 /* SndEndianFunctions.h */,
 				D88FE2B805A0F8430024FD88 /* SndError.h */,
 				D88FE2B905A0F8430024FD88 /* SndError.m */,
-				D88FE33D05A0FBC10024FD88 /* _Sndfilterkit.c */,
-				D88FE33E05A0FBC10024FD88 /* _Sndfilterkit.h */,
+				D88FE33D05A0FBC10024FD88 /* Sndfilterkit.c */,
+				D88FE33E05A0FBC10024FD88 /* Sndfilterkit.h */,
 				D88FE30905A0F9E40024FD88 /* SndMuLaw.h */,
 				D88FE30A05A0F9E40024FD88 /* SndMuLaw.m */,
 				D88FE30F05A0F9E40024FD88 /* SndResample.h */,
@@ -2899,8 +2908,8 @@
 			children = (
 				D8F8011007A1C6E7005C1665 /* Configured Headers */,
 				D88FE34D05A0FC990024FD88 /* SndKit.h */,
-				D88FE34005A0FBC10024FD88 /* _Sndsmallfilter.h */,
-				D88FE33F05A0FBC10024FD88 /* _Sndlargefilter.h */,
+				D88FE34005A0FBC10024FD88 /* Sndsmallfilter.h */,
+				D88FE33F05A0FBC10024FD88 /* Sndlargefilter.h */,
 				D88FE35505A0FCC00024FD88 /* SndFormat.h */,
 			);
 			name = Headers;
@@ -3994,6 +4003,7 @@
 		D86D24AF06F2AB43003565CB /* PlayNote */ = {
 			isa = PBXGroup;
 			children = (
+				D828B06D0FAE39AE00B4DC3B /* Supporting Files */,
 				D85755D30FA9047C00E5B905 /* Documentation */,
 				D85755CA0FA9043D00E5B905 /* Classes */,
 				D85755CD0FA9044A00E5B905 /* Other Sources */,
@@ -5172,7 +5182,6 @@
 				D8DB4E5E059FA0C900624233 /* Applications */,
 				D8DB4E61059FA0D100624233 /* Documentation */,
 				D84395EA059FAA450054BEEE /* Products */,
-				D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */,
 			);
 			comments = "This is the main MacOS X Xcode project file which will build the MusicKit and SndKit frameworks, Palettes, Tools, Examples, and Applications.\n\nNot all applications are able to be compiled at the moment since the unit generators are still to be converted from 56001 DSP assembly language. This is an ongoing project.\n\nThe entire project should build without warnings.\n\nSee http://www.musickit.org for most up to date info on the MusicKit.";
 			sourceTree = "<group>";
@@ -5582,9 +5591,9 @@
 				D88FE33505A0F9E40024FD88 /* SndStreamRecorder.h in Headers */,
 				D88FE33705A0F9E40024FD88 /* SndTable.h in Headers */,
 				D88FE33905A0F9E40024FD88 /* SndView.h in Headers */,
-				D88FE34505A0FBC10024FD88 /* _Sndfilterkit.h in Headers */,
-				D88FE34605A0FBC10024FD88 /* _Sndlargefilter.h in Headers */,
-				D88FE34705A0FBC10024FD88 /* _Sndsmallfilter.h in Headers */,
+				D88FE34505A0FBC10024FD88 /* Sndfilterkit.h in Headers */,
+				D88FE34605A0FBC10024FD88 /* Sndlargefilter.h in Headers */,
+				D88FE34705A0FBC10024FD88 /* Sndsmallfilter.h in Headers */,
 				D88FE34805A0FBC10024FD88 /* SndFunctions.h in Headers */,
 				D88FE35005A0FC990024FD88 /* SndKit.h in Headers */,
 				D88FE35105A0FC990024FD88 /* SndKitConfig.h in Headers */,
@@ -6992,6 +7001,7 @@
 				D8D2A3DC0FA905E2008DBF68 /* README.txt in Resources */,
 				D8D2A3E30FA9062D008DBF68 /* Info.nib in Resources */,
 				D8D2A3E40FA9062D008DBF68 /* PlayNote.nib in Resources */,
+				D828B0720FAE3A0F00B4DC3B /* PlayNote-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7172,7 +7182,7 @@
 				D88FE33605A0F9E40024FD88 /* SndStreamRecorder.m in Sources */,
 				D88FE33805A0F9E40024FD88 /* SndTable.m in Sources */,
 				D88FE33A05A0F9E40024FD88 /* SndView.m in Sources */,
-				D88FE34405A0FBC10024FD88 /* _Sndfilterkit.c in Sources */,
+				D88FE34405A0FBC10024FD88 /* Sndfilterkit.c in Sources */,
 				D88FE34905A0FBC10024FD88 /* SndFunctions.m in Sources */,
 				D88FE34A05A0FBC10024FD88 /* SndFileIO.m in Sources */,
 				D84CDEE1061F57D5007B002D /* SndPasteboard.m in Sources */,
@@ -14606,7 +14616,6 @@
 		D8D2A3CA0FA90539008DBF68 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
