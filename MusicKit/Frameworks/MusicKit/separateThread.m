@@ -64,22 +64,25 @@
 #define NSConditionLock SndConditionLock
 #endif
 
-#define MKCONDUCTOR_DEBUG 0
+#define MKCONDUCTOR_DEBUG 1
 
-static NSRecursiveLock *musicKitLock = nil;
-static NSThread *musicKitThread = nil;
-static NSThread *lockingThread = nil;
-static NSConditionLock *abortPlayLock = nil;  // Used to abort a playing separate thread.
+static NSRecursiveLock *performanceLock = nil;	// The lock used to control modification (such as adjusting time) to the performance thread.
+static NSThread *performanceThread = nil;	// The thread that runs to perform separate threaded performances.
+static NSThread *lockingThread = nil;		// The current thread that is holding the performance lock.
+static NSConditionLock *abortPlayLock = nil;    // Used to abort a playing separate thread.
 
-// Locking definitions.
-#define nonrecursive 0
-#define recursive 1
+// performance thread locking definitions.
+#define NONRECURSIVE_LOCKING 0
+#define RECURSIVE_LOCKING 1
+// Macros to save the thread we're in to help determine when to unlock.
+// #define lockPerformance(marker) { NSLog(@"lockPerformance %d: %@\n", marker, performanceLock); [performanceLock lock]; lockingThread = [NSThread currentThread]; }
+#define lockPerformance(marker) { [performanceLock lock]; lockingThread = [NSThread currentThread]; }
+// LMS: we always recursively unlock (ignoring _x) until we determine exactly when we
+// shouldn't. I think this is now redundant.
+// #define unlockPerformance(marker, recursiveness) { NSLog(@"unlocking %d\n", marker); lockingThread = nil; [performanceLock unlock]; }
+#define unlockPerformance(marker, recursiveness) { lockingThread = nil; [performanceLock unlock]; }
 
-// TODO better describe what this "lock" actually protects.
-#define lockIt() { lockingThread = [NSThread currentThread]; [musicKitLock lock]; }
-// LMS: at the moment, we always recursively unlock (ignoring _x) until we determine exactly when we shouldn't
-// #define unlockIt(_x) [musicKitLock unlock]
-#define unlockIt(_x) { [musicKitLock unlock]; lockingThread = nil; }
+// abortPlayLock conditions.
 #define MK_ABORTED_PLAYING 1
 #define MK_PLAYING_UNINTERRUPTED 0
 
@@ -113,9 +116,8 @@ static void adjustTimedEntry(double nextMsgTime);
 // Unfortunately that would mean making many variables and functions public when they are currently private (static).
 // @implementation MKConductor(SeparateThread)
 
+/* Returns self if successful. It's illegal to change this during a performance. */
 + useSeparateThread: (BOOL) yesOrNo
-  /* Returns self if successful. It's illegal to change this during a 
-     performance. */
 {
     if (inPerformance)
         return nil;
@@ -125,12 +127,12 @@ static void adjustTimedEntry(double nextMsgTime);
     return self;
 }
 
+/* In a separate-threaded MusicKit performance, returns the NSThread
+   used in that performance.  When the thread is finished, returns
+   NO_CTHREAD. */
 + (NSThread *) performanceThread
-  /* In a separate-threaded MusicKit performance, returns the NSThread
-     used in that performance.  When the thread is finished, returns
-     NO_CTHREAD. */
 {
-    return musicKitThread;
+    return performanceThread;
 }
 
 + (BOOL) separateThreaded
@@ -141,8 +143,8 @@ static void adjustTimedEntry(double nextMsgTime);
 + (BOOL) separateThreadedAndInMusicKitThread
 {
     return (separateThread && 
-            musicKitThread != nil &&
-            [musicKitThread isEqual: [NSThread currentThread]]);
+            performanceThread != nil &&
+            [performanceThread isEqual: [NSThread currentThread]]);
 }
 
 /* The idea here is that Mach over-protects us and only allows us to use
@@ -185,17 +187,17 @@ static void adjustTimedEntry(double nextMsgTime);
 
 void _MKLock(void) 
 {
-    lockIt();
+    lockPerformance(1);
 }
 
 void _MKUnlock(void) 
 {
-    unlockIt(recursive); 
+    unlockPerformance(1, RECURSIVE_LOCKING); 
 }
 
 + lockPerformance
 {  
-    lockIt();
+    lockPerformance(2);
     if (inPerformance)
 	[self adjustTime];
     return self;
@@ -203,7 +205,8 @@ void _MKUnlock(void)
 
 + (BOOL) lockPerformanceNoBlock
 {
-    if ([musicKitLock tryLock]) {
+    NSLog(@"Why is +lockPerformanceNoBlock being called? Deprecated\n");
+    if ([performanceLock tryLock]) {
 	if (inPerformance)
 	    [self adjustTime];
 	return YES;
@@ -214,39 +217,41 @@ void _MKUnlock(void)
 + unlockPerformance
 {
     [_MKClassOrchestra() flushTimedMessages]; /* A no-op if no MKOrchestra */
-    unlockIt(recursive);
+    unlockPerformance(2, RECURSIVE_LOCKING);
     return self;
 }
 
+/* Returns YES if we are in a multi-threaded performance and the
+   MusicKit performance thread has the lock.  Note that no mutex is needed around this
+   function because the function is assumed to be called from either
+   within the MusicKit or from the Appkit with the MusicKit lock. 
+   I.e. whoever calls this has the MusicKit lock so its return value
+   can't change out from under the caller until the caller himself
+   releases the lock.
+ */
 static BOOL musicKitHasLock(void)
-    /* Returns YES if we are in a multi-threaded performance and the
-       Music Kit has the lock.  Note that no mutex is needed around this
-       function because the function is assumed to be called from either
-       within the Music Kit or from the Appkit with the Music Kit lock. 
-       I.e. whoever calls this has the Music Kit lock so its return value
-       can't change out from under the caller until the caller himself
-       releases the lock.
-       */
 {
-    BOOL hasLock = musicKitThread != nil && lockingThread == musicKitThread;
-    // NSLog(@"MusicKit Has Lock = %d, musicKitThread %@ lockingThread %@\n", hasLock, musicKitThread, lockingThread);
+    BOOL hasLock = performanceThread != nil && lockingThread == performanceThread;
+    // NSLog(@"MusicKit Has Lock = %d, performanceThread %@ lockingThread %@\n", hasLock, performanceThread, lockingThread);
     return hasLock;
 }
 
-// Fires a message to the MusicKit thread to wake it out of it's slumber.
-// Typically this occurs from a pause scheduling a wait till the end of time (MK_ENDOFTIME).
-static void sendMessageToWakeUpMKThread(void)
+// Unlocks the abortPlayLock with the abort condition to wake the MusicKit thread out of it's own abortPlayLock slumber.
+// Typically this occurs from a pause which schedules a wait till the end of time (MK_ENDOFTIME).
+static void wakeUpMKThread(void)
 {
-    // We send the message only when someone other than the Music Kit has
-    // the lock. If we're not in performance, the value of musicKitThread
+    // We gain and release the lock only when someone other than the MusicKit has
+    // the lock. If we're not in performance, the value of performanceThread
     // and lockingThread will both be nil. The assumption here
     // is that the caller has the lock if we are in performance.
     
     // Ensure MK doesn't have the lock
     if (separateThread && !musicKitHasLock()) {
-        // NSLog(@"Sending message to wake up MK thread\n");
-
-        // So get the MK thread out of its timed condition lock deep sleep.
+	// NSLog(@"wakeUpMKThread: Waiting on lock %@ for either condition\n", abortPlayLock);
+	[abortPlayLock lock];
+    
+	// So get the MK performance thread out of its timed condition lock deep sleep.
+        // NSLog(@"wakeUpMKThread: Unlocking %@ to wake up MK thread\n", abortPlayLock);
         [abortPlayLock unlockWithCondition: MK_ABORTED_PLAYING]; 
     }
 }
@@ -256,25 +261,24 @@ static void sendMessageToWakeUpMKThread(void)
  */
 static void killMusicKitThread(void)
 {
-    if (musicKitThread == nil)
+    if (performanceThread == nil)
         return;
     if (MKIsTraced(MK_TRACECONDUCTOR))
         NSLog(@"Attempting to kill the MK Thread\n");
 
     // This is only called by a function that has checked it is not in the MusicKit thread.
-    // Must check if the current thread (known to not be the musicKitThread) has the lock.
-    lockIt();
-    // Since we've got the lock, we know that the MusicKit thread is either
-    // waiting in a timed condition lock for the abort or waiting for the lock.
-    sendMessageToWakeUpMKThread();
+    // Must check if the current thread (known to not be the performanceThread) has the lock.
+    lockPerformance(3);
+    // Since we've got the lock, we know that the MusicKit performance thread is either
+    // waiting in a timed condition lock for the abort condition or waiting for the performance lock.
+    wakeUpMKThread();
 
-    unlockIt(recursive);
+    unlockPerformance(3, RECURSIVE_LOCKING);
 }
 
 static BOOL notInMusicKitThread(void)
 {
-    return musicKitThread != nil && 
-           ![musicKitThread isEqual: [NSThread currentThread]]; 
+    return performanceThread != nil && ![performanceThread isEqual: [NSThread currentThread]]; 
 }
 
 /* Destroys the timed entry. */
@@ -283,15 +287,16 @@ static void removeTimedEntry(int arg)
     switch (arg) {
     case pauseThread:
         if (MKIsTraced(MK_TRACECONDUCTOR))
-            NSLog(@"Pausing separate thread\n");
+            NSLog(@"Pausing separate MK performance thread\n");
         adjustTimedEntry(MK_ENDOFTIME); // pausing consists of waiting for a long, long time.
         break;
     case exitThread:
         if (MKIsTraced(MK_TRACECONDUCTOR))
-            NSLog(@"Exiting separate thread\n");
-        if (separateThread && notInMusicKitThread())
-            killMusicKitThread();
-        break;
+            NSLog(@"Exiting separate MK performance thread\n");
+	if (separateThread && notInMusicKitThread() && performanceThread != nil) {
+	    killMusicKitThread();
+	}
+	break;
     default:
         break;
     }
@@ -395,8 +400,8 @@ static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2
     return self;
 }
 
-+ setInterThreadThreshold: (NSString *) newThreshold
 /* this seems fairly unnecessary, but its been left in. It should work ok. */
++ setInterThreadThreshold: (NSString *) newThreshold
 {
     if ([self separateThreadedAndInMusicKitThread]) 
 	return nil;
@@ -417,39 +422,20 @@ static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2
 }
 
 // Must be called from the application thread. Called once when the MKConductor is initialized.
-// We use an NSConnection to communicate from the application thread to the separate conductor (MK) thread.
+// We use an NSRecursiveLock to communicate from the application thread to the separate conductor (MK, i.e performance) thread.
 // Since we only need to do this when we are stopping or pausing, restarting etc (wakeup), the latency
-// in the connection management will be low enough for this purpose.
-// We can get away with NSConnection for the MK to application communication, again, because the messages are
-// sparse and since the data being transported is roughly equivalent to the earlier mach port implementation.
+// in the lock management will be low enough for this purpose.
+// We can get away with NSLocks for the MK to application communication, again, because the events are sparse.
 static void initializeBackgroundThread()
 {
-    // _MKAppProxy *appProxy = [[_MKAppProxy alloc] init];
-    musicKitLock = [[NSRecursiveLock alloc] init];
+    performanceLock = [[NSRecursiveLock alloc] init];
     abortPlayLock = [[NSConditionLock alloc] initWithCondition: MK_PLAYING_UNINTERRUPTED];
-
-    // MKConductor doesn't need messages from the application to the MK (just wakeups via abortPlayLock)
-    // appToMKPort = [NSPort port];
-    // if (appToMKPort == nil)
-    //     MKErrorCode(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
-
-    // appProxy handles object messages from the MK thread to the application
-    // MKToAppPort = [NSPort port];
-    // if (MKToAppPort == nil)
-    //    MKErrorCode(MK_musicKitErr, COND_ERROR, 0, @"initializeBackgroundThread"); //TODO
     
-    // appConnection = [[NSConnection alloc] initWithReceivePort: MKToAppPort sendPort: appToMKPort];
-    // [appConnection setRootObject: appProxy];  // for receiving messages from MK thread to the application thread.
-    // 1 second *should* be plenty of time for a NSConnection message to be processed correctly.
-    // Any longer than this and we assume the message is blocked waiting on the queue to free, in which case
-    // the lock should be released.
-    // [appConnection setRequestTimeout: 1.0];      
+    // [abortPlayLock setName: @"abortPlayLock"]; // for diagnostics on 10.5
 
+    // MKConductor doesn't need messages from the application to the MK (just wakes up via abortPlayLock)
     if (interThreadThreshold == nil)
         interThreadThreshold = NSDefaultRunLoopMode;
-    // We should probably do the following, if we start monkeying with the interThreadThreshold
-    // aka the run loop mode.
-    // [appConnection addRequestMode: interThreadThreshold];
 }
 
 #if PRIORITY_THREADING // LMS: disabled until we find a OpenStep way of changing thread priority...i.e probably forever.
@@ -529,12 +515,11 @@ static void resetPriority(void)
 + (void) separateThreadLoop
 {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-
     double timeToWait; // In fractions of seconds
 
-    lockIt();                // Must be the first thing in this function
-    [abortPlayLock initWithCondition: MK_PLAYING_UNINTERRUPTED];
-    musicKitThread = [[NSThread currentThread] retain];
+    performanceThread = [[NSThread currentThread] retain];
+    abortPlayLock = [abortPlayLock initWithCondition: MK_PLAYING_UNINTERRUPTED];
+    lockPerformance(4); // Must be the first thing in this function
     setPriority();           // if ever this does something, we may need to retrieve the currentRunLoop afterwards.
 
     while ([MKConductor inPerformance]) {
@@ -543,25 +528,27 @@ static void resetPriority(void)
         // finishPerformance can be called from within the MusicKit thread
         // or from the application thread.  In both cases, inPerformance gets
         // set to NO. In the application thread case, we also set the MK_ABORTED_PLAYING
-        //  condition on abortPlayLock (in sendMessageToWakeUpMKThread) to kick the MusicKit
+        // condition when unlocking abortPlayLock (in wakeUpMKThread) to kick the MusicKit
         // thread outta bed.
 
         timeToWait = ([MKConductor isPaused] ? MK_ENDOFTIME :
                       ([MKConductor isClocked] ? _MKTheTimeToWait(condQueue->nextMsgTime) : 0.0));
 
         if (MKIsTraced(MK_TRACECONDUCTOR))
-            NSLog(@"timeToWait in seconds %lf\n", timeToWait);
+            NSLog(@"MK: timeToWait in seconds %lf\n", timeToWait);
 
+	// We better have the lock and we know we want to give it up.
+	// NSLog(@"MK: about to unlock performance lock\n");
+	unlockPerformance(4, RECURSIVE_LOCKING); 
+	
         // if we need to wait longer than 100 uSec, use the timed condition lock, this is just a zero check.
-        if(timeToWait > 0.0001) { 
-            // We better have the lock and we know we want to give it up.
-            unlockIt(recursive); 
-
+        if(timeToWait > 0.0001) {
             /**************************** GOODNIGHT ***************************/
-            // This wakes up when an abort message arrives or until timeout.
+            // This wakes up when an abort condition occurs arrives or until timeout.
             // On waking, the masterConductorBody will be performed.
+	    // NSLog(@"MK: Waiting to lock %@ when condition MK_ABORTED_PLAYING occurs\n", abortPlayLock);
             didAbort = [abortPlayLock lockWhenCondition: MK_ABORTED_PLAYING 
-                                             beforeDate: [NSDate dateWithTimeIntervalSinceNow: timeToWait]];
+					     beforeDate: [NSDate dateWithTimeIntervalSinceNow: timeToWait]];
             /**************************** IT'S MORNING! *************************/
             // If the desire is to exit the thread, this will be
             // accomplished by the setting of inPerformance to false.
@@ -570,31 +557,42 @@ static void resetPriority(void)
             // If the desire is to reposition the thread, this will be
             // accomplished by the setting of timedEntry to the new
             // time.
-            // NSLog(@"Exited timed condition lock either with timeout or abort condition, waiting on lock\n");
-            lockIt();
-            // check if we aborted, preventing calling masterConductorBody
-            if(!didAbort)
-                [MKConductor masterConductorBody: nil];
-                
         }
-        else
-            [MKConductor masterConductorBody: nil];
+        else {
+            // NSLog(@"Skipped locking due to timeToWait being so small");
+            didAbort = NO;
+        }
+	// check if we aborted, preventing calling masterConductorBody
+	if(!didAbort) {
+	    // NSLog(@"MK: Timed out, waiting on performance lock\n");
+	    lockPerformance(5);
+	    // NSLog(@"MK: Now have the performance thread lock %@\n", performanceLock);
+	    [MKConductor masterConductorBody: nil];
+	}
+	else {
+	    // NSLog(@"MK: Exited timed condition lock with abort condition, unlocking abortPlayLock\n");
+	    [abortPlayLock unlockWithCondition: MK_PLAYING_UNINTERRUPTED];
+	    // Now lock the performance lock to ensure we correctly unlock it after exiting the loop.
+	    // Note that we lock this after the abortPlayLock has been unlocked to avoid a deadlock.
+	    // NSLog(@"MK: Waiting on performance lock to lock for final exit\n");
+	    lockPerformance(6);
+	    // NSLog(@"MK: Now have the performance thread lock %@ before exit\n", performanceLock);
+	}
     }
     if (MKIsTraced(MK_TRACECONDUCTOR))
-        NSLog(@"Exited the inPerformance loop\n");
+        NSLog(@"MK: Exited the inPerformance loop\n");
     resetPriority();
-    musicKitThread = nil;
-    unlockIt(nonrecursive);
-
+    performanceThread = nil;
+    unlockPerformance(5, NONRECURSIVE_LOCKING);
     [pool release];
     [NSThread exit];
 }
 
 static void launchThread(void)
 {
-    lockIt();                   // Make sure thread has had a chance to start up.
+    lockPerformance(7);                   // Make sure thread has had a chance to start up.
     [NSThread detachNewThreadSelector: @selector(separateThreadLoop) toTarget: [MKConductor self] withObject: nil];
-    unlockIt(nonrecursive);
+    unlockPerformance(7, NONRECURSIVE_LOCKING);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

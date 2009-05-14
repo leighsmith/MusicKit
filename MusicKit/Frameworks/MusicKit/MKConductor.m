@@ -14,11 +14,11 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2004 The MusicKit Project.
+  Portions Copyright (c) 1999-2009 The MusicKit Project.
 */
 /*
   Original pre MusicKit.org project modification history. For current history, 
-  check the CVS log on musickit.org.
+  check the Subversion log via www.musickit.org.
 
   09/15/89/daj - Added caching of inverse of beatSize. 
   09/19/89/daj - Unraveled inefficient MIN(MAX construct.
@@ -128,9 +128,9 @@ static MKConductor *defaultCond = nil; /* default Conductor. */
 // TODO this should be static but has to be extern for categories to be able to access it.
 MKConductor *clockCond = nil;   /* clock time Conductor. */
 
-#define NORMALCOND (unsigned char)0
-#define CLOCKCOND (unsigned char)1
-#define DEFAULTCOND (unsigned char)2
+#define NORMALCOND (unsigned char) 0
+#define CLOCKCOND (unsigned char) 1
+#define DEFAULTCOND (unsigned char) 2
 
 #define VERSION2 2
 #define VERSION3 3
@@ -155,7 +155,7 @@ static void condInit();    /* Forward decl */
 static MKMsgStruct *evalSpecialQueue();
 
 /*
- LMS these are SB's notes, perhaps redundant.
+ LMS these are SB's notes, perhaps redundant:
  startTime is absolute date (NSDate *)
  nextmsgtime: relative time to start of performance
  clockTime: relative to start of performance
@@ -205,31 +205,31 @@ double _MKTheTimeToWait(double nextMsgTime)
             lowThresholdCrossed = NO;
         }
     }
-    t = MAX(t,0);
-    return t; /*sb: returns relative time... */
+    t = MAX(t, 0);
+    return t; /* sb: returns relative time... */
 }
 
+/* The idea here is that we always calibrate by clock time. Therefore
+   we can't accumulate errors. We subtract the difference between 
+   where we are and where we should be. It is assumed that time is
+   already updated. */
 static void adjustTimedEntry(double nextMsgTime)
-    /* The idea here is that we always calibrate by clock time. Therefore
-       we can't accumulate errors. We subtract the difference between 
-       where we are and where we should be. It is assumed that time is
-       already updated. */
 {
     // NSLog(@"Adjusting timed entry %lf %d, %d, %d, %d\n", nextMsgTime, !inPerformance, performanceIsPaused, musicKitHasLock(), !isClocked);
     if ((!inPerformance) || (performanceIsPaused) || (musicKitHasLock()) || (!isClocked)) 
         return;  /* No timed entry, s.v.p. */
     if (separateThread)
-        sendMessageToWakeUpMKThread();
+        wakeUpMKThread();
     else {
         if (timedEntry != NOTIMEDENTRY) {
             [timedEntry invalidate];
             [timedEntry release];
         }
         timedEntry = [[NSTimer timerWithTimeInterval: _MKTheTimeToWait(nextMsgTime) 
-			       target: [MKConductor class]
-			       selector: @selector(masterConductorBody:)
-			       userInfo: nil
-			       repeats: NO] retain];
+					      target: [MKConductor class]
+					    selector: @selector(masterConductorBody:)
+					    userInfo: nil
+					     repeats: NO] retain];
         [[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
 }
@@ -243,19 +243,18 @@ BOOL checkForEndOfTime()
     return NO;
 }
 
-void repositionCond(MKConductor *cond, double nextMsgTime)
 /*
- Enqueue a MKConductor (this happens every time a new message is 
-scheduled.)
+  Enqueue a MKConductor (this happens every time a new message is scheduled.)
 
-cond is the conductor to be enqueued.  nextMsgTime is the next
-post-mapped time that the conductor wants to run.  If we're not in
-performance, just sets cond->nextMsgTime.  Otherwise, enqueues cond at
-the appropriate place, ordered by time. If, after adding the conductor, the head of the
-queue is MK_ENDOFTIME and if we're not hanging, sends
-+finishPerformance. If the newly enqueued conductor is added at the head of the list, calls adjustTimedEntry().
-Question is: where do we retain cond? I presume it is assumed cond is already retained.
+  cond is the conductor to be enqueued.  nextMsgTime is the next
+  post-mapped time that the conductor wants to run.  If we're not in
+  performance, just sets cond->nextMsgTime.  Otherwise, enqueues cond at
+  the appropriate place, ordered by time. If, after adding the conductor, the head of the
+  queue is MK_ENDOFTIME and if we're not hanging, sends
+  +finishPerformance. If the newly enqueued conductor is added at the head of the list, calls adjustTimedEntry().
+  Question is: where do we retain cond? I presume it is assumed cond is already retained.
  */
+void repositionCond(MKConductor *cond, double nextMsgTime)
 {
     MKConductor *tmp;
     register double t;
@@ -366,8 +365,8 @@ double beatToClock(MKConductor *self, double newBeat)
 #pragma CC_OPT_ON
 #endif
 
-static void adjustBeat(MKConductor *self)
     /* Given clock time, adjust internal state to reflect current time. */
+static void adjustBeat(MKConductor *self)
 {
     double adjustedClockTime,x;
     if (self == clockCond) 
@@ -387,8 +386,8 @@ static void adjustBeat(MKConductor *self)
     }
 }
 
-static void setTime(double newTime)
 /* Adjusts beats of all conductors and resets time. */
+static void setTime(double newTime)
 {
     register MKConductor *cond;
     
@@ -413,7 +412,6 @@ static void setTime(double newTime)
     }
 }
 
-void adjustTime()
 /* Normally, the variable time jumps in discrete amounts. However,
    sometimes, as, for example, when an asynchronous event such as
    MIDI or a mouse-click is received, it is desirable to adjust time 
@@ -421,6 +419,7 @@ void adjustTime()
    This function adjustTime() attempts to serve this need. It will set
    the conductors clockTime to either the current system time or the current clockTime.
    The current value of clockTime is set. */
+void adjustTime()
 {
     double time;
 //    time = getTime() - startTime;
@@ -440,16 +439,15 @@ void adjustTime()
     setTime(time);
 }
 
-BOOL _MKAdjustTimeIfNotBehind(void)
 /* Normally, the variable time jumps in discrete amounts. However,
    sometimes, as, for example, when an asynchronous event such as
    MIDI or a mouse-click is received, it is desirable to adjust time 
    to reflect the current time.  AdjustTime serves this function.
    Returns the current value of clockTime. */
+BOOL _MKAdjustTimeIfNotBehind(void)
 {
-    double time;
-//    time = getTime() - startTime;
-    time = [[NSDate date] timeIntervalSinceDate:startTime]; //sb: replaced previous line.
+    double time = [[NSDate date] timeIntervalSinceDate: startTime];
+
     /* Don't allow it to exceed next scheduled msg. This insures that 
        multiple adjustTimes (e.g. for flurry of MIDI events) don't push 
        scheduled events into the past. (The event loop may favor port action
@@ -464,11 +462,10 @@ BOOL _MKAdjustTimeIfNotBehind(void)
     return YES;
 }
 
+/* Returns the time in seconds as viewed by the clock conductor.
+   Same as [[MKConductor clockConductor] time]. 
+   Returns MK_NODVAL if not in performance. Use MKIsNoDVal() to check for this return value.  */
 + (double) timeInSeconds
-    /* Returns the time in seconds as viewed by the clock conductor.
-       Same as [[MKConductor clockConductor] time]. 
-       Returns MK_NODVAL if not in
-       performance. Use MKIsNoDVal() to check for this return value.  */
 {
     return (inPerformance) ? clockTime : MK_NODVAL;
 }
@@ -685,27 +682,27 @@ static void condInit()
     return self;
 }
 
-+ allocWithZone:(NSZone *)zone {
++ allocWithZone: (NSZone *) zone
+{
     if (inPerformance)
       return nil;
     self = [super allocWithZone:zone];
     return self;
 }
 
-+ alloc {
++ alloc 
+{
     if (inPerformance)
       return nil;
     self = [super alloc];
     return self;
 }
 
+/* TYPE: Creating; Creates a new Conductor.
+ * Creates and returns a new Conductor object with a tempo of 60 beats a minute.
+ * If inPerformance is YES, does nothing and returns nil.
+ */
 - init
-  /* TYPE: Creating; Creates a new Conductor.
-   * Creates and returns a new Conductor object with a tempo of
-   * 60 beats a minute.
-   * If inPerformance is YES, does nothing
-   * and returns nil.
-   */
 {
     self = [super init];
     if (self) {
@@ -875,7 +872,7 @@ static void evalAfterQueues()
 	return nil;
     }
     performanceIsPaused = NO;
-    _MKSetConductedPerformance(NO,self);
+    _MKSetConductedPerformance(NO, self);
     inPerformance = NO; /* Must be set before -emptyQueue is sent */
     [allConductors makeObjectsPerformSelector: @selector(emptyQueue)];
     if (separateThread)
@@ -1046,15 +1043,13 @@ static void evalAfterQueues()
 }
 
 
-- pause
   /* TYPE: Controlling; Pauses the receiver.
    * Pauses the performance of the receiver.
-   * The effect on the receiver is restricted to
-   * the present performance;
-   * paused Conductors are automatically resumed at the end of each
-   * performance.
+ * The effect on the receiver is restricted to the present performance;
+ * paused MKConductors are automatically resumed at the end of each performance.
    * Returns the receiver.
    */
+- pause
 {
     if (self == clockCond || MTCSynch)
 	return nil;
@@ -1067,12 +1062,12 @@ static void evalAfterQueues()
     return self;
 }
 
-- resume
   /* TYPE: Controlling; Resumes a paused receiver.
    * Resumes the receiver.  If the receiver isn't currently paused
    * (if it wasn't previously sent the pause message),
    * this has no effect.
    */
+- resume
 {
     if (MTCSynch)
 	return nil;
@@ -1322,12 +1317,13 @@ withDelay: (double) deltaT
     return self->time;
 }
 
+/* TYPE: Requesting; Flushes the receiver's message queue.
+ * Flushes the receiver's message queue and returns self.
+ */
 - emptyQueue
-  /* TYPE: Requesting; Flushes the receiver's message queue.
-   * Flushes the receiver's message queue and returns self.
-   */
 {
     register MKMsgStruct *curProc;
+    
     while (!ISENDOFLIST(PEEKTIME(_msgQueue))) {
 	curProc = popMsgQueue(&(_msgQueue));
         if (curProc) { /* This test shouldn't be needed */
@@ -1338,7 +1334,7 @@ withDelay: (double) deltaT
         }
     }
     if (!isPaused)
-	repositionCond(self,MK_ENDOFTIME);
+	repositionCond(self, MK_ENDOFTIME);
     return self;
 }
 
@@ -1405,10 +1401,9 @@ MKMsgStruct *MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
 		/* If our conductor is the running conductor, then 
 		   repositionCond will be called by him so there's no need 
 		   to do it here. */
-		BOOL wasHeadOfQueue;
-		double nextTime = beatToClock(conductor,
-					      PEEKTIME(conductor->_msgQueue));
-		wasHeadOfQueue = (conductor == condQueue);
+		double nextTime = beatToClock(conductor, PEEKTIME(conductor->_msgQueue));
+		BOOL wasHeadOfQueue = (conductor == condQueue);
+		
 		/* If we're the head of the queue, then the message we've
 		   just deleted is enqueued to us with a timed entry. We've
 		   got to do an adjustTimedEntry. */
@@ -1431,13 +1426,12 @@ MKMsgStruct *MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
     return NULL;
 }
 
+/* Creates a new msgStruct to be used with MKScheduleMsgRequest. 
+ args may be ids or ints. The struct returned by MKNewMsgRequest
+ should not be altered in any way. Its only use is to pass to
+ MKCancelMsgRequest() and MKScheduleMsgRequest(). */
 MKMsgStruct *
-MKNewMsgRequest(double timeOfMsg,SEL whichSelector,id destinationObject,
-		int argCount,...)
-    /* Creates a new msgStruct to be used with MKScheduleMsgRequest. 
-       args may be ids or ints. The struct returned by MKNewMsgRequest
-       should not be altered in any way. Its only use is to pass to
-       MKCancelMsgRequest() and MKScheduleMsgRequest(). */
+MKNewMsgRequest(double timeOfMsg, SEL whichSelector, id destinationObject, int argCount, ...)
 {
     id arg1,arg2;
     va_list ap;
@@ -1909,12 +1903,12 @@ static double getNextMsgTime(MKConductor *aCond)
 
 @implementation MKConductor(Private)
 
-+ (void) masterConductorBody: (NSTimer *) unusedTimer
 /*sb: created for the change from DPS timers to OS-style timers. The timer performs a method, not
  * a function. It's a class method because we want only one object to look after these messages.
  * When called from a separate thread, it will not actually be called from a NSTimer,
  * but after a timed condition lock. Therefore we should never do anything with unusedTimer.
  */
++ (void) masterConductorBody: (NSTimer *) unusedTimer
 {
     MKMsgStruct  *curProc;
 
@@ -2022,14 +2016,14 @@ static double getNextMsgTime(MKConductor *aCond)
     _MKUnlock();
 }
 
-+ (MKMsgStruct *) _afterPerformanceSel: (SEL) aSelector 
-				    to: (id) toObject 
-			      argCount: (int) argCount, ...;
 /* 
   Same as afterPerformanceSel:to:argCount: but ensures that message will
   be sent before any of the messages enqueued with that method. Private
   to the musickit.
 */
++ (MKMsgStruct *) _afterPerformanceSel: (SEL) aSelector 
+				    to: (id) toObject 
+			      argCount: (int) argCount, ...;
 {
     MKMsgStruct *sp;
     id arg1, arg2;
@@ -2044,16 +2038,16 @@ static double getNextMsgTime(MKConductor *aCond)
     return(sp);
 }
 
-+ (MKMsgStruct *) _afterPerformanceSel: (SEL) aSelector 
-				    to: (id) toObject 
-			      argCount: (int) argCount
-				  arg1: (id) arg1 retain: (BOOL) retainArg1
-				  arg2: (id) arg2 retain: (BOOL) retainArg2
 /* 
   Same as afterPerformanceSel:to:argCount: but ensures that message will
   be sent before any of the messages enqueued with that method. Private
   to the musickit.
 */
++ (MKMsgStruct *) _afterPerformanceSel: (SEL) aSelector 
+				    to: (id) toObject 
+			      argCount: (int) argCount
+				  arg1: (id) arg1 retain: (BOOL) retainArg1
+				  arg2: (id) arg2 retain: (BOOL) retainArg2
 {
     MKMsgStruct *sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME, aSelector, toObject, argCount, arg1, retainArg1, arg2, retainArg2);
     
@@ -2061,10 +2055,6 @@ static double getNextMsgTime(MKConductor *aCond)
     return(sp);
 }
 
-+ (MKMsgStruct *) _newMsgRequestAtTime: (double) timeOfMsg
-				   sel: (SEL) whichSelector
-				    to: (id) destinationObject
-			      argCount: (int) argCount, ...;
 /* TYPE: Requesting; Creates and returns a new message request.
  * Creates and returns message request but doesn't schedule it.
  * The return value can be passed as an argument to the
@@ -2075,6 +2065,10 @@ static double getNextMsgTime(MKConductor *aCond)
  * than that afforded by the sel:to:atTime:argCount: and
  * sel:to:withDelay:argCount: methods.
  */
++ (MKMsgStruct *) _newMsgRequestAtTime: (double) timeOfMsg
+				   sel: (SEL) whichSelector
+				    to: (id) destinationObject
+			      argCount: (int) argCount, ...;
 {
     id arg1, arg2;
     va_list ap;
@@ -2086,12 +2080,6 @@ static double getNextMsgTime(MKConductor *aCond)
     return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, FALSE, arg2, FALSE);
 }
 
-+ (MKMsgStruct *) _newMsgRequestAtTime: (double) timeOfMsg
-				   sel: (SEL) whichSelector 
-				    to: (id) destinationObject
-			      argCount: (int) argCount
-				  arg1: (id) arg1 retain: (BOOL) retainArg1
-				  arg2: (id) arg2 retain: (BOOL) retainArg2
 /* TYPE: Requesting; Creates and returns a new message request.
  * Creates and returns message request but doesn't schedule it.
  * The return value can be passed as an argument to the
@@ -2102,45 +2090,47 @@ static double getNextMsgTime(MKConductor *aCond)
  * than that afforded by the sel:to:atTime:argCount: and
  * sel:to:withDelay:argCount: methods.
  */
++ (MKMsgStruct *) _newMsgRequestAtTime: (double) timeOfMsg
+				   sel: (SEL) whichSelector 
+				    to: (id) destinationObject
+			      argCount: (int) argCount
+				  arg1: (id) arg1 retain: (BOOL) retainArg1
+				  arg2: (id) arg2 retain: (BOOL) retainArg2
 {
     return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, retainArg1, arg2, retainArg2);
 }
 
+/* TYPE: Requesting; Schedules a message request with the receiver.
+ * Sorts the message request aMsgStructPtr
+ * into the receiver's message queue.  aMsgStructPtr is 
+ * a pointer to an MKMsgStruct, such as returned by
+ * _newMsgRequestAtTime:sel:to:argCount:.
+ */
 - (void) _scheduleMsgRequest: (MKMsgStruct *) aMsgStructPtr
-  /* TYPE: Requesting; Schedules a message request with the receiver.
-   * Sorts the message request aMsgStructPtr
-   * into the receiver's message queue.  aMsgStructPtr is 
-   * a pointer to an MKMsgStruct, such as returned by
-   * _newMsgRequestAtTime:sel:to:argCount:.
-   */
 {
     if (aMsgStructPtr && (!aMsgStructPtr->_onQueue))
         insertMsgQueue(aMsgStructPtr, self);
 }
 
+/* Same as _scheduleMsgRequest: but uses clock conductor. */
 + (void) _scheduleMsgRequest: (MKMsgStruct *) aMsgStructPtr
-  /* Same as _scheduleMsgRequest: but uses clock conductor. 
-   */
 {
     if (aMsgStructPtr && (!aMsgStructPtr->_onQueue))
         insertMsgQueue(aMsgStructPtr, clockCond);
 }
 
+/* TYPE: Requesting; Reschedules a message request with the receiver.
+ * Redefines the message request aMsgStructPtr according
+ * to the following arguments and resorts it into the receiver's message queue.
+ * aMsgStructPtr is a pointer to an MKMsgStruct, such as returned by
+ * _newMsgRequestAtTime:sel:to:argCount:.
+ * (Same as MKReschedule)
+ */
 - (MKMsgStruct *) _rescheduleMsgRequest: (MKMsgStruct *) aMsgStructPtr
 				 atTime: (double) timeOfNewMsg 
 				    sel: (SEL) whichSelector
 				     to: (id) destinationObject 
 			       argCount: (int) argCount, ...;
-  /* TYPE: Requesting; Reschedules a message request with the receiver.
-   * Redefines the message request aMsgStructPtr according
-   * to the following arguments and resorts
-   * it into the receiver's message queue.
-   * aMsgStructPtr is 
-   * a pointer to an MKMsgStruct, such as returned by
-   * _newMsgRequestAtTime:sel:to:argCount:.
-   */
-
-/* Same as MKReschedule */
 {
     id arg1, arg2;
     va_list ap;
@@ -2152,6 +2142,7 @@ static double getNextMsgTime(MKConductor *aCond)
     return MKRescheduleMsgRequest(aMsgStructPtr, self, timeOfNewMsg, whichSelector, destinationObject, argCount, arg1, FALSE, arg2, FALSE);
 }
 
+/* Same as MKReschedule */
 - (MKMsgStruct *) _rescheduleMsgRequestWithObjectArgs: (MKMsgStruct *) aMsgStructPtr
 					       atTime: (double) timeOfNewMsg
 						  sel: (SEL) whichSelector
@@ -2159,35 +2150,31 @@ static double getNextMsgTime(MKConductor *aCond)
 					     argCount: (int) argCount
 						 arg1: (id) arg1 retain: (BOOL) retainArg1
 						 arg2: (id) arg2 retain: (BOOL) retainArg2
-/* Same as MKReschedule */
 {
     return MKRescheduleMsgRequest(aMsgStructPtr, self, timeOfNewMsg, whichSelector, destinationObject, argCount, arg1, retainArg1, arg2, retainArg2);
 }
 
-
+/* TYPE: Requesting; Cancels the message request aMsgStructPtr.
+ * Removes the message request pointed to by aMsgStructPtr. 
+ * Notice that this is a factory method -- you don't have to
+ * know which queue the message request is on to cancel it.
+ * aMsgStructPtr is a pointer to an MKMsgStruct, such as returned by
+ * _newMsgRequestAtTime:sel:to:argCount:.
+ */
 + (MKMsgStruct *) _cancelMsgRequest: (MKMsgStruct *) aMsgStructPtr
-  /* TYPE: Requesting; Cancels the message request aMsgStructPtr.
-   * Removes the message request pointed to by
-   * aMsgStructPtr. 
-   * Notice that this is a factory method -- you don't have to
-   * know which queue the message request is on to cancel it.
-   * aMsgStructPtr is 
-   * a pointer to an MKMsgStruct, such as returned by
-   * _newMsgRequestAtTime:sel:to:argCount:.
-   */
 {
     return MKCancelMsgRequest(aMsgStructPtr);
 }
 
+/* TYPE: Modifying; Sets the current time to desiredTime.
+ * Sets the factory's notion of the current time to
+ * desiredTime.  desiredTime is clipped
+ * to a value not less than the time that the previous message
+ * was sent and not greater than that of the
+ * next scheduled message.
+ * Returns the adjusted time.
+ */
 + (double) _adjustTimeNoTE: (double) desiredTime     
-  /* TYPE: Modifying; Sets the current time to desiredTime.
-   * Sets the factory's notion of the current time to
-   * desiredTime.  desiredTime is clipped
-   * to a value not less than the time that the previous message
-   * was sent and not greater than that of the
-   * next scheduled message.
-   * Returns the adjusted time.
-   */
 {
     double t;
     if (!inPerformance || performanceIsPaused)
@@ -2240,8 +2227,8 @@ static double getNextMsgTime(MKConductor *aCond)
     return self;
 }
 
-- _pause
     /* Used by MTC mechanism */
+- _pause
 {
     if (isPaused)
 	return self;

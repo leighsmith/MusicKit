@@ -1412,12 +1412,8 @@ Appendix entitled MIDI Time Code in the MusicKit
 + setThreadPriority: (float) priorityFactor;
 
 /*!
-  @return Returns an NSThread..
-  @brief In a separate-threaded MusicKit performance, returns the NSThread
-  used in that performance.
-
-  When the thread has exited, returns
-  nil. 
+  @return Returns an NSThread. When the thread has exited, returns nil.
+  @brief In a separate-threaded MusicKit performance, returns the NSThread used in that performance.
 */
 + (NSThread *) performanceThread;
 

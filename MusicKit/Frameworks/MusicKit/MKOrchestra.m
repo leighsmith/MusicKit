@@ -2195,10 +2195,10 @@ extern BOOL _MKAdjustTimeIfNotBehind(void);
     double dspTime,hostTime;
     if (![_MKClassConductor() inPerformance])
 	return;
-    _MKLock();
+    _MKLock(); // TODO can we replace this with [MKConductor lockPerformance]; ?
     if ((self->_parenCount) /* Don't mess with parens */
         || (!_MKAdjustTimeIfNotBehind())) {
-	_MKUnlock();
+	_MKUnlock(); // TODO can we replace this with [MKConductor unlockPerformance]; ?
 	return;
     }
     DSPSetCurrentDSP(self->orchIndex); /* Added March 7, 1993--DAJ */
@@ -2208,7 +2208,7 @@ extern BOOL _MKAdjustTimeIfNotBehind(void);
     /* one pole filter */
     synchTimeRatio = (synchTimeRatio * .8 + dspTime/hostTime * .2);
     timeOffset = (synchTimeRatio - 1) * hostTime;
-    _MKUnlock();
+    _MKUnlock();  // TODO can we replace this with [MKConductor unlockPerformance]; ?
 }
 
 static void adjustOrchTE(MKOrchestra *self,BOOL yesOrNo,BOOL reset) {
