@@ -220,8 +220,6 @@ PERFORM_API MKMDReturn MKMDReleaseOwnership(MKMDPort mididriver_port, MKMDOwnerP
     // TODO check the ports properly
     fprintf(debug, "MKMDReleaseOwnership called\n");
     fclose(debug); // hopefully save what we did.
-#else
-    NSLog(@"MKMDReleaseOwnership called\n");
 #endif
     if(MIDIPortDispose(outPort) != noErr)
         return MKMD_ERROR_BUSY;
@@ -512,7 +510,10 @@ PERFORM_API MKMDReturn MKMDSendData (
         unsigned int firstUniqueTimeIndex = msgIndex;
         unsigned int bufferIndex;
 
-        playTime = (data[msgIndex].time - datumMilliSecTime) * quantumFactor + datumRefTime;
+	if (data[msgIndex].time == 0)
+	    playTime = 0; // zero time is reserved for play notes immediately.
+	else
+	    playTime = (data[msgIndex].time - datumMilliSecTime) * quantumFactor + datumRefTime;
         // since note-offs are also timed, playEndTimeEstimate will save the end time of the last note.
         if(data[msgIndex].time > playEndTimeEstimate)
             playEndTimeEstimate = data[msgIndex].time;
@@ -597,7 +598,7 @@ PERFORM_API MKMDReturn MKMDRequestQueueNotification (
     return MKMD_SUCCESS;
 }
 
-/* Routine MKMDClearQueue */
+/* Routine MKMDClearQueue. On MacOS X it's the same as MKMDFlushQueue, flushing the output. */
 PERFORM_API MKMDReturn MKMDClearQueue (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
@@ -606,7 +607,7 @@ PERFORM_API MKMDReturn MKMDClearQueue (
 #if FUNCLOG
     fprintf(debug, "MKMDClearQueue called\n");
 #endif
-    return MKMD_SUCCESS;
+    return MIDIFlushOutput(claimedDestinations[unit]) != noErr ? MKMD_ERROR_UNKNOWN_ERROR : MKMD_SUCCESS;
 }
 
 /* Routine MKMDFlushQueue */
@@ -616,9 +617,9 @@ PERFORM_API MKMDReturn MKMDFlushQueue (
 	short unit)
 {
 #if FUNCLOG
-    fprintf(debug, "MKMDFlushQueue called\n");
+    fprintf(debug, "MKMDFlushQueue called unit %d\n", unit);
 #endif
-    return MKMD_SUCCESS;
+    return MIDIFlushOutput(claimedDestinations[unit]) != noErr ? MKMD_ERROR_UNKNOWN_ERROR : MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetSystemIgnores */
