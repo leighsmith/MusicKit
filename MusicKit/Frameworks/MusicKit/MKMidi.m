@@ -1457,27 +1457,36 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
     return self;
 }
 
+/* This is a conservative version of allNotesOff.  It only sends
+ * noteOffs for notes if those notes are sounding.
+ * The notes are sent immediately (but will be
+ * queued behind any notes that have already been queued up).
+ */
 - allNotesOff
-   /* This is a conservative version of allNotesOff.  It only sends
-    * noteOffs for notes if those notes are sounding.
-    * The notes are sent immediately (but will be
-    * queued behind any notes that have already been queued up).
-    */
 {
-    NSMutableArray *aList;
-    int i, cnt, j;
+    int i, cnt, j, r;
     
     if (!MIDIOUTPTR(self) || deviceStatus != MK_devRunning)
 	return nil;
-    MKMDFlushQueue(devicePort, ownerPort, outputUnit);
-    /* Not MKMDClearQueue, which can leave MIDI devices confused. */
+    /* MKMDFlushQueue not MKMDClearQueue, which can leave MIDI devices confused. */
+    if ((r = MKMDFlushQueue(devicePort, ownerPort, outputUnit)) != MKMD_SUCCESS) {
+	MKErrorCode(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"allNotesOff");
+    }
+    // Update our sense of time so that when we write out note-offs at time 0 we mean "now"!
+    if ((r = MKMDSetClockTime(devicePort, ownerPort, 0)) != MKMD_SUCCESS) {
+	MKErrorCode(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"allNotesOff");
+    }
     for (i = 1; i <= MIDI_NUMCHANS; i++) {
-	aList = _MKGetNoteOns(MIDIOUTPTR(self), i);
-	for (j = 0, cnt = [aList count]; j < cnt; j++)
-            _MKWriteMidiOut([aList objectAtIndex: j], 0, i, MIDIOUTPTR(self), [self channelNoteReceiver: i]);
-        MKMDFlushQueue(devicePort, ownerPort, outputUnit);
-	[aList removeAllObjects];
-	[aList release];
+	NSMutableArray *noteOffsForSoundingNotes = _MKGetNoteOns(MIDIOUTPTR(self), i);
+	
+	for (j = 0, cnt = [noteOffsForSoundingNotes count]; j < cnt; j++) {
+	    // We need to wait a considerable amount of time for the note offs to be received. I think this is mostly to do with flushing
+	    // the queue not really working on MacOS X.
+            _MKWriteMidiOut([noteOffsForSoundingNotes objectAtIndex: j], 0.8, i, MIDIOUTPTR(self), [self channelNoteReceiver: i]);
+	}
+        // MKMDFlushQueue(devicePort, ownerPort, outputUnit);
+	[noteOffsForSoundingNotes removeAllObjects];
+	[noteOffsForSoundingNotes release];
     }
     awaitMidiOutDone(self, 1000); /* Timeout to work around driver (?) bug */
     return self;
