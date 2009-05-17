@@ -64,7 +64,7 @@
 #define NSConditionLock SndConditionLock
 #endif
 
-#define MKCONDUCTOR_DEBUG 1
+#define MKCONDUCTOR_DEBUG 0
 
 static NSRecursiveLock *performanceLock = nil;	// The lock used to control modification (such as adjusting time) to the performance thread.
 static NSThread *performanceThread = nil;	// The thread that runs to perform separate threaded performances.
