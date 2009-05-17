@@ -1,5 +1,5 @@
 #
-#   $Id: GNUmakefile 3459 2009-04-08 22:13:47Z leighsmith $
+#   $Id$
 #   Defined In: The MusicKit
 #
 #  Description:
