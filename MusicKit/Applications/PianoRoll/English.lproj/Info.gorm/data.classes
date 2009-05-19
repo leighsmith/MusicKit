@@ -1,0 +1,39 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    Distributor = {
+	Actions = (
+	    "stopPlay:",
+	    "saveDoc:",
+	    "closeDoc:",
+	    "play:",
+	    "openDoc:",
+	    "showInfo:",
+	    "newDoc:",
+	    "saveDocAs:",
+	    "showHelp:"
+	);
+	Outlets = (
+	    openPanel,
+	    tadList,
+	    infoPanel,
+	    scorePlayer,
+	    helpPanel,
+	    docList,
+	    savePanel
+	);
+	Super = NSObject;
+    };
+    FirstResponder = {
+	Actions = (
+	    "closeDoc:",
+	    "newDoc:",
+	    "openDoc:",
+	    "play:",
+	    "saveDoc:",
+	    "saveDocAs:",
+	    "showInfo:",
+	    "stopPlay:"
+	);
+	Super = NSObject;
+    };
+}

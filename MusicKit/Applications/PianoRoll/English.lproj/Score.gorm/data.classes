@@ -1,0 +1,19 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    Document = {
+	Actions = (
+	);
+	Outlets = (
+	    partView,
+	    docWindow
+	);
+	Super = NSObject;
+    };
+    PartView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSView;
+    };
+}
