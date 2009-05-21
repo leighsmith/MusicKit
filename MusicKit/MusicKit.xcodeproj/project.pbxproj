@@ -6173,6 +6173,7 @@
 			buildPhases = (
 				D85A2F45061F347D0065380E /* Headers */,
 				D85A2F46061F347D0065380E /* Resources */,
+				D8515F5F0FC5E7E8008DB277 /* ShellScript */,
 				D85A2F47061F347D0065380E /* Sources */,
 				D85A2F48061F347D0065380E /* Frameworks */,
 			);
@@ -7032,6 +7033,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXRezBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D8515F5F0FC5E7E8008DB277 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/SpectroHelp/SpectroHelp.html",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run openjade to convert SGML to HTML\n# Need to fix the location\nmkdir -p $DERIVED_FILE_DIR/SpectroHelp\ncd $DERIVED_FILE_DIR/SpectroHelp\n# -d $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.dsssl\\#html\n# \U0013-d $SRCROOT/Documentation/SGML/MusicKit_README.dsssl\\#html\n/sw/bin/openjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_README.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D80151BC0FA64B24002FB882 /* Sources */ = {
