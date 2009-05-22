@@ -466,7 +466,6 @@
 		D85A2FDB061F36080065380E /* Spectro.ico in Resources */ = {isa = PBXBuildFile; fileRef = D85A2FD6061F36080065380E /* Spectro.ico */; };
 		D85A2FDC061F36080065380E /* Spectro.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D85A2FD7061F36080065380E /* Spectro.tiff */; };
 		D85A2FDD061F36080065380E /* WaterFall.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D85A2FD8061F36080065380E /* WaterFall.tiff */; };
-		D85A3023061F3A820065380E /* SpectroHelp.sgml in Resources */ = {isa = PBXBuildFile; fileRef = D85A3021061F3A820065380E /* SpectroHelp.sgml */; };
 		D85C2F8A06308A2900E6397B /* SndEditing.m in Sources */ = {isa = PBXBuildFile; fileRef = D85C2F8806308A2900E6397B /* SndEditing.m */; };
 		D85E27FC06FA0D0800385C32 /* ScorePlayer_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D85E27FB06FA0D0800385C32 /* ScorePlayer_main.m */; };
 		D85E280306FA0D2E00385C32 /* ScorePlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = D85E280106FA0D2E00385C32 /* ScorePlayerController.m */; };
@@ -1478,6 +1477,7 @@
 		D828FA5C0780D1F500215EB9 /* EnvelopeEd-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EnvelopeEd-Info.plist"; path = "Applications/EnvelopeEd/EnvelopeEd-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D82AC3B905A0F6DA00780F57 /* SndKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SndKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82AC3BA05A0F6DA00780F57 /* SndKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SndKit-Info.plist"; path = "Frameworks/SndKit/SndKit-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D833C7420FC610D20098790C /* Spectro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Spectro; path = ../../../ApplicationBuilding/MusicKit.build/Development/Spectro; sourceTree = SOURCE_ROOT; };
 		D837AB8606C80F4F00A6CFEB /* Juno106.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Juno106.h; path = Applications/PatchCord/Juno106.subproj/Juno106.h; sourceTree = "<group>"; };
 		D837AB8706C80F4F00A6CFEB /* Juno106.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Juno106.m; path = Applications/PatchCord/Juno106.subproj/Juno106.m; sourceTree = "<group>"; };
 		D837AB9506C80F8B00A6CFEB /* 24bitJunoSwitchDown.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = 24bitJunoSwitchDown.tiff; path = Applications/PatchCord/Juno106.subproj/24bitJunoSwitchDown.tiff; sourceTree = "<group>"; };
@@ -5172,6 +5172,7 @@
 		D8DB4E48059FA05500624233 = {
 			isa = PBXGroup;
 			children = (
+				D833C7420FC610D20098790C /* Spectro */,
 				D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */,
 				D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */,
 				D8DB4E5B059FA0AA00624233 /* Frameworks */,
@@ -6172,8 +6173,8 @@
 			buildConfigurationList = D8B44FAE099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "Spectro (Application)" */;
 			buildPhases = (
 				D85A2F45061F347D0065380E /* Headers */,
-				D85A2F46061F347D0065380E /* Resources */,
 				D8515F5F0FC5E7E8008DB277 /* ShellScript */,
+				D85A2F46061F347D0065380E /* Resources */,
 				D85A2F47061F347D0065380E /* Sources */,
 				D85A2F48061F347D0065380E /* Frameworks */,
 			);
@@ -6799,7 +6800,6 @@
 				D85A2FDB061F36080065380E /* Spectro.ico in Resources */,
 				D85A2FDC061F36080065380E /* Spectro.tiff in Resources */,
 				D85A2FDD061F36080065380E /* WaterFall.tiff in Resources */,
-				D85A3023061F3A820065380E /* SpectroHelp.sgml in Resources */,
 				D861CCC40F8E9392002F1A16 /* Go.tiff in Resources */,
 				D861CCC50F8E9392002F1A16 /* pausebutton.tiff in Resources */,
 				D861CCC60F8E9392002F1A16 /* pausebuttonH.tiff in Resources */,
@@ -7044,11 +7044,11 @@
 				"$(SRCROOT)/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml",
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/SpectroHelp/SpectroHelp.html",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/SpectroHelp/SpectroHelp.html",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\n# Need to fix the location\nmkdir -p $DERIVED_FILE_DIR/SpectroHelp\ncd $DERIVED_FILE_DIR/SpectroHelp\n# -d $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.dsssl\\#html\n# \U0013-d $SRCROOT/Documentation/SGML/MusicKit_README.dsssl\\#html\n/sw/bin/openjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_README.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\n";
+			shellScript = "# Run openjade to convert SGML to HTML\n# Need to fix the location\necho \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\"\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\n# -d $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.dsssl\\#html\n/sw/bin/openjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_README.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
