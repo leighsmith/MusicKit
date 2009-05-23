@@ -33,7 +33,7 @@
     NSArray *fileTypes = [Snd soundFileExtensions];
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
 
-    NSLog(@"Accepting %@\n", fileTypes);
+    // NSLog(@"Accepting %@\n", fileTypes);
     [oPanel setAllowsMultipleSelection: YES];
     result = [oPanel runModalForDirectory: nil file: nil types: fileTypes];
     if (result == NSOKButton) {
@@ -55,7 +55,7 @@
         NSString *soundFileName = [filesToPlay objectAtIndex:i];
         sound = [[Snd alloc] initFromSoundfile: soundFileName];
         if(sound != nil) {
-            NSLog(@"starting playing %@\n", soundFileName);
+            // NSLog(@"starting playing %@\n", soundFileName);
             [sound setDelegate: self];
             [sound setName: soundFileName];
             [sound play];
@@ -65,7 +65,7 @@
 
 - (void) willPlay: (Snd *) sound duringPerformance: (SndPerformance *) performance
 {
-    NSLog(@"will begin playing sound number %d named %@\n", soundTag, [sound name]);
+    // NSLog(@"will begin playing sound number %d named %@\n", soundTag, [sound name]);
     [currentPerformances setObject: [NSNumber numberWithInt: soundTag++]
                             forKey: performance];
 }
@@ -82,7 +82,7 @@
         }
     }
     soundTagNumber = [currentPerformances objectForKey: currentPerf];  // yet works with this?
-    NSLog(@"did finish playing sound number %d named %@\n", [soundTagNumber intValue], [sound name]);
+    // NSLog(@"did finish playing sound number %d named %@\n", [soundTagNumber intValue], [sound name]);
     [currentPerformances removeObjectForKey: performance];
 }
 
