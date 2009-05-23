@@ -15,7 +15,7 @@
 ]>
 
 <!-- 
-  $Id: MusicKit_Help.dsssl 4706 2006-02-19 11:18:11Z leigh $
+  $Id$
 
   MusicKit customizations for documentation to appear in the Apple
   HelpViewer application, which is a specialised web browser.
@@ -56,7 +56,7 @@
 
 ;; Adds CSS style-sheet support
 (define %stylesheet%
-  "as_help.css")
+  "MusicKit_Help.css")
 
 ;; Set to #f to not generate any article titlepage.
 (define %generate-article-titlepage%

@@ -613,6 +613,7 @@
 		D870944F05B5E0460074C18D /* MIDIFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = D870944B05B5E0460074C18D /* MIDIFileController.m */; };
 		D870945005B5E0460074C18D /* MIDIFilePlayback_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D870944C05B5E0460074C18D /* MIDIFilePlayback_main.m */; };
 		D870946C05B5E1100074C18D /* MIDIFilePlayback.nib in Resources */ = {isa = PBXBuildFile; fileRef = D870946A05B5E1100074C18D /* MIDIFilePlayback.nib */; };
+		D8743EDD0FC7EF6F007B3313 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
 		D879C3C705A2B4B6005DB251 /* SndViewP.h in Headers */ = {isa = PBXBuildFile; fileRef = D879C3C505A2B4B6005DB251 /* SndViewP.h */; };
 		D879C3D405A2B4E1005DB251 /* SndViewP.nib in Resources */ = {isa = PBXBuildFile; fileRef = D879C3D205A2B4E0005DB251 /* SndViewP.nib */; };
 		D879C3DD05A2B506005DB251 /* palette.table in Resources */ = {isa = PBXBuildFile; fileRef = D879C3DC05A2B506005DB251 /* palette.table */; };
@@ -1242,6 +1243,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		D8743ED40FC7EEF7007B3313 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/SpectroHelp;
+			dstSubfolderSpec = 7;
+			files = (
+				D8743EDD0FC7EF6F007B3313 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -1477,7 +1488,6 @@
 		D828FA5C0780D1F500215EB9 /* EnvelopeEd-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EnvelopeEd-Info.plist"; path = "Applications/EnvelopeEd/EnvelopeEd-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D82AC3B905A0F6DA00780F57 /* SndKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SndKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82AC3BA05A0F6DA00780F57 /* SndKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SndKit-Info.plist"; path = "Frameworks/SndKit/SndKit-Info.plist"; sourceTree = SOURCE_ROOT; };
-		D833C7420FC610D20098790C /* Spectro */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Spectro; path = ../../../ApplicationBuilding/MusicKit.build/Development/Spectro; sourceTree = SOURCE_ROOT; };
 		D837AB8606C80F4F00A6CFEB /* Juno106.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Juno106.h; path = Applications/PatchCord/Juno106.subproj/Juno106.h; sourceTree = "<group>"; };
 		D837AB8706C80F4F00A6CFEB /* Juno106.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Juno106.m; path = Applications/PatchCord/Juno106.subproj/Juno106.m; sourceTree = "<group>"; };
 		D837AB9506C80F8B00A6CFEB /* 24bitJunoSwitchDown.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = 24bitJunoSwitchDown.tiff; path = Applications/PatchCord/Juno106.subproj/24bitJunoSwitchDown.tiff; sourceTree = "<group>"; };
@@ -1511,6 +1521,8 @@
 		D844A7AD07C7F1EE0086A55B /* recsnd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = recsnd; sourceTree = BUILT_PRODUCTS_DIR; };
 		D844A7B207C7F2360086A55B /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Examples/recsnd/main.m; sourceTree = "<group>"; };
 		D844A7C907C827CD0086A55B /* playsndfaders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playsndfaders; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8465EFD0FC76555006488CE /* MusicKit_Help.dsssl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MusicKit_Help.dsssl; path = Documentation/SGML/MusicKit_Help.dsssl; sourceTree = "<group>"; };
+		D8465EFE0FC76555006488CE /* MusicKit_README.dsssl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MusicKit_README.dsssl; path = Documentation/SGML/MusicKit_README.dsssl; sourceTree = "<group>"; };
 		D847900E07A8B84500F7C83A /* MusicKitConfig.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MusicKitConfig.h; path = Frameworks/MusicKit/MusicKitConfig.h; sourceTree = "<group>"; };
 		D847900F07A8B84500F7C83A /* MusicKitConfig.h.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MusicKitConfig.h.in; path = Frameworks/MusicKit/MusicKitConfig.h.in; sourceTree = "<group>"; };
 		D84B2D9C09D558A900766BD4 /* Makefile.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 30; name = Makefile.in; path = Documentation/Makefile.in; sourceTree = "<group>"; };
@@ -1743,6 +1755,8 @@
 		D870944B05B5E0460074C18D /* MIDIFileController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MIDIFileController.m; path = Examples/MidiFilePlayback/MIDIFileController.m; sourceTree = "<group>"; };
 		D870944C05B5E0460074C18D /* MIDIFilePlayback_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MIDIFilePlayback_main.m; path = Examples/MidiFilePlayback/MIDIFilePlayback_main.m; sourceTree = "<group>"; };
 		D870946B05B5E1100074C18D /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Examples/MidiFilePlayback/English.lproj/MIDIFilePlayback-macosx.nib"; sourceTree = "<group>"; };
+		D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = MusicKit_Help.css; path = Documentation/MusicKit_Help.css; sourceTree = "<group>"; };
+		D8743EDC0FC7EF62007B3313 /* MusicKit_README.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = MusicKit_README.css; path = Documentation/MusicKit_README.css; sourceTree = "<group>"; };
 		D879C15B05A22C4F005DB251 /* SndKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SndKit.framework; path = /Library/Frameworks/SndKit.framework; sourceTree = "<absolute>"; };
 		D879C3C005A2B47F005DB251 /* SndViewP.palette */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SndViewP.palette; sourceTree = BUILT_PRODUCTS_DIR; };
 		D879C3C105A2B47F005DB251 /* SndViewPalette-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SndViewPalette-Info.plist"; path = "Palettes/SndView/SndViewPalette-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -5172,7 +5186,6 @@
 		D8DB4E48059FA05500624233 = {
 			isa = PBXGroup;
 			children = (
-				D833C7420FC610D20098790C /* Spectro */,
 				D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */,
 				D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */,
 				D8DB4E5B059FA0AA00624233 /* Frameworks */,
@@ -5218,6 +5231,10 @@
 			children = (
 				D84B2D9C09D558A900766BD4 /* Makefile.in */,
 				D8D1B7380817D26600D9156A /* MusicKit_README.sgml */,
+				D8465EFD0FC76555006488CE /* MusicKit_Help.dsssl */,
+				D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */,
+				D8465EFE0FC76555006488CE /* MusicKit_README.dsssl */,
+				D8743EDC0FC7EF62007B3313 /* MusicKit_README.css */,
 				D8D1B74F0817D3DA00D9156A /* Concepts */,
 				D8D1B7520817D3F600D9156A /* Tutorials */,
 			);
@@ -6174,6 +6191,7 @@
 			buildPhases = (
 				D85A2F45061F347D0065380E /* Headers */,
 				D8515F5F0FC5E7E8008DB277 /* ShellScript */,
+				D8743ED40FC7EEF7007B3313 /* CopyFiles */,
 				D85A2F46061F347D0065380E /* Resources */,
 				D85A2F47061F347D0065380E /* Sources */,
 				D85A2F48061F347D0065380E /* Frameworks */,
@@ -7048,7 +7066,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\n# Need to fix the location\necho \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\"\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\n# -d $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.dsssl\\#html\n/sw/bin/openjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_README.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\n/sw/bin/openjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_Help.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
