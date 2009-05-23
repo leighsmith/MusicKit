@@ -364,13 +364,13 @@ static id readScorefile(MKScore *self, NSData *stream, double firstTimeTag, doub
 	if (timeBounds)
 	    notes = [currentPart firstTimeTag: firstTimeTag lastTimeTag: lastTimeTag];
 	else {
-	    [currentPart sort];
 	    notes = [currentPart notesNoCopy];
 	}
 	if (notes) {
 	    [allNotes addObjectsFromArray: notes]; 
 	}
     }
+    [allNotes sortUsingSelector: @selector(compare:)]; // order all notes by time.
     return [NSArray arrayWithArray: allNotes]; // returns an immutable, autoreleased version
 }
 
@@ -419,7 +419,7 @@ static id readScorefile(MKScore *self, NSData *stream, double firstTimeTag, doub
     if (!aStream)
 	return nil;
     p = _MKInitScoreOut(aStream, self, info, timeShift, NO, isBinary);
-    [self _noteTagRangeLowP: &lowTag highP:&highTag];
+    [self _noteTagRangeLowP: &lowTag highP: &highTag];
     if (lowTag <= highTag) {
 	if (isBinary) {
 	    _MKWriteShort(aStream, _MK_noteTagRange);
@@ -448,8 +448,8 @@ static id readScorefile(MKScore *self, NSData *stream, double firstTimeTag, doub
        timeShift: (double) timeShift
           binary: (BOOL) isBinary
 {
-  NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
-  BOOL success;
+    NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
+    BOOL success;
 
     [self writeScorefileStream: stream
                   firstTimeTag: firstTimeTag
@@ -457,16 +457,14 @@ static id readScorefile(MKScore *self, NSData *stream, double firstTimeTag, doub
                      timeShift: timeShift
                         binary: isBinary];
 
-  success = _MKOpenFileStreamForWriting(aFileName,
-                                        (isBinary) ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT,
-                                        stream, YES);
-  [stream release];
-  if (!success) {
-    MKErrorCode(MK_cantCloseFileErr, aFileName);
-    return nil;
-  }
-  else
-    return self;
+    success = _MKOpenFileStreamForWriting(aFileName, (isBinary) ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT, stream, YES);
+    [stream release];
+    if (!success) {
+	MKErrorCode(MK_cantCloseFileErr, aFileName);
+	return nil;
+    }
+    else
+	return self;
 }
 
 - writeScorefile: (NSString *) aFileName
