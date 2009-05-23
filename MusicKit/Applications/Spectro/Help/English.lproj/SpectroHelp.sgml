@@ -26,7 +26,7 @@
 	4 is an update and port to <productname>OpenStep</productname>
 	by Stephen Brandon, Leigh Smith and other
 	<productname>MusicKit</productname> project developers and is
-	therefore operational with <corpname>Apple</corpname>'s
+	therefore operational with Apple's
 	<productname>Cocoa</productname> and
 	<productname>GnuStep</productname>
 	<acronym>API</acronym>s. Direct bugs/suggestions to
