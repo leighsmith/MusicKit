@@ -1,0 +1,30 @@
+musickit_c directory
+
+This directory contains an subset of the musicKit API implemented in C, as 
+well as a number of demonstration waveguide patches that use the API. 
+
+Here is a description of the contents of this directory. 
+
+Makefile               - Makefile to build the unitGenerator library, 
+                         the musickit subset and the example patch 
+                         algorithms. On a NeXT system you can simply
+                         type "make" to build the unitGenerators, the 
+                         musickit_c, the patches, and to play the patches
+            
+
+mk_c.h                 - Subset of the musickit implemented in C
+mk_sys.c
+mk_sys.h
+musickit_c.h
+numerics.c
+numerics.h
+
+soundout.c           - These modules are currently setup to write NeXT
+soundout.h             sound objects. This routine shoul be rewritten 
+                       to support whatever sound file format that is 
+                       native to the system that you are porting to. 
+
+uglib                - Subdirectory that contains the unitGenerator library
+
+
+README               - This file
