@@ -44,15 +44,39 @@
           "UNREGISTERED::James Clark//Characteristic::preserve-sdata?"
           #f)
 
+;; Determine the Apple Title from the first defined title.
+(define (apple-title)
+  (data (node-list-first (select-elements (descendants (sgml-root-element)) "title"))))
+
+(define (apple-title-sequence)
+  (make empty-element gi: "META"
+	attributes: (list (list "NAME" "AppleTitle")
+			  (list "CONTENT" (apple-title)))))
+
 ;; Add the META header tags for use with Apple's HelpViewer application.
 (define %html-header-tags%
   (list
    (list "META" '("HTTP-EQUIV" "content-type") '("CONTENT" "text/html;charset=iso-8859-1"))
-   (list "META" '("NAME" "AppleTitle") '("CONTENT" "Spectro Help"))
-   (list "META" '("NAME" "AppleIcon") '("CONTENT" "SpectroHelp/Images/icon16x16.png"))
    (list "META" '("NAME" "AppleFont") '("CONTENT" "Lucida Grande,Helvetica"))
    (list "META" '("NAME" "AppleSearchResultsFont") '("CONTENT" "Lucida Grande,Helvetica"))
+   ;; (list "META" '("NAME" "AppleIcon") '("CONTENT" "SpectroHelp/Images/icon16x16.png"))
    (list "META" '("NAME" "robots") '("CONTENT" "anchors"))))
+
+(define ($user-html-header$ #!optional 
+			    (home (empty-node-list))
+			    (up (empty-node-list))
+			    (prev (empty-node-list))
+			    (next (empty-node-list)))
+  (make sequence
+    ;; Add additional header tags.
+    (let loop ((tl %html-header-tags%))
+      (if (null? tl)
+	  (empty-sosofo)
+	  (make sequence
+	    (make empty-element gi: (car (car tl))
+		  attributes: (cdr (car tl)))
+	    (loop (cdr tl)))))
+    (apple-title-sequence)))
 
 ;; Adds CSS style-sheet support
 (define %stylesheet%
@@ -114,10 +138,6 @@
 (define %graphic-default-extension% "gif")
 
 ;; TODO need inlinemediaobject managing image definition
-
-(define %root-filename%
-  ;; The filename of the root HTML document is the same as the folder.
-  "SpectroHelp")
 
 (element emphasis
   ;; make role=strong equate to bold for emphasis tag
@@ -235,17 +255,20 @@
 ;;; listing the manual online. It may however (?) cause up anchors
 ;;; from subsections to be mislabelled.
 
+(define (top-level-exit-string elemnode)
+  (let ((up      (parent elemnode))) 
+    (if (or (node-list-empty? up)
+	    (equal? (gi up) (normalize "bookinfo"))
+	    (equal? (gi up) (normalize "docinfo"))
+	    (equal? (gi up) (normalize "setinfo")))
+	(string-append "Leave " 
+		       (select-elements up "title") 
+		       " Manual")
+	(string-append "Leave " (select-elements up "title")))))
+
+;;; Always return true to allow navigation at all levels so the top-level up will exit the help.
 (define (nav-up? elemnode)
-  (let ((up      (parent elemnode))
-        (up-text "Leave Spectro Manual"))
-    (if (and up-text (not (string=? up-text "")))
-        #t
-        (if (or (node-list-empty? up)
-                (equal? (gi up) (normalize "bookinfo"))
-                (equal? (gi up) (normalize "docinfo"))
-                (equal? (gi up) (normalize "setinfo")))
-            #f
-            #t))))
+  #t)
 
 (define (nav-up elemnode)
   (let* ((up      (parent elemnode))
@@ -268,7 +291,7 @@
 ;; of whole manual.
 (define (nav-up-sosofo elemnode)
   (let* ((up      (parent elemnode))
-         (up-text "Leave Spectro Manual"))
+         (up-text (string-append "Leave " (element-title-string elemnode))))
     (if (and up-text (not (string=? up-text "")))
         (literal up-text)
         (if (node-list-empty? up)
