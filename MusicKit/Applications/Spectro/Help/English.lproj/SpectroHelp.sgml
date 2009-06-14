@@ -4,7 +4,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!entity spectroVer "4.1">
 ]>
-<article>
+<article ID="SpectroHelp">
   <title>Spectro &spectroVer;</title>
 
   <sect1 id="GettingStarted">

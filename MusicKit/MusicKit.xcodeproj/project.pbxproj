@@ -350,11 +350,9 @@
 		D82557ED05A21B7F00B0192B /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557EC05A21B7F00B0192B /* utilities.m */; };
 		D82557F005A21BBF00B0192B /* Localized.strings in Resources */ = {isa = PBXBuildFile; fileRef = D82557EF05A21BBF00B0192B /* Localized.strings */; };
 		D828B0720FAE3A0F00B4DC3B /* PlayNote-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */; };
-		D828F99C0780C24B00215EB9 /* MKAlert.h in Resources */ = {isa = PBXBuildFile; fileRef = D828F99A0780C24B00215EB9 /* MKAlert.h */; };
 		D828F99D0780C24B00215EB9 /* MKAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D828F99B0780C24B00215EB9 /* MKAlert.m */; };
 		D828F9AE0780C46700215EB9 /* play.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828F9AC0780C46700215EB9 /* play.tiff */; };
 		D828F9AF0780C46700215EB9 /* playH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828F9AD0780C46700215EB9 /* playH.tiff */; };
-		D828F9B90780C52400215EB9 /* ScorePlayer.sgml in Resources */ = {isa = PBXBuildFile; fileRef = D828F9B70780C52400215EB9 /* ScorePlayer.sgml */; };
 		D828F9DA0780CCDF00215EB9 /* Distributor.m in Sources */ = {isa = PBXBuildFile; fileRef = D828F9D00780CCDE00215EB9 /* Distributor.m */; };
 		D828F9DC0780CCDF00215EB9 /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = D828F9D20780CCDE00215EB9 /* Document.m */; };
 		D828F9DE0780CCDF00215EB9 /* PartView.m in Sources */ = {isa = PBXBuildFile; fileRef = D828F9D40780CCDE00215EB9 /* PartView.m */; };
@@ -435,25 +433,15 @@
 		D84E219505B7082E002B493F /* maxamp_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D84E219405B7082E002B493F /* maxamp_main.m */; };
 		D84E21D305B708CF002B493F /* extractchannel_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D84E21D205B708CF002B493F /* extractchannel_main.m */; };
 		D84E222605B70B28002B493F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D84E222505B70B28002B493F /* main.m */; };
-		D85A2F68061F34E80065380E /* PrefController.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F52061F34E70065380E /* PrefController.h */; };
 		D85A2F69061F34E80065380E /* PrefController.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F53061F34E70065380E /* PrefController.m */; };
-		D85A2F6A061F34E80065380E /* SaveToController.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F54061F34E70065380E /* SaveToController.h */; };
 		D85A2F6B061F34E80065380E /* SaveToController.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F55061F34E70065380E /* SaveToController.m */; };
-		D85A2F6C061F34E80065380E /* ScrollingSound.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F56061F34E70065380E /* ScrollingSound.h */; };
 		D85A2F6D061F34E80065380E /* ScrollingSound.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F57061F34E70065380E /* ScrollingSound.m */; };
-		D85A2F6E061F34E80065380E /* ScrollingSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F58061F34E70065380E /* ScrollingSpectrum.h */; };
 		D85A2F6F061F34E80065380E /* ScrollingSpectrum.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F59061F34E70065380E /* ScrollingSpectrum.m */; };
-		D85A2F70061F34E80065380E /* SignalProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F5A061F34E70065380E /* SignalProcessor.h */; };
 		D85A2F71061F34E80065380E /* SignalProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F5B061F34E70065380E /* SignalProcessor.m */; };
-		D85A2F74061F34E80065380E /* SoundDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F5E061F34E70065380E /* SoundDocument.h */; };
 		D85A2F75061F34E80065380E /* SoundDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F5F061F34E70065380E /* SoundDocument.m */; };
-		D85A2F76061F34E80065380E /* SoundInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F60061F34E70065380E /* SoundInfo.h */; };
 		D85A2F77061F34E80065380E /* SoundInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F61061F34E70065380E /* SoundInfo.m */; };
-		D85A2F78061F34E80065380E /* SpectrumDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F62061F34E80065380E /* SpectrumDocument.h */; };
 		D85A2F79061F34E80065380E /* SpectrumDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F63061F34E80065380E /* SpectrumDocument.m */; };
-		D85A2F7A061F34E80065380E /* SpectrumView.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F64061F34E80065380E /* SpectrumView.h */; };
 		D85A2F7B061F34E80065380E /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F65061F34E80065380E /* SpectrumView.m */; };
-		D85A2F7C061F34E80065380E /* WaterfallView.h in Headers */ = {isa = PBXBuildFile; fileRef = D85A2F66061F34E80065380E /* WaterfallView.h */; };
 		D85A2F7D061F34E80065380E /* WaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F67061F34E80065380E /* WaterfallView.m */; };
 		D85A2F99061F353C0065380E /* Spectro_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D85A2F98061F353C0065380E /* Spectro_main.m */; };
 		D85A2FA9061F35920065380E /* preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = D85A2F9F061F35910065380E /* preferences.nib */; };
@@ -632,7 +620,6 @@
 		D880FCBB077FE29F00FD03CC /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D880FCC7077FEAD000FD03CC /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D880FD0D0780882F00FD03CC /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
-		D880FD210780AC2A00FD03CC /* ErrorLog.h in Resources */ = {isa = PBXBuildFile; fileRef = D880FD1F0780AC2A00FD03CC /* ErrorLog.h */; };
 		D880FD220780AC2A00FD03CC /* ErrorLog.m in Sources */ = {isa = PBXBuildFile; fileRef = D880FD200780AC2A00FD03CC /* ErrorLog.m */; };
 		D880FE440780AF2200FD03CC /* Midi.icns in Resources */ = {isa = PBXBuildFile; fileRef = D880FE3F0780AF2200FD03CC /* Midi.icns */; };
 		D880FE450780AF2200FD03CC /* PlayScore.icns in Resources */ = {isa = PBXBuildFile; fileRef = D880FE400780AF2200FD03CC /* PlayScore.icns */; };
@@ -640,7 +627,6 @@
 		D880FE470780AF2200FD03CC /* ScorePlayerApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = D880FE420780AF2200FD03CC /* ScorePlayerApp.icns */; };
 		D880FE480780AF2200FD03CC /* Sound.icns in Resources */ = {isa = PBXBuildFile; fileRef = D880FE430780AF2200FD03CC /* Sound.icns */; };
 		D882794507008F510060CAFE /* MKOrchestra.m in Sources */ = {isa = PBXBuildFile; fileRef = D882794407008F510060CAFE /* MKOrchestra.m */; };
-		D8831D310AE6BA6C00201B3D /* SpectroController.h in Headers */ = {isa = PBXBuildFile; fileRef = D8831D2F0AE6BA6C00201B3D /* SpectroController.h */; };
 		D8831D320AE6BA6C00201B3D /* SpectroController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8831D300AE6BA6C00201B3D /* SpectroController.m */; };
 		D8831D380AE6D50500201B3D /* TwoWaves.icns in Resources */ = {isa = PBXBuildFile; fileRef = D8831D360AE6D50500201B3D /* TwoWaves.icns */; };
 		D8831D390AE6D50500201B3D /* TwoWaves.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8831D370AE6D50500201B3D /* TwoWaves.tiff */; };
@@ -808,6 +794,14 @@
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
 		D8A786160CC8E33300D5A812 /* metronome-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */; };
 		D8AE7A4406194279009D0112 /* SndViewPalette.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8AE7A4306194279009D0112 /* SndViewPalette.tiff */; };
+		D8BC47170FC7F35B007D61A5 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
+		D8BC472F0FC7FDF0007D61A5 /* Midi.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC47280FC7FDF0007D61A5 /* Midi.gif */; };
+		D8BC47300FC7FDF0007D61A5 /* play.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC47290FC7FDF0007D61A5 /* play.gif */; };
+		D8BC47310FC7FDF0007D61A5 /* PlayScore.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC472A0FC7FDF0007D61A5 /* PlayScore.gif */; };
+		D8BC47320FC7FDF0007D61A5 /* Score.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC472B0FC7FDF0007D61A5 /* Score.gif */; };
+		D8BC47330FC7FDF0007D61A5 /* ScorePlayerApp.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC472C0FC7FDF0007D61A5 /* ScorePlayerApp.gif */; };
+		D8BC47340FC7FDF0007D61A5 /* Sound.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC472D0FC7FDF0007D61A5 /* Sound.gif */; };
+		D8BC47350FC7FDF0007D61A5 /* tempo.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC472E0FC7FDF0007D61A5 /* tempo.gif */; };
 		D8C274F705A73A88008ABA16 /* ArielQPMix.h in Sources */ = {isa = PBXBuildFile; fileRef = D8C2748405A739CB008ABA16 /* ArielQPMix.h */; };
 		D8C274F805A73A88008ABA16 /* ArielQPMix.m in Sources */ = {isa = PBXBuildFile; fileRef = D8C2748505A739CB008ABA16 /* ArielQPMix.m */; };
 		D8C274F905A73A88008ABA16 /* DBFm1vi.h in Sources */ = {isa = PBXBuildFile; fileRef = D8C2748605A739CB008ABA16 /* DBFm1vi.h */; };
@@ -1250,6 +1244,32 @@
 			dstSubfolderSpec = 7;
 			files = (
 				D8743EDD0FC7EF6F007B3313 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8BC47160FC7F34D007D61A5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/ScorePlayerHelp;
+			dstSubfolderSpec = 7;
+			files = (
+				D8BC47170FC7F35B007D61A5 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8BC47250FC7FD8C007D61A5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/ScorePlayerHelp/Images;
+			dstSubfolderSpec = 7;
+			files = (
+				D8BC472F0FC7FDF0007D61A5 /* Midi.gif in CopyFiles */,
+				D8BC47300FC7FDF0007D61A5 /* play.gif in CopyFiles */,
+				D8BC47310FC7FDF0007D61A5 /* PlayScore.gif in CopyFiles */,
+				D8BC47320FC7FDF0007D61A5 /* Score.gif in CopyFiles */,
+				D8BC47330FC7FDF0007D61A5 /* ScorePlayerApp.gif in CopyFiles */,
+				D8BC47340FC7FDF0007D61A5 /* Sound.gif in CopyFiles */,
+				D8BC47350FC7FDF0007D61A5 /* tempo.gif in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1954,6 +1974,13 @@
 		D8A1DC5109F65BD10094B3F5 /* MyObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MyObject.h; path = Examples/example4/MyObject.h; sourceTree = "<group>"; };
 		D8A1DC5209F65BD10094B3F5 /* MyObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MyObject.m; path = Examples/example4/MyObject.m; sourceTree = "<group>"; };
 		D8AE7A4306194279009D0112 /* SndViewPalette.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = SndViewPalette.tiff; path = Palettes/SndView/SndViewPalette.tiff; sourceTree = "<group>"; };
+		D8BC47280FC7FDF0007D61A5 /* Midi.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = Midi.gif; path = Applications/ScorePlayer/Images/Midi.gif; sourceTree = "<group>"; };
+		D8BC47290FC7FDF0007D61A5 /* play.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = play.gif; path = Applications/ScorePlayer/Images/play.gif; sourceTree = "<group>"; };
+		D8BC472A0FC7FDF0007D61A5 /* PlayScore.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = PlayScore.gif; path = Applications/ScorePlayer/Images/PlayScore.gif; sourceTree = "<group>"; };
+		D8BC472B0FC7FDF0007D61A5 /* Score.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = Score.gif; path = Applications/ScorePlayer/Images/Score.gif; sourceTree = "<group>"; };
+		D8BC472C0FC7FDF0007D61A5 /* ScorePlayerApp.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = ScorePlayerApp.gif; path = Applications/ScorePlayer/Images/ScorePlayerApp.gif; sourceTree = "<group>"; };
+		D8BC472D0FC7FDF0007D61A5 /* Sound.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = Sound.gif; path = Applications/ScorePlayer/Images/Sound.gif; sourceTree = "<group>"; };
+		D8BC472E0FC7FDF0007D61A5 /* tempo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = tempo.gif; path = Applications/ScorePlayer/Images/tempo.gif; sourceTree = "<group>"; };
 		D8C2748405A739CB008ABA16 /* ArielQPMix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ArielQPMix.h; path = Frameworks/MKSynthPatches/ArielQPMix.h; sourceTree = "<group>"; };
 		D8C2748505A739CB008ABA16 /* ArielQPMix.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ArielQPMix.m; path = Frameworks/MKSynthPatches/ArielQPMix.m; sourceTree = "<group>"; };
 		D8C2748605A739CB008ABA16 /* DBFm1vi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DBFm1vi.h; path = Frameworks/MKSynthPatches/DBFm1vi.h; sourceTree = "<group>"; };
@@ -2857,6 +2884,13 @@
 			isa = PBXGroup;
 			children = (
 				D828F9B70780C52400215EB9 /* ScorePlayer.sgml */,
+				D8BC47280FC7FDF0007D61A5 /* Midi.gif */,
+				D8BC47290FC7FDF0007D61A5 /* play.gif */,
+				D8BC472A0FC7FDF0007D61A5 /* PlayScore.gif */,
+				D8BC472B0FC7FDF0007D61A5 /* Score.gif */,
+				D8BC472C0FC7FDF0007D61A5 /* ScorePlayerApp.gif */,
+				D8BC472D0FC7FDF0007D61A5 /* Sound.gif */,
+				D8BC472E0FC7FDF0007D61A5 /* tempo.gif */,
 			);
 			name = Help;
 			sourceTree = "<group>";
@@ -5682,24 +5716,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D85A2F45061F347D0065380E /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D85A2F68061F34E80065380E /* PrefController.h in Headers */,
-				D85A2F6A061F34E80065380E /* SaveToController.h in Headers */,
-				D85A2F6C061F34E80065380E /* ScrollingSound.h in Headers */,
-				D85A2F6E061F34E80065380E /* ScrollingSpectrum.h in Headers */,
-				D85A2F70061F34E80065380E /* SignalProcessor.h in Headers */,
-				D85A2F74061F34E80065380E /* SoundDocument.h in Headers */,
-				D85A2F76061F34E80065380E /* SoundInfo.h in Headers */,
-				D85A2F78061F34E80065380E /* SpectrumDocument.h in Headers */,
-				D85A2F7A061F34E80065380E /* SpectrumView.h in Headers */,
-				D85A2F7C061F34E80065380E /* WaterfallView.h in Headers */,
-				D8831D310AE6BA6C00201B3D /* SpectroController.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D85E27CD06FA098200385C32 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -6189,7 +6205,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8B44FAE099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "Spectro (Application)" */;
 			buildPhases = (
-				D85A2F45061F347D0065380E /* Headers */,
 				D8515F5F0FC5E7E8008DB277 /* ShellScript */,
 				D8743ED40FC7EEF7007B3313 /* CopyFiles */,
 				D85A2F46061F347D0065380E /* Resources */,
@@ -6227,6 +6242,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8B44FBD099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "ScorePlayer (Application)" */;
 			buildPhases = (
+				D8BC47090FC7F29F007D61A5 /* ShellScript */,
+				D8BC47160FC7F34D007D61A5 /* CopyFiles */,
+				D8BC47250FC7FD8C007D61A5 /* CopyFiles */,
 				D85E27F006FA0C0100385C32 /* Resources */,
 				D85E27F106FA0C0100385C32 /* Sources */,
 				D85E27F206FA0C0100385C32 /* Frameworks */,
@@ -6849,16 +6867,13 @@
 				D85E281906FA0DF000385C32 /* SSAD64x.nib in Resources */,
 				D85E281A06FA0DF000385C32 /* StealthDAI2400.nib in Resources */,
 				D85E281F06FA0E1200385C32 /* ScorePlayer.strings in Resources */,
-				D880FD210780AC2A00FD03CC /* ErrorLog.h in Resources */,
 				D880FE440780AF2200FD03CC /* Midi.icns in Resources */,
 				D880FE450780AF2200FD03CC /* PlayScore.icns in Resources */,
 				D880FE460780AF2200FD03CC /* Score.icns in Resources */,
 				D880FE470780AF2200FD03CC /* ScorePlayerApp.icns in Resources */,
 				D880FE480780AF2200FD03CC /* Sound.icns in Resources */,
-				D828F99C0780C24B00215EB9 /* MKAlert.h in Resources */,
 				D828F9AE0780C46700215EB9 /* play.tiff in Resources */,
 				D828F9AF0780C46700215EB9 /* playH.tiff in Resources */,
-				D828F9B90780C52400215EB9 /* ScorePlayer.sgml in Resources */,
 				D8C6E3420ACC4AC4004978A9 /* music.tiff in Resources */,
 				D85E74820AD00B460078D3B5 /* stop.tiff in Resources */,
 			);
@@ -7062,11 +7077,27 @@
 				"$(SRCROOT)/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml",
 			);
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/SpectroHelp/SpectroHelp.html",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/SpectroHelp/spectrohelp.html",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\n/sw/bin/openjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_Help.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_Help.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
+		};
+		D8BC47090FC7F29F007D61A5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Applications/ScorePlayer/Help/English.lproj/ScorePlayerHelp.sgml",
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/ScorePlayerHelp/scoreplayer.html",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_Help.dsssl\\#html $SRCROOT/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml\nexit 0\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 

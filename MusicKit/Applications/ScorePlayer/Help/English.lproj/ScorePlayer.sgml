@@ -41,13 +41,13 @@
       excerpts.
       </PARA>
       <PARA>
-	To specify a file, select <emphasis>Document/Open...</emphasis>
+	To specify a file, select <GUIMENUITEM>Document/Open...</GUIMENUITEM>
       from the main menu.  This will bring up the <emphasis>Open
       Panel</emphasis>. Select a file.
       <APPLICATION>ScorePlayer</APPLICATION> then reads the file into
-      a <PRODUCTNAME>MusicKit</PRODUCTNAME> <emphasis>Score</emphasis>
+      a <PRODUCTNAME>MusicKit</PRODUCTNAME> <CLASSNAME>MKScore</CLASSNAME>
       object and makes it the <emphasis>current file</emphasis>. To
-      play the file, click on the <emphasis>Play</emphasis> button:
+      play the file, click on the <GUIBUTTON>Play</GUIBUTTON> button:
       </PARA>
       <FIGURE ID="playIcon">
 	<TITLE>Play Icon</TITLE>
