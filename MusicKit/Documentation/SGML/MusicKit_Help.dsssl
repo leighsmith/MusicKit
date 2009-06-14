@@ -44,6 +44,62 @@
           "UNREGISTERED::James Clark//Characteristic::preserve-sdata?"
           #f)
 
+;;; Since Apple HelpViewer wants all HTML pages except the title page in a subdirectory,
+;;; we specify a relative output directory. We don't specify use-output-dir or
+;;; %output-dir%, since that only indicates the directory to write the files to, not the URLs.
+
+;;; Define a prefix which includes the subdirectory. The main HTML DTD will recognise and
+;;; correctly manage the prefix as a directory.
+(define %html-prefix%
+  "Pages/")
+
+;; Slightly modify division-html-base to not use the html-prefix
+(define (division-html-base nd)
+  (let* ((number (number->string (all-element-number nd)))
+	 (prefix #f) ;; (html-prefix nd))
+	 (pibase (or
+		  (inherited-dbhtml-value nd "basename")
+		  (inherited-pi-value nd "html-basename")))
+	 (idbase (id-based-filename nd))
+	 (base   (cond (pibase pibase)
+		       (idbase idbase)
+		       ((equal? (gi nd) (normalize "set"))          "s")
+		       ((equal? (gi nd) (normalize "preface"))      "f")
+		       ((equal? (gi nd) (normalize "chapter"))      "c")
+		       ((equal? (gi nd) (normalize "article"))      "t")
+		       ((equal? (gi nd) (normalize "appendix"))     "a")
+		       ((equal? (gi nd) (normalize "part"))         "p")
+		       ((equal? (gi nd) (normalize "reference"))    "r")
+		       ((equal? (gi nd) (normalize "glossary"))     "g")
+		       ((equal? (gi nd) (normalize "bibliography")) "b")
+		       ((equal? (gi nd) (normalize "index"))        "i")
+		       ((equal? (gi nd) (normalize "setindex"))     "n")
+		       ((equal? (gi nd) (normalize "refentry"))     "r")
+		       ;; "x" is section
+		       (else "z"))))
+    (if idbase
+	(string-append (if prefix prefix "") idbase)
+	(if pibase
+	    (string-append (if prefix prefix "") pibase number)
+	    (string-append (if prefix prefix "") base number)))))
+
+;; This differs from the original in not generating a parent directory reference
+;; if the source is the top level node.
+(define (href-to target)
+   ;; Return the HTML HREF for the given node.  If nochunks is true, just
+   ;; return the fragment identifier.
+   (let* ((id       (element-id target))
+          (curdepth (if (node-list=? (sgml-root-element) (current-node))
+			0
+			(directory-depth (html-file (current-node)))))
+          (entfile  (html-file target))
+          (fragid   (if (chunk? target)
+                      ""
+                      (string-append "#" id))))
+     (if nochunks
+	 fragid
+	 (string-append (copy-string "../" curdepth) entfile fragid))))
+
 ;; Determine the Apple Title from the first defined title.
 (define (apple-title)
   (data (node-list-first (select-elements (descendants (sgml-root-element)) "title"))))
@@ -62,6 +118,7 @@
    ;; (list "META" '("NAME" "AppleIcon") '("CONTENT" "SpectroHelp/Images/icon16x16.png"))
    (list "META" '("NAME" "robots") '("CONTENT" "anchors"))))
 
+;;; Add the header tags and the Apple title sequence.
 (define ($user-html-header$ #!optional 
 			    (home (empty-node-list))
 			    (up (empty-node-list))
