@@ -4,5 +4,8 @@
 # repository or the distributed configure script is too old.
 
 autoconf
-./configure
+# We include the fink locations (on MacOS X) into the default locations to search for
+# libraries to ease bootstrapping. This has no effect on Linux etc.
+# ./configure
+./configure CPPFLAGS=-I/sw/include LDFLAGS=-L/sw/lib 
 make
