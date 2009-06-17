@@ -57,8 +57,8 @@ id MKGetPartClass(void)
     }
 }
 
-+new
-    /* Override default to return instance of theSubclass, if nec. */
+/* Override default to return instance of theSubclass, if necessary. */
++ new
 {
     return [[MKGetPartClass() alloc] init];
 }
@@ -81,64 +81,54 @@ id MKGetPartClass(void)
 
 static id compact(MKPart *self)
 {
-  NSMutableArray *newList = [[NSMutableArray alloc] initWithCapacity:self->noteCount];
-  IMP addObjectImp = [newList methodForSelector:@selector(addObject:)];
-# define ADDNEW(x) (*addObjectImp)(newList, @selector(addObject:),x)
-  int noteIndex, nc = [self->notes count];
-  MKNote *aNote;
-  SEL oaiSel = @selector(objectAtIndex:);
-  IMP objectAtIndex = [self->notes methodForSelector: oaiSel];
-# define OBJECTATINDEX(x)  (*objectAtIndex)(self->notes, oaiSel, (x))
+    NSMutableArray *newList = [[NSMutableArray alloc] initWithCapacity: self->noteCount];
+    int noteIndex, nc = [self->notes count];
   
-  for (noteIndex = 0; noteIndex < nc; noteIndex++) {
-    aNote = OBJECTATINDEX( noteIndex );
-    if (_MKNoteIsPlaceHolder(aNote)) {
-      [aNote _setPartLink:nil order:0];
+    for (noteIndex = 0; noteIndex < nc; noteIndex++) {
+	MKNote *aNote = [self->notes objectAtIndex: noteIndex];
+	
+	if (_MKNoteIsPlaceHolder(aNote)) {
+	    [aNote _setPartLink: nil order: 0];
+	}
+	else {
+	    [newList addObject: aNote];
+	}
     }
-    else {
-      ADDNEW(aNote);
-    }
-  }
-  [self->notes release];
-  self->notes = newList;
-  self->noteCount = [newList count];
-  return self;
-# undef ADDNEW
-# undef OBJECTATINDEX
+    [self->notes release];
+    self->notes = newList;
+    self->noteCount = [newList count];
+    return self;
 }
 
 static void removeNote(MKPart *self, MKNote *aNote);
 
+/* TYPE: Editing
+ * Attempts to minimize the number of MKNotes by creating
+ * a single noteDur for every noteOn/noteOff pair
+ * (see the MKNote class).  A noteOn is paired with the
+ * earliest subsequent noteOff that has a matching noteTag. However,
+ * if an intervening noteOn or noteDur is found, the noteOn is not
+ * converted to a noteDur.
+ * If a match isn't found, the MKNote is unaffected.
+ * Returns the receiver.
+ */
 - combineNotes
-  /* TYPE: Editing
-    * Attempts to minimize the number of MKNotes by creating
-    * a single noteDur for every noteOn/noteOff pair
-    * (see the MKNote class).  A noteOn is paired with the
-    * earliest subsequent noteOff that has a matching noteTag. However,
-    * if an intervening noteOn or noteDur is found, the noteOn is not
-    * converted to a noteDur.
-    * If a match isn't found, the MKNote is unaffected.
-    * Returns the receiver.
-    */
 {
     MKNote *noteOn, *aNote;
     int noteTag, listSize;
     register int i, j;
-    SEL oaiSel = @selector(objectAtIndex:);
-    IMP objectAtIndex = [notes methodForSelector: oaiSel];
-# define OBJECTATINDEX(x)  (*objectAtIndex)(notes, oaiSel, (x))
     
     if (!noteCount)
 	return self;
     listSize = [notes count];
     
     for (i = 0; i < listSize; i++) {			/* For each note... */
-	if ([(noteOn = OBJECTATINDEX(i)) noteType] == MK_noteOn) {
+	if ([(noteOn = [notes objectAtIndex: i]) noteType] == MK_noteOn) {
 	    noteTag = [noteOn noteTag];			/* We got a noteOn */
 	    if (noteTag == MAXINT)			/* Malformed MKPart. */
 		continue;
 	    for (j = i + 1; (j < listSize); j++) {	/* Search forward */
-		if ([(aNote=OBJECTATINDEX(j)) noteTag] == noteTag) {	/* A hit ? */
+		if ([(aNote= [notes objectAtIndex: j]) noteTag] == noteTag) {	/* A hit ? */
 		    switch ([aNote noteType]) {           /* Ok. What is it? */
 			case MK_noteOff:
 			    removeNote(self, aNote);           /* Remove aNote from us by tagging as _MKMakePlaceHolder */
@@ -159,19 +149,18 @@ static void removeNote(MKPart *self, MKNote *aNote);
     compact(self); /* drops all notes that are PlaceHolder and remakes list without them */
     return self;
 }
-# undef OBJECTATINDEX
 
--splitNotes
-  /* TYPE: Editing
-    * Splits all noteDurs into a noteOn/noteOff pair.
-    * This is done by changing the noteType of the noteDur to noteOn
-    * and creating a noteOff with timeTag equal to the
-    * timeTag of the original MKNote plus its duration.
-    * However, if an intervening noteOn or noteDur of the same tag
-    * appears, the noteOff is not added (the noteDur is still converted
-					 * to a noteOn in this case).
-    * Returns the receiver, or nil if the receiver contains no MKNotes.
-    */
+/* TYPE: Editing
+ * Splits all noteDurs into a noteOn/noteOff pair.
+ * This is done by changing the noteType of the noteDur to noteOn
+ * and creating a noteOff with timeTag equal to the
+ * timeTag of the original MKNote plus its duration.
+ * However, if an intervening noteOn or noteDur of the same tag
+ * appears, the noteOff is not added (the noteDur is still converted
+ * to a noteOn in this case).
+ * Returns the receiver, or nil if the receiver contains no MKNotes.
+ */
+- splitNotes
 {
     NSArray *noteList;
     MKNote *noteOff;
@@ -180,17 +169,16 @@ static void removeNote(MKPart *self, MKNote *aNote);
     double timeTag;
     int noteTag;
     int originalNoteCount = noteCount;  // noteCount is updated by addNote:
-    SEL oaiSel = @selector(objectAtIndex:);
-    IMP objectAtIndex;
-# define OBJECTATINDEX(x)  (*objectAtIndex)(noteList, oaiSel, (x))
     
     if (!noteCount)
 	return self;
-    noteList = [self notes]; /* local copy of list (autoreleased) */
-    objectAtIndex = [noteList methodForSelector: oaiSel];
+    // Create a local lightweight copy of list (autoreleased) so the notes can be modified.
+    [self sort]; 
+    noteList = _MKLightweightArrayCopy(notes);
     
     for (noteIndex = 0; noteIndex < originalNoteCount; noteIndex++) {
-	MKNote *note = OBJECTATINDEX(noteIndex);
+	MKNote *note = [noteList objectAtIndex: noteIndex];
+	
 	if ([note noteType] == MK_noteDur) {
 	    noteOff = [note _splitNoteDurNoCopy];  // Split all noteDurs.
 	    noteTag = [noteOff noteTag];
@@ -203,7 +191,8 @@ static void removeNote(MKPart *self, MKNote *aNote);
 		// search for matching noteTag in the subsequent notes before the noteOff.
 		// since addNote: adds noteoffs at the end of the array, we can just search to the original length.
 		for (matchIndex = noteIndex + 1; (matchIndex < originalNoteCount) && !matchFound; matchIndex++) {
-		    MKNote *candidateNote = OBJECTATINDEX(matchIndex);
+		    MKNote *candidateNote = [noteList objectAtIndex: matchIndex];
+		    
 		    if ([candidateNote timeTag] > timeTag)
 			break;
 		    if ([candidateNote noteTag] == noteTag) {
@@ -230,7 +219,6 @@ static void removeNote(MKPart *self, MKNote *aNote);
     }
     return self;
 }
-#undef OBJECTATINDEX
 
 /* Reading and Writing files. ------------------------------------ */
 
