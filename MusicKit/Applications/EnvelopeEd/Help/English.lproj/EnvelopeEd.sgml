@@ -8,7 +8,7 @@
     <TITLE>Envelope Editor</TITLE>
     <AUTHOR>
       <FIRSTNAME>Fernando</FIRSTNAME> 
-      <SURNAME>L&otilde;&shy;pez Lezcano</SURNAME>
+      <SURNAME>L&oacute;pez Lezcano</SURNAME>
     </AUTHOR>
     <AFFILIATION>
       <ORGNAME>CCRMA, Stanford Center for Computer Research in Music and Acoustics</ORGNAME>
@@ -95,7 +95,7 @@ view:</PARA>
 
 </SECT1>
 
-<SECT1>
+<SECT1 ID="DrawingLimits">
 <TITLE>Drawing Limits</TITLE>
 
 <PARA>The four limit fields (xmin, xmax, ymin, ymax) let you select the drawing limits for
@@ -108,7 +108,7 @@ you can more easily see temporal relationships between different envelopes.</PAR
 
 </SECT1>
 
-<SECT1>
+<SECT1 ID="SnapGrid">
 <TITLE>Snap Grid</TITLE>
 
 <PARA>The snap fields let you select the rounding value of
@@ -119,7 +119,7 @@ pasteboard to only three decimal places.</PARA>
 
 </SECT1>
 
-<SECT1>
+<SECT1 ID="IOFormats">
 <TITLE>Input and Output Formats</TITLE>
 
 <PARA>The program automatically parses and can write envelopes with the following formats:</PARA>
@@ -179,7 +179,7 @@ users.</PARA>
 
 </SECT1>
 
-<SECT1>
+<SECT1 ID="Defaults">
 <TITLE>Defaults Database</TITLE>
 
 <PARA>The program recognizes three options in the <productname>Cocoa</productname>/<productname>GNUstep</productname> defaults database:</PARA>
@@ -205,7 +205,7 @@ Davidson that is available on the archives.</PARA>
 
 </SECT1>
 
-  <SECT1>
+  <SECT1 ID="Thanks">
     <TITLE>Many thanks to</TITLE>
     <itemizedlist>
       <listitem>
@@ -223,14 +223,14 @@ envelopes work.
     </itemizedlist>
   </SECT1>
 
-  <SECT1>
+  <SECT1 ID="Contact">
     <TITLE>Contact</title>
     <PARA>Comments, bug reports or fixes and added features are welcome to the address below:</PARA>
-    <ADDRESS><PERSONNAME>Fernando L&Atilde;&shy;pez Lezcano</PERSONNAME>
-    <EMAIL>nando@CCRMA.stanford.edu</EMAIL></address>
+    <ADDRESS><FIRSTNAME>Fernando</FIRSTNAME> <OTHERNAME>L&oacute;pez</OTHERNAME> <SURNAME>Lezcano</SURNAME>
+    <EMAIL>nando@CCRMA.stanford.edu</EMAIL></ADDRESS>
   </sect1>
 
-  <SECT1>
+  <SECT1 ID="VersionHistory">
     <TITLE>Version History</TITLE>
     <para>Version 1.04b</PARA>
     <para>- Added libraries so that it can be compiled fat</PARA>
