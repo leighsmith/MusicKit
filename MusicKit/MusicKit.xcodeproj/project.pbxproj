@@ -396,6 +396,11 @@
 		D837AC6506C81A9300A6CFEB /* ProphetVS.nib in Resources */ = {isa = PBXBuildFile; fileRef = D837AC6306C81A9300A6CFEB /* ProphetVS.nib */; };
 		D837AC6A06C81AAC00A6CFEB /* ProphetVS.h in Headers */ = {isa = PBXBuildFile; fileRef = D837AC6806C81AAC00A6CFEB /* ProphetVS.h */; };
 		D837AC6B06C81AAC00A6CFEB /* ProphetVS.m in Sources */ = {isa = PBXBuildFile; fileRef = D837AC6906C81AAC00A6CFEB /* ProphetVS.m */; };
+		D83CADFB0FEA2CB20000CF19 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
+		D83CAE000FEA2D110000CF19 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
+		D83CAE060FEA30E10000CF19 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
+		D83CAE0A0FEA31060000CF19 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
+		D83CAE1C0FEAE43C0000CF19 /* EnvelopeEd.sgml in Resources */ = {isa = PBXBuildFile; fileRef = D83CAE1A0FEAE43C0000CF19 /* EnvelopeEd.sgml */; };
 		D844A77707C7F1790086A55B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D844A77407C7F0E70086A55B /* main.m */; };
 		D844A7A607C7F18A0086A55B /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D844A7A707C7F18A0086A55B /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -1208,6 +1213,59 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		D83CADF80FEA2C510000CF19 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/SpectroHelp/Pages;
+			dstSubfolderSpec = 7;
+			files = (
+				D83CADFB0FEA2CB20000CF19 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D83CAE010FEA2D2F0000CF19 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/ScorePlayerHelp/Pages;
+			dstSubfolderSpec = 7;
+			files = (
+				D83CAE000FEA2D110000CF19 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D83CAE050FEA30DD0000CF19 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/EnvelopeEdHelp;
+			dstSubfolderSpec = 7;
+			files = (
+				D83CAE060FEA30E10000CF19 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D83CAE0B0FEA31240000CF19 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/EnvelopeEdHelp/Pages;
+			dstSubfolderSpec = 7;
+			files = (
+				D83CAE0A0FEA31060000CF19 /* MusicKit_Help.css in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D83CAE120FEAE1AC0000CF19 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/ScorePlayerHelp/Pages/Images;
+			dstSubfolderSpec = 7;
+			files = (
+				D8BC47340FC7FDF0007D61A5 /* Sound.gif in CopyFiles */,
+				D8BC472F0FC7FDF0007D61A5 /* Midi.gif in CopyFiles */,
+				D8BC47310FC7FDF0007D61A5 /* PlayScore.gif in CopyFiles */,
+				D8BC47320FC7FDF0007D61A5 /* Score.gif in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D86CBBB707ADB80A00CB06E4 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -1263,12 +1321,8 @@
 			dstPath = English.lproj/ScorePlayerHelp/Images;
 			dstSubfolderSpec = 7;
 			files = (
-				D8BC472F0FC7FDF0007D61A5 /* Midi.gif in CopyFiles */,
 				D8BC47300FC7FDF0007D61A5 /* play.gif in CopyFiles */,
-				D8BC47310FC7FDF0007D61A5 /* PlayScore.gif in CopyFiles */,
-				D8BC47320FC7FDF0007D61A5 /* Score.gif in CopyFiles */,
 				D8BC47330FC7FDF0007D61A5 /* ScorePlayerApp.gif in CopyFiles */,
-				D8BC47340FC7FDF0007D61A5 /* Sound.gif in CopyFiles */,
 				D8BC47350FC7FDF0007D61A5 /* tempo.gif in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1534,6 +1588,7 @@
 		D837AC6406C81A9300A6CFEB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/PatchCord/ProphetVS.subproj/English.lproj/ProphetVS.nib; sourceTree = "<group>"; };
 		D837AC6806C81AAC00A6CFEB /* ProphetVS.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ProphetVS.h; path = Applications/PatchCord/ProphetVS.subproj/ProphetVS.h; sourceTree = "<group>"; };
 		D837AC6906C81AAC00A6CFEB /* ProphetVS.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ProphetVS.m; path = Applications/PatchCord/ProphetVS.subproj/ProphetVS.m; sourceTree = "<group>"; };
+		D83CAE1B0FEAE43C0000CF19 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = English; path = Applications/EnvelopeEd/Help/English.lproj/EnvelopeEd.sgml; sourceTree = "<group>"; };
 		D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MKPerformSndMIDI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84395EB059FAA450054BEEE /* MKPerformSndMIDI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MKPerformSndMIDI-Info.plist"; path = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D844A75807C7EF320086A55B /* playsnd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playsnd; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1541,7 +1596,7 @@
 		D844A7AD07C7F1EE0086A55B /* recsnd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = recsnd; sourceTree = BUILT_PRODUCTS_DIR; };
 		D844A7B207C7F2360086A55B /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Examples/recsnd/main.m; sourceTree = "<group>"; };
 		D844A7C907C827CD0086A55B /* playsndfaders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playsndfaders; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8465EFD0FC76555006488CE /* MusicKit_Help.dsssl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MusicKit_Help.dsssl; path = Documentation/SGML/MusicKit_Help.dsssl; sourceTree = "<group>"; };
+		D8465EFD0FC76555006488CE /* MusicKit_HelpViewer.dsssl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MusicKit_HelpViewer.dsssl; path = Documentation/SGML/MusicKit_HelpViewer.dsssl; sourceTree = "<group>"; };
 		D8465EFE0FC76555006488CE /* MusicKit_README.dsssl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MusicKit_README.dsssl; path = Documentation/SGML/MusicKit_README.dsssl; sourceTree = "<group>"; };
 		D847900E07A8B84500F7C83A /* MusicKitConfig.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MusicKitConfig.h; path = Frameworks/MusicKit/MusicKitConfig.h; sourceTree = "<group>"; };
 		D847900F07A8B84500F7C83A /* MusicKitConfig.h.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MusicKitConfig.h.in; path = Frameworks/MusicKit/MusicKitConfig.h.in; sourceTree = "<group>"; };
@@ -2083,7 +2138,6 @@
 		D8E8D5C3078463D400AAE755 /* EnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = EnvelopeView.h; path = Applications/EnvelopeEd/EnvelopeView.h; sourceTree = "<group>"; };
 		D8E8D5C4078463D400AAE755 /* EnvelopeView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = EnvelopeView.m; path = Applications/EnvelopeEd/EnvelopeView.m; sourceTree = "<group>"; };
 		D8E8D5CD078463FB00AAE755 /* EnvelopeEd_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = EnvelopeEd_main.m; path = Applications/EnvelopeEd/EnvelopeEd_main.m; sourceTree = "<group>"; };
-		D8E8D5D10784641D00AAE755 /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = README.rtf; path = Applications/EnvelopeEd/README.rtf; sourceTree = "<group>"; };
 		D8E8D5D20784641D00AAE755 /* TODO */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = TODO; path = Applications/EnvelopeEd/TODO; sourceTree = "<group>"; };
 		D8E8D5DD0784645800AAE755 /* above_alt.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = above_alt.tiff; path = Applications/EnvelopeEd/above_alt.tiff; sourceTree = "<group>"; };
 		D8E8D5DE0784645800AAE755 /* above.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = above.tiff; path = Applications/EnvelopeEd/above.tiff; sourceTree = "<group>"; };
@@ -3196,6 +3250,14 @@
 			children = (
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		D83CAE170FEAE40A0000CF19 /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				D83CAE1A0FEAE43C0000CF19 /* EnvelopeEd.sgml */,
+			);
+			name = Help;
 			sourceTree = "<group>";
 		};
 		D83F2CB20FAB40A400B62A4F /* Resources */ = {
@@ -4681,6 +4743,7 @@
 		D880FD370780AD8000FD03CC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D83CAE170FEAE40A0000CF19 /* Help */,
 				D8E8D5DA0784642D00AAE755 /* Images */,
 				D8E8D5D70784642600AAE755 /* Interfaces */,
 			);
@@ -4690,7 +4753,6 @@
 		D880FD3A0780AD8C00FD03CC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D8E8D5D10784641D00AAE755 /* README.rtf */,
 				D8E8D5D20784641D00AAE755 /* TODO */,
 				D828FA5C0780D1F500215EB9 /* EnvelopeEd-Info.plist */,
 			);
@@ -5265,7 +5327,7 @@
 			children = (
 				D84B2D9C09D558A900766BD4 /* Makefile.in */,
 				D8D1B7380817D26600D9156A /* MusicKit_README.sgml */,
-				D8465EFD0FC76555006488CE /* MusicKit_Help.dsssl */,
+				D8465EFD0FC76555006488CE /* MusicKit_HelpViewer.dsssl */,
 				D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */,
 				D8465EFE0FC76555006488CE /* MusicKit_README.dsssl */,
 				D8743EDC0FC7EF62007B3313 /* MusicKit_README.css */,
@@ -5996,6 +6058,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8B44FC7099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "EnvelopeEd (Application)" */;
 			buildPhases = (
+				D83CADCA0FE997660000CF19 /* ShellScript */,
+				D83CAE050FEA30DD0000CF19 /* CopyFiles */,
+				D83CAE0B0FEA31240000CF19 /* CopyFiles */,
 				D828FA560780D1F400215EB9 /* Resources */,
 				D828FA570780D1F400215EB9 /* Sources */,
 				D828FA580780D1F400215EB9 /* Frameworks */,
@@ -6206,6 +6271,7 @@
 			buildConfigurationList = D8B44FAE099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "Spectro (Application)" */;
 			buildPhases = (
 				D8515F5F0FC5E7E8008DB277 /* ShellScript */,
+				D83CADF80FEA2C510000CF19 /* CopyFiles */,
 				D8743ED40FC7EEF7007B3313 /* CopyFiles */,
 				D85A2F46061F347D0065380E /* Resources */,
 				D85A2F47061F347D0065380E /* Sources */,
@@ -6243,8 +6309,10 @@
 			buildConfigurationList = D8B44FBD099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "ScorePlayer (Application)" */;
 			buildPhases = (
 				D8BC47090FC7F29F007D61A5 /* ShellScript */,
+				D83CAE010FEA2D2F0000CF19 /* CopyFiles */,
 				D8BC47160FC7F34D007D61A5 /* CopyFiles */,
 				D8BC47250FC7FD8C007D61A5 /* CopyFiles */,
+				D83CAE120FEAE1AC0000CF19 /* CopyFiles */,
 				D85E27F006FA0C0100385C32 /* Resources */,
 				D85E27F106FA0C0100385C32 /* Sources */,
 				D85E27F206FA0C0100385C32 /* Frameworks */,
@@ -6783,6 +6851,7 @@
 				D8E8D5F10784649E00AAE755 /* EnvelopeEd.nib in Resources */,
 				D8E8D5F20784649E00AAE755 /* Info.nib in Resources */,
 				D8E8D5F70784653B00AAE755 /* EnvelopeEd.icns in Resources */,
+				D83CAE1C0FEAE43C0000CF19 /* EnvelopeEd.sgml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7068,6 +7137,22 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D83CADCA0FE997660000CF19 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Applications/ScorePlayer/Help/English.lproj/EnvelopeEdHelp.sgml",
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/EnvelopeEdHelp/envelopeeditor.html",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/EnvelopeEdHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/EnvelopeEdHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/EnvelopeEd/Help/English.lproj/EnvelopeEd.sgml\nexit 0\n";
+			showEnvVarsInLog = 0;
+		};
 		D8515F5F0FC5E7E8008DB277 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -7081,7 +7166,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_Help.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nexit 0\n";
+			showEnvVarsInLog = 0;
 		};
 		D8BC47090FC7F29F007D61A5 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7096,7 +7182,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_Help.dsssl\\#html $SRCROOT/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp/Pages\ncd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp\nPATH=$PATH:/sw/bin/\nopenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -7984,6 +8070,14 @@
 				D837AC6406C81A9300A6CFEB /* English */,
 			);
 			name = ProphetVS.nib;
+			sourceTree = "<group>";
+		};
+		D83CAE1A0FEAE43C0000CF19 /* EnvelopeEd.sgml */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D83CAE1B0FEAE43C0000CF19 /* English */,
+			);
+			name = EnvelopeEd.sgml;
 			sourceTree = "<group>";
 		};
 		D84E1F5805B5E4FC002B493F /* Info.nib */ = {
@@ -14920,7 +15014,7 @@
 				D80151C50FA64B25002FB882 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D81589AA0F90EDEF00E38A7D /* Build configuration list for PBXNativeTarget "playscorefile" */ = {
 			isa = XCConfigurationList;
@@ -14932,7 +15026,7 @@
 				D81589A70F90EDC300E38A7D /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D86986A20ED9CA0E00E90F3F /* Build configuration list for PBXNativeTarget "SndView IB Plugin (Bundle)" */ = {
 			isa = XCConfigurationList;
@@ -14944,7 +15038,7 @@
 				D86986A70ED9CA0E00E90F3F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D886C3E20FA64847000AC7C4 /* Build configuration list for PBXNativeTarget "playscorefile2" */ = {
 			isa = XCConfigurationList;
@@ -14956,7 +15050,7 @@
 				D886C3DB0FA6480A000AC7C4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8A1DC0F09F64B6F0094B3F5 /* Build configuration list for PBXNativeTarget "mixscorefiles" */ = {
 			isa = XCConfigurationList;
@@ -14968,7 +15062,7 @@
 				D8A1DC1409F64B6F0094B3F5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8A1DC4309F65B8A0094B3F5 /* Build configuration list for PBXNativeTarget "example4" */ = {
 			isa = XCConfigurationList;
@@ -14980,7 +15074,7 @@
 				D8A1DC4809F65B8A0094B3F5 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F1D099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKPerformSndMIDI (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -14992,7 +15086,7 @@
 				D8B44F21099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F22099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "SndKit (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15004,7 +15098,7 @@
 				D8B44F26099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F27099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKDSP (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15016,7 +15110,7 @@
 				D8B44F2B099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F2C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MusicKit (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15028,7 +15122,7 @@
 				D8B44F30099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F31099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Frameworks Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15040,7 +15134,7 @@
 				D8B44F35099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F36099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "SndView Palette (Bundle)" */ = {
 			isa = XCConfigurationList;
@@ -15052,7 +15146,7 @@
 				D8B44F3A099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F3B099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Palettes Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15064,7 +15158,7 @@
 				D8B44F3F099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F40099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "convertscore" */ = {
 			isa = XCConfigurationList;
@@ -15076,7 +15170,7 @@
 				D8B44F44099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F45099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "scorefile2stella" */ = {
 			isa = XCConfigurationList;
@@ -15088,7 +15182,7 @@
 				D8B44F49099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F4A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscore" */ = {
 			isa = XCConfigurationList;
@@ -15100,7 +15194,7 @@
 				D8B44F4E099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F4F099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Utilities Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15112,7 +15206,7 @@
 				D8B44F53099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F54099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiRecord" */ = {
 			isa = XCConfigurationList;
@@ -15124,7 +15218,7 @@
 				D8B44F58099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F59099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiLoop" */ = {
 			isa = XCConfigurationList;
@@ -15136,7 +15230,7 @@
 				D8B44F5D099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F5E099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiPlay" */ = {
 			isa = XCConfigurationList;
@@ -15148,7 +15242,7 @@
 				D8B44F62099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F63099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiFilePlayback" */ = {
 			isa = XCConfigurationList;
@@ -15160,7 +15254,7 @@
 				D8B44F67099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F68099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiEcho" */ = {
 			isa = XCConfigurationList;
@@ -15172,7 +15266,7 @@
 				D8B44F6C099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F6D099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiEcho-1-Channel" */ = {
 			isa = XCConfigurationList;
@@ -15184,7 +15278,7 @@
 				D8B44F71099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F72099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "mixsounds" */ = {
 			isa = XCConfigurationList;
@@ -15196,7 +15290,7 @@
 				D8B44F76099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F77099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "maxamp" */ = {
 			isa = XCConfigurationList;
@@ -15208,7 +15302,7 @@
 				D8B44F7B099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F7C099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "extractchannel" */ = {
 			isa = XCConfigurationList;
@@ -15220,7 +15314,7 @@
 				D8B44F80099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F81099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "sndinfo" */ = {
 			isa = XCConfigurationList;
@@ -15232,7 +15326,7 @@
 				D8B44F85099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F86099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsnd" */ = {
 			isa = XCConfigurationList;
@@ -15244,7 +15338,7 @@
 				D8B44F8A099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F8B099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "recsnd" */ = {
 			isa = XCConfigurationList;
@@ -15256,7 +15350,7 @@
 				D8B44F8F099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F90099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playsndfaders" */ = {
 			isa = XCConfigurationList;
@@ -15268,7 +15362,7 @@
 				D8B44F94099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F95099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MultipleSoundPlayer" */ = {
 			isa = XCConfigurationList;
@@ -15280,7 +15374,7 @@
 				D8B44F99099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F9A099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "playscorefilemidi" */ = {
 			isa = XCConfigurationList;
@@ -15292,7 +15386,7 @@
 				D8B44F9E099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44F9F099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example1" */ = {
 			isa = XCConfigurationList;
@@ -15304,7 +15398,7 @@
 				D8B44FA3099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FA4099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "example3" */ = {
 			isa = XCConfigurationList;
@@ -15316,7 +15410,7 @@
 				D8B44FA8099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FA9099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Examples Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15328,7 +15422,7 @@
 				D8B44FAD099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FAE099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "Spectro (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15340,7 +15434,7 @@
 				D8B44FB2099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FB3099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PatchCord (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15352,7 +15446,7 @@
 				D8B44FB7099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FB8099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "TwoWaves (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15364,7 +15458,7 @@
 				D8B44FBC099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FBD099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "ScorePlayer (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15376,7 +15470,7 @@
 				D8B44FC1099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FC2099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PianoRoll (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15388,7 +15482,7 @@
 				D8B44FC6099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FC7099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "EnvelopeEd (Application)" */ = {
 			isa = XCConfigurationList;
@@ -15400,7 +15494,7 @@
 				D8B44FCB099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FCC099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Applications Only (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15412,7 +15506,7 @@
 				D8B44FD0099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FD1099617E500B5C3A4 /* Build configuration list for PBXLegacyTarget "Documentation" */ = {
 			isa = XCConfigurationList;
@@ -15424,7 +15518,7 @@
 				D8B44FD5099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FD6099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "MusicKit (Aggregate)" */ = {
 			isa = XCConfigurationList;
@@ -15436,7 +15530,7 @@
 				D8B44FDA099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FDB099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKSynthPatches (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15448,7 +15542,7 @@
 				D8B44FDF099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FE0099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MKUnitGenerators (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15460,7 +15554,7 @@
 				D8B44FE4099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FE5099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "PatchCord (Framework)" */ = {
 			isa = XCConfigurationList;
@@ -15472,7 +15566,7 @@
 				D8B44FE9099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8B44FEA099617E500B5C3A4 /* Build configuration list for PBXProject "MusicKit" */ = {
 			isa = XCConfigurationList;
@@ -15484,7 +15578,7 @@
 				D8B44FEE099617E500B5C3A4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8CFD2630B5D66E0003AB3C3 /* Build configuration list for PBXNativeTarget "Metronome" */ = {
 			isa = XCConfigurationList;
@@ -15496,7 +15590,7 @@
 				D8CFD2680B5D66E0003AB3C3 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8D2A3CF0FA9053A008DBF68 /* Build configuration list for PBXNativeTarget "PlayNote" */ = {
 			isa = XCConfigurationList;
@@ -15508,7 +15602,7 @@
 				D8D2A3CE0FA90539008DBF68 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 		D8FD873709F6667C001E01B4 /* Build configuration list for PBXNativeTarget "example5" */ = {
 			isa = XCConfigurationList;
@@ -15520,7 +15614,7 @@
 				D8FD873C09F6667C001E01B4 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Intel Development";
+			defaultConfigurationName = Development;
 		};
 /* End XCConfigurationList section */
 	};

@@ -15,7 +15,7 @@
 ]>
 
 <!-- 
-  $Id$
+  $Id: MusicKit_Help.dsssl 3564 2009-06-14 14:00:22Z leighsmith $
 
   MusicKit customizations for documentation to appear in the Apple
   HelpViewer application, which is a specialised web browser.
@@ -133,7 +133,9 @@
 	    (make empty-element gi: (car (car tl))
 		  attributes: (cdr (car tl)))
 	    (loop (cdr tl)))))
-    (apple-title-sequence)))
+    (if (node-list-empty? up)
+	(apple-title-sequence)
+	(empty-sosofo))))
 
 ;; Adds CSS style-sheet support
 (define %stylesheet%
@@ -329,7 +331,7 @@
 
 (define (nav-up elemnode)
   (let* ((up      (parent elemnode))
-         (up-href "../HowItWorks.html")
+         (up-href "../Home.html")
          (uplink? (not (node-list-empty? up)))
          (href    (if up-href
                       up-href
