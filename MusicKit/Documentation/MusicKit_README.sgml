@@ -17,7 +17,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkvertuple "5.5.3">
+<!entity mkvertuple "5.6.0">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
 <!entity mksvnweb "http://sourceforge.net/svn/?group_id=9881">
@@ -26,12 +26,12 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity mklists "@lists.sourceforge.net_nospam">
 <!-- GNUstep Libraries used -->
 <!entity gnustepdownload "http://www.gnustep.org">
-<!entity gsmakevertuple "1.6.0">
-<!entity gsbasevertuple "1.8.1">
-<!entity gsguivertuple "0.8.5">
+<!entity gsmakevertuple "2.2.0">
+<!entity gsbasevertuple "1.18.0">
+<!entity gsguivertuple "0.16.0">
 <!-- Libraries used -->
 <!entity libsndfileweb "http://www.mega-nerd.com/libsndfile">
-<!entity libsndfilevertuple "1.0.14">
+<!entity libsndfilevertuple "1.0.20">
 <!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile">
 <!entity hipvertuple "0.4pre1">
 <!entity hipdownload "http://icepick.info/projects_old/libmp3hip">
@@ -82,19 +82,12 @@ and binary distributions. Likewise if the distribution web site changes.
           <ulink url="http://www.ozmusiccode.com">Oz Music Code LLC.</ulink>
         </orgname>
         <address>
-<!--      
-          <street></street>
-          <city>Brooklyn</city>, <state>NY</state>
-          <postcode>11217</postcode>
-          <country>USA</country>
--->
-          <phone>+31-6-2871-7830</phone> 
           <email>&maintaineremail;</email>
         </address>
       </affiliation>
     </author>
     <copyright>
-      <year>2000-2006</year>
+      <year>2000-2009</year>
       <holder>The MusicKit Project</holder>
     </copyright>
     <revhistory>
@@ -108,7 +101,7 @@ and binary distributions. Likewise if the distribution web site changes.
       <para>
 These are overall comments (incorporating original notes by David
 A. Jaffe) and serve as the highest level overview of the
-MusicKit &mkvertuple; &horbar; the &ldquo;README&rdquo;.
+MusicKit version &mkvertuple; &mdash; the &ldquo;README&rdquo;.
       </para>
     </abstract>
   </articleinfo>
@@ -208,7 +201,7 @@ of Music V and <acronym>MIDI</acronym> paradigms.
 	</listitem>
 	<listitem>
 	  <para>
-Written in Objective C and C, using Apple's
+Written in Objective C and C, using <productname>Apple</productname>'s
 <productname>OpenStep/Cocoa</productname> <acronym>API</acronym>, the
 <productname>FoundationKit</productname>.
 </para>
@@ -272,9 +265,9 @@ writes a sound file.
 	<listitem>
 	  <para>
 Suite of <link linkend=applications>applications</link>, including
-<application>Ensemble</application> &horbar; an interactive algorithmic
+<application>Ensemble</application> &mdash; an interactive algorithmic
 composition and performance environment (including a built-in sampler),
-and <application>ScorePlayer</application> &horbar; a Scorefile and standard
+and <application>ScorePlayer</application> &mdash; a Scorefile and standard
  <acronym>MIDI</acronym> file player.
 </para>
 	</listitem>
@@ -507,7 +500,7 @@ lists changes and is generated from the <productname>Subversion</productname> lo
 <ulink url="&mkurl;/MusicKit_README.pdf">
 README in <acronym>PDF</acronym>
 </ulink>
-&horbar; 
+&mdash; 
 This README document in the 
 <productname>Adobe Portable Document Format</productname>
 (e.g <productname>Acrobat</productname>).
@@ -521,7 +514,7 @@ This README document in the
 <ulink url="&mkurl;/MusicKitConcepts.pdf">
 (<acronym>PDF</acronym> version)
 </ulink>
-&horbar; Thorough documentation of the <productname>MusicKit</productname> and <productname>SndKit</productname> in operation.
+&mdash; Thorough documentation of the <productname>MusicKit</productname> and <productname>SndKit</productname> in operation.
 </para>
 	</listitem>
 	<listitem>
@@ -532,7 +525,7 @@ This README document in the
 <ulink url="&mkurl;/MusicKitTutorials.pdf">
 (<acronym>PDF</acronym> version)
 </ulink>
-&horbar; Tutorial exercises by David A. Jaffe, used in his lecture series.
+&mdash; Tutorial exercises by David A. Jaffe, used in his lecture series.
 </para>
 	</listitem>
 	<listitem>
@@ -540,7 +533,7 @@ This README document in the
 <ulink url="&mkurl;/Frameworks">
 Class Documentation
 </ulink>
-&horbar; Documentation for each module, <productname>C</productname>
+&mdash; Documentation for each module, <productname>C</productname>
 function and <productname>Objective-C</productname> class.
 </para>
 	</listitem>
@@ -762,7 +755,7 @@ Kim Shrier added <productname>FreeBSD</productname> support.
 	  </row>
 	  <row>
 	    <entry>Windows XP (using <productname>GNUstep</productname>)</entry>
-	    <entry>N</entry>
+	    <entry>Partial</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
 	  </row>
@@ -782,7 +775,7 @@ Kim Shrier added <productname>FreeBSD</productname> support.
 	    <entry>Linux/Unix (Using
  <productname>GNUstep</productname>,
  <productname>portaudio</productname>/<productname>portmusic</productname>)</entry>
-	    <entry>N</entry>
+	    <entry>Partial</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
 	  </row>
@@ -818,10 +811,10 @@ The two versions under most active development are
 <filename>MKPerformSndMIDI_portaudio</filename>. The latter uses the
 multiplatform <ulink
 url="http://www.portaudio.com"><productname>portaudio</productname></ulink>
-(and eventually <productname>portmidi</productname>) library to map
-down to the platform specific <acronym>API</acronym> and this is the
+and <ulink url="http://portmedia.sourceforge.net/"><productname>portmidi</productname></ulink> library to map
+to the platform specific <acronym>API</acronym> and this is the
 means to interface with <productname>Linux</productname> and
-<productname>Windows</productname>.
+<productname>Windows</productname> platforms.
       </para>
     </sect2>
 
@@ -841,23 +834,21 @@ access is done using <productname>CoreMIDI</productname>
 
       <para>
 <productname>AudioUnits</productname> are
-supported. <classname>SndAudioUnitProcessor</classname> allows loading
-and using existing <productname>AudioUnits</productname> as a
-<classname>SndAudioProcessor</classname>, so you will be able to plug
-other developers <productname>AudioUnits</productname> into your
-<productname>SndKit</productname> sound processing stream.
+supported. <classname>SndAudioUnitProcessor</classname> allows loading and using existing
+<productname>AudioUnits</productname> as a <classname>SndAudioProcessor</classname>, so
+you will be able to plug other developers <productname>AudioUnits</productname> into your
+<productname>SndKit</productname> sound processing stream. The source for AudioUnit
+processing is located in <filename class=directory>MusicKit/Frameworks/PlatformSpecific/AudioUnits</filename>.
       </para>
 
-<!--
       <para>
-The other <productname>AudioUnit</productname> issue is whether a
+One <productname>AudioUnit</productname> issue is whether a
 <productname>SndKit</productname> program can function as an
 <productname>AudioUnit</productname>. In theory this should be
 possible once <productname>Cocoa</productname> apps can draw their own
 <productname>AudioUnit</productname> <acronym>GUI</acronym>, however
-this depends on Apple.
+this depends on <productname>Apple</productname>.
       </para>
--->
 
     </sect2>
 
@@ -865,22 +856,18 @@ this depends on Apple.
       <title>Linux support</title>
 
       <para>
-<productname>Linux</productname>/<productname>Unix</productname>
-support using the <ulink url="http://www.gnustep.org">GNUstep</ulink>
-library is partially completed and looking for more volunteers. A
-performance framework
-(<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
-<ulink url="http://www.portaudio.com">portaudio</ulink> library has
-been completed, porting the
-<productname>MusicKit</productname> to
-<productname>Intel</productname>
-<productname>Linux</productname>. Streaming sound works, but
-<acronym>MIDI</acronym> needs further work, please help! Potentially
-other <productname>Unix</productname> platforms will work
-(<productname>SGI</productname>, <productname>Solaris</productname>,
-<productname>FreeBSD</productname>, <productname>AIX</productname>
-etc) if they are supported in the <productname>portaudio</productname>
-library and <productname>GNUstep</productname>.
+<productname>Linux</productname>/<productname>Unix</productname> support using the <ulink
+url="http://www.gnustep.org">GNUstep</ulink> library is partially completed and looking
+for more volunteers. A performance framework
+(<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the <ulink
+url="http://www.portaudio.com">portaudio</ulink> library has been completed, porting the
+<productname>MusicKit</productname> to <productname>Intel</productname>
+<productname>Linux</productname>. Streaming sound I/O and <acronym>MIDI</acronym> output
+works, but <acronym>MIDI</acronym> input needs further work, please help! Potentially
+other <productname>Unix</productname> platforms will work (<productname>SGI</productname>,
+<productname>Solaris</productname>, <productname>FreeBSD</productname>,
+<productname>AIX</productname> etc) if they are supported in the
+<productname>portaudio</productname> library and <productname>GNUstep</productname>.
 </para>
 
       <sect3 id=installinggnustep>
@@ -1019,8 +1006,9 @@ directory is a single name without a space, as this tends to break
 	  </listitem>
 	  <listitem>
 	    <para>
-Install the <productname>Subversion</productname> version control system and other
-development tools with the MSYS developer tool kit
+Install the <ulink
+url="http://subversion.tigris.org"><productname>Subversion</productname> version control
+system</ulink> and other development tools with the MSYS developer tool kit
 <filename>msysDTK-1.0.1.exe</filename>.
 <!--
  Install the most up to date C
@@ -1183,12 +1171,8 @@ distribution newer than &libshoutvertuple;.
       <sect3>
 	<title><acronym>MIDI</acronym> on <productname>Windows</productname></title>
 	<para>
-The <filename>MKPerformSndMIDI_portaudio</filename> framework does not
-currently support <acronym>MIDI</acronym>. An earlier
-<productname>Windows</productname> only framework
-<filename>MKPerformSndMIDI_Win32</filename> which implements
-<acronym>MIDI</acronym> with the core layer of
-<productname>DirectMusic</productname> is available.  The downloadable
+The <filename>MKPerformSndMIDI_portaudio</filename> framework supports <acronym>MIDI</acronym>.
+The downloadable
 sound (<acronym>DLS</acronym>) capability of
 <productname>DirectMusic</productname> (providing a
 <acronym>MIDI</acronym> oriented sample playback
@@ -1282,15 +1266,14 @@ knowledge it will continue to work.
       <title><productname>Subversion</productname> Branch Structure</title>
 
       <para>
-Different software projects adopt different procedures for dealing
-with <emphasis>branching</emphasis> of the code base. The MusicKit
-project currently has few branches, however this is an attempt to
-define a policy for developers to conform to and to therefore be able
-to use when retrieving from the <productname>Subversion</productname> tree.  For example, some projects
-use branches for the &ldquo;bleeding-edge&rdquo; or experimental
-development, with the &ldquo;head&rdquo; or &ldquo;trunk&rdquo; of the
-code tree being stable. Positive experiments are then merged back into
-the head of the main branch of the tree.
+Different software projects adopt different procedures for dealing with
+<emphasis>branching</emphasis> of the code base. The MusicKit project currently has few
+branches, however this description is an attempt to define a policy for developers to
+conform to and to therefore be able to use when retrieving from the
+<productname>Subversion</productname> tree.  For example, some projects use branches for
+the &ldquo;bleeding-edge&rdquo; or experimental development, with the &ldquo;head&rdquo;
+or &ldquo;trunk&rdquo; of the code tree being stable. Successful experiments are then merged
+back into the head of the main branch of the tree.
 </para>
       <para>
 The head of the MusicKit can be considered unstable, but should be
@@ -1459,7 +1442,9 @@ sudo make install
 	  <term>
             <ulink
             url="&libsndfiledownload;/libsndfile-&libsndfilevertuple;.tar.gz">libsndfile-&libsndfilevertuple;.tar.gz</ulink>.
-            Status: Required.
+            Status: optional - disables
+            <classname>Snd</classname> file I/O and 
+            <classname>SndAudioProcessorRecorder</classname> if omitted.
             </term>
 	  <listitem>
 	    <para>
@@ -1561,7 +1546,7 @@ etc do:
 		  <screen>
 cvs -d:pserver:anonymous@www.portaudio.com:/home/cvs co -r v19-devel portaudio
 cd portaudio
-./configure --libdir=$GNUSTEP_SYSTEM_ROOT/Libraries
+./configure --without-oss --libdir=$GNUSTEP_SYSTEM_ROOT/Libraries
  --includedir=$GNUSTEP_SYSTEM_ROOT/Local/Libraries/Headers
 sudo make install
 </screen>
@@ -1837,9 +1822,10 @@ for regression testing.
     <sect2 id="RetrieveSubversion">
       <title>Retrieving Sources From The <productname>Subversion</productname> Repository</title>
       <para>
-The bleeding edge source is obtainable from the <productname>Subversion</productname> repository on
-<ulink url="http://www.sourceforge.net">sourceforge</ulink> and is
-described in detail by <ulink url="&mksvnweb;">this sourceforge page</ulink>.
+The bleeding edge source is obtainable from the <ulink
+url="http://subversion.tigris.org"><productname>Subversion</productname></ulink>
+repository on <ulink url="http://www.sourceforge.net">sourceforge</ulink> and is described
+in detail by <ulink url="&mksvnweb;">this sourceforge page</ulink>.
 </para>
     </sect2>
 
@@ -1847,14 +1833,31 @@ described in detail by <ulink url="&mksvnweb;">this sourceforge page</ulink>.
       <title>Compiling The Sources</title>
 
       <para>
-The MusicKit installation process is the now nearly the same as most
-autoconf configured software. Trivially, the following commands
-will compile and install the MusicKit.
+The MusicKit installation process is the now nearly the same as most <ulink
+url="http://www.gnu.org/software/autoconf/"><productname>autoconf</productname></ulink>
+configured software. Trivially, the following commands will compile and install the
+MusicKit.
 </para>
 
 	<informalexample id=mkbuild>
 	  <screen>
 ./configure
+make
+sudo make install
+</screen>
+	</informalexample>
+
+      <para>
+If you are installing dependent libraries into a non-standard place such as <filename
+class=directory>/sw</filename> if using <ulink
+url="http://www.finkproject.org/"><productname>fink</productname></ulink> on
+<productname>MacOS X</productname>, you can use the standard <command>configure</command>
+method to specify the compilation and linking flags:
+</para>
+
+	<informalexample id=mkbuildflags>
+	  <screen>
+./configure CPPFLAGS=-I/sw/include LDFLAGS=-L/sw/lib
 make
 sudo make install
 </screen>

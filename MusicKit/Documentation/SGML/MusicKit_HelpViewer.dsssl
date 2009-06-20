@@ -15,7 +15,7 @@
 ]>
 
 <!-- 
-  $Id: MusicKit_Help.dsssl 3564 2009-06-14 14:00:22Z leighsmith $
+  $Id$
 
   MusicKit customizations for documentation to appear in the Apple
   HelpViewer application, which is a specialised web browser.
