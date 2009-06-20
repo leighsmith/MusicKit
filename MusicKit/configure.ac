@@ -46,6 +46,12 @@ fi
 # Currently openjade is our only option.
 AC_CHECK_PROGS(SGMLTRANS, openjade)
 
+# Check for pdfjadetex being installed, this allows PDF generation.
+AC_CHECK_PROGS(PDFJADETEX, pdfjadetex)
+
+# Check for doxygen which generates HTML documentation from header files.
+AC_CHECK_PROGS(DOXYGEN, doxygen)
+
 AC_HEADER_STDC
 
 # Check for rt (needed for portaudio)
@@ -76,11 +82,8 @@ AC_CHECK_HEADERS(portaudio.h)
 AC_CHECK_LIB(ogg, ogg_stream_init)
 AC_CHECK_LIB(vorbis, vorbis_info_init)
 
-# Ensure that libsndfile must be installed.
+# Check if libsndfile is installed.
 AC_CHECK_LIB(sndfile, sf_open)
-# if test $ac_cv_lib_sndfile_sf_open != yes; then
-#   AC_MSG_ERROR([[libsndfile must be installed and is not.]])
-# fi
 
 # Will #if define out SndAudioProcessorMP3Encoder.m if LAME or
 # shoutcast libraries aren't available.
