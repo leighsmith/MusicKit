@@ -7141,7 +7141,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Applications/ScorePlayer/Help/English.lproj/EnvelopeEdHelp.sgml",
+				"$(SRCROOT)/Applications/EnvelopeEd/Help/English.lproj/EnvelopeEd.sgml",
 			);
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/EnvelopeEdHelp/envelopeeditor.html",
@@ -7173,7 +7173,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Applications/ScorePlayer/Help/English.lproj/ScorePlayerHelp.sgml",
+				"$(SRCROOT)/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml",
 			);
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/ScorePlayerHelp/scoreplayer.html",
