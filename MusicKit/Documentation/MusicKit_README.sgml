@@ -252,8 +252,8 @@ loading, on multiple DSPs.
 	</listitem>
 	<listitem>
 	  <para>
-Digital sound I/O from the DSP port with support for serial port
-devices by all popular vendors.
+On NeXT machines, digital sound I/O from the DSP port with support for NeXT serial port
+devices.
 </para>
 	</listitem>
 	<listitem>
@@ -873,10 +873,12 @@ other <productname>Unix</productname> platforms will work (<productname>SGI</pro
       <sect3 id=installinggnustep>
 	<title>Installing <productname>GNUStep</productname></title>
 	<para>
-Install <productname>GNUStep</productname> on your system in
-the usual fashion, according to the build guide. The following
-versions of <productname>GNUStep</productname> packages are
-known to work:
+Install <productname>GNUStep</productname> on your system in the usual fashion, according
+to the <ulink url="http://wiki.gnustep.org/index.php/User_Guides">build guide</ulink>. You
+may find binary packages are available on some <productname>Linux</productname>
+distributions such as <ulink
+url="http://www.debian.org"><productname>Debian</productname></ulink>. The following
+versions of <productname>GNUStep</productname> packages are known to work:
 </para>
      
 	<variablelist>
@@ -1864,19 +1866,17 @@ sudo make install
 	</informalexample>
 
       <para>
-There are a couple of subtle variations to this. On GNUstep systems,
-<command>make</command> will build the MusicKit sources as
-expected. On <productname>MacOS X</productname>, to benefit from the
-<productname>Xcode</productname> <acronym>IDE</acronym> (the
-<acronym>IDE</acronym>, plus zero-linking), <command>make</command>
-will just run the <command>xcodebuild</command> command line tool
-which does the actual building using the
-<filename>MusicKit.xcode</filename> project. If
-<command>configure</command> determined some libraries were
-unavailable, they will be omitted when <command>xcodebuild</command>
-is run. Since <command>xcodebuild install</command> builds and then
-installs, the <command>sudo make install</command> suffices, typing a
-preceding <command>make</command> is not actually necessary.
+There are a couple of subtle variations to this. On <productname>GNUstep</productname> systems,
+<command>make</command> is responsible for building the MusicKit sources as normal. On
+<productname>MacOS X</productname>, to benefit from the <productname>Xcode</productname>
+<acronym>IDE</acronym> (the <acronym>IDE</acronym>, plus zero-linking),
+<command>make</command> will just run the <command>xcodebuild</command> command line tool
+which does the actual building using the <filename>MusicKit.xcode</filename> project. If
+<command>configure</command> determined some libraries were unavailable, they will be
+omitted from the <envar>CONFIGURED_LIBS</envar> variable passed on the command line when
+<command>xcodebuild</command> is run by <command>make</command>. Since <command>xcodebuild
+install</command> builds and then installs, the <command>sudo make install</command>
+suffices, typing a preceding <command>make</command> is not actually necessary.
 </para>
 
       <para>
@@ -1889,12 +1889,13 @@ addition, the default configuration is to assume if the
 <productname>Xcode</productname> <acronym>GUI</acronym> is being used,
 then the MusicKit is being developed, not just installed and that all
 libraries have been installed. If all of the libraries are not
-available, the build setting CONFIGURED_LIBS must be changed for the
+available, the build setting <envar>CONFIGURED_LIBS</envar> must be changed for the
 SndKit to remove those libraries which are not installed. In practice,
-the user must manually modify CONFIGURED_LIBS build setting in the
+the user must manually modify <envar>CONFIGURED_LIBS</envar> build setting in the
 SndKit target to match the setting in <filename>Makefile</filename>.
 </para>
 
+      <note>
       <para>
 The <filename>MKUnitGenerators</filename> and
 <filename>MKSynthPatches</filename> frameworks won't compile on
@@ -1903,6 +1904,7 @@ platforms other than <productname>OpenStep</productname> or
 <command>asm56000</command> and <command>lnk56000</command> tools are
 missing.
 </para>
+      </note>
 
       <sect3 id="mididriver">
 	<title>Installing a MIDI driver</title>
@@ -1934,6 +1936,33 @@ url="http://www.midiman.com">MIDIMan's web page</ulink> and other
 vendors may well have drivers available for their hardware.
 </para>
       </sect3>
+
+    </sect2>
+
+    <sect2 id="building_doco">
+      <title>Building the Documentation</title>
+      <para>
+The documentation for the MusicKit and SndKit are now authored in <ulink
+url="http://www.docbook.org">DocBook</ulink> <acronym>SGML</acronym> format. This is then
+rendered to <acronym>HTML</acronym>, <acronym>PDF</acronym>,
+<productname>Apple</productname> <application>HelpViewer</application> and potentially
+other formats. In order to convert the documentation to these usual output formats, tools
+such as <ulink
+url="http://openjade.sourceforge.net"><application>openjade</application></ulink>, <ulink
+url="http://www.tug.org/"><application>TeX</application></ulink>, <ulink
+url="http://doxygen.sourceforge.net"><application>doxygen</application></ulink> need to be
+installed in addition to DocBook itself. The <command>configure</command> command will
+check for these tools. The <command>make</command> command will attempt to build and
+install as much of the documentation as possible based on which tools have been
+installed. This is invoked by:
+</para>
+
+	<informalexample id=mkbuilddocs>
+	  <screen>
+make documentation
+sudo make installdocs
+</screen>
+	</informalexample>
 
     </sect2>
 

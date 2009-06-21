@@ -28,6 +28,8 @@ SYMROOT=/tmp/build
 # This allows overriding this on the command line.
 VERSION=0.0.0
 
+.PHONY: all install frameworks palettes utilities examples applciations documentation installdocs clean cleandocs
+
 all:
 	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Development build DSTROOT=$(DSTROOT) $(CONFIG)
 
