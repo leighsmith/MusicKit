@@ -366,13 +366,12 @@
     return [self readSoundfile: expandedFilename startFrame: 0 frameCount: -1];    
 }
 
-#if HAVE_LIBSNDFILE
-
 // writes the sound data, soundDataFormat describes the format of the data pointed to by soundData.
 // TODO The parameters can probably be eventually changed to take an SndAudioBuffer when Snd's hold it's internal
 // data as one or more SndAudioBuffers. Alternatively, perhaps this is a candidate to become a SndAudioBuffer method.
 int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
 {
+#if HAVE_LIBSNDFILE
     long sampleCount = soundDataFormat.frameCount * soundDataFormat.channelCount;
 
     switch(soundDataFormat.dataFormat) {
@@ -397,10 +396,9 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     default:
 	NSLog(@"SndWriteSampleData() Unable to write from format %d, not supported\n", soundDataFormat.dataFormat);	    
     }
+#endif    
     return SND_ERR_NONE;
 }
-
-#endif
 
 // The underlying sound file writing library (libsndfile) will look after endian issues.
 - (int) writeSoundfile: (NSString *) path

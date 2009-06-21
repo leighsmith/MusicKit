@@ -20,8 +20,6 @@
 # import "SndKitConfig.h"
 #endif
 
-#if HAVE_LIBSNDFILE
-
 #import <math.h>
 #import "SndFunctions.h"
 #import "SndAudioBuffer.h"
@@ -153,6 +151,7 @@
 - (BOOL) setUpRecordFile: (NSString *) filename
 	      withFormat: (SndFormat) format
 {
+#if HAVE_LIBSNDFILE
     SF_INFO sfinfo;
     NSString *expandedFilename = [filename stringByExpandingTildeInPath];
     
@@ -186,6 +185,10 @@
 	    return NO;
 	}	
     }
+#else
+#warning Did not compile SndAudioProcessorRecorder class since libsndfile library was not installed.
+    return NO;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,9 +197,11 @@
 
 - (BOOL) closeRecordFile
 {
+#if HAVE_LIBSNDFILE
     stopSignal = NO;
     isRecording = NO; // Halt all recording then close the file.
     sf_close(recordFile);
+#endif
     recordFile = NULL;
     framesRecorded = 0;
     
@@ -486,7 +491,3 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 @end
-
-#else
-#warning Did not compile SndAudioProcessorRecorder class since libsndfile library was not installed.
-#endif

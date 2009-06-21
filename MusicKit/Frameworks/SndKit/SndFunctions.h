@@ -56,18 +56,15 @@
 #import "SndKitConfig.h"
 #import "SndFormat.h"
 
-#ifdef GNUSTEP
-# import <Foundation/NSArray.h>
-//# include <stdio.h>     /* for FILE */
-#else
-#  import <Foundation/Foundation.h>
-#endif /* GNUSTEP */
+#import <Foundation/Foundation.h>
 
 #import "SndError.h"
 #import "SndEndianFunctions.h"
 
 #if HAVE_LIBSNDFILE
 # import <sndfile.h> /* for libsndfile SNDFILE declaration */
+#else
+#define SNDFILE void
 #endif
 
 /*!
@@ -205,7 +202,6 @@ SNDKIT_API int SndAlloc(SndSoundStruct **sound,
                                    int channelCount,
                                    int infoSize);
 
-#if HAVE_LIBSNDFILE
 /*!
   @brief To come 
   @param sfp
@@ -214,7 +210,6 @@ SNDKIT_API int SndAlloc(SndSoundStruct **sound,
   @return
  */
 SNDKIT_API int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat);
-#endif
 
 /*!
   @brief Swaps the sound data in big endian format to host (native) format.

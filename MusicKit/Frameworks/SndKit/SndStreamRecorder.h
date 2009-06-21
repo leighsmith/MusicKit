@@ -15,18 +15,7 @@
 #ifndef __SNDSTREAMRECORDER_H__
 #define __SNDSTREAMRECORDER_H__
 
-/* We #include this file regardless of the setting of
-   HAVE_CONFIG_H so that other applications compiling against this
-   header don't have to define it. If you are seeing errors for
-   SndKitConfig.h not found when compiling the MusicKit, you haven't
-   run ./configure 
-*/
-#import "SndKitConfig.h"
-
-#if HAVE_LIBSNDFILE
-
 #import <Foundation/Foundation.h>
-
 #import "SndStreamClient.h"
 
 @class SndAudioBuffer;
@@ -153,6 +142,4 @@
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif
-
 #endif

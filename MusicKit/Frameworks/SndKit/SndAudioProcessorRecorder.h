@@ -26,12 +26,14 @@
 */
 #import "SndKitConfig.h"
 
-#if HAVE_LIBSNDFILE
-
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
 
+#if HAVE_LIBSNDFILE
 # import <sndfile.h>
+#else
+#define SNDFILE void
+#endif
 
 @class SndAudioBuffer;
 @class SndAudioBufferQueue;
@@ -149,6 +151,5 @@ enum SndRecorderParam {
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif
 
 #endif

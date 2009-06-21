@@ -12,13 +12,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// Only compile this class if the libsndfile library has been installed.
-#if HAVE_CONFIG_H
-# import "SndKitConfig.h"
-#endif
-
-#if HAVE_LIBSNDFILE
-
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
@@ -166,7 +159,3 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 @end
-
-#else
-#warning Did not compile SndStreamRecorder class since libsndfile library was not installed.
-#endif
