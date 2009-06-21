@@ -77,7 +77,6 @@
 				D8708DFF05B31C970074C18D /* PBXTargetDependency */,
 				D8708F8805B49B360074C18D /* PBXTargetDependency */,
 				D84AE071062324B300A477FA /* PBXTargetDependency */,
-				D8306767082C5F2B00BCA5C1 /* PBXTargetDependency */,
 			);
 			name = "MusicKit (Aggregate)";
 			productName = "MusicKit (Aggregate)";
@@ -370,6 +369,9 @@
 		D834DA7D0FA6467000EEBC03 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D834DA7E0FA6467000EEBC03 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D834DA7F0FA6467000EEBC03 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D8379A840FEE8C6E00E7B708 /* icon16x16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8379A830FEE8C6E00E7B708 /* icon16x16.png */; };
+		D8379A8B0FEE8CBA00E7B708 /* icon16x16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8379A8A0FEE8CBA00E7B708 /* icon16x16.png */; };
+		D8379AA30FEEC3DD00E7B708 /* icon16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = D8379AA20FEEC3DD00E7B708 /* icon16x16.png */; };
 		D837AB8806C80F4F00A6CFEB /* Juno106.h in Headers */ = {isa = PBXBuildFile; fileRef = D837AB8606C80F4F00A6CFEB /* Juno106.h */; };
 		D837AB8906C80F4F00A6CFEB /* Juno106.m in Sources */ = {isa = PBXBuildFile; fileRef = D837AB8706C80F4F00A6CFEB /* Juno106.m */; };
 		D837AB9E06C80F8C00A6CFEB /* 24bitJunoSwitchDown.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D837AB9506C80F8B00A6CFEB /* 24bitJunoSwitchDown.tiff */; };
@@ -936,13 +938,6 @@
 			remoteGlobalIDString = D84E221205B70AED002B493F;
 			remoteInfo = "sndinfo (Tool)";
 		};
-		D8306766082C5F2B00BCA5C1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D8D1B73B0817D2B000D9156A;
-			remoteInfo = Documentation;
-		};
 		D834DA780FA6456300EEBC03 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
@@ -1212,6 +1207,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		D8379A900FEE8D5B00E7B708 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = English.lproj/SpectroHelp/Images;
+			dstSubfolderSpec = 7;
+			files = (
+				D8379A8B0FEE8CBA00E7B708 /* icon16x16.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D83CADF80FEA2C510000CF19 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1323,6 +1328,7 @@
 				D8BC47300FC7FDF0007D61A5 /* play.gif in CopyFiles */,
 				D8BC47330FC7FDF0007D61A5 /* ScorePlayerApp.gif in CopyFiles */,
 				D8BC47350FC7FDF0007D61A5 /* tempo.gif in CopyFiles */,
+				D8379A840FEE8C6E00E7B708 /* icon16x16.png in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1561,6 +1567,9 @@
 		D828FA5C0780D1F500215EB9 /* EnvelopeEd-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EnvelopeEd-Info.plist"; path = "Applications/EnvelopeEd/EnvelopeEd-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D82AC3B905A0F6DA00780F57 /* SndKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SndKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82AC3BA05A0F6DA00780F57 /* SndKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SndKit-Info.plist"; path = "Frameworks/SndKit/SndKit-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D8379A830FEE8C6E00E7B708 /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon16x16.png; path = Applications/ScorePlayer/Images/icon16x16.png; sourceTree = "<group>"; };
+		D8379A8A0FEE8CBA00E7B708 /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon16x16.png; path = Applications/Spectro/icon16x16.png; sourceTree = "<group>"; };
+		D8379AA20FEEC3DD00E7B708 /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon16x16.png; path = Applications/EnvelopeEd/icon16x16.png; sourceTree = "<group>"; };
 		D837AB8606C80F4F00A6CFEB /* Juno106.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Juno106.h; path = Applications/PatchCord/Juno106.subproj/Juno106.h; sourceTree = "<group>"; };
 		D837AB8706C80F4F00A6CFEB /* Juno106.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Juno106.m; path = Applications/PatchCord/Juno106.subproj/Juno106.m; sourceTree = "<group>"; };
 		D837AB9506C80F8B00A6CFEB /* 24bitJunoSwitchDown.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = 24bitJunoSwitchDown.tiff; path = Applications/PatchCord/Juno106.subproj/24bitJunoSwitchDown.tiff; sourceTree = "<group>"; };
@@ -2944,6 +2953,7 @@
 				D8BC472C0FC7FDF0007D61A5 /* ScorePlayerApp.gif */,
 				D8BC472D0FC7FDF0007D61A5 /* Sound.gif */,
 				D8BC472E0FC7FDF0007D61A5 /* tempo.gif */,
+				D8379A830FEE8C6E00E7B708 /* icon16x16.png */,
 			);
 			name = Help;
 			sourceTree = "<group>";
@@ -3254,6 +3264,7 @@
 		D83CAE170FEAE40A0000CF19 /* Help */ = {
 			isa = PBXGroup;
 			children = (
+				D8379AA20FEEC3DD00E7B708 /* icon16x16.png */,
 				D83CAE1A0FEAE43C0000CF19 /* EnvelopeEd.sgml */,
 			);
 			name = Help;
@@ -3676,6 +3687,7 @@
 			isa = PBXGroup;
 			children = (
 				D85A3021061F3A820065380E /* SpectroHelp.sgml */,
+				D8379A8A0FEE8CBA00E7B708 /* icon16x16.png */,
 			);
 			name = Help;
 			sourceTree = "<group>";
@@ -6272,6 +6284,7 @@
 				D8515F5F0FC5E7E8008DB277 /* ShellScript */,
 				D83CADF80FEA2C510000CF19 /* CopyFiles */,
 				D8743ED40FC7EEF7007B3313 /* CopyFiles */,
+				D8379A900FEE8D5B00E7B708 /* CopyFiles */,
 				D85A2F46061F347D0065380E /* Resources */,
 				D85A2F47061F347D0065380E /* Sources */,
 				D85A2F48061F347D0065380E /* Frameworks */,
@@ -6318,6 +6331,7 @@
 			);
 			buildRules = (
 			);
+			comments = "Note that the ScorePlayer code is not intended as a good simple example of MusicKit programming.\nFor clearer examples of how to use the MusicKit, see the MusicKit/Examples directory. ";
 			dependencies = (
 			);
 			name = "ScorePlayer (Application)";
@@ -6850,6 +6864,7 @@
 				D8E8D5F10784649E00AAE755 /* EnvelopeEd.nib in Resources */,
 				D8E8D5F20784649E00AAE755 /* Info.nib in Resources */,
 				D8E8D5F70784653B00AAE755 /* EnvelopeEd.icns in Resources */,
+				D8379AA30FEEC3DD00E7B708 /* icon16x16.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7791,11 +7806,6 @@
 			isa = PBXTargetDependency;
 			target = D84E221205B70AED002B493F /* sndinfo */;
 			targetProxy = D80DA5CA0764E4250052DFAF /* PBXContainerItemProxy */;
-		};
-		D8306767082C5F2B00BCA5C1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D8D1B73B0817D2B000D9156A /* Documentation */;
-			targetProxy = D8306766082C5F2B00BCA5C1 /* PBXContainerItemProxy */;
 		};
 		D834DA790FA6456300EEBC03 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -2,20 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFAppleHelpAnchor</key>
+	<string>envelopeeditor</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>EnvelopeEd</string>
-	<key>CFBundleIconFile</key>
-	<string>EnvelopeEd</string>
-	<key>CFBundleIdentifier</key>
-	<string>org.musickit.EnvelopeEd</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>EnvelopeEdHelp</string>
 	<key>CFBundleHelpBookName</key>
 	<string>Envelope Editor</string>
-	<key>CFAppleHelpAnchor</key>
-	<string>envelopeeditor</string>
+	<key>CFBundleIconFile</key>
+	<string>EnvelopeEd</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.musickit.EnvelopeEd</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -23,7 +23,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>5.6.0</string>
 	<key>NSMainNibFile</key>
 	<string>EnvelopeEd</string>
 	<key>NSPrincipalClass</key>

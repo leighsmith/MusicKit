@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFAppleHelpAnchor</key>
+	<string>scoreplayer</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -21,16 +23,14 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>ScorePlayer</string>
-	<key>CFBundleIconFile</key>
-	<string>ScorePlayerApp</string>
-	<key>CFBundleIdentifier</key>
-	<string>org.musickit.ScorePlayer</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>ScorePlayerHelp</string>
 	<key>CFBundleHelpBookName</key>
 	<string>ScorePlayer</string>
-	<key>CFAppleHelpAnchor</key>
-	<string>scoreplayer</string>
+	<key>CFBundleIconFile</key>
+	<string>ScorePlayerApp</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.musickit.ScorePlayer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -38,7 +38,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.5.0</string>
+	<string>5.6.0</string>
 	<key>NSMainNibFile</key>
 	<string>ScorePlayer</string>
 	<key>NSPrincipalClass</key>
