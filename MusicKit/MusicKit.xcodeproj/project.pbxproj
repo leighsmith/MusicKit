@@ -801,7 +801,6 @@
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
-		D8A786160CC8E33300D5A812 /* metronome-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */; };
 		D8AE7A4406194279009D0112 /* SndViewPalette.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8AE7A4306194279009D0112 /* SndViewPalette.tiff */; };
 		D8BC47170FC7F35B007D61A5 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
 		D8BC472F0FC7FDF0007D61A5 /* Midi.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC47280FC7FDF0007D61A5 /* Midi.gif */; };
@@ -2102,9 +2101,9 @@
 		D8C6E3410ACC4AC4004978A9 /* music.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = music.tiff; path = Applications/ScorePlayer/Images/music.tiff; sourceTree = "<group>"; };
 		D8CFD2490B5D66DF003AB3C3 /* metronome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = metronome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8CFD24B0B5D66DF003AB3C3 /* metronome-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "metronome-Info.plist"; path = "Examples/metronome/metronome-Info.plist"; sourceTree = "<group>"; };
-		D8CFD2690B5D6743003AB3C3 /* metronome_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = metronome_main.m; path = Examples/metronome/metronome_main.m; sourceTree = "<group>"; };
-		D8CFD26A0B5D6743003AB3C3 /* Metronome.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Metronome.h; path = Examples/metronome/Metronome.h; sourceTree = "<group>"; };
-		D8CFD26B0B5D6743003AB3C3 /* Metronome.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Metronome.m; path = Examples/metronome/Metronome.m; sourceTree = "<group>"; };
+		D8CFD2690B5D6743003AB3C3 /* metronome_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = metronome_main.m; path = Examples/metronome/metronome_main.m; sourceTree = SOURCE_ROOT; };
+		D8CFD26A0B5D6743003AB3C3 /* Metronome.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Metronome.h; path = Examples/metronome/Metronome.h; sourceTree = SOURCE_ROOT; };
+		D8CFD26B0B5D6743003AB3C3 /* Metronome.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Metronome.m; path = Examples/metronome/Metronome.m; sourceTree = SOURCE_ROOT; };
 		D8CFD2710B5D67DD003AB3C3 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Examples/metronome/English.lproj/metronome.nib; sourceTree = "<group>"; };
 		D8D1B6A90812492700D9156A /* playscorefilemidi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playscorefilemidi; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8D1B6AD0812496D00D9156A /* playscorefilemidi.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = playscorefilemidi.m; path = Examples/playscorefilemidi/playscorefilemidi.m; sourceTree = "<group>"; };
@@ -7112,7 +7111,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8CFD27B0B5D67DD003AB3C3 /* metronome.nib in Resources */,
-				D8A786160CC8E33300D5A812 /* metronome-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14684,7 +14682,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "metronome-Info.plist";
+				INFOPLIST_FILE = "Examples/metronome/metronome-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14706,7 +14704,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "metronome-Info.plist";
+				INFOPLIST_FILE = "Examples/metronome/metronome-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14730,7 +14728,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "metronome-Info.plist";
+				INFOPLIST_FILE = "Examples/metronome/metronome-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14752,7 +14750,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "metronome-Info.plist";
+				INFOPLIST_FILE = "Examples/metronome/metronome-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14774,7 +14772,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "metronome-Info.plist";
+				INFOPLIST_FILE = "Examples/metronome/metronome-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
