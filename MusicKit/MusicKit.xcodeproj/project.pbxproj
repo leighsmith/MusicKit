@@ -348,7 +348,6 @@
 		D82557EB05A21B5900B0192B /* trigonometry.c in Sources */ = {isa = PBXBuildFile; fileRef = D82557E805A21B5900B0192B /* trigonometry.c */; };
 		D82557ED05A21B7F00B0192B /* utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557EC05A21B7F00B0192B /* utilities.m */; };
 		D82557F005A21BBF00B0192B /* Localized.strings in Resources */ = {isa = PBXBuildFile; fileRef = D82557EF05A21BBF00B0192B /* Localized.strings */; };
-		D828B0720FAE3A0F00B4DC3B /* PlayNote-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */; };
 		D828F99D0780C24B00215EB9 /* MKAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = D828F99B0780C24B00215EB9 /* MKAlert.m */; };
 		D828F9AE0780C46700215EB9 /* play.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828F9AC0780C46700215EB9 /* play.tiff */; };
 		D828F9AF0780C46700215EB9 /* playH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828F9AD0780C46700215EB9 /* playH.tiff */; };
@@ -618,6 +617,10 @@
 		D87BF81B0F0985E40078AD51 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D87BF8150F0985E40078AD51 /* InfoPlist.strings */; };
 		D87BF81C0F0985E40078AD51 /* SndViewIBPluginInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = D87BF8170F0985E40078AD51 /* SndViewIBPluginInspector.nib */; };
 		D87BF81D0F0985E40078AD51 /* SndViewIBPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = D87BF8190F0985E40078AD51 /* SndViewIBPluginLibrary.nib */; };
+		D88032AD0FF17F4E00182A0C /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D88032AE0FF17F4E00182A0C /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D88032AF0FF17F4E00182A0C /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
+		D88032B00FF17F4E00182A0C /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D880FBC7077FD9B700FD03CC /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D880FBCE077FDD4A00FD03CC /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D880FBE4077FDD7E00FD03CC /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -2122,8 +2125,8 @@
 		D8D1B7590817D44B00D9156A /* MusicKitClass5.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = MusicKitClass5.sgml; path = Documentation/TutorialClasses/MusicKitClass5.sgml; sourceTree = "<group>"; };
 		D8D1B75A0817D44B00D9156A /* MusicKitTutorials.sgml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html.documentation; name = MusicKitTutorials.sgml; path = Documentation/TutorialClasses/MusicKitTutorials.sgml; sourceTree = "<group>"; };
 		D8D2A3C70FA90537008DBF68 /* PlayNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PlayNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PlayNote-Info.plist"; path = "Examples/PlayNote/PlayNote-Info.plist"; sourceTree = "<group>"; };
-		D8D2A3D40FA905E2008DBF68 /* dkeislar.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = dkeislar.tiff; path = Examples/PlayNote/dkeislar.tiff; sourceTree = "<group>"; };
+		D8D2A3C90FA90538008DBF68 /* PlayNote-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PlayNote-Info.plist"; path = "Examples/PlayNote/PlayNote-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D8D2A3D40FA905E2008DBF68 /* dkeislar.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = dkeislar.tiff; path = Examples/PlayNote/dkeislar.tiff; sourceTree = SOURCE_ROOT; };
 		D8D2A3D50FA905E2008DBF68 /* ExampApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExampApp.h; path = Examples/PlayNote/ExampApp.h; sourceTree = "<group>"; };
 		D8D2A3D60FA905E2008DBF68 /* ExampApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExampApp.m; path = Examples/PlayNote/ExampApp.m; sourceTree = "<group>"; };
 		D8D2A3D70FA905E2008DBF68 /* PlayNote_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlayNote_main.m; path = Examples/PlayNote/PlayNote_main.m; sourceTree = "<group>"; };
@@ -2580,6 +2583,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D88032AD0FF17F4E00182A0C /* MKPerformSndMIDI.framework in Frameworks */,
+				D88032AE0FF17F4E00182A0C /* SndKit.framework in Frameworks */,
+				D88032AF0FF17F4E00182A0C /* MKDSP.framework in Frameworks */,
+				D88032B00FF17F4E00182A0C /* MusicKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7117,7 +7124,6 @@
 				D8D2A3DC0FA905E2008DBF68 /* README.txt in Resources */,
 				D8D2A3E30FA9062D008DBF68 /* Info.nib in Resources */,
 				D8D2A3E40FA9062D008DBF68 /* PlayNote.nib in Resources */,
-				D828B0720FAE3A0F00B4DC3B /* PlayNote-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8393,7 +8399,7 @@
 				D8D2A3E00FA9062D008DBF68 /* English */,
 			);
 			name = Info.nib;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		D8D2A3E10FA9062D008DBF68 /* PlayNote.nib */ = {
 			isa = PBXVariantGroup;
@@ -10414,7 +10420,7 @@
 		D8B44F23099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lsndfile -lvorbis -logg";
+				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lsndfile -lvorbis -logg -lshout";
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14793,7 +14799,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "PlayNote-Info.plist";
+				INFOPLIST_FILE = "Examples/PlayNote/PlayNote-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14814,7 +14820,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "PlayNote-Info.plist";
+				INFOPLIST_FILE = "Examples/PlayNote/PlayNote-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14837,7 +14843,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "PlayNote-Info.plist";
+				INFOPLIST_FILE = "Examples/PlayNote/PlayNote-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14859,7 +14865,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "PlayNote-Info.plist";
+				INFOPLIST_FILE = "Examples/PlayNote/PlayNote-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14880,7 +14886,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "PlayNote-Info.plist";
+				INFOPLIST_FILE = "Examples/PlayNote/PlayNote-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
