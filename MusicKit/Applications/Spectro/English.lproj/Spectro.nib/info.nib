@@ -3,16 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>IBFramework Version</key>
-	<string>672</string>
+	<string>677</string>
+	<key>IBLastKnownRelativeProjectPath</key>
+	<string>../../../MusicKit.xcodeproj</string>
 	<key>IBOldestOS</key>
 	<integer>5</integer>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>57</integer>
-		<integer>50</integer>
+		<integer>17</integer>
+		<integer>42</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>9G55</string>
+	<string>9J61</string>
 	<key>targetFramework</key>
 	<string>IBCocoaFramework</string>
 </dict>

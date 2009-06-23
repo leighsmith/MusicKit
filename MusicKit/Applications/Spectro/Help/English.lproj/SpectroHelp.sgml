@@ -5,13 +5,13 @@
 <!entity spectroVer "4.1">
 ]>
 <article ID="SpectroHelp">
-  <title>Spectro &spectroVer;</title>
+  <title>Spectro</title>
 
   <sect1 id="GettingStarted">
     <title>Getting Started</title>
 
     <sect2 id="AQuickIntroduction">
-      <title>A quick introduction</title>
+      <title>A Quick Introduction</title>
       
       <para>
 	Welcome to Spectro V&spectroVer;, a spectrum analysis tool for use in the
