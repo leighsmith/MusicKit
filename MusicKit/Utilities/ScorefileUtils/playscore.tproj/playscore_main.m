@@ -214,7 +214,7 @@ static BOOL checkForMidi(id obj)
     id info;
     char *sp;
     
-    if (weGotScore = [obj isKindOf: [MKScore class]])
+    if (weGotScore = [obj isKindOfClass: [MKScore class]])
 	subobjs = [obj parts];
     else 
 	subobjs = [obj noteSenders];
