@@ -1787,7 +1787,7 @@
 		D86963C007C164F000785798 /* example1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = example1; sourceTree = BUILT_PRODUCTS_DIR; };
 		D86963C407C1653700785798 /* example1.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = example1.m; path = Examples/example1/example1.m; sourceTree = "<group>"; };
 		D86986A00ED9CA0E00E90F3F /* SndViewPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SndViewPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		D86986A10ED9CA0E00E90F3F /* SndViewPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SndViewPlugin-Info.plist"; sourceTree = "<group>"; };
+		D86986A10ED9CA0E00E90F3F /* SndViewPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SndViewPlugin-Info.plist"; path = "Plugins/SndView/SndViewPlugin-Info.plist"; sourceTree = "<group>"; };
 		D86CBB8407ADAE9A00CB06E4 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/MidiEcho.nib"; sourceTree = "<group>"; };
 		D86CBB8B07ADAF6100CB06E4 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/Info.nib"; sourceTree = "<group>"; };
 		D86CBE1707AF1AD800CB06E4 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Examples/MidiPlay/English.lproj/MidiPlay.nib; sourceTree = "<group>"; };
@@ -7163,11 +7163,11 @@
 				"$(SRCROOT)/Applications/EnvelopeEd/Help/English.lproj/EnvelopeEd.sgml",
 			);
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/EnvelopeEdHelp/envelopeeditor.html",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/envelopeeditorhelp/envelopeeditor.html",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/EnvelopeEdHelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/EnvelopeEdHelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/EnvelopeEd/Help/English.lproj/EnvelopeEd.sgml\nelse\n\techo Missing openjade so skipped building EnvelopeEd Help from SGML.\nfi\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/envelopeeditorhelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/envelopeeditorhelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/EnvelopeEd/Help/English.lproj/EnvelopeEd.sgml\nelse\n\techo Missing openjade so skipped building EnvelopeEd Help from SGML.\nfi\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		D8515F5F0FC5E7E8008DB277 /* ShellScript */ = {
@@ -7179,11 +7179,11 @@
 				"$(SRCROOT)/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml",
 			);
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/SpectroHelp/spectrohelp.html",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/spectrohelp/spectrohelp.html",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/SpectroHelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nelse\n\techo Missing openjade so skipped building Spectro Help from SGML.\nfi\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/spectrohelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/spectrohelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/Spectro/Help/English.lproj/SpectroHelp.sgml\nelse\n\techo Missing openjade so skipped building Spectro Help from SGML.\nfi\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		D8BC47090FC7F29F007D61A5 /* ShellScript */ = {
@@ -7195,11 +7195,11 @@
 				"$(SRCROOT)/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml",
 			);
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/ScorePlayerHelp/scoreplayer.html",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/English.lproj/scoreplayerhelp/scoreplayer.html",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/ScorePlayerHelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml\nelse\n\techo Missing openjade so skipped building ScorePlayer Help from SGML.\nfi\nexit 0\n";
+			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/scoreplayerhelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/scoreplayerhelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml\nelse\n\techo Missing openjade so skipped building ScorePlayer Help from SGML.\nfi\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
