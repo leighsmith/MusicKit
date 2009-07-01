@@ -3,7 +3,7 @@
 <!entity mkurl "http://musickit.sourceforge.net">
 ]>
 
-<ARTICLE ID="ScorePlayer">
+<ARTICLE ID="ScorePlayerHelp">
   <ARTHEADER>
     <TITLE>ScorePlayer</TITLE>
     <AUTHOR>
@@ -90,9 +90,7 @@
       </FIGURE>
     </SECT1>
     <SECT1 ID="SynthesisOnDSP">
-      <TITLE> 
-	How is the Music Synthesized on the <ACRONYM>DSP</ACRONYM>?
-      </TITLE>
+      <TITLE>How is the Music Synthesized on the <ACRONYM>DSP</ACRONYM>?</TITLE>
       <PARA>
 	Music synthesis involves the computation of a stream of numbers, or
 	<emphasis>samples</emphasis> from a higher-level parametric description.
@@ -214,8 +212,7 @@
     </PARA>
   </SECT1>
   <SECT1 id=MusicOnMIDISynth>
-    <TITLE>How is the Music Synthesized on an External
-      <ACRONYM>MIDI</ACRONYM> Synthesizer?</TITLE> 
+    <TITLE>How is the Music Synthesized on an External <ACRONYM>MIDI</ACRONYM> Synthesizer?</TITLE> 
 
     <PARA>To use
       <APPLICATION>ScorePlayer</APPLICATION> with an external
@@ -268,9 +265,7 @@
       </PARA>
       <PARA>Here are the icons for the two forms of scorefile:</PARA>
       <FIGURE ID="ScoreIcon">
-	<TITLE>
-	  <FILENAME>.score</FILENAME> (text form) file icon
-	</TITLE>      
+	<TITLE><FILENAME>.score</FILENAME> (text form) file icon</TITLE>      
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/Score.eps" FORMAT="EPS">
@@ -284,9 +279,7 @@
 	</MEDIAOBJECT> 
       </FIGURE>  
       <FIGURE ID="PlayScoreIcon">
-	<TITLE>
-	  <FILENAME>.playscore</FILENAME> (optimized form) file icon
-	</TITLE>      
+	<TITLE><FILENAME>.playscore</FILENAME> (optimized form) file icon </TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/PlayScore.eps" FORMAT="EPS">
@@ -418,8 +411,7 @@ guitar4 synthPatch:"Pluck";            // Uses the Pluck synthpatch on the DSP
       </PARA>
     </SECT1>
     <SECT1 ID="ConvertingToSMF">
-      <TITLE>Converting a Scorefile to a Standard <ACRONYM>MIDI</ACRONYM>
-	File</TITLE> 
+      <TITLE>Converting a Scorefile to a Standard <ACRONYM>MIDI</ACRONYM> File</TITLE> 
       <PARA>
 	When exporting scorefile data to another application,
 	particularly if that application runs on another computer, you
@@ -523,8 +515,7 @@ guitar4 synthPatch:"Pluck";            // Uses the Pluck synthpatch on the DSP
       soundfile is being written.</PARA>
   </SECT1>
   <SECT1 ID="SendToDSPPort">
-    <TITLE>Sending the Sound to an External <ACRONYM>DSP</ACRONYM> Serial Port
-      Device</TITLE>
+    <TITLE>Sending the Sound to an External <ACRONYM>DSP</ACRONYM> Serial Port Device</TITLE>
     <PARA>
       You can direct <APPLICATION>ScorePlayer</APPLICATION> to send its
       synthesis output to an external device connected to the

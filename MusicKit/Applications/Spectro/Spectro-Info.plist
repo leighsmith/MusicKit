@@ -29,7 +29,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>SpectroHelp</string>
+	<string>spectrohelp</string>
 	<key>CFBundleHelpBookName</key>
 	<string>Spectro Help</string>
 	<key>CFBundleIconFile</key>

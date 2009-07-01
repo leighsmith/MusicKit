@@ -22,7 +22,7 @@
 	<key>CFBundleExecutable</key>
 	<string>ScorePlayer</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>ScorePlayerHelp</string>
+	<string>scoreplayerhelp</string>
 	<key>CFBundleHelpBookName</key>
 	<string>ScorePlayer</string>
 	<key>CFBundleIconFile</key>

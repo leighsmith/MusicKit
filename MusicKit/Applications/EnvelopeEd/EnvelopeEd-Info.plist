@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>EnvelopeEd</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>EnvelopeEdHelp</string>
+	<string>envelopeeditorhelp</string>
 	<key>CFBundleHelpBookName</key>
 	<string>Envelope Editor</string>
 	<key>CFBundleIconFile</key>

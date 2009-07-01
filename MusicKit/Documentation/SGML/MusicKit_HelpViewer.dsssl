@@ -109,13 +109,19 @@
 	attributes: (list (list "NAME" "AppleTitle")
 			  (list "CONTENT" (apple-title)))))
 
+(define (apple-icon)
+  (make empty-element gi: "META"
+	attributes: (list (list "NAME" "AppleIcon")
+			  (list "CONTENT" (string-append 
+					   (case-fold-down (attribute-string (normalize "id") (sgml-root-element)))
+					   "/Images/icon16x16.png")))))
+
 ;; Add the META header tags for use with Apple's HelpViewer application.
 (define %html-header-tags%
   (list
    (list "META" '("HTTP-EQUIV" "content-type") '("CONTENT" "text/html;charset=iso-8859-1"))
    (list "META" '("NAME" "AppleFont") '("CONTENT" "Lucida Grande,Helvetica"))
    (list "META" '("NAME" "AppleSearchResultsFont") '("CONTENT" "Lucida Grande,Helvetica"))
-   ;; (list "META" '("NAME" "AppleIcon") '("CONTENT" "SpectroHelp/Images/icon16x16.png"))
    (list "META" '("NAME" "robots") '("CONTENT" "anchors"))))
 
 ;;; Add the header tags and the Apple title sequence.
@@ -133,6 +139,7 @@
 	    (make empty-element gi: (car (car tl))
 		  attributes: (cdr (car tl)))
 	    (loop (cdr tl)))))
+    (apple-icon)
     (if (node-list-empty? up)
 	(apple-title-sequence)
 	(empty-sosofo))))
