@@ -336,6 +336,7 @@
     
     return SND_ERR_NONE;
 #else
+    NSLog(@"File reading not configured!\n");
     return SND_ERR_NOT_IMPLEMENTED;
 #endif
 }
