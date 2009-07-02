@@ -30,7 +30,7 @@ void printSoundReport(NSString *filename, Snd *snd)
     printf("Sampling Rate: %.2lf Hz\n", [snd samplingRate]);
     printf("Channels: %d\n", [snd channelCount]);
     printf("Sample frames: %ld\n", [snd lengthInSampleFrames]);
-    printf("Duration %.3lf seconds\n", [snd duration]);
+    printf("Duration: %.3lf seconds\n", [snd duration]);
     printf("Info: %s\n", [[snd info] cString]);
 }
 
