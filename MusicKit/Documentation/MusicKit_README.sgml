@@ -1939,7 +1939,7 @@ vendors may well have drivers available for their hardware.
 
     </sect2>
 
-    <sect2 id="building_doco">
+    <sect2 id="buildingdoco">
       <title>Building the Documentation</title>
       <para>
 The documentation for the MusicKit and SndKit are now authored in <ulink

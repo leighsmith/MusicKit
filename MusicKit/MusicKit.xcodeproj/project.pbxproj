@@ -109,6 +109,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		424957F10FFCB39400CFEA3E /* icon16x16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8379AA20FEEC3DD00E7B708 /* icon16x16.png */; };
 		D8001DE30762D2F700508A26 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D8001FE00762D3B100508A26 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D8001FE10762D3B100508A26 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -1209,10 +1210,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D8379A900FEE8D5B00E7B708 /* CopyFiles */ = {
+		424957F00FFCB38100CFEA3E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = English.lproj/SpectroHelp/Images;
+			dstPath = English.lproj/envelopeeditorhelp/Images;
+			dstSubfolderSpec = 7;
+			files = (
+				424957F10FFCB39400CFEA3E /* icon16x16.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8379A900FEE8D5B00E7B708 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = English.lproj/spectrohelp/Images;
 			dstSubfolderSpec = 7;
 			files = (
 				D8379A8B0FEE8CBA00E7B708 /* icon16x16.png in CopyFiles */,
@@ -1324,7 +1335,7 @@
 		D8BC47250FC7FD8C007D61A5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = English.lproj/ScorePlayerHelp/Images;
+			dstPath = English.lproj/scoreplayerhelp/Images;
 			dstSubfolderSpec = 7;
 			files = (
 				D8BC47300FC7FDF0007D61A5 /* play.gif in CopyFiles */,
@@ -6078,6 +6089,7 @@
 				D83CADCA0FE997660000CF19 /* ShellScript */,
 				D83CAE050FEA30DD0000CF19 /* CopyFiles */,
 				D83CAE0B0FEA31240000CF19 /* CopyFiles */,
+				424957F00FFCB38100CFEA3E /* CopyFiles */,
 				D828FA560780D1F400215EB9 /* Resources */,
 				D828FA570780D1F400215EB9 /* Sources */,
 				D828FA580780D1F400215EB9 /* Frameworks */,
