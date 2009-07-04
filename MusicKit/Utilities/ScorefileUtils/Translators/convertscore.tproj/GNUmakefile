@@ -30,6 +30,6 @@ ADDITIONAL_TOOL_LIBS += -lMusicKit
 -include GNUmakefile.preamble
 
 include $(GNUSTEP_MAKEFILES)/tool.make
-include $(GNUSTEP_MAKEFILES)/documentation.make
+# include $(GNUSTEP_MAKEFILES)/documentation.make
 
 -include GNUmakefile.postamble
