@@ -1883,19 +1883,19 @@ permissions in order to install. This is achieved with the following commands:
 	
 	<informalexample id=gnustepmkbuild>
 	  <screen>
-./configure
-sudo sh
-. /usr/GNUstep/
-cd Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio
-make install
-cd ../../SndKit
-make install
-cd ../MKDSP_Native
-make install
-cd ../MusicKit
-make install
-cd ../..
-make install
+% ./configure
+% sudo sh
+# . /usr/GNUstep/System/Library/Makefiles/GNUstep.sh
+# cd Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio
+# make install
+# cd ../../SndKit
+# make install
+# cd ../MKDSP_Native
+# make install
+# cd ../MusicKit
+# make install
+# cd ../..
+# make install
 </screen>
 	</informalexample>
       </sect3>
