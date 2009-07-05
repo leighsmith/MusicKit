@@ -20,16 +20,20 @@ SVNREV=
 
 DISTNAME=MusicKit
 SOURCEFORGE_NAME=musickit
-SRCDISTNAME=$(DISTNAME)-$(VERSION)
 PACKAGENAME=MK
+SITE_ADMIN=leighsmith
+UPLOAD_SERVER=frs.sourceforge.net
+
+SRCDISTNAME=$(DISTNAME)-$(VERSION)
 PACKAGETITLE="$(DISTNAME) V$(VERSION) applications, frameworks, tools and documentation"
 # This allows us to have a different default CVSROOT
 SVNURL=https://$(SOURCEFORGE_NAME).svn.sourceforge.net/svnroot/$(SOURCEFORGE_NAME)
 WORKINGDIR=/tmp
-RELEASESRCDIR=$(WORKINGDIR)/MKSRC/$(SRCDISTNAME)
-CHANGELOG_FILE=/tmp/$(PACKAGENAME)_changelog.txt
+RELEASESRCDIR=$(WORKINGDIR)/$(PACKAGENAME)SRC/$(SRCDISTNAME)
+CHANGELOG_FILE=/tmp/$(DISTNAME)_ChangeLog.txt
 # tar or gnutar
 TAR=gnutar
+CHGLOGGEN=svn2cl.sh
 
 # We can't generate the MusicKit_README.pdf from the Makefile in the checkout
 # source directory, since we don't actually run configure. This is
@@ -46,9 +50,6 @@ README_PDF=$(WORKINGDIR)/MKDocumentation.build/PDF/$(DISTNAME)_README.pdf
 # development machine is the same as on the target installation machine.
 INSTALL_FILE_DIR=$(WORKINGDIR)/$(PACKAGENAME)Install
 INSTALLROOT=/
-
-SITE_ADMIN=leighsmith
-UPLOAD_SERVER=frs.sourceforge.net
 
 UNAME=`uname`
 OS_ACRONYM=MOX
@@ -75,17 +76,17 @@ SRC_TARBALL=$(WORKINGDIR)/$(PACKAGENAME)-$(VERSION).s.tar.gz
 all: check_version packageSources packageBinaries
 
 check_version:
-	if [ x_$(VERSION) = x_ ]; then echo "Usage: make VERSION=V.R.P [SVNREV=XXXX tag]"; exit 1; fi
+	@if [ x_$(VERSION) = x_ ]; then echo "Usage: make VERSION=V.R.P [SVNREV=XXXX tag]"; exit 1; fi
 
 # Upload the files to the server
 # should be doing: sudo $(MAKE) -C Documentation upload DSTROOT=$(INSTALL_FILE_DIR)
 # TODO should generate a temporary file:
 ship: packageBinaries packageSources $(CHANGELOG_FILE)
-	echo Do these commands in sftp:
-	echo cd uploads
-	echo put $(BINARY_TARBALL)
-	echo put $(SRC_TARBALL)
-	echo quit
+	@echo Do these commands in sftp:
+	@echo cd uploads
+	@echo put $(BINARY_TARBALL)
+	@echo put $(SRC_TARBALL)
+	@echo quit
 	sftp $(SITE_ADMIN)@$(UPLOAD_SERVER) 
 
 packageSources: $(SRC_TARBALL)
@@ -98,15 +99,16 @@ clean:
 	rm -r -f $(BINARY_PACKAGEFILE)
 	rm $(BINARY_TARBALL)
 	rm $(SRC_TARBALL)
+	rm $(RELEASESRCDIR)
 	sudo /bin/rm -r -f $(INSTALL_FILE_DIR)
 
 # Tag a particular Subversion revision in the repository as a tag for release. Must have defined SVNREV
-# SVNTAG=$(DISTNAME)_`echo $(VERSION) | tr '.' '-'`
-# CVS tags couldn't use periods, so we had to use V-R-P for tag names. Subversion doesn't have
-# that restriction, so we make it the same as the source distribution name.
+# CVS tags couldn't use periods, so we had to use V-R-P for tag names:
+# CVSTAG=$(DISTNAME)_`echo $(VERSION) | tr '.' '-'`
+# Subversion doesn't have that restriction, so we make it the same as the source distribution name.
 tag:
 	svn copy -r $(SVNREV) $(SVNURL)/trunk $(SVNURL)/tags/$(SRCDISTNAME) -m "Tagged V$(VERSION) release of $(DISTNAME)"
-	echo "Tagged revision $(SVNREV) as $(SRCDISTNAME) release of $(DISTNAME) in Subversion repository"
+	@echo "Tagged revision $(SVNREV) as $(SRCDISTNAME) release of $(DISTNAME) in Subversion repository"
 
 # just tar the file ready for transmission, no point compressing.
 $(BINARY_TARBALL): $(BINARY_PACKAGEFILE)
@@ -118,9 +120,10 @@ $(BINARY_TARBALL): $(BINARY_PACKAGEFILE)
 # Copy in a readable PDF version of the MusicKit_README.sgml file.
 $(SRC_TARBALL): $(RELEASESRCDIR)/configure $(CHANGELOG_FILE) $(README_PDF)
 	cp $(README_PDF) $(RELEASESRCDIR)
-	cp $(CHANGELOG_FILE) $(RELEASESRCDIR)
+	cp $(CHANGELOG_FILE) $(RELEASESRCDIR)/Documentation
 	cd $(RELEASESRCDIR)/..; \
 	$(TAR) czf $(SRC_TARBALL) $(SRCDISTNAME)
+	@echo "Finished. Final source package is located at $@"
 
 # Check out the source tree. Assumes the release is already checked into the Subversion
 # tags. TODO Perhaps we should check that.
@@ -141,10 +144,11 @@ $(RELEASESRCDIR)/Makefile: $(RELEASESRCDIR)/configure
 # Determine the previous revision of the last release automatically from the tags directory.
 $(CHANGLOG_FILE): export PREVREV = `svn log --limit 1 --quiet $(SVNURL)/tags | sed -n -e 'n;s/r\([0-9]*\) .*/\1/p;q'`
 
-# Generate a changelog file
+# Generate a changelog file from the previous version.
 $(CHANGELOG_FILE):
-	svn log -r HEAD:$(PREVREV) $(SVNURL)/trunk | sed -e '/^r/d;/^---/d' > $(CHANGELOG_FILE)
-	-echo "Change Log since $(PREVREV) generated at $(CHANGELOG_FILE)"
+	# svn log -r HEAD:$(PREVREV) $(SVNURL)/trunk | sed -e '/^r/d;/^---/d' > $(CHANGELOG_FILE)
+	$(CHGLOGGEN) --revision HEAD:$(PREVREV) --group-by-day --output=$(CHANGELOG_FILE)
+	@echo "Change Log since $(PREVREV) generated at $(CHANGELOG_FILE)"
 
 $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework: $(RELEASESRCDIR)/Makefile
 	# Remove any dynamic libraries that the Frameworks will link to
@@ -207,62 +211,62 @@ $(INSTALL_FILE_DIR):
 #  to YES, otherwise it should be set to NO.
 #
 Info.plist:
-	echo '<?xml version="1.0" encoding="UTF-8"?>' > $@
-	echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $@
-	echo '<plist version="1.0">' >> $@
-	echo '<dict>' >> $@
-	echo '    <key>CFBundleGetInfoString</key>' >> $@
-	echo '    <string>$(PACKAGETITLE)</string>' >> $@
-	echo '    <key>CFBundleName</key>' >> $@
-	echo '    <string>$(PACKAGETITLE)</string>' >> $@
-	echo '    <key>CFBundleIdentifier</key>' >> $@
-	echo '    <string>org.musickit.MusicKit</string>' >> $@
-	echo '    <key>CFBundleShortVersion</key>' >> $@
-	echo '    <string>$(VERSION)</string>' >> $@
-	echo '    <key>IFMajorVersion</key>' >> $@
-	echo '    <integer>0</integer>' >> $@
-	echo '    <key>IFMinorVersion</key>' >> $@
-	echo '    <integer>0</integer>' >> $@
-	echo '    <key>IFPkgFlagAllowBackRev</key>' >> $@
-	echo '    <false/>' >> $@
-	echo '    <key>IFPkgFlagAuthorizationAction</key>' >> $@
-	echo '    <string>AdminAuthorization</string>' >> $@
-	echo '    <key>IFPkgFlagDefaultLocation</key>' >> $@
-	echo '    <string>$(INSTALLROOT)</string>' >> $@
-	echo '    <key>IFPkgFlagInstallFat</key>' >> $@
-	echo '    <false/>' >> $@
-	echo '    <key>IFPkgFlagIsRequired</key>' >> $@
-	echo '    <false/>' >> $@
-	echo '    <key>IFPkgFlagOverwritePermissions</key>' >> $@
-	echo '    <true/>' >> $@
-	echo '    <key>IFPkgFlagRelocatable</key>' >> $@
-	echo '    <true/>' >> $@
-	echo '    <key>IFPkgFlagRestartAction</key>' >> $@
-	echo '    <string>NoRestart</string>' >> $@
-	echo '    <key>IFPkgFlagRootVolumeOnly</key>' >> $@
-	echo '    <false/>' >> $@
-	echo '    <key>IFPkgFlagUpdateInstalledLanguages</key>' >> $@
-	echo '    <false/>' >> $@
-	echo '    <key>IFPkgFlagUseUserMask</key>' >> $@
-	echo '    <false/>' >> $@
-	echo '    <key>IFPkgFormatVersion</key>' >> $@
-	echo '    <real>0.10000000149011612</real>' >> $@
-	echo '</dict>' >> $@
-	echo '</plist>' >> $@
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > $@
+	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $@
+	@echo '<plist version="1.0">' >> $@
+	@echo '<dict>' >> $@
+	@echo '    <key>CFBundleGetInfoString</key>' >> $@
+	@echo '    <string>$(PACKAGETITLE)</string>' >> $@
+	@echo '    <key>CFBundleName</key>' >> $@
+	@echo '    <string>$(PACKAGETITLE)</string>' >> $@
+	@echo '    <key>CFBundleIdentifier</key>' >> $@
+	@echo '    <string>org.musickit.MusicKit</string>' >> $@
+	@echo '    <key>CFBundleShortVersion</key>' >> $@
+	@echo '    <string>$(VERSION)</string>' >> $@
+	@echo '    <key>IFMajorVersion</key>' >> $@
+	@echo '    <integer>0</integer>' >> $@
+	@echo '    <key>IFMinorVersion</key>' >> $@
+	@echo '    <integer>0</integer>' >> $@
+	@echo '    <key>IFPkgFlagAllowBackRev</key>' >> $@
+	@echo '    <false/>' >> $@
+	@echo '    <key>IFPkgFlagAuthorizationAction</key>' >> $@
+	@echo '    <string>AdminAuthorization</string>' >> $@
+	@echo '    <key>IFPkgFlagDefaultLocation</key>' >> $@
+	@echo '    <string>$(INSTALLROOT)</string>' >> $@
+	@echo '    <key>IFPkgFlagInstallFat</key>' >> $@
+	@echo '    <false/>' >> $@
+	@echo '    <key>IFPkgFlagIsRequired</key>' >> $@
+	@echo '    <false/>' >> $@
+	@echo '    <key>IFPkgFlagOverwritePermissions</key>' >> $@
+	@echo '    <true/>' >> $@
+	@echo '    <key>IFPkgFlagRelocatable</key>' >> $@
+	@echo '    <true/>' >> $@
+	@echo '    <key>IFPkgFlagRestartAction</key>' >> $@
+	@echo '    <string>NoRestart</string>' >> $@
+	@echo '    <key>IFPkgFlagRootVolumeOnly</key>' >> $@
+	@echo '    <false/>' >> $@
+	@echo '    <key>IFPkgFlagUpdateInstalledLanguages</key>' >> $@
+	@echo '    <false/>' >> $@
+	@echo '    <key>IFPkgFlagUseUserMask</key>' >> $@
+	@echo '    <false/>' >> $@
+	@echo '    <key>IFPkgFormatVersion</key>' >> $@
+	@echo '    <real>0.10000000149011612</real>' >> $@
+	@echo '</dict>' >> $@
+	@echo '</plist>' >> $@
 
 # Recent versions of installer now expect the description in a
 # separate file so it can be localized.
 Description.plist:
-	echo '<?xml version="1.0" encoding="UTF-8"?>' > $@
-	echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $@
-	echo '<plist version="1.0">' >> $@
-	echo '<dict>' >> $@
-	echo '    <key>IFPkgDescriptionTitle</key>' >> $@
-	echo '    <string>$(PACKAGETITLE)</string>' >> $@
-	echo '    <key>IFPkgDescriptionVersion</key>' >> $@
-	echo '    <string>$(VERSION)</string>' >> $@
-	echo '</dict>' >> $@
-	echo '</plist>' >> $@
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > $@
+	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $@
+	@echo '<plist version="1.0">' >> $@
+	@echo '<dict>' >> $@
+	@echo '    <key>IFPkgDescriptionTitle</key>' >> $@
+	@echo '    <string>$(PACKAGETITLE)</string>' >> $@
+	@echo '    <key>IFPkgDescriptionVersion</key>' >> $@
+	@echo '    <string>$(VERSION)</string>' >> $@
+	@echo '</dict>' >> $@
+	@echo '</plist>' >> $@
 
 # Now build the package
 # TODO If we want the old fashioned (and safer!) way.
