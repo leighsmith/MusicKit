@@ -2,14 +2,15 @@
 #import <MusicKit/MusicKit.h>
 //#import <MKSynthPatches/Pluck.h>
 
-@interface Metronome: NSObject {
+@interface Metronome: NSObject 
+{
     id	tempoSlider;
     MKNote *aNote;
     Pluck *pluck;
     MKConductor *cond;
 }
 
-- setTempoFromSlider:sender;
-- startStop:sender;
+- setTempoFromSlider: sender;
+- startStop: sender;
 
 @end

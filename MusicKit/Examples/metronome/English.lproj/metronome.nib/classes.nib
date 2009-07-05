@@ -30,6 +30,34 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>appDidInit</key>
+				<string>id</string>
+				<key>bendPitch</key>
+				<string>id</string>
+				<key>playNote</key>
+				<string>id</string>
+				<key>showInfoPanel</key>
+				<string>id</string>
+				<key>terminate</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ExampApp</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>infoPanel</key>
+				<string>id</string>
+				<key>stringTable</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
 				<key>addEnvelope</key>
 				<string>id</string>
 				<key>changeLength</key>
