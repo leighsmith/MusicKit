@@ -34,7 +34,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity libsndfilevertuple "1.0.20">
 <!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile/libsndfile-1.0.20.tar.gz">
 <!entity hipvertuple "0.4pre1">
-<!entity hipdownload "sourceforge.net/projects/lame/files/lame/libmp3hip-XXX.tar.gz">
+<!entity hipdownload "http://www.sourceforge.net/projects/lame/files/lame/libmp3hip-0.4pre1.tar.gz">
 <!entity lameweb "http://www.sourceforge.net/projects/lame">
 <!entity lamevertuple "3.98.2">
 <!entity lamedownload "http://sourceforge.net/projects/lame/files/lame/lame-398-2.tar.gz">
@@ -385,22 +385,6 @@ freshmeat.net
 advogato.org
             </ulink>
           </para>
-	</listitem>
-	<listitem>
-	<para>
-	<ulink url="http://www.opensourcedirectory.org/projects/musickit/">
-	<inlinemediaobject>
-	      <imageobject>
-		<imagedata fileref="Images/osd.eps" width=25 depth=15
-			   scalefit=1>
-	      </imageobject>
-	      <imageobject>
-		<imagedata fileref="Images/osd.png">
-	      </imageobject>
-	    </inlinemediaobject>
-opensourcedirectory.org
-          </ulink>
-        </para>
 	</listitem>
 	<listitem>
 	  <para>
