@@ -6111,6 +6111,7 @@
 				D82AC3B505A0F6DA00780F57 /* Resources */,
 				D82AC3B605A0F6DA00780F57 /* Sources */,
 				D82AC3B705A0F6DA00780F57 /* Frameworks */,
+				D82606AA10336FDB006CC4F8 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -7166,6 +7167,20 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D82606AA10336FDB006CC4F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "# Changes all libraries linked from /usr/local/lib to relative install_names of \"@loader_path/Resources\" & copies in the linked dylibs.\n# do it all in awk\notool -L  $LD_DYLIB_INSTALL_NAME | awk '/\\/usr\\/local\\/lib|\\/sw\\/lib/ { rel_install = $1; sub(\"/.*\\/lib/\", \"@loader_path/Resources/\", rel_install); system(\"install_name_tool -change \" $1 \" \" rel_install \" \" ENVIRON[\"LD_DYLIB_INSTALL_NAME\"]); system(\"cp \" $1 \" \" ENVIRON[\"TARGET_BUILD_DIR\"] \"/\" ENVIRON[\"UNLOCALIZED_RESOURCES_FOLDER_PATH\"]); }'\n";
+			showEnvVarsInLog = 0;
+		};
 		D83CADCA0FE997660000CF19 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10493,7 +10508,6 @@
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
-				ZERO_LINK = NO;
 			};
 			name = Deployment;
 		};
