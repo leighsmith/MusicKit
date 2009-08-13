@@ -33,7 +33,7 @@ RELEASESRCDIR=$(WORKINGDIR)/$(PACKAGENAME)SRC/$(SRCDISTNAME)
 CHANGELOG_FILE=/tmp/$(DISTNAME)_ChangeLog.txt
 # tar or gnutar
 TAR=gnutar
-CHGLOGGEN=svn2cl.sh
+CHGLOGGEN=svn2cl
 
 # We can't generate the MusicKit_README.pdf from the Makefile in the checkout
 # source directory, since we don't actually run configure. This is
@@ -71,7 +71,7 @@ BINARY_PACKAGEFILE=$(WORKINGDIR)/$(PACKAGENAME).pkg
 BINARY_TARBALL=$(WORKINGDIR)/$(PACKAGENAME)-$(VERSION).b.$(OS_ACRONYM).pkg.tar
 SRC_TARBALL=$(WORKINGDIR)/$(PACKAGENAME)-$(VERSION).s.tar.gz
 
-.PHONY: all ship clean packageSources packageBinaries tag check_version
+.PHONY: all ship clean packageSources packageBinaries tag check_version prevrev
 
 all: check_version packageSources packageBinaries
 
@@ -89,9 +89,9 @@ ship: packageBinaries packageSources $(CHANGELOG_FILE)
 	@echo quit
 	sftp $(SITE_ADMIN)@$(UPLOAD_SERVER) 
 
-packageSources: $(SRC_TARBALL)
+packageSources: check_version $(SRC_TARBALL)
 
-packageBinaries: $(BINARY_TARBALL)
+packageBinaries: check_version $(BINARY_TARBALL)
 
 # Clean out anything already there.
 clean:
@@ -106,8 +106,8 @@ clean:
 # CVS tags couldn't use periods, so we had to use V-R-P for tag names:
 # CVSTAG=$(DISTNAME)_`echo $(VERSION) | tr '.' '-'`
 # Subversion doesn't have that restriction, so we make it the same as the source distribution name.
-tag:
-	svn copy -r $(SVNREV) $(SVNURL)/trunk $(SVNURL)/tags/$(SRCDISTNAME) -m "Tagged V$(VERSION) release of $(DISTNAME)"
+tag: check_version
+	svn copy -r $(SVNREV) $(SVNURL)/trunk/$(DISTNAME) $(SVNURL)/tags/$(SRCDISTNAME) -m "Tagged V$(VERSION) release of $(DISTNAME)"
 	@echo "Tagged revision $(SVNREV) as $(SRCDISTNAME) release of $(DISTNAME) in Subversion repository"
 
 # just tar the file ready for transmission, no point compressing.
@@ -142,12 +142,14 @@ $(RELEASESRCDIR)/Makefile: $(RELEASESRCDIR)/configure
 	sh ./configure
 
 # Determine the previous revision of the last release automatically from the tags directory.
-$(CHANGLOG_FILE): export PREVREV = `svn log --limit 1 --quiet $(SVNURL)/tags | sed -n -e 'n;s/r\([0-9]*\) .*/\1/p;q'`
+prevrev:
+	export PREVREV=`svn log --limit 1 --quiet $(SVNURL)/tags | sed -n -e 'n;s/r\([0-9]*\) .*/\1/p;q'`
+	@echo "Previous tagged revision was $(PREVREV)"
 
-# Generate a changelog file from the previous version.
-$(CHANGELOG_FILE):
+# Generate a changelog file from the previous version. TODO Perhaps replace HEAD with SVNREV?
+$(CHANGELOG_FILE): prevrev
 	# svn log -r HEAD:$(PREVREV) $(SVNURL)/trunk | sed -e '/^r/d;/^---/d' > $(CHANGELOG_FILE)
-	$(CHGLOGGEN) --revision HEAD:$(PREVREV) --group-by-day --output=$(CHANGELOG_FILE)
+	$(CHGLOGGEN) --revision HEAD:$(PREVREV) --group-by-day --output=$(CHANGELOG_FILE) $(SVNURL)/trunk
 	@echo "Change Log since $(PREVREV) generated at $(CHANGELOG_FILE)"
 
 $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework: $(RELEASESRCDIR)/Makefile
