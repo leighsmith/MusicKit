@@ -1581,8 +1581,8 @@ sudo make install
       <title>Installing MusicKit Binaries</title>
       <para>
 Binaries for the compiled frameworks for various operating systems
-reside on sourceforge as tar'ed <filename>.pkg</filename>
-(<productname>Apple</productname>/<productname>NeXT</productname>), or
+reside on sourceforge as <filename>.dmg</filename>
+(<productname>Apple</productname>), or
 <filename>.rpm</filename> (<productname>Linux</productname>)
 packages. The files include the version number, choose the most recent
 release:
@@ -1592,7 +1592,7 @@ release:
 	<variablelist>
 	  <varlistentry>
 	    <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.b.MOX.pkg.tar">MK-&mkvertuple;.b.MOX.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.MOX.dmg">MK-&mkvertuple;.b.MOX.dmg</ulink>
             </term>
 	    <listitem>
 	      <para>
