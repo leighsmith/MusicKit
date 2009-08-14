@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		4289989110359C39005FEC40 /* Musical Examples */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4289989710359C5F005FEC40 /* Build configuration list for PBXAggregateTarget "Musical Examples" */;
+			buildPhases = (
+				4289989010359C39005FEC40 /* CopyFiles */,
+				4289992310359F97005FEC40 /* CopyFiles */,
+			);
+			dependencies = (
+			);
+			name = "Musical Examples";
+			productName = "Musical Examples";
+		};
 		D84AE06A0623249200A477FA /* Applications Only (Aggregate) */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = D8B44FCC099617E500B5C3A4 /* Build configuration list for PBXAggregateTarget "Applications Only (Aggregate)" */;
@@ -77,6 +89,7 @@
 				D8708DFF05B31C970074C18D /* PBXTargetDependency */,
 				D8708F8805B49B360074C18D /* PBXTargetDependency */,
 				D84AE071062324B300A477FA /* PBXTargetDependency */,
+				4289991910359E53005FEC40 /* PBXTargetDependency */,
 			);
 			name = "MusicKit (Aggregate)";
 			productName = "MusicKit (Aggregate)";
@@ -110,6 +123,44 @@
 
 /* Begin PBXBuildFile section */
 		424957F10FFCB39400CFEA3E /* icon16x16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8379AA20FEEC3DD00E7B708 /* icon16x16.png */; };
+		428998C510359CF0005FEC40 /* Allegro.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4289989D10359CF0005FEC40 /* Allegro.midi */; };
+		428998C610359CF0005FEC40 /* BayBlue.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4289989E10359CF0005FEC40 /* BayBlue.midi */; };
+		428998C710359CF0005FEC40 /* BigArm.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4289989F10359CF0005FEC40 /* BigArm.midi */; };
+		428998C810359CF0005FEC40 /* Clockworks.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A010359CF0005FEC40 /* Clockworks.midi */; };
+		428998C910359CF0005FEC40 /* DoomInTheBathroom.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A110359CF0005FEC40 /* DoomInTheBathroom.midi */; };
+		428998CA10359CF0005FEC40 /* DrugsAreDeath.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A210359CF0005FEC40 /* DrugsAreDeath.midi */; };
+		428998CB10359CF0005FEC40 /* Easy.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A310359CF0005FEC40 /* Easy.midi */; };
+		428998CC10359CF0005FEC40 /* Fugue.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A410359CF0005FEC40 /* Fugue.midi */; };
+		428998CD10359CF0005FEC40 /* Prelude.midi in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A510359CF0005FEC40 /* Prelude.midi */; };
+		428998CE10359CF0005FEC40 /* BachFugue.playscore in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A710359CF0005FEC40 /* BachFugue.playscore */; };
+		428998CF10359CF0005FEC40 /* BachFugue.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A810359CF0005FEC40 /* BachFugue.score */; };
+		428998D010359CF0005FEC40 /* BeadGame.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998A910359CF0005FEC40 /* BeadGame.score */; };
+		428998D110359CF0005FEC40 /* CoventryCarol.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998AA10359CF0005FEC40 /* CoventryCarol.score */; };
+		428998D210359CF0005FEC40 /* Emma.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998AB10359CF0005FEC40 /* Emma.score */; };
+		428998D310359CF0005FEC40 /* Examp1.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998AC10359CF0005FEC40 /* Examp1.score */; };
+		428998D410359CF0005FEC40 /* Examp10.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998AD10359CF0005FEC40 /* Examp10.score */; };
+		428998D510359CF0005FEC40 /* Examp11.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998AE10359CF0005FEC40 /* Examp11.score */; };
+		428998D610359CF0005FEC40 /* Examp2.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998AF10359CF0005FEC40 /* Examp2.score */; };
+		428998D710359CF0005FEC40 /* Examp3.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B010359CF0005FEC40 /* Examp3.score */; };
+		428998D810359CF0005FEC40 /* Examp4.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B110359CF0005FEC40 /* Examp4.score */; };
+		428998D910359CF0005FEC40 /* Examp5.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B210359CF0005FEC40 /* Examp5.score */; };
+		428998DA10359CF0005FEC40 /* Examp6.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B310359CF0005FEC40 /* Examp6.score */; };
+		428998DB10359CF0005FEC40 /* Examp7.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B410359CF0005FEC40 /* Examp7.score */; };
+		428998DC10359CF0005FEC40 /* Examp8.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B510359CF0005FEC40 /* Examp8.score */; };
+		428998DD10359CF0005FEC40 /* Examp9.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B610359CF0005FEC40 /* Examp9.score */; };
+		428998DE10359CF0005FEC40 /* Gamelan.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B710359CF0005FEC40 /* Gamelan.score */; };
+		428998DF10359CF0005FEC40 /* JoysSeven.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B810359CF0005FEC40 /* JoysSeven.score */; };
+		428998E010359CF0005FEC40 /* Jungle.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998B910359CF0005FEC40 /* Jungle.score */; };
+		428998E210359CF0005FEC40 /* MarchKings.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998BB10359CF0005FEC40 /* MarchKings.score */; };
+		428998E310359CF0005FEC40 /* NoelNouvelet.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998BC10359CF0005FEC40 /* NoelNouvelet.score */; };
+		428998E410359CF0005FEC40 /* PatAPan.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998BD10359CF0005FEC40 /* PatAPan.score */; };
+		428998E510359CF0005FEC40 /* PatAPan2.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998BE10359CF0005FEC40 /* PatAPan2.score */; };
+		428998E610359CF0005FEC40 /* RockingCarol.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998BF10359CF0005FEC40 /* RockingCarol.score */; };
+		428998E710359CF0005FEC40 /* Suntan.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998C010359CF0005FEC40 /* Suntan.score */; };
+		428998E810359CF0005FEC40 /* Throb.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998C110359CF0005FEC40 /* Throb.score */; };
+		428998E910359CF0005FEC40 /* Twilight.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998C210359CF0005FEC40 /* Twilight.score */; };
+		428998EA10359CF0005FEC40 /* WhatChildIsThis.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998C310359CF0005FEC40 /* WhatChildIsThis.score */; };
+		428998EB10359CF0005FEC40 /* WTC1.score in CopyFiles */ = {isa = PBXBuildFile; fileRef = 428998C410359CF0005FEC40 /* WTC1.score */; };
 		D8001DE30762D2F700508A26 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D8001FE00762D3B100508A26 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D8001FE10762D3B100508A26 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -920,6 +971,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4289991810359E53005FEC40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4289989110359C39005FEC40 /* Musical Examples */;
+			remoteInfo = "Musical Examples";
+		};
 		D80151B00FA64A37002FB882 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
@@ -1220,6 +1278,62 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4289989010359C39005FEC40 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "/Library/Application Support/MusicKit/Midi";
+			dstSubfolderSpec = 0;
+			files = (
+				428998C510359CF0005FEC40 /* Allegro.midi in CopyFiles */,
+				428998C610359CF0005FEC40 /* BayBlue.midi in CopyFiles */,
+				428998C710359CF0005FEC40 /* BigArm.midi in CopyFiles */,
+				428998C810359CF0005FEC40 /* Clockworks.midi in CopyFiles */,
+				428998C910359CF0005FEC40 /* DoomInTheBathroom.midi in CopyFiles */,
+				428998CA10359CF0005FEC40 /* DrugsAreDeath.midi in CopyFiles */,
+				428998CB10359CF0005FEC40 /* Easy.midi in CopyFiles */,
+				428998CC10359CF0005FEC40 /* Fugue.midi in CopyFiles */,
+				428998CD10359CF0005FEC40 /* Prelude.midi in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		4289992310359F97005FEC40 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "/Library/Application Support/MusicKit/Scorefiles";
+			dstSubfolderSpec = 0;
+			files = (
+				428998CE10359CF0005FEC40 /* BachFugue.playscore in CopyFiles */,
+				428998CF10359CF0005FEC40 /* BachFugue.score in CopyFiles */,
+				428998D010359CF0005FEC40 /* BeadGame.score in CopyFiles */,
+				428998D110359CF0005FEC40 /* CoventryCarol.score in CopyFiles */,
+				428998D210359CF0005FEC40 /* Emma.score in CopyFiles */,
+				428998D310359CF0005FEC40 /* Examp1.score in CopyFiles */,
+				428998D410359CF0005FEC40 /* Examp10.score in CopyFiles */,
+				428998D510359CF0005FEC40 /* Examp11.score in CopyFiles */,
+				428998D610359CF0005FEC40 /* Examp2.score in CopyFiles */,
+				428998D710359CF0005FEC40 /* Examp3.score in CopyFiles */,
+				428998D810359CF0005FEC40 /* Examp4.score in CopyFiles */,
+				428998D910359CF0005FEC40 /* Examp5.score in CopyFiles */,
+				428998DA10359CF0005FEC40 /* Examp6.score in CopyFiles */,
+				428998DB10359CF0005FEC40 /* Examp7.score in CopyFiles */,
+				428998DC10359CF0005FEC40 /* Examp8.score in CopyFiles */,
+				428998DD10359CF0005FEC40 /* Examp9.score in CopyFiles */,
+				428998DE10359CF0005FEC40 /* Gamelan.score in CopyFiles */,
+				428998DF10359CF0005FEC40 /* JoysSeven.score in CopyFiles */,
+				428998E010359CF0005FEC40 /* Jungle.score in CopyFiles */,
+				428998E210359CF0005FEC40 /* MarchKings.score in CopyFiles */,
+				428998E310359CF0005FEC40 /* NoelNouvelet.score in CopyFiles */,
+				428998E410359CF0005FEC40 /* PatAPan.score in CopyFiles */,
+				428998E510359CF0005FEC40 /* PatAPan2.score in CopyFiles */,
+				428998E610359CF0005FEC40 /* RockingCarol.score in CopyFiles */,
+				428998E710359CF0005FEC40 /* Suntan.score in CopyFiles */,
+				428998E810359CF0005FEC40 /* Throb.score in CopyFiles */,
+				428998E910359CF0005FEC40 /* Twilight.score in CopyFiles */,
+				428998EA10359CF0005FEC40 /* WhatChildIsThis.score in CopyFiles */,
+				428998EB10359CF0005FEC40 /* WTC1.score in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		D8379A900FEE8D5B00E7B708 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -1348,6 +1462,44 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4289989D10359CF0005FEC40 /* Allegro.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; name = Allegro.midi; path = Music/Midi/Allegro.midi; sourceTree = SOURCE_ROOT; };
+		4289989E10359CF0005FEC40 /* BayBlue.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = BayBlue.midi; sourceTree = "<group>"; };
+		4289989F10359CF0005FEC40 /* BigArm.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = BigArm.midi; sourceTree = "<group>"; };
+		428998A010359CF0005FEC40 /* Clockworks.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = Clockworks.midi; sourceTree = "<group>"; };
+		428998A110359CF0005FEC40 /* DoomInTheBathroom.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = DoomInTheBathroom.midi; sourceTree = "<group>"; };
+		428998A210359CF0005FEC40 /* DrugsAreDeath.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = DrugsAreDeath.midi; sourceTree = "<group>"; };
+		428998A310359CF0005FEC40 /* Easy.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = Easy.midi; sourceTree = "<group>"; };
+		428998A410359CF0005FEC40 /* Fugue.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = Fugue.midi; sourceTree = "<group>"; };
+		428998A510359CF0005FEC40 /* Prelude.midi */ = {isa = PBXFileReference; lastKnownFileType = audio.midi; path = Prelude.midi; sourceTree = "<group>"; };
+		428998A710359CF0005FEC40 /* BachFugue.playscore */ = {isa = PBXFileReference; lastKnownFileType = file; name = BachFugue.playscore; path = Music/Scorefiles/BachFugue.playscore; sourceTree = SOURCE_ROOT; };
+		428998A810359CF0005FEC40 /* BachFugue.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BachFugue.score; path = Music/Scorefiles/BachFugue.score; sourceTree = SOURCE_ROOT; };
+		428998A910359CF0005FEC40 /* BeadGame.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BeadGame.score; path = Music/Scorefiles/BeadGame.score; sourceTree = SOURCE_ROOT; };
+		428998AA10359CF0005FEC40 /* CoventryCarol.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoventryCarol.score; sourceTree = "<group>"; };
+		428998AB10359CF0005FEC40 /* Emma.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Emma.score; sourceTree = "<group>"; };
+		428998AC10359CF0005FEC40 /* Examp1.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp1.score; sourceTree = "<group>"; };
+		428998AD10359CF0005FEC40 /* Examp10.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp10.score; sourceTree = "<group>"; };
+		428998AE10359CF0005FEC40 /* Examp11.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp11.score; sourceTree = "<group>"; };
+		428998AF10359CF0005FEC40 /* Examp2.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp2.score; sourceTree = "<group>"; };
+		428998B010359CF0005FEC40 /* Examp3.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp3.score; sourceTree = "<group>"; };
+		428998B110359CF0005FEC40 /* Examp4.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp4.score; sourceTree = "<group>"; };
+		428998B210359CF0005FEC40 /* Examp5.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp5.score; sourceTree = "<group>"; };
+		428998B310359CF0005FEC40 /* Examp6.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp6.score; sourceTree = "<group>"; };
+		428998B410359CF0005FEC40 /* Examp7.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp7.score; sourceTree = "<group>"; };
+		428998B510359CF0005FEC40 /* Examp8.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp8.score; sourceTree = "<group>"; };
+		428998B610359CF0005FEC40 /* Examp9.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Examp9.score; sourceTree = "<group>"; };
+		428998B710359CF0005FEC40 /* Gamelan.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Gamelan.score; sourceTree = "<group>"; };
+		428998B810359CF0005FEC40 /* JoysSeven.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JoysSeven.score; sourceTree = "<group>"; };
+		428998B910359CF0005FEC40 /* Jungle.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Jungle.score; sourceTree = "<group>"; };
+		428998BB10359CF0005FEC40 /* MarchKings.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MarchKings.score; sourceTree = "<group>"; };
+		428998BC10359CF0005FEC40 /* NoelNouvelet.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NoelNouvelet.score; sourceTree = "<group>"; };
+		428998BD10359CF0005FEC40 /* PatAPan.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PatAPan.score; sourceTree = "<group>"; };
+		428998BE10359CF0005FEC40 /* PatAPan2.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PatAPan2.score; sourceTree = "<group>"; };
+		428998BF10359CF0005FEC40 /* RockingCarol.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RockingCarol.score; sourceTree = "<group>"; };
+		428998C010359CF0005FEC40 /* Suntan.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Suntan.score; sourceTree = "<group>"; };
+		428998C110359CF0005FEC40 /* Throb.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Throb.score; sourceTree = "<group>"; };
+		428998C210359CF0005FEC40 /* Twilight.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Twilight.score; sourceTree = "<group>"; };
+		428998C310359CF0005FEC40 /* WhatChildIsThis.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WhatChildIsThis.score; sourceTree = "<group>"; };
+		428998C410359CF0005FEC40 /* WTC1.score */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WTC1.score; sourceTree = "<group>"; };
 		D80032570819F0C600E47C6C /* MidiEcho.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MidiEcho.icns; path = Examples/MidiEcho/MidiEcho.icns; sourceTree = "<group>"; };
 		D800325C0819F52E00E47C6C /* midi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = midi.icns; path = Examples/MidiFilePlayback/midi.icns; sourceTree = "<group>"; };
 		D80151BF0FA64B24002FB882 /* playpart */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playpart; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2619,6 +2771,67 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4289989B10359CF0005FEC40 /* Music */ = {
+			isa = PBXGroup;
+			children = (
+				4289989C10359CF0005FEC40 /* Midi */,
+				428998A610359CF0005FEC40 /* Scorefiles */,
+			);
+			path = Music;
+			sourceTree = "<group>";
+		};
+		4289989C10359CF0005FEC40 /* Midi */ = {
+			isa = PBXGroup;
+			children = (
+				4289989D10359CF0005FEC40 /* Allegro.midi */,
+				4289989E10359CF0005FEC40 /* BayBlue.midi */,
+				4289989F10359CF0005FEC40 /* BigArm.midi */,
+				428998A010359CF0005FEC40 /* Clockworks.midi */,
+				428998A110359CF0005FEC40 /* DoomInTheBathroom.midi */,
+				428998A210359CF0005FEC40 /* DrugsAreDeath.midi */,
+				428998A310359CF0005FEC40 /* Easy.midi */,
+				428998A410359CF0005FEC40 /* Fugue.midi */,
+				428998A510359CF0005FEC40 /* Prelude.midi */,
+			);
+			path = Midi;
+			sourceTree = "<group>";
+		};
+		428998A610359CF0005FEC40 /* Scorefiles */ = {
+			isa = PBXGroup;
+			children = (
+				428998A710359CF0005FEC40 /* BachFugue.playscore */,
+				428998A810359CF0005FEC40 /* BachFugue.score */,
+				428998A910359CF0005FEC40 /* BeadGame.score */,
+				428998AA10359CF0005FEC40 /* CoventryCarol.score */,
+				428998AB10359CF0005FEC40 /* Emma.score */,
+				428998AC10359CF0005FEC40 /* Examp1.score */,
+				428998AD10359CF0005FEC40 /* Examp10.score */,
+				428998AE10359CF0005FEC40 /* Examp11.score */,
+				428998AF10359CF0005FEC40 /* Examp2.score */,
+				428998B010359CF0005FEC40 /* Examp3.score */,
+				428998B110359CF0005FEC40 /* Examp4.score */,
+				428998B210359CF0005FEC40 /* Examp5.score */,
+				428998B310359CF0005FEC40 /* Examp6.score */,
+				428998B410359CF0005FEC40 /* Examp7.score */,
+				428998B510359CF0005FEC40 /* Examp8.score */,
+				428998B610359CF0005FEC40 /* Examp9.score */,
+				428998B710359CF0005FEC40 /* Gamelan.score */,
+				428998B810359CF0005FEC40 /* JoysSeven.score */,
+				428998B910359CF0005FEC40 /* Jungle.score */,
+				428998BB10359CF0005FEC40 /* MarchKings.score */,
+				428998BC10359CF0005FEC40 /* NoelNouvelet.score */,
+				428998BD10359CF0005FEC40 /* PatAPan.score */,
+				428998BE10359CF0005FEC40 /* PatAPan2.score */,
+				428998BF10359CF0005FEC40 /* RockingCarol.score */,
+				428998C010359CF0005FEC40 /* Suntan.score */,
+				428998C110359CF0005FEC40 /* Throb.score */,
+				428998C210359CF0005FEC40 /* Twilight.score */,
+				428998C310359CF0005FEC40 /* WhatChildIsThis.score */,
+				428998C410359CF0005FEC40 /* WTC1.score */,
+			);
+			path = Scorefiles;
+			sourceTree = "<group>";
+		};
 		D80032540819F07700E47C6C /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -5318,6 +5531,7 @@
 				D8DB4E6C059FA10700624233 /* Utilities */,
 				D8DB4E66059FA0DE00624233 /* Examples */,
 				D8DB4E5E059FA0C900624233 /* Applications */,
+				4289989B10359CF0005FEC40 /* Music */,
 				D8DB4E61059FA0D100624233 /* Documentation */,
 				D84395EA059FAA450054BEEE /* Products */,
 			);
@@ -6799,6 +7013,8 @@
 				D8708F7F05B49AFD0074C18D /* Examples Only (Aggregate) */,
 				D84AE06A0623249200A477FA /* Applications Only (Aggregate) */,
 				D8708B7705B313F60074C18D /* Utilities Only (Aggregate) */,
+				D8D1B73B0817D2B000D9156A /* Documentation */,
+				4289989110359C39005FEC40 /* Musical Examples */,
 				D84395E8059FAA450054BEEE /* MKPerformSndMIDI (Framework) */,
 				D82AC3B805A0F6DA00780F57 /* SndKit (Framework) */,
 				D88FED7005A10EAF0024FD88 /* MKDSP (Framework) */,
@@ -6841,7 +7057,6 @@
 				D828F9C80780CC1E00215EB9 /* PianoRoll (Application) */,
 				D828FA590780D1F400215EB9 /* EnvelopeEd (Application) */,
 				D8CFD2480B5D66DF003AB3C3 /* Metronome */,
-				D8D1B73B0817D2B000D9156A /* Documentation */,
 				D8D2A3C60FA90537008DBF68 /* PlayNote */,
 			);
 		};
@@ -7823,6 +8038,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		4289991910359E53005FEC40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4289989110359C39005FEC40 /* Musical Examples */;
+			targetProxy = 4289991810359E53005FEC40 /* PBXContainerItemProxy */;
+		};
 		D80151B10FA64A37002FB882 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D886C3D40FA64809000AC7C4 /* playscorefile2 */;
@@ -8477,6 +8697,48 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4289989210359C39005FEC40 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Musical Examples";
+			};
+			name = Development;
+		};
+		4289989310359C39005FEC40 /* Intel Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Musical Examples";
+			};
+			name = "Intel Development";
+		};
+		4289989410359C39005FEC40 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Musical Examples";
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		4289989510359C39005FEC40 /* Embedded */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Musical Examples";
+			};
+			name = Embedded;
+		};
+		4289989610359C39005FEC40 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Musical Examples";
+			};
+			name = Default;
+		};
 		D80151C10FA64B25002FB882 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -15042,6 +15304,18 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4289989710359C5F005FEC40 /* Build configuration list for PBXAggregateTarget "Musical Examples" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4289989210359C39005FEC40 /* Development */,
+				4289989310359C39005FEC40 /* Intel Development */,
+				4289989410359C39005FEC40 /* Deployment */,
+				4289989510359C39005FEC40 /* Embedded */,
+				4289989610359C39005FEC40 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
 		D80151CC0FA64B6A002FB882 /* Build configuration list for PBXNativeTarget "playpart" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
