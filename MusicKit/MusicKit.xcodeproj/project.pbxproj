@@ -975,7 +975,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = D8DB4E4C059FA05500624233 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4289989110359C39005FEC40 /* Musical Examples */;
+			remoteGlobalIDString = 4289989110359C39005FEC40;
 			remoteInfo = "Musical Examples";
 		};
 		D80151B00FA64A37002FB882 /* PBXContainerItemProxy */ = {
@@ -7392,8 +7392,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "# Changes all libraries linked from /usr/local/lib to relative install_names of \"@loader_path/Resources\" & copies in the linked dylibs.\n# do it all in awk\notool -L  $LD_DYLIB_INSTALL_NAME | awk '/\\/usr\\/local\\/lib|\\/sw\\/lib/ { rel_install = $1; sub(\"/.*\\/lib/\", \"@loader_path/Resources/\", rel_install); system(\"install_name_tool -change \" $1 \" \" rel_install \" \" ENVIRON[\"LD_DYLIB_INSTALL_NAME\"]); system(\"cp \" $1 \" \" ENVIRON[\"TARGET_BUILD_DIR\"] \"/\" ENVIRON[\"UNLOCALIZED_RESOURCES_FOLDER_PATH\"]); }'\n";
+			shellPath = /bin/zsh;
+			shellScript = "#!/bin/zsh\n# Changes all libraries linked from /usr/local/lib or /sw/lib/ to relative install_names\n# of \"@loader_path/Resources\" (when linked against the Framework dylib) or \"@loader_path\"\n# (when linked against another dylib) & copies in the linked dylibs.\nnewpath=\"@loader_path/Resources\"\nlibraries_to_examine=($LD_DYLIB_INSTALL_NAME)\n\nwhile [ ${(w)#libraries_to_examine} != 0 ]; do\n    library=${libraries_to_examine[1]} # take the first on the list.\n    # echo Processing library: $library\n    non_standard_libs=(`otool -L $library | awk '/(\\/usr\\/local\\/lib|\\/sw\\/lib).* \\(/ { printf(\"%s \", $1); }'`)\n    # echo Libraries to copy: $non_standard_libs\n    libraries_copied=()\n    for library_to_copy in $non_standard_libs; do\n\t# since non_standard_libs can have the name of the library itself, don't process that.\n\tlibrary_to_copy_basename=`basename $library_to_copy`\n\tif [ $library_to_copy_basename != `basename $library` ]; then\n            new_install_name=${library_to_copy/\\/(sw|usr\\/local)\\/lib/$newpath}\n            echo install_name_tool -change $library_to_copy $new_install_name  $library\n            install_name_tool -change $library_to_copy $new_install_name  $library\n\t    installed_library=$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$library_to_copy_basename\n\t    if [ ! -f $installed_library ]; then\n                echo cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n                cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n\t    fi\n\t    libraries_copied=($libraries_copied $installed_library)\n        fi\n    done\n    # append all valid libraries onto the non standard libs list for examination.\n    libraries_to_examine=($libraries_to_examine[2,-1] $libraries_copied)\n    # echo Non standard Libraries to eval: $libraries_to_examine\n    newpath=\"@loader_path\" # All remaining install_names reside next to the dylib.\ndone\n";
 			showEnvVarsInLog = 0;
 		};
 		D83CADCA0FE997660000CF19 /* ShellScript */ = {
