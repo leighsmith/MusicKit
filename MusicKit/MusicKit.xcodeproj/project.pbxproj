@@ -6326,6 +6326,7 @@
 				D82AC3B605A0F6DA00780F57 /* Sources */,
 				D82AC3B705A0F6DA00780F57 /* Frameworks */,
 				D82606AA10336FDB006CC4F8 /* ShellScript */,
+				D8BFA68F10376CF70055F75D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -7393,7 +7394,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
-			shellScript = "#!/bin/zsh\n# Changes all libraries linked from /usr/local/lib or /sw/lib/ to relative install_names\n# of \"@loader_path/Resources\" (when linked against the Framework dylib) or \"@loader_path\"\n# (when linked against another dylib) & copies in the linked dylibs.\nnewpath=\"@loader_path/Resources\"\nlibraries_to_examine=($LD_DYLIB_INSTALL_NAME)\n\nwhile [ ${(w)#libraries_to_examine} != 0 ]; do\n    library=${libraries_to_examine[1]} # take the first on the list.\n    # echo Processing library: $library\n    non_standard_libs=(`otool -L $library | awk '/(\\/usr\\/local\\/lib|\\/sw\\/lib).* \\(/ { printf(\"%s \", $1); }'`)\n    # echo Libraries to copy: $non_standard_libs\n    libraries_copied=()\n    for library_to_copy in $non_standard_libs; do\n\t# since non_standard_libs can have the name of the library itself, don't process that.\n\tlibrary_to_copy_basename=`basename $library_to_copy`\n\tif [ $library_to_copy_basename != `basename $library` ]; then\n            new_install_name=${library_to_copy/\\/(sw|usr\\/local)\\/lib/$newpath}\n            echo install_name_tool -change $library_to_copy $new_install_name  $library\n            install_name_tool -change $library_to_copy $new_install_name  $library\n\t    installed_library=$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$library_to_copy_basename\n\t    if [ ! -f $installed_library ]; then\n                echo cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n                cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n\t    fi\n\t    libraries_copied=($libraries_copied $installed_library)\n        fi\n    done\n    # append all valid libraries onto the non standard libs list for examination.\n    libraries_to_examine=($libraries_to_examine[2,-1] $libraries_copied)\n    # echo Non standard Libraries to eval: $libraries_to_examine\n    newpath=\"@loader_path\" # All remaining install_names reside next to the dylib.\ndone\n";
+			shellScript = "#!/bin/zsh\n# Changes all libraries linked from /usr/local/lib or /sw/lib/ to relative install_names\n# of \"@loader_path/Resources\" (when linked against the Framework dylib) or \"@loader_path\"\n# (when linked against another dylib) & copies in the linked dylibs.\nnewpath=\"@loader_path/Resources\"\nlibraries_to_examine=($LD_DYLIB_INSTALL_NAME)\n\nwhile [ ${(w)#libraries_to_examine} != 0 ]; do\n    library=${libraries_to_examine[1]} # take the first on the list.\n    # echo Processing library: $library\n    non_standard_libs=(`otool -L $library | awk '/(\\/usr\\/local\\/lib|\\/sw\\/lib).* \\(/ { printf(\"%s \", $1); }'`)\n    # echo Libraries to copy: $non_standard_libs\n    libraries_copied=()\n    for library_to_copy in $non_standard_libs; do\n        # since non_standard_libs can have the name of the library itself, don't process that.\n        library_to_copy_basename=`basename $library_to_copy`\n        if [ $library_to_copy_basename != `basename $library` ]; then\n            new_install_name=${library_to_copy/\\/(sw|usr\\/local)\\/lib/$newpath}\n            echo install_name_tool -change $library_to_copy $new_install_name  $library\n            install_name_tool -change $library_to_copy $new_install_name  $library\n\t       installed_library=$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$library_to_copy_basename\n\t       if [ ! -f $installed_library ]; then\n                echo cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n                cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n\t       fi\n\t       libraries_copied=($libraries_copied $installed_library)\n        fi\n    done\n    # append all valid libraries onto the non standard libs list for examination.\n    libraries_to_examine=($libraries_to_examine[2,-1] $libraries_copied)\n    # echo Non standard Libraries to eval: $libraries_to_examine\n    newpath=\"@loader_path\" # All remaining install_names reside next to the dylib.\ndone\n";
 			showEnvVarsInLog = 0;
 		};
 		D83CADCA0FE997660000CF19 /* ShellScript */ = {
@@ -7443,6 +7444,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run openjade to convert SGML to HTML\nmkdir -p $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/scoreplayerhelp/Pages\nif [ -x `which openjade` ]; then\n\tcd $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/English.lproj/scoreplayerhelp\n\tPATH=$PATH:/sw/bin/\n\topenjade -t sgml -ihtml -d $SRCROOT/Documentation/SGML/MusicKit_HelpViewer.dsssl\\#html $SRCROOT/Applications/ScorePlayer/Help/English.lproj/ScorePlayer.sgml\nelse\n\techo Missing openjade so skipped building ScorePlayer Help from SGML.\nfi\nexit 0\n";
 			showEnvVarsInLog = 0;
+		};
+		D8BFA68F10376CF70055F75D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/zsh;
+			shellScript = "# Copy in headers from dependent libraries.\nforeach header_path (${=USER_HEADER_SEARCH_PATHS})\n   foreach header (shout/shout.h lame/lame.h sndfile.h)\n\t header_file=$header_path/$header\n      # echo checking $header_file\n      if [ -f $header_file ]; then\n\t\t echo mkdir $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/`dirname $header`\n\t\t mkdir $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/`dirname $header`\n          echo cp $header_file $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/$header\n          cp $header_file $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/$header\n      fi\n   end\nend\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -10769,6 +10783,7 @@
 				);
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
 				WARNING_CFLAGS = "-Wmost";
 			};
 			name = Deployment;
