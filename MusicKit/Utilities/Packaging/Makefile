@@ -141,16 +141,16 @@ $(RELEASESRCDIR)/Makefile: $(RELEASESRCDIR)/configure
 	cd $(RELEASESRCDIR); \
 	sh ./configure
 
-# Determine the previous revision of the last release automatically from the tags directory.
+# Determine the previous revision of the last release automatically from the tags
+# directory. Assumes we have already tagged the latest release, so we want the penultimate.
 prevrev:
-	export PREVREV=`svn log --limit 1 --quiet $(SVNURL)/tags | sed -n -e 'n;s/r\([0-9]*\) .*/\1/p;q'`
-	@echo "Previous tagged revision was $(PREVREV)"
+	svn log --limit 2 --quiet $(SVNURL)/tags | awk '/r[0-9]*/ {rev=$$1; sub("^r", ":",rev); revision=revision rev } END { sub("^:","",revision); print revision }' > /tmp/prevrev
+	@echo "Previous tagged revisions were " `cat /tmp/prevrev`
 
-# Generate a changelog file from the previous version. TODO Perhaps replace HEAD with SVNREV?
+# Generate a changelog file from the previous version.
 $(CHANGELOG_FILE): prevrev
-	# svn log -r HEAD:$(PREVREV) $(SVNURL)/trunk | sed -e '/^r/d;/^---/d' > $(CHANGELOG_FILE)
-	$(CHGLOGGEN) --revision HEAD:$(PREVREV) --group-by-day --output=$(CHANGELOG_FILE) $(SVNURL)/trunk
-	@echo "Change Log since $(PREVREV) generated at $(CHANGELOG_FILE)"
+	$(CHGLOGGEN) --revision `cat /tmp/prevrev` --group-by-day --output=$(CHANGELOG_FILE) $(SVNURL)/trunk
+	@echo "Change log between `cat /tmp/prevrev` generated at $(CHANGELOG_FILE)"
 
 $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework: $(RELEASESRCDIR)/Makefile
 	# Remove any dynamic libraries that the Frameworks will link to
