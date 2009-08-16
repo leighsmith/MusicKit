@@ -17,7 +17,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkvertuple "5.6.0">
+<!entity mkvertuple "5.6.1">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://sourceforge.net/projects/musickit/files/musickit">
 <!entity mksvnweb "http://sourceforge.net/svn/?group_id=9881">
@@ -295,8 +295,9 @@ ScoreFile, a textual scripting language for music.
 	</listitem>
         <listitem>
           <para>
-Connectable audio processing modules (&ldquo;plugins&rdquo) including
-standard audio effects such as reverb.
+Connectable audio processing modules (&ldquo;plugins&rdquo) including standard audio
+effects such as reverb. Support for <productname>Apple</productname>
+<productname>AudioUnits</productname>.
 </para>
         </listitem>
 	<listitem>
