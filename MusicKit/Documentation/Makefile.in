@@ -44,7 +44,7 @@ HTML_TMPDIR=$(BUILDDIR)/$(HTML_DISTRIB_DIR)
 PDF_OUTPUT_DIR=$(BUILDDIR)/PDF
 
 SITEUSER=leighsmith
-SITE=musickit.sourceforge.net
+SITE=musickit
 SITEDIR=/home/groups/m/mu/musickit
 SITEHTMLDIR=$(SITEDIR)/$(HTML_DISTRIB_DIR)
 
@@ -86,12 +86,14 @@ ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
 #
 INSTALL_DIR=$(DSTROOT)/Library/Documentation/MusicKit
 
+.PHONY: all clean install upload check_sgmltrans
+
 # 
 # The highest level and default rule if there is an SGML translator, makes everything.
 # Generates the HTML tarball. The HTML tarball will create the PDF
 # before it copies them into the HTML directory.
 #
-.PHONY: all
+
 all: check_sgmltrans $(DOC_TARBALL_PATH)
 
 #
@@ -99,19 +101,16 @@ all: check_sgmltrans $(DOC_TARBALL_PATH)
 # If there isn't, we want to exit gracefully rather than causing an error which will stop
 # the entire MusicKit build process.
 #
-.PHONY: check_sgmltrans
 check_sgmltrans:
 ifeq ($(SGMLTRANS),)
 	$(error DocBook SGML translator not found, building of documentation skipped.)
 	@exit 0
 endif
 
-.PHONY: clean
 clean:
 	-rm -rf $(HTML_TMPDIR)
 	-rm -rf $(PDF_OUTPUT_DIR) 
 
-.PHONY: install
 install:: check_sgmltrans $(DOC_TARBALL_PATH) $(INSTALL_DIR)
 	tar -x -j -C $(INSTALL_DIR) -p -f $(DOC_TARBALL_PATH)
 	-chmod -R go-w $(INSTALL_DIR)
@@ -120,10 +119,12 @@ install:: check_sgmltrans $(DOC_TARBALL_PATH) $(INSTALL_DIR)
 #
 # Automate the secure uploading of the MusicKit documentation tarball to the sourceforge website.
 #
-.PHONY: upload
 upload: $(DOC_TARBALL_PATH)
-	scp $(DOC_TARBALL_PATH) $(SITEUSER)@$(SITE):$(DOC_TARBALL_FILE)
-	ssh -l $(SITEUSER) $(SITE) "tar -x -j -C $(SITEHTMLDIR) -f ~/$(DOC_TARBALL_FILE)"
+	@echo "Do the following within sftp after logging in:"
+	@echo "put $(DOC_TARBALL_PATH) $(DOC_TARBALL_FILE)"
+	sftp -b - $(SITEUSER),$(SITE)@web.sourceforge.net
+	ssh $(SITEUSER),$(SITE)@shell.sourceforge.net "create"
+	ssh $(SITEUSER),$(SITE)@shell.sourceforge.net "tar -x -j -C $(SITEHTMLDIR) -f $(SITEDIR)/$(DOC_TARBALL_FILE)"
 
 $(INSTALL_DIR):
 	mkdir -p $(INSTALL_DIR)
