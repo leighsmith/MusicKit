@@ -7456,7 +7456,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
-			shellScript = "# Copy in headers from dependent libraries.\nforeach header_path (${=USER_HEADER_SEARCH_PATHS})\n   foreach header (shout/shout.h lame/lame.h sndfile.h)\n\t header_file=$header_path/$header\n      # echo checking $header_file\n      if [ -f $header_file ]; then\n\t\t echo mkdir $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/`dirname $header`\n\t\t mkdir $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/`dirname $header`\n          echo cp $header_file $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/$header\n          cp $header_file $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/$header\n      fi\n   end\nend\n";
+			shellScript = "# Copy in headers from dependent libraries.\nforeach header_path (${=USER_HEADER_SEARCH_PATHS})\n   foreach header (shout/shout.h lame/lame.h sndfile.h hip.h)\n\t header_file=$header_path/$header\n      # echo checking $header_file\n      if [ -f $header_file ]; then\n\t\t echo mkdir $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/`dirname $header`\n\t\t mkdir $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/`dirname $header`\n          echo cp $header_file $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/$header\n          cp $header_file $TARGET_BUILD_DIR/$PUBLIC_HEADERS_FOLDER_PATH/$header\n      fi\n   end\nend\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
