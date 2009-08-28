@@ -87,7 +87,7 @@ ship: packageBinaries packageSources $(CHANGELOG_FILE)
 	@echo put $(BINARY_TARBALL)
 	@echo put $(SRC_TARBALL)
 	@echo quit
-	sftp $(SITE_ADMIN)@$(UPLOAD_SERVER) 
+	sftp $(SITE_ADMIN),$(SOURCEFORGE_NAME)@$(UPLOAD_SERVER) 
 
 packageSources: check_version $(SRC_TARBALL)
 
