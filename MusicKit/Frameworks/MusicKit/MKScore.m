@@ -630,17 +630,15 @@ static void putMidi(struct __MKMidiOutStruct *ptr)
                        &(ptr->_bytes[0]));
 }
 
-static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
+static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
 {
-    int sysExStrLen = [sysExclString cStringLength];
-    char *sysExclStr = (char *) _MKMalloc(sysExStrLen); // was alloca
+    int sysExStrLen = [sysExclString maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+    const char *sysExclStr = [sysExclString UTF8String];
     unsigned char *buffer = (unsigned char *) _MKMalloc(sysExStrLen); /* More than enough */
     unsigned char *bufptr = buffer;
     int bufferLen;
-    unsigned char c;
+    unsigned char c = _MKGetSysExByte(&sysExclStr);
 
-    [sysExclString getCString: sysExclStr];
-    c = _MKGetSysExByte(&sysExclStr);
     if (c == MIDI_SYSEXCL)
 	c = _MKGetSysExByte(&sysExclStr);
     *bufptr++ = c;
@@ -650,9 +648,10 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
 	*bufptr++ = MIDI_EOX;
     bufferLen = bufptr - buffer;
     MKMIDIFileWriteSysExcl(ptr->_midiFileStruct,
-			   timeInQuanta(ptr->_midiFileStruct,ptr->_timeTag),
+			   timeInQuanta(ptr->_midiFileStruct, ptr->_timeTag),
 			   bufferLen,
 			   buffer);
+    free(buffer);
 }
 
 static void sendBufferedData(struct __MKMidiOutStruct *ptr)
@@ -1021,7 +1020,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
     for (i = 0; i < nBytes; i++)
 	sprintf(&(str[i * ROOM]), "%-3d ", j = data[i + 1]);
     str[size - 1] = '\0'; /* Write over last space. */
-    retStr = [NSString stringWithCString: str];
+    retStr = [NSString stringWithUTF8String: str];
     MKSetNoteParToString(aNote, par, retStr);
     free(str);
 }
@@ -1100,25 +1099,25 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    /* Check if it is the first part. There is no MK_title in level 2 files, since
 		    the title is merely the name of the first sequence. */
 		    if ((curPart == midiParts) && !LEVEL2)
-			MKSetNoteParToString(info, MK_title, [NSString stringWithCString: STRINGDATA]);
+			MKSetNoteParToString(info, MK_title, [NSString stringWithUTF8String: STRINGDATA]);
 		    /* In level 1 files, we name the current part with the
 		    title. Note that we do this even if the name is a
 		    sequence name rather than a track name. In level 0
 		    files, we do not name the part. */
 		    if(LEVEL1)
-			MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithCString: STRINGDATA]);
+			MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithUTF8String: STRINGDATA]);
 			if (fileFormatLevel != 0)
-			    MKNameObject([NSString stringWithCString: STRINGDATA], *curPart);
+			    MKNameObject([NSString stringWithUTF8String: STRINGDATA], *curPart);
 			    break;
 		case MKMIDI_copyright:
-		    MKSetNoteParToString(info, MK_copyright, [NSString stringWithCString: STRINGDATA]);
+		    MKSetNoteParToString(info, MK_copyright, [NSString stringWithUTF8String: STRINGDATA]);
 		    break;
 		case MKMIDI_instrumentName:
 		    /* An instrument name is the sort of thing you need in a part info note, but the strict definition of
 		    the SMF spec allows you to rename the track at different time points, why? It would have been better
 		to define more tracks, each with a separate instrument. In that rather wierd case,
 		    this code is wrong as it will take the last instrument name used as the info note. */
-		    MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info, MK_instrumentName, [NSString stringWithCString: STRINGDATA]);
+		    MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info, MK_instrumentName, [NSString stringWithUTF8String: STRINGDATA]);
 		default:
 		    break;
 	    }
@@ -1189,11 +1188,11 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    MKSetNoteParToString(aNote,
 					 ((DATA[0] == MKMIDI_text) ? MK_text :
 					  (DATA[0] == MKMIDI_lyric) ? MK_lyric : MK_cuePoint),
-					 [NSString stringWithCString: STRINGDATA]);
+					 [NSString stringWithUTF8String: STRINGDATA]);
 		    [CURPART addNote: aNote];
 		    break;
 		case MKMIDI_marker:
-		    MKSetNoteParToString(aNote, MK_marker, [NSString stringWithCString: STRINGDATA]);
+		    MKSetNoteParToString(aNote, MK_marker, [NSString stringWithUTF8String: STRINGDATA]);
 		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
 		    break;
 		case MKMIDI_timeSig:
@@ -1209,7 +1208,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    x = (int) DATA[3]; /* mi */
 		    sprintf(&(str[3]), "%d", x);
 		    str[4] = '\0';
-		    MKSetNoteParToString(aNote, MK_keySignature, [NSString stringWithCString: str]);
+		    MKSetNoteParToString(aNote, MK_keySignature, [NSString stringWithUTF8String: str]);
 		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
 		    break;
 		}
@@ -1246,7 +1245,7 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    }
 		    *ptr = '\0';
 		    aNote = [[MKGetNoteClass() alloc] initWithTimeTag: t + timeShift];
-		    MKSetNoteParToString(aNote, MK_sysExclusive, [NSString stringWithCString: str]); /* copy */
+		    MKSetNoteParToString(aNote, MK_sysExclusive, [NSString stringWithUTF8String: str]); /* copy */
 		    [CURPART addNote: aNote];
 		    [aNote release];
 		    continue;

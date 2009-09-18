@@ -165,7 +165,7 @@ static void adjustTimedEntry(double nextMsgTime);
 	NSString** buff1 = NULL;
 	if (!fixedPolicyEnabled) { /* Only do it first time. */
 	    if (_MKFindAppWrapperFile(@"fixedpolicy",buff1)) {
-                system([[*buff1 stringByAppendingString:@" -e -q"] cString]);
+                system([[*buff1 stringByAppendingString:@" -e -q"] UTF8String]);
 	    }
 	    else {
         	if ([manager fileExistsAtPath: @"/usr/local/lib/MusicKit/bin/fixedpolicy"]) {

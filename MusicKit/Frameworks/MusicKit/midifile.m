@@ -638,11 +638,11 @@ int MKMIDIFileBeginWritingTrack(MKMIDIFileOut *p, NSString *trackName)
     p->currentTrack++;
     p->currentCount = 0; /* Set this after the "MTrk" and dummy length are written */
     if (trackName) {
-        int i = [trackName cStringLength];
+        int i = [trackName maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding];
 	if (i) {
 	    if (!writeByte(p,0) || !writeByte(p,0xff) || !writeByte(p,0x03) || 
 		!writeVariableQuantity(p,i) ||
-		!writeBytes(p, (const unsigned char *)[trackName cString], i))  
+		!writeBytes(p, (const unsigned char *)[trackName UTF8String], i))  
 	      return endOfStream;
 	}
     }
@@ -707,7 +707,7 @@ int MKMIDIFileWriteText(MKMIDIFileOut *p,int quanta,short metaevent,NSString *te
     if (!writeTime(p,quanta) || 
 	!writeByte(p,0xff) ||
 	!writeByte(p,metaevent) ||
-	!writeVariableQuantity(p,i) || !writeBytes(p,(const unsigned char *)[text cString],i))
+	!writeVariableQuantity(p,i) || !writeBytes(p,(const unsigned char *)[text UTF8String],i))
       return endOfStream;
     return ok;
 }

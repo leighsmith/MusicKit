@@ -40,7 +40,7 @@ _MKStringToInt(NSString * s)
     /* Convert string to int by scanning for a contained string.
        If none, returns MAXINT. */
     int i;
-    const char *p = [s cString];
+    const char *p = [s UTF8String];
     if (!s)
       return MAXINT;
     i = [s intValue];//sb: was atoi(s);
@@ -60,7 +60,7 @@ _MKStringToDouble(NSString * s)
        returns MK_NODVAL. */
     /*sb: returns HUGE_VAL or -HUGEVAL for really big numbers */
     double x;
-    const char *p = [s cString];
+    const char *p = [s UTF8String];
     if (!s)
       return MK_NODVAL;
     x = [s doubleValue];//sb: was atof(s);

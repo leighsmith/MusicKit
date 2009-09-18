@@ -717,7 +717,7 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
      * going to alter the contents of the string, we are going to need to
      * alter the *sysExclStr pointer (in _MKGetSysExByte).
      */
-    char *sysExclStr = (char *)[sysExclString UTF8String];
+    const char *sysExclStr = [sysExclString UTF8String];
     unsigned char c;
     unsigned int curTime = .5 + ptr->_timeTag * _MK_MIDI_QUANTUM;
     

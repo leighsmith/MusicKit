@@ -266,8 +266,8 @@ static void addAccidentalPitch(int keyNumValue, NSString *name1, NSString *name2
 {
     int keyNumber = 0;
     static const char *octaveNames[] = { "00", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
-    NSString *oct = [NSString stringWithCString: octaveNames[0]]; /* Pointer to const char */
-    NSString *nOct = [NSString stringWithCString: octaveNames[1]];
+    NSString *oct = [NSString stringWithUTF8String: octaveNames[0]]; /* Pointer to const char */
+    NSString *nOct = [NSString stringWithUTF8String: octaveNames[1]];
     NSMutableArray *equalTempered12Array;
 
     if (self != [MKTuningSystem class])
@@ -289,7 +289,7 @@ static void addAccidentalPitch(int keyNumValue, NSString *name1, NSString *name2
 	addAccidentalPitch(keyNumber,   @"c",  @"bs", nOct, oct);  
 	oct = nOct;
 	if (keyNumber < MIDI_NUMKEYS)
-	    nOct = [NSString stringWithCString: octaveNames[1 + keyNumber / 12]];
+	    nOct = [NSString stringWithUTF8String: octaveNames[1 + keyNumber / 12]];
 	keyNumber++;
     }
     for (keyNumber = 0; keyNumber < MIDI_NUMKEYS; keyNumber++) {  /* Init pitch x-ref. */

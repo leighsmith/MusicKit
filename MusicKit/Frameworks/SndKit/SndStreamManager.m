@@ -94,7 +94,7 @@ static SndStreamManager *defaultStreamManager = nil;
     unsigned int driverNameIndex;
     
     for(driverNameIndex = 0; driverNames[driverNameIndex] != NULL; driverNameIndex++) {
-        [soundDriverNames addObject: [NSString stringWithCString: driverNames[driverNameIndex]]];
+        [soundDriverNames addObject: [NSString stringWithUTF8String: driverNames[driverNameIndex]]];
     }
     // if([soundDriverNames count] == 0) {
     //    return nil;

@@ -150,7 +150,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	    [self setTableToSineROM];
 	}
 	else {
-            MKErrorCode(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) UTF8String]);
 	    return nil;
 	}
     }
@@ -252,7 +252,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
      table must be set before sending this message.  */
 {
     if (tableLength == 0) {
-        MKErrorCode(MK_ugsNotSetGetErr,LOOKUP_TABLE_STR,[NSStringFromClass([self class]) cString],INCREMENT_STR);
+        MKErrorCode(MK_ugsNotSetGetErr,LOOKUP_TABLE_STR,[NSStringFromClass([self class]) UTF8String],INCREMENT_STR);
 	return 0.0;
     }
     return (MKIsNoDVal(aFreq)) ? MK_NODVAL : 
@@ -348,7 +348,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	    /* The following statement added by DAJ */
 	    if (anObj != synthData) /* If user alloced, let it be */
 	      [synthData mkdealloc];  /* Release our claim on it. */
-            MKErrorCode(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) UTF8String]);
 	    return nil;
 	}
 	/* Set some relevant instance variables. */

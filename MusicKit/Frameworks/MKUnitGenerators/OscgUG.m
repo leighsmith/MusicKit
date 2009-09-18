@@ -107,7 +107,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	    [self setTableToSineROM];
 	}
 	else {
-            MKErrorCode(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsNotSetRunErr,WAVETABLE_STR,[NSStringFromClass([self class]) UTF8String]);
 	    return nil;
 	}
     }
@@ -312,7 +312,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	    /* The following statement added by DAJ */
 	    if (anObj != synthData) /* If user alloced, let it be */
 	      [synthData mkdealloc];  /* Release our claim on it. */
-            MKErrorCode(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
+            MKErrorCode(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) UTF8String]);
 	    return nil;
 	}
 	/* Set some relevant instance variables. */

@@ -52,7 +52,7 @@ Modification history prior to commit to CVS:
 */
 
 // LMS: FIXME MKErrorCode use here is wrong, for now I'm continuing to make the earlier assumption that the second argument
-// is somehow a cString.
+// is somehow a UTF8String.
 
 #import "UnitGeneratorPrivate.h"
 #import "_musickit.h"
@@ -485,13 +485,13 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
      file from which the class was created. The name is not copied. */
 {
     return (argNum >= [self argCount]) ? @"invalidArgument" :
-      [NSString stringWithCString:[self masterUGPtr]->argSymbols[argNum].name];
+      [NSString stringWithUTF8String:[self masterUGPtr]->argSymbols[argNum].name];
 }  
 
 static id argOutOfBoundsErr(unsigned argNum,MKUnitGenerator *self)
   /* Generates error message saying argument is out of bounds. */
 {
-    MKErrorCode(MK_ugBadArgErr, [NSString stringWithCString: (char *) argNum], NSStringFromClass([self class]));
+    MKErrorCode(MK_ugBadArgErr, [NSString stringWithUTF8String: (char *) argNum], NSStringFromClass([self class]));
     return nil;
 }
 
@@ -647,7 +647,7 @@ id MKSetUGDatumArg(MKUnitGenerator *self, unsigned argNum, DSPDatum val)
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
             else {
-                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithUTF8String: (char *) val],
 				   argName(self,argNum), NSStringFromClass([self class]));
 		return nil;
 	    }
@@ -665,7 +665,7 @@ id MKSetUGDatumArg(MKUnitGenerator *self, unsigned argNum, DSPDatum val)
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
         else {
-            MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+            MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithUTF8String: (char *) val],
 			       argName(self,argNum),NSStringFromClass([self class]));
 	    return nil;
 	}
@@ -709,7 +709,7 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self, unsigned argNum, DSPLongDatum *val
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
             else {
-                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithUTF8String: (char *) val],
 				   argName(self,argNum), NSStringFromClass([self class]));
 		return nil;
 	    }
@@ -728,7 +728,7 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self, unsigned argNum, DSPLongDatum *val
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
             else {
-                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+                MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithUTF8String: (char *) val],
 				   argName(self,argNum), NSStringFromClass([self class]));
 		return nil;
 	    }
@@ -761,7 +761,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 	if (OUTOFBOUNDS(self,argNum))                 /* Arg ok? */
 	  return argOutOfBoundsErr(argNum,self);
 	if (self->_orchIndex != memP->orchIndex) {    /* Right orch? */
-	    MKErrorCode(MK_ugOrchMismatchErr, [NSString stringWithCString: (char *) memP->orchIndex],
+	    MKErrorCode(MK_ugOrchMismatchErr, [NSString stringWithUTF8String: (char *) memP->orchIndex],
 			       argName(self,argNum), NSStringFromClass([self class]), self->_orchIndex);
 	    return nil;
 	}
@@ -769,7 +769,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 	  return addrSetErr(self,argNum);
 	if (argP->addressMemSpace != memP->memSpace) {  /* space match? */ 
 	    MKErrorCode(MK_ugArgSpaceMismatchErr,
-			       [NSString stringWithCString: 
+			       [NSString stringWithUTF8String: 
 				   (((int)memP->memSpace < (int)DSP_MS_Num && (int)memP->memSpace > (int)DSP_MS_N) ? 
 				    ((char *)memP->memSpace) : "invalid")],
 			       DSPMemoryNames((int)argP->addressMemSpace),
@@ -796,7 +796,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
         else {
-            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithUTF8String: (char *) memP->address],
 			       argName(self,argNum), NSStringFromClass([self class]));
 	    return nil;
 	}
@@ -836,7 +836,7 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
         else {
-            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
+            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithUTF8String: (char *) addr],
 			       argName(self,argNum),NSStringFromClass([self class]));
 	    return nil;
 	}
@@ -883,7 +883,7 @@ static id specialAddressVal(MKUnitGenerator *self, unsigned int argNum, SEL orch
         if (ec == DSP_EABORT)
             [self->orchestra _notifyAbort];
         else {
-            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+            MKErrorCode(MK_ugBadAddrPokeErr, [NSString stringWithUTF8String: (char *) memP->address],
 			       argName(self,argNum), NSStringFromClass([self class]));
 	    return nil;
 	}
@@ -952,7 +952,7 @@ extern int _MKOrchestraGetNoops(void);
         NSStringFromClass([self class])] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     if (synthPatch)
         [s appendData:[[NSString stringWithFormat:@" in %s_0x%x\n",
-            [NSStringFromClass([synthPatch class]) cString],
+            [NSStringFromClass([synthPatch class]) UTF8String],
             synthPatch] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     else [s appendBytes:"\n" length:1];
     [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%@ I %06X\n",

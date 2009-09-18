@@ -181,7 +181,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     } 
     [oldLists release];           /* Flush patch lists */
     newLists = [NSMutableArray array];
-//	[Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR cString]];
+//	[Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR UTF8String]];
     if (oldLists) {
 	[p setActiveNewest: activeNewest];
 	[p setActiveOldest: activeOldest];

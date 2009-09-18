@@ -61,7 +61,7 @@ static void doDealloc(SynthElement *synthEl, BOOL shouldIdle)
         _MKOrchTrace(synthEl->orchestra,MK_TRACEORCHALLOC,
                      @"Deallocating %@",
                      [NSStringFromClass([synthEl class]) stringByAppendingFormat:@" 0x%x",synthEl]);
-		    /* [[synthEl name] cString]); */
+		    /* [[synthEl name] UTF8String]); */
     _MKOrchResetPreviousLosingTemplate(synthEl->orchestra);
     [synthEl _deallocAndAddToList];
 }

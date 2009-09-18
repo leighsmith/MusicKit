@@ -51,7 +51,7 @@ void _MKWriteDoublePar(NSMutableData *aStream,double aDouble)
 void _MKWriteStringPar(NSMutableData *aStream,NSString *aString)
 {
     short aType = NSSwapHostShortToBig(MK_string);
-    const char *convString = [aString cString];
+    const char *convString = [aString UTF8String];
     [aStream appendBytes:&aType length:sizeof(aType)];
     [aStream appendBytes:convString length:strlen(convString)+1];
 }
@@ -59,7 +59,7 @@ void _MKWriteStringPar(NSMutableData *aStream,NSString *aString)
 void _MKWriteVarPar(NSMutableData *aStream,NSString *aString)
 {
     short aType = NSSwapHostShortToBig(_MK_typedVar);
-    const char *convString = [aString cString];
+    const char *convString = [aString UTF8String];
     [aStream appendBytes:&aType length:sizeof(aType)];
     [aStream appendBytes:convString length:strlen(convString)+1];
 }
@@ -100,7 +100,7 @@ void _MKWriteString(NSMutableData *aStream,char *aString)
 
 void _MKWriteNSString(NSMutableData *aStream,NSString *aString)
 {
-    const char *convString = [aString cString];
+    const char *convString = [aString UTF8String];
     [aStream appendBytes:convString length:strlen(convString)+1];
 }
 

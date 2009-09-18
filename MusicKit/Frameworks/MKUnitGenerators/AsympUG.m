@@ -198,7 +198,7 @@ static id clockConductor = nil;
 {
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                   "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],aVal);
+                   "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],aVal);
     return MKSetUGDatumArg(self,trg,_MKDoubleToFix24(aVal));
 }
 
@@ -210,7 +210,7 @@ static id clockConductor = nil;
 {
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                   "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],aVal);
+                   "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],aVal);
     return MKSetUGDatumArg(self,trg,_MKDoubleToFix24(aVal));
 }
 
@@ -223,7 +223,7 @@ static id clockConductor = nil;
     DSPFix48 aFix48;
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                   "Setting current value of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],aVal);
+                   "Setting current value of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],aVal);
     DSPDoubleToFix48UseArg(aVal,&aFix48);
     return MKSetUGDatumArgLong(self,amp,&aFix48);
 }
@@ -233,7 +233,7 @@ static id setRate(AsympUG *self,double aVal)
     self->_rateValue = (aVal >= MAXRATE) ? MAXINTRATE : _MKDoubleToFix24(aVal);
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                   "Setting rate of UG%d_%s to %f",self->_instanceNumber,[NSStringFromClass([self class]) cString],aVal);
+                   "Setting rate of UG%d_%s to %f",self->_instanceNumber,[NSStringFromClass([self class]) UTF8String],aVal);
     return MKSetUGDatumArg(self,rate,self->_rateValue);
 }
 
@@ -332,7 +332,7 @@ static id setT60(AsympUG *self,double seconds)
 	{
 	    if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
 	      _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                    "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],
+                    "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],
 			   lastVal);
 	    MKSetUGDatumArg(self,trg,DSPDoubleToFix24(lastVal));
 	    setT60(self,MKGetPreemptDuration());
@@ -399,7 +399,7 @@ static id setT60(AsympUG *self,double seconds)
 	/* we head for the new target y */
 	if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
 	  _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],
+                "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],
 		       newTargetY);
 	MKSetUGDatumArg(self,trg,_MKDoubleToFix24(newTargetY));
 	if (arrivalStatus != MK_noEnvError || curPt == 1)
@@ -421,7 +421,7 @@ static id setT60(AsympUG *self,double seconds)
 	}
 	if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
 	  _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                "Setting amp of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],
+                "Setting amp of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],
 		       newCurrentAmp);
 	MKSetUGDatumArgLong(self,amp,
 			    DSPDoubleToFix48UseArg(newCurrentAmp,&aVal));
@@ -480,7 +480,7 @@ static id setT60(AsympUG *self,double seconds)
 	  _targetY = scalingFunc(_targetY,self);
 	if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
 	  _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                "Setting amp of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],_targetY);
+                "Setting amp of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],_targetY);
 	MKSetUGDatumArgLong(self,amp,DSPDoubleToFix48UseArg(_targetY,&aVal));
 	switch (envelopeStatus) {
 	    /* This is to check for a special case.
@@ -491,7 +491,7 @@ static id setT60(AsympUG *self,double seconds)
 	  case MK_stickPoint:
             if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
 	      _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                    "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) cString],
+                    "Setting target of UG%d_%s to %f",_instanceNumber,[NSStringFromClass([self class]) UTF8String],
 			   _targetY);
             MKSetUGDatumArg(self,trg,_MKDoubleToFix24(_targetY));
 	  default:
@@ -556,7 +556,7 @@ static id setT60(AsympUG *self,double seconds)
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
 		   "Setting rate of UG%d_%s to 0, amp and target to %f.",_instanceNumber,
-                   [NSStringFromClass([self class]) cString],aVal);
+                   [NSStringFromClass([self class]) UTF8String],aVal);
     MKSetUGDatumArg(self,rate,_rateValue = 0); /* fixes overflow bug in ug */
     MKSetUGDatumArgLong(self,amp,&aFix48);
     MKSetUGDatumArg(self,trg,_MKDoubleToFix24(aVal));
@@ -619,7 +619,7 @@ static id setT60(AsympUG *self,double seconds)
     /* we head for the new target y(n) */
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-                   "Setting target of UG%d_%s to %f.",_instanceNumber,[NSStringFromClass([self class]) cString],_targetY);
+                   "Setting target of UG%d_%s to %f.",_instanceNumber,[NSStringFromClass([self class]) UTF8String],_targetY);
     MKSetUGDatumArg(self,trg,_MKDoubleToFix24(_targetY));
     /* Schedule a _nextPoint message to self at time targetX. This is
        the time to interrupt the trajectory towards y(n) */

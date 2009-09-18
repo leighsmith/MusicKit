@@ -130,7 +130,7 @@ void PRINTSTAMPS(void) {
     NSDate * prevStamp = tstamps[0]; //sb: was double
     for (i=0; i<TSTAMPS; i++) {
 //      printf("%f: [%f] %s\n",tstamps[i],tstamps[i]-prevStamp,msgs[i]);
-	printf("%s: [%f] %s\n",[[tstamps[i] descriptionWithCalendarFormat:@"%H:%M:%S:%F" timeZone:nil locale:nil] cString],
+	printf("%s: [%f] %s\n",[[tstamps[i] descriptionWithCalendarFormat:@"%H:%M:%S:%F" timeZone:nil locale:nil] UTF8String],
 	       [tstamps[i] timeIntervalSinceDate:prevStamp],
 	       msgs[i]);
 	prevStamp = tstamps[i];
@@ -239,7 +239,7 @@ static int myDSPMKInit(MKOrchestra *self)
 	    }
 	    errorCode = DSPReadFile(&self->mkSys, [*foundFile fileSystemRepresentation]);
 	    if(errorCode)                            /* Can't open file */
-		return _DSPError1(errorCode, "DSPMKInit: Could not read music system '%s' for booting the DSP", (char *)[s cString]);
+		return _DSPError1(errorCode, "DSPMKInit: Could not read music system '%s' for booting the DSP", (char *)[s UTF8String]);
 	    if (_MK_ORCHTRACE(self, MK_TRACEDSP))
 		NSLog(@"Music Kit: Loaded DSP monitor %@\n", *foundFile);
 	}

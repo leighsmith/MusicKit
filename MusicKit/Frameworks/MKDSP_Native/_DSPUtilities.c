@@ -607,7 +607,7 @@ int def; char *name;
     while(*line != _DSP_NULLC)	if( isdigit(*line++) ) white = FALSE; 
     if(white)
     {
-	fprintf(stderr,DSPCat(name," not changed\n"));
+	fprintf(stderr, "%s\n", DSPCat(name," not changed"));
 	return(def);
     }
     else 

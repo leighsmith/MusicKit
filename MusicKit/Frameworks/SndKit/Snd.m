@@ -445,7 +445,7 @@
     */
     [aCoder encodeValuesOfObjCTypes:"iiiiii", s->magic, s->dataLocation, s->dataSize,
             s->dataFormat, s->samplingRate, soundFormat.channelCount];
-    [aCoder encodeArrayOfObjCType:"c" count: headerSize - sizeof(SndSoundStruct) + 4 at: [info cString]];
+    [aCoder encodeArrayOfObjCType:"c" count: headerSize - sizeof(SndSoundStruct) + 4 at: [info UTF8String]];
 
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
         [aCoder encodeArrayOfObjCType:"s"

@@ -242,7 +242,7 @@ NSString *SndStructDescription(SndSoundStruct *s)
 // TODO marked for demolition.
 void SndPrintStruct(SndSoundStruct *s)
 {
-    puts([SndStructDescription(s) cString]);
+    puts([SndStructDescription(s) UTF8String]);
 }
 
 int SndPrintFrags(SndSoundStruct *sound)

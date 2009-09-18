@@ -95,10 +95,10 @@ _MKMidiOutStruct *_MKInitMidiOut()
     return rtn;
 }
 
-unsigned char _MKGetSysExByte(char **strP)
+unsigned char _MKGetSysExByte(const char **strP)
     /* Helper function for putSysExcl below */
 {
-    char *str = *strP;
+    const char *str = *strP;
     BOOL gotOne = NO;
     unsigned char rtn = 0;
     unsigned char digit;

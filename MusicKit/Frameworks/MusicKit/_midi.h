@@ -76,7 +76,7 @@ extern _MKMidiInStruct *_MKFinishMidiIn(_MKMidiInStruct *ptr);
 extern _MKMidiOutStruct *_MKInitMidiOut(void);
 extern  _MKMidiOutStruct *_MKFinishMidiOut(_MKMidiOutStruct *ptr);
 extern void _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, _MKMidiOutStruct *ptr, MKNoteReceiver *noteReceiver);
-extern unsigned char _MKGetSysExByte(char **strP);
+extern unsigned char _MKGetSysExByte(const char **strP);
 
 /* Useful for sending allNotesOff */
 extern NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr, int chan);

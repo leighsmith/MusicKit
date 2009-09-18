@@ -141,7 +141,7 @@ _MKWritePartDecl(MKPart *aPart, _MKScoreOutStruct * p, MKNote *aPartInfo)
 	
 	if (!partName) {
 	    tokname = _MKTokNameNoCheck(_MK_part);
-	    partName = [NSString stringWithCString: tokname];
+	    partName = [NSString stringWithUTF8String: tokname];
 	}
 	// LMS check _MKTokNameNoCheck shouldn't return nil, which will cause problems trying to make it a NSString 
 	/* Root of anonymous name */

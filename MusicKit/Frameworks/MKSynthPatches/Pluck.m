@@ -105,13 +105,13 @@
 
 /* #include "tune.m" */
 //#define LOW_PITCH_STR NXLocalStringFromTableInBundle(_MKErrorStringFile(),_MKErrorBundle(),"low pitch",NULL,"This string appears as part of a larger error message: 'Out of low pitch memory...'")
-#define LOW_PITCH_STR [NSLocalizedStringFromTableInBundle(@"low pitch", [NSString stringWithCString:_MKErrorStringFile()], _MKErrorBundle(), "This string appears as part of a larger error message: 'Out of low pitch memory...'") cString]
+#define LOW_PITCH_STR [NSLocalizedStringFromTableInBundle(@"low pitch", [NSString stringWithUTF8String:_MKErrorStringFile()], _MKErrorBundle(), "This string appears as part of a larger error message: 'Out of low pitch memory...'") UTF8String]
 
 //#define PITCH_STR NXLocalStringFromTableInBundle(_MKErrorStringFile(),_MKErrorBundle(),"pitch",NULL,"This string appears as part of a larger error message: 'Out of pitch memory...'")
-#define PITCH_STR [NSLocalizedStringFromTableInBundle(@"pitch", [NSString stringWithCString:_MKErrorStringFile()], _MKErrorBundle(), "This string appears as part of a larger error message: 'Out of pitch memory...'") cString]
+#define PITCH_STR [NSLocalizedStringFromTableInBundle(@"pitch", [NSString stringWithUTF8String:_MKErrorStringFile()], _MKErrorBundle(), "This string appears as part of a larger error message: 'Out of pitch memory...'") UTF8String]
 
 //#define PLUCK_NOISE_STR NXLocalStringFromTableInBundle(_MKErrorStringFile(),_MKErrorBundle(),"Pluck noise",NULL,"This string appears as part of a larger error message: 'Can't allocate Pluck noise...'")
-#define PLUCK_NOISE_STR [NSLocalizedStringFromTableInBundle(@"Pluck noise", [NSString stringWithCString:_MKErrorStringFile()], _MKErrorBundle(), "This string appears as part of a larger error message: 'Can't allocate Pluck noise...'") cString]
+#define PLUCK_NOISE_STR [NSLocalizedStringFromTableInBundle(@"Pluck noise", [NSString stringWithUTF8String:_MKErrorStringFile()], _MKErrorBundle(), "This string appears as part of a larger error message: 'Can't allocate Pluck noise...'") UTF8String]
 
 #define noiseLoc _reservedPluck1 
 #define delayMem _reservedPluck2

@@ -141,7 +141,7 @@
             speakerConfiguration[SND_SPEAKER_RIGHT] = speakerIndex;
 	else
 	    speakerConfiguration[SND_SPEAKER_RIGHT] = SND_SPEAKER_UNUSED;
-        [speakerNamesArray addObject: [NSString stringWithCString: speakerNames[speakerIndex]]];
+        [speakerNamesArray addObject: [NSString stringWithUTF8String: speakerNames[speakerIndex]]];
     }
     
     return [NSArray arrayWithArray: speakerNamesArray];

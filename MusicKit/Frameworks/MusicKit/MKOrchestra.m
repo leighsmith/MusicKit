@@ -411,16 +411,16 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
     if (index >= nDSPs) 
 	return NULL;
     DSPSetCurrentDSP(index);
-    s = DSPGetDriverParameter([parameterName cString]);
-    return s ? [NSString stringWithCString: s] : @"";
+    s = DSPGetDriverParameter([parameterName UTF8String]);
+    return s ? [NSString stringWithUTF8String: s] : @"";
 }
 
 - (NSString *) driverParameter: (NSString *) parameterName
 {
     char *s;
     DSPSetCurrentDSP(orchIndex);
-    s = DSPGetDriverParameter([parameterName cString]);
-    return s ? [NSString stringWithCString: s] : @"";
+    s = DSPGetDriverParameter([parameterName UTF8String]);
+    return s ? [NSString stringWithUTF8String: s] : @"";
 }
 
 + (NSArray *) getDriverNames
@@ -462,7 +462,7 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
 	for (dspIndex = 0; dspIndex < nDSPs; dspIndex++) {
 	    id classObj = nil;
 	    NSString *className;
-            className = [MKOrchestra driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_ORCHESTRA] 
+            className = [MKOrchestra driverParameter: [NSString stringWithUTF8String: DSPDRIVER_PAR_ORCHESTRA] 
 					forOrchIndex: dspIndex];
 	    if (className)
                 classObj = NSClassFromString(className);
@@ -679,14 +679,14 @@ static void _MKTimeStamp()
 	return DSP_192K_MUSIC_SYSTEM_BINARY_0; /* non-overlaid (UCSF board) */
     if (memSize == DSP_32K)
 	return DSP_32K_MUSIC_SYSTEM_BINARY_0;
-    return [NSString stringWithCString: DSP_MUSIC_SYSTEM_BINARY_0];
+    return [NSString stringWithUTF8String: DSP_MUSIC_SYSTEM_BINARY_0];
 #else
     if (monitorFileName)      /* Allow user-override */
 	return monitorFileName;
     if (!_driverParMonitorFileName)
-        _driverParMonitorFileName = [self driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_MONITOR_4_2]];
+        _driverParMonitorFileName = [self driverParameter: [NSString stringWithUTF8String: DSPDRIVER_PAR_MONITOR_4_2]];
     if (!_driverParMonitorFileName) /* Pre-4.2 driver? */
-        _driverParMonitorFileName = [self driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_MONITOR]];
+        _driverParMonitorFileName = [self driverParameter: [NSString stringWithUTF8String: DSPDRIVER_PAR_MONITOR]];
     return _driverParMonitorFileName;
 #endif
 }
@@ -736,7 +736,7 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc);
     [self setOutputSoundDelegate: nil];
     [self setOutputCommandsFile: NULL];
     [self useDSP: YES];
-    s = [self driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_SERIALPORTDEVICE]];
+    s = [self driverParameter: [NSString stringWithUTF8String: DSPDRIVER_PAR_SERIALPORTDEVICE]];
     _nextCompatibleSerialPort = (s && [s isEqualToString: @"NeXT"]);
     if (_nextCompatibleSerialPort) {
 	/* Get it from defaults data base */
@@ -1235,7 +1235,7 @@ associated with it exists.
 #if !m68k
 -(int) _waitStates
 {
-    NSString *s = [self driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_WAITSTATES]];
+    NSString *s = [self driverParameter: [NSString stringWithUTF8String: DSPDRIVER_PAR_WAITSTATES]];
     if (!s)
 	return 0;
     return [s intValue];
@@ -1246,7 +1246,7 @@ associated with it exists.
 {
 #if i386 && defined(__NeXT__)
 #define DEFAULT_CLOCK_RATE 25  /* Mhz. */
-    NSString *s = [self driverParameter: [NSString stringWithCString: DSPDRIVER_PAR_CLOCKRATE]];
+    NSString *s = [self driverParameter: [NSString stringWithUTF8String: DSPDRIVER_PAR_CLOCKRATE]];
     int clockRate;
     double adjustment;
     if (!s || ![s length] || ([self _waitStates] >= 3))
@@ -2050,7 +2050,7 @@ static void _traceMsg(FILE *simFP, int typeOfInfo, NSString *fmt, char *ap)
         NSLogv([fmt stringByAppendingString: @"\n"], ap);
     }
     if (simFP) {
-        vfprintf(simFP, [[NSString stringWithFormat: @"; %@\n", fmt] cString], ap);
+        vfprintf(simFP, [[NSString stringWithFormat: @"; %@\n", fmt] UTF8String], ap);
     }
 }
 
@@ -2058,10 +2058,10 @@ static void _traceNSStringMsg(FILE *simFP, int typeOfInfo, NSString *msg)
 /* See trace: below */
 {
     if (MKIsTraced(typeOfInfo)) {
-        NSLog([msg stringByAppendingString: @"\n"]);
+        NSLog(@"%@\n", msg);
     }
     if (simFP) {
-        fprintf(simFP, [msg cString]);
+        fprintf(simFP, "%s", [msg UTF8String]);
     }
 }
 

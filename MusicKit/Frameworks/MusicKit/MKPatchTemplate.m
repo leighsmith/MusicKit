@@ -369,7 +369,7 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ, id synthPatchClass, id anOrch, int
 	if (_MK_ORCHTRACE(anOrch,MK_TRACEORCHALLOC))
 	  _MKOrchTrace(anOrch,MK_TRACEORCHALLOC,
 		       "allocSynthPatch returns %s_%p",
-                [NSStringFromClass([synthPatchClass class]) cString],aPatch);
+                [NSStringFromClass([synthPatchClass class]) UTF8String],aPatch);
 	[aPatch _allocate]; /* Tell it it's allocated */
 	return aPatch;
     }

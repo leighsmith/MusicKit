@@ -39,7 +39,7 @@
     int sndfileFormat;
     int formatIndex, formatCount;
     SF_FORMAT_INFO sfFormatInfo;
-    const char *extension = [extensionString cString];
+    const char *extension = [extensionString UTF8String];
     
     // Determine major format from file extension, default to AIFF
     sndfileFormat = SF_FORMAT_AIFF;
@@ -110,7 +110,7 @@
 	// include all the alternative namings.
 	sfFormatInfo.format = formatIndex;
 	sf_command(NULL, SFC_GET_FORMAT_MAJOR, &sfFormatInfo, sizeof(sfFormatInfo));
-	fileExtension = [NSString stringWithCString: sfFormatInfo.extension];
+	fileExtension = [NSString stringWithUTF8String: sfFormatInfo.extension];
 	[fileTypes addObject: fileExtension];
 	// Accept upper case equivalent. TODO This should probably be an optional behaviour.
 	[fileTypes addObject: [fileExtension uppercaseString]];
@@ -260,7 +260,7 @@
     // Retrieve the sound file comment as the info string.
     if((comment = sf_get_string(sfp, SF_STR_COMMENT)) != NULL) {
 	[info release];
-	info = [[NSString stringWithCString: comment] retain];
+	info = [[NSString stringWithUTF8String: comment] retain];
     }
     
 #if DEBUG_MESSAGES

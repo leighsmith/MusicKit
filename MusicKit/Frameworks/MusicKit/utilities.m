@@ -525,8 +525,7 @@ void MKError(NSString *msg)
     else if (!errorStreamEnabled)
         return;
     if(errorStream == nil) {
-        NSLog(msg);      // default is to write to the standard logging.
-        NSLog(@"\n");
+        NSLog(@"%@\n", msg);      // default is to write to the standard logging.
     }
     else {
         [errorStream appendData: [msg dataUsingEncoding: NSNEXTSTEPStringEncoding]];
@@ -553,9 +552,9 @@ void MKErrorCode(int errorCode,...)
     else {
         NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease];
         NSMutableData *errorStream = MKErrorStream();
+	
         if(errorStream == nil) {
-            NSLog(theErrorString); // default is to write to the standard logging.
-            NSLog(@"\n");
+            NSLog(@"%@\n", theErrorString); // default is to write to the standard logging.
         }
         else {
             [errorStream appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];

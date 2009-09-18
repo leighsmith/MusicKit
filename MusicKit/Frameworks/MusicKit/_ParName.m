@@ -136,7 +136,7 @@ object by reference. */
 {
   unsigned short type;
   if (aName == nil) return MK_noPar;
-  if (![aName cStringLength]) {
+  if (![aName maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding]) {
     return MK_noPar; /* DAJ - Jan 27, 96 */
   }
   *aPar = _MKGetNamedGlobal(aName,&type);
@@ -435,7 +435,7 @@ valued, returns a description of the envelope. */
     case MK_waveTable:
       return [param->_uVal.symbol description];//@" (waveTable) ";//sb: was _MKMakeStr(" (waveTable) ");  /*** FIXME ***/
     default:
-      return [param->_uVal.symbol description];// NSStringFromClass([param->_uVal.symbol class]);//sb: was _MKMakeStr([NSStringFromClass([param->_uVal.symbol class]) cString]); /*** FIXME ***/
+      return [param->_uVal.symbol description];// NSStringFromClass([param->_uVal.symbol class]);//sb: was _MKMakeStr([NSStringFromClass([param->_uVal.symbol class]) UTF8String]); /*** FIXME ***/
   }
   return @"";//sb: was _MKMakeStr("");
 }
@@ -553,7 +553,7 @@ void _MKParWriteValueOn(_MKParameter *param,NSMutableData *aStream,
 static NSString *genAnonName(id obj)
 /* Generate default anonymous name */ /*sb: as a temporary NSString */
 {
-  //    return _MKMakeStrcat([NSStringFromClass([obj class]) cString],"1");
+  //    return _MKMakeStrcat([NSStringFromClass([obj class]) UTF8String],"1");
   return [NSString stringWithFormat:@"%@1",NSStringFromClass([obj class])];
 }
 
@@ -655,7 +655,7 @@ it will look identical. */
 {
   char c;
   const char *tmp;
-  const register char *str = [strBuf cString];
+  const register char *str = [strBuf UTF8String];
 #   define WRITECHAR(_c) c = (_c); [aStream appendBytes:&c length:1]
   WRITECHAR('"');
   for (tmp = str; *str; str++)
@@ -722,7 +722,7 @@ _MKParWriteStdValueOn, if desired. */
 
 void _MKArchiveParOn(_MKParameter *param,NSCoder *aTypedStream) /*sb: originally ocnverted as NSArchiver */
 {
-// note: the parameter name was originally a cstring (type "*"). If versionning can
+// note: the parameter name was originally a UTF8String (type "*"). If versionning can
 // be used here then it would be good to catch this.
 
   BOOL isMKPublicPar = (param->parNum<(int)(MK_privatePars));

@@ -291,7 +291,7 @@ static short lexan(void)
           ;
         BACKUPENDTOKEN(c);
         tokenVal->symbol =
-        _MKNameTableGetObjectForName(scoreRPtr->_symbolTable,[NSString stringWithCString:tokenBuf],nil,
+        _MKNameTableGetObjectForName(scoreRPtr->_symbolTable,[NSString stringWithUTF8String:tokenBuf],nil,
                                        &tok);
         if (tokenVal->symbol /* It's an object */
             || tok)          /* It's a keyword. */
@@ -329,7 +329,7 @@ static short lexan(void)
           } while ( (c=NEXTTCHAR()) != '"'); 
         tokenPtr--;   /* Don't include final " in string but advance input. */
         ENDTOKEN();
-        tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
+        tokenVal->sval = [[NSString stringWithUTF8String:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
         /* We can't anticipate where the damn thing will end up so we can't
            do garbage collection. So we make it unique to avoid accumulating
            garbage. At some point in the future, might want to really move
@@ -747,7 +747,7 @@ static id samples(void)
     _MKParameterUnion tmpUnion;
     tmpUnion.symbol = [MKGetSamplesClass() new];
     if (![(MKSamples *) tmpUnion.symbol readSoundfile:tokenVal->sval])
-      error(MK_cantOpenFileErr,[tokenVal->sval cString]);
+      error(MK_cantOpenFileErr,[tokenVal->sval UTF8String]);
     match(lookahead); /* Matches file name */
     emitVar(MK_waveTable,&tmpUnion);
     if (!match('}'))
@@ -844,7 +844,7 @@ static id obj(void)
     id aClass;
     if (lookahead != _MK_undef)
       error(MK_sfMissingStringErr,_MKTokNameNoCheck(MK_object));
-    if (!(aClass = _MK_FINDCLASS([NSString stringWithCString:tokenBuf])))
+    if (!(aClass = _MK_FINDCLASS([NSString stringWithUTF8String:tokenBuf])))
       error(MK_sfCantFindClass,tokenBuf);
     /* The following cases are in case the guy wrote an env or wave out
        as a normal object. SPECIAL-WAVE-ENV-CASE. */
@@ -932,7 +932,7 @@ static void namedDataDecl(_MKToken type)
        If the object is a duplicate, a name is generated of the form
        <oldName><low integer>. */
     {
-      NSString *s = [NSString stringWithCString:name];
+      NSString *s = [NSString stringWithUTF8String:name];
       addLocalSymbol(s,dataObj,dataToken);
       MKNameObject(s,dataObj);
     }
@@ -1068,7 +1068,7 @@ static void evalAssign(_MKParameterUnion *val1,
     }
     if (err) {
         if (err == (short)MK_sfReadOnlyErr)
-          error(MK_sfReadOnlyErr,[[val1->symbol varName] cString]);
+          error(MK_sfReadOnlyErr,[[val1->symbol varName] UTF8String]);
         else
           error(MK_sfTypeConversionErr);
     }
@@ -1400,7 +1400,7 @@ static void eval(_MKParameterUnion *val1,
 /*
               char *s;
               _MK_MALLOC(s,char,2);
-              s[0] = ((const unsigned char *)[v1.sval cString])[v2.ival];
+              s[0] = ((const unsigned char *)[v1.sval UTF8String])[v2.ival];
               s[1] = '\0';
               rtnVal->sval = s;
  */
@@ -1808,16 +1808,16 @@ _errorMsg(MKErrno errCode,char *ap)
        info */
 {
     char * s;
-    char * fmt = [_MKGetErrStr(errCode) cString];
+    char * fmt = [_MKGetErrStr(errCode) UTF8String];
     if (shutUp) 
       return NULL;
     s = _MKErrBuf();
     if (errCode == MK_sfNonScorefileErr)  /* This one's special */
       *s = '\0';
     else if (BINARY(scoreRPtr)) /* Binary files have no 'line number' */
-      sprintf(s,"%s: ",[parsePtr->_name cString]);
+      sprintf(s,"%s: ",[parsePtr->_name UTF8String]);
     else
-        sprintf(s,"%s, pg %d, line %d: ", [parsePtr->_name cString],
+        sprintf(s,"%s, pg %d, line %d: ", [parsePtr->_name UTF8String],
               parsePtr->_pageNo, parsePtr->_lineNo);
     vsprintf(s + strlen(s),fmt,ap);
     return s;
@@ -1872,7 +1872,7 @@ static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
     errMsg = _errorMsg(errCode,ap);
     if (BINARY(scoreRPtr))
       return errMsg;
-    strcpy(s, [errMsg cString]);  // LMS: eventually redo this function using NSString
+    strcpy(s, [errMsg UTF8String]);  // LMS: eventually redo this function using NSString
     errS = s;                /* Keep pointer to buffer */
     msgLen = strlen(errS);  // [errMsg length]
     errS = errS + msgLen;
@@ -1894,7 +1894,7 @@ static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
     else
       ++p; /* We're one behind (see above loop) */
     q = p;
-    // [s appendString: [NSString stringWithCString: p length: errorLoc - p]];
+    // [s appendString: [NSString stringWithUTF8String: p length: errorLoc - p]];
     while (p < errorLoc)  
       sprintf(errS++,"%c",*p++);
     // [s appendString: "\n"];
@@ -1911,9 +1911,9 @@ static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
     if (potentiallyFatal)
       if (scoreRPtr->_errCount != MAXINT)
         if (++scoreRPtr->_errCount >= errAbort) {
-            sprintf(errS,"\n%s",[_MKGetErrStr(MK_sfTooManyErrorsErr) cString]);
+            sprintf(errS,"\n%s",[_MKGetErrStr(MK_sfTooManyErrorsErr) UTF8String]);
         }
-    return [NSString stringWithCString: s];
+    return [NSString stringWithUTF8String: s];
 }
 
 static void
@@ -2250,14 +2250,14 @@ static NSString *getBinaryString(BOOL install, BOOL inHeader)
         ENDTOKEN();
     }
     if (install) {
-        tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf);
+        tokenVal->sval = [[NSString stringWithUTF8String:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf);
     }
     /* We can't anticipate where the damn thing will end up so we can't
        do garbage collection. So we make it unique to avoid accumulating
        garbage. At some point in the future, might want to really move
        to unique strings system-wide. This makes string compares faster,
        for example. */
-    return tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was tokenBuf;
+    return tokenVal->sval = [[NSString stringWithUTF8String:tokenBuf] retain];//sb: was tokenBuf;
 }
 
 static id nullObject = nil;
@@ -2324,7 +2324,7 @@ static short getBinarySymbol(BOOL inHeader)
     }
     ENDTOKEN();
     tokenVal->symbol = 
-      _MKNameTableGetObjectForName(scoreRPtr->_symbolTable,[NSString stringWithCString:tokenBuf],nil,
+      _MKNameTableGetObjectForName(scoreRPtr->_symbolTable,[NSString stringWithUTF8String:tokenBuf],nil,
                                    &tok);
 #ifdef DEBUG_PARSE_SCORE
     printf("token found is %s\n",tokenBuf);
@@ -2569,7 +2569,7 @@ static short getAppPar(BOOL inHeader)
 {
     getBinarySymbol(inHeader);
     if (lookahead == INT(_MK_undef))
-      return addParameter([NSString stringWithCString:tokenBuf]);
+      return addParameter([NSString stringWithUTF8String:tokenBuf]);
     else return _MKGetParNamePar(tokenVal->symbol);
     /*** FIXME BINARY Need to check for non-params here. ***/ 
 }
@@ -2728,7 +2728,7 @@ partDecl(void)
             continue;   
         }
         declErrCheck(_MKTokNameNoCheck(_MK_part),0);
-        installPart([NSString stringWithCString:tokenBuf]);
+        installPart([NSString stringWithUTF8String:tokenBuf]);
         MATCH(lookahead);
     }  while (match(','));
 }
@@ -2747,7 +2747,7 @@ binaryPartDecl(BOOL inHeader)
     /* We don't need a declErrCheck here. It actually doesn't matter what
        we call the part. The collissions are resolved when it's written to
        a file. */
-    [scoreRPtr->_binaryIndexedObjects addObject:installPart([NSString stringWithCString:tokenBuf])];
+    [scoreRPtr->_binaryIndexedObjects addObject:installPart([NSString stringWithUTF8String:tokenBuf])];
     return;
 }
 
@@ -2790,7 +2790,7 @@ static void putGlobal()
     do {
         if (lookahead == _MK_undef)
           error(MK_sfUndeclaredErr,"symbol",curToken());
-        if (_MKGetNamedGlobal([NSString stringWithCString:tokenBuf],&tok))
+        if (_MKGetNamedGlobal([NSString stringWithUTF8String:tokenBuf],&tok))
           error(MK_sfMulDefErr,curToken(),_MKTokName((int)tok));
         switch (lookahead) { 
           case _MK_typedVar:
@@ -2802,7 +2802,7 @@ static void putGlobal()
           default:
             error(MK_sfGlobalErr,_MKTokName(lookahead));
         }
-        installLocalGlobally([NSString stringWithCString:tokenBuf],tokenVal->symbol,
+        installLocalGlobally([NSString stringWithUTF8String:tokenBuf],tokenVal->symbol,
                              (unsigned short)lookahead);
         MATCH(lookahead);
     } while (match(','));
@@ -2854,7 +2854,7 @@ static void getGlobal()
         }
         if (lookahead != _MK_undef)
           error(MK_sfMulDefErr,curToken(),_MKTokName(lookahead));
-        if (!(obj = _MKGetNamedGlobal([NSString stringWithCString:tokenBuf],&tok)))
+        if (!(obj = _MKGetNamedGlobal([NSString stringWithUTF8String:tokenBuf],&tok)))
           error(MK_sfCantFindGlobalErr,tokenBuf);
         if (tok != (unsigned short) type)
           error(MK_sfMulDefErr,tokenBuf,_MKTokName((int)tok));
@@ -2897,9 +2897,9 @@ varDecl(void)
             aPar = _MKNewObjPar(nil,MK_noPar,dataType);
             break;
         }
-        aScorefileVar = _MKNewScorefileVar(aPar,[NSString stringWithCString:tokenBuf],isUntyped,NO);
+        aScorefileVar = _MKNewScorefileVar(aPar,[NSString stringWithUTF8String:tokenBuf],isUntyped,NO);
         lookahead = (isUntyped) ? _MK_untypedVar : _MK_typedVar;
-        addLocalSymbol([NSString stringWithCString:tokenBuf],aScorefileVar,lookahead);
+        addLocalSymbol([NSString stringWithUTF8String:tokenBuf],aScorefileVar,lookahead);
         tokenVal->symbol = aScorefileVar;
         expression(&tmpUnion); /* Possible initialization value */
     }  while (match(','));
@@ -3264,7 +3264,7 @@ parListDecl(void)
     matchInsert('=');
     while (lookahead == INT(_MK_param) || lookahead == INT(_MK_undef)) {
         if (lookahead == INT(_MK_undef))
-          param = addParameter([NSString stringWithCString:tokenBuf]);
+          param = addParameter([NSString stringWithUTF8String:tokenBuf]);
         else param = _MKGetParNamePar(tokenVal->symbol);
         MATCH(lookahead);
         if (lookahead == ':') {
@@ -3351,7 +3351,7 @@ include(void)
         parsePtr = backwardsLink; /* Restore value. */
         scoreRPtr->_parsePtr = (void *)parsePtr;
         loadFromStruct(scoreRPtr);
-        errorMsg(MK_sfCantFindFileErr,[s cString]);
+        errorMsg(MK_sfCantFindFileErr,[s UTF8String]);
     }
     else 
       parsePtr->_backwardsLink = backwardsLink; /* Stack link. */
@@ -3381,7 +3381,7 @@ print(void)
             case MK_envelope: {
                 NSString * s = MKGetObjectName(tmpUnion.symbol);
                 if (s != nil)
-                    if ([s cStringLength])
+                    if ([s maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding])
                         [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%s %@ = ", _MKTokNameNoCheck(t),s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
                 [tmpUnion.symbol writeScorefileStream:scoreRPtr->printStream];
                 break;
@@ -3495,7 +3495,7 @@ static void
     while (lookahead != ';') {
         if (lookahead != INT(_MK_param))
           if (lookahead == INT(_MK_undef))
-              j = addParameter([NSString stringWithCString:tokenBuf]);
+              j = addParameter([NSString stringWithUTF8String:tokenBuf]);
           else error(MK_sfBadParamErr);
         else 
           j = _MKGetParNamePar(tokenVal->symbol);
@@ -4078,7 +4078,7 @@ static id parseScoreNote(void)
             while (lookahead != ';') {
                 if (lookahead != INT(_MK_param))
                   if (lookahead == INT(_MK_undef))
-                      j = addParameter([NSString stringWithCString:tokenBuf]);
+                      j = addParameter([NSString stringWithUTF8String:tokenBuf]);
                   else error(MK_sfBadParamErr);
                 else 
                   j = _MKGetParNamePar(tokenVal->symbol);

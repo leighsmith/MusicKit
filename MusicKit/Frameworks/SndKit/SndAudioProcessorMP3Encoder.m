@@ -52,12 +52,12 @@
 
 + (NSString*) defaultSourcePassword
 {
-  return [NSString stringWithCString: DEFAULT_MP3SERVER_PASSWORD];
+  return [NSString stringWithUTF8String: DEFAULT_MP3SERVER_PASSWORD];
 }
 
 + (NSString*) defaultServerAddress
 {
-  return [NSString stringWithCString: DEFAULT_MP3SERVER_ADDRESS];
+  return [NSString stringWithUTF8String: DEFAULT_MP3SERVER_ADDRESS];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,9 +104,9 @@
   [encodeNShoutcastLock lock];
     
   if (shout_get_connected(conn) != SHOUTERR_CONNECTED) {
-    shout_set_host(conn, [address cString]);
+    shout_set_host(conn, [address UTF8String]);
     shout_set_port(conn, port);
-    shout_set_password(conn, [password cString]);
+    shout_set_password(conn, [password UTF8String]);
     shout_set_protocol(conn, SHOUT_PROTOCOL_ICY);
     shout_set_format(conn, SHOUT_FORMAT_MP3);
   }
@@ -166,12 +166,12 @@
 
 - (NSString*) serverAddress
 {
-  return [NSString stringWithCString: shout_get_host(conn)];
+  return [NSString stringWithUTF8String: shout_get_host(conn)];
 }
  
 - (NSString*) serverPassword
 {
-  return [NSString stringWithCString: shout_get_password(conn)];
+  return [NSString stringWithUTF8String: shout_get_password(conn)];
 }
 
 - (int) serverPort
@@ -273,9 +273,9 @@
   id obj;
   int conn_port;
   switch (i) {
-    case mp3enc_kServerAddress:  obj = [NSString stringWithCString: shout_get_host(conn)];                  break;
+    case mp3enc_kServerAddress:  obj = [NSString stringWithUTF8String: shout_get_host(conn)];                  break;
     case mp3enc_kServerPort:     conn_port = shout_get_port(conn); obj = [NSValue value: &conn_port withObjCType: @encode(int)]; break;
-    case mp3enc_kServerPassword: obj = [NSString stringWithCString: shout_get_password(conn)];            break;
+    case mp3enc_kServerPassword: obj = [NSString stringWithUTF8String: shout_get_password(conn)];            break;
     default:
       obj = [super paramObjectForIndex: i];
   }

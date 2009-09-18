@@ -426,9 +426,7 @@ int _DSPMachError(
 void _DSPErr(msg)
 char *msg;
 {   
-    fprintf(stderr,"\n\n\t\t\toops!\n\n");
-    fprintf(stderr,msg);
-    fprintf(stderr,"\n*** Aborting\n^C\n");
+    fprintf(stderr,"\n\n\t\t\toops!\n\n%s\n*** Aborting\n^C\n", msg);
     exit(1);
 } 
 

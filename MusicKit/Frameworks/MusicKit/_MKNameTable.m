@@ -326,12 +326,12 @@ returns sym, and sets *wasChagned to NO. */
   NSString *result = nil;
   if (sym == nil) { *wasChanged = NO; return sym; }
 
-  if (isCSym([sym cString])) { /* DAJ. Jan 27, 1996. Added null check */
+  if (isCSym([sym UTF8String])) { /* DAJ. Jan 27, 1996. Added null check */
     *wasChanged = NO;
     return sym;
   }
-  _MK_MALLOC(newSym,char,[sym cStringLength] + 1);
-  convertToCSym([sym cString],newSym);
+  _MK_MALLOC(newSym,char,[sym maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding] + 1);
+  convertToCSym([sym UTF8String],newSym);
   //    *wasChanged = NO;
   *wasChanged = YES; /* DAJ -- Jan 27, 96. Plugged leak */
   result = [[NSString alloc] initWithCString: newSym];
@@ -352,14 +352,10 @@ static _MKNameTable *mkNameTable = nil;
 
 void _MKPrintGlobalNameTables()
 {
-  NSLog(@"globalParseNameTable symbols:");
-  NSLog(NSStringFromMapTable(globalParseNameTable->symbols));
-  NSLog(@"globalParseNameTable types:");
-  NSLog(NSStringFromMapTable(globalParseNameTable->types));
-  NSLog(@"mkNameTable symbols:");
-  NSLog(NSStringFromMapTable(mkNameTable->symbols));
-  NSLog(@"mkNameTable types:");
-  NSLog(NSStringFromMapTable(mkNameTable->types));
+  NSLog(@"globalParseNameTable symbols:\n%@\n", NSStringFromMapTable(globalParseNameTable->symbols));
+  NSLog(@"globalParseNameTable types:\n%@\n", NSStringFromMapTable(globalParseNameTable->types));
+  NSLog(@"mkNameTable symbols:\n%@\n", NSStringFromMapTable(mkNameTable->symbols));
+  NSLog(@"mkNameTable types:\n%@\n", NSStringFromMapTable(mkNameTable->types));
 }
 
 id MKRemoveObjectName(id object)
@@ -572,7 +568,7 @@ static void initKeyWords()
 		  (unsigned short)_MK_typedVar | _MK_NOFREESTRINGBIT,YES,NO);
     for (i=0; i<NUMKEYWORDS; i++) {
 	tok = (int)(keyWordsArr[i]);
-	_MKNameGlobal([NSString stringWithCString:_MKTokName(tok)],@"",
+	_MKNameGlobal([NSString stringWithUTF8String:_MKTokName(tok)],@"",
 	       (unsigned short)tok | _MK_NOFREESTRINGBIT,YES,NO);
     }
     initialised = YES;
