@@ -189,14 +189,14 @@ int main (int argc, const char * argv[])
 		    break;
 		case 'a': // mp3 server address
 		    [shoutcastServerAddress release];
-		    shoutcastServerAddress = [NSString stringWithCString: argv[++i]];
+		    shoutcastServerAddress = [NSString stringWithUTF8String: argv[++i]];
 		    break;
 		case 'P': // mp3 server source port number
 		    shoutcastPortNumber = atoi(argv[++i]);
 		    break;
 		case 'p': // mp3 server source password
 		    [shoutcastSourcePassword release];
-		    shoutcastSourcePassword = [NSString stringWithCString: argv[++i]];
+		    shoutcastSourcePassword = [NSString stringWithUTF8String: argv[++i]];
 		    break;
 		case 'I': showInfo = TRUE; break;
 		default: fprintf(stderr, "Ignoring unrecognized option -%c\n",argv[i][1]);

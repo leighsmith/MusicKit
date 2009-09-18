@@ -31,7 +31,7 @@ int main (int argc, const char *argv[])
         system([playString fileSystemRepresentation]);  /* play the thing */
     } else {
         fprintf(stderr,"Could not find playscore in /usr/bin or /usr/local/bin.\n");
-        fprintf(stderr,"Look for the test score in %s\n",[testPath cString]);
+        fprintf(stderr,"Look for the test score in %s\n",[testPath UTF8String]);
     }
     [pool release];
     exit(0);       // insure the process exit status is 0

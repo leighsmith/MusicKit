@@ -45,7 +45,7 @@ int main (int argc, const char *argv[])
         exit(1);
     }
 #if SCOREFILE_PERFORMER
-    inStream = [NSData dataWithContentsOfFile: [NSString stringWithCString: argv[1]]];
+    inStream = [NSData dataWithContentsOfFile: [NSString stringWithUTF8String: argv[1]]];
     if (inStream == nil) {
         NSLog(@"Can't open score file %s\n.", argv[1]);
         exit(1);
@@ -59,7 +59,7 @@ int main (int argc, const char *argv[])
 #else
     mixScore = [MKScore score];
     aScorePerformer = [[MKScorePerformer alloc] init];
-    if([mixScore readScorefile: [NSString stringWithCString: argv[1]]] == nil) {
+    if([mixScore readScorefile: [NSString stringWithUTF8String: argv[1]]] == nil) {
 	NSLog(@"Can't load %s\n.", argv[1]);
     }
     NSLog(@"mix score: %@\n", mixScore);
@@ -103,7 +103,7 @@ int main (int argc, const char *argv[])
     NSLog(@"...done\n");
     mixedSound = [mixIns mixedSound];
     // NSLog(@"mixed sound: %@\n", mixedSound);
-    if ([mixedSound writeSoundfile: [NSString stringWithCString: argv[2]]] != SND_ERR_NONE) {
+    if ([mixedSound writeSoundfile: [NSString stringWithUTF8String: argv[2]]] != SND_ERR_NONE) {
         NSLog(@"Can't create %s\n.", argv[2]);
         exit(1);
     }

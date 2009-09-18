@@ -83,7 +83,7 @@
     else
 	[displayMode selectCellWithTag: 0];
 
-    type = [[standardUserDefaults objectForKey: @"WindowType"] cString];
+    type = [[standardUserDefaults objectForKey: @"WindowType"] UTF8String];
     if (!strcmp(type, "Rectangular"))
 	[windowTypeMatrix selectCellAtRow: 0 column: 0];	
     if (!strcmp(type, "Triangular"))

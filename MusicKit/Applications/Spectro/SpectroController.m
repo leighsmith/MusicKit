@@ -21,7 +21,7 @@ NSString *colorToString(NSColor *color)
 NSColor *stringToColor(NSString *buffer)
 {
     float r, g, b;
-    const char *buf = [buffer cString];
+    const char *buf = [buffer UTF8String];
     
     sscanf(buf, "%f:%f:%f", &r, &g, &b);
     return [NSColor colorWithCalibratedRed: r green: g blue: b alpha: 1.0];

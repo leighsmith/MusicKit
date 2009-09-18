@@ -39,7 +39,7 @@ int main (int ac, const char *av[])
 	fprintf(stderr, "Converts MusicKit scorefiles to Common Music stella Lisp files\n");
 	exit(1);
     }
-    if ([aScore readScorefile: [NSString stringWithCString: av[1]]] == nil) {
+    if ([aScore readScorefile: [NSString stringWithUTF8String: av[1]]] == nil) {
 	fprintf(stderr,"%s: Problem reading file %s.\n", av[0], av[1]);
 	exit(1);
     }
@@ -80,7 +80,7 @@ static void writeScore(MKScore *aScore, const char *fil)
 	indent(3);
 	fprintf(fp,"score)");  /* end lambda */
 	indent(1);
-	fprintf(fp,"(make-object 'merge :id '%s", [genName(aScore, @"score-%d") cString]);
+	fprintf(fp,"(make-object 'merge :id '%s", [genName(aScore, @"score-%d") UTF8String]);
 	fprintf(fp,"))\n"); /* end make-object, lambda form */
 }
 
@@ -117,9 +117,9 @@ static void writeHeader(MKScore *aScore, const char *fil)
 		if (name == nil)
 		  name = genName(obj, @"");
 		if ([obj class] == [MKEnvelope class])
-		      fprintf(fp,"envelope %s = [", [name cString]);
+		      fprintf(fp,"envelope %s = [", [name UTF8String]);
 		else 
-		      fprintf(fp,"waveTable %s = [", [name cString]);
+		      fprintf(fp,"waveTable %s = [", [name UTF8String]);
                 [obj writeScorefileStream: envelopeData];
                 fflush(fp); // put something in the file so the file handle can append to it.
 		// fileno() may not be as portable as we'd like
@@ -151,7 +151,7 @@ static void writeParts(MKScore *aScore)
 		int par, mode;
 		
 		aPart = (MKPart *)[parts objectAtIndex:i];
-		name = [MKGetObjectName(aPart) cString];
+		name = [MKGetObjectName(aPart) UTF8String];
 		info = [aPart infoNote];
 		/* if user specified freqNames:YES, print freqnames */
 		par=[MKNote parTagForName: @"freqNames"];
@@ -225,7 +225,7 @@ static void writeNotes(MKPart *aPart, unsigned modes)
 			r=0.0;
 		nt = [aNote noteType];
 		indent(14);
-		fprintf(fp,"(make-object '%s :part part", [class cString]);
+		fprintf(fp,"(make-object '%s :part part", [class UTF8String]);
 		fprintf(fp," :rhythm %f", r);
 		if ([aNote noteTag] != MAXINT)
 		  fprintf(fp," :tag %4d", [aNote noteTag]);
@@ -261,7 +261,7 @@ static void writeParameters(MKNote *aNote, unsigned modes)
 		name = [MKNote parNameForTag:par];
 		if ([name length] == 0)
 			continue;	/* skip private pars */
-		fprintf(fp,format, [name cString]);
+		fprintf(fp,format, [name UTF8String]);
 
 		if (((modes & writeParFreqName) == writeParFreqName) &&
 		    (([[MKNote parNameForTag:par] compare: @"freq"] == NSOrderedSame) ||
@@ -286,7 +286,7 @@ static void writeParameters(MKNote *aNote, unsigned modes)
 		    switch ([aNote parType:par]) {
 	  		case MK_envelope:
 	  		case MK_waveTable:
-	    			fprintf(fp," \"%s\"", [MKGetObjectName([aNote parAsObject:par]) cString]);
+	    			fprintf(fp," \"%s\"", [MKGetObjectName([aNote parAsObject:par]) UTF8String]);
 	    			break;
 	  		case MK_double:
 	    			fprintf(fp," %f", [aNote parAsDouble:par]);
@@ -296,7 +296,7 @@ static void writeParameters(MKNote *aNote, unsigned modes)
 	    			break;
 	  		case MK_string:
 				fprintf(fp, (modes & writeParInString) == writeParInString ? " %s" : " \"%s\"",
-					 [[aNote parAsStringNoCopy:par] cString]);
+					 [[aNote parAsStringNoCopy:par] UTF8String]);
 				break;
 			default:
 				break;

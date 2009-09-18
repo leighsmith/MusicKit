@@ -32,8 +32,8 @@ int main (int argc, const char *argv[])
             }
         }
     }
-    outFile = [NSString stringWithCString: argv[argc - 1]];
-    inFile = [NSString stringWithCString: argv[argc - 2]];
+    outFile = [NSString stringWithUTF8String: argv[argc - 1]];
+    inFile = [NSString stringWithUTF8String: argv[argc - 2]];
     sound = [[Snd alloc] initFromSoundfile: inFile];
     if (sound == nil) {
         NSLog(@"Can't find file %@\n", inFile);

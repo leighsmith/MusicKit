@@ -141,7 +141,7 @@ The following options are recognized: \n\
     for(i = 0; i < [libraryDirs count]; i++)
 	[searchedDirectories appendFormat: @"   %@\n", [[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: SCORE_DIR]];
 
-    fprintf(stderr, help, [searchedDirectories cString], [SOUND_EXTENSION cString], [SOUND_EXTENSION cString]);
+    fprintf(stderr, help, [searchedDirectories UTF8String], [SOUND_EXTENSION UTF8String], [SOUND_EXTENSION UTF8String]);
 }
 
 void setSoundOutDevice(char *optarg)
@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
     while ((optch = getopt(argc, argv, "c:dn:afpqr:s:t:vw:h")) != -1) {
         switch(optch) {
 	    case 'c':
-		commandsFile = [[NSString stringWithCString: optarg] stringByAppendingPathExtension: SOUND_EXTENSION];
+		commandsFile = [[NSString stringWithUTF8String: optarg] stringByAppendingPathExtension: SOUND_EXTENSION];
 		break;
 	    case 'd':
 		debugIt = YES;
@@ -349,7 +349,7 @@ int main(int argc, char *argv[])
 		DSPEnableErrorFile("/dev/tty");
 		break;
 	    case 'w':
-		outputFile = [[NSString stringWithCString: optarg] stringByAppendingPathExtension: SOUND_EXTENSION];
+		outputFile = [[NSString stringWithUTF8String: optarg] stringByAppendingPathExtension: SOUND_EXTENSION];
 		break;
 	    case 'y':  // override synthPatch for given part.
 		       // TODO NSDictionary of optarg, parsed into part "=" synthPatch
@@ -369,14 +369,14 @@ int main(int argc, char *argv[])
 	exit(1);
     }
     
-    inputFile = [NSString stringWithCString: argv[argc-1]];
+    inputFile = [NSString stringWithUTF8String: argv[argc-1]];
     for (repeat = 0; repeat < repeatCount; repeat++) {
 	if (!onTheFly) {
 	    if (repeat == 0) {
 		MKScore *aScore = [MKScore new];
                 NSString *scoreOrMidiFileName = findFile(inputFile, &midifile);
 		if (scoreOrMidiFileName != nil && !quiet)
-                    fprintf(stderr,"playscore reading %s...\n", [inputFile cString]);
+                    fprintf(stderr,"playscore reading %s...\n", [inputFile UTF8String]);
                 if(midifile) {
                     if (![aScore readMidifile: scoreOrMidiFileName] && !quiet) {
                         fprintf(stderr, "Fix midifile errors and try again.\n");
@@ -483,7 +483,7 @@ int main(int argc, char *argv[])
 			if (midis[whichMidi] == nil) {
                             midis[whichMidi] = [[MKMidi midiOnDevice: className] retain];
                             if(midis[whichMidi] == nil) {
-                                fprintf(stderr, "No MIDI devices of class %s present, unable to play.\n", [className cString]);
+                                fprintf(stderr, "No MIDI devices of class %s present, unable to play.\n", [className UTF8String]);
                                 continue;
                             }
                         }
@@ -495,7 +495,7 @@ int main(int argc, char *argv[])
 		    synthPatchClass = [MKSynthPatch findPatchClass: className];
 		    if (!synthPatchClass) {          
 			if (!quiet)
-			    fprintf(stderr,"MKSynthPatch %s cannot be loaded into program.\n", [className cString]);
+			    fprintf(stderr,"MKSynthPatch %s cannot be loaded into program.\n", [className UTF8String]);
 			continue;
 		    }
 		    if ([[MKOrchestra nthOrchestra: orchIndex] deviceStatus] != MK_devOpen) {
@@ -521,7 +521,7 @@ int main(int argc, char *argv[])
                         fprintf(stderr,
 				"Could only allocate %d instead of %d %ss for %s\n",
 				synthPatchCount, voices,
-				[[synthPatchClass name] cString], [MKGetObjectName(aPart) cString]);
+				[[synthPatchClass name] UTF8String], [MKGetObjectName(aPart) UTF8String]);
 		}
 	    }
 	}
@@ -565,7 +565,7 @@ int main(int argc, char *argv[])
 			if (midis[whichMidi] == nil) {
 			    midis[whichMidi] = [MKMidi midiOnDevice: className];
 			    if(midis[whichMidi] == nil) {
-				fprintf(stderr, "No MIDI devices of class %s present, unable to play.\n", [className cString]);
+				fprintf(stderr, "No MIDI devices of class %s present, unable to play.\n", [className UTF8String]);
 				continue;
 			    }
 			}
@@ -577,7 +577,7 @@ int main(int argc, char *argv[])
 		    if (!synthPatchClass) {          
 			if (!quiet)
 			    fprintf(stderr, "Class %s cannot be loaded into program.\n",
-				    [className cString]);
+				    [className UTF8String]);
 			continue;
 		    }
 		    if ([[MKOrchestra nthOrchestra: orchIndex] deviceStatus] != MK_devOpen) {
@@ -602,8 +602,8 @@ int main(int argc, char *argv[])
 		    if (repeat == 0 && synthPatchCount < voices) 
 			if (!quiet)
 			    fprintf(stderr, "Could only allocate %d instead of %d %ss for %s\n",
-				    synthPatchCount, voices, [[synthPatchClass name] cString],
-				    [MKGetObjectName(aNoteSender) cString]);
+				    synthPatchCount, voices, [[synthPatchClass name] UTF8String],
+				    [MKGetObjectName(aNoteSender) UTF8String]);
 		}
 	    }
 	}
@@ -625,9 +625,9 @@ int main(int argc, char *argv[])
 #endif
 	if (!quiet) {
 	    if (commandsFile)
-		fprintf(stderr,"writing to %s...\n", [commandsFile cString]);
+		fprintf(stderr,"writing to %s...\n", [commandsFile UTF8String]);
 	    if (outputFile)
-		fprintf(stderr,"writing to %s...\n", [outputFile cString]);
+		fprintf(stderr,"writing to %s...\n", [outputFile UTF8String]);
 	    else
 		fprintf(stderr,"playing...\n");
 	}

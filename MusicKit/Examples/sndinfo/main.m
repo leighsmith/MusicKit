@@ -25,13 +25,13 @@ void printSoundReport(NSString *filename, Snd *snd)
 {
     NSString *formatName = SndFormatName([snd dataFormat], YES);
     
-    printf("File: %s\n", [filename cString]);
-    printf("Data Format: %s\n", [formatName cString]);
+    printf("File: %s\n", [filename UTF8String]);
+    printf("Data Format: %s\n", [formatName UTF8String]);
     printf("Sampling Rate: %.2lf Hz\n", [snd samplingRate]);
     printf("Channels: %d\n", [snd channelCount]);
     printf("Sample frames: %ld\n", [snd lengthInSampleFrames]);
     printf("Duration: %.3lf seconds\n", [snd duration]);
-    printf("Info: %s\n", [[snd info] cString]);
+    printf("Info: %s\n", [[snd info] UTF8String]);
 }
 
 int main (int argc, const char * argv[])
@@ -42,7 +42,7 @@ int main (int argc, const char * argv[])
     int argIndex;
 
     for(argIndex = 1; argIndex < argc; argIndex++) {
-	filename = [NSString stringWithCString: argv[argIndex]];
+	filename = [NSString stringWithUTF8String: argv[argIndex]];
 	snd = [[Snd alloc] initFromSoundfile: filename];
 	if(snd != nil) {
 	    printSoundReport(filename, snd);

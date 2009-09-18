@@ -117,10 +117,10 @@ int main (int argc, const char *argv[])
 	else if (strcmp(argv[i],"-o") == 0)  {
 	    i++;
 	    if (i < argc)
-                outputFile = [NSString stringWithCString: argv[i]];
+                outputFile = [NSString stringWithUTF8String: argv[i]];
 	}
     }
-    inputFile = [NSString stringWithCString: argv[argc-1]];
+    inputFile = [NSString stringWithUTF8String: argv[argc-1]];
     if (!outputFile)
         outputFile = [inputFile stringByDeletingPathExtension]; /* Extension added by write routine */
 
@@ -180,7 +180,7 @@ int main (int argc, const char *argv[])
         exit(1);
     }
     if (errorFlag) {
-	fprintf(stderr,"Can't write %s.\n", [outputFile cString]);
+	fprintf(stderr,"Can't write %s.\n", [outputFile UTF8String]);
 	exit(1);
     }
     [pool release];
