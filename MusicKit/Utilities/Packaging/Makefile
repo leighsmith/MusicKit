@@ -95,7 +95,6 @@ packageBinaries: check_version $(BINARY_TARBALL)
 
 # Clean out anything already there.
 clean:
-	rm Info.plist Description.plist
 	rm -r -f $(BINARY_PACKAGEFILE)
 	rm $(BINARY_TARBALL)
 	rm $(SRC_TARBALL)
@@ -185,93 +184,3 @@ $(INSTALL_FILE_DIR):
 	sudo /bin/chmod -R 750 $(INSTALL_FILE_DIR)/
 	# Change ownership to root.wheel
 	sudo /usr/sbin/chown -R root:wheel $(INSTALL_FILE_DIR)/
-
-#  The .info file is in a basic key/value format. The keys that are
-#  commonly used are defined below, a more complete list of keys is
-#  available in the Yellow Box release notes
-#  (file:/System/Documentation/Developer/YellowBox/ReleaseNotes/CreatingPackages.html).
-#
-#  The Title, Version and Description keys are the values displayed in
-#  the Installer.app user interface. All are single line strings,
-#  including Description.
-#
-#  The DefaultLocation key is the destination directory where the
-#  contents of the package will be installed. This can be changed by
-#  the user if the Relocatable key is set to YES.
-#
-#  Some packages should only be installed as root, and those packages
-#  will have NeedsAuthorization set to YES. If there is no requirement
-#  to be root, you can set this key to NO.
-#
-#  If the package is an application, set the Application key to YES,
-#  otherwise to No. If you do not want your package contents to be
-#  deletable from Installer.app, set InstallOnly to YES. Finally, in
-#  most cases, you will want to allow the installation of a package to
-#  be stopped during the process. There are cases where that may not
-#  be wise (if your application has a packageName.pre_install script
-#  for example), and in those cases you'll want to set the DisableStop
-#  to YES, otherwise it should be set to NO.
-#
-Info.plist:
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > $@
-	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $@
-	@echo '<plist version="1.0">' >> $@
-	@echo '<dict>' >> $@
-	@echo '    <key>CFBundleGetInfoString</key>' >> $@
-	@echo '    <string>$(PACKAGETITLE)</string>' >> $@
-	@echo '    <key>CFBundleName</key>' >> $@
-	@echo '    <string>$(PACKAGETITLE)</string>' >> $@
-	@echo '    <key>CFBundleIdentifier</key>' >> $@
-	@echo '    <string>org.musickit.MusicKit</string>' >> $@
-	@echo '    <key>CFBundleShortVersion</key>' >> $@
-	@echo '    <string>$(VERSION)</string>' >> $@
-	@echo '    <key>IFMajorVersion</key>' >> $@
-	@echo '    <integer>0</integer>' >> $@
-	@echo '    <key>IFMinorVersion</key>' >> $@
-	@echo '    <integer>0</integer>' >> $@
-	@echo '    <key>IFPkgFlagAllowBackRev</key>' >> $@
-	@echo '    <false/>' >> $@
-	@echo '    <key>IFPkgFlagAuthorizationAction</key>' >> $@
-	@echo '    <string>AdminAuthorization</string>' >> $@
-	@echo '    <key>IFPkgFlagDefaultLocation</key>' >> $@
-	@echo '    <string>$(INSTALLROOT)</string>' >> $@
-	@echo '    <key>IFPkgFlagInstallFat</key>' >> $@
-	@echo '    <false/>' >> $@
-	@echo '    <key>IFPkgFlagIsRequired</key>' >> $@
-	@echo '    <false/>' >> $@
-	@echo '    <key>IFPkgFlagOverwritePermissions</key>' >> $@
-	@echo '    <true/>' >> $@
-	@echo '    <key>IFPkgFlagRelocatable</key>' >> $@
-	@echo '    <true/>' >> $@
-	@echo '    <key>IFPkgFlagRestartAction</key>' >> $@
-	@echo '    <string>NoRestart</string>' >> $@
-	@echo '    <key>IFPkgFlagRootVolumeOnly</key>' >> $@
-	@echo '    <false/>' >> $@
-	@echo '    <key>IFPkgFlagUpdateInstalledLanguages</key>' >> $@
-	@echo '    <false/>' >> $@
-	@echo '    <key>IFPkgFlagUseUserMask</key>' >> $@
-	@echo '    <false/>' >> $@
-	@echo '    <key>IFPkgFormatVersion</key>' >> $@
-	@echo '    <real>0.10000000149011612</real>' >> $@
-	@echo '</dict>' >> $@
-	@echo '</plist>' >> $@
-
-# Recent versions of installer now expect the description in a
-# separate file so it can be localized.
-Description.plist:
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > $@
-	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $@
-	@echo '<plist version="1.0">' >> $@
-	@echo '<dict>' >> $@
-	@echo '    <key>IFPkgDescriptionTitle</key>' >> $@
-	@echo '    <string>$(PACKAGETITLE)</string>' >> $@
-	@echo '    <key>IFPkgDescriptionVersion</key>' >> $@
-	@echo '    <string>$(VERSION)</string>' >> $@
-	@echo '</dict>' >> $@
-	@echo '</plist>' >> $@
-
-# Now build the package
-# TODO If we want the old fashioned (and safer!) way.
-# PackageMaker $INSTALL_FILE_DIR Info.plist -gnutar
-$(BINARY_PACKAGEFILE): $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework Info.plist Description.plist
-	/Developer/Tools/packagemaker -build -ds -p $@ -f $(INSTALL_FILE_DIR) -i Info.plist -d Description.plist
