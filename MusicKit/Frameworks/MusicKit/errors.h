@@ -704,7 +704,7 @@ typedef enum _MKErrno {
     MK_sfCantWriteErr,
     /*! Times appear out of order in a file. */
     MK_sfOutOfOrderErr,
-    /*! <b>comment</b> without a matching  <b>endComment</b>. */
+    /*! <b>comment</b> without a matching <b>endComment</b>. */
     MK_sfUnmatchedCommentErr,
     /*! A noteOff or noteUpdate appears for an inactive noteTag. */
     MK_sfInactiveNoteTagErr,

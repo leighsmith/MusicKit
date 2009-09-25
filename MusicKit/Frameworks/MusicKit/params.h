@@ -30,9 +30,9 @@
   
   Parameters are similar to objective-C messages in that their precise meaning 
   depends on the object interpreting them. The parameters are given below,
-  organized according to function. See MusicTables for a list of the parameters organized according
-  to which MKSynthPatches use them.  Applications may also define their own parameters,
-  as described in the MKNote class description.
+  organized according to function. See <A href="http://www.musickit.org/Concepts/musictables.html">Music Tables</A> 
+  for a list of the parameters organized according to which MKSynthPatches use them.
+  Applications may also define their own parameters, as described in the MKNote class description.
 */	  
 typedef enum _MKPars {
     MK_noPar = 0,          /*!< Begin marker */

@@ -185,7 +185,7 @@ typedef enum _MKPerformerStatus {
     /*! MKPerformer has been activated. MKPerformer is either performing
        (if [MKConductor startPerformance] has been invoked), or will start
        performing when the performance starts (as soon as 
-       [MKConductor startPerformance] is invoked.) */
+       [MKConductor startPerformance] is invoked). */
     MK_active,
     /*! MKPerformer was activated, then paused. */
     MK_paused

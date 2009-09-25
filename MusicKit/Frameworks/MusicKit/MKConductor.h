@@ -303,7 +303,7 @@ typedef struct _MKMsgStruct {
     MKConductor *_conductor;
 } MKMsgStruct;
 
-/*! Largest time value that may be scheduled with the MKConductor. */
+/*! Largest time value that may be scheduled with the MKConductor. See the Performance Concepts documentation for details.*/
 #define MK_ENDOFTIME (6000000000.0) /* A long time, but not as long as MK_FOREVER */
 
 /*!

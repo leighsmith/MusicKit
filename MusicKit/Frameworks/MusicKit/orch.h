@@ -25,7 +25,7 @@
 /*!
   @brief This enumeration specifies the memory segments supported by the
   MusicKit.  These memory segments are not necessarily contiguous on the
-  DSP -- they are "logical" rather than "physical".  The segments are:
+  DSP -- they are "logical" rather than "physical".
   Memory segments may be on or off chip unless otherwise indicated. 
  */
 typedef enum _MKOrchMemSegment {

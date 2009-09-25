@@ -1617,23 +1617,23 @@ extern void MKSetPreemptDuration(double seconds);
 - getMonitorVersion: (char *) versionP release: (int *) releaseP;
 
 /*!
- @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ @brief These constants define the MKOrchestra capabilities bits returned by the MKOrchestra <b>capabilities</b> method.
  */
 #define MK_nextCompatibleDSPPort 1
 /*!
- @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ @brief These constants define the MKOrchestra capabilities bits returned by the MKOrchestra <b>capabilities</b> method.
  */
 #define MK_hostSoundOut (1<<1)
 /*!
- @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ @brief These constants define the MKOrchestra capabilities bits returned by the MKOrchestra <b>capabilities</b> method.
  */
 #define MK_serialSoundOut (1<<2)
 /*!
- @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ @brief These constants define the MKOrchestra capabilities bits returned by the MKOrchestra <b>capabilities</b> method.
  */
 #define MK_soundIn (1<<3)
 /*!
- @brief These constants define the Orchestra capabilities bits returned by the Orchestra <b>capabilities</b> method.
+ @brief These constants define the MKOrchestra capabilities bits returned by the MKOrchestra <b>capabilities</b> method.
  */
 #define MK_soundfileOut (1<<4)
 

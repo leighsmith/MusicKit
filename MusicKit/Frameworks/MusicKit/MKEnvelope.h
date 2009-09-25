@@ -104,8 +104,7 @@ where 0.0 means no <i>smoothing</i> (a stairstep function), and 1.0 takes the
 entire duration between points to arrive at (near) the <i>y</i> value.  More
 precisely, a <i>smoothing</i> of 1.0 signifies that the AsympUG<b></b> will
 reach within -48dB of the <i>y</i> value.  A smoothing in excess of 1.0 causes
-the
-AsympUG trajectory to fall short of the next point's <i>y</i> value.  See the
+the AsympUG trajectory to fall short of the next point's <i>y</i> value.  See the
 AsympUG class description for the formula used to compute the asymptotic
 function.
 

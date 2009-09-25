@@ -19,7 +19,8 @@
  */
 
 /*!
-  @brief MIDI key numbers.  See MusicTables.rtf for more information.
+  @brief MIDI key numbers.  See <A href="http://www.musickit.org/Concepts/musictables.html">Music Tables</A> 
+  for more information.
  */
 typedef enum _MKKeyNum {
     c00k =0,cs00k,d00k,ef00k,e00k,f00k,fs00k,g00k,af00k,a00k,bf00k,b00k,
