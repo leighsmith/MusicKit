@@ -110,59 +110,56 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
     * with the conductor.  But then we'd have to worry
     * about MTC stopping in the interim.
     */
-    [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(1000 * 2/24.0)/1000.0]];
+    [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: (1000 * 2 / 24.0) / 1000.0]];
     adjustTime();
     sysTime = [[NSDate date] retain];
     MTCTime = [self->MTCSynch _time];
-    [mtcHelper setTimeSlip:0];
+    [mtcHelper setTimeSlip: 0];
     if (shouldSeek) {
-	//	int i,count;
-	id obj;
-	id listCopy; /* Need to copy list since deactivate/activate changes it */
+	MKPerformer *performer;
+	NSMutableArray *activePerformersCopy; /* Need to copy array since deactivate/activate changes it */
 	
-	/* We subtract MTCTime from pauseOffset because MTCTime will be added back in
-	    * by beatToClock().  
-	    *
-	    * oldAdjustedBaseTime = [MKConductor timeInSeconds] - _pauseOffset
-	    * We want _pauseOffset += oldAdjustedBaseTime - newBaseTime
-	    * But this is the same as _pauseOffset = [MKConductor timeInSeconds] - newBaseTime
-	    */
+	/* We subtract MTCTime from pauseOffset because MTCTime will be added back in by beatToClock().  
+         *
+         * oldAdjustedBaseTime = [MKConductor timeInSeconds] - _pauseOffset
+         * We want _pauseOffset += oldAdjustedBaseTime - newBaseTime
+         * But this is the same as _pauseOffset = [MKConductor timeInSeconds] - newBaseTime
+         */
 	self->_pauseOffset = [MKConductor timeInSeconds] - MTCTime;
 	/* For oldAdjustedClockTime (which is used only when delegate doesn't
-	    * provide a time map), we just set it to the same as the current
-* adjusted clockTime. 
-*/
+         * provide a time map), we just set it to the same as the current
+         * adjusted clockTime. 
+         */
 	self->oldAdjustedClockTime = [MKConductor timeInSeconds] - self->_pauseOffset;
         if (self->oldAdjustedClockTime < 0)
 	    self->oldAdjustedClockTime = 0;
-	if (DELEGATE_RESPONDS_TO(self,CLOCK_TO_BEAT)) 
-	    self->time = [self->delegate clockToBeat:MTCTime from:self];
-	else self->time = MTCTime * self->inverseBeatSize;
+	if (DELEGATE_RESPONDS_TO(self, CLOCK_TO_BEAT)) 
+	    self->time = [self->delegate clockToBeat: MTCTime from: self];
+	else 
+	    self->time = MTCTime * self->inverseBeatSize;
 	if (MKIsTraced(MK_TRACEMIDI))
 	    NSLog(@"MIDI time code MKConductor seeking.\n");
-	if ([self->delegate respondsToSelector:@selector(conductorWillSeek:)])
-	    [self->delegate conductorWillSeek:self];
-	listCopy = [self->activePerformers copy];
+	if ([self->delegate respondsToSelector: @selector(conductorWillSeek:)])
+	    [self->delegate conductorWillSeek: self];
+	activePerformersCopy = [self->activePerformers copy];
 	/* We could try and be smart and disable _removeActivePerformer: and
-	    * _addActivePerformer: but we might outsmart ourselves--the user's
-	    * activateSelf method could add a new performer, for example.
-	    */
+         * _addActivePerformer: but we might outsmart ourselves--the user's
+         * activateSelf method could add a new performer, for example.
+         */
 	endOfTimeOverride = YES;
-	/* sb: changed to enumerator */
-	//        for (i=0, count=[listCopy count]; i<count; i++)
-	//            obj = NX_ADDRESS(listCopy)[i];
         {
-            NSEnumerator *enumerator = [listCopy objectEnumerator];
-            while ((obj = [enumerator nextObject])) {
-                [obj deactivate];
-                [obj setFirstTimeTag:self->time];
-                [obj activate];
+            NSEnumerator *enumerator = [activePerformersCopy objectEnumerator];
+	    
+            while ((performer = [enumerator nextObject])) {
+                [performer deactivate];
+                [performer setFirstTimeTag: self->time];
+                [performer activate];
 	    }
         }
 	endOfTimeOverride = NO;
-	[listCopy release];
-	if ([self->delegate respondsToSelector:@selector(conductorDidSeek:)])
-	    [self->delegate conductorDidSeek:self];
+	[activePerformersCopy release];
+	if ([self->delegate respondsToSelector: @selector(conductorDidSeek:)])
+	    [self->delegate conductorDidSeek: self];
     }
     if (checkForEndOfTime())  /* Needed??? (FIXME) */
 	return NO;
@@ -172,9 +169,9 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
 	    NSLog(@"MIDI time code MKConductor running.\n");
 	[theMTCCond _resume];
 	[mtcHelper resume];
-	[self->MTCSynch _alarm:MTCTime + mtcPollPeriod];   
-	if ([self->delegate respondsToSelector:@selector(conductorDidResume:)])
-	    [self->delegate conductorDidResume:self];
+	[self->MTCSynch _alarm: MTCTime + mtcPollPeriod];   
+	if ([self->delegate respondsToSelector: @selector(conductorDidResume:)])
+	    [self->delegate conductorDidResume: self];
     }
     return YES;
 }
