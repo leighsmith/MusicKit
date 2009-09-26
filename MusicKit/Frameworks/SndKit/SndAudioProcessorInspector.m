@@ -129,20 +129,22 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 // setAudioProcessor:
 ////////////////////////////////////////////////////////////////////////////////
 
-- setAudioProcessor: (SndAudioProcessor*) anAudProc
+- setAudioProcessor: (SndAudioProcessor *) anAudProc
 {
-  if (theAudProc != nil)
-    [theAudProc release];
-  theAudProc = [anAudProc retain];
-  [processorName setStringValue: [theAudProc name]];
-
-  [parameterTableView selectRow: 0 byExtendingSelection: NO];
-  [parameterValueSilder setFloatValue: [theAudProc paramValue: 0]];
-  [parameterTableView setDataSource: self];
-
-  [parameterTableView reloadData];
-  [processorActive setIntValue: [theAudProc isActive]];
-  return self;
+    NSIndexSet *indexes = [NSIndexSet indexSetWithIndex: 0];
+    
+    if (theAudProc != nil)
+	[theAudProc release];
+    theAudProc = [anAudProc retain];
+    [processorName setStringValue: [theAudProc name]];
+    
+    [parameterTableView selectRowIndexes: indexes byExtendingSelection: NO];
+    [parameterValueSilder setFloatValue: [theAudProc paramValue: 0]];
+    [parameterTableView setDataSource: self];
+    
+    [parameterTableView reloadData];
+    [processorActive setIntValue: [theAudProc isActive]];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
