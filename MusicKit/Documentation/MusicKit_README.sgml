@@ -1472,7 +1472,7 @@ sudo make install
 
 	<varlistentry id=libshout>
 	  <term>
-            <ulink url="&libshoutdownload;">libshout-&libshoutvertuple;.tar.gz</ulink>. Status:
+            <ulink url="&libshoutdownload;">icecast-&libshoutvertuple;.tar.gz</ulink>. Status:
             optional - disables
             <classname>SndAudioProcessorMP3Encoder</classname> if omitted.
           </term>
@@ -1488,8 +1488,8 @@ server.
 Install the library using:
                 <informalexample>
                   <screen>
-tar xzvf libshout-&libshoutvertuple;.tar.gz
-cd libshout-&libshoutvertuple;
+tar xzvf icecast-&libshoutvertuple;.tar.gz
+cd icecast-&libshoutvertuple;
 sh ./configure --without-python --disable-dependency-tracking
 make
 sudo make install
@@ -1566,7 +1566,7 @@ Install the library using:
                   <screen>
 tar xzvf libmp3hip-&hipvertuple;.tar.gz
 cd libmp3hip-&hipvertuple;
-sh ./configure --without-python --disable-dependency-tracking
+sh ./configure
 make
 sudo make install
 </screen>
@@ -2315,9 +2315,9 @@ Sound recording/performance.
     <itemizedlist>
       <listitem>
 	<para>
-The current list of tasks to be done is listed on the 
-<systemitem class="systemname">sourceforge</systemitem> 
-<ulink url="http://www.sourceforge.net/projects/musickit">Task Manager</ulink>.
+The current tasks to be done (tickets) are listed on the 
+<systemitem class="systemname">sourceforge</systemitem> MusicKit
+<ulink url="http://www.sourceforge.net/apps/trac/musickit">Trac Manager</ulink>.
 </para>
       </listitem>
       <listitem>
