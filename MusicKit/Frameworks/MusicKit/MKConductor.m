@@ -814,7 +814,11 @@ static void initializeConductorList()
     startTime = [[NSDate date] retain];
     if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE) {
         [startTime autorelease];
-        startTime = [[startTime addTimeInterval: (0 - MKGetDeltaT())] retain];
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+        startTime = [[startTime addTimeInterval: (0 - MKGetDeltaT())] retain]; // MacOS 10.5 Cocoa
+#else
+	startTime = [[startTime dateByAddingTimeInterval: (0 - MKGetDeltaT())] retain]; // MacOS 10.6 Cocoa
+#endif
     }
     if (separateThread) {
 	launchThread();
@@ -954,8 +958,11 @@ static void evalAfterQueues()
 	return nil;
     performanceIsPaused = NO;
     [startTime autorelease];
-//    startTime += (getTime() - pauseTime);
-    startTime = [[startTime addTimeInterval:[[NSDate date] timeIntervalSinceDate:pauseTime]] retain];
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+    startTime = [[startTime addTimeInterval: [[NSDate date] timeIntervalSinceDate: pauseTime]] retain]; // MacOS 10.5 Cocoa
+#else
+    startTime = [[startTime dateByAddingTimeInterval: [[NSDate date] timeIntervalSinceDate: pauseTime]] retain]; // MacOS 10.6 Cocoa
+#endif
     /* We use cur-start to get the time since the start of the performance
        with all pauses removed. Thus by increasing startTime by the
        paused time, we remove the effect of the pause. */

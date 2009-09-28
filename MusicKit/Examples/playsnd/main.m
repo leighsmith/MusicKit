@@ -22,8 +22,8 @@
 
 // Version info
 #define V_MAJ  5
-#define V_MIN  5
-#define V_PATCH 3
+#define V_MIN  6
+#define V_PATCH 2
 
 #define USE_SNDEXPT 0
 
@@ -210,7 +210,7 @@ int main (int argc, const char * argv[])
 	}
     }
     if (soundFileName == nil)
-	printError(-2, "No soundfile name given");
+	printError(-2, "No soundfile name given\n");
     
     // Reason why we finally exit here instead of eariler - allow all error msgs to
     // be displayed before exit
@@ -259,7 +259,7 @@ int main (int argc, const char * argv[])
         [soundToPlay convertToSampleFormat: SND_FORMAT_FLOAT];
 #endif
         if (showInfo) {
-	    NSLog([soundToPlay description]);
+	    NSLog(@"%@", [soundToPlay description]);
 	    [soundToPlay release];
 	    return 0;
         }

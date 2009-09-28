@@ -94,8 +94,12 @@
 	return SND_ERR_CANNOT_OPEN;
     }
     
-  // check its seekable, by checking it is a POSIX regular file.
+    // check its seekable, by checking it is a POSIX regular file.
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4)
     fileAttributeDictionary = [fileManager fileAttributesAtPath: filename traverseLink: YES];
+#else
+    fileAttributeDictionary = [fileManager attributesOfItemAtPath: filename error: NULL];
+#endif
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
 	return SND_ERR_CANNOT_OPEN;
     

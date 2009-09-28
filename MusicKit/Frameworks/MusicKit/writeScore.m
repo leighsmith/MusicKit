@@ -80,7 +80,11 @@ _MKInitScoreOut(NSMutableData *fileStream, id owner, MKNote *anInfoNote, double 
 #   define DEFAULTINDECIES 8
     p->_binary = binary;
     if (binary) {
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4)
 	p->_binaryIndecies = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntMapValueCallBacks, DEFAULTINDECIES);
+#else
+	p->_binaryIndecies = NSCreateMapTable(NSObjectMapKeyCallBacks, NSIntegerMapValueCallBacks, DEFAULTINDECIES);
+#endif	
         p->_highBinaryIndex = 0;
     }
     else

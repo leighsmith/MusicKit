@@ -42,7 +42,7 @@
 /* error log */
 static int s_error_log_disabled = 1;	 /* Stifle error print-out if nonzero */
 static FILE *s_err_fp = 0;
-static char *s_err_fn = DSP_ERRORS_FILE;
+static const char *s_err_fn = DSP_ERRORS_FILE;
 
 #ifdef GETPWUID_BUG_FIXED
 #include <pwd.h>		/* for getpwuid */
@@ -185,7 +185,7 @@ int DSPSetErrorFile(
 }
 
 
-char *DSPGetErrorFile(void)
+const char *DSPGetErrorFile(void)
 {
     return s_err_fn;
 }

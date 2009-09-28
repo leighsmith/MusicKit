@@ -356,8 +356,11 @@
     }
     
     // check its seekable, by checking it is POSIX regular.
-    fileAttributeDictionary = [fileManager fileAttributesAtPath: expandedFilename
-					           traverseLink: YES];
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+    fileAttributeDictionary = [fileManager fileAttributesAtPath: expandedFilename traverseLink: YES];
+#else
+    fileAttributeDictionary = [fileManager attributesOfItemAtPath: expandedFilename error: NULL];
+#endif
     
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular) {
 	NSLog(@"Snd -readSoundfile: sound file %@ not a regular file\n", expandedFilename);

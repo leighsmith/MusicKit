@@ -211,7 +211,7 @@ inline static int axonData(id msg, int start)
     [compactedPatch getBytes: patchNameAscii range: patchNameRange];
     patchNameAscii[PATCHNAME_LEN] = '\0';
     [self setPatchDescription: [NSString stringWithUTF8String: patchNameAscii]];
-    NSLog([self patchDescription]);
+    NSLog(@"%@", [self patchDescription]);
 }
 
 

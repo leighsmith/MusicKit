@@ -27,7 +27,7 @@ static void handleMKError(NSString *msg)
       }
     }
     else {
-	NSLog(msg);
+	NSLog(@"%@", msg);
     }
 }
 

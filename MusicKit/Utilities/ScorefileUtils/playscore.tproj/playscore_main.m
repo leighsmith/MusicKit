@@ -240,7 +240,7 @@ static BOOL checkForMidi(id obj)
 
 static void nullErrorHandler(NSString *msg)
 {
-    NSLog(msg);
+    NSLog(@"%@", msg);
 }
 
 static int openOrch(int orchIndex, BOOL waitForIt, BOOL quiet, BOOL allDSPs)

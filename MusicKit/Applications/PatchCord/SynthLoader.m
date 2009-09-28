@@ -109,7 +109,7 @@
              userData: (NSString *) sortArgs
                 error: (NSString **) errorMessage
 {
-    NSArray *ptypes  = [pasteboard types];
+    NSArray *ptypes = [pasteboard types];
     NSString  *pboardString;
     SysExMessage *newsysex;
     NSDocumentController *dc;
@@ -131,7 +131,9 @@
     // create a new bank if there is not already one opened by the DocumentController
     dc = [NSDocumentController sharedDocumentController];
     if([[dc documents] count] == 0) {
-       [dc openUntitledDocumentOfType: @"MIDI" display: YES];
+	NSError *outError;
+	
+	[dc openUntitledDocumentAndDisplay: YES error: &outError];
     }
 
     // now create a sysex message and send it to the receiver to have it interpreted.

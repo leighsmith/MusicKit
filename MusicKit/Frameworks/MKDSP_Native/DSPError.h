@@ -53,7 +53,7 @@ MKDSP_API int DSPSetErrorFile(const char *fn);
  */
 
 
-MKDSP_API char *DSPGetErrorFile(void);
+MKDSP_API const char *DSPGetErrorFile(void);
 /* 
  * Get the file-name being used for DSP error messages, if known.
  * If unknown, such as when only a file-pointer was passed to

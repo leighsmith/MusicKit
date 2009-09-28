@@ -127,7 +127,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
     sortOrderString = [NSString stringWithFormat: @"PatchCordSortOrder: %@", sortOrder];
     [sortOrderNote setPar: MK_text toString: sortOrderString];
     [infoPart addNote: sortOrderNote];
-    NSLog(sortOrderString);
+    NSLog(@"%@", sortOrderString);
 
     // [sysexScore setInfo: infoNote];
     [sysexScore addPart: infoPart];
@@ -205,7 +205,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
     SysExMessage *newMessage;
     int partIndex;
     int noteIndex;
-    NSMutableArray *newSortOrder;
+    // NSMutableArray *newSortOrder;
 
     [sysexScore readMidifileStream: [NSMutableData dataWithData: smf]];
 

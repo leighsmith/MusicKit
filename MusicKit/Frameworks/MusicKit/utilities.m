@@ -840,24 +840,26 @@ BOOL MKLoadAllBundles(void)
     BOOL loadedSome = FALSE;
 
     for(i = 0; i < [libraryDirs count]; i++) {
-        NSString *path = [[libraryDirs objectAtIndex: i]
-                            stringByAppendingPathComponent: MK_BUNDLE_DIR];
-        NSArray *files = [[NSFileManager defaultManager]
-                            directoryContentsAtPath:path];
+        NSString *path = [[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: MK_BUNDLE_DIR];
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4)
+	NSArray *files = [[NSFileManager defaultManager] directoryContentsAtPath:path];
+#else	
+        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: NULL];
+#endif
 
         for (j = 0 ; j < [files count] ; j++) {
-            NSString *tryFile = [files objectAtIndex:j];
+            NSString *tryFile = [files objectAtIndex: j];
             if ([[tryFile pathExtension] isEqualToString: MK_BUNDLE_EXTENSION]) {
-                tryFile = [path stringByAppendingPathComponent:tryFile];
+                tryFile = [path stringByAppendingPathComponent: tryFile];
                 if ([[NSFileManager defaultManager] isReadableFileAtPath: tryFile]) {
-                    NSBundle *bundleToLoad = [NSBundle bundleWithPath:tryFile];
-                    NSLog(@"Attempting to load bundle at %@",tryFile);
+                    NSBundle *bundleToLoad = [NSBundle bundleWithPath: tryFile];
+                    NSLog(@"Attempting to load bundle at %@", tryFile);
                     if ((newClass = [[[bundleToLoad principalClass] alloc] init])) {
                         NSLog(@"Managed to load principal class");
                         loadedSome = TRUE;
-                        if ([newClass conformsToProtocol:@protocol(MusicKitPlugin)]) {
-                            [(id<MusicKitPlugin>)newClass setDelegate:[MKScore class]];
-                            [MKScore addPlugin:newClass];
+                        if ([newClass conformsToProtocol: @protocol(MusicKitPlugin)]) {
+                            [(id<MusicKitPlugin>)newClass setDelegate: [MKScore class]];
+                            [MKScore addPlugin: newClass];
                         }
                         [newClass release];
                     }
@@ -866,4 +868,4 @@ BOOL MKLoadAllBundles(void)
         }
     }
     return loadedSome;
-}    
+}

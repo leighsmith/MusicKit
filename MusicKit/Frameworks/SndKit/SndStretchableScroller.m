@@ -118,7 +118,12 @@
 		    newValue = (r.origin.x - slotRect.origin.x) / (slotRect.size.width - r.size.width);
 		    newProp  = r.size.width / slotRect.size.width;
 		    if(newProp >= MIN_PROPORTION) {
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4)
 			[self setFloatValue: newValue knobProportion: newProp];
+#else
+			[self setKnobProportion: newProp];
+			[self setFloatValue: newValue];
+#endif
 			[self modifySndViewScale: newProp];
 		    }
 		}

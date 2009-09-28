@@ -74,7 +74,7 @@
     [midiInstrument release];
     midiInstrument = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
     [midiInstrument retain];
-    NSLog([midiInstrument driverName]);
+    NSLog(@"%@", [midiInstrument driverName]);
 }
 
 // Determine the sample filename to be assigned to this note using the keymap
@@ -83,8 +83,7 @@
     NSString *chanAndKeyNum = [NSString stringWithFormat: KEYMAPFORMAT, [aNote parAsInt: MK_midiChan], [aNote parAsInt: MK_keyNum]];
     NSString *filename = [keymap objectForKey: chanAndKeyNum];
 
-    NSLog(@"Testing  %@\n", chanAndKeyNum);
-    NSLog([aNote description]);
+    NSLog(@"Testing  %@\n%@", chanAndKeyNum, [aNote description]);
     if(filename == nil) { // if we can't find the filename using the keymap, we may be able to find it using the noteTag
         filename = [samplesIndexedByTag objectForKey: [NSNumber numberWithInt: [aNote noteTag]]];
     }

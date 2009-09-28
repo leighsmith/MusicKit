@@ -65,21 +65,21 @@
     return self;
 }
 
-- (void) setFileName: (NSString *) aName
+- (void) setSoundFileURL: (NSURL *) newSoundFileURL
 {
-    [fileName release];
-    fileName = [aName copy];
+    [soundfileURL release];
+    soundfileURL = [newSoundFileURL copy];
 }
 
-- (NSString *) fileName
+- (NSURL *) soundFileURL
 {
-    return fileName;
+    return [[soundfileURL retain] autorelease];
 }
 
 - (void) setWindowTitle
 {
     int channelCount = [theSound channelCount];
-    NSString *title = [fileName stringByAppendingFormat: @" (%i Hz %@, %s)", 
+    NSString *title = [[[self soundFileURL] path] stringByAppendingFormat: @" (%i Hz %@, %s)", 
 			(int) [theSound samplingRate],
 			[theSound formatDescription],
 			channelCount == 1 ? "Mono" : channelCount == 2 ? "Stereo" : "Mult-channel"];
@@ -133,7 +133,7 @@
     theSound = [[Snd alloc] initFromSoundURL: soundURL]; // will retain.
     
     if (theSound) {
-	[self setFileName: [soundURL path]]; // kludged for now, can eventually be removed when fileName is no longer used.
+	[self setSoundFileURL: soundURL];
 	[theSound setDelegate: self]; // to receive notices of playing/recording completion.
 	fresh = NO;
 	return YES;
@@ -200,15 +200,15 @@
 - (IBAction) revertToSaved: (id) sender
 {
     NSBundle *mainB = [NSBundle mainBundle];
-    if([[self windowForSheet] isDocumentEdited] && fileName
-       && ![[fileName lastPathComponent] isEqualToString:@"/UNTITLED"]) {
+    if([[self windowForSheet] isDocumentEdited] && soundfileURL
+       && ![[[[soundfileURL path] lastPathComponent] isEqualToString:@"/UNTITLED"]) {
         if (NSRunAlertPanel(
 			    [mainB localizedStringForKey:@"Revert" value:@"Revert" table:nil],
 			    [mainB localizedStringForKey:@"Revert to saved version of %@?"
 						   value:@"Revert to saved version of %@?" table:nil],
 			    [mainB localizedStringForKey:@"Revert" value:@"Revert" table:nil],
 			    [mainB localizedStringForKey:@"Cancel" value:@"Cancel" table:nil],
-			    nil, fileName) == NSAlertDefaultReturn)
+			    nil, [soundfileURL path]) == NSAlertDefaultReturn)
             // [self load:nil];
 	    ;
     }
@@ -435,7 +435,7 @@
     
     if ([theSound isEmpty])
 	return;
-    title = [[self fileName] lastPathComponent];
+    title = [[[self soundFileURL] path] lastPathComponent];
     [soundInfo displaySound: theSound title: title];
 }
 
@@ -447,7 +447,7 @@
 	mySpectrumDocument = [[SpectrumDocument alloc] init];
 	[mySpectrumDocument setDelegate: self];
 	[mySpectrumDocument setSoundView: mySoundView];
-	[mySpectrumDocument setWindowTitle: [self fileName]];
+	[mySpectrumDocument setWindowTitle: [[self soundFileURL] path]];
     }
     [mySpectrumDocument spectroButtonDepressed];
     [spectrumButton setState: 0];

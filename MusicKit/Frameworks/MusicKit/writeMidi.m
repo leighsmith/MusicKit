@@ -81,8 +81,11 @@ _MKMidiOutStruct *_MKInitMidiOut()
     NSMapTableValueCallBacks valueCallBacks = {NSOwnedPointerMapValueCallBacks.retain, 
                                                freeMidiOutNode,
 					       NSOwnedPointerMapValueCallBacks.describe};
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4)
     NSMapTableKeyCallBacks keyCallBacks = NSIntMapKeyCallBacks;//{NULL, NULL, NULL, NULL, NULL, NULL};
-
+#else
+    NSMapTableKeyCallBacks keyCallBacks = NSIntegerMapKeyCallBacks;//{NULL, NULL, NULL, NULL, NULL, NULL};
+#endif
     if (!beenHere) {
 	beenHere = YES;
 	for ( ; midiOutNodeCachePtr < CACHESIZE; midiOutNodeCachePtr++) 

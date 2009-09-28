@@ -1,11 +1,15 @@
 #import <AppKit/AppKit.h>
 #import "MIDISysExSynth.h"
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
 @interface UnhandledSynth: MIDISysExSynth
+#else
+@interface UnhandledSynth: MIDISysExSynth <NSTextViewDelegate>
+#endif
 {
-  IBOutlet id scrollingDisplay;  // Points to our NSText NSScrollView
-  NSTextView *sysExText;         // The NSTextView within the NSScrollView
-  SysExMessage *userMessages;	 // the messages typed by the user, the superclass has those received from the synth.
+    IBOutlet id scrollingDisplay;   // Points to our NSText NSScrollView
+    NSTextView *sysExText;	    // The NSTextView within the NSScrollView
+    SysExMessage *userMessages;	    // the messages typed by the user, the superclass has those received from the synth.
 }
 
 - (id) init;

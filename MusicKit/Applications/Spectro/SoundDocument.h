@@ -19,7 +19,11 @@
 #import "SpectrumDocument.h"
 #import "ScrollingSound.h"
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
 @interface SoundDocument: NSDocument
+#else
+@interface SoundDocument: NSDocument <NSWindowDelegate>
+#endif
 {
     IBOutlet NSButton *playButton;
     IBOutlet NSButton *recordButton;
@@ -38,7 +42,7 @@
     SoundInfo *soundInfo;
     SpectrumDocument *mySpectrumDocument;
     Snd *theSound;
-    NSString *fileName;
+    NSURL *soundfileURL;
     SndView *mySoundView;
     BOOL fresh;
 }

@@ -41,7 +41,7 @@ int main (int argc, const char *argv[])
     // either getopt or better
 
     if (argc==1) {
-        fprintf(stderr,helpString);
+        fprintf(stderr, "%s", helpString);
         exit(1);
     }
     for (i=1; i<argc; i++) {

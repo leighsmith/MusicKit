@@ -722,9 +722,14 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
     // we can't estimate their consumption rate, so this is the entire
     // performance duration since last MKMDSetClockTime. 
     // We note the start date of MKMDSetClockTime and wait an absolute date.
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
     [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-                             beforeDate: [datumAsDate addTimeInterval: delayEstimateInSeconds]];
-
+                             beforeDate: [datumAsDate addTimeInterval: delayEstimateInSeconds]]; // MacOS 10.5 Cocoa
+#else
+    [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                             beforeDate: [datumAsDate dateByAddingTimeInterval: delayEstimateInSeconds]]; // MacOS 10.6 Cocoa
+#endif
+    
     // Should be calling userFuncs appropriately.
     
     playEndTimeEstimate = 0;

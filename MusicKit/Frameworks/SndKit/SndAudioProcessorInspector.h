@@ -30,17 +30,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class SndAudioProcessorInspector
-@brief An inspector window for SndAudioProcessors
+  @class SndAudioProcessorInspector
+  @brief An inspector window for SndAudioProcessors
 
   SndAudioProcessorInspector has an SndAudioArchitectureView allowing user to select
   the SndAudioProcessor of interest, whose parameters are then displayed
   in the tableview. A slider allows the user to change the "VST
-  styled" float params in the range [0, 1]. This will change to utilize
-  the newer NSValue styled parameter API shortly.
+  styled" float params in the range [0, 1]. TODO This should be changed to utilize
+  the newer NSValue styled parameter API.
 */
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
 @interface SndAudioProcessorInspector : NSObject {
-/*! */  
+#else
+@interface SndAudioProcessorInspector : NSObject <NSTableViewDataSource> {
+#endif
+    
+    /*! */  
   IBOutlet NSTableView *parameterTableView;
 /*! */  
   IBOutlet NSSlider *parameterValueSilder;

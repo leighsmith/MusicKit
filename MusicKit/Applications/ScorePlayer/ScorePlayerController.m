@@ -235,8 +235,12 @@ static void setFileTime(void)
     
     if (scoreForm == PLAYSCORE_FILE)
         return;
-    fattrs = [[NSFileManager defaultManager] fileAttributesAtPath: fileName
-                                                     traverseLink: YES];
+    
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+    fattrs = [[NSFileManager defaultManager] fileAttributesAtPath: fileName traverseLink: YES];
+#else
+    fattrs = [[NSFileManager defaultManager] attributesOfItemAtPath: fileName error: NULL];
+#endif
     lastModifyTime = [[fattrs objectForKey:NSFileModificationDate] retain];
 }
 
@@ -249,8 +253,11 @@ static BOOL needToReread(void)
     
     if (scoreForm == PLAYSCORE_FILE)
         return NO;
-    fattrs = [[NSFileManager defaultManager] fileAttributesAtPath: fileName
-                                                     traverseLink: YES];
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+    fattrs = [[NSFileManager defaultManager] fileAttributesAtPath: fileName traverseLink: YES];
+#else
+    fattrs = [[NSFileManager defaultManager] attributesOfItemAtPath: fileName error: NULL];
+#endif
     fileModifyTime = [fattrs objectForKey: NSFileModificationDate];
     reread = ([fileModifyTime compare: lastModifyTime] == NSOrderedDescending);
     [lastModifyTime release];

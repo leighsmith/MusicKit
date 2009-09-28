@@ -897,7 +897,7 @@ void freeDraw()
     types = [NSArray arrayWithObject: NSStringPboardType];
     [[NSPasteboard generalPasteboard] declareTypes: types owner: self];
     if(![[NSPasteboard generalPasteboard] setString: stringToCopy forType: NSStringPboardType])
-	NSLog([NSString stringWithFormat: @"Unable to copy %@\n", stringToCopy]);
+	NSLog(@"Unable to copy %@\n", stringToCopy);
 }
 
 //-------------------------------------------------------------------

@@ -153,7 +153,7 @@ static unsigned int patchCounter;
 
     synthClassUserSelected = NSClassFromString([synthList titleOfSelectedItem]);
     if(synthClassUserSelected == nil) {
-        NSLog([NSString stringWithFormat: @"Unable to find a class named %@\n", [synthList titleOfSelectedItem]]);
+        NSLog(@"Unable to find a class named %@\n", [synthList titleOfSelectedItem]);
         return;
     }
 
@@ -197,8 +197,7 @@ static unsigned int patchCounter;
     NSLog(@"Getting from the synth\n");
     synthClassUserSelected = NSClassFromString([synthList titleOfSelectedItem]);
     if(synthClassUserSelected == nil) {
-        NSLog([NSString stringWithFormat: @"Unable to find a class named %@\n", 
-            [synthList titleOfSelectedItem]]);
+        NSLog(@"Unable to find a class named %@\n", [synthList titleOfSelectedItem]);
         return;
     }
 
