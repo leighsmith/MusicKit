@@ -13636,7 +13636,7 @@
 				LIBRARY_SEARCH_PATHS = /sw/lib;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
 			};
 			name = Development;
@@ -13647,7 +13647,7 @@
 				GCC_MODEL_TUNING = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Deployment;
@@ -13656,7 +13656,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = "";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Embedded;
@@ -13665,7 +13665,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = "";
 				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
 			};
 			name = Default;

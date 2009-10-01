@@ -17,7 +17,7 @@
 
 CONFIG = OTHER_CFLAGS="@DEFS@ @CFLAGS@ @CPPFLAGS@" LDFLAGS="@LDFLAGS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 PROJECT = -project MusicKit.xcodeproj
-SDK = -sdk macosx10.6
+SDK = # -sdk macosx10.6 # disabled for now
 XCODEBUILD = xcodebuild $(PROJECT) $(SDK)
 # This allows overriding this on the command line.
 DSTROOT=/
