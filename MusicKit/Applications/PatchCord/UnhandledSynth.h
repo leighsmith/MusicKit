@@ -1,7 +1,7 @@
 #import <AppKit/AppKit.h>
 #import "MIDISysExSynth.h"
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
 @interface UnhandledSynth: MIDISysExSynth
 #else
 @interface UnhandledSynth: MIDISysExSynth <NSTextViewDelegate>

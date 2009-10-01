@@ -1916,6 +1916,20 @@ the user must manually modify <envar>CONFIGURED_LIBS</envar> build setting in th
 SndKit target to match the setting in <filename>Makefile</filename>.
 </para>
 
+	<para>
+To build on MacOS 10.6, currently the MusicKit and SndKit frameworks must be built for the
+i386 32 bit architecture. This requires the supporting libraries to also be built as i386
+binaries. Assuming the support libraries are built with an i386 architecture binary,
+<command>configure</command> needs to be instructed to test the library linking with the
+i386 architecture, using the -arch flag:
+
+	<informalexample id=mkbuildflags>
+	  <screen>
+./configure CFLAGS="-arch i386"
+make
+</screen>
+	</informalexample>
+
       <note>
       <para>
 The <filename>MKUnitGenerators</filename> and

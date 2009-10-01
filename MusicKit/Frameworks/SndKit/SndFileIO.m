@@ -356,7 +356,7 @@
     }
     
     // check its seekable, by checking it is POSIX regular.
-#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
     fileAttributeDictionary = [fileManager fileAttributesAtPath: expandedFilename traverseLink: YES];
 #else
     fileAttributeDictionary = [fileManager attributesOfItemAtPath: expandedFilename error: NULL];

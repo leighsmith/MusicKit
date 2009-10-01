@@ -39,39 +39,30 @@
   styled" float params in the range [0, 1]. TODO This should be changed to utilize
   the newer NSValue styled parameter API.
 */
-#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
 @interface SndAudioProcessorInspector : NSObject {
 #else
 @interface SndAudioProcessorInspector : NSObject <NSTableViewDataSource> {
 #endif
     
-    /*! */  
   IBOutlet NSTableView *parameterTableView;
-/*! */  
   IBOutlet NSSlider *parameterValueSilder;
 /*! Checkbox */  
   IBOutlet NSButton *processorActive;
-/*! */  
   IBOutlet NSTextField *processorName;
-/*! */  
   IBOutlet SndStreamArchitectureView *sndArchView;
 /*! The current target for inspection */  
   SndAudioProcessor *theAudProc;
 
-/*! */  
   IBOutlet NSButton *addFxButton;
-/*! */  
   IBOutlet NSButton *delFxButton;
-/*! */  
   IBOutlet NSComboBox *fxChooser;
-/*! */  
   IBOutlet NSPanel *window;
 }
 
 /*!
-  @brief   To come
+  @brief   Return an autoreleased default audio processor inspector.
   
-  To come
   @return     id to the default SndAudioProcessorInspector.
 */
 + defaultAudioProcessorInspector;
@@ -79,55 +70,55 @@
 /*!
   @brief
   
-  
   @param      anAudProc
   @return     self
 */
 - initWithAudioProcessor: (SndAudioProcessor*) anAudProc;
+
 /*!
-  @brief
-  
+  @brief Assign an SndAudioProcessor instance for inspection.
   
   @param      anAudProc
   @return
 */
 - setAudioProcessor: (SndAudioProcessor*) anAudProc;
+
 /*!
-  @brief
-  
+  @brief Action method called when the processor is set active.
   
   @param      sender
   @return
 */
 - onProcessorActive: (id) sender;
+
 /*!
   @brief
-  
   
   @param      sender
   @return
 */
 - onParameterValueSlider: (id) sender;
+
 /*!
   @brief
-  
   
   @param      sender
   @return
 */
 - parameterTableAction: (id) sender;
+    
 /*!
   @brief   Adds an SndAudioProcessor of the Chooser's  currently selected type
   to the currently selected object in the SndStreamArchitectureView,
   which must be of type SndStreamClient or SndStreamMixer.
   
-  To come
   @param      sender sender's id.
   @return     self
 */
 - onAddFxButton: (id) sender;
+
 /*!
-  @brief   Respose method for the Del button.
+  @brief   Respose method for the Delete button.
   
   Removes the currently selected SndAudioProcessor from the host
   object's SndAudioProcessorChain. If the currently selected object

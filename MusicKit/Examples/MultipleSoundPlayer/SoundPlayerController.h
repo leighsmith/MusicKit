@@ -16,7 +16,7 @@
 #import <AppKit/AppKit.h>
 #import <SndKit/SndKit.h>
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
 @interface SoundPlayerController : NSObject
 #else
 @interface SoundPlayerController : NSObject <NSTableViewDataSource>

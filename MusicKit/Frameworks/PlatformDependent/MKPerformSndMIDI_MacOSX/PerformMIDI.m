@@ -722,7 +722,7 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
     // we can't estimate their consumption rate, so this is the entire
     // performance duration since last MKMDSetClockTime. 
     // We note the start date of MKMDSetClockTime and wait an absolute date.
-#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5)
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
     [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
                              beforeDate: [datumAsDate addTimeInterval: delayEstimateInSeconds]]; // MacOS 10.5 Cocoa
 #else
