@@ -814,7 +814,7 @@ static void initializeConductorList()
     startTime = [[NSDate date] retain];
     if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE) {
         [startTime autorelease];
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
+#if !defined(MAC_OS_X_VERSION_10_6) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
         startTime = [[startTime addTimeInterval: (0 - MKGetDeltaT())] retain]; // MacOS 10.5 Cocoa
 #else
 	startTime = [[startTime dateByAddingTimeInterval: (0 - MKGetDeltaT())] retain]; // MacOS 10.6 Cocoa
@@ -958,7 +958,7 @@ static void evalAfterQueues()
 	return nil;
     performanceIsPaused = NO;
     [startTime autorelease];
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
+#if !defined(MAC_OS_X_VERSION_10_6) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
     startTime = [[startTime addTimeInterval: [[NSDate date] timeIntervalSinceDate: pauseTime]] retain]; // MacOS 10.5 Cocoa
 #else
     startTime = [[startTime dateByAddingTimeInterval: [[NSDate date] timeIntervalSinceDate: pauseTime]] retain]; // MacOS 10.6 Cocoa

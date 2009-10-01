@@ -19,7 +19,7 @@
 #import "SpectrumDocument.h"
 #import "ScrollingSound.h"
 
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
+#if !defined(MAC_OS_X_VERSION_10_6) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
 @interface SoundDocument: NSDocument
 #else
 @interface SoundDocument: NSDocument <NSWindowDelegate>

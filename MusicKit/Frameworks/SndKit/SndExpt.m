@@ -95,7 +95,7 @@
     }
     
     // check its seekable, by checking it is a POSIX regular file.
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
     fileAttributeDictionary = [fileManager fileAttributesAtPath: filename traverseLink: YES];
 #else
     fileAttributeDictionary = [fileManager attributesOfItemAtPath: filename error: NULL];

@@ -841,7 +841,7 @@ BOOL MKLoadAllBundles(void)
 
     for(i = 0; i < [libraryDirs count]; i++) {
         NSString *path = [[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: MK_BUNDLE_DIR];
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
 	NSArray *files = [[NSFileManager defaultManager] directoryContentsAtPath:path];
 #else	
         NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath: path error: NULL];

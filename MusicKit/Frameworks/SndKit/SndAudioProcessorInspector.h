@@ -39,7 +39,7 @@
   styled" float params in the range [0, 1]. TODO This should be changed to utilize
   the newer NSValue styled parameter API.
 */
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
+#if !defined(MAC_OS_X_VERSION_10_6) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
 @interface SndAudioProcessorInspector : NSObject {
 #else
 @interface SndAudioProcessorInspector : NSObject <NSTableViewDataSource> {
