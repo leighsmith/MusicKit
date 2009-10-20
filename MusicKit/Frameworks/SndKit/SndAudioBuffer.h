@@ -50,7 +50,7 @@ typedef enum {
 */
 @interface SndAudioBuffer : NSObject
 {
-    /*! Holds sound parameters (sample rate, data format, channel count, frame count). */
+    /*! Holds sound parameters (sample rate, data format, channel count, frame count). */
     SndFormat format;
     /*! The audio sample data. */
     NSMutableData *data;
@@ -140,9 +140,9 @@ typedef enum {
 - initWithBuffer: (SndAudioBuffer *) sndBuffer;
 
 /*!
-  @brief   Initialize a buffer with a matching format to the supplied buffer, for a subset range of that sound.
+  @brief   Initialize a buffer with a matching format to the supplied buffer, for a subset range of that audio buffer.
   @param      sndBuffer An existing initialised SndAudioBuffer.
-  @param      rangeInFrames
+  @param      rangeInFrames The NSRange of the supplied sndBuffer to initialise the new instance with.
   @return     Returns self.
 */
 - initWithBuffer: (SndAudioBuffer *) sndBuffer
@@ -210,11 +210,13 @@ typedef enum {
 - (id) copyWithZone: (NSZone *) zone;
 
 /*!
-  @brief
-  @param      ab
-  @return     self.
+  @brief    Copies the audio buffer NSData instance from the given buffer to the receiver.
+ 
+  Audio buffers must be the same format.
+  @param    audioBufferToCopyFrom The audio buffer instance to copy the data from.
+  @return   Returns self.
 */
-- copyDataFromBuffer: (SndAudioBuffer *) ab;
+- copyDataFromBuffer: (SndAudioBuffer *) audioBufferToCopyFrom;
 
 /*!
   @brief   Copies bytes from the void * array given.
@@ -398,6 +400,13 @@ typedef enum {
   across all channels.
  */
 - (void) normalise;
+
+/*!
+  @brief Scale signal by a given factor.
+ 
+  Scales the sample values in the buffer by the given multiplier across all channels.
+ */
+- (void) scaleBy: (float) scaleFactor;
 
 /*!
   @brief Retrieves a normalised sample given the frame number (time position) and channel number.

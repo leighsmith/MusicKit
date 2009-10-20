@@ -67,6 +67,8 @@
 #import "SndAudioProcessorChain.h"
 #import "SndMuLaw.h"
 
+#define AU_FORMAT_INT_LENGTH 4
+
 @implementation Snd
 
 + soundNamed: (NSString *) aName
@@ -116,6 +118,8 @@
 {
     self = [super init];
     if (self != nil) {
+	SndAudioBuffer *singleAudioBuffer;
+	
 	name = nil;
 	conversionQuality = SndConvertLowQuality;
 	delegate = nil;
@@ -141,18 +145,14 @@
 	// initialize the priming audio processor chain for playback.
 	audioProcessorChain = nil;
 	
-#if 1 // while we still use soundStruct
-	if (soundStruct == NULL) {
-	    if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
-		[[NSException exceptionWithName: @"Sound Error"
-					 reason: @"Can't allocate memory for Snd class"
-				       userInfo: nil] raise];
-	}
-	
-	if (soundStruct)
-	    SndFree(soundStruct);
-	SndAlloc(&soundStruct, SndFramesToBytes(frames, channels, format), format, (int) samplingRate, channels, 0);
-#endif
+	// Initialise with an array of a single SndAudioBuffer instance.
+	if (soundBuffers)
+	    [soundBuffers release];
+	singleAudioBuffer = [SndAudioBuffer audioBufferWithDataFormat: format
+							 channelCount: channels
+							 samplingRate: samplingRate
+							   frameCount: frames];
+	soundBuffers = [[NSMutableArray arrayWithObject: singleAudioBuffer] retain];
 	soundFormat.dataFormat = format;
 	soundFormat.sampleRate = samplingRate;
 	soundFormat.channelCount = channels;
@@ -175,7 +175,7 @@
 				     frames: [aBuffer lengthInSampleFrames]
 			       samplingRate: [aBuffer samplingRate]]; 
   
-    memcpy([newInstance data], [aBuffer bytes], [aBuffer lengthInBytes]);  
+    memcpy([newInstance bytes], [aBuffer bytes], [aBuffer lengthInBytes]);  
     return newInstance;
 }
 
@@ -204,25 +204,76 @@
   return self;
 }
 
+// Assumes all data is formatted as .au only.
 - initWithData: (NSData *) soundData
 {
-    if([self init] != nil)
-	[self readSoundFromData: soundData];
+    int magic;		// need to ensure this is 4 bytes long.
+    unsigned char *soundDataBytes;
+    int infoStringLength;
+    char *infoUTF8String;
+    // TODO need to ensure these are all 4 bytes long.
+    int dataLocation;
+    int dataSize;
+    int dataFormat;
+    int sampleRate;   
+    int channelCount;
     
+    if([self init] == nil)
+	return nil;
+    
+    [soundData getBytes: &magic range: NSMakeRange(0, AU_FORMAT_INT_LENGTH)]; /* first integer */
+    magic = NSSwapBigLongToHost(magic);
+    
+    if (magic != SND_MAGIC)     // Verify we do have a .au/.snd file.
+	return nil;
+    	
+    [soundData getBytes: &dataLocation range: NSMakeRange(AU_FORMAT_INT_LENGTH * 1, AU_FORMAT_INT_LENGTH)]; /* second integer */
+    dataLocation = NSSwapBigLongToHost(dataLocation);
+    [soundData getBytes: &dataSize range: NSMakeRange(AU_FORMAT_INT_LENGTH * 2, AU_FORMAT_INT_LENGTH)]; /* third integer */
+    dataSize = NSSwapBigLongToHost(dataSize);
+    [soundData getBytes: &dataFormat range: NSMakeRange(AU_FORMAT_INT_LENGTH * 3, AU_FORMAT_INT_LENGTH)]; /* fourth integer */
+    soundFormat.dataFormat = NSSwapBigLongToHost(dataFormat);
+    [soundData getBytes: &sampleRate range: NSMakeRange(AU_FORMAT_INT_LENGTH * 4, AU_FORMAT_INT_LENGTH)]; /* fifth integer */
+    soundFormat.sampleRate = NSSwapBigLongToHost(sampleRate);
+    [soundData getBytes: &channelCount range: NSMakeRange(AU_FORMAT_INT_LENGTH * 5, AU_FORMAT_INT_LENGTH)]; /* sixth integer */
+    soundFormat.channelCount = NSSwapBigLongToHost(channelCount);
+    soundFormat.frameCount = SndBytesToFrames(dataSize, channelCount, dataFormat);
+
+    infoStringLength = dataLocation - (AU_FORMAT_INT_LENGTH * 6); // gap between the header and data location is the info string.
+    if ((infoUTF8String = malloc(infoStringLength + 1)) == NULL) // + 1 for terminating \0.
+	[[NSException exceptionWithName: @"Sound Error"
+				 reason: @"Can't allocate memory for info string"
+			       userInfo: nil] raise];
+    [soundData getBytes: infoUTF8String range: NSMakeRange(AU_FORMAT_INT_LENGTH * 6, infoStringLength)];
+    infoUTF8String[infoStringLength] = '\0'; // terminate the string
+    [info release];
+    info = [[NSString stringWithUTF8String: infoUTF8String] retain];
+    free(infoUTF8String);
+    
+    if((soundDataBytes = malloc(dataSize)) == NULL) {
+	[[NSException exceptionWithName: @"Sound Error"
+				 reason: @"Can't allocate memory for Snd instance"
+			       userInfo: nil] raise];
+    }
+    [soundData getBytes: soundDataBytes range: NSMakeRange(dataLocation, dataSize)];
+    if(soundBuffers)
+	[soundBuffers release];
+    // TODO define audioBufferWithFormat: data: (NSData *) and audioBufferWithFormat: bytes:
+    soundBuffers = [[NSMutableArray arrayWithObject: [SndAudioBuffer audioBufferWithFormat: &soundFormat data: soundDataBytes]] retain];
+    free(soundDataBytes);
+    
+    priority = 0;
+    status = SND_SoundInitialized;
+    loopEndIndex = [self lengthInSampleFrames] - 1;
     return self;
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
-  unsigned ss = 0;
-  if (soundStruct) {
     // take into account all basic metadata, including size, formate, rate, channels
-    ss = ((unsigned *) soundStruct)[0] + ((unsigned *) soundStruct)[1] + 
-         ((unsigned *) soundStruct)[2] + ((unsigned *) soundStruct)[3] +
-	 ((unsigned *) soundStruct)[4] + ((unsigned *) soundStruct)[5] +
-         ((unsigned *) soundStruct)[6] + ((unsigned *) soundStruct)[7];
-  }
-  return [name length] * 256 + 512 * tag + ss + 1023 * soundStructSize;
+    NSUInteger ss = soundFormat.sampleRate + soundFormat.dataFormat + soundFormat.channelCount + [info length];
+
+    return [name length] * 256 + 512 * tag + ss + 1023 * [self lengthInSampleFrames];
 }
 
 - (void) dealloc
@@ -233,8 +284,8 @@
         [name release];
 	name = nil;
     }
-    if (soundStruct)
-	SndFree(soundStruct);
+    [soundBuffers release];
+    soundBuffers = nil;
     [performancesArray release];
     performancesArray = nil;
     [performancesArrayLock release];
@@ -256,9 +307,8 @@
     return [NSString stringWithFormat: @"%@ (%@ %@ %@)", 
 	[super description],
 	name != nil ? name : @"(unnamed)",
-	(soundStruct != NULL) ? SndStructDescription(soundStruct) : @"",
-	info];
-    // TODO SndFormatDescription(format)
+	SndFormatDescription(soundFormat),
+	info != nil ? info : @""];
 }
 
 - (NSString *) formatDescription
@@ -266,90 +316,17 @@
     return SndFormatName([self dataFormat], NO);
 }
 
-// TODO Assumes all data is formatted as .au only.
-// TODO We should move this inside -initWithData and remove.
-- (BOOL) readSoundFromData: (NSData *) soundData
-{
-    SndSoundStruct *s;
-    int finalSize;
-
-    priority = 0;
-
-    if (soundStruct)
-	SndFree(soundStruct);
-    if (!(s = malloc(sizeof(SndSoundStruct))))
-        [[NSException exceptionWithName: @"Sound Error"
-                                 reason: @"Can't allocate memory for Snd class"
-                               userInfo: nil] raise];
-    [soundData getBytes: s length: sizeof(SndSoundStruct) - 4]; /* SndSoundStruct includes the first 4 bytes of the info string */
-
-    s->magic = NSSwapBigLongToHost(s->magic);
-    s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
-    s->dataSize = NSSwapBigLongToHost(s->dataSize);
-    s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
-    s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
-    s->channelCount = NSSwapBigLongToHost(s->channelCount);
-
-    // Verify we do have a .au/.snd file.
-    if (s->magic == SND_MAGIC) {
-	int infoStringLength = s->dataLocation - sizeof(SndSoundStruct) + 4;
-	char *infoUTF8String;
-	
-	if ((infoUTF8String = malloc(infoStringLength + 1)) == NULL) // + 1 for terminating \0.
-	    [[NSException exceptionWithName: @"Sound Error"
-				     reason: @"Can't allocate memory for info string"
-				   userInfo: nil] raise];
-	[soundData getBytes: infoUTF8String range: NSMakeRange(sizeof(SndSoundStruct) - 4, infoStringLength)];
-	infoUTF8String[infoStringLength] = '\0'; // terminate the string
-	[info release];
-	info = [[NSString stringWithUTF8String: infoUTF8String] retain];
-	free(infoUTF8String);
-	
-	finalSize = s->dataSize + sizeof(SndSoundStruct); // Allocate no size for info (deprecated)
-	// NSLog(@"%@\n", SndStructDescription(s), finalSize);
-	s = realloc((char *) s, finalSize);
-	[soundData getBytes: (char *) s + sizeof(SndSoundStruct)
-		      range: NSMakeRange(s->dataLocation, s->dataSize)];
-	// Reassign dataLocation to be just beyond the SndSoundStruct.
-	s->dataLocation = sizeof(SndSoundStruct);
-	
-	soundStruct = s;
-	status = SND_SoundInitialized;
-	// Prime format. 
-	// TODO these should eventually be read in order direct from the NSData instance once SndSoundStruct is removed.
-	soundFormat.dataFormat = s->dataFormat;
-	soundFormat.channelCount = s->channelCount;
-	soundFormat.frameCount = SndFrameCount(soundStruct);
-	soundFormat.sampleRate = s->samplingRate;
-	loopEndIndex = [self lengthInSampleFrames] - 1;
-	return YES;
-    } 
-    else
-	return NO;
-}
-
 // TODO at the moment we ignore the dataFormat, only writing AU format.
 // Eventually we need to replace this with file writing routines.
 - (NSData *) dataEncodedAsFormat: (NSString *) dataFormat
 {
-    SndSoundStruct **ssList;
-    SndSoundStruct *theStruct;
     NSMutableData *soundData; 
-    unsigned int dataOffsetLocation = 6 * sizeof(int);  // offset past the audio header, not including info.
+    unsigned int dataOffsetLocation = 6 * AU_FORMAT_INT_LENGTH;  // offset past the audio header, not including info.
     unsigned int sampleDataSize = [self dataSize];
-    SndSampleFormat df = soundStruct->dataFormat;
     const char *UTF8Info = [info UTF8String];
-    unsigned int UTF8InfoLength = strlen(UTF8Info);
+    NSUInteger UTF8InfoLength = [info lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+    NSUInteger audioBufferIndex;
 
-    if (df == SND_FORMAT_INDIRECT) {
-        int newCount = 0;
-        int i = 0;
-        ssList = (SndSoundStruct **) soundStruct->dataLocation;
-        while ((theStruct = ssList[i++]) != NULL)
-	    newCount += theStruct->dataSize;
-        dataOffsetLocation = soundStruct->dataSize;
-        sampleDataSize = newCount;
-    }
     // TODO not sure this will work with indirect sounds.
     dataOffsetLocation += UTF8InfoLength;
 
@@ -377,125 +354,107 @@
     // Write UTF8 data out so foreign language info fields are properly transported.
     [soundData appendBytes: UTF8Info length: UTF8InfoLength];
 
-    if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
-        [soundData appendBytes: (char *) soundStruct + soundStruct->dataLocation length: soundStruct->dataSize];
-	//NSLog(@"writing %u bytes from %u\n", soundStruct->dataSize, soundStruct->dataLocation);
-    }
-    else {
-	int j = 0;
-
-	ssList = (SndSoundStruct **) soundStruct->dataLocation;
-	while ((theStruct = ssList[j++]) != NULL) {
-	    [soundData appendBytes: (char *) theStruct + theStruct->dataLocation length: theStruct->dataSize];
-	}
+    for(audioBufferIndex = 0; audioBufferIndex < [soundBuffers count]; audioBufferIndex++) {
+	SndAudioBuffer *audioBuffer = [soundBuffers objectAtIndex: audioBufferIndex];
+	
+	[soundData appendBytes: [audioBuffer bytes] length: [audioBuffer lengthInBytes]];
     }
     return [NSData dataWithData: soundData];
 }
 
 - (void) swapHostToBigEndianFormat
 {
-    void *d = [self data];
-    SndSwapHostToBigEndianSound(d, d, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
+    void *bytes = [self bytes];
+    
+    SndSwapHostToBigEndianSound(bytes, bytes, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
 }
 
 - (void) swapBigEndianToHostFormat
 {
-    void *d = [self data];
-    SndSwapBigEndianSoundToHost(d, d, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
+    void *bytes = [self bytes];
+    
+    SndSwapBigEndianSoundToHost(bytes, bytes, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
 }
 
-// TODO Adopt keyed coding. Don't save magic.
-- (void) encodeWithCoder: (NSCoder *) aCoder
-/* Here I archive data to coder as CHAR rather than exact data
- * type. Why? Well, I don't want it swapping data for me! I always want the
- * internal data representation to be big endian.
+/* Archive data using keyed coding.
  */
+- (void) encodeWithCoder: (NSCoder *) aCoder
 {
-    SndSoundStruct *s;
-    SndSoundStruct **ssList;
-    SndSoundStruct *theStruct;
-    int headerSize;
-    int df;
-    int i,j=0;
+    [aCoder encodeConditionalObject: delegate forKey: @"delegate"];
+    [aCoder encodeObject: name forKey: @"Name"];
+    [aCoder encodeObject: info forKey: @"Info"];
+    [aCoder encodeInt: soundFormat.dataFormat forKey: @"DataFormat"];
+    [aCoder encodeDouble: soundFormat.sampleRate  forKey: @"SampleRate"];
+    [aCoder encodeInt: soundFormat.channelCount forKey: @"ChannelCount"];
+    [aCoder encodeInt: soundFormat.frameCount forKey: @"FrameCount"]; 
+    [aCoder encodeObject: soundBuffers forKey: @"SoundBuffers"];
 
-    [aCoder encodeConditionalObject: delegate];
-    [aCoder encodeObject: name];
+#if 0
+    // no need to swap data in the header, because coders take care of endian issues for us.
+    [aCoder encodeValuesOfObjCTypes: "iiiii", 0, [self dataSize],
+     soundFormat.dataFormat, soundFormat.sampleRate, soundFormat.channelCount];
+    // [aCoder encodeArrayOfObjCType: "s"count: [info lengthOfBytesUsingEncoding: NSUTF8StringEncoding] at: [info UTF8String]
 
-    df = soundStruct->dataFormat;
-    if (df == SND_FORMAT_INDIRECT) headerSize = soundStruct->dataSize;
-    else headerSize = soundStruct->dataLocation;
-    /* make new header with swapped bytes if nec */
-    if (!(s = malloc(headerSize))) [[NSException exceptionWithName: @"Sound Error"
-							    reason: @"Can't allocate memory for Snd class"
-                                                          userInfo: nil] raise];
-    memmove(s, soundStruct, headerSize);
-    if (df == SND_FORMAT_INDIRECT) {
-        int newCount = 0;
-        i = 0;
-        s->dataFormat = ((SndSoundStruct *)(*((SndSoundStruct **) (soundStruct->dataLocation))))->dataFormat;
-        ssList = (SndSoundStruct **)soundStruct->dataLocation;
-        while ((theStruct = ssList[i++]) != NULL)
-            newCount += theStruct->dataSize;
-        s->dataLocation = s->dataSize;
-        s->dataSize = newCount;
+    /* simple read/write of block of data */
+    for(audioBufferIndex = 0; audioBufferIndex < [soundBuffers length]; audioBufferIndex++) {
+	SndAudioBuffer *audioBuffer = [soundBuffers objectAtIndex: audioBufferIndex];
+	    
+	[aCoder encodeArrayOfObjCType: "s"
+                                count: [audioBuffer lengthInBytes]
+                                   at: [audioBuffer bytes]];
     }
-
-    /* no need to swap data in the header, because coders take care
-    * of endian issues for us.
-    */
-    [aCoder encodeValuesOfObjCTypes:"iiiiii", s->magic, s->dataLocation, s->dataSize,
-            s->dataFormat, s->samplingRate, soundFormat.channelCount];
-    [aCoder encodeArrayOfObjCType:"c" count: headerSize - sizeof(SndSoundStruct) + 4 at: [info UTF8String]];
-
-    if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
-        [aCoder encodeArrayOfObjCType:"s"
-                                count:soundStruct->dataSize
-                                   at:(char *)soundStruct + soundStruct->dataLocation];
-        free(s);
-    }
-
-    ssList = (SndSoundStruct **)soundStruct->dataLocation;
-    free(s);
-    while ((theStruct = ssList[j++]) != NULL) {
-            [aCoder encodeArrayOfObjCType:"c"
-                                    count:theStruct->dataSize
-                                       at:(char *)theStruct + theStruct->dataLocation];
-    }
+#endif
 }
 
 - (id) initWithCoder: (NSCoder *) aDecoder
 {
-    SndSoundStruct *s;
-    int finalSize;
-
-    delegate = [[aDecoder decodeObject] retain];
-    name = [[aDecoder decodeObject] retain];
-
-    if (soundStruct) SndFree(soundStruct);
-    if (!(s = malloc(sizeof(SndSoundStruct))))
-        [[NSException exceptionWithName:@"Sound Error"
-                                 reason:@"Can't allocate memory for Snd class"
-                               userInfo:nil] raise];
-
-    [aDecoder decodeValuesOfObjCTypes:"iiiiii", &(s->magic), &(s->dataLocation), &(s->dataSize),
-            &(s->dataFormat), &(s->samplingRate), &(soundFormat.channelCount)];
-    s = realloc((char *)s, s->dataLocation + 1); /* allocate enough room for info string */
-    [aDecoder decodeArrayOfObjCType:"c" count:s->dataLocation - sizeof(SndSoundStruct) + 4 at:s->info];
-
-    // NSLog(@"%@\n", SndStructDescription(s));
-
-    finalSize = s->dataSize + s->dataLocation;
-
-    s = realloc((char *)s,finalSize);
-    if ((unsigned) s->dataLocation > sizeof(SndSoundStruct)) {
-            /* read off the rest of the info string */
-        [aDecoder decodeArrayOfObjCType: "c"
-                                  count: s->dataLocation - sizeof(SndSoundStruct)
-                                     at: (char *)s + sizeof(SndSoundStruct)];
+    if ([aDecoder allowsKeyedCoding]) {
+	[self setDelegate: [aDecoder decodeObjectForKey: @"delegate"]];
+	[self setName: [aDecoder decodeObjectForKey: @"Name"]];
+	[self setInfo: [aDecoder decodeObjectForKey: @"Info"]];
+	soundFormat.dataFormat = [aDecoder decodeIntForKey: @"DataFormat"];
+	soundFormat.sampleRate = [aDecoder decodeDoubleForKey: @"SampleRate"];
+	soundFormat.channelCount = [aDecoder decodeIntForKey: @"ChannelCount"];
+	soundFormat.frameCount = [aDecoder decodeIntForKey: @"FrameCount"]; 
+	soundBuffers = [[aDecoder decodeObjectForKey: @"SoundBuffers"] retain];
     }
-    [aDecoder decodeArrayOfObjCType: "c" count: s->dataSize at: (char *)s + s->dataLocation];
-
-    soundStruct = s;
+    else {
+	int infoSize;
+	int magic;
+	int dataLocation;
+	int dataSize;
+	char *infoString;
+	unsigned char *soundBytes;
+	
+	delegate = [[aDecoder decodeObject] retain];
+	name = [[aDecoder decodeObject] retain];
+	
+	[aDecoder decodeValuesOfObjCTypes: "iiiiii", &magic, &dataLocation, &dataSize,
+	    &(soundFormat.dataFormat), &(soundFormat.sampleRate), &(soundFormat.channelCount)];
+	
+	/* allocate enough room for info string */
+	infoSize = dataLocation - (AU_FORMAT_INT_LENGTH * 6);
+	if ((infoString = malloc(infoSize + 1)) == NULL)
+	    [[NSException exceptionWithName: @"Sound Error"
+				     reason: @"Can't allocate memory for Snd class"
+				   userInfo: nil] raise];
+	[aDecoder decodeArrayOfObjCType: "c" count: infoSize at: infoString];
+	infoString[infoSize] = '\0'; // Ensure the string is terminated.
+	if(info)
+	    [info release];
+	info = [[NSString stringWithUTF8String: infoString] retain];
+	free(infoString);
+	
+	/* allocate enough room for info string */
+	if ((soundBytes = malloc(dataSize)) == NULL)
+	    [[NSException exceptionWithName: @"Sound Error"
+				     reason: @"Can't allocate memory for Snd class"
+				   userInfo: nil] raise];
+	
+	[aDecoder decodeArrayOfObjCType: "c" count: dataSize at: soundBytes];
+	soundBuffers = [[NSMutableArray arrayWithObject: [SndAudioBuffer audioBufferWithFormat: &soundFormat data: soundBytes]] retain];
+	free(soundBytes);
+    }
     return SND_ERR_NONE;
 }
 
@@ -511,7 +470,6 @@
     return name;
 }
 
-- setName: (NSString *) theName
 /* this needs to interface with an object-wide name table
  * to identify sounds by name. At the moment multiple sound
  * objects may share the same name, which is not right.
@@ -520,6 +478,7 @@
  * The central name table though can only register one sound
  * with any unique name.
  */
+- setName: (NSString *) theName
 {
     if (name) {
         [name release];
@@ -543,16 +502,12 @@
 
 - (double) samplingRate
 {
-    if (!soundStruct) return 0;
-    return (double)(soundStruct->samplingRate);
-    // TODO return soundFormat.samplingRate
+    return soundFormat.sampleRate;
 }
 
 - (unsigned long) lengthInSampleFrames
 {
-    if (!soundStruct) return 0;
-    return SndFrameCount(soundStruct);
-    // TODO return soundFormat.frameCount
+    return soundFormat.frameCount;
 }
 
 - (double) duration
@@ -592,50 +547,38 @@
 
 - (BOOL) isEmpty
 {
-    if (![self isEditable]) return NO;
-    if (!soundStruct) return YES;
-    if (![self dataSize]) return YES;
+    if (![self isEditable]) 
+	return NO;
+    if (![self dataSize]) 
+	return YES;
     return NO;
 }
 
 - (BOOL) isEditable
 {
-    int df;
-    if (!soundStruct) return YES; /* empty sound can be played! */
-    if ((df = soundStruct->dataFormat) == SND_FORMAT_INDIRECT)
-        df =  ((SndSoundStruct *)(*((SndSoundStruct **)
-                (soundStruct->dataLocation))))->dataFormat;
-    switch (df) {
-        case SND_FORMAT_MULAW_8:
-        case SND_FORMAT_LINEAR_8:
-        case SND_FORMAT_LINEAR_16:
-        case SND_FORMAT_LINEAR_24:
-        case SND_FORMAT_LINEAR_32:
-        case SND_FORMAT_FLOAT:
-        case SND_FORMAT_DOUBLE:
-                return YES;
-        default:
-                break;
+    switch ([self dataFormat]) {
+    case SND_FORMAT_MULAW_8:
+    case SND_FORMAT_LINEAR_8:
+    case SND_FORMAT_LINEAR_16:
+    case SND_FORMAT_LINEAR_24:
+    case SND_FORMAT_LINEAR_32:
+    case SND_FORMAT_FLOAT:
+    case SND_FORMAT_DOUBLE:
+	return YES;
+    default:
+	break;
     }
     return NO;
 }
 
 - (BOOL) compatibleWithSound: (Snd *) aSound
 {
-    BOOL formatsOk;
     SndSampleFormat df1 = [self dataFormat];
     SndSampleFormat df2 = [aSound dataFormat];
+    BOOL formatsOk = ((df1 == df2) && df1 != SND_FORMAT_INDIRECT);
     
-    /* No longer needed since -dataFormat now checks indirect formats.
-	if (df1 == SND_FORMAT_INDIRECT)
-        df1 = ((SndSoundStruct *) (*((SndSoundStruct **) (soundStruct->dataLocation))))->dataFormat;
-    if (df2 == SND_FORMAT_INDIRECT)
-        df2 = ((SndSoundStruct *) (*((SndSoundStruct **) ([aSound soundStruct]->dataLocation))))->dataFormat;
-    */
-    formatsOk = ((df1 == df2) && df1 != SND_FORMAT_INDIRECT);
-    
-    if (!soundStruct) return YES;
-    if (!aSound) return YES;
+    if (aSound == nil) 
+	return YES;
     if ([self samplingRate] == [aSound samplingRate] &&
 	[self channelCount] == [aSound channelCount] &&
 	formatsOk)
@@ -647,49 +590,37 @@
 		 samplingRate: (double) toRate
 		 channelCount: (int) toChannelCount
 {
-    NSRange wholeSound = { 0, [self lengthInSampleFrames] };
-    SndAudioBuffer *bufferToConvert;
-    SndAudioBuffer *error;
-
+    NSUInteger soundBufferIndex;
+    double stretchFactor = toRate / [self samplingRate];
+    long totalFrameCount = 0;
+    
     if([self dataFormat] == toFormat && [self samplingRate] == toRate && [self channelCount] == toChannelCount)
 	return SND_ERR_NONE;
 
-    bufferToConvert = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
+    for(soundBufferIndex = 0; soundBufferIndex < [soundBuffers count]; soundBufferIndex++) {
+	SndAudioBuffer *bufferToConvert = [soundBuffers objectAtIndex: soundBufferIndex];
+	SndAudioBuffer *error;
 
-    /* SndConvertLowQuality: fastest conversion, non-interpolated */
-    /* SndConvertMediumQuality: medium conversion, small filter, uses interpolation */
-    /* SndConvertHighQuality: slow, accurate conversion, large filter, uses interpolation */
-    error = [bufferToConvert convertToSampleFormat: toFormat
-				channelCount: toChannelCount
-                                samplingRate: toRate
-                              useLargeFilter: conversionQuality == SndConvertHighQuality
-                           interpolateFilter: conversionQuality != SndConvertLowQuality
-                      useLinearInterpolation: conversionQuality == SndConvertLowQuality];
-
-    if (error != nil) {
-	double stretchFactor = toRate / [self samplingRate];
-	SndSoundStruct *toSound;
-	int err = SndAlloc(&toSound, [bufferToConvert lengthInBytes], toFormat, toRate, toChannelCount, 4);
-
-	if (err != SND_ERR_NONE)
-	    return err;
-	
-        SndFree(soundStruct);
-	// We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
-	// we should just be able to use the buffer directly.
-	memcpy((void *) toSound + toSound->dataLocation, [bufferToConvert bytes], [bufferToConvert lengthInBytes]);
-	soundStruct = toSound;
-        soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-	
-	soundFormat.dataFormat = toFormat;
-	soundFormat.frameCount = [bufferToConvert lengthInSampleFrames];
-	soundFormat.sampleRate = toRate;
-	soundFormat.channelCount = toChannelCount;
-	loopStartIndex *= stretchFactor;  // adjust the loop pointers if the sound was resampled.
-	loopEndIndex *= stretchFactor;
-	return SND_ERR_NONE;
+	/* SndConvertLowQuality: fastest conversion, non-interpolated */
+	/* SndConvertMediumQuality: medium conversion, small filter, uses interpolation */
+	/* SndConvertHighQuality: slow, accurate conversion, large filter, uses interpolation */
+	error = [bufferToConvert convertToSampleFormat: toFormat
+					  channelCount: toChannelCount
+					  samplingRate: toRate
+					useLargeFilter: conversionQuality == SndConvertHighQuality
+				     interpolateFilter: conversionQuality != SndConvertLowQuality
+				useLinearInterpolation: conversionQuality == SndConvertLowQuality];
+	totalFrameCount += [bufferToConvert lengthInSampleFrames];
+	if (error == nil)
+	    return SND_ERR_UNKNOWN;
     }
-    return SND_ERR_UNKNOWN;
+    soundFormat.dataFormat = toFormat;
+    soundFormat.frameCount = totalFrameCount;
+    soundFormat.sampleRate = toRate;
+    soundFormat.channelCount = toChannelCount;
+    loopStartIndex *= stretchFactor;  // adjust the loop pointers if the sound was resampled.
+    loopEndIndex *= stretchFactor;
+    return SND_ERR_NONE;
 }
 
 - (int) convertToSampleFormat: (SndSampleFormat) aFormat
@@ -716,100 +647,16 @@
                     channelCount: nativeFormat.channelCount];
 }
 
-static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound)
-{
-    SndSoundStruct **ssList=NULL,**newssList=NULL;
-    SndSoundStruct *theStruct;
-    int i = 0,ssPointer = 0;
-    int cc;
-    SndSampleFormat df;
-    int ds;
-    int sr;
-    
-    if (!fromSound) return SND_ERR_NOT_SOUND;
-    if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-    cc = fromSound->channelCount;
-    df = fromSound->dataFormat;
-    ds = fromSound->dataSize; /*ie size of header including info string*/
-    sr = fromSound->samplingRate;
-    
-    if (df == SND_FORMAT_INDIRECT) {
-	df = ((SndSoundStruct *)(*((SndSoundStruct **)
-				   (fromSound->dataLocation))))->dataFormat;
-	
-	/*Copying fragged sound: */
-	/* initial struct -- info and all */
-	if (SndAlloc(toSound, 0, df, sr, cc,
-		     ds - sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
-	    return SND_ERR_CANNOT_ALLOC;
-	
-	memmove(&((*toSound)->info),&(fromSound->info),
-		ds - sizeof(SndSoundStruct) + 4);
-	
-	ssList = (SndSoundStruct **)fromSound->dataLocation;
-	while ((theStruct = ssList[i++]) != NULL);
-	i--;
-	/* i is the number of frags */
-	newssList = malloc((i+1) * sizeof(SndSoundStruct *));
-	if (!newssList) {
-	    free (*toSound);
-	    return SND_ERR_CANNOT_ALLOC;
-	}
-	newssList[i] = NULL; /* do the last one now... */
-	
-	for (ssPointer = 0; ssPointer < i; ssPointer++) {
-	    if (!(newssList[ssPointer] = _SndCopyFrag(ssList[ssPointer]))) {
-		free (*toSound);
-		for (i = 0; i < ssPointer; i++) {
-		    free (newssList[i]);
-		}
-		return SND_ERR_CANNOT_ALLOC;
-	    }
-	}
-	(*toSound)->dataLocation = (int) newssList; // cast to an int to store it correctly.
-	(*toSound)->dataSize = fromSound->dataSize;
-	(*toSound)->dataFormat = SND_FORMAT_INDIRECT;
-	return SND_ERR_NONE;
-    }
-    else {
-	/* copy unfragged sound */
-	if (SndAlloc(toSound, ds, df, sr, cc, fromSound->dataLocation -
-		     sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
-	    return SND_ERR_CANNOT_ALLOC;
-	memmove(&((*toSound)->info),&(fromSound->info),
-		fromSound->dataLocation - sizeof(SndSoundStruct) + 4);
-	memmove((char *)(*toSound)   + (*toSound)->dataLocation,
-		(char *)fromSound + fromSound->dataLocation, ds);
-    }
-    return SND_ERR_NONE;
-}
-
 // TODO Perhaps just use soundFromSampleInRange: specifying entire range and passing a NSZone parameter.
 - (id) copyWithZone: (NSZone *) zone
 {
-    int err;
     Snd *newSound = [[[self class] allocWithZone: zone] initWithFormat: [self dataFormat]
 							  channelCount: [self channelCount]
 								frames: [self lengthInSampleFrames]
 							  samplingRate: [self samplingRate]];
     
-    
-    if (newSound->soundStruct) {
-        err = SndFree(newSound->soundStruct);
-        newSound->soundStruct = NULL;
-        newSound->soundStructSize = 0;
-        if (err)
-	    return nil;
-    }
-
-    err = SndCopySound(&(newSound->soundStruct), [self soundStruct]);
-    if (err) {
-	return nil;
-    }
-    if (newSound->soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-	newSound->soundStructSize = newSound->soundStruct->dataLocation + newSound->soundStruct->dataSize;
-    else
-	newSound->soundStructSize = newSound->soundStruct->dataSize;		
+    // TODO verify deep copying behaviour.
+    newSound->soundBuffers = [soundBuffers copyWithZone: zone];
     
     // Duplicate all other ivars
     newSound->soundFormat = soundFormat;
@@ -826,42 +673,24 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 
     [newSound setAudioProcessorChain: [self audioProcessorChain]];
     
-    return newSound; // TODO [newSound autorelease]; ?
+    return newSound; // Return a retained object per the NSObject spec.
 }
 
-- (void *) data
+- (void *) bytes
 {
-    if (!soundStruct)
-	return NULL;
-    if (soundStruct->dataFormat == SND_FORMAT_INDIRECT)
-	return (void *) soundStruct->dataLocation;
-    return (void *)((char *) soundStruct + soundStruct->dataLocation);
+    SndAudioBuffer *firstBuffer = [soundBuffers objectAtIndex: 0];
+    
+    return [firstBuffer bytes];
 }
 
-- (int) dataSize
-/* This looks after fragged sounds ok, as the docs say that for a
- * fragged sound, this should return the length of the main SndSoundStruct
- * (not including data); otherwise, should return num of bytes of data,
- * not including the structure.
- */
+- (long) dataSize
 {
-    // TODO once soundStruct purged.
-    //  return soundFormat.frameCount * SndFrameSize(soundFormat);
-
-    if (!soundStruct) return 0;
-    return soundStruct->dataSize; 
+    return SndDataSize(soundFormat); 
 }
 
 - (SndSampleFormat) dataFormat
 {
-    int df;
-    
-    if (!soundStruct)
-        return 0;
-    if ((df = soundStruct->dataFormat) == SND_FORMAT_INDIRECT)
-        return ((SndSoundStruct *)(*((SndSoundStruct **)
-                    (soundStruct->dataLocation))))->dataFormat;
-    return df;
+    return soundFormat.dataFormat;
 }
 
 - (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff
@@ -876,22 +705,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 
 - (SndFormat) format
 {
-    // TODO this should eventually be held in this structure field, not calculated.
-    soundFormat.frameCount = [self lengthInSampleFrames];
     return soundFormat;
-}
-
-- (SndSoundStruct *) soundStruct
-{
-#if 0
-    // TODO Prepare the soundStruct from the soundFormat once soundFormat is the authorative source.
-    soundStruct->dataFormat = soundFormat.dataFormat;
-    soundStruct->samplingRate = soundFormat.samplingRate;
-    etc
-#endif
-    
-    soundStruct->channelCount = soundFormat.channelCount; // soundFormat has the authorative channelCount.
-    return soundStruct;
 }
 
 // retrieve a sound value at the given frame, for a specified channel, or average over all channels.
@@ -1019,32 +833,24 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 
 - (void) normalise
 {
-    // Retrieve the Snd as an SndAudioBuffer (TODO eventually this will be redundant once a SndAudioBuffer is an ivar).
-    NSRange wholeSound = { 0, [self lengthInSampleFrames] };
-    SndAudioBuffer *audioBufferOfEntireSound = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
-    
-#if 0
-    {
-	float max, min;
-	[audioBufferOfEntireSound findMin: &min max: &max];
-	NSLog(@"%@ max %f min %f\n", self, max, min);
-    }
-#endif
-    [audioBufferOfEntireSound normalise];
+    NSUInteger soundBufferIndex;
+    float maximumExcursion = 0.0;
 
-    // We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
-    // we should just be able to use the buffer directly.
-    {
-	SndSoundStruct *toSound;
-	int err = SndAlloc(&toSound, [audioBufferOfEntireSound lengthInBytes], [self dataFormat], [self samplingRate], [self channelCount], 4);
+    // Determine the maximum excursion (+/-) across all fragment buffers.
+    for(soundBufferIndex = 0; soundBufferIndex < [soundBuffers count]; soundBufferIndex++) {
+	SndAudioBuffer *audioBufferOfSound = [soundBuffers objectAtIndex: soundBufferIndex];
+	float maxSample, minSample;
 	
-	if (err != SND_ERR_NONE)
-	    return;
+	[audioBufferOfSound findMin: &minSample max: &maxSample];
+	// NSLog(@"%@ max %f min %f\n", self, maxSample, minSample);
+
+	maximumExcursion = MAX(maximumExcursion, MAX(fabs(maxSample), fabs(minSample)));
+    }
+    // Now scale all audio buffers.
+    for(soundBufferIndex = 0; soundBufferIndex < [soundBuffers count]; soundBufferIndex++) {
+	SndAudioBuffer *audioBufferOfSound = [soundBuffers objectAtIndex: soundBufferIndex];
 	
-	SndFree(soundStruct);
-	memcpy((void *) toSound + toSound->dataLocation, [audioBufferOfEntireSound bytes], [audioBufferOfEntireSound lengthInBytes]);
-	soundStruct = toSound;
-	soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;	
+	[audioBufferOfSound scaleBy: 1.0 / maximumExcursion];
     }
 }
 

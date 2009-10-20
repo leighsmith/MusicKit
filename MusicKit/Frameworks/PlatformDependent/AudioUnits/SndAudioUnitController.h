@@ -14,6 +14,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SndAudioUnitProcessor.h"
+#import <AudioUnit/AudioUnitCarbonView.h>
 
 /*!
   @class SndAudioUnitController

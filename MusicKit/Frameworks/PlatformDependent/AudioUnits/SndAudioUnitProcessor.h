@@ -13,15 +13,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <Foundation/Foundation.h>
-// TODO while not within the SndKit framework.
-// #import "SndKit/SndAudioProcessor.h"
 #import <SndKit/SndKit.h>
+// TODO while not within the SndKit framework.
+// #import <SndKit/SndAudioProcessor.h>
 #import <AudioUnit/AudioUnit.h>
 
 /*!
   @class SndAudioUnitProcessor
   @brief Wraps an audio unit and it's signal processing behaviour.
-
   
   There is one AudioUnit per SndAudioUnitProcessor instance.
   In this context it forms the Model in an MVC triumvariate with SndAudioUnitController managing

@@ -38,7 +38,7 @@ install:
 	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
 
 frameworks:
-	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration Embedded install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
 
 palettes:
 	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)

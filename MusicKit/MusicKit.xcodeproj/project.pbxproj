@@ -853,6 +853,14 @@
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
+		D8A441F510777A7300E12376 /* SndAudioUnitController.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F110777A7300E12376 /* SndAudioUnitController.h */; };
+		D8A441F610777A7300E12376 /* SndAudioUnitController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A441F210777A7300E12376 /* SndAudioUnitController.m */; };
+		D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */; };
+		D8A441F810777A7300E12376 /* SndAudioUnitProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A441F410777A7300E12376 /* SndAudioUnitProcessor.m */; };
+		D8A441FD10777AA000E12376 /* AUCarbonWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */; };
+		D8A442241077D58C00E12376 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442231077D58C00E12376 /* AudioToolbox.framework */; };
+		D8A4422A1077D5BF00E12376 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442291077D5BF00E12376 /* AudioUnit.framework */; };
+		D8A442481077D6AF00E12376 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442471077D6AF00E12376 /* Carbon.framework */; };
 		D8AE7A4406194279009D0112 /* SndViewPalette.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D8AE7A4306194279009D0112 /* SndViewPalette.tiff */; };
 		D8BC47170FC7F35B007D61A5 /* MusicKit_Help.css in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8743ED80FC7EF3F007B3313 /* MusicKit_Help.css */; };
 		D8BC472F0FC7FDF0007D61A5 /* Midi.gif in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8BC47280FC7FDF0007D61A5 /* Midi.gif */; };
@@ -2146,7 +2154,6 @@
 		D88FE37105A0FEB80024FD88 /* denormals.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = denormals.h; path = Frameworks/SndKit/denormals.h; sourceTree = "<group>"; };
 		D88FE37605A0FEB80024FD88 /* tuning.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tuning.h; path = Frameworks/SndKit/tuning.h; sourceTree = "<group>"; };
 		D88FE38605A0FF940024FD88 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Frameworks/SndKit/English.lproj/SndAudioProcessorInspector.nib; sourceTree = "<group>"; };
-		D88FE38A05A0FFB70024FD88 /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = README.rtf; path = Frameworks/SndKit/README.rtf; sourceTree = "<group>"; };
 		D88FE39605A101690024FD88 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		D88FE39705A101690024FD88 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		D88FE39805A101690024FD88 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -2201,6 +2208,14 @@
 		D8A1DC5009F65BD10094B3F5 /* example4_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = example4_main.m; path = Examples/example4/example4_main.m; sourceTree = "<group>"; };
 		D8A1DC5109F65BD10094B3F5 /* MyObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MyObject.h; path = Examples/example4/MyObject.h; sourceTree = "<group>"; };
 		D8A1DC5209F65BD10094B3F5 /* MyObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MyObject.m; path = Examples/example4/MyObject.m; sourceTree = "<group>"; };
+		D8A441F110777A7300E12376 /* SndAudioUnitController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndAudioUnitController.h; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitController.h; sourceTree = "<group>"; };
+		D8A441F210777A7300E12376 /* SndAudioUnitController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndAudioUnitController.m; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitController.m; sourceTree = "<group>"; };
+		D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndAudioUnitProcessor.h; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitProcessor.h; sourceTree = "<group>"; };
+		D8A441F410777A7300E12376 /* SndAudioUnitProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndAudioUnitProcessor.m; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitProcessor.m; sourceTree = "<group>"; };
+		D8A441FC10777AA000E12376 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Frameworks/PlatformDependent/AudioUnits/English.lproj/AUCarbonWindow.nib; sourceTree = "<group>"; };
+		D8A442231077D58C00E12376 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		D8A442291077D5BF00E12376 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		D8A442471077D6AF00E12376 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		D8AE7A4306194279009D0112 /* SndViewPalette.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = SndViewPalette.tiff; path = Palettes/SndView/SndViewPalette.tiff; sourceTree = "<group>"; };
 		D8BC47280FC7FDF0007D61A5 /* Midi.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = Midi.gif; path = Applications/ScorePlayer/Images/Midi.gif; sourceTree = "<group>"; };
 		D8BC47290FC7FDF0007D61A5 /* play.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = play.gif; path = Applications/ScorePlayer/Images/play.gif; sourceTree = "<group>"; };
@@ -2398,6 +2413,9 @@
 				D88FE39E05A101690024FD88 /* System.framework in Frameworks */,
 				D88FE39F05A101690024FD88 /* vecLib.framework in Frameworks */,
 				D880FBC7077FD9B700FD03CC /* MKPerformSndMIDI.framework in Frameworks */,
+				D8A442241077D58C00E12376 /* AudioToolbox.framework in Frameworks */,
+				D8A4422A1077D5BF00E12376 /* AudioUnit.framework in Frameworks */,
+				D8A442481077D6AF00E12376 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3219,7 +3237,6 @@
 		D82AC39005A0F38300780F57 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D88FE38A05A0FFB70024FD88 /* README.rtf */,
 				D82AC3BA05A0F6DA00780F57 /* SndKit-Info.plist */,
 			);
 			name = "Supporting Files";
@@ -3313,6 +3330,7 @@
 			isa = PBXGroup;
 			children = (
 				D88FE38505A0FF940024FD88 /* SndAudioProcessorInspector.nib */,
+				D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */,
 			);
 			name = Interfaces;
 			sourceTree = "<group>";
@@ -5184,6 +5202,7 @@
 			children = (
 				D88FE36A05A0FD100024FD88 /* Classes */,
 				D88FE35905A0FCE80024FD88 /* FreeVerb */,
+				D8A441EE10777A2C00E12376 /* AudioUnits */,
 			);
 			name = AudioProcessors;
 			sourceTree = "<group>";
@@ -5257,6 +5276,9 @@
 				D88FE39605A101690024FD88 /* AppKit.framework */,
 				D88FE39A05A101690024FD88 /* vecLib.framework */,
 				D88FE39705A101690024FD88 /* ApplicationServices.framework */,
+				D8A442231077D58C00E12376 /* AudioToolbox.framework */,
+				D8A442291077D5BF00E12376 /* AudioUnit.framework */,
+				D8A442471077D6AF00E12376 /* Carbon.framework */,
 			);
 			name = "System Frameworks";
 			sourceTree = "<group>";
@@ -5360,6 +5382,17 @@
 				D8FD875109F68B9A001E01B4 /* example4.nib */,
 			);
 			name = Interfaces;
+			sourceTree = "<group>";
+		};
+		D8A441EE10777A2C00E12376 /* AudioUnits */ = {
+			isa = PBXGroup;
+			children = (
+				D8A441F110777A7300E12376 /* SndAudioUnitController.h */,
+				D8A441F210777A7300E12376 /* SndAudioUnitController.m */,
+				D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */,
+				D8A441F410777A7300E12376 /* SndAudioUnitProcessor.m */,
+			);
+			name = AudioUnits;
 			sourceTree = "<group>";
 		};
 		D8AE7A6A061A1636009D0112 /* Spectro */ = {
@@ -5960,6 +5993,8 @@
 				D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */,
 				D8227E750F8B343100681ED5 /* SndReverbAllpassFilter.h in Headers */,
 				D8227E770F8B343100681ED5 /* SndReverbCombFilter.h in Headers */,
+				D8A441F510777A7300E12376 /* SndAudioUnitController.h in Headers */,
+				D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7111,6 +7146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D88FE38705A0FF940024FD88 /* SndAudioProcessorInspector.nib in Resources */,
+				D8A441FD10777AA000E12376 /* AUCarbonWindow.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7622,6 +7658,8 @@
 				D804E064063DB32C0098E73C /* SndPlaying.m in Sources */,
 				D8227E760F8B343100681ED5 /* SndReverbAllpassFilter.m in Sources */,
 				D8227E780F8B343100681ED5 /* SndReverbCombFilter.m in Sources */,
+				D8A441F610777A7300E12376 /* SndAudioUnitController.m in Sources */,
+				D8A441F810777A7300E12376 /* SndAudioUnitProcessor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8646,6 +8684,14 @@
 				D88FE38605A0FF940024FD88 /* English */,
 			);
 			name = SndAudioProcessorInspector.nib;
+			sourceTree = "<group>";
+		};
+		D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D8A441FC10777AA000E12376 /* English */,
+			);
+			name = AUCarbonWindow.nib;
 			sourceTree = "<group>";
 		};
 		D8CFD2700B5D67DD003AB3C3 /* metronome.nib */ = {
@@ -13632,11 +13678,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				COPY_PHASE_STRIP = YES;
 				GCC_MODEL_TUNING = "";
 				LIBRARY_SEARCH_PATHS = /sw/lib;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = "";
+				STRIP_INSTALLED_PRODUCT = NO;
 				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
 			};
 			name = Development;

@@ -65,7 +65,7 @@ static BOOL getAudioUnitProperty(AudioUnit au, AudioUnitPropertyID propertyType,
     
     componentDescriptionPtr[len] = 0;
     
-    componentDescription = [NSString stringWithCString: componentDescriptionPtr];
+    componentDescription = [NSString stringWithUTF8String: componentDescriptionPtr];
     
     DisposeHandle(componentInfoHandle);
     
@@ -247,7 +247,7 @@ static OSStatus auInputCallback(void *inRefCon,
 	if(parameterInfo.flags & kAudioUnitParameterFlag_HasCFNameString)
 	    return [NSString stringWithString: (NSString *) parameterInfo.cfNameString];
 	else
-	    return [NSString stringWithCString: parameterInfo.name];
+	    return [NSString stringWithUTF8String: parameterInfo.name];
     }
     else
 	return [super paramName: index];

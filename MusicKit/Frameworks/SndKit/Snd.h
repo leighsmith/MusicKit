@@ -107,12 +107,9 @@ compacted before they're copied to a pasteboard (through the
 sound file, the data in the file will be compact regardless of the
 state of the object.
 
-A Snd object contains a SndSoundStruct, the structure that describes
-and contains sound data and that's used as the sound file format and
-the pasteboard sound type. Most of the methods defined in the Snd
-class are implemented so that you needn't be aware of this
-structure.
-
+A Snd object contains an NSArray of SndAudioBuffers, the structure that describes
+and contains sound data. Most of the methods defined in the Snd class are implemented 
+so that you needn't be aware of this structure.
 
 <H3>Sound Conversion Features</H3>
 
@@ -139,27 +136,8 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 @interface Snd : NSObject
 {
  @protected
-/*! The sound data structure.
- 
-  <p>This is defined in the MKPerformSndMIDI framework as follows:</p>
-  <pre>
-  <b>typedef struct</b> {
-    int magic;
-    int dataLocation;
-    int dataSize;
-    int dataFormat;
-    int samplingRate;
-    int channelCount; // channelCount is no longer guaranteed to be accurate, soundFormat.channelCount is now authorative.
-    char info[4]; // now redundant, always "\0\0\0\0".
-  } SndSoundStruct;
-  </pre>
-  */
-    // TODO this is in the process of phase-out in favour of soundFormat.
-    SndSoundStruct *soundStruct; 
-    /*! The length of the structure in bytes */
-    int soundStructSize;
-
-    // TODO NSArray *soundBuffers; /* An array of SndAudioBuffers, the number of elements will depend on the fragmentation. */
+    /*! An array of SndAudioBuffers, the number of elements will depend on the fragmentation. */
+    NSMutableArray *soundBuffers; 
     /*! The parameters defining the format of the sound. */
     SndFormat soundFormat;
     /*! A descriptive information string read from a sound file. */
@@ -300,11 +278,12 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - initFromSoundURL: (NSURL *) url;
 
 /*!
-  @param  format
-  @param  channels
-  @param  frames
-  @param  samplingRate
-  @return Returns self
+  @brief Initialise a Snd instance with silence of given format and length.
+  @param  format is an SndSampleFormat.
+  @param  channels specifies the number of channels (i.e 2 for stereo).
+  @param  frames specifies the number of frames (multiple channel samples) in the sound.
+  @param  samplingRate is a double.
+  @return Returns self.
 */
 - initWithFormat: (SndSampleFormat) format
     channelCount: (int) channels
@@ -313,23 +292,15 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 
 /*!
   @brief Initialise a Snd instance using a NSData instance which holds audio data in Sun/NeXT .au format.
-  @brief The data is held with format preceding the PCM audio data.
+  
+  The data is held with format preceding the PCM audio data.
+  If the sound in the NSData is named, the Snd gets the new name. 
+  <B>Currently only reads Sun/NeXT .au format data</B>.
+ 
   @param soundData An NSData instance containing preceding sound format data followed by PCM audio data, in Sun/NeXT .au format.
-  @return Returns self
+  @return Returns self if the sound was read successfully, nil otherwise.
  */
 - initWithData: (NSData *) soundData;
-
-/*!
-  @param  stream is a NSData instance.
-  @return Returns a BOOL.  Returns YES if the sound was read successfully, NO otherwise.
-  @brief Replaces the Snd's contents with those of the sound in the
-              NSData instance <i>stream</i>.
-
-  If the sound in the NSData is named,
-              the Snd gets the new name.
-	      <B>Currently only reads Sun/NeXT .au format files</B>.
-*/
-- (BOOL) readSoundFromData: (NSData *) stream;
 
 /*!
   @brief  The swapBigEndianToHostFormat method swaps the byte order of the receiver if it
@@ -575,23 +546,18 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
     pointers to SndSoundStructs, one for each fragment. To
     examine or manipulate the samples in a fragmented sound,
     you must understand the SndSoundStruct structure.
-
-    TODO This should probably be renamed to "bytes" matching NSData's naming scheme.
 */
-- (void *) data;
+- (void *) bytes;
 
 /*!
-  @return Returns an int.
-  @brief Return the size (in bytes) of the Snd's data.
+  @brief Return the size (in bytes) of the Snd's sample data.
 
-  If you modify the
-  data (through the pointer returned by the <b>data</b> method) you
-  must be careful not to exceed its length. If the sound is
-  fragmented, the value returned by this method is the size of the
-  Snd's <b>soundStruct</b> and doesn't include the actual data
-  itself.
+  If you modify the data (through the pointer returned by the <b>data</b> method) you
+  must be careful not to exceed its length. If the sound is fragmented, 
+  the value returned by this method is still the total size of the Snd's data.
+  @return Returns a long int.
 */
-- (int) dataSize;
+- (long) dataSize;
 
 /*!
   @return Returns an SndSampleFormat.
@@ -623,15 +589,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @brief Returns a NSString instance.
  */
 - (NSString *) formatDescription;
-
-/*!
-  @return Returns a SndSoundStruct *.
-  @brief Returns a pointer to the Snd's SndSoundStruct structure that holds
-              the object's sound data.
- 
-  TODO This will be changed to -soundData and return an NSData instance.
-*/
-- (SndSoundStruct *) soundStruct;
 
 /*!
   @return Returns an int.
@@ -1018,11 +975,9 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   gone on for the duration of the original sound data. The default
   CODEC recording lasts precisely ten minutes if not stopped. To
   record for a longer time, first increase the size of the sound data
-  with <b>setSoundStruct:soundStructSize:</b> or 
-  <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
+  with  <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
 
-  When the recording begins, <b>willRecord:</b> is
-  sent to the Snd's delegate; when the recording stops,
+  When the recording begins, <b>willRecord:</b> is sent to the Snd's delegate; when the recording stops,
   <b>didRecord:</b> is sent.
 
   <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
@@ -1206,7 +1161,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @brief The Snd's sampled data is compacted into a contiguous block,
               undoing the fragmentation that can occur during editing.
 
-  If the Snd's data isn't fragmented (its format isn't SND_FORMAT_INDIRECT), then this method does
+  If the Snd's data isn't fragmented, then this method does
   nothing. Compacting a large sound can take a long time;
   keep in mind that when you copy a Snd to a pasteboard,
   the object is automatically compacted before it's
@@ -1214,7 +1169,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   contains contiguous data so there's no need to compact a
   Snd before writing it to a sound file simply to ensure
   that the file representation will be compact. An error
-  code is returned.  
+  code is returned.
  */
 - (int) compactSamples;
 
@@ -1229,8 +1184,8 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @brief Get data address and statistics for fragmented or non-fragmented Snds.
  
   For fragmented sounds, you often need to be able to find the
-  block of data that a certain frame resides in. You then often
-  need to know which is the last frame in that fragment (block),
+  SndAudioBuffer of data that a certain frame resides in. You then often
+  need to know which is the last frame in that fragment (audio buffer),
   indexed from the start of the block.
   @param frame            The index of the sample you wish to find the block for, indexed from the beginning of the sound
   @param currentFrame     Returns by reference the index of the frame supplied, indexed from the start of the block
@@ -1319,9 +1274,11 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
  */
 - (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r;
 
-// TODO we have to export this for now while SndSoundStructs are still used.
-// This should be removed when an array of SndAudioBuffers is used instead.
-SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
+/*!
+  @brief Returns an NSArray of SndAudioBuffers comprising the Snd. The array is stored in temporal order.
+  @return An autoreleased NSArray of SndAudioBuffers.
+ */
+- (NSArray *) audioBuffers;
 
 @end
 

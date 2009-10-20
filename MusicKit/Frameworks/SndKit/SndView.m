@@ -852,7 +852,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     /* draw sound data */    
     dataFormat = [sound dataFormat];
     chanCount = [sound channelCount];
-    pcmData = [sound data];
+    pcmData = [sound bytes];
     fragmentedSound = [sound needsCompacting];
     
     maxAmp = [sound maximumAmplitude];

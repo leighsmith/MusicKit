@@ -29,6 +29,7 @@
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
 #import "Snd.h"
+#import "SndAudioBuffer.h"
 
 @implementation Snd(FileIO)
 
@@ -221,12 +222,12 @@
     SF_INFO sfinfo;
     SF_FORMAT_INFO soundFileFormatInfo;
     long numOfSamplesActuallyRead;
-    int headerLen = sizeof(SndSoundStruct);
     long totalNumOfSamplesToRead;
     int errorClosing;
     const char *comment;
     NSFileHandle *readingFileHandle;
     NSAutoreleasePool *fileReadingPool = [[NSAutoreleasePool alloc] init];
+    SndAudioBuffer *fileContents;
     
     if (path == nil)
 	return SND_ERR_BAD_FILENAME;
@@ -286,9 +287,12 @@
     soundFormat.channelCount = sfinfo.channels;
 
     totalNumOfSamplesToRead = frameCount * sfinfo.channels;
-    // TODO to be replaced with NSData
-    soundStruct = realloc((char *) soundStruct, headerLen + totalNumOfSamplesToRead * SndSampleWidth(soundFormat.dataFormat));
-    if(soundStruct == NULL)
+    
+    fileContents = [SndAudioBuffer audioBufferWithDataFormat: soundFormat.dataFormat
+						channelCount: soundFormat.channelCount
+					        samplingRate: soundFormat.sampleRate
+						  frameCount: frameCount];
+    if(fileContents == nil)
 	return SND_ERR_CANNOT_ALLOC;
     
     // NSLog(@"Allocating: %li\n", totalNumOfSamplesToRead * SndSampleWidth(soundFormat.dataFormat));
@@ -296,37 +300,30 @@
 	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
 	    NSLog(@"%s\n", sf_strerror(sfp));
 	    return SND_ERR_CANNOT_READ;
-	}	
+	}
     }
 
     // endian order is handled within sf_read_float().
-    soundStruct->dataLocation = headerLen;
-    numOfSamplesActuallyRead = sf_read_float(sfp, (float *) ((char *) soundStruct + soundStruct->dataLocation), totalNumOfSamplesToRead);
+    numOfSamplesActuallyRead = sf_read_float(sfp, (float *) [fileContents bytes], totalNumOfSamplesToRead);
     if (numOfSamplesActuallyRead < 0)
 	return SND_ERR_CANNOT_READ;
     
     soundFormat.frameCount = numOfSamplesActuallyRead / sfinfo.channels;
-    
-    // TODO Only keep this while SndSoundStruct is a Snd ivar.
-    soundStruct->magic        = SND_MAGIC;
-    soundStruct->dataFormat   = soundFormat.dataFormat;
-    soundStruct->samplingRate = soundFormat.sampleRate;
-    soundStruct->channelCount = soundFormat.channelCount;
-    soundStruct->dataSize     = SndDataSize(soundFormat);
-    soundStruct->info[0]      = '\0';
-    
+
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
 	NSLog(@"Input file %@: style %s %@\n", path, soundFileFormatInfo.name, self);
     }
     
     errorClosing = sf_close(sfp);
     [readingFileHandle closeFile];
+
+    // Replace all audio buffers with the new file contents buffer.
+    [soundBuffers removeAllObjects];
+    [soundBuffers addObject: fileContents];
+    
     if (errorClosing != 0)
 	return SND_ERR_UNKNOWN;
-    
-    // Set ivars after reading the file.
-    soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-    
+        
     // TODO Need to retrieve loop pointers.
     // This is probably a bit kludgy but it will do for now.
     // TODO when we can retrieve the loop indexes from the sound file, this should become the default value.
@@ -456,7 +453,7 @@ int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat)
     }
     
     // Writing the whole thing out assumes the sound is compacted.
-    error = SndWriteSampleData(sfp, [self data], [self format]);
+    error = SndWriteSampleData(sfp, [self bytes], [self format]);
     if(error != SND_ERR_NONE)
 	return error;
     sf_close(sfp);

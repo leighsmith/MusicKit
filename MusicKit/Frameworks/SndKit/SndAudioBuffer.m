@@ -53,7 +53,7 @@
  
     sndFormat.frameCount = rangeInFrames.length;
     ab = [[SndAudioBuffer alloc] initWithFormat: &sndFormat
-					   data: [snd data] + rangeInFrames.location * SndFrameSize(sndFormat)];
+					   data: [snd bytes] + rangeInFrames.location * SndFrameSize(sndFormat)];
     return [ab autorelease];
 }
 
@@ -174,7 +174,7 @@
 	if (length < 0)
 	    NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0! frameSize = %d, range.length = %d", length, frameSize, rangeInFrames.length);
         
-	[data setLength: length];
+	[data setLength: dataLength];
 	memcpy([data mutableBytes], ptr, dataLength);
 	format.frameCount = dataLength / frameSize;
     }
@@ -802,33 +802,28 @@
     return SndMaximumAmplitude([self dataFormat]);
 }
 
-- (void) normalise
+- (void) scaleBy: (float) scaleFactor
 {
-    float minSample, maxSample, maximumExcursion;
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
 
-    [self findMin: &minSample max: &maxSample];
-    maximumExcursion = MAX(fabs(maxSample), fabs(minSample));
-    
 //#ifndef __VEC__
 #if 1
-    // Scalar implementation
+   // Scalar implementation
     switch(format.dataFormat) {
-    case SND_FORMAT_FLOAT: {
-	unsigned long sampleIndex;
-	float *samplePtr = (float *) [data bytes];
-
-	// Check all channels
-	for (sampleIndex = 0; sampleIndex < samplesInBuffer; sampleIndex++) {	    
-	    samplePtr[sampleIndex] /= maximumExcursion;
+	case SND_FORMAT_FLOAT: {
+	    unsigned long sampleIndex;
+	    float *samplePtr = (float *) [data bytes];
+	    
+	    // Check all channels
+	    for (sampleIndex = 0; sampleIndex < samplesInBuffer; sampleIndex++) {	    
+		samplePtr[sampleIndex] *= scaleFactor;
+	    }
+	    break;
 	}
-	break;
+	default:
+	    NSLog(@"Attempt to normalise unsupported format %d\n", format.dataFormat);
     }
-    default:
-	// TODO [self maximumAmplitude]
-	NSLog(@"normalise unsupported format %d\n", format.dataFormat);
-    }
-#else
+ #else
     // Altivec implementation
     switch(format.dataFormat) {
 	case SND_FORMAT_FLOAT: {
@@ -838,6 +833,16 @@
 	    NSLog(@"normalise unsupported format %d\n", format.dataFormat);
     }
 #endif
+}
+
+- (void) normalise
+{
+    float minSample, maxSample, maximumExcursion;
+
+    [self findMin: &minSample max: &maxSample];
+    maximumExcursion = MAX(fabs(maxSample), fabs(minSample));
+    
+    [self scaleBy: 1.0 / maximumExcursion];
 }
 
 // retrieve a sound value at the given frame, for a specified channel, or average over all channels.

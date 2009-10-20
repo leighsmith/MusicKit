@@ -268,7 +268,7 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
     
     if(viewBundle == nil) {
 	NSLog(@"Error loading AU view's bundle %@", viewBundleURL);
-	return nil;
+	return NO;
     }
     
 #if 1

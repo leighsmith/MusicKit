@@ -82,8 +82,6 @@
     NSDictionary *fileAttributeDictionary;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    if (soundStruct)
-	SndFree(soundStruct);
     if (name) {
 	[name release];
 	name = nil;
@@ -110,17 +108,9 @@
 	if (theFileName)
 	    [theFileName release];
 	theFileName = [filename copy];
-	soundFormat = [self soundFormatOfFilename: filename];
-	
-	soundStruct->dataFormat = soundFormat.dataFormat;
-	soundStruct->channelCount = soundFormat.channelCount;
-	soundStruct->samplingRate = soundFormat.sampleRate;
-	soundStruct->dataSize = SndDataSize(soundFormat);
+	soundFormat = [self soundFormatOfFilename: filename];	
 	//    NSLog([self description]);
     }
-    // NSLog(@"%@\n", SndStructDescription(soundStruct));
-    if (!err)
-	soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
     return err;
 }
 
@@ -140,12 +130,7 @@
     theFileName = [filename copy];
     bImageInMemory = FALSE;
     soundFormat = [self soundFormatOfFilename: theFileName];
-    
-    soundStruct->dataFormat = soundFormat.dataFormat;
-    soundStruct->channelCount = soundFormat.channelCount;
-    soundStruct->samplingRate = soundFormat.sampleRate;
-    soundStruct->dataSize = SndDataSize(soundFormat);
-    
+        
     // NSLog([self description]);
     return SND_ERR_NONE;
 }
