@@ -416,7 +416,7 @@ of it.
     }
     length = aLength;
     scaling = aScaling;
-    data = (short *)[sound data]; 
+    data = (short *)[sound bytes]; 
     if (tableType == MK_oscTable)
 	end = data + originalLength;
     else 
@@ -457,7 +457,7 @@ of it.
 	    }	
 	    if (maxval > 24573) {  /* Don't bother if we're close */
 		/* 24573 is (0x7fff * .75) */
-	        data = (short *)[sound data]; 
+	        data = (short *)[sound bytes]; 
 		while (data < end) {         /* Same as above. */
 		    val = NSSwapBigShortToHost(*data);
 		    *newData++ = (((int) val) << 8); 
@@ -473,7 +473,7 @@ of it.
 	    scaler = scaling / (double)(0x7fff); 
 
 	/* TODO This should be rewritten to accept sound data of any format. */
-	data = (short *)[sound data];
+	data = (short *)[sound bytes];
 	_MK_MALLOC(dataDouble, double, aLength);
 	dbl = dataDouble;
 	while (data < end) {

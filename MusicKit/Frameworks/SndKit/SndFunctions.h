@@ -75,26 +75,6 @@
 SNDKIT_API NSString *SndFormatDescription(SndFormat format);
 
 /*!
-  @brief Returns a NSString description of the sound. 
-  @param sound A SndStructSound containing the Snd
-  @return Returns a NSString description of the sound.
- */
-SNDKIT_API NSString *SndStructDescription(SndSoundStruct *sound);
-
-/*!
-  @brief Prints a description of the sound to stderr.
-  @param sound A SndStructSound containing the Snd.
- */
-SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
-
-/*!
-  @brief Prints, to stdout, a description of the data fragments in the sound.
-  @param sound A SndStructSound containing the sound data.
-  @return Returns?
- */
-SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
-
-/*!
   @brief Returns and NSString describing the data format, in either a terse or verbose manner.
   @param dataFormat The sample format enumerated integer. See ? for a description.
   @param verbose YES returns the verbose description, NO returns the terse description.
@@ -170,37 +150,6 @@ SNDKIT_API float SndConvertDecibelsToLinear(float db);
   @return The relative decibel equivalent of linearAmplitude.
  */
 SNDKIT_API float SndConvertLinearToDecibels(float linearAmplitude);
-
-/*!
-  @brief returns the number of samples in the Snd
-  @param sound A SndStructSound containing the Snd
-  @return
- */
-SNDKIT_API int SndFrameCount(const SndSoundStruct *sound);
-
-/*!
-  @brief Frees the sound contained in the structure sound
-  @param sound A SndStructSound containing the Snd
-  @return
- */
-SNDKIT_API int SndFree(SndSoundStruct *sound);
-
-/*!
-  @brief Allocates a sound as specified by the parameters.
-  @param sound The address of a SndStructSound pointer in which to alloc the Snd
-  @param dataSize
-  @param dataFormat
-  @param samplingRate
-  @param channelCount
-  @param infoSize
-  @return
- */
-SNDKIT_API int SndAlloc(SndSoundStruct **sound,
-                                   int dataSize,
-                                   SndSampleFormat dataFormat,
-                                   int samplingRate,
-                                   int channelCount,
-                                   int infoSize);
 
 /*!
   @brief To come 

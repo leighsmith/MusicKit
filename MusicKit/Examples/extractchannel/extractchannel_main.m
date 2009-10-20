@@ -48,7 +48,7 @@ int main (int argc, const char *argv[])
         NSLog(@"Input file must be in 16-bit linear format.\n");
         exit(1);
     }
-    data = (short *)[sound data];
+    data = (short *)[sound bytes];
     dataEnd = (short *)(((char *)data) + [sound dataSize]);
 
     newSound = [[Snd alloc] initWithFormat: [sound dataFormat]
@@ -56,7 +56,7 @@ int main (int argc, const char *argv[])
 				    frames: [sound lengthInSampleFrames]
 			      samplingRate: [sound samplingRate]];
     
-    newDataPtr = (short *)[newSound data];
+    newDataPtr = (short *)[newSound bytes];
     NSLog(@"Extracting channel %d...\n", (int) whichChan);
     data += whichChan - 1;
     while (data < dataEnd) {

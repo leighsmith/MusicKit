@@ -130,22 +130,6 @@
     return [newSound autorelease];    
 }
 
-/*!
- @discussion
- There's a wee bit of a problem when compacting sounds. That is the info
- string. When a sound isn't fragmented, the size of the info string is held
- in "dataLocation" by virtue of the fact that the info will always
- directly precede the dataLocation. When a sound is fragmented though,
- dataLocation is taken over for use as a pointer to the list of fragments.
- What NeXTSTEP does is to then set the dataSize of the main SNDSoundStruct
- to 8192 -- a page of VM. Therefore, there is no longer any explicit
- record of how long the info string was. When the sound is compacted, bytes
- seem to be read off the main SNDSoundStruct until a NULL is reached, and
- that is assumed to be the end of the info string.
- Therefore I am doing things differently. In a fragmented sound, dataSize
- will be the length of the SndSoundStruct INCLUDING the info string, and
- adjusted to the upper 4-byte boundary.
- */
 - (int) compactSamples
 {
     if (![self isEditable]) 

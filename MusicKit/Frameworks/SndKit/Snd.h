@@ -526,26 +526,23 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @return Returns a void pointer.
   @brief Returns a pointer to the Snd's sampled data.
 
-    You can use the
-    pointer to examine, create, and modify the sound data. To
-    intelligently manipulate the data, you need to be aware of its size,
-    format, sampling rate, and the number of channels that it contains
-    (a query method for each of these attributes is provided by the
-    Snd class). The size of the data, in particular, must be
-    respected; it's set when the Snd is created or given a new sound
-    (through <b>readSoundfile:</b>, for example) and can't be changed
-    directly. To resize the data, you should invoke one of the editing
-    methods such as <b>insertSamples:at:</b> or
-    <b>deleteSamplesInRange:</b>.
+  You can use the pointer to examine, create, and modify the sound data. 
+  To intelligently manipulate the data, you need to be aware of its size,
+  format, sampling rate, and the number of channels that it contains
+  (a query method for each of these attributes is provided by the
+  Snd class). The size of the data, in particular, must be
+  respected; it's set when the Snd is created or given a new sound
+  (through <b>readSoundfile:</b>, for example) and can't be changed
+  directly. To resize the data, you should invoke one of the editing
+  methods such as <b>insertSamples:at:</b> or
+  <b>deleteSamplesInRange:</b>.
 
-    To start with a new, unfragmented sound with a
-    determinate length, invoke the
-    <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>
-    method. Keep in mind that the sound data in a fragmented
-    sound is a pointer to a <b>NULL</b>-terminated list of
-    pointers to SndSoundStructs, one for each fragment. To
-    examine or manipulate the samples in a fragmented sound,
-    you must understand the SndSoundStruct structure.
+  To start with a new, unfragmented sound with a determinate length, invoke the
+  <b>initWithFormat:channelCount:frames:samplingRate:</b> method.
+  Keep in mind that the sound data in a fragmented
+  sound is an NSArray of SndAudioBuffers, one for each fragment. To
+  examine or manipulate the samples in a fragmented sound,
+  you should retrieve the audio buffers array using <b>audioBuffers</b>.
 */
 - (void *) bytes;
 
@@ -975,7 +972,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   gone on for the duration of the original sound data. The default
   CODEC recording lasts precisely ten minutes if not stopped. To
   record for a longer time, first increase the size of the sound data
-  with  <b>setDataSize:dataFormat:samplingRate:channelCount:infoSize:</b>.
+  with  <b>initWithFormat:channelCount:frames:samplingRate:</b>.
 
   When the recording begins, <b>willRecord:</b> is sent to the Snd's delegate; when the recording stops,
   <b>didRecord:</b> is sent.
@@ -988,7 +985,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @param performance The SndPerformance of which to enquire.
   @return Returns an int.
   @brief If the Snd is currently playing or recording, this returns the
-              number of sample frames that have been played or recorded so far.
+         number of sample frames that have been played or recorded so far.
  
   If not currently playing or recording, the number of sample frames in the Snd is returned.
   If the sample frame count can't be determined, -1 is returned.

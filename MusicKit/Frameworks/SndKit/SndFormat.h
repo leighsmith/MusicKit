@@ -5,7 +5,6 @@
 //  Description:
 //    Defines a structure for holding sound describing parameters.
 //    This is the replacement for SndSoundStruct which is now deprecated.
-//    Since there is a lot of code using SndSoundStruct, the change is gradual.
 //    SndFormat differs from SndSoundStruct such that it becomes a struct just holding
 //    sample format data, removing the unused info, magic and troublesome dataLocation
 //    (and the crufty arrangement of data following the struct itself) fields. This will

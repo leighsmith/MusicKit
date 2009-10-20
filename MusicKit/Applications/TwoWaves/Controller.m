@@ -138,7 +138,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - calcSound1
 {
     float theFreq,theAmp;
-    short *pointer = (short *)[[soundView1 sound] data];
+    short *pointer = (short *)[[soundView1 sound] bytes];
 
     theAmp = [volNum1 floatValue] * 32768 / 10;
     theFreq = [freqNum1 floatValue];
@@ -149,7 +149,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - calcSound2
 {
     float theFreq,theAmp;
-    short *pointer = (short *)[[soundView2 sound] data];
+    short *pointer = (short *)[[soundView2 sound] bytes];
 
     theFreq = [freqNum2 floatValue];
     theAmp = [volNum2 floatValue] * 32768 / 10;
@@ -160,9 +160,9 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - calcSound3
 {
     int i,newVal;
-    short *pointer1 = (short *)[[soundView1 sound] data];
-    short *pointer2 = (short *)[[soundView2 sound] data];
-    short *pointer3 = (short *)[[soundView3 sound] data];
+    short *pointer1 = (short *)[[soundView1 sound] bytes];
+    short *pointer2 = (short *)[[soundView2 sound] bytes];
+    short *pointer3 = (short *)[[soundView3 sound] bytes];
     
     for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
 	newVal = pointer1[i] + pointer2[i];
@@ -207,7 +207,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 
     amp1 = [volNum1 floatValue] * 32768 / 10;
     freq1 = [freqNum1 floatValue];
-    pointer = (short *)[newSoundA data];
+    pointer = (short *)[newSoundA bytes];
     for (i = 0; i < 3 * SAMPLING_RATE; i++) {
         float num1;
         switch (type1) {
@@ -266,7 +266,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 				  channelCount: 1
 					frames: SAMPLING_RATE * theLength
 				  samplingRate: SAMPLING_RATE];
-        pointer = (short *) [newSound data];
+        pointer = (short *) [newSound bytes];
         
         for (i = 0; i < theLength * SAMPLING_RATE; i++) {
             float num1,num2;

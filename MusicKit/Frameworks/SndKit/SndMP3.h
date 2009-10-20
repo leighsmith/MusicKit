@@ -64,19 +64,23 @@
     NSMutableDictionary *decodedBufferAccessCount;
     int accessTime;
 	
-    /*! */
+    /*! The decoded audio buffer ready for access. */
     SndAudioBuffer *pcmBufferToAccess;
 	
-    /*! The duration of the sound (when decoded) in seconds. Necessary only as long as Snd uses SndSoundStructs. */
+    /*! The duration of the sound (when decoded) in seconds. In principle we could use
+     *  the soundFormat.frameCount instead. */
     double duration;
 
     /*! Locks the decoding of a bitstream frame (and any preceding frames necessary to backtrack). */ 
     NSLock *pcmDataLock;
 
     // Variables used in separate threaded predecoding.
-    NSMutableData *pcmData; // the decoded linear sample data.
-    long           decodedSampleCount; // Number of samples decoded so far.
-    BOOL           bDecoding;    // we are decoding.
+    /*! the decoded linear sample data. */
+    NSMutableData *pcmData;
+    /*! Number of samples decoded so far. */
+    long           decodedSampleCount; 
+    /*! Indicates we are decoding. */
+    BOOL           bDecoding;
 }
 
 /*!

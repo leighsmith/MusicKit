@@ -124,7 +124,7 @@ static int readData(
     int inDataFormat = inSndFormat.dataFormat;
     
     if (!inData) {
-	NSLog(@"readData now only works with inData, no more SndSoundStructs.\n");
+	NSLog(@"readData: inData NULL pointer.\n");
 	return 0;
     }
     numOfFramesInInputBlock = inSndFormat.frameCount;

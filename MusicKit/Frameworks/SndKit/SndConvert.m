@@ -62,9 +62,8 @@ OF THIS AGREEMENT.
 //////////////////////////////////////////////
 //
 // Adjust the sample rate if necessary, reading from
-// the fromSound and writing into the toSound. The
-// resample code has been modified to work with SndSoundStructs
-// for both in and out, and can read fragmented sounds directly.
+// the fromSound and writing into the toSound. 
+// We do not directly support resampling indirect Snds.
 //
 //////////////////////////////////////////////
 void SndChangeSampleRate(const SndFormat fromSound,
