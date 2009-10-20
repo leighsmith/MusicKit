@@ -140,8 +140,8 @@
 
 	// Replace the soundBuffers with the array containing the single compacted one.
 	[editingLock lock];
-	[soundBuffers release];
-	soundBuffers = [[newCompactedSnd audioBuffers] retain];
+	[soundBuffers removeAllObjects];
+	[soundBuffers addObjectsFromArray: [newCompactedSnd audioBuffers]];
 	[editingLock unlock];
     }
     return SND_ERR_NONE;
@@ -169,12 +169,11 @@
     if (!frameRange.length) 
 	return SND_ERR_NONE;
     
-    // TODO we need to lock the whole method since we refer to a number of variables that would cause problems if not locked.
-    // TODO ideally we could surround critical regions only.
+    // we need to lock the whole method since we refer to a number of variables that would cause problems if not locked.
     [editingLock lock]; 
     
     for(soundBufferIndex = 0; soundBufferIndex < [soundBuffers count] && deleteState != DELETE_LAST_PARTIAL; soundBufferIndex++) {
-	audioBuffer = [soundBuffers objectAtIndex: soundBufferIndex];
+	audioBuffer = [[soundBuffers objectAtIndex: soundBufferIndex] retain]; // retain since we replace or remove it.
 	
 	// Find the audio buffer which has the start of the frame range.
 	if((frameRange.location < startFrameOfBuffer + [audioBuffer lengthInSampleFrames]) && deleteState == BEFORE_DELETING) {
@@ -229,6 +228,7 @@
 	    }
 	}
 	startFrameOfBuffer += [audioBuffer lengthInSampleFrames];
+	[audioBuffer release]; // remove the retain since we've finished with it.
     }
     
     soundFormat.frameCount -= frameRange.length;
