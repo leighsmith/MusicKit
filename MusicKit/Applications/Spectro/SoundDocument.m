@@ -177,7 +177,7 @@
 // Need to determine the format from the extension.
 - (BOOL) writeToURL: (NSURL *) absoluteURL ofType: (NSString *) typeName error: (NSError **) outError
 {
-    NSLog(@"writeToURL %@ of type: %@\n", absoluteURL, typeName);
+    // NSLog(@"writeToURL %@ of type: %@\n", absoluteURL, typeName);
     
 #if 0
     if (templateSound && theSound) {
