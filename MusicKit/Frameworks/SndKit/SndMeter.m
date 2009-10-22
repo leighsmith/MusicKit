@@ -95,19 +95,10 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
     static SndStreamClient *outStream = nil;
     static SndStreamClient *inStream = nil;
     SndStreamClient *stream = nil;
-    int status = [self->sound status];
     float leftPeak, rightPeak;
 
     *peakVal = *aveVal = 0.0;
-    if (status == SND_SoundStopped || status == SND_SoundInitialized ||
-	status == SND_SoundFreed || status == SND_SoundRecordingPaused ||
-	status == SND_SoundPlayingPaused) {
-	/*
-	 * Not playing or recording, smooth last value.
-	 */
-	*peakVal = self->currentValue * 0.7;
-    }
-    else if (status == SND_SoundRecording || status == SND_SoundRecordingPending) {
+    if ([self->sound isRecording]) {
 	/*
 	 * Recording, get the sound in stream.
 	 */
@@ -121,6 +112,12 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 	}
 	stream = inStream;
     }
+    else if (![self->sound isPlaying]) {
+	/*
+	 * Not playing or recording, smooth last value.
+	 */
+	*peakVal = self->currentValue * 0.7;
+    } 
     else {
 	/*
 	 * Playing, get the sound out stream.
@@ -145,14 +142,13 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 - (int) shouldBreak
 {
    NSEvent *ev;
-   int status = [self->sound status];
 
    /* Always give up the CPU when playing. */
-   if (status == SND_SoundPlaying)
+   if ([self->sound isPlaying])
        return 1;
    ev = [[self window] nextEventMatchingMask: NSAnyEventMask  
 	     untilDate: [NSDate date] inMode: NSDefaultRunLoopMode dequeue: NO];
-   return ev != nil || !status || self->smFlags.shouldStop;
+   return ev != nil || self->smFlags.shouldStop;
 }
 
 
@@ -167,7 +163,7 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
     float aveVal, peakVal;
 
     [self lockFocus];
-    if ([self->sound status] && !self->smFlags.shouldStop)
+    if (([self->sound isPlaying] || [self->sound isRecording]) && !self->smFlags.shouldStop)
 	stopDelay = DONE_DELAY;
     else
 	stopDelay--;

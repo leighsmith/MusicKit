@@ -66,7 +66,7 @@ $(MY_NAME)_OBJC_FILES = \
          SndEditing.m \
          SndEnvelope.m \
          SndError.m \
-         SndExpt.m \
+         SndOnDisk.m \
 	 SndFileIO.m \
          SndFunctions.m \
          SndMeter.m \
@@ -116,7 +116,7 @@ $(MY_NAME)_HEADER_FILES = \
          SndEndianFunctions.h \
          SndEnvelope.h \
          SndError.h \
-         SndExpt.h \
+         SndOnDisk.h \
          SndFormat.h \
          SndFunctions.h \
          SndKitConfig.h \

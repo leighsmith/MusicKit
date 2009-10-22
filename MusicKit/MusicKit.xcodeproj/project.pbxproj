@@ -765,8 +765,8 @@
 		D88FE2E605A0F8430024FD88 /* SndEnvelope.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE2B705A0F8430024FD88 /* SndEnvelope.m */; };
 		D88FE2E705A0F8430024FD88 /* SndError.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE2B805A0F8430024FD88 /* SndError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE2E805A0F8430024FD88 /* SndError.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE2B905A0F8430024FD88 /* SndError.m */; };
-		D88FE2E905A0F8430024FD88 /* SndExpt.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE2BA05A0F8430024FD88 /* SndExpt.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D88FE2EA05A0F8430024FD88 /* SndExpt.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE2BB05A0F8430024FD88 /* SndExpt.m */; };
+		D88FE2E905A0F8430024FD88 /* SndOnDisk.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE2BA05A0F8430024FD88 /* SndOnDisk.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D88FE2EA05A0F8430024FD88 /* SndOnDisk.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE2BB05A0F8430024FD88 /* SndOnDisk.m */; };
 		D88FE32005A0F9E40024FD88 /* SndMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE30505A0F9E40024FD88 /* SndMeter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE32105A0F9E40024FD88 /* SndMeter.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE30605A0F9E40024FD88 /* SndMeter.m */; };
 		D88FE32205A0F9E40024FD88 /* SndMP3.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE30705A0F9E40024FD88 /* SndMP3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2113,8 +2113,8 @@
 		D88FE2B705A0F8430024FD88 /* SndEnvelope.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndEnvelope.m; path = Frameworks/SndKit/SndEnvelope.m; sourceTree = "<group>"; };
 		D88FE2B805A0F8430024FD88 /* SndError.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndError.h; path = Frameworks/SndKit/SndError.h; sourceTree = "<group>"; };
 		D88FE2B905A0F8430024FD88 /* SndError.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndError.m; path = Frameworks/SndKit/SndError.m; sourceTree = "<group>"; };
-		D88FE2BA05A0F8430024FD88 /* SndExpt.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndExpt.h; path = Frameworks/SndKit/SndExpt.h; sourceTree = "<group>"; };
-		D88FE2BB05A0F8430024FD88 /* SndExpt.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndExpt.m; path = Frameworks/SndKit/SndExpt.m; sourceTree = "<group>"; };
+		D88FE2BA05A0F8430024FD88 /* SndOnDisk.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndOnDisk.h; path = Frameworks/SndKit/SndOnDisk.h; sourceTree = "<group>"; };
+		D88FE2BB05A0F8430024FD88 /* SndOnDisk.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndOnDisk.m; path = Frameworks/SndKit/SndOnDisk.m; sourceTree = "<group>"; };
 		D88FE30505A0F9E40024FD88 /* SndMeter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndMeter.h; path = Frameworks/SndKit/SndMeter.h; sourceTree = "<group>"; };
 		D88FE30605A0F9E40024FD88 /* SndMeter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndMeter.m; path = Frameworks/SndKit/SndMeter.m; sourceTree = "<group>"; };
 		D88FE30705A0F9E40024FD88 /* SndMP3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndMP3.h; path = Frameworks/SndKit/SndMP3.h; sourceTree = "<group>"; };
@@ -5191,8 +5191,8 @@
 		D88FE2FA05A0F9440024FD88 /* Experimental */ = {
 			isa = PBXGroup;
 			children = (
-				D88FE2BA05A0F8430024FD88 /* SndExpt.h */,
-				D88FE2BB05A0F8430024FD88 /* SndExpt.m */,
+				D88FE2BA05A0F8430024FD88 /* SndOnDisk.h */,
+				D88FE2BB05A0F8430024FD88 /* SndOnDisk.m */,
 			);
 			name = Experimental;
 			sourceTree = "<group>";
@@ -5966,7 +5966,7 @@
 				D88FE2E405A0F8430024FD88 /* SndEndianFunctions.h in Headers */,
 				D88FE2E505A0F8430024FD88 /* SndEnvelope.h in Headers */,
 				D88FE2E705A0F8430024FD88 /* SndError.h in Headers */,
-				D88FE2E905A0F8430024FD88 /* SndExpt.h in Headers */,
+				D88FE2E905A0F8430024FD88 /* SndOnDisk.h in Headers */,
 				D88FE32005A0F9E40024FD88 /* SndMeter.h in Headers */,
 				D88FE32205A0F9E40024FD88 /* SndMP3.h in Headers */,
 				D88FE32405A0F9E40024FD88 /* SndMuLaw.h in Headers */,
@@ -7635,7 +7635,7 @@
 				D88FE2E305A0F8430024FD88 /* SndEndianFunctions.c in Sources */,
 				D88FE2E605A0F8430024FD88 /* SndEnvelope.m in Sources */,
 				D88FE2E805A0F8430024FD88 /* SndError.m in Sources */,
-				D88FE2EA05A0F8430024FD88 /* SndExpt.m in Sources */,
+				D88FE2EA05A0F8430024FD88 /* SndOnDisk.m in Sources */,
 				D88FE32105A0F9E40024FD88 /* SndMeter.m in Sources */,
 				D88FE32305A0F9E40024FD88 /* SndMP3.m in Sources */,
 				D88FE32505A0F9E40024FD88 /* SndMuLaw.m in Sources */,

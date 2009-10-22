@@ -150,6 +150,11 @@
     return SND_ERR_NONE;
 }
 
+- (BOOL) isRecording
+{
+    return NO;
+}
+
 - (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
 {
     return [performance playIndex];

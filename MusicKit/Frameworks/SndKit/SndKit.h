@@ -57,7 +57,7 @@
 #import "SndPasteboard.h"
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
-#import "SndExpt.h"
+#import "SndOnDisk.h"
 
 #import "SndView.h"
 #import "SndError.h"

@@ -70,6 +70,32 @@ typedef enum {
     SndConvertHighQuality  = 2
 } SndConversionQuality;
 
+
+/*!
+  @enum       SNDSoundStatus
+  @brief   Status Codes
+  @brief Categorizes beverages, err sounds into groups of similar types.
+  @constant   SND_SoundStopped
+  @constant   SND_SoundRecording
+  @constant   SND_SoundPlaying
+  @constant   SND_SoundInitialized
+  @constant   SND_SoundRecordingPaused
+  @constant   SND_SoundRecordingPending
+  @constant   SND_SoundPlayingPending
+  @constant   SND_SoundFreed
+*/
+typedef enum {
+    SND_SoundStopped = 0,
+    SND_SoundRecording,
+    SND_SoundPlaying,
+    SND_SoundInitialized,
+    SND_SoundRecordingPaused,
+    SND_SoundPlayingPaused,
+    SND_SoundRecordingPending,
+    SND_SoundPlayingPending,
+    SND_SoundFreed = -1,
+} SNDSoundStatus;
+
 /*!
 @class Snd
 @brief The Snd object encapsulates a sounds format parameters and it's sample data.
@@ -982,6 +1008,13 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (int) record;
 
 /*!
+  @brief Returns whether the Snd instance is currently recording audio into the sound.
+  @return Returns YES if the recording has begun (regardless of whether samples have actually
+  been received).
+ */
+- (BOOL) isRecording;
+
+/*!
   @param performance The SndPerformance of which to enquire.
   @return Returns an int.
   @brief If the Snd is currently playing or recording, this returns the
@@ -1315,30 +1348,5 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - didPlay:    sender duringPerformance: (SndPerformance *) performance;
 
 @end
-
-/*!
-  @enum       SNDSoundStatus
-  @brief   Status Codes
-  @brief Categorizes beverages, err sounds into groups of similar types.
-  @constant   SND_SoundStopped
-  @constant   SND_SoundRecording
-  @constant   SND_SoundPlaying
-  @constant   SND_SoundInitialized
-  @constant   SND_SoundRecordingPaused
-  @constant   SND_SoundRecordingPending
-  @constant   SND_SoundPlayingPending
-  @constant   SND_SoundFreed
-*/
-typedef enum {
-    SND_SoundStopped = 0,
-    SND_SoundRecording,
-    SND_SoundPlaying,
-    SND_SoundInitialized,
-    SND_SoundRecordingPaused,
-    SND_SoundPlayingPaused,
-    SND_SoundRecordingPending,
-    SND_SoundPlayingPending,
-    SND_SoundFreed = -1,
-} SNDSoundStatus;
 
 #endif
