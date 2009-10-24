@@ -38,9 +38,6 @@
     if (playEnd > [self lengthInSampleFrames] || playEnd < playBegin)
         playEnd = [self lengthInSampleFrames];
 
-    // TODO Remove status, instead derive from SndPerformance.
-    status = SND_SoundPlayingPending;
-    
     return [[SndPlayer defaultSndPlayer] playSnd: self 
                                   withTimeOffset: inSeconds 
                                     beginAtIndex: playBegin 
@@ -173,14 +170,14 @@
 
 - (void) stopInFuture: (double) inSeconds
 {
-    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
-        status = SND_SoundStopped;
+    if ([self isRecording]) {
+	// TODO must inform the SndStreamRecorder to stop.
         [self tellDelegate: @selector(didRecord:)];	
     }
   // SKoT: I commented this out as the player may have PENDING performances to
-  // deal with as well - in which case the SND won't have a playing status.
+  // deal with as well - in which case the Snd won't have a playing status.
   // Basically yet another reason to move playing status stuff out of the snd obj.
-//    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
+//    if ([self isPlaying]) {
         [[SndPlayer defaultSndPlayer] stopSnd: self withTimeOffset: inSeconds];
 //    }
 }

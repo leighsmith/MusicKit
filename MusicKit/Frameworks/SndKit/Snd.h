@@ -72,31 +72,6 @@ typedef enum {
 
 
 /*!
-  @enum       SNDSoundStatus
-  @brief   Status Codes
-  @brief Categorizes beverages, err sounds into groups of similar types.
-  @constant   SND_SoundStopped
-  @constant   SND_SoundRecording
-  @constant   SND_SoundPlaying
-  @constant   SND_SoundInitialized
-  @constant   SND_SoundRecordingPaused
-  @constant   SND_SoundRecordingPending
-  @constant   SND_SoundPlayingPending
-  @constant   SND_SoundFreed
-*/
-typedef enum {
-    SND_SoundStopped = 0,
-    SND_SoundRecording,
-    SND_SoundPlaying,
-    SND_SoundInitialized,
-    SND_SoundRecordingPaused,
-    SND_SoundPlayingPaused,
-    SND_SoundRecordingPending,
-    SND_SoundPlayingPending,
-    SND_SoundFreed = -1,
-} SNDSoundStatus;
-
-/*!
 @class Snd
 @brief The Snd object encapsulates a sounds format parameters and it's sample data.
           It supports reading and writing to a soundfile, playback of sound,
@@ -173,8 +148,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
     int priority;		 
     /*! The target of notification messages */
     id delegate;		 
-    /*! What the object is currently doing */
-    int status;			 
     /*! The name of the sound, typically less verbose than the info string which can be descriptive. */
     NSString *name;
     /*! The code of the most recently occurring error. Zero if no error. */
@@ -334,7 +307,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 	   (e.g Motorola 68k, PPC) architecture.
  
    Note that no checks are done as to whether or not the receiver was
-   already byte-swapped, so you have to keep track of the status of
+   already byte-swapped, so you have to keep track of the state of
    Snd objects yourself.<br>
    Always use the appropriate method to convert your Snd objects; either
    swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
@@ -349,7 +322,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
                (e.g Motorola 68k, PPC) architecture.
  
    Note that no checks are done as to whether or not the receiver was
-   already byte-swapped, so you have to keep track of the status of
+   already byte-swapped, so you have to keep track of the state of
    Snd objects yourself.<br>
    Always use the appropriate method to convert your Snd objects; either
    swapBigEndianToHostFormat to convert a Snd from the pasteboard or from a soundfile,
@@ -432,25 +405,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @param newInfoString An NSString containing the new text.
  */
 - (void) setInfo: (NSString *) newInfoString;
-
-/*!
-  @return Returns an int.
-  @brief Return the Snd's current status.
- 
-  The current status is one of the following integer constants:
-  <UL>
-  <LI>	SND_SoundStopped</LI>
-  <LI>	SND_SoundRecording</LI>
-  <LI>	SND_SoundPlaying</LI>
-  <LI>	SND_SoundInitialized</LI>
-  <LI>	SND_SoundRecordingPaused</LI>
-  <LI>	SND_SoundPlayingPaused</LI>
-  <LI>	SND_SoundRecordingPending</LI>
-  <LI>	SND_SoundPlayingPending</LI>
-  <LI>	SND_SoundFreed</LI>
-  </UL>
-*/
-- (int) status;
 
 /*!
   @return Returns a BOOL.
@@ -683,8 +637,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @return Returns a SndConversionQuality enumerated type.
 */
 - (SndConversionQuality) conversionQuality;
-
-- (void) _setStatus: (int) newStatus; /* Private! not for general use. */
 
 /*!
   @brief Initialises a Snd instance from the provided SndAudioBuffer.

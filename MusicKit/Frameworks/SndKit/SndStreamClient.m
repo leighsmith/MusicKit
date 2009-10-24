@@ -35,7 +35,6 @@
 #include <sys/resource.h>
 #endif
 
-#import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
 #import "SndStreamClient.h"

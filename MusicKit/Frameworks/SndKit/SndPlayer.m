@@ -143,7 +143,6 @@ static SndPlayer *defaultSndPlayer;
   // is an extra buffer, therefore: delay == buffLength/sampleRate after the delegate
   // message has been received.
 
-  [snd _setStatus:SND_SoundPlaying];
   //    [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
   //                  duringPerformance: performance];
   [manager sendMessageInMainThreadToTarget: snd
@@ -571,13 +570,6 @@ static SndPlayer *defaultSndPlayer;
 	    if ([performance atEndOfPerformance] == YES) {
 		[removalArray addObject: performance];
 		[snd removePerformance: performance];
-
-		/* Check thru all performances, and if this one was the last
-		 * one using this snd, we set the snd to SND_SoundStopped
-		 */
-		if ([snd performanceCount] == 0) {
-		    [snd _setStatus: SND_SoundStopped];
-		}
 
 		/* Multithreaded delegate messaging. Note that the arguments HAVE to be objects -
 		 * hence arg1 here is not a SEL as one would expect but an NSString, and we convert to a SEL in the Snd object.

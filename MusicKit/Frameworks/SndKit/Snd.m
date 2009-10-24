@@ -123,7 +123,6 @@
 	name = nil;
 	conversionQuality = SndConvertLowQuality;
 	delegate = nil;
-	status = SND_SoundInitialized;
 	info = nil;
 	currentError = 0;
 	tag = 0;
@@ -263,7 +262,6 @@
     free(soundDataBytes);
     
     priority = 0;
-    status = SND_SoundInitialized;
     loopEndIndex = [self lengthInSampleFrames] - 1;
     return self;
 }
@@ -460,7 +458,6 @@
 
 - awakeAfterUsingCoder: (NSCoder *) aDecoder
 {
-    status = SND_SoundInitialized;
     conversionQuality = SndConvertLowQuality;
     return self; /* what to do here??? Doesn't seem to be anything pressing... */
 }
@@ -530,19 +527,6 @@
 {
     [info release];
     info = [newInfoString copy];
-}
-
-- (int) status
-{
-    // TODO We should compute the status by interogating any performances the
-    // Snd instance currently has, rather than storing in a variable.
-    return status;
-}
-
-- (void) _setStatus: (int) newStatus
-    /* for use in the beginFunc and endFunc routines and the SndPlayer */
-{
-    status = newStatus;
 }
 
 - (BOOL) isEmpty
