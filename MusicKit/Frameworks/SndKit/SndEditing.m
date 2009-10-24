@@ -61,7 +61,7 @@
 	frameRange.location > [self lengthInSampleFrames] ||
 	frameRange.location + frameRange.length > [self lengthInSampleFrames]) 
 	return nil;
-
+    
     [editingLock lock];
 
     for(soundBufferIndex = 0; soundBufferIndex < [soundBuffers count] && copyState != COPY_LAST_PARTIAL; soundBufferIndex++) {
@@ -108,12 +108,11 @@
 	}
 	startFrameOfBuffer += [audioBuffer lengthInSampleFrames];
     }
-        
+
     // Duplicate all other ivars
-    newSound->soundFormat = soundFormat;
     [newSound setInfo: [self info]];
     
-    newSound->priority = priority;		 
+    newSound->priority = priority;
     [newSound setDelegate: [self delegate]];		 
     [newSound setName: [self name]];
     newSound->conversionQuality = conversionQuality;
