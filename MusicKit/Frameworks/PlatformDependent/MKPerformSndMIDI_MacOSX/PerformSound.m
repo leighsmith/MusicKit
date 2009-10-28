@@ -39,7 +39,7 @@ extern "C" {
 static BOOL initialised = FALSE;
 static BOOL inputInit = FALSE;
 
-static char         **driverList;
+static const char   **driverList;
 static char         **speakerConfigurationList;
 static unsigned int driverIndex = 0;
 static unsigned int numOfDevices;
@@ -52,6 +52,10 @@ static AudioHardwareIOProcStreamUsage *outputStreamIOProcUsage;
 static AudioStreamBasicDescription inputStreamBasicDescription;
 static AudioDeviceID inputDeviceID;
 static AudioHardwareIOProcStreamUsage *inputStreamIOProcUsage;
+#if defined(MAC_OS_X_VERSION_10_5) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+static AudioDeviceIOProcID inputDeviceProcID;
+static AudioDeviceIOProcID outputDeviceProcID;
+#endif
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
@@ -85,17 +89,30 @@ static char *getCoreAudioErrorStr(OSStatus status)
 }
 
 // General routine to retrieve a device property, performing error checking.
-static BOOL getDeviceProperty(AudioDeviceID deviceID, BOOL isInput, AudioDevicePropertyID propertyType, void *buffer, int maxBufferSize)
+static BOOL getDeviceProperty(AudioObjectID deviceID, BOOL isInput, AudioObjectPropertySelector propertyType, void *buffer, int maxBufferSize)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
+    AudioObjectPropertyAddress devicePropertyAddress;
 
-    // NSLog(@"getDeviceProperty test AudioDeviceGetProperty \'%4.4s\'\n", (char *) (&propertyType));    
+    // NSLog(@"getDeviceProperty of \'%4.4s\'\n", (char *) (&propertyType));    
 
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, propertyType, &propertySize, &propertyWritable);
+    // AudioObjectPropertySelector values that apply to AudioDevice objects.
+    // AudioDevices have four scopes: kAudioDevicePropertyScopeGlobal,
+    // kAudioDevicePropertyScopeInput, kAudioDevicePropertyScopeOutput and
+    // kAudioDevicePropertyScopePlayThrough. They have a master element and an element
+    // for each channel in each stream numbered according to the starting channel number of each stream.
+	
+    // The property selector specifies the general classification of the property such as volume, stream format, latency, etc. 
+    // Note that each class has a different set of selectors. A subclass inherits it's super class's set of selectors, although 
+    // it may not implement them all.
+    devicePropertyAddress.mSelector = propertyType;
+    devicePropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    devicePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &devicePropertyAddress, 0, NULL, &propertySize);
     if (CAstatus) {
-        NSLog(@"getDeviceProperty AudioDeviceGetPropertyInfo property \'%4.4s\': %s\n", (char *) (&propertyType), getCoreAudioErrorStr(CAstatus));
+        NSLog(@"getDeviceProperty AudioObjectGetPropertyDataSize for property \'%4.4s\': %s\n", (char *) (&propertyType), getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
@@ -105,10 +122,9 @@ static BOOL getDeviceProperty(AudioDeviceID deviceID, BOOL isInput, AudioDeviceP
         return FALSE;
     }
     
-    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, propertyType, &propertySize, buffer);
-    
+    CAstatus = AudioObjectGetPropertyData(deviceID, &devicePropertyAddress, 0, NULL, &propertySize, buffer);
     if (CAstatus) {
-        NSLog(@"getDeviceProperty AudioDeviceGetProperty \'%4.4s\': %s\n", (char *) (&propertyType), getCoreAudioErrorStr(CAstatus));
+        NSLog(@"getDeviceProperty AudioObjectGetPropertyData \'%4.4s\': %s\n", (char *) (&propertyType), getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
@@ -336,84 +352,86 @@ static BOOL retrieveDriverList(BOOL isInput)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
     unsigned int driverIndex = 0;
     AudioDeviceID *allDeviceIDs;
+    AudioObjectPropertyAddress devicesPropertyAddress;
+    AudioObjectPropertyAddress deviceNamePropertyAddress;
 
-    CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propertySize, &propertyWritable);
-    // NSLog(@"AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-    //    (char *) &CAstatus, propertySize, propertyWritable);
+    devicesPropertyAddress.mSelector = kAudioHardwarePropertyDevices;
+    // devicesPropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
+    // Doesn't seem to have much effect, probably because it's not AudioHardware, but an AudioDevice property scope.
+    devicesPropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    devicesPropertyAddress.mElement = kAudioObjectPropertyElementMaster;
 
+    // get the device list    
+    CAstatus = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &devicesPropertyAddress, 0, NULL, &propertySize);
     if (CAstatus) {
-        NSLog(@"AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"AudioObjectGetPropertyDataSize kAudioHardwarePropertyDevices returned %s for property size = %ld\n", 
+	      getCoreAudioErrorStr(CAstatus), propertySize);
         return FALSE;
     }
+        
+    // Find out how many devices are on the system
+    numOfDevices = propertySize / sizeof(AudioDeviceID);
+    // NSLog(@"numOfDevices = %d\n", numOfDevices);
 
     if((allDeviceIDs = (AudioDeviceID *) malloc(propertySize)) == NULL) {
         NSLog(@"Unable to malloc device ids\n");
         return FALSE;
     }
 
-    CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propertySize, allDeviceIDs);
-    // NSLog(@"AudioHardwareGetProperty kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld\n", (char *) &CAstatus, propertySize);
+    CAstatus = AudioObjectGetPropertyData(kAudioObjectSystemObject, &devicesPropertyAddress, 0, NULL, &propertySize, allDeviceIDs);
     if (CAstatus) {
-        NSLog(@"AudioHardwareGetProperty 1 returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"AudioObjectGetPropertyData of audio device list returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
-
-    numOfDevices = propertySize / sizeof(AudioDeviceID);
-    // NSLog(@"numOfDevices = %d\n", numOfDevices);
-
-    if((driverList = (char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
+    
+    if((driverList = (const char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
         NSLog(@"Unable to malloc driver list\n");
         return FALSE;
     }
-    
-    for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
-        char *deviceName;
-        CAstatus = AudioDeviceGetPropertyInfo(allDeviceIDs[driverIndex], 0, isInput,
-                                            kAudioDevicePropertyDeviceName,
-                                            &propertySize, &propertyWritable);
-        //NSLog(@"output device CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-        //    getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
-            
-        // malloc up enough memory for the name.
-        if((deviceName = (char *) malloc(propertySize * sizeof(char))) == NULL) {
-            NSLog(@"Unable to malloc deviceName string\n");
-            return FALSE;
-        }
         
+    for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
+         NSString *deviceName;
+
+	deviceNamePropertyAddress.mSelector = kAudioObjectPropertyName;
+	deviceNamePropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
+	deviceNamePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+	propertySize = sizeof(NSString *);
+	
         // get the name.
-        CAstatus = AudioDeviceGetProperty(allDeviceIDs[driverIndex], 0, isInput,
-                                        kAudioDevicePropertyDeviceName,
-                                        &propertySize, deviceName);
+	CAstatus = AudioObjectGetPropertyData(allDeviceIDs[driverIndex], &deviceNamePropertyAddress, 0, NULL, &propertySize, &deviceName);
         if (CAstatus) {
-            NSLog(@"AudioDeviceGetProperty 2 returned %s\n", getCoreAudioErrorStr(CAstatus));
+            NSLog(@"AudioObjectGetPropertyData device name returned %s, propertySize = %ld\n", getCoreAudioErrorStr(CAstatus), propertySize);
             return FALSE;
         }
-
-        // NSLog(@"DevID: %d   name: %s\n", allDeviceIDs[driverIndex], deviceName);
-    
-        driverList[driverIndex] = deviceName;
+	
+        // NSLog(@"DevID: %d   name: %@\n", allDeviceIDs[driverIndex], deviceName);
+        driverList[driverIndex] = [deviceName UTF8String];
     }
-
+    free(allDeviceIDs);
+    
     driverList[driverIndex] = NULL; // NULL terminate the list
     return TRUE;
 }
 
+// This retrieves the entire list, irrespective of input or output status. Whereas retrieveDriverList produces a list based
+// on the status of input or output.   
 AudioDeviceID *getAllDeviceIDs(void)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
     AudioDeviceID *allDeviceIDs;
+    AudioObjectPropertyAddress hardwarePropertyAddress;
 
-    CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propertySize, &propertyWritable);
-    // NSLog(@"AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-    //    (char *) &CAstatus, propertySize, propertyWritable);
-
+    hardwarePropertyAddress.mSelector = kAudioHardwarePropertyDevices;
+    hardwarePropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
+    hardwarePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &hardwarePropertyAddress, 0, NULL, &propertySize);    
     if (CAstatus) {
-        NSLog(@"getAllDeviceIDs() AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"getAllDeviceIDs() AudioObjectGetPropertyDataSize kAudioHardwarePropertyDevices returned %s, propertySize = %ld\n", 
+	      getCoreAudioErrorStr(CAstatus), propertySize);
         return NULL;
     }
 
@@ -422,10 +440,9 @@ AudioDeviceID *getAllDeviceIDs(void)
         return NULL;
     }
 
-    CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propertySize, allDeviceIDs);
-    // NSLog(@"AudioHardwareGetProperty kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld\n", (char *) &CAstatus, propertySize);
+    CAstatus = AudioObjectGetPropertyData(kAudioObjectSystemObject, &hardwarePropertyAddress, 0, NULL, &propertySize, allDeviceIDs);
     if (CAstatus) {
-        NSLog(@"getAllDeviceIDs() AudioHardwareGetProperty returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"getAllDeviceIDs() AudioObjectGetPropertyData returned %s, propertySize = %ld\n", getCoreAudioErrorStr(CAstatus), propertySize);
         return NULL;
     }
 
@@ -539,11 +556,15 @@ static BOOL determineBasicDescription(AudioDeviceID deviceID,
 #endif
     
 #if 0
+    AudioObjectPropertyAddress devicePropertyAddress;
+    
+    devicePropertyAddress.mSelector = kAudioDevicePropertyRateScalar;
+    devicePropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    devicePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
     // check to see if the sample rate is changeable... TODO this could be used to change the hardware rather than resampling.
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
-                                          kAudioDevicePropertyRateScalar,
-                                          &propertySize, &propertyWritable);
-    NSLog(@"AudioDeviceGetPropertyInfo kAudioDevicePropertyRateScalar  CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &devicePropertyAddress, 0, NULL, &propertySize);
+    NSLog(@"AudioObjectGetPropertyDataSize kAudioDevicePropertyRateScalar  CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
 	    getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
 #endif
 
@@ -560,23 +581,27 @@ static BOOL getStreamChannelConfiguration(AudioDeviceID deviceID, BOOL isInput)
     AudioStreamID *streamIdentifiers;
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
     int streamIndex;
     int maxChannelsPerStream = 0;
+    AudioObjectPropertyAddress devicePropertyAddress;
     // int streamIDIndex;
     
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, kAudioDevicePropertyStreamConfiguration, &propertySize, &propertyWritable);
+    devicePropertyAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
+    devicePropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    devicePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &devicePropertyAddress, 0, NULL, &propertySize);
     if (CAstatus) {
 	NSLog(@"kAudioDevicePropertyStreamConfiguration %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
     }
     
     if((streamConfigurationList = (AudioBufferList *) malloc(propertySize)) == NULL) {
-	NSLog(@"Unable to malloc streamConfigurationList\n");
+	NSLog(@"getStreamChannelConfiguration property: unable to malloc streamConfigurationList of size %d bytes.\n", propertySize);
 	return FALSE;
     }
-    
-    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, kAudioDevicePropertyStreamConfiguration, &propertySize, streamConfigurationList);	
+
+    CAstatus = AudioObjectGetPropertyData(deviceID, &devicePropertyAddress, 0, NULL, &propertySize, streamConfigurationList);
     if (CAstatus) {
 	NSLog(@"kAudioDevicePropertyStreamConfiguration returned %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
@@ -597,20 +622,25 @@ static BOOL getStreamChannelConfiguration(AudioDeviceID deviceID, BOOL isInput)
 #if DEBUG_DESCRIPTION
     NSLog(@"interleavedChannels = %d\n", interleavedChannels);
 #endif
+    free(streamConfigurationList);
     
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, kAudioDevicePropertyStreams, &propertySize, &propertyWritable);
+    devicePropertyAddress.mSelector = kAudioDevicePropertyStreams;
+    devicePropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    devicePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &devicePropertyAddress, 0, NULL, &propertySize);    
     if (CAstatus) {
 	NSLog(@"kAudioDevicePropertyStreams %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
     }
     
     if((streamIdentifiers = (AudioStreamID *) malloc(propertySize)) == NULL) {
-	NSLog(@"Unable to malloc streamConfigurationList\n");
+	NSLog(@"getStreamChannelConfiguration: Unable to malloc streamIdentifiers of size %d bytes.\n", propertySize);
 	return FALSE;
     }
     numberOfStreams = propertySize / sizeof(AudioStreamID);
     
-    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, kAudioDevicePropertyStreams, &propertySize, streamIdentifiers);	
+    CAstatus = AudioObjectGetPropertyData(deviceID, &devicePropertyAddress, 0, NULL, &propertySize, streamIdentifiers);
     if (CAstatus) {
 	NSLog(@"kAudioDevicePropertyStreams returned %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
@@ -648,6 +678,7 @@ static BOOL getStreamChannelConfiguration(AudioDeviceID deviceID, BOOL isInput)
 	NSLog(@"starting channel = %d\n", startingChannel);
     }
 #endif
+    free(streamIdentifiers);
     
     return TRUE;
 }
@@ -663,29 +694,29 @@ static BOOL getAudioStreamsToVend(AudioDeviceID deviceID,
 {
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
+    AudioObjectPropertyAddress devicePropertyAddress;
 
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
-					  kAudioDevicePropertyIOProcStreamUsage,
-					  &propertySize, &propertyWritable);
+    devicePropertyAddress.mSelector = kAudioDevicePropertyIOProcStreamUsage;
+    devicePropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    devicePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &devicePropertyAddress, 0, NULL, &propertySize);    
     if (CAstatus) {
-	NSLog(@"AudioDeviceGetPropertyInfo kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	NSLog(@"AudioObjectGetPropertyDataSize kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
     }
 
     if((*ioProcStreamUsage = (AudioHardwareIOProcStreamUsage *) malloc(propertySize)) == NULL) {
-        NSLog(@"Unable to malloc ioProcStreamUsage buffer of %ld\n", propertySize);
+        NSLog(@"Unable to malloc ioProcStreamUsage buffer of %ld bytes\n", propertySize);
         return FALSE;
     }
 
     // Indicate which ioProc to retrieve stream usage information for.
     (*ioProcStreamUsage)->mIOProc = ioProc;
 
-    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
-				      kAudioDevicePropertyIOProcStreamUsage,
-				      &propertySize, *ioProcStreamUsage);
+    CAstatus = AudioObjectGetPropertyData(deviceID, &devicePropertyAddress, 0, NULL, &propertySize, *ioProcStreamUsage);
     if (CAstatus) {
-	NSLog(@"AudioDeviceGetProperty kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	NSLog(@"AudioObjectGetPropertyDataSize kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
     }
 
@@ -713,13 +744,15 @@ static BOOL setAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStr
 {
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
-
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
-					  kAudioDevicePropertyIOProcStreamUsage,
-					  &propertySize, &propertyWritable);
+    AudioObjectPropertyAddress ioProcPropertyAddress;
+    
+    ioProcPropertyAddress.mSelector = kAudioDevicePropertyIOProcStreamUsage;
+    ioProcPropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    ioProcPropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &devicePropertyAddress, 0, NULL, &propertySize);
     if (CAstatus) {
-	NSLog(@"AudioDeviceGetPropertyInfo kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	NSLog(@"AudioObjectGetPropertyDataSize kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
     }
 
@@ -735,11 +768,9 @@ static BOOL setAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStr
     }
 #endif
 
-    CAstatus = AudioDeviceSetProperty(deviceID, NULL, 0, isInput,
-				      kAudioDevicePropertyIOProcStreamUsage,
-				      propertySize, ioProcStreamUsage);
+    CAstatus = AudioObjectSetPropertyData(deviceID, &ioProcPropertyAddress, 0, NULL, propertySize, ioProcStreamUsage);
     if (CAstatus) {
-	NSLog(@"AudioDeviceGetProperty kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	NSLog(@"AudioObjectSetPropertyData kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
 	return FALSE;
     }
 
@@ -773,22 +804,23 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
 {
     OSStatus CAstatus;
     UInt32 propertySize;
-    Boolean propertyWritable;
+    AudioObjectPropertyAddress bufferSizePropertyAddress;
 
-    /* fetch the buffer size for informational purposes */
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
-                                          &propertySize, &propertyWritable);
+    /* fetch the buffer size as another level of error checking. */
+    bufferSizePropertyAddress.mSelector = kAudioDevicePropertyBufferSize;
+    bufferSizePropertyAddress.mScope = isInput ? kAudioDevicePropertyScopeInput : kAudioDevicePropertyScopeOutput;
+    bufferSizePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
+    
+    CAstatus = AudioObjectGetPropertyDataSize(deviceID, &bufferSizePropertyAddress, 0, NULL, &propertySize);
     if (CAstatus) {
-        NSLog(@"AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"AudioObjectGetPropertyDataSize kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
     
     /* set the buffer size of the device */
-    CAstatus = AudioDeviceSetProperty(deviceID, NULL, 0, isInput,
-                                    kAudioDevicePropertyBufferSize,
-                                    propertySize, &bufferSizeToSetInBytes);
+    CAstatus = AudioObjectSetPropertyData(deviceID, &bufferSizePropertyAddress, 0, NULL, propertySize, &bufferSizeToSetInBytes);
     if (CAstatus) {
-        NSLog(@"AudioDeviceSetProperty (output) returned %s\n", getCoreAudioErrorStr(CAstatus));
+        NSLog(@"AudioObjectSetPropertyData (output) returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
     
@@ -940,10 +972,6 @@ BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
 
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 {
-    OSStatus CAstatus;
-    UInt32 propertySize;
-    Boolean propertyWritable;
-
     if(!retrieveDriverList(FALSE))
         return FALSE;
 
@@ -954,35 +982,25 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 
     /* initialize CoreAudio device */
     if(guessTheDevice) {
+	BOOL noError;
+	
         /* Get the default sound output device */
-        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultOutputDevice,
-                                                &propertySize, &propertyWritable);
-	if (CAstatus) {
-	    NSLog(@"SNDInit() Output: AudioHardwareGetPropertyInfo returned %s\n", getCoreAudioErrorStr(CAstatus));
+	noError = getDeviceProperty(kAudioObjectSystemObject, NO, kAudioHardwarePropertyDefaultOutputDevice, &outputDeviceID, sizeof(AudioDeviceID));
+	// NSLog(@"Default output device ID %d\n", outputDeviceID);
+	
+	if(!noError) {
+	    NSLog(@"SNDInit() Output: kAudioObjectSystemObject kAudioHardwarePropertyDefaultOutputDevice returned FALSE\n");
 	    return FALSE;
 	}
-	CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-				     &propertySize, &outputDeviceID);
-	if (CAstatus) {
-		NSLog(@"SNDInit() Output: AudioHardwareGetProperty kAudioHardwarePropertyDefaultOutputDevice returned %s\n",
-				getCoreAudioErrorStr(CAstatus));
-		return FALSE;
-	}
-	CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultInputDevice, &propertySize, &propertyWritable);
-	if (CAstatus) {
-		NSLog(@"SNDInit() Input: AudioHardwareGetPropertyInfo kAudioHardwarePropertyDefaultInputDevice returned %s\n",
-		getCoreAudioErrorStr(CAstatus));
-		return FALSE;
-	}
 
-	CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
-					&propertySize, &inputDeviceID);
-	if (CAstatus) {
-		NSLog(@"SNDInit() Input: AudioHardwareGetProperty kAudioHardwarePropertyDefaultInputDevice returned %s\n",
-		getCoreAudioErrorStr(CAstatus));
-		return FALSE;
-	}
+	noError = getDeviceProperty(kAudioObjectSystemObject, NO, kAudioHardwarePropertyDefaultInputDevice, &inputDeviceID, sizeof(AudioDeviceID));
+	// NSLog(@"Default input device ID %d\n", inputDeviceID);
 
+	if(!noError) {
+	    NSLog(@"SNDInit() Input: kAudioObjectSystemObject kAudioHardwarePropertyDefaultInputDevice returned FALSE\n");
+	    return FALSE;
+	}
+	
 	// If we are guessing the device, retrieve and use the standard buffer size.
 	bufferSizeInBytes = getBufferSize(outputDeviceID, NO);
 
@@ -1032,7 +1050,7 @@ PERFORM_API const char **SNDSpeakerConfiguration(void)
 // Returns NULL if the driver names were unobtainable.
 // The client application should not attempt to free the pointers.
 // TODO return driverIndex by reference
-PERFORM_API char **SNDGetAvailableDriverNames(void)
+PERFORM_API const char **SNDGetAvailableDriverNames(void)
 {    
     // We need the initialisation to retrieve the driver list.
     if(!initialised)
@@ -1139,7 +1157,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
 
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
     CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendOutputBuffersToStreamManagerIOProc, NULL);
+#else
+    CAstatus = AudioDeviceCreateIOProcID(outputDeviceID, vendOutputBuffersToStreamManagerIOProc, NULL, &outputDeviceProcID);
+#endif
     if (CAstatus) {
         NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s for output\n", getCoreAudioErrorStr(CAstatus));
         r = FALSE;
@@ -1165,7 +1187,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 #endif
 
     if (inputInit) {
-        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc, NULL);
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
+        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc, NULL);  // MacOS 10.4 Cocoa
+#else
+	CAstatus = AudioDeviceCreateIOProcID(inputDeviceID, vendInputBuffersToStreamManagerIOProc, NULL, &inputDeviceProcID);
+#endif
         if (CAstatus) {
             NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s for input\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
@@ -1174,13 +1200,21 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 	    return FALSE;
     }
     if (r) { // all is well so far...
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
         CAstatus = AudioDeviceStart(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
+#else
+        CAstatus = AudioDeviceStart(outputDeviceID, outputDeviceProcID);
+#endif
         if (CAstatus) {
             NSLog(@"SNDStartStreaming: AudioDeviceStart returned %s\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
         if (inputInit) {
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
             CAstatus = AudioDeviceStart(inputDeviceID, vendInputBuffersToStreamManagerIOProc);
+#else
+            CAstatus = AudioDeviceStart(inputDeviceID, inputDeviceProcID);
+#endif
             if (CAstatus) {
                 NSLog(@"SNDStartStreaming: AudioDeviceStart returned %s\n", getCoreAudioErrorStr(CAstatus));
                 r = FALSE;
@@ -1205,20 +1239,28 @@ PERFORM_API BOOL SNDStreamStop(void)
 
     // Close input stream before closing the output streams.
     if (inputInit) {
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
         CAstatus = AudioDeviceStop(inputDeviceID, vendInputBuffersToStreamManagerIOProc);
+#else
+        CAstatus = AudioDeviceStop(inputDeviceID, inputDeviceProcID);
+#endif
         if (CAstatus) {
             NSLog(@"SNDStreamStop() input device stop returned: %s\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
 	// Disable the input IOProc
-	// CAstatus = AudioDeviceRemoveIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc);  
+	// CAstatus = AudioDeviceDestroyIOProcID(inputDeviceID, inputDeviceProcID);  
         // if (CAstatus) {
-        //    NSLog(@"SNDStreamStop() input IOProc removal returned: %s\n", getCoreAudioErrorStr(CAstatus));
+        //    NSLog(@"SNDStreamStop() input IOProc destruction returned: %s\n", getCoreAudioErrorStr(CAstatus));
         //    r = FALSE;
         // }
     }
 
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
     CAstatus = AudioDeviceStop(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
+#else
+    CAstatus = AudioDeviceStop(outputDeviceID, outputDeviceProcID);
+#endif
 
 #if DEBUG_STARTSTOPMSG    
     NSLog(@"[SND] Begining stream shutdown...\n");
@@ -1233,6 +1275,13 @@ PERFORM_API BOOL SNDStreamStop(void)
         free(inputBuffer);
         inputBuffer = NULL;
     }
+    // Disable the output IOProc
+    // CAstatus = AudioDeviceDestroyIOProcID(outputDeviceID, outputDeviceProcID);  
+    // if (CAstatus) {
+    //    NSLog(@"SNDStreamStop() output IOProc destruction returned: %s\n", getCoreAudioErrorStr(CAstatus));
+    //    r = FALSE;
+    // }
+    
 #if DEBUG_STARTSTOPMSG    
     NSLog(@"[SND] Stream Stopped: %s\n", r ? "OK" : "ERR");
 #endif    

@@ -70,7 +70,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	
     if (SNDInit(TRUE)) {
         if([defaults boolForKey: @"SndShowDriverSelected"]) {
-            char **driverNames = SNDGetAvailableDriverNames();
+            const char **driverNames = SNDGetAvailableDriverNames();
             
             NSLog(@"SndStreamManager +initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
         }
@@ -90,7 +90,7 @@ static SndStreamManager *defaultStreamManager = nil;
 + (NSArray *) getDriverNames
 {
     NSMutableArray *soundDriverNames = [NSMutableArray array];
-    char **driverNames = SNDGetAvailableDriverNames();
+    const char **driverNames = SNDGetAvailableDriverNames();
     unsigned int driverNameIndex;
     
     for(driverNameIndex = 0; driverNames[driverNameIndex] != NULL; driverNameIndex++) {
