@@ -229,8 +229,8 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 		outStream.streamData = outOutputData->mBuffers[interleavedStreamIndex].mData;
 	    else
 		// If we must pass non-interleaved streams to CoreAudio, we need memory to receive the always interleaved streams from the
-		// SndStreamManager.
-		outStream.streamData = malloc(outStream.frameCount * outStream.channelCount * sizeof(float));	
+		// SndStreamManager. We calloc this to ensure it is zero in case the streamProcessor does nothing with it.
+		outStream.streamData = calloc(outStream.frameCount * outStream.channelCount, sizeof(float));	
 	}
 	else {
 	    outStream.streamData = NULL;

@@ -608,6 +608,8 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
     else {
 	// This can happen quite benignly when we first call SNDStreamStart, we literally can get callbacks
 	// after AudioDeviceStart() is called, before SNDStartStream has returned to set the active ivar.
+	// Currently we rely on the sound hardware interface to ensure that playing the output buffer that 
+	// has not been filled will play ok. Otherwise we could zero (silence) the buffer.
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
 #endif

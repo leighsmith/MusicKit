@@ -326,8 +326,10 @@ static SndPlayer *defaultSndPlayer;
     // If we are attempting to play the sound immediately, i.e that the playTime precedes the stream time,
     // force the stream to update so we hear the new sounds begin playing immediately,
     // rather than after the lag from playing out any processed buffers waiting to play.
-    if(playTime <= [manager nowTime])
+    if(playTime <= [manager nowTime]) {
+	// NSLog(@"preempting the Queued stream\n");
 	[self preemptQueuedStream];
+    }
 
     return thePerformance;
 }
