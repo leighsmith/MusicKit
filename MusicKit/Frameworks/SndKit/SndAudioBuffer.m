@@ -19,9 +19,9 @@
 #import "SndAudioBuffer.h"
 #import "SndMuLaw.h"
 
-// altivec support...
-#ifdef __VEC__
-#import <vecLib/vecLib.h>
+// vector library support is currently only available on MacOS X...
+#ifdef __APPLE_CC__
+#import <vecLib/vDSP.h>
 #endif
 
 #define SNDAUDIOBUFFER_DEBUG_MIXING 0
@@ -420,11 +420,10 @@
 #endif
     }
     out += startFrame * buffNumChannels;
-    // TODO we need a universal altivec mixer for all destination sample formats.
+    // TODO we need a universal vector mixer for all destination sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
-#ifdef __VEC__
-	/* TODO need to do extra check to ensure altivec is supported at runtime */
-	vadd(in, 1, out, 1, out, 1, lengthInSamples);
+#ifdef __APPLE_CC__
+	vDSP_vadd(in, 1, out, 1, out, 1, lengthInSamples);
 #else
 	unsigned long sampleIndex;
 	
