@@ -723,7 +723,7 @@
 - (void) findMin: (float *) pMin max: (float *) pMax
 {
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
-// #ifndef __VEC__
+// #ifndef __APPLE_CC__
 #if 1
     unsigned long sampleIndex;
     const void *samplePtr = [data bytes];
@@ -805,7 +805,7 @@
 {
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
 
-//#ifndef __VEC__
+//#ifndef __APPLE_CC__
 #if 1
    // Scalar implementation
     switch(format.dataFormat) {
