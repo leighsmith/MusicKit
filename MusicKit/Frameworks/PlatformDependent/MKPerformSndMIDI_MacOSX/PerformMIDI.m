@@ -199,14 +199,14 @@ PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort o
 #if FUNCLOG
     fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", [executable UTF8String]);
 #else
-    NSLog(@"in MKMDBecomeOwner before MIDIClientCreate, appname: %@\n", executable);
+    // NSLog(@"in MKMDBecomeOwner before MIDIClientCreate, appname: %@\n", executable);
 #endif
     if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr)
 	return MKMD_ERROR_UNKNOWN_ERROR;
-    NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
+    // NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
     if((result = MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort)) != noErr)
 	return MKMD_ERROR_UNKNOWN_ERROR;
-    NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
+    // NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
     if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr)
        return MKMD_ERROR_UNKNOWN_ERROR;
 
