@@ -961,7 +961,7 @@ int token(char *t)
     pastetypes = [[NSPasteboard generalPasteboard] types];    
     prs = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
     if (prs != nil) {                            // if ASCII in pasteboard...
-	length = [prs maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+	length = [prs lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
 // TODO change calloc to object declaration.	
         data = orig = calloc(length + 16,sizeof(char));     // copy data to local buffer
         strncpy(data, [prs UTF8String], length);

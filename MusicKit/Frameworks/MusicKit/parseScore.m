@@ -3357,43 +3357,40 @@ include(void)
       parsePtr->_backwardsLink = backwardsLink; /* Stack link. */
 }  
 
-static void
-print(void)
+static void print(void)
 {
-    short t;
-    _MKParameterUnion tmpUnion;
     MATCH(_MK_print);
     while (lookahead != ';') {
-        t = expression(&tmpUnion);
+	_MKParameterUnion tmpUnion;
+	short t = expression(&tmpUnion);
+	
         if (scoreRPtr->printStream)
-          switch (t) {
-            case MK_double: 
-              [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%f", tmpUnion.rval] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
-              break;
-            case MK_int:
-              [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%d", tmpUnion.ival] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
-              break;
-            case MK_string:
-                [scoreRPtr->printStream appendData:[tmpUnion.sval dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
-              break;
-            case MK_object:
-            case MK_waveTable:
-            case MK_envelope: {
-                NSString * s = MKGetObjectName(tmpUnion.symbol);
-                if (s != nil)
-                    if ([s maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding])
-                        [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%s %@ = ", _MKTokNameNoCheck(t),s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-                [tmpUnion.symbol writeScorefileStream:scoreRPtr->printStream];
-                break;
-            }
-            default:
-              error(MK_sfCantWriteErr,curToken());
-          }
+	    switch (t) {
+		case MK_double: 
+		    [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%f", tmpUnion.rval] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+		    break;
+		case MK_int:
+		    [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%d", tmpUnion.ival] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+		    break;
+		case MK_string:
+		    [scoreRPtr->printStream appendData:[tmpUnion.sval dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+		    break;
+		case MK_object:
+		case MK_waveTable:
+		case MK_envelope: {
+		    NSString *s = MKGetObjectName(tmpUnion.symbol);
+		    
+		    if (s != nil)
+			if ([s lengthOfBytesUsingEncoding: NSUTF8StringEncoding])
+			    [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%s %@ = ", _MKTokNameNoCheck(t),s] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+		    [tmpUnion.symbol writeScorefileStream: scoreRPtr->printStream];
+		    break;
+		}
+		default:
+		    error(MK_sfCantWriteErr, curToken());
+	    }
         match(',');
     }
-//    if (scoreRPtr->printStream)
-//#error StreamConversion: NXFlush should be converted to an NSData method
-//      NXFlush(scoreRPtr->printStream);
 }
 
 static void clipTagRange(void)

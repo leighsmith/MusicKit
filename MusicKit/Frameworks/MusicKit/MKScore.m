@@ -632,7 +632,7 @@ static void putMidi(struct __MKMidiOutStruct *ptr)
 
 static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
 {
-    int sysExStrLen = [sysExclString maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+    int sysExStrLen = [sysExclString lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
     const char *sysExclStr = [sysExclString UTF8String];
     unsigned char *buffer = (unsigned char *) _MKMalloc(sysExStrLen); /* More than enough */
     unsigned char *bufptr = buffer;

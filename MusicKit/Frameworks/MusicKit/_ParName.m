@@ -136,7 +136,7 @@ object by reference. */
 {
   unsigned short type;
   if (aName == nil) return MK_noPar;
-  if (![aName maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding]) {
+  if (![aName lengthOfBytesUsingEncoding: NSUTF8StringEncoding]) {
     return MK_noPar; /* DAJ - Jan 27, 96 */
   }
   *aPar = _MKGetNamedGlobal(aName,&type);

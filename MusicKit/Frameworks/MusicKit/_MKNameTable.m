@@ -330,7 +330,7 @@ returns sym, and sets *wasChagned to NO. */
     *wasChanged = NO;
     return sym;
   }
-  _MK_MALLOC(newSym,char,[sym maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding] + 1);
+  _MK_MALLOC(newSym,char,[sym lengthOfBytesUsingEncoding: NSUTF8StringEncoding] + 1);
   convertToCSym([sym UTF8String],newSym);
   //    *wasChanged = NO;
   *wasChanged = YES; /* DAJ -- Jan 27, 96. Plugged leak */
