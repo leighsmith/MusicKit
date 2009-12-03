@@ -518,10 +518,10 @@ int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
  * writing
  */
 
-static int writeBytes(MKMIDIFileOut *p, const unsigned char *bytes,int count)
+static int writeBytes(MKMIDIFileOut *p, const unsigned char *bytes, int count)
 {
 //    int bytesWritten;
-    /*bytesWritten = */[p->midiStream appendBytes:bytes length:count];
+    /*bytesWritten = */[p->midiStream appendBytes: bytes length: count];
     p->currentCount += count;
 /*    if (bytesWritten != count)
       return endOfStream;
@@ -629,21 +629,26 @@ int MKMIDIFileEndWriting(MKMIDIFileOut *p)
 int MKMIDIFileBeginWritingTrack(MKMIDIFileOut *p, NSString *trackName)
 {
     if (p->currentCount) /* Did we forget to finish before? */
-      MKMIDIFileEndWritingTrack(p,0);
-    if (!writeChunkType(p,"MTrk")) 
-      return endOfStream;
-    if (!writeLong(p,0))  /* This will be the length of the track, but is dummy'ed for now. */
-      return endOfStream;
+	MKMIDIFileEndWritingTrack(p, 0);
+    if (!writeChunkType(p, "MTrk")) 
+	return endOfStream;
+    if (!writeLong(p, 0))  /* This will be the length of the track, but is dummy'ed for now. */
+	return endOfStream;
     p->lastTime = 0;
     p->currentTrack++;
     p->currentCount = 0; /* Set this after the "MTrk" and dummy length are written */
     if (trackName) {
-        int i = [trackName maximumLengthOfBytesUsingEncoding: NSUTF8StringEncoding];
-	if (i) {
-	    if (!writeByte(p,0) || !writeByte(p,0xff) || !writeByte(p,0x03) || 
-		!writeVariableQuantity(p,i) ||
-		!writeBytes(p, (const unsigned char *)[trackName UTF8String], i))  
-	      return endOfStream;
+        NSUInteger trackNameByteLength = [trackName lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+
+	if (trackNameByteLength) {
+	    BOOL error = !writeByte(p, 0);
+
+	    error = error || !writeByte(p, 0xff);
+	    error = error || !writeByte(p, 0x03);
+	    error = error || !writeVariableQuantity(p, trackNameByteLength);
+	    error = error || !writeBytes(p, (const unsigned char *)[trackName UTF8String], trackNameByteLength);
+	    if (error) 
+		return endOfStream;
 	}
     }
     return ok;
