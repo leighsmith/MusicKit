@@ -1,8 +1,0 @@
-.index.store
-.dir*.wmd
-.places*.wmd
-.*TheInvisiblePropertyStore
-.DS_Store
-*.pbxuser
-*~.nib
-
