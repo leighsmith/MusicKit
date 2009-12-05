@@ -23,6 +23,7 @@ SOURCEFORGE_NAME=musickit
 PACKAGENAME=MK
 SITE_ADMIN=leighsmith
 UPLOAD_SERVER=frs.sourceforge.net
+SITEDIR=/home/frs/project/m/mu/musickit/MK/$(VERSION)/
 
 SRCDISTNAME=$(DISTNAME)-$(VERSION)
 PACKAGETITLE="$(DISTNAME) V$(VERSION) applications, frameworks, tools and documentation"
@@ -33,7 +34,6 @@ RELEASESRCDIR=$(WORKINGDIR)/$(PACKAGENAME)SRC/$(SRCDISTNAME)
 CHANGELOG_FILE=/tmp/$(DISTNAME)_ChangeLog.txt
 # tar or gnutar
 TAR=gnutar
-CHGLOGGEN=svn2cl
 
 # We can't generate the MusicKit_README.pdf from the Makefile in the checkout
 # source directory, since we don't actually run configure. This is
@@ -67,13 +67,22 @@ OS_ACRONYM=MOX
 # 	;;
 # esac
 
-BINARY_PACKAGEFILE=$(WORKINGDIR)/$(PACKAGENAME).pkg
-BINARY_TARBALL=$(WORKINGDIR)/$(PACKAGENAME)-$(VERSION).b.$(OS_ACRONYM).pkg.tar
+BINARY_PACKAGEFILE=$(WORKINGDIR)/$(DISTNAME).mpkg
+BINARY_TARBALL=$(WORKINGDIR)/$(PACKAGENAME)-$(VERSION).b.$(OS_ACRONYM).dmg
 SRC_TARBALL=$(WORKINGDIR)/$(PACKAGENAME)-$(VERSION).s.tar.gz
 
-.PHONY: all ship clean packageSources packageBinaries tag check_version prevrev
+.PHONY: all ship clean packageSources packageBinaries tag check_version usage
 
 all: check_version packageSources packageBinaries
+
+usage:
+	@echo "Usage: make VERSION=V.R.P [SVNREV=XXXX tag] command"
+	@echo "Commands:"
+	@echo "    packageSources - Create a tarball of source files ready for uploading."
+	@echo "    packageBinaries - Create a tarball of binaries ready for uploading."
+	@echo "    all (default) - Create the tarballs for binaries and sources ready for uploading."
+	@echo "    ship - Upload the tarballs of binaries and sources."
+	@echo "    clean - Remove the tarballs."
 
 check_version:
 	@if [ x_$(VERSION) = x_ ]; then echo "Usage: make VERSION=V.R.P [SVNREV=XXXX tag]"; exit 1; fi
@@ -82,12 +91,8 @@ check_version:
 # should be doing: sudo $(MAKE) -C Documentation upload DSTROOT=$(INSTALL_FILE_DIR)
 # TODO should generate a temporary file:
 ship: packageBinaries packageSources $(CHANGELOG_FILE)
-	@echo Do these commands in sftp:
-	@echo cd uploads
-	@echo put $(BINARY_TARBALL)
-	@echo put $(SRC_TARBALL)
-	@echo quit
-	sftp $(SITE_ADMIN),$(SOURCEFORGE_NAME)@$(UPLOAD_SERVER) 
+	scp $(BINARY_TARBALL) $(SITE_ADMIN),$(SOURCEFORGE_NAME)@$(UPLOAD_SERVER):$(SITEDIR)
+	scp $(SRC_TARBALL) $(SITE_ADMIN),$(SOURCEFORGE_NAME)@$(UPLOAD_SERVER):$(SITEDIR) 
 
 packageSources: check_version $(SRC_TARBALL)
 
@@ -99,6 +104,7 @@ clean:
 	rm $(BINARY_TARBALL)
 	rm $(SRC_TARBALL)
 	rm $(RELEASESRCDIR)
+	rm /tmp/prevrev
 	sudo /bin/rm -r -f $(INSTALL_FILE_DIR)
 
 # Tag a particular Subversion revision in the repository as a tag for release. Must have defined SVNREV
@@ -111,8 +117,8 @@ tag: check_version
 
 # just tar the file ready for transmission, no point compressing.
 $(BINARY_TARBALL): $(BINARY_PACKAGEFILE)
-	cd $(WORKINGDIR); \
-	$(TAR) cf $@ $(PACKAGENAME).pkg
+	# cd $(WORKINGDIR); \
+	# $(TAR) cf $@ $(BINARY_PACKAGEFILE)
 	@echo "Finished. Final package is located at $@"
 
 # Do the packaging.
@@ -142,24 +148,24 @@ $(RELEASESRCDIR)/Makefile: $(RELEASESRCDIR)/configure
 
 # Determine the previous revision of the last release automatically from the tags
 # directory. Assumes we have already tagged the latest release, so we want the penultimate.
-prevrev:
+/tmp/prevrev:
 	svn log --limit 2 --quiet $(SVNURL)/tags | awk '/r[0-9]*/ {rev=$$1; sub("^r", ":",rev); revision=revision rev } END { sub("^:","",revision); print revision }' > /tmp/prevrev
 	@echo "Previous tagged revisions were " `cat /tmp/prevrev`
 
 # Generate a changelog file from the previous version.
-$(CHANGELOG_FILE): prevrev
-	$(CHGLOGGEN) --revision `cat /tmp/prevrev` --group-by-day --output=$(CHANGELOG_FILE) $(SVNURL)/trunk
+$(CHANGELOG_FILE): /tmp/prevrev
+	svn2cl --revision `cat /tmp/prevrev` --group-by-day --output=$(CHANGELOG_FILE) $(SVNURL)/trunk
 	@echo "Change log between `cat /tmp/prevrev` generated at $(CHANGELOG_FILE)"
 
+# 1. Remove any dynamic libraries that the Frameworks will link to
+# so they link to the static libraries instead.
+# TODO Eventually figure out how to force static linking of these.
+# 2. Remove any existing frameworks in the temporary build area
+# which would have caused relative links (@executable_path paths).
+# 3. Build the system
 $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework: $(RELEASESRCDIR)/Makefile
-	# Remove any dynamic libraries that the Frameworks will link to
-	# so they link to the static libraries instead.
-	# Eventually figure out how to force static linking of these.
 	sudo rm -f /usr/local/lib/{libmp3hip,libsndfile,libmp3lame,libshout,libvorbis,libogg}.*dylib
-	# Remove any existing frameworks in the temporary build area
-	# which would have caused relative links (@executable_path paths).
 	sudo $(MAKE) -C $(RELEASESRCDIR) clean DSTROOT=$(INSTALL_FILE_DIR)
-	# build the system
 	sudo $(MAKE) -C $(RELEASESRCDIR) install DSTROOT=$(INSTALL_FILE_DIR) VERSION=$(VERSION)
 
 # This is the point where you'll want to make sure that the
@@ -180,7 +186,7 @@ $(INSTALL_FILE_DIR)/Library/Frameworks/MusicKit.framework: $(RELEASESRCDIR)/Make
 # sudo /bin/chmod -R ugo+rX $INSTALL_FILE_DIR/
 # sudo /bin/chmod -R u+w $INSTALL_FILE_DIR/
 #
+# We change ownership to root.wheel
 $(INSTALL_FILE_DIR):
 	sudo /bin/chmod -R 750 $(INSTALL_FILE_DIR)/
-	# Change ownership to root.wheel
 	sudo /usr/sbin/chown -R root:wheel $(INSTALL_FILE_DIR)/

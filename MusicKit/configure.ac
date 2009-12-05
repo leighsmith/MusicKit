@@ -14,13 +14,9 @@
 # TODO
 # For now we require a working MKPerformSndMIDI library, but we
 # could default to using MKPerformSndMIDI_silent for users who just want
-# to crunch notes and not play anything. Likewise, we currently
-# require libsndfile installed but eventually we should work out a
-# way of compiling Snd.m when an entire category is missing. This
-# could be really tough to do, however, since so many other SndKit
-# classes depend on Snd.m.
+# to crunch notes and not play anything.
 
-AC_INIT(MusicKit, 5.6.0, leigh@leighsmith.com)
+AC_INIT(MusicKit, 5.6.2, leigh@leighsmith.com)
 AC_REVISION($Id$)
 
 AC_CONFIG_SRCDIR([Frameworks/SndKit/Snd.h])

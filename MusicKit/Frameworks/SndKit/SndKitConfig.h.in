@@ -87,6 +87,11 @@ typedef unsigned int   SND_UWORD;
 #define MAX_HWORD (32767)
 #define MIN_HWORD (-32768)
 
+// Fake NSUInteger for MacOS versions less than 10.5
+#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
+typedef unsigned int NSUInteger;
+#endif
+
 #ifdef DEBUG
 #define INLINE
 #else
