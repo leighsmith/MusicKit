@@ -14,10 +14,10 @@ and binary distributions. Likewise if the distribution web site changes.
 -->
 
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!entity mkvertuple "5.6.2">
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkvertuple "5.6.1">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://sourceforge.net/projects/musickit/files/musickit">
 <!entity mksvnweb "http://sourceforge.net/svn/?group_id=9881">
@@ -1833,7 +1833,7 @@ url="http://www.finkproject.org/"><productname>fink</productname></ulink> on
 method to specify the compilation and linking flags:
 </para>
 
-	<informalexample id=mkbuildflags>
+	<informalexample id=mkbuildflagsfink>
 	  <screen>
 ./configure CPPFLAGS=-I/sw/include LDFLAGS=-L/sw/lib
 make
@@ -1922,6 +1922,7 @@ i386 32 bit architecture. This requires the supporting libraries to also be buil
 binaries. Assuming the support libraries are built with an i386 architecture binary,
 <command>configure</command> needs to be instructed to test the library linking with the
 i386 architecture, using the -arch flag:
+</para>
 
 	<informalexample id=mkbuildflags>
 	  <screen>
