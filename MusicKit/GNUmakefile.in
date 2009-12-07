@@ -20,6 +20,11 @@ CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 SUBPROJECTS = Frameworks Utilities Examples Applications
 # TODO: Frameworks Palettes Utilities Examples Applications Documentation
 
+# Packaging info
+PACKAGE_NAME=MusicKit
+PACKAGE_VERSION=5.6.2
+PACKAGE_NEEDS_CONFIGURE=YES
+
 include $(GNUSTEP_MAKEFILES)/common.make
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 

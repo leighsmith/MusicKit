@@ -1,0 +1,13 @@
+Release:        1
+Source:         http://www.sourceforge.net/pub/gnustep/libs/%{gs_name}-%{gs_version}.tar.gz
+Copyright:      
+Group:          Development/Libraries
+Summary:        MusicKit/SndKit Objective-C Library
+Packager:       Leigh M. Smith <leigh@leighsmith.com>
+Vendor:         The MusicKit Project
+URL:            http://www.musickit.org/
+
+%description 
+The MusicKit and SndKit is an object-oriented software system for building music, sound,
+signal processing and MIDI applications. The distribution is a comprehensive package that
+includes on-line documentation, code examples, utilities, applications and scores.
