@@ -217,6 +217,13 @@
 
 ;; End of $verbatim-display$ redefinition
 
+;;; Redefine acknowledgements to be a division so we manipulate it with CSS.
+(element ackno 
+  (make element gi: "DIV"
+	attributes: (list
+		     (list "CLASS" (gi)))
+	($paragraph$)))
+
 </style-specification-body>
 </style-specification>
 

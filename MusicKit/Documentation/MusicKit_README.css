@@ -19,11 +19,26 @@ A:active { color: rgb(150, 159, 244);  } /* when link is clicked */
 
 div.TOC {
     background: rgb(0, 0, 0);
+    width: 300px;
     padding-right: 10px;
     padding-left: 10px;
-    margin-right: 10px;
-    float: left;
+    margin-right: 20px;
+    float: right;
     border-style: solid;
     border-colour: rgb(255, 255, 255);
     line-height: 150%;
+}
+
+div.SECT1 {
+    width: 600px;
+    margin: 0 auto;
+    float: left;
+}
+
+div.ACKNO {
+    clear:both;
+}
+
+div.NAVFOOTER {
+    clear:both;
 }

@@ -185,6 +185,12 @@ The following is a partial list of the highlights of the
       <itemizedlist>
 	<listitem>
 	  <para>
+Extensible, high-level object-oriented frameworks that are a super-set
+of Music V and <acronym>MIDI</acronym> paradigms.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
 Applicable to composers writing real-time computer music applications.
 </para>
 	</listitem>
@@ -195,15 +201,8 @@ Applicable to programmers writing cross-platform audio/music applications.
 	</listitem>
 	<listitem>
 	  <para>
-Extensible, high-level object-oriented frameworks that are a super-set
-of Music V and <acronym>MIDI</acronym> paradigms.
-</para>
-	</listitem>
-	<listitem>
-	  <para>
 Written in Objective C and C, using <productname>Apple</productname>'s
-<productname>OpenStep/Cocoa</productname> <acronym>API</acronym>, the
-<productname>FoundationKit</productname>.
+<productname>OpenStep/Cocoa</productname> <acronym>API</acronym>.
 </para>
 	</listitem>
         <listitem>
