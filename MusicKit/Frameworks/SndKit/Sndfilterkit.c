@@ -315,55 +315,56 @@ int readFilter(char *filterFile, SND_HWORD **ImpP, SND_HWORD **ImpDP, SND_UHWORD
     char *fname;
     FILE *fp;
     int i, temp;
-    SND_HWORD *Imp,*ImpD;
-
+    SND_HWORD *Imp, *ImpD;
+    
     if (!filterFile || !(*filterFile)) {
         fname = (char *) malloc(32);
         if ((*Nmult)>0 && ((*Nmult)&1))
-          sprintf(fname, "F%dT%d.filter", *Nmult, Nhc);
+	    sprintf(fname, "F%dT%d.filter", *Nmult, Nhc);
         else
-          sprintf(fname, "F65dT%d.filter", Nhc);
-    } else
-      fname = filterFile;
-
+	    sprintf(fname, "F65dT%d.filter", Nhc);
+    } 
+    else
+	fname = filterFile;
+    
     fp = fopen(fname, "rb");
     if (fp == NULL)
-      return(1);
-
+	return(1);
+    
     fscanf(fp, "ScaleFactor ");
     if (1 != fscanf(fp,"%d",&temp))
-      return(2);
+	return(2);
     *LpScl = temp;
-
+    
     fscanf(fp, "\nLength ");
     if (1 != fscanf(fp,"%d",&temp))
-      return(3);
+	return(3);
     *Nwing = temp;
-
+    
     fscanf(fp, "\nNmult ");
     if (1 != fscanf(fp,"%d",&temp))
-      return(4);
+	return(4);
     *Nmult = temp;
-
+    
     Imp = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
-
+    
     fscanf(fp, "\nCoeffs:\n");
     for (i=0; i<*Nwing; i++)  { /* Get array of 16-bit filter coefficients */
         fscanf(fp, "%d\n", &temp);
         Imp[i] = temp;
     }
-
-ImpD = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
-
+    
+    ImpD = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
+    
     fscanf(fp, "\nDifferences:\n");
-    for (i=0; i<*Nwing; i++)  { /* Get array of 16bit filter coeff differences */
+    for (i = 0; i < *Nwing; i++)  { /* Get array of 16bit filter coeff differences */
         fscanf(fp, "%d\n", &temp);
         ImpD[i] = temp;
     }
-
+    
     fclose(fp);
     if (!filterFile || !(*filterFile))
-      free(fname);
+	free(fname);
     *ImpP = Imp;
     *ImpDP = ImpD;
     return(0);

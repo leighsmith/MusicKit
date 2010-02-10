@@ -33,59 +33,7 @@
  Portions Copyright (c) 1999-2000 The MusicKit Project.
  */
 /*
-Modification history:
-
- $Log$
- Revision 1.16  2006/02/05 17:57:10  leighsmith
- Cleaned up prototypes for Xcode 2.2 as it is much more strict about mixing id with a defined type
-
- Revision 1.15  2004/11/16 18:17:26  leighsmith
- Removed _MKTuningSystemInit() so it is now unnecessary to initialise the tuning system until it is needed
-
- Revision 1.14  2003/08/16 22:29:11  leighsmith
- replaced some i386 #if conditions with a tighter check to verify it is only in the case of Intel NeXTStep platforms, several chunks of code were being compiled on Intel machines running GnuStep
-
- Revision 1.13  2003/08/04 21:14:33  leighsmith
- Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
- Revision 1.12  2002/04/16 15:07:06  sbrandon
- - now use proper capacity for new nametbles instead of default 10
- - included new debug tool "_MKPrintGlobalNameTables()" to view
-   what's in there
-
- Revision 1.11  2002/04/15 14:28:15  sbrandon
- - changed symbols and types NSDictionaries to NSMapTables, because NSMapTables
-   do not have to retain their objects (and I have set them up not to do so).
-   This had been causing dealloc loops for objects held in the main dict
-   and trying to remove themselves in their -dealloc methods.
-
- Revision 1.10  2002/04/03 03:59:41  skotmcdonald
- Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
- Revision 1.9  2002/01/23 15:33:02  sbrandon
- The start of a major cleanup of memory management within the MK. This set of
- changes revolves around MKNote allocation/retain/release/autorelease.
-
- Revision 1.8  2001/09/06 21:27:48  leighsmith
- Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
- Revision 1.7  2000/10/01 06:42:47  leigh
- Doco cleanup.
-
- Revision 1.6  2000/07/22 00:34:05  leigh
- Minor doco and typing cleanups.
-
- Revision 1.5  2000/05/13 17:19:10  leigh
- stricter typing
-
- Revision 1.4  2000/04/22 20:10:24  leigh
- user defaults standardised to MK prefix
-
- Revision 1.3  2000/04/07 22:45:03  leigh
- Cleaned up defaults usage, removed redundant DSP output assignments (which are better covered using the IOKit).
-
- Revision 1.2  1999/07/29 01:25:59  leigh
- Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to use of a version control system:
 
  09/22/89/daj - Made back-hash optional in the interest of saving space.
  Flushed _MKNameTableAddGlobalNameNoCopy() in light of the
