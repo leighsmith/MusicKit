@@ -116,9 +116,9 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
     IBNibRef    nibRef;
     OSStatus    err;
     
-    // Calls the Core Foundation Bundle Services function CFBundleGetMainBundle to obtain an instance
-    // of the application's main bundle (autoreleased). You need this reference for the next call.
-    bundleRef = CFBundleGetMainBundle();
+    // Calls the Core Foundation Bundle Services function CFBundleGetBundleWithIdentifier to obtain an instance
+    // of the framework's bundle (autoreleased).
+    bundleRef = CFBundleGetBundleWithIdentifier((CFStringRef) @"org.musickit.SndKit");
     
     // Create a reference to the Carbon window's nib file.
     // The Core Foundation string you provide must be the name of the nib file, without the .nib extension.    

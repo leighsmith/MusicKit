@@ -853,9 +853,9 @@
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
-		D8A441F510777A7300E12376 /* SndAudioUnitController.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F110777A7300E12376 /* SndAudioUnitController.h */; };
+		D8A441F510777A7300E12376 /* SndAudioUnitController.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F110777A7300E12376 /* SndAudioUnitController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D8A441F610777A7300E12376 /* SndAudioUnitController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A441F210777A7300E12376 /* SndAudioUnitController.m */; };
-		D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */; };
+		D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D8A441F810777A7300E12376 /* SndAudioUnitProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A441F410777A7300E12376 /* SndAudioUnitProcessor.m */; };
 		D8A441FD10777AA000E12376 /* AUCarbonWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */; };
 		D8A442241077D58C00E12376 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442231077D58C00E12376 /* AudioToolbox.framework */; };
@@ -5960,6 +5960,8 @@
 				D88FE2D405A0F8430024FD88 /* SndAudioProcessorRecorder.h in Headers */,
 				D88FE2D605A0F8430024FD88 /* SndAudioProcessorReverb.h in Headers */,
 				D88FE2D805A0F8430024FD88 /* SndAudioProcessorToneGenerator.h in Headers */,
+				D8A441F510777A7300E12376 /* SndAudioUnitController.h in Headers */,
+				D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */,
 				D88FE2DA05A0F8430024FD88 /* SndBreakpoint.h in Headers */,
 				D88FE2DF05A0F8430024FD88 /* SndDisplayData.h in Headers */,
 				D88FE2E105A0F8430024FD88 /* SndDisplayDataList.h in Headers */,
@@ -5993,8 +5995,6 @@
 				D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */,
 				D8227E750F8B343100681ED5 /* SndReverbAllpassFilter.h in Headers */,
 				D8227E770F8B343100681ED5 /* SndReverbCombFilter.h in Headers */,
-				D8A441F510777A7300E12376 /* SndAudioUnitController.h in Headers */,
-				D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
