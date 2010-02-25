@@ -1,7 +1,9 @@
 /*
-** The abstract Synth class and the stubs defining methods which are over-ridden
-** in the sub-classes corresponding to each particular synth.
-*/
+ * The abstract Synth class and the stubs defining methods which are over-ridden
+ * in the sub-classes corresponding to each particular synth.
+ *
+ * $Id$
+ */
 #import "MIDISysExSynth.h"
 #import "Bank.h"
 
@@ -75,13 +77,13 @@
 - (BOOL) initWithSysEx: (SysExMessage *) msg
 {
     if([self isParameterUpdate: msg])
-	    [self parameterUpdate:msg];
+	[self parameterUpdate:msg];
     else if ([self isNewPatch: msg])
-	    [self acceptNewPatch:msg];
+	[self acceptNewPatch:msg];
     else if ([self isBulkDump: msg])
-	    [self acceptBulkDump:msg];
+	[self acceptBulkDump:msg];
     else
-	    return NO;
+	return NO;
     return YES;
 }
 
@@ -133,20 +135,20 @@
 // Identifies the synth as responding to note-on/offs.
 - (BOOL) canPlayNotes
 {
-	return NO;
+    return NO;
 }
 
 // We can send parameter updates to the synth while it
 // sounds and hear the changes without retriggering a note.
 - (BOOL) canUpdatePatchWhilePlaying
 {
-	return NO;
+    return NO;
 }
 
 // We are able to retrieve patches from the synth via sysex.
 + (BOOL) canUploadPatches
 {
-	return NO;
+    return NO;
 }
 
 /*
@@ -161,7 +163,7 @@ Bank - a managed collection of dissimilar synth subclass instances, containing s
 // patches and hand them back to the controller - hmm.
 - (BOOL) canSendMultiplePatches
 {
-	return NO;
+    return NO;
 }
 
 /*
@@ -170,7 +172,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
 */
 - (BOOL) mustDownloadBank
 {
-	return NO;
+    return NO;
 }
 
 // restore a whole patch, including the MIDI channel, but it is conditional whether
@@ -192,22 +194,22 @@ Controller may need to inform the user that a complete bank must be downloaded, 
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {
 // was	[aCoder encodeValuesOfObjCTypes: "@", patch];
-        [aCoder encodeObject: patch];
-	[aCoder encodeValuesOfObjCTypes: "i", &MIDIChannel];
-	[aCoder encodeValuesOfObjCTypes: "*", &patchDescription];
+    [aCoder encodeObject: patch];
+    [aCoder encodeValuesOfObjCTypes: "i", &MIDIChannel];
+    [aCoder encodeValuesOfObjCTypes: "*", &patchDescription];
 }
 
 // return the MIDI channel the synth is on, if deducable from the sysEx messages.
 // otherwise return what? -1?
 - (int) midiChannel
 {
-	return MIDIChannel;
+    return MIDIChannel;
 }
 
 // assign the MIDI channel the synth is on
 - (void) setMidiChannel: (int) midiChan
 {
-	MIDIChannel = midiChan; 
+    MIDIChannel = midiChan; 
 }
 
 /*
@@ -216,7 +218,7 @@ patch name be derived from the description (when downloading) & vice-versa when 
 */
 - (NSString *) patchDescription	// returns the text of the patch description
 {
-	return patchDescription;
+    return patchDescription;
 }
 
 // Assign a new description to the patch

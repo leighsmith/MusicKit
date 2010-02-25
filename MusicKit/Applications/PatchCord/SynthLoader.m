@@ -16,10 +16,6 @@
 
 @implementation SynthLoader
 
-// We load all the MIDISysExSynth objects from the bundles that we can find here to enable MIDI sysex reception.
-// Priority increases on each register so we load unhandled first.
-// MIDI reception of patches should only be enabled when a BankController has been allocated.
-// That means we should load the Nibs here and enable reception everytime we start up a BankController.
 - (void) loadTheBundles
 {
     // TODO check NSUserDefault if we should load unhandled. If not loaded, we should just ignore unhandled SysEx.
@@ -55,14 +51,13 @@
 	}
     }
    
-    // For now just load the ones we need
+    // TODO For now just load the ones we need
     //[[Juno106 alloc] init];
-    //[[QuadraverbGT alloc] init];
     //[[ProphetVS alloc] init];
+    [[QuadraverbGT alloc] init];
     [[AxonNGC77 alloc] init];
 }
 
-// Determine what Synth bundles we find and load up.
 - (void) awakeFromNib
 {
     [NSApp setServicesProvider: self];
@@ -104,7 +99,7 @@
 
 @implementation SynthLoader(ServiceManager)
 
-// Currently handle ascii strings as SysEx messages only.
+// Currently handle ASCII strings as SysEx messages only.
 - (void) patchMessage: (NSPasteboard *) pasteboard
              userData: (NSString *) sortArgs
                 error: (NSString **) errorMessage

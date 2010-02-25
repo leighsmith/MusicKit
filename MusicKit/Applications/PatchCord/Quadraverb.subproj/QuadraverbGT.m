@@ -1,6 +1,8 @@
 /*
  * Class declaring Alesis Quadraverb GT MultiFX unit patch management.
  * Leigh Smith 6/9/98
+ *
+ * $Id$
  */
 #import "QuadraverbGT.h"
 
@@ -8,22 +10,23 @@
 
 - init
 {
-   [super init];
-   NSLog(@"Quadraverb GT initialisation\n");
-   update = [[SysExMessage alloc] init];
-   // F0 00 00 0E 07 01<function#><page#>< value1>< value2>< value3>F7
-   [update initWithString:@"f0,00,00,0e,07,01,0,0,0,0,0,f7"];
-   return self;
+    self = [super init];
+    if(self != nil) {
+        NSLog(@"Quadraverb GT initialisation\n");
+        update = [[SysExMessage alloc] init];
+        // F0 00 00 0E 07 01<function#><page#>< value1>< value2>< value3>F7
+        [update initWithString:@"f0,00,00,0e,07,01,0,0,0,0,0,f7"];
+    }
+    return self;
 }
 
 - (void) loadAndShowNib
 {
-    [super initWithWindowNibName: @"quadraverb" owner:self];
+    [super initWithWindowNibName: @"quadraverb" owner: self];
     [[self window] setDocumentEdited: NO];
     [self displayPatch];
 }
 
-// Create a new empty instance of a patch and download it and display it
 - (id) initWithEmptyPatch
 {
    [super initWithEmptyPatch];
@@ -39,11 +42,10 @@
     return @"Dummy name";
 }
 
-// process a new patch
 - (void) acceptNewPatch: (SysExMessage *) msg
 {
     [super acceptNewPatch:msg];
-//    [self setMidiChannel:[msg messageByteAt: MIDI_CHAN]];
+    // [self setMidiChannel:[msg messageByteAt: MIDI_CHAN]];
     [self setPatchDescription: [self getPatchName: msg]];
     [self loadAndShowNib];
 }
