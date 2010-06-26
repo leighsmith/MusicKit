@@ -1,0 +1,77 @@
+<!-- $Id: $ -->
+
+<appendix id=HowManyVoices>
+<title>Appendix A&#208;DSP Music Synthesis Benchmarks</title>
+
+<para>These benchmarks are provided to indicate how much music synthesis computation a DSP
+can do in real time, using the software provided by the Music Kit.  <emphasis>These tests
+were done with a 25 MHz DSP with 8K words of 0-wait state DSP SRAM</emphasis>. Note that
+Intel-based DSP cards have faster DSPs and more DSP SRAM, allowing for more voices.
+However, some Intel-based DSP cards, such as the Turtle Beach Multisound, use slower DSP
+SRAM, which will negatively impact the number of possible voices.</para>
+
+<para>The benchmarks are in the following format:</para>
+
+<para><emphasis>Name&#208;description: I1 / I2</emphasis></para>
+
+<para><emphasis>Name</emphasis><emphasis role="bold"> </emphasis>is the name of a
+synthesis instrument in the MusicKit SynthPatch Library.
+<emphasis>Description</emphasis> describes the synthesis instrument briefly.  <emphasis>I1
+</emphasis>is the number of instances of the instrument that can play in real time at a
+sound-out sampling rate of 22050 Hz.  <emphasis>I2</emphasis> is the number of instances
+that can play at a sampling rate of 44100 Hz.</para>
+
+<para>Note that the MusicKit SynthPatch Library supports a number of instruments that are
+not represented here.  It also supports polyphonic instruments, and the constitution of
+the orchestra can be changed between samples (via timed messages) during a
+performance.</para>
+
+<sect1 id=PluckedStringSynthesis>
+<title>Plucked String Synthesis</title>
+
+<para><emphasis role="bold">Pluck</emphasis>&#208;with fine tuning allpass, sustain
+filter, and stereo panning:  14 / 7</para>
+</sect1>
+
+<sect1>
+<title>Wave Table Synthesis</title>
+
+<para><emphasis role="bold">Wave1</emphasis>&#208;amplitude and frequency envelopes,
+stereo panning, and non-interpolating drop-sample oscillator: 22 / 12</para>
+
+<para><emphasis role="bold">Wave1i</emphasis>&#208;same as Wave1, but with interpolating
+high-quality oscillator: 16 / 8 </para>
+
+<para><emphasis role="bold">Wave1vi&#208;</emphasis>same as Wave1i, but with the addition
+of random and periodic vibrato: 10 / 5</para>
+
+</sect1>
+
+<sect1>
+<title>Frequency Modulation Synthesis</title>
+
+<para><emphasis role="bold">Fm1&#208;</emphasis>arbitrary carrier and modulator
+wavetables, amplitude, frequency and FM index envelopes, stereo panning, and
+non-interpolating oscillator:  13 / 8 </para>
+
+<para><emphasis role="bold">Fm1i&#208;</emphasis>same as Fm1, but with interpolating
+oscillator for carrier:  11 / 6 </para>
+
+<para><emphasis role="bold">Fm1pnvi&#208;</emphasis>same as Fm1i, with the addition of
+random and periodic vibrato, another modulator with its own index envelope, noise
+modulating the frequency of the two modulators, and an envelope on the noise:  5 / 3
+</para>
+</sect1>
+
+<sect1>
+<title>Benchmark Details</title>
+
+<para>The DSP sine ROM is used as the wavetable for all oscillators above.  All vibrato is
+done on the DSP.  The amount of synthesis that can be done in real time also depends on
+how rapidly wave tables are changing and other details of musical context.  Changing the
+constitution of the orchestra during a performance can lead to somewhat smaller numbers
+due to DSP memory fragmentation.</para>
+
+</sect1>
+</appendix>
+
