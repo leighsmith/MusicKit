@@ -246,13 +246,13 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // Returns NULL if the driver names were unobtainable.
 // The client application should not attempt to free the pointers.
 // TODO return driverIndex by reference
-PERFORM_API char **SNDGetAvailableDriverNames(void)
+PERFORM_API const char **SNDGetAvailableDriverNames(void)
 {
     // We need the initialisation to retrieve the driver list.
     if(!initialised)
         SNDInit(TRUE);
 
-    return driverList;
+    return (const char **) driverList;
 }
 
 

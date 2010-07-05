@@ -34,9 +34,9 @@ LIBRARIES_DEPEND_UPON += -l$(FOUNDATION_LIBRARY_NAME) $(ADDITIONAL_DEPENDS) \
                          @LIBS@ -lportmidi -lporttime
 
 ifeq ($(GNUSTEP_TARGET_OS),mingw32)
-LIBRARIES_DEPEND_UPON += -lobjc -lpmdll
+LIBRARIES_DEPEND_UPON += -lobjc
 endif
 # TODO this should be redundant with autoconf.
 ifeq ($(GNUSTEP_TARGET_OS),cygwin)
-LIBRARIES_DEPEND_UPON += -lwinmm -ldsound -lobjc -lole32 -lpmdll
+LIBRARIES_DEPEND_UPON += -lwinmm -ldsound -lobjc -lole32
 endif

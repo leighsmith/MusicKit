@@ -95,10 +95,10 @@ PERFORM_API BOOL SNDTerminate(void);
 
 /*!
   @function       SNDGetAvailableDriverNames
-  @brief       Retrieve a list of available driver descriptions.
+  @brief          Retrieve a list of available driver descriptions.
   @return         Returns a NULL terminated array of readable strings of each driver's name.
 */
-PERFORM_API char **SNDGetAvailableDriverNames(void);
+PERFORM_API const char **SNDGetAvailableDriverNames(void);
 
 /*!
   @function       SNDSetDriverIndex
