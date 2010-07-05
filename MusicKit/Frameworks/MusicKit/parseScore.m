@@ -631,8 +631,8 @@ static char *initRan(void)
 {
     char *stateArr;
 
-#if HAVE_RANDOM
     _MK_MALLOC(stateArr, char, STATESIZEINBYTES);
+#if HAVE_RANDOM
     initstate(1, stateArr, STATESIZEINBYTES);
 #endif
     return stateArr;

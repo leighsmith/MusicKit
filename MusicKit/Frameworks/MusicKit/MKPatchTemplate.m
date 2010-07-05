@@ -180,11 +180,11 @@ Modification history:
     return self;
 }
 
+/* Creates a new MKPatchTemplate that's a copy of the receiver, containing
+   the same connections and entries. */
 - copyWithZone: (NSZone *) zone
-  /* Creates a new MKPatchTemplate that's a copy of the receiver, containing
-     the same connections and entries. */
 {
-    MKPatchTemplate *newObj = NSCopyObject(self, 0, zone);
+    MKPatchTemplate *newObj = (MKPatchTemplate *) NSCopyObject(self, 0, zone);
 
     _deallocatedPatches = [_MKClassOrchestra() _addTemplate:newObj];
     newObj->_connectionStorage = [_connectionStorage copy];

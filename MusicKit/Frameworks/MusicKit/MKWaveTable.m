@@ -110,11 +110,11 @@
     return YES;
 }
 
-- copyWithZone:(NSZone *)zone
-  /* Copies the receiver, setting all cached data arrays to NULL. 
-     The scaling and length are copied from the receiver. */
+/* Copies the receiver, setting all cached data arrays to NULL. 
+   The scaling and length are copied from the receiver. */
+- copyWithZone: (NSZone *) zone
 {
-    MKWaveTable *newObj = NSCopyObject(self, 0, zone);
+    MKWaveTable *newObj = (MKWaveTable *) NSCopyObject(self, 0, zone);
     newObj->dataDSP = NULL;
     newObj->dataDouble = NULL;
     return newObj;

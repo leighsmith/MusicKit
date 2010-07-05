@@ -157,12 +157,13 @@ Modification history before commit to CVS:
 }
 
 /* TYPE: Creating; Creates a new MKNoteReceiver as a copy of the receiver.
-* Creates, initializes, and returns a new MKNoteReceiver with the same noteSenders as the receiver.
-*/
+ * Creates, initializes, and returns a new MKNoteReceiver with the same noteSenders as the receiver.
+ */
 - copyWithZone: (NSZone *) zone
 {
     unsigned n = [noteSenders count], i;
-    MKNoteReceiver *newObj = NSCopyObject(self, 0, zone);
+    MKNoteReceiver *newObj = (MKNoteReceiver *) NSCopyObject(self, 0, zone);
+
     newObj->noteSenders = [[NSMutableArray arrayWithCapacity: [noteSenders count]] retain];
     for (i = 0; i < n; i++)
         [newObj connect: [noteSenders objectAtIndex: i]];

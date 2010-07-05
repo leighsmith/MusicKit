@@ -384,11 +384,12 @@ static void addAccidentalPitch(int keyNumValue, NSString *name1, NSString *name2
     [super dealloc];
 }
 
+/* Returns a copy of receiver. */
 - copyWithZone: (NSZone *) zone
-    /* Returns a copy of receiver. */
 {
-//    MKTuningSystem *newObj = [super copyWithZone:zone];
-    MKTuningSystem *newObj = NSCopyObject(self, 0, zone);//sb: must check for deep copying
+    //    MKTuningSystem *newObj = [super copyWithZone:zone];
+    //sb: must check for deep copying
+    MKTuningSystem *newObj = (MKTuningSystem *) NSCopyObject(self, 0, zone);
     
     newObj->frequencies = [[NSMutableArray alloc] initWithArray: frequencies];
     return newObj;

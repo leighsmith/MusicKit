@@ -237,14 +237,14 @@ the note's MKConductor for time coordination. Then free the note. */
 }
 
 /* Creates a new MKNoteSender as a copy of the receiver.
-* Creates, initializes, and returns a new MKNoteSender with the same noteReceivers as the receiver.
-* Thus a new array but the elements are the original noteSenders.
-* If we copied the noteSenders, then we couldn't connect senders.
-*/
+ * Creates, initializes, and returns a new MKNoteSender with the same noteReceivers as the receiver.
+ * Thus a new array but the elements are the original noteSenders.
+ * If we copied the noteSenders, then we couldn't connect senders.
+ */
 - copyWithZone: (NSZone *) zone
 {
     unsigned int noteReceiverIndex;
-    MKNoteSender *newObj = NSCopyObject(self, 0, zone);
+    MKNoteSender *newObj = (MKNoteSender *) NSCopyObject(self, 0, zone);
     
     newObj->noteReceivers = [[NSMutableArray arrayWithCapacity: [noteReceivers count]] retain];
     for (noteReceiverIndex = 0; noteReceiverIndex < [noteReceivers count]; noteReceiverIndex++) {

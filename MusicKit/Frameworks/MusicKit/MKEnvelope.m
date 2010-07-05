@@ -226,17 +226,21 @@ id MKGetEnvelopeClass(void)
   return theSubclass;
 }
 
-- copyWithZone:(NSZone *)zone
-  /* Returns a copy of the receiver with its own copy of arrays. */
+/* Returns a copy of the receiver with its own copy of arrays. */
+- copyWithZone: (NSZone *) zone
 {
-  MKEnvelope *newObj = NSCopyObject(self, 0, zone);
-  newObj->xArray = NULL;
-  newObj->yArray = NULL;
-  newObj->smoothingArray = NULL;
-  [newObj setPointCount:pointCount xArray:xArray orSamplingPeriod:
- samplingPeriod  yArray:yArray smoothingArray:smoothingArray orDefaultSmoothing:defaultSmoothing];
-  [newObj setStickPoint:stickPoint];
-  return newObj;
+    MKEnvelope *newObj = (MKEnvelope *) NSCopyObject(self, 0, zone);
+    newObj->xArray = NULL;
+    newObj->yArray = NULL;
+    newObj->smoothingArray = NULL;
+    [newObj setPointCount: pointCount 
+		   xArray: xArray 
+	 orSamplingPeriod: samplingPeriod  
+		   yArray: yArray 
+	   smoothingArray: smoothingArray 
+       orDefaultSmoothing: defaultSmoothing];
+    [newObj setStickPoint: stickPoint];
+    return newObj;
 }
 
 - (int)	pointCount

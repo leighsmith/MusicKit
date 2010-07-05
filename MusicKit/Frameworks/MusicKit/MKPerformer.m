@@ -669,19 +669,19 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
     return newObj;
 }
 
-- copyWithZone: (NSZone *) zone;
-  /* TYPE: Copying: Returns a copy of the receiver.
-   * Creates and returns a new inactive MKPerformer as
-   * a copy of the receiver.  
-   * The new object has the same timeShift and 
-   * duration values as the reciever. Its
-   * time and nextPerform variables 
-   * are set to 0.0. It has its own noteSenders which contains
-   * copies of the values in the receiver's collection. The copies are 
-   * added to the collection by addNoteSender:. 
-   */
+/* TYPE: Copying: Returns a copy of the receiver.
+ * Creates and returns a new inactive MKPerformer as
+ * a copy of the receiver.  
+ * The new object has the same timeShift and 
+ * duration values as the reciever. Its
+ * time and nextPerform variables 
+ * are set to 0.0. It has its own noteSenders which contains
+ * copies of the values in the receiver's collection. The copies are 
+ * added to the collection by addNoteSender:. 
+ */
+- copyWithZone: (NSZone *) zone
 {
-    MKPerformer *newObj = NSCopyObject(self, 0, zone);
+    MKPerformer *newObj = (MKPerformer *) NSCopyObject(self, 0, zone);
     id obj_copy;
     unsigned n, i;
     
@@ -756,7 +756,7 @@ static void setNoteSenders(MKPerformer *newObj, id aList)
 {
     /* This is like copyFromZone: except that the MKNoteSenders are not copied.
        Instead, a virgin empty List is given. */
-    MKPerformer *newObj = NSCopyObject(self, 0, zone);
+    MKPerformer *newObj = (MKPerformer *) NSCopyObject(self, 0, zone);
     newObj = copyFields(self,newObj);
     setNoteSenders(newObj,[[NSMutableArray alloc] init]);
     return newObj;

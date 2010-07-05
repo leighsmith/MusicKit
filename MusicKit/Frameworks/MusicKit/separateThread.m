@@ -60,10 +60,6 @@
 
 #define COND_ERROR NSLocalizedStringFromTableInBundle(@"MKConductor encountered problem.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if the MusicKit's MKConductor class encounters a Mach error (this should never happen, so this error should never appear--in particular, it should never be seen by the user).")
 
-#ifdef __MINGW32__
-#define NSConditionLock SndConditionLock
-#endif
-
 #define MKCONDUCTOR_DEBUG 0
 
 static NSRecursiveLock *performanceLock = nil;	// The lock used to control modification (such as adjusting time) to the performance thread.
