@@ -66,6 +66,7 @@
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorChain.h"
 #import "SndMuLaw.h"
+#import <math.h> // Required for GNUstep. Should be unnecessary in later versions of GS.
 
 #define AU_FORMAT_INT_LENGTH 4
 

@@ -41,7 +41,6 @@ CONDITIONS OF THIS AGREEMENT.
 #else
 # import <fcntl.h>
 # import <math.h>
-# import <arpa/inet.h>
 #endif
 
 #import <Foundation/Foundation.h>

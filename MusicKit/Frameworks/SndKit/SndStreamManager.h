@@ -25,11 +25,6 @@
 @class SndStreamClient;
 @class SndStreamMixer;
 
-#ifdef __MINGW32__
-#import "SndConditionLock.h"
-#define NSConditionLock SndConditionLock
-#endif
-
 /*!
 @protocol SndDelegateMessagePassing
  */

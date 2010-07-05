@@ -86,11 +86,11 @@ $(MY_NAME)_OBJC_FILES = \
          SndTable.m \
          SndView.m \
          SndReverbAllpassFilter.m \
-         SndReverbCombFilter.m
+         SndReverbCombFilter.m \
+         Sndfilterkit.m
 
 $(MY_NAME)_C_FILES = \
-         SndEndianFunctions.c \
-         Sndfilterkit.c
+         SndEndianFunctions.c
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \
@@ -110,7 +110,6 @@ $(MY_NAME)_HEADER_FILES = \
          SndAudioProcessorReverb.h \
          SndAudioProcessorToneGenerator.h \
          SndBreakpoint.h \
-         SndConditionLock.h \
          SndDisplayData.h \
          SndDisplayDataList.h \
          SndEndianFunctions.h \
@@ -143,10 +142,6 @@ $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
 # Extra DLL exports file
 # $(MY_NAME)_DLL_DEF = $(MY_NAME).def
-
-ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  $(MY_NAME)_OBJC_FILES += SndConditionLock.m
-endif
 
 # SRCS = $(LIBRARY_NAME:=.m)
 # HDRS = $(LIBRARY_NAME:=.h)
