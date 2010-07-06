@@ -793,7 +793,7 @@
 		D88FE33805A0F9E40024FD88 /* SndTable.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE31D05A0F9E40024FD88 /* SndTable.m */; };
 		D88FE33905A0F9E40024FD88 /* SndView.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE31E05A0F9E40024FD88 /* SndView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FE33A05A0F9E40024FD88 /* SndView.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE31F05A0F9E40024FD88 /* SndView.m */; };
-		D88FE34405A0FBC10024FD88 /* Sndfilterkit.c in Sources */ = {isa = PBXBuildFile; fileRef = D88FE33D05A0FBC10024FD88 /* Sndfilterkit.c */; };
+		D88FE34405A0FBC10024FD88 /* Sndfilterkit.m in Sources */ = {isa = PBXBuildFile; fileRef = D88FE33D05A0FBC10024FD88 /* Sndfilterkit.m */; };
 		D88FE34505A0FBC10024FD88 /* Sndfilterkit.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE33E05A0FBC10024FD88 /* Sndfilterkit.h */; };
 		D88FE34605A0FBC10024FD88 /* Sndlargefilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE33F05A0FBC10024FD88 /* Sndlargefilter.h */; };
 		D88FE34705A0FBC10024FD88 /* Sndsmallfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FE34005A0FBC10024FD88 /* Sndsmallfilter.h */; };
@@ -2141,7 +2141,7 @@
 		D88FE31D05A0F9E40024FD88 /* SndTable.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndTable.m; path = Frameworks/SndKit/SndTable.m; sourceTree = "<group>"; };
 		D88FE31E05A0F9E40024FD88 /* SndView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SndView.h; path = Frameworks/SndKit/SndView.h; sourceTree = "<group>"; };
 		D88FE31F05A0F9E40024FD88 /* SndView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SndView.m; path = Frameworks/SndKit/SndView.m; sourceTree = "<group>"; };
-		D88FE33D05A0FBC10024FD88 /* Sndfilterkit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Sndfilterkit.c; path = Frameworks/SndKit/Sndfilterkit.c; sourceTree = "<group>"; };
+		D88FE33D05A0FBC10024FD88 /* Sndfilterkit.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = Sndfilterkit.m; path = Frameworks/SndKit/Sndfilterkit.m; sourceTree = "<group>"; };
 		D88FE33E05A0FBC10024FD88 /* Sndfilterkit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sndfilterkit.h; path = Frameworks/SndKit/Sndfilterkit.h; sourceTree = "<group>"; };
 		D88FE33F05A0FBC10024FD88 /* Sndlargefilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sndlargefilter.h; path = Frameworks/SndKit/Sndlargefilter.h; sourceTree = "<group>"; };
 		D88FE34005A0FBC10024FD88 /* Sndsmallfilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sndsmallfilter.h; path = Frameworks/SndKit/Sndsmallfilter.h; sourceTree = "<group>"; };
@@ -3251,7 +3251,7 @@
 				D88FE2B505A0F8430024FD88 /* SndEndianFunctions.h */,
 				D88FE2B805A0F8430024FD88 /* SndError.h */,
 				D88FE2B905A0F8430024FD88 /* SndError.m */,
-				D88FE33D05A0FBC10024FD88 /* Sndfilterkit.c */,
+				D88FE33D05A0FBC10024FD88 /* Sndfilterkit.m */,
 				D88FE33E05A0FBC10024FD88 /* Sndfilterkit.h */,
 				D88FE30905A0F9E40024FD88 /* SndMuLaw.h */,
 				D88FE30A05A0F9E40024FD88 /* SndMuLaw.m */,
@@ -7649,7 +7649,7 @@
 				D88FE33605A0F9E40024FD88 /* SndStreamRecorder.m in Sources */,
 				D88FE33805A0F9E40024FD88 /* SndTable.m in Sources */,
 				D88FE33A05A0F9E40024FD88 /* SndView.m in Sources */,
-				D88FE34405A0FBC10024FD88 /* Sndfilterkit.c in Sources */,
+				D88FE34405A0FBC10024FD88 /* Sndfilterkit.m in Sources */,
 				D88FE34905A0FBC10024FD88 /* SndFunctions.m in Sources */,
 				D88FE34A05A0FBC10024FD88 /* SndFileIO.m in Sources */,
 				D84CDEE1061F57D5007B002D /* SndPasteboard.m in Sources */,
