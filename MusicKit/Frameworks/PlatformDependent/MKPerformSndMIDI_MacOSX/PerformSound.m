@@ -393,6 +393,7 @@ static BOOL retrieveDriverList(BOOL isInput)
         
     for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
          NSString *deviceName;
+	const char *utf8DeviceName;
 
 	deviceNamePropertyAddress.mSelector = kAudioObjectPropertyName;
 	deviceNamePropertyAddress.mScope = kAudioObjectPropertyScopeGlobal;
@@ -407,7 +408,9 @@ static BOOL retrieveDriverList(BOOL isInput)
         }
 	
         // NSLog(@"DevID: %d   name: %@\n", allDeviceIDs[driverIndex], deviceName);
-        driverList[driverIndex] = [deviceName UTF8String];
+	utf8DeviceName = [deviceName UTF8String];
+        driverList[driverIndex] = (const char *) malloc(strlen(utf8DeviceName) + 1);
+	strcpy((char *) driverList[driverIndex], utf8DeviceName);
     }
     free(allDeviceIDs);
     
