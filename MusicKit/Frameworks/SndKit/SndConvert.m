@@ -27,26 +27,8 @@ DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS
 OF THIS AGREEMENT.
 
 ******************************************************************************/
-#ifdef GNUSTEP
-#include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-#include <Foundation/NSByteOrder.h>
-#include "SndFunctions.h"
-#include "SndResample.h"
-#include <string.h>      /* for memmove   */
-
-#else
 
 #import <Foundation/Foundation.h>
-
-#ifdef WIN32
-#import <wtypes.h>
-#import <Winsock.h>
-#import <malloc.h>
-#import <stdio.h>
-#endif
-
-#endif /* GNUSTEP */
-
 #import "SndError.h"
 #import "SndFunctions.h"
 #import "SndMuLaw.h"

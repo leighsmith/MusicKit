@@ -31,12 +31,6 @@ CONDITIONS OF THIS AGREEMENT.
 #ifndef GNUSTEP
 # ifndef WIN32
 #  import <libc.h>
-# else
-#  import <stdio.h>
-#  import <fcntl.h>
-#  import <Winsock.h>
-#  import <malloc.h>
-#  import <io.h>
 # endif
 #else
 # import <fcntl.h>

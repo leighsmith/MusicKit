@@ -47,12 +47,8 @@
  * 20/6/99 sb: added check to -compactSamples to ensure sound needs it
  */
 
-#ifdef WIN32
-#include <windows.h>
-#else
-# ifndef GNUSTEP
-#  include <libc.h>
-# endif
+#ifndef GNUSTEP
+#include <libc.h>
 #endif
 
 #include <stdlib.h>
