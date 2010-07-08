@@ -93,9 +93,10 @@
 /*!
   @brief Returns an NSArray of NSStrings listing the sound drivers available.
   
+  @param outputDevices YES to retrieve only the output devices, NO to retrieve only the input devices.
   The format of the names is dependent on the underlying operating system.
 */
-+ (NSArray *) getDriverNames;
++ (NSArray *) getDriverNamesForOutput: (BOOL) outputDevices;
 
 /*!
   @brief   Returns an NSString with description of SndStreamManager

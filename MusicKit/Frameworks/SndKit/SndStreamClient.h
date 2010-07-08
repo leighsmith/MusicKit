@@ -128,13 +128,6 @@ enum {
 + streamClient;
 
 /*!
-  @brief   Frees buffer memory
-  
-  For internal use only.
-*/
-- freeBufferMem;
-
-/*!
   @brief   Describes SndStreamClient
   
   Describes SndStreamClient 
@@ -321,19 +314,19 @@ enum {
 - setGeneratesOutput: (BOOL) b;
 
 /*!
-  @brief   Sets whether the client requires an input uadio stream or not.
+  @brief   Sets whether the client requires an input audio stream or not.
   
-  Normally you should only need to call this when initializing a derived stream client.
+  Normally you should only need to call this when initializing a subclassed stream client.
   If true, the stream manager will copy the most recent input buffer
   into the client's input buffer each processing cycle provided the
   client hasn't choked the CPU. If the client is running in less than
   real time, the input buffer is not updated, since the manager must
   assume that the client's copy of the previous input buffer may still
   be in use.
-  @param      b Boolean switch
+  @param      yesOrNo YES copy the input buffer into the client.
   @return     Returns self.
 */
-- setNeedsInput: (BOOL) b;
+- setNeedsInput: (BOOL) yesOrNo;
 
 /*!
   @brief   Sets the SndStreamManager for this client.

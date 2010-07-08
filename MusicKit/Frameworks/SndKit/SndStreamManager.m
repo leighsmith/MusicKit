@@ -70,9 +70,9 @@ static SndStreamManager *defaultStreamManager = nil;
 	
     if (SNDInit(TRUE)) {
         if([defaults boolForKey: @"SndShowDriverSelected"]) {
-            const char **driverNames = SNDGetAvailableDriverNames();
+            const char **outputDriverNames = SNDGetAvailableDriverNames(YES);
             
-            NSLog(@"SndStreamManager +initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+            NSLog(@"SndStreamManager +initialise: output driver selected is %s\n", outputDriverNames[SNDGetAssignedDriverIndex(YES)]);
         }
 	if([defaults boolForKey: @"SndShowSpeakerConfiguration"]) {
 	    const char **speakerNames = SNDSpeakerConfiguration();
@@ -87,10 +87,10 @@ static SndStreamManager *defaultStreamManager = nil;
         defaultStreamManager = [SndStreamManager new];  // create our default
 }
 
-+ (NSArray *) getDriverNames
++ (NSArray *) getDriverNamesForOutput: (BOOL) outputDevices
 {
     NSMutableArray *soundDriverNames = [NSMutableArray array];
-    const char **driverNames = SNDGetAvailableDriverNames();
+    const char **driverNames = SNDGetAvailableDriverNames(outputDevices);
     unsigned int driverNameIndex;
     
     for(driverNameIndex = 0; driverNames[driverNameIndex] != NULL; driverNameIndex++) {
@@ -114,6 +114,8 @@ static SndStreamManager *defaultStreamManager = nil;
 }
 
 // TODO provide - initOnDevice: (NSString *) driverName
+// or deviceSpecificStreamManager = [[SndStreamManager streamManagerOnDevice: deviceName] retain];
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // init
@@ -539,6 +541,8 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[Manager] --> processAudio sampleCount = %ld, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
         (long) sampleCount, streamOutputBuffer, streamOutputBuffer->streamData);
+    NSLog(@"[Manager] --> processAudio sampleCount = %ld, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
+	  (long) sampleCount, streamInputBuffer, streamInputBuffer->streamData);
     // NSLog(@"[Manager] --> processAudio outB = %@\n", outB);
 #endif
     
