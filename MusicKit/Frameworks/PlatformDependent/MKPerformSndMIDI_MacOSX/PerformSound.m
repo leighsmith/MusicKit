@@ -1053,7 +1053,7 @@ PERFORM_API const char **SNDSpeakerConfiguration(void)
 // Returns NULL if the driver names were unobtainable.
 // The client application should not attempt to free the pointers.
 // TODO return driverIndex by reference
-PERFORM_API const char **SNDGetAvailableDriverNames(void)
+PERFORM_API const char **SNDGetAvailableDriverNames(BOOL outputDrivers)
 {    
     // We need the initialisation to retrieve the driver list.
     if(!initialised)
@@ -1063,7 +1063,7 @@ PERFORM_API const char **SNDGetAvailableDriverNames(void)
 }
 
 // Match the driverDescription against the driverList
-PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
+PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL outputDrivers)
 {
     // This needs to be called after initialising.
     if(!initialised)
@@ -1083,7 +1083,7 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
 }
 
 // Match the driverDescription against the driverList
-PERFORM_API unsigned int SNDGetAssignedDriverIndex(void)
+PERFORM_API unsigned int SNDGetAssignedDriverIndex(BOOL outputDrivers)
 {
     return driverIndex;
 }
