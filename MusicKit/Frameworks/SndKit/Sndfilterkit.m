@@ -62,16 +62,11 @@
 #define SUPERCEDED 1 
 
 #import <stdio.h>
-
-#if !defined(__FreeBSD__) || (defined(__FreeBSD_version) && (__FreeBSD_version < 500000))
-#include <malloc.h>
-#endif
-
 #import "SndResample.h"
 #import "Sndfilterkit.h"
 
-#ifndef WIN32
-#import <libc.h>
+#if defined(WIN32) || (defined(__FreeBSD_version) && (__FreeBSD_version < 500000))
+#include <malloc.h>
 #endif
 
 #import <math.h>
