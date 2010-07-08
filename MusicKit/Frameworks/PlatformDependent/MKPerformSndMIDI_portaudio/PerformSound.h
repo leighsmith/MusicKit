@@ -96,25 +96,27 @@ PERFORM_API BOOL SNDTerminate(void);
 /*!
   @function       SNDGetAvailableDriverNames
   @brief          Retrieve a list of available driver descriptions.
+  @param	  outputDrivers Set to YES to retrieve only names of output drivers, NO to retrieve only names of input drivers.
   @return         Returns a NULL terminated array of readable strings of each driver's name.
 */
-PERFORM_API const char **SNDGetAvailableDriverNames(void);
+PERFORM_API const char **SNDGetAvailableDriverNames(BOOL outputDrivers);
 
 /*!
   @function       SNDSetDriverIndex
-  @brief       Assign currently active driver.
-  @param          selectedIndex
-  The 0 base index into the driver table returned by SNDGetAvailableDriverNames
+  @brief          Assign currently active driver.
+  @param          selectedIndex The 0 base index into the driver table returned by SNDGetAvailableDriverNames
+  @param	  outputDrivers Set to YES to set the assigned driver index of output drivers only, NO to set the index of input drivers only.
   @return         Returns YES if able to set the index, no if unable (for example selectedIndex out of bounds).
 */
-PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex);
+PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL outputDrivers);
 
 /*!
   @function       SNDGetAssignedDriverIndex
-  @brief       Return the index into driverList currently selected.
+  @brief          Return the index into driverList currently selected.
+  @param	  outputDrivers Set to YES to retrieve the assigned driver index of output drivers only, NO to retrieve the index of input drivers only.
   @return         Returns the index (0 base).
 */
-PERFORM_API unsigned int SNDGetAssignedDriverIndex(void);
+PERFORM_API unsigned int SNDGetAssignedDriverIndex(BOOL outputDrivers);
 
 /*!
   @function       SNDIsMuted
@@ -126,10 +128,9 @@ PERFORM_API BOOL SNDIsMuted(void);
 /*!
   @function       SNDSetMute
   @brief       Mute or unmute the currently playing sound..
-  @param          aFlag
-  YES to mute, NO to unmute.
+  @param          muted YES to mute, NO to unmute.
 */
-PERFORM_API void SNDSetMute(BOOL aFlag);
+PERFORM_API void SNDSetMute(BOOL muted);
 
 /*!
   @function       SNDSetBufferSizeInBytes
