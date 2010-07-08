@@ -26,12 +26,6 @@ ADDITIONAL_TOOL_LIBS += -lSndKit
 ADDITIONAL_FLAGS += -g -O2
 ADDITIONAL_LDFLAGS += -g
 
-ifeq (mingw32, $(GNUSTEP_HOST_OS))
-  CYG_PATH = $(shell cygpath -w '/' | tr '\\' '/' )
-  ADDITIONAL_FLAGS += -I$(CYG_PATH)/usr/local/include
-  ADDITIONAL_LDFLAGS += -L$(CYG_PATH)/usr/local/lib
-endif
-
 # The Objective-C source files to be compiled
 $(TOOL_NAME)_OBJC_FILES = main.m
 

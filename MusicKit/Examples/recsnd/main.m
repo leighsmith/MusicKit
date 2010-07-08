@@ -12,8 +12,8 @@
 #import <SndKit/SndKit.h>
 #include <unistd.h>
 
-static char* versionString   = "5.5.3"; 
-static char* versionDate     = "April 2007";  
+static char* versionString   = "5.6.2"; 
+static char* versionDate     = "July 2010";  
 static char* defaultFilename = "temp.wav";
 static BOOL  bSilent         = FALSE;
 
@@ -27,7 +27,7 @@ static BOOL  bSilent         = FALSE;
 void showHelp(void)
 {
     printf("recsnd -  A command line SndKit recording tool.\n");
-    printf("Author:   SKoT McDonald <skot@tomandandy.com>\n");
+    printf("Orig. Author: SKoT McDonald <skot@tomandandy.com>\n\n");
     printf("Use:      recsnd [options] <filename>\n");
     printf("Options:  -h    show this help page\n"); 
     printf("          -v    show version\n"); 
@@ -53,9 +53,13 @@ void doRecord(const char* recordFilename, double recordDuration)
 {
     NSAutoreleasePool *pool     = [[NSAutoreleasePool alloc] init];
     SndStreamRecorder *recorder = [[SndStreamRecorder alloc] init];
+#ifndef WIN32
     NSString *fileName = [[NSFileManager defaultManager] stringWithFileSystemRepresentation: recordFilename
 										     length: strlen(recordFilename)];
-        
+#else
+    NSString *fileName = [NSString stringWithUTF8String: recordFilename];
+#endif
+
     [recorder startRecordingToFile: fileName];
     
     if (recordDuration >= 0.0) {
@@ -124,14 +128,14 @@ int main (int argc, const char * argv[])
 		    }
 		    break;
 		default:
-		    fprintf(stderr,"Ignoring unknown option '%s'.\n",argv[i]);
+		    fprintf(stderr, "Ignoring unknown option '%s'.\n", argv[i]);
 	    }
 	}
 	else if (recordFilename == NULL) {
 	    recordFilename = argv[i];
 	}
 	else {
-	    fprintf(stderr,"Ignoring superfluous filename: %s\n",argv[i]);
+	    fprintf(stderr, "Ignoring superfluous filename: %s\n", argv[i]);
 	}
     }
     
@@ -142,7 +146,7 @@ int main (int argc, const char * argv[])
     }
     
     // Record!
-    
+   
     doRecord(recordFilename, recordDuration);
     
     return 0;  
