@@ -425,7 +425,7 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
 
 + (NSArray *) getDriverNames
 {
-    return [SndStreamManager getDriverNames];
+    return [SndStreamManager getDriverNamesForOutput: YES];
 }
 
 - (NSString *) driverName 
