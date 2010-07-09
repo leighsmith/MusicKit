@@ -28,27 +28,13 @@ CONDITIONS OF THIS AGREEMENT.
 
 ******************************************************************************/
 
-#ifndef GNUSTEP
-# ifndef WIN32
-#  import <libc.h>
-# endif
-#else
-# import <fcntl.h>
-# import <math.h>
-#endif
-
 #import <Foundation/Foundation.h>
-
+#import <math.h>
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
 #import "SndResample.h"
 
 #define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
-#ifdef WIN32
-#define LASTCHAR        '\\'
-#else
-#define LASTCHAR        '/'
-#endif
 
 int SndSampleWidth(SndSampleFormat format)
 {
