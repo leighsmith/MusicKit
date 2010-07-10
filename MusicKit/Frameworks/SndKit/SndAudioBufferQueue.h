@@ -30,22 +30,22 @@ typedef enum {
 } SndAudioBufferQueueType;
 
 /*!
-@class SndAudioBufferQueue
-@brief Abstraction of the producer / consumer buffer queue operation found inside
-  the SndStreamClients, which have both an input and output SndAudioBufferQueue.
-  Provides thread safe buffer exchange and blocking operations.
+  @class SndAudioBufferQueue
+  @brief Abstraction of the producer / consumer buffer queue operation found inside
+    the SndStreamClients, which have both an input and output SndAudioBufferQueue.
+    Provides thread safe buffer exchange and blocking operations.
 */
 @interface SndAudioBufferQueue : NSObject 
 {
-/*! Array of buffers pending processing (to be consumed) */
+    /*! Array of buffers pending processing (to be consumed) */
     NSMutableArray  *pendingBuffers;
-/*! Array of processed buffers (post consumption) */
+    /*! Array of processed buffers (post consumption) */
     NSMutableArray  *processedBuffers;
-/*! Lock for thread safety around pending buffers array */
+    /*! Lock for thread safety around pending buffers array */
     NSConditionLock *pendingBuffersLock;
     /*! Lock for thread safety around processed buffers array */
     NSConditionLock *processedBuffersLock;
-/*! Total number of buffers in the queue, both pending and processed */
+    /*! Total number of buffers in the queue, both pending and processed */
     int              numBuffers;
 }
 

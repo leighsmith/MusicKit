@@ -66,10 +66,28 @@ enum {
   @class SndStreamClient
   @brief A stream client is responsible for audio streaming, signal processing and synthesis.
 
-  A SndStreamClient provides basic streaming services such as double buffering, thread handling,
-  automatic start up and and shut down of lower-level streaming services. 
-  Each SndStreamClient instance has a SndAudioProcessorChain instance, so each client can be part of a signal processing chain.
-*/
+  A SndStreamClient provides basic streaming services such as double buffering, thread
+  handling, automatic start up and and shut down of lower-level streaming services.  Each
+  SndStreamClient instance has a SndAudioProcessorChain instance, so each client can be
+  part of a signal processing chain.
+
+  To interpret the operation and performance of the input and output queues, the output
+  queue holds the empty (ready to be modified), buffers in the pending portion of the queue, and
+  the synthesised (waiting to be played), buffers in the processed portion of the
+  queue. Conversely, the input queue's processed portion holds those buffers which have
+  been read and processed and are free to be overwritten with newly received data, while
+  the pending portion of the queue holds recorded audio that is yet to be processed.
+  Therefore, the [inputQueue pendingBuffersCount] indicates the amount of system input
+  latency, [outputQueue processedBuffersCount] indicates the amount of system output
+  latency.
+
+  In the processing thread, the input operation is to retrieve ("pop")
+  the next available pending buffer. Additionally, the output operation is to pop the next available
+  pending buffer. The input synth buffer is then used to process and synthesise into the
+  output synth buffer. That output synth buffer is then processed via an
+  SndAudioProcessorChain and pushed onto the output buffer queue for retrieval by the
+  playback engine.
+ */
 @interface SndStreamClient : NSObject
 {
     /*! The buffer in the output queue retrieved by the SndStreamMixer (driven by the output thread). */
@@ -430,12 +448,30 @@ enum {
 - (double) outputLatencyInSeconds;
 
 /*!
-  @brief  Calculates the current stream latency of the client
+  @brief  Calculates the stream latency of the client
   
-  Number of buffers in queue times buffer duration.
+  The calculation is determined as the total number of buffers in the queue times the buffer duration.
   @return    Returns latency, in samples.
  */
 - (long) outputLatencyInSamples;
+
+/*!
+  @brief  Calculates the current output stream latency of the client
+  
+  The calculation is determined as the number of buffers processed in the queue waiting to
+  be played times the buffer duration.
+  @return    Returns latency, in samples.
+ */
+- (long) instantaneousOutputLatencyInSamples;
+
+/*!
+  @brief  Calculates the current input stream latency of the client
+  
+  The calculation is determined as the number of buffers pending in the queue waiting to
+  be processed times the buffer duration.
+  @return    Returns latency, in samples.
+ */
+- (long) instantaneousInputLatencyInSamples;
 
 /*!
   @brief  Accessor to the client name 

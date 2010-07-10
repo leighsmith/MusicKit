@@ -719,7 +719,7 @@ static void inline setThreadPriority()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// synthBuffer
+// synthOutputBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndAudioBuffer*) synthOutputBuffer
@@ -728,7 +728,7 @@ static void inline setThreadPriority()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// inputBuffer
+// synthInputBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndAudioBuffer*) synthInputBuffer
@@ -902,6 +902,28 @@ static void inline setThreadPriority()
     }
     else
 	return 0;
+}
+
+- (long) instantaneousInputLatencyInSamples
+{
+    if (synthInputBuffer != nil) {
+	// This assumes all buffers in the queue are the same length...
+	long latency = [synthInputBuffer lengthInSampleFrames] * [inputQueue pendingBuffersCount];
+	return latency;
+    }
+    else
+	return -1; // TODO to indicate the value is bogus.
+}
+
+- (long) instantaneousOutputLatencyInSamples
+{
+    if (exposedOutputBuffer != nil) {
+	// This assumes all buffers in the queue are the same length...
+	long latency = [exposedOutputBuffer lengthInSampleFrames] * [outputQueue processedBuffersCount];
+	return latency;
+    }
+    else
+	return -1;  // TODO to indicate the value is bogus.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
