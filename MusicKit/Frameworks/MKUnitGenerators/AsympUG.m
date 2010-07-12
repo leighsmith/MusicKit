@@ -57,9 +57,9 @@ Modification history:
 
 #import "AsympUG.h"
 
-#ifndef MAX
-#define  MAX(A,B)	((A) > (B) ? (A) : (B))
-#endif
+//#ifndef MAX
+//#define  MAX(A,B)	((A) > (B) ? (A) : (B))
+//#endif
 
 @implementation AsympUG:MKUnitGenerator
 /* Asymptotic ramper for writing to patch points.

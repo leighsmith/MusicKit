@@ -40,9 +40,9 @@
 #import "_exportedPrivateMusickit.h"
 #import "AsympenvUG.h"
 
-#ifndef MAX
-#define  MAX(A,B)	((A) > (B) ? (A) : (B))
-#endif
+//#ifndef MAX
+//#define  MAX(A,B)	((A) > (B) ? (A) : (B))
+//#endif
 
 #define EQU(_x,_y) ((_x>_y)?(_x-_y<.0001):(_y-_x<.0001))
 

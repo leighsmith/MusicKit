@@ -97,12 +97,12 @@ enum args { ainp, aout, s, aa1, bb0};
      brightness control, as described in Jaffe/Smith, Computer Music Journal
      Vol. 7, No. 2, Summer 1983. */
 {
-#   ifndef MAX
-#   define  MAX(A,B)	((A) > (B) ? (A) : (B))
-#   endif
-#   ifndef MIN
-#   define  MIN(A,B)	((A) < (B) ? (A) : (B))
-#   endif
+//#   ifndef MAX
+//#   define  MAX(A,B)	((A) > (B) ? (A) : (B))
+//#   endif
+//#   ifndef MIN
+//#   define  MIN(A,B)	((A) < (B) ? (A) : (B))
+//#   endif
 #   define LOG10 log(10.0)
     double poleRadius;
     gain = MAX(MIN(gain,.999),0);
