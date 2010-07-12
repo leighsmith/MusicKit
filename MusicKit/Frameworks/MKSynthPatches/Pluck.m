@@ -221,12 +221,12 @@ static void setOneZeroCoeffs(oneZ,damper,sustain)
     [oneZ setB1:damper*(1.0+sustain)*0.5];
 }
 
-#ifndef MAX
-#define  MAX(A,B)	((A) > (B) ? (A) : (B))
-#endif
-#ifndef MIN
-#define  MIN(A,B)	((A) < (B) ? (A) : (B))
-#endif
+//#ifndef MAX
+//#define  MAX(A,B)	((A) > (B) ? (A) : (B))
+//#endif
+//#ifndef MIN
+//#define  MIN(A,B)	((A) < (B) ? (A) : (B))
+//#endif
 #ifndef ABS
 #define  ABS(A)		((A) < 0 ? (-(A)) : (A))
 #endif
