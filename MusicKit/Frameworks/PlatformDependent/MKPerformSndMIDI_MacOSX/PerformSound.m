@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 #define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
+#define DEBUG_BUFFERSIZE    1  // dump the check of the audio buffer size.
 #define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 #define DEBUG_CALLBACK      0  // dump vendOutputBuffersToStreamManagerIOProc info.
 #define DEBUG_IOPROCUSAGE   0  // dump the usage of AudioStreams by IOProcs.
@@ -43,8 +43,10 @@ static const char   **driverList;
 static char         **speakerConfigurationList;
 static unsigned int driverIndex = 0;
 static unsigned int numOfDevices;
-static int          bufferSizeInFrames;
-static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
+static int          outputBufferSizeInFrames;
+static int          inputBufferSizeInFrames;
+static long         outputBufferSizeInBytes = DEFAULT_BUFFERSIZE;
+static long         inputBufferSizeInBytes = DEFAULT_BUFFERSIZE;
 
 static AudioStreamBasicDescription outputStreamBasicDescription;
 static AudioDeviceID outputDeviceID;
@@ -64,7 +66,7 @@ static double firstSampleTime = -1.0; // indicates this has not been assigned.
 static float  *inputBuffer = NULL;
 static BOOL   isMuted = FALSE;
 static NSLock *inputLock = nil;
-static BOOL   interleavedChannels = YES;
+static BOOL   interleavedChannels = TRUE;
 static int    numberOfStreams = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +210,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	if(inputStreamIOProcUsage->mStreamIsOn[0] &&
 	   inInputData->mBuffers[0].mData != NULL) {
 	    // TODO we only copy across the first buffers data to inputBuffer.
-	    memcpy(inputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+	    memcpy(inputBuffer, inInputData->mBuffers[0].mData, inputBufferSizeInBytes);
 	}
 	else {
 	    inStream.streamData = NULL;
@@ -220,8 +222,8 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
     // for(interleavedStreamIndex = 0; interleavedStreamIndex < outputStreamIOProcUsage->mNumberStreams; interleavedStreamIndex++) 
     {
 	// to tell the client the format it should send.
-	SNDStreamNativeFormat(&outStream, YES);
-	SNDStreamNativeFormat(&inStream, NO);
+	SNDStreamNativeFormat(&outStream, TRUE);
+	SNDStreamNativeFormat(&inStream, FALSE);
 	
 	inStream.streamData = inputBuffer;
 	if(outputStreamIOProcUsage->mStreamIsOn[interleavedStreamIndex]) {
@@ -242,7 +244,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 #if DEBUG_CALLBACK
 	    NSLog(@"[SND] vend no input initialized, zeroing input buffer...\n");
 #endif		
-	    memset(inputBuffer, 0, bufferSizeInBytes);
+	    memset(inputBuffer, 0, inputBufferSizeInBytes);
 	}
 	
 	// hand over the stream buffers to the processor/stream manager.
@@ -261,7 +263,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 
 	    for(bufferIndex = 0; bufferIndex < outOutputData->mNumberBuffers; bufferIndex++) {
 		if (isMuted) {
-		    memset(outOutputData->mBuffers[bufferIndex].mData, 0, bufferSizeInBytes);
+		    memset(outOutputData->mBuffers[bufferIndex].mData, 0, outputBufferSizeInBytes);
 		}
 		else {
 #if DEBUG_CALLBACK
@@ -279,7 +281,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	}
 	else {
 	    if (isMuted) {
-		memset(outOutputData->mBuffers[interleavedStreamIndex].mData, 0, bufferSizeInBytes);
+		memset(outOutputData->mBuffers[interleavedStreamIndex].mData, 0, outputBufferSizeInBytes);
 	    }	
 	}
     }
@@ -322,7 +324,7 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                     inStream.streamData = NULL;
                 else {
                     [inputLock lock];
-                    memcpy(inputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+                    memcpy(inputBuffer, inInputData->mBuffers[0].mData, inputBufferSizeInBytes);
                     [inputLock unlock];
                 }
             }
@@ -808,6 +810,7 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     OSStatus CAstatus;
     UInt32 propertySize;
     AudioObjectPropertyAddress bufferSizePropertyAddress;
+    long newBufferSizeInBytes;
 
     /* fetch the buffer size as another level of error checking. */
     bufferSizePropertyAddress.mSelector = kAudioDevicePropertyBufferSize;
@@ -819,7 +822,11 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
         NSLog(@"AudioObjectGetPropertyDataSize kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
-    
+
+#if DEBUG_BUFFERSIZE // only needed for debugging
+    NSLog(@"Setting the %s buffer size to %ld bytes\n", isInput ? "input" : "output", bufferSizeToSetInBytes);
+#endif
+
     /* set the buffer size of the device */
     CAstatus = AudioObjectSetPropertyData(deviceID, &bufferSizePropertyAddress, 0, NULL, propertySize, &bufferSizeToSetInBytes);
     if (CAstatus) {
@@ -828,31 +835,38 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     }
     
     /* fetch the buffer size to check */
-    if (!getDeviceProperty(deviceID, isInput, kAudioDevicePropertyBufferSize, &bufferSizeInBytes, sizeof(bufferSizeInBytes))) {
+    if (!getDeviceProperty(deviceID, isInput, kAudioDevicePropertyBufferSize, &newBufferSizeInBytes, sizeof(newBufferSizeInBytes))) {
 	return FALSE;
     }
+    if(isInput)
+	inputBufferSizeInBytes = newBufferSizeInBytes;
+    else 
+	outputBufferSizeInBytes = newBufferSizeInBytes;
 
 #if DEBUG_BUFFERSIZE // only needed for debugging
-    NSLog(@"get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", getCoreAudioErrorStr(CAstatus), bufferSizeInBytes);
+    NSLog(@"after setting, %s buffer size (CAstatus:%s), bufferSizeInBytes = %ld\n", isInput ? "input" : "output", getCoreAudioErrorStr(CAstatus), newBufferSizeInBytes);
 #endif
     
-    if (bufferSizeInBytes != bufferSizeToSetInBytes) {
+    if (newBufferSizeInBytes != bufferSizeToSetInBytes) {
         NSLog(@"device did not set desired buffer size\n");
-        NSLog(@"desired: %d\nactual: %d\n", (int) bufferSizeToSetInBytes,
-                (int) bufferSizeInBytes);
+        NSLog(@"desired: %d\nactual: %d\n", (int) bufferSizeToSetInBytes, (int) newBufferSizeInBytes);
         return FALSE;
     }
-    bufferSizeInFrames = bufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame;
-
+    if(isInput)
+	inputBufferSizeInFrames = inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame;
+    else 
+	outputBufferSizeInFrames = outputBufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame;
+    
     return TRUE;
 }
 
+// Only for output.
 BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes)
 {
     if (isDeviceRunning(outputDeviceID, FALSE))
 	return FALSE;
-    bufferSizeInBytes = newBufferSizeInBytes;
-    if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false)) {
+    outputBufferSizeInBytes = newBufferSizeInBytes;
+    if(!setBufferSize(outputDeviceID, outputBufferSizeInBytes, FALSE)) {
 	NSLog(@"output device - error setting buffer size\n");
 	return FALSE;
     }
@@ -867,7 +881,7 @@ static BOOL getSpeakerConfiguration(AudioDeviceID outputDeviceID)
     int numOfChannels = 4;  // TODO hardwired
     // AudioChannelLayout channelLayout;
     
-    if (!getDeviceProperty(outputDeviceID, false, kAudioDevicePropertyPreferredChannelsForStereo, &stereoChannels, sizeof(stereoChannels))) {
+    if (!getDeviceProperty(outputDeviceID, FALSE, kAudioDevicePropertyPreferredChannelsForStereo, &stereoChannels, sizeof(stereoChannels))) {
 	// In case a device doesn't respond to preferred channels for stereo, we create a default.
 	numOfChannels = 2;
     }
@@ -876,7 +890,7 @@ static BOOL getSpeakerConfiguration(AudioDeviceID outputDeviceID)
 
 #if 0
     // TODO determine multichannel layouts. 
-    if (!getDeviceProperty(outputDeviceID, false, kAudioDevicePropertyPreferredChannelLayout, &channelLayout, sizeof(channelLayout))) {
+    if (!getDeviceProperty(outputDeviceID, FALSE, kAudioDevicePropertyPreferredChannelLayout, &channelLayout, sizeof(channelLayout))) {
 	// In case a device doesn't respond to preferred channels for stereo, we create a default.
 	numOfChannels = 2;
     }
@@ -903,18 +917,18 @@ BOOL setOutputDevice(AudioDeviceID outputDeviceID, BOOL setTheBufferSize)
         NSLog(@"setOutputDevice() outputDeviceID is kAudioDeviceUnknown\n");
         return FALSE;
     }
-    if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, false)) {
+    if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, FALSE)) {
         NSLog(@"setOutputDevice() - error determining basic description\n");
         return FALSE;
     }
     if(setTheBufferSize) {
-	if(!setBufferSize(outputDeviceID, bufferSizeInBytes, NO)) {
+	if(!setBufferSize(outputDeviceID, outputBufferSizeInBytes, FALSE)) {
 	    NSLog(@"setOutputDevice() - error setting buffer size\n");
 	    return FALSE;
 	}
     }
     else
-	bufferSizeInFrames = bufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame;
+	outputBufferSizeInFrames = outputBufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame;
 
     if(!getSpeakerConfiguration(outputDeviceID)) {
 	NSLog(@"couldn't retrieve speaker configuration\n");
@@ -922,12 +936,12 @@ BOOL setOutputDevice(AudioDeviceID outputDeviceID, BOOL setTheBufferSize)
     }
 
 #if CHECK_DEVICE_RUNNING_STATUS
-    if(isDeviceRunning(outputDeviceID, false)) {
+    if(isDeviceRunning(outputDeviceID, FALSE)) {
 	NSLog(@"SNDInit() output device is already running... but this is ok in CoreAudio land\n");
     }
 #endif
 
-    if(!getStreamChannelConfiguration(outputDeviceID, false)) {
+    if(!getStreamChannelConfiguration(outputDeviceID, FALSE)) {
 	NSLog(@"Couldn't retrieve output stream's channel configuration\n");
 	// return FALSE; // We should probably let this slide.
     }
@@ -945,19 +959,21 @@ BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
         NSLog(@"setInputDevice() inputDeviceID is kAudioDeviceUnknown\n");
         return FALSE;
     }
-    if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true)) {
+    if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, TRUE)) {
         NSLog(@"setInputDevice() - error determining basic setup\n");
         return FALSE;
     }
     if(setTheBufferSize) {
-        if(!setBufferSize(inputDeviceID, bufferSizeInBytes, YES)) {
+        if(!setBufferSize(inputDeviceID, inputBufferSizeInBytes, TRUE)) {
             NSLog(@"setInputDevice() - error setting buffer size\n");
             return FALSE;
         }
     }
+    else
+	inputBufferSizeInFrames = inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame;
 
 #if CHECK_DEVICE_RUNNING_STATUS
-    if(isDeviceRunning(inputDeviceID, true)) {
+    if(isDeviceRunning(inputDeviceID, TRUE)) {
 	NSLog(@"SNDInit() Input device is already running... but this is ok in CoreAudio land\n");
     }
 #endif
@@ -975,6 +991,8 @@ BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
 
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 {
+    BOOL settingInputBufferSize = FALSE;
+    
     if(!retrieveDriverList(FALSE))
         return FALSE;
 
@@ -988,7 +1006,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 	BOOL noError;
 	
         /* Get the default sound output device */
-	noError = getDeviceProperty(kAudioObjectSystemObject, NO, kAudioHardwarePropertyDefaultOutputDevice, &outputDeviceID, sizeof(AudioDeviceID));
+	noError = getDeviceProperty(kAudioObjectSystemObject, FALSE, kAudioHardwarePropertyDefaultOutputDevice, &outputDeviceID, sizeof(AudioDeviceID));
 	// NSLog(@"Default output device ID %d\n", outputDeviceID);
 	
 	if(!noError) {
@@ -996,7 +1014,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 	    return FALSE;
 	}
 
-	noError = getDeviceProperty(kAudioObjectSystemObject, NO, kAudioHardwarePropertyDefaultInputDevice, &inputDeviceID, sizeof(AudioDeviceID));
+	noError = getDeviceProperty(kAudioObjectSystemObject, FALSE, kAudioHardwarePropertyDefaultInputDevice, &inputDeviceID, sizeof(AudioDeviceID));
 	// NSLog(@"Default input device ID %d\n", inputDeviceID);
 
 	if(!noError) {
@@ -1005,10 +1023,10 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 	}
 	
 	// If we are guessing the device, retrieve and use the standard buffer size.
-	bufferSizeInBytes = getBufferSize(outputDeviceID, NO);
+	outputBufferSizeInBytes = getBufferSize(outputDeviceID, FALSE);
 
 #if DEBUG_BUFFERSIZE
-	NSLog(@"get buffer size bufferSizeInBytes = %ld\n", bufferSizeInBytes);
+	NSLog(@"get output buffer size outputBufferSizeInBytes = %ld\n", outputBufferSizeInBytes);
 #endif
         // find the default output device ID in the driver list and return its index
         driverIndex = findDeviceInDriverList(outputDeviceID);  
@@ -1021,7 +1039,14 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     if(!setOutputDevice(outputDeviceID, !guessTheDevice))
         return FALSE;
 
-    inputInit = setInputDevice(inputDeviceID, YES);
+    if(!settingInputBufferSize) {
+	// If we are not setting the buffer size, then initialise our saved size from the hardware.
+	inputBufferSizeInBytes = getBufferSize(inputDeviceID, TRUE);
+#if DEBUG_BUFFERSIZE
+	NSLog(@"get input buffer size inputBufferSizeInBytes = %ld\n", inputBufferSizeInBytes);
+#endif
+    }
+    inputInit = setInputDevice(inputDeviceID, settingInputBufferSize);	
 
     return TRUE;
 }
@@ -1034,7 +1059,7 @@ PERFORM_API BOOL SNDTerminate(void)
     initialised = FALSE;
 
     // CoreAudio doesn't need an explicit call to shut down/disengage/unreserve to our app.
-    return YES;
+    return TRUE;
 }
 
 // Returns an array of character pointers listing the names of each channel. There will be channel count number of strings returned, with a NULL terminated
@@ -1073,7 +1098,7 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL outputDriver
         
         outputDeviceID = deviceIDOfDriverIndex(driverIndex);
 
-        if(!setOutputDevice(outputDeviceID, NO))
+        if(!setOutputDevice(outputDeviceID, FALSE))
             return FALSE;
 
         inputInit = setInputDevice(inputDeviceID, TRUE);
@@ -1116,7 +1141,7 @@ PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat, BOOL isOut
     // The bytes per frame is implicitly set by the dataFormat value.
     streamFormat->dataFormat   = SND_FORMAT_FLOAT;
     // Number of channel independent sample frames in a buffer.
-    streamFormat->frameCount   = bufferSizeInFrames;
+    streamFormat->frameCount   = isOutputStream ? outputBufferSizeInFrames : inputBufferSizeInFrames;
     streamFormat->sampleRate   = streamBasicDescription->mSampleRate;
     // if it's a non-interleaved set of mono CoreAudio streams, count those, otherwise count the number of interleaved channels per frame.
     streamFormat->channelCount = interleavedChannels ? streamBasicDescription->mChannelsPerFrame : numberOfStreams;
@@ -1148,11 +1173,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         return FALSE;  // invalid sound structure.
 
     // Even if we don't have input, we still need an input buffer to send up empty to the rest of the arch.
-    if ((inputBuffer = (float *) malloc(bufferSizeInBytes)) == NULL) {
-        NSLog(@"Unable to malloc input buffer of %ld\n", bufferSizeInBytes);
+    if ((inputBuffer = (float *) malloc(inputBufferSizeInBytes)) == NULL) {
+        NSLog(@"Unable to malloc input buffer of %ld\n", inputBufferSizeInBytes);
         return FALSE;
     }
-    memset(inputBuffer, 0, bufferSizeInBytes);
+    memset(inputBuffer, 0, inputBufferSizeInBytes);
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
@@ -1169,7 +1194,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s for output\n", getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
-    if(!getAudioStreamsToVend(outputDeviceID, &outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
+    if(!getAudioStreamsToVend(outputDeviceID, &outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, FALSE))
 	return FALSE;
 
 #if 0 // no longer needed. Kept for reference only.
@@ -1182,10 +1207,10 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 	// a means to determine this. For now, we do what iTunes seems to do, use the first AudioStream. 
         // This only seems to manifest itself for some multichannel boxes and now they interpret streams more logically.
 	for(streamIndex = 1; streamIndex < outputStreamIOProcUsage->mNumberStreams; streamIndex++)
-	    outputStreamIOProcUsage->mStreamIsOn[streamIndex] = NO;
+	    outputStreamIOProcUsage->mStreamIsOn[streamIndex] = FALSE;
     }
     
-    if(!setAudioStreamsToVend(outputDeviceID, outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
+    if(!setAudioStreamsToVend(outputDeviceID, outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, FALSE))
 	return FALSE;
 #endif
 
@@ -1199,7 +1224,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
             NSLog(@"SNDStartStreaming: AudioDeviceAddIOProc returned %s for input\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
-	if(!getAudioStreamsToVend(inputDeviceID, &inputStreamIOProcUsage, vendInputBuffersToStreamManagerIOProc, YES))
+	if(!getAudioStreamsToVend(inputDeviceID, &inputStreamIOProcUsage, vendInputBuffersToStreamManagerIOProc, TRUE))
 	    return FALSE;
     }
     if (r) { // all is well so far...
