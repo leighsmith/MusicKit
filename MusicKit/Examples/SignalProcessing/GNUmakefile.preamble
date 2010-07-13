@@ -1,0 +1,35 @@
+# -*- Makefile -*-
+#  $Id: GNUmakefile.preamble.in 3324 2005-07-29 09:10:00Z leighsmith $
+#
+# Frameworks/SndKit/GNUmakefile.preamble.  Generated from GNUmakefile.preamble.in by configure.
+#
+#  Defined In: The MusicKit
+#  Description:
+#    Makefile preamble for GNUstep
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  17 October 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-
+#  commercial purposes so long as the author attribution and this copyright
+#  message remains intact and accompanies all derived code.
+
+#  Modification history:
+#    See the CVS repository for the log i.e cvs log GNUmakefile.preamble.in
+#
+
+# for all platforms, attempt to pre-link to libraries so that individual
+# binaries don't have to.
+
+#LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
+#                         -lobjc -lstdc++ \
+#			 -lgnustep-gui \
+#			 -lsndfile -lportaudio -lpthread 
+
+# ADDITIONAL_FLAGS += -DHAVE_CONFIG_H
+
+ADDITIONAL_CPPFLAGS += -I/usr/local/include -I/usr/local/include/sndfile
+
+ADDITIONAL_LDFLAGS += -L/usr/local/lib -L/usr/local/sndfile
+
