@@ -87,6 +87,11 @@ static SndStreamManager *defaultStreamManager = nil;
         defaultStreamManager = [SndStreamManager new];  // create our default
 }
 
++ (BOOL) setOutputBufferSize: (int) frames
+{
+    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]));
+}
+
 + (NSArray *) getDriverNamesForOutput: (BOOL) outputDevices
 {
     NSMutableArray *soundDriverNames = [NSMutableArray array];
@@ -100,6 +105,11 @@ static SndStreamManager *defaultStreamManager = nil;
     //    return nil;
     // }
     return [NSArray arrayWithArray: soundDriverNames];
+}
+
++ (int) getAssignedDriverIndexForOutput: (BOOL) outputDevices
+{
+    return SNDGetAssignedDriverIndex(outputDevices);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -45,31 +45,31 @@
 */
 @interface SndStreamManager : NSObject <SndDelegateMessagePassing>
 { 
-/*! mixer A stream client mixer. */
+    /*! mixer A stream client mixer. */
     SndStreamMixer *mixer;
-/*! active Stores the streaming state of the manager. */
+    /*! active Stores the streaming state of the manager. */
     BOOL            active;
-/*! bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
+    /*! bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
     BOOL            bg_active;
-/*! format SndFormat containing stream format information. */
+    /*! format SndFormat containing stream format information. */
     SndFormat       format;
-/*! nowTime Manager's conception of time, in seconds. */
+    /*! nowTime Manager's conception of time, in seconds. */
     double          nowTime;
-/*! bg_sem Semaphore to the background thread to start/stop streaming. */
+    /*! bg_sem Semaphore to the background thread to start/stop streaming. */
     char            bg_sem;
-/*! bgdm_sem Semaphore to the background delegate messaging thread to notify it of data
-  being ready for it. */
+    /*! bgdm_sem Semaphore to the background delegate messaging thread to notify it of data being ready for it. */
     char            bgdm_sem;
-/*! bg_threadLock used for signalling to background thread to start streaming,
-  stop streaming, or abort itself. */
+    /*! bg_threadLock used for signalling to background thread to start streaming,
+        stop streaming, or abort itself. */
     NSConditionLock *bg_threadLock;
-  /*!           bgdm_threadLock used for ? */
+    /*! bgdm_threadLock used for ? */
     NSConditionLock *bgdm_threadLock;
     NSLock          *delegateMessageArrayLock;
     NSMutableArray  *delegateMessageArray;
     NSConnection    *threadConnection;
 
     BOOL             bDelegateMessagingEnabled;
+    /*! isStopping Indicates the SndStreamManager is in the process of stopping. */
     BOOL             isStopping;
 }
 
@@ -97,6 +97,20 @@
   The format of the names is dependent on the underlying operating system.
 */
 + (NSArray *) getDriverNamesForOutput: (BOOL) outputDevices;
+
+/*!
+  @brief Returns the index into the NSArray returned by getDriverNamesForOutput: for the current driver.
+  @param outputDevices YES to retrieve the assigned output device number, NO to retrieve the assigned input device number.
+ */
++ (int) getAssignedDriverIndexForOutput: (BOOL) outputDevices;
+
+/*!
+  @brief Sets the number of sample frames used by the audio hardware.
+ 
+  @param frames Sets the number of frames (channel independent) in the hardware buffer, if possible.
+  @return Returns YES if able to change the hardware, NO if unable to change.
+ */
++ (BOOL) setOutputBufferSize: (int) frames;
 
 /*!
   @brief   Returns an NSString with description of SndStreamManager

@@ -850,28 +850,24 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 
 /*!
   @brief Play the entire sound now.
-  @return Returns SND_ERR_NONE if the sound played correctly.
+  @return Returns the performance that represents the sound playing.
   @brief Initiates playback of the Snd.
 
-  The method returns immediately
-  while the playback continues asynchronously in the background. The
-  playback ends when the Snd receives the <b>stop</b> message, or
-  when its data is exhausted.
+  The method returns immediately while the playback continues asynchronously in the background. 
+  The playback ends when the Snd receives the <b>stop</b> message, or when its data is exhausted.
 
-  When playback starts, <b>willPlay:</b> is sent to
-  the Snd's delegate; when it stops, <b>didPlay:</b> is sent. An
-  error code is returned.
+  When playback starts, <b>willPlay:</b> is sent to the Snd's delegate; when it stops, <b>didPlay:</b> is sent.
 
   <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
 */
-- (int) play;
+- (SndPerformance *) play;
 
 /*!
   @brief Play the entire sound now, for use as an action method.
   @param sender The sending object.
-  @return Returns self if play occured correctly, nil if there was an error.
+  @return Returns the performance that represents the sound playing.
  */
-- play: (id) sender;
+- (SndPerformance *) play: (id) sender;
 
 /*!
   @brief Begin playback at some time in the future, over a region of the sound.
@@ -910,9 +906,9 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   You should use playInFuture:beginSample:sampleCount: instead.
   @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
   @param count The number of samples to play. Use sampleCount to play the entire sound.
-  @return Returns self.
+  @return Returns the performance that represents the sound playing.
  */
-- play: (id) sender beginSample: (int) begin sampleCount: (int) count;
+- (SndPerformance *) play: (id) sender beginSample: (int) begin sampleCount: (int) count;
 
 /*!
   @brief Begin the playback of the sound at some future time, specified in seconds.

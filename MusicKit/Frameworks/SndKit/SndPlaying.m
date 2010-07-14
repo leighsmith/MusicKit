@@ -89,28 +89,25 @@
 }
 
 // Legacy method for SoundKit compatability
-- play: (id) sender beginSample: (int) begin sampleCount: (int) count 
+- (SndPerformance *) play: (id) sender beginSample: (int) begin sampleCount: (int) count 
 {
     // do something with sender?
-    [self playInFuture: 0.0
-           beginSample: begin
-           sampleCount: count];
-    return self;
+    return [self playInFuture: 0.0
+		  beginSample: begin
+		  sampleCount: count];
 }
 
 // Legacy method for SoundKit compatability
-- play: sender
+- (SndPerformance *) play: sender
 {
     // do something with sender?
-    [self playInFuture: 0.0];
-    return self;
+    return [self playInFuture: 0.0];
 }
 
 // Legacy method for SoundKit compatability
-- (int) play
+- (SndPerformance *)  play
 {
-    [self play: self];
-    return SND_ERR_NONE;
+    return [self play: self];
 }
 
 #if 0

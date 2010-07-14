@@ -435,6 +435,7 @@ enum {
 
 		// TODO perhaps we could eventually just add the inB into the inputQueue, rather than copying it.
 		// This requires looking at the persistence of inB.
+		// NSLog(@"startProcessingNextBuffer exposedInputBuffer %@ copied from inB %@\n", exposedInputBuffer, inB);
 		[exposedInputBuffer copyDataFromBuffer: inB];
 		// Add the exposed input buffer with the new audio data back into the queue.
 		[inputQueue addPendingBuffer: exposedInputBuffer];
