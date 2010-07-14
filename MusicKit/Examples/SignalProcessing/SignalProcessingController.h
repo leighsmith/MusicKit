@@ -1,5 +1,5 @@
 /*
-  $Id: SoundPlayerController.h 3633 2009-10-01 21:55:52Z leighsmith $
+  $Id$
  
   Description:
     Simple sound signal processing application, demonstrating applying effects to a input stream and playing the result 
@@ -21,12 +21,19 @@
 {
     IBOutlet NSPopUpButton *soundInputDriverPopup;
     IBOutlet NSPopUpButton *soundOutputDriverPopup;
+    IBOutlet NSButton *playButton;
 
     SndStreamInput *streamInput;
-    /*! A reverb audio processor we can selectively enable and disable */
+    /*! A reverb audio processor we can selectively enable and disable. */
     SndAudioProcessorReverb *reverb;
-    /*! A distortion audio processor  we can selectively enable and disable */
+    /*! A distortion audio processor  we can selectively enable and disable. */
     SndAudioProcessorDistortion *distortion;
+    /*! A sound file that can be played asynchronously. */
+    SndMP3 *soundToPlay;
+    /*! A fader that can be used to fade out the input. */
+    SndAudioFader *liveFader;
+    /*! A fader that can be used to fade out the playing sound. */
+    SndAudioFader *sndFader;
 }
 
 - (IBAction) startProcessing: (id) sender;
@@ -37,9 +44,15 @@
 
 - (IBAction) setVolume: (id) sender;
 
+- (IBAction) setSndVolume: (id) sender;
+
 - (IBAction) enableReverb: (id) sender;
 
 - (IBAction) enableDistortion: (id) sender;
+
+- (IBAction) playSound: (id) sender;
+
+- (IBAction) openFile: (id) sender;
 
 - (void) applicationDidFinishLaunching: (id) sender;
 

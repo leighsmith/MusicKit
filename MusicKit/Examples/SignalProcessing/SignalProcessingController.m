@@ -1,5 +1,5 @@
 /*
-  $Id: SoundPlayerController.h 3633 2009-10-01 21:55:52Z leighsmith $
+  $Id$
  
   Description:
    Simple sound signal processing application, demonstrating applying effects to a input stream and playing the result 
@@ -45,17 +45,22 @@
 
 - (IBAction) setVolume: (id) sender
 {
-    NSLog(@"volume change");
+    [liveFader setAmp: [sender floatValue] clearingEnvelope: NO];
+}
+
+- (IBAction) setSndVolume: (id) sender
+{
+    [sndFader setAmp: [sender floatValue] clearingEnvelope: NO];
 }
 
 - (void) displaySoundPreferences
 {
     [soundInputDriverPopup removeAllItems]; // remove placeholder, in a blitzkrieg kind of way...
     [soundInputDriverPopup addItemsWithTitles: [SndStreamManager getDriverNamesForOutput: NO]];
-    // [soundInputDriverPopup selectItemWithTitle: [SndStreamManager ];
+    [soundInputDriverPopup selectItemAtIndex: [SndStreamManager getAssignedDriverIndexForOutput: NO]];
     [soundOutputDriverPopup removeAllItems]; // remove placeholder, in a blitzkrieg kind of way...
     [soundOutputDriverPopup addItemsWithTitles: [SndStreamManager getDriverNamesForOutput: YES]];
-    // [soundOutputDriverPopup selectItemWithTitle: [[NSUserDefaults standardUserDefaults] objectForKey: SoundDriverName]];    
+    [soundOutputDriverPopup selectItemAtIndex: [SndStreamManager getAssignedDriverIndexForOutput: YES]];    
 }
 
 - (IBAction) enableReverb: (id) sender
@@ -68,30 +73,66 @@
     [distortion setActive: [sender intValue]];
 }
 
+- (IBAction) playSound: (id) sender
+{
+    if(![soundToPlay isPlaying]) {
+	[soundToPlay play];
+    }
+    else {
+	[soundToPlay stop];
+    }
+}
+
+- (IBAction) openFile: (id) sender
+{
+    int result;
+    NSArray *fileTypes = [SndMP3 soundFileExtensions];
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    
+    // NSLog(@"Accepting %@\n", fileTypes);
+    result = [oPanel runModalForDirectory: nil file: nil types: fileTypes];
+    if (result == NSOKButton) {
+        NSArray *fileNames = [[oPanel filenames] retain];
+	SndAudioProcessorChain *audioProcessorChain = [SndAudioProcessorChain audioProcessorChain];
+	
+	[soundToPlay release];
+	soundToPlay = [[SndMP3 alloc] initFromSoundfile: [fileNames objectAtIndex: 0]];
+	[audioProcessorChain setPostFader: sndFader];
+	[sndFader setActive: YES];
+	[soundToPlay setAudioProcessorChain: audioProcessorChain];
+        [playButton setEnabled: YES];
+    }
+}
+
 - init
 {
     self = [super init];
     if (self != nil) {
-	SndAudioFader *postFader = [[SndAudioFader alloc] init]; // Create the fader.
 	SndStreamManager *streamManager;
+	SndAudioProcessorChain *audioProcessorChain;
+	
+	soundToPlay = nil;
+	liveFader = [[SndAudioFader alloc] init]; // Create the live fader.
+	[liveFader setAmp: 1.0 clearingEnvelope: NO]; // TODO use [liveFaderSlider floatValue]
+	sndFader = [[SndAudioFader alloc] init]; // Create the sound playback fader.
+	[sndFader setAmp: 1.0 clearingEnvelope: NO];  // TODO use [sndFaderSlider floatValue]
 	
 	reverb = [[SndAudioProcessorReverb alloc] init];
 	distortion = [[SndAudioProcessorDistortion alloc] init];
-	[distortion setBoostAmount: 0.9];
+	[distortion setBoostAmount: 0.8];
 	//[distortion setHardness: 0.6];
-
+	
 	streamInput = [[SndStreamInput alloc] init];
+	audioProcessorChain = [streamInput audioProcessorChain];
 	
 	// Initially make inactive.
 	[reverb setActive: NO];
 	[distortion setActive: NO];
 	
-	[[streamInput audioProcessorChain] addAudioProcessor: distortion];
-	[[streamInput audioProcessorChain] addAudioProcessor: reverb];
-
-	// [postFader setActive: YES];
-	
-	//[audioProcessorChain setPostFader: postFader];
+	[audioProcessorChain addAudioProcessor: distortion];
+	[audioProcessorChain addAudioProcessor: reverb];
+	[liveFader setActive: YES];
+	[audioProcessorChain setPostFader: liveFader];
 
 	streamManager = [SndStreamManager defaultStreamManager];
 	// TODO how do we manage different input and output devices?
@@ -104,6 +145,14 @@
 
 - (void) dealloc
 {
+    if(soundToPlay != nil) {
+	[soundToPlay release];
+	soundToPlay = nil;
+    }
+    [liveFader release];
+    liveFader = nil;
+    [sndFader release];
+    sndFader = nil;
     [reverb release];
     reverb = nil;
     [distortion release];

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  $Id: SndStreamRecorder.h,v 1.16 2005/04/04 03:28:43 leighsmith Exp $
+//  $Id$
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //

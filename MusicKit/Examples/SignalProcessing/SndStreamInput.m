@@ -1,5 +1,5 @@
 //
-//  $Id: SndStreamInput.m,v 1.23 2005/04/04 03:28:43 leighsmith Exp $
+//  $Id$
 //
 //  Created by Leigh Smith on Jul 9th 2010.
 //  Copyright (c) 2010 Oz Music Code LLC. All rights reserved.
