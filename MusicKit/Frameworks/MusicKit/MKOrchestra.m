@@ -425,18 +425,20 @@ static NSString * orchMemSegmentNames[(int) MK_numOrchMemSegments] =
 
 + (NSArray *) getDriverNames
 {
-    return [SndStreamManager getDriverNamesForOutput: YES];
+    return [SndStreamManager driverNamesForOutput: YES];
 }
 
 - (NSString *) driverName 
 {
     // return (DSPGetInUseDriverNames() )[orchIndex];
-    return @"Not Yet Implemented"; // driverNames[orchIndex]; or just driverName?
+    // driverNames[orchIndex]; or just driverName?
+    return [[SndStreamManager defaultStreamManager] assignedDriverNameForOutput: YES];
 }
 
 -(int) driverUnit
 {
-    return (DSPGetInUseDriverUnits())[orchIndex];
+    // return (DSPGetInUseDriverUnits())[orchIndex];
+    return [[SndStreamManager defaultStreamManager] assignedDriverIndexForOutput: YES];
 }
 
 -(int) driverSubUnit
