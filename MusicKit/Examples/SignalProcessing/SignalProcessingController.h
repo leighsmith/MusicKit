@@ -23,6 +23,9 @@
     IBOutlet NSPopUpButton *soundOutputDriverPopup;
     IBOutlet NSButton *playButton;
 
+    /*! The stream manager, managing clients on the sound hardware */
+    SndStreamManager *streamManager;
+    /*! An subclass of SndStreamClient that reflects it's input to output, possibly processed by it's SndAudioProcessorChain */
     SndStreamInput *streamInput;
     /*! A reverb audio processor we can selectively enable and disable. */
     SndAudioProcessorReverb *reverb;

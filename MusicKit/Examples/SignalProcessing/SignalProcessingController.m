@@ -35,12 +35,17 @@
 {
     // TODO Must Restart sound to use the new driver.
     NSLog(@"Selected for input %@", [soundInputDriverPopup titleOfSelectedItem]);
+    // [streamManager setAssignedDriverToIndex: [soundInputDriverPopup indexOfSelectedItem] forOutput: NO];
+
 }
 
 - (IBAction) outputSourceSelected: (id) sender
 {
     // TODO Must Restart sound to use the new driver.
-    NSLog(@"Selected for input %@", [soundInputDriverPopup titleOfSelectedItem]);
+    NSLog(@"Selected for output %@", [soundOutputDriverPopup titleOfSelectedItem]);
+    if(![streamManager setAssignedDriverToIndex: [soundOutputDriverPopup indexOfSelectedItem] forOutput: YES])
+	NSLog(@"Unable to set output device to %@", [soundOutputDriverPopup titleOfSelectedItem]);
+    NSLog(@"stream manager = %@", streamManager);
 }
 
 - (IBAction) setVolume: (id) sender
@@ -56,11 +61,11 @@
 - (void) displaySoundPreferences
 {
     [soundInputDriverPopup removeAllItems]; // remove placeholder, in a blitzkrieg kind of way...
-    [soundInputDriverPopup addItemsWithTitles: [SndStreamManager getDriverNamesForOutput: NO]];
-    [soundInputDriverPopup selectItemAtIndex: [SndStreamManager getAssignedDriverIndexForOutput: NO]];
+    [soundInputDriverPopup addItemsWithTitles: [SndStreamManager driverNamesForOutput: NO]];
+    [soundInputDriverPopup selectItemAtIndex: [streamManager assignedDriverIndexForOutput: NO]];
     [soundOutputDriverPopup removeAllItems]; // remove placeholder, in a blitzkrieg kind of way...
-    [soundOutputDriverPopup addItemsWithTitles: [SndStreamManager getDriverNamesForOutput: YES]];
-    [soundOutputDriverPopup selectItemAtIndex: [SndStreamManager getAssignedDriverIndexForOutput: YES]];    
+    [soundOutputDriverPopup addItemsWithTitles: [SndStreamManager driverNamesForOutput: YES]];
+    [soundOutputDriverPopup selectItemAtIndex: [streamManager assignedDriverIndexForOutput: YES]];    
 }
 
 - (IBAction) enableReverb: (id) sender
@@ -108,7 +113,6 @@
 {
     self = [super init];
     if (self != nil) {
-	SndStreamManager *streamManager;
 	SndAudioProcessorChain *audioProcessorChain;
 	
 	soundToPlay = nil;
@@ -145,6 +149,8 @@
 
 - (void) dealloc
 {
+    [streamManager release];
+    streamManager = nil;
     if(soundToPlay != nil) {
 	[soundToPlay release];
 	soundToPlay = nil;

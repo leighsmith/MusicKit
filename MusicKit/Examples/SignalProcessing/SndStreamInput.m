@@ -89,7 +89,7 @@
 
     for(timeIndex = 0; timeIndex < numberOfTimes; timeIndex++)
 	summedLatency += latency[timeIndex];
-    NSLog(@"summedLatency %f numberOfTimes = %d\n", summedLatency, numberOfTimes);
+    // NSLog(@"summedLatency %f numberOfTimes = %d\n", summedLatency, numberOfTimes);
     return summedLatency / MAX(numberOfTimes, 1); // to prevent divide by zero.
 }
 
