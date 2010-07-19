@@ -26,19 +26,21 @@
 @class SndStreamMixer;
 
 /*!
-@protocol SndDelegateMessagePassing
+  @protocol SndDelegateMessagePassing
  */
 @protocol SndDelegateMessagePassing
 /*!
-@param mesg
+  @param mesg
  */
 - (void) _sendDelegateInvocation:(in unsigned long) mesg;
 @end 
 
 /*!
   @class SndStreamManager
-  @brief Provides client connection and stream mixing services, and acts as 
-  the gateway to the lowlevel MKPerformSndMIDI C functions
+  @brief SndStreamManager abstracts the playing of streams of audio. Provides streaming client connection and stream mixing services, and acts as 
+  an abstraction of the sound playing hardware.
+ 
+  In practice, the hardware is further abstracted by a platform specific interface that encapsulated by the lowlevel MKPerformSndMIDI C functions. 
   
   Each SndStreamManager has a SndStreamMixer which has a SndAudioProcessorChain which has a SndAudioFader.
   Adding clients to a manager adds them to the underlying mixer.
@@ -93,16 +95,30 @@
 /*!
   @brief Returns an NSArray of NSStrings listing the sound drivers available.
   
-  @param outputDevices YES to retrieve only the output devices, NO to retrieve only the input devices.
+  @param forOutputDevices YES to retrieve only the output devices, NO to retrieve only the input devices.
   The format of the names is dependent on the underlying operating system.
 */
-+ (NSArray *) getDriverNamesForOutput: (BOOL) outputDevices;
++ (NSArray *) driverNamesForOutput: (BOOL) forOutputDevices;
 
 /*!
-  @brief Returns the index into the NSArray returned by getDriverNamesForOutput: for the current driver.
-  @param outputDevices YES to retrieve the assigned output device number, NO to retrieve the assigned input device number.
+  @brief Returns the index into the NSArray returned by +driverNamesForOutput: for the current driver.
+  @param forOutputDevices YES to retrieve the assigned output device number, NO to retrieve the assigned input device number.
  */
-+ (int) getAssignedDriverIndexForOutput: (BOOL) outputDevices;
+- (int) assignedDriverIndexForOutput: (BOOL) forOutputDevices;
+
+/*!
+  @brief Assigns the sound hardware to be the driver referenced by the driver index number.
+ 
+  @param driverIndex Must be a number that corresponds to the list of driver names returned by +driverNamesForOutput:
+  @param forOutputDevices YES to retrieve the assigned output device number, NO to retrieve the assigned input device number.
+ */
+- (BOOL) setAssignedDriverToIndex: (unsigned int) driverIndex forOutput: (BOOL) forOutputDevices;
+
+/*!
+  @brief Returns an NSString of the current driver.
+  @param forOutputDevices YES to retrieve the assigned output device name, NO to retrieve the assigned input device name.
+ */
+- (NSString *) assignedDriverNameForOutput: (BOOL) forOutputDevices;
 
 /*!
   @brief Sets the number of sample frames used by the audio hardware.
@@ -110,7 +126,7 @@
   @param frames Sets the number of frames (channel independent) in the hardware buffer, if possible.
   @return Returns YES if able to change the hardware, NO if unable to change.
  */
-+ (BOOL) setOutputBufferSize: (int) frames;
+- (BOOL) setOutputBufferSize: (int) frames;
 
 /*!
   @brief   Returns an NSString with description of SndStreamManager

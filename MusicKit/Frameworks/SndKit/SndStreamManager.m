@@ -69,10 +69,11 @@ static SndStreamManager *defaultStreamManager = nil;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	
     if (SNDInit(TRUE)) {
-        if([defaults boolForKey: @"SndShowDriverSelected"]) {
-            const char **outputDriverNames = SNDGetAvailableDriverNames(YES);
-            
-            NSLog(@"SndStreamManager +initialise: output driver selected is %s\n", outputDriverNames[SNDGetAssignedDriverIndex(YES)]);
+	if (defaultStreamManager == nil) {
+	    defaultStreamManager = [[SndStreamManager alloc] init];  // create our default SndStreamManager on default input and output devices.
+	}
+	if([defaults boolForKey: @"SndShowDriverSelected"]) {
+            NSLog(@"SndStreamManager +initialise: output driver selected is %@\n", defaultStreamManager);
         }
 	if([defaults boolForKey: @"SndShowSpeakerConfiguration"]) {
 	    const char **speakerNames = SNDSpeakerConfiguration();
@@ -83,16 +84,9 @@ static SndStreamManager *defaultStreamManager = nil;
     else {
         NSLog(@"SndStreamManager +initialise: Error - Unable to initialise SNDInit()!\n");
     }
-    if (defaultStreamManager == nil)
-        defaultStreamManager = [SndStreamManager new];  // create our default
 }
 
-+ (BOOL) setOutputBufferSize: (int) frames
-{
-    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]));
-}
-
-+ (NSArray *) getDriverNamesForOutput: (BOOL) outputDevices
++ (NSArray *) driverNamesForOutput: (BOOL) outputDevices
 {
     NSMutableArray *soundDriverNames = [NSMutableArray array];
     const char **driverNames = SNDGetAvailableDriverNames(outputDevices);
@@ -107,11 +101,6 @@ static SndStreamManager *defaultStreamManager = nil;
     return [NSArray arrayWithArray: soundDriverNames];
 }
 
-+ (int) getAssignedDriverIndexForOutput: (BOOL) outputDevices
-{
-    return SNDGetAssignedDriverIndex(outputDevices);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // defaultStreamManager
 //
@@ -123,8 +112,32 @@ static SndStreamManager *defaultStreamManager = nil;
     return [[defaultStreamManager retain] autorelease];
 }
 
-// TODO provide - initOnDevice: (NSString *) driverName
-// or deviceSpecificStreamManager = [[SndStreamManager streamManagerOnDevice: deviceName] retain];
+// TODO verify it works.
+#if 0
+
++ streamManagerOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) deviceName 
+{
+    return [SndStreamManager alloc] initOnDeviceForOutput: 
+}
+
+- initOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) outputDeviceName 
+{
+    if([self init]) {
+	NSArray *inputNames = [SndStreamManager driverNamesForOutput: NO];
+	NSArray *outputNames  = [SndStreamManager driverNamesForOutput: YES];
+
+	// TODO find the device indices for input and output names
+	int outputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
+	int inputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
+	
+	[self setAssignedDriverToIndex: outputDeviceIndex forOutput: YES];
+	[self setAssignedDriverToIndex: inputDeviceIndex forOutput: NO];
+	
+	return self;
+    }
+    return nil;
+}
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +162,7 @@ static SndStreamManager *defaultStreamManager = nil;
     bDelegateMessagingEnabled = FALSE;
     format = [Snd nativeFormat];
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
-	NSLog(@"Native format of streaming audio buffer: %@\n", self);
+	NSLog(@"Native format of streaming audio buffer: %@\n", SndFormatDescription(format));
     
     /* might as well set up the delegate background thread now too */
     
@@ -212,11 +225,35 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
-	[super description],
-	format.sampleRate / 1000.0,
-	format.channelCount,
-	format.frameCount];
+    return [NSString stringWithFormat: @"%@ input: %@ output: %@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
+	    [super description],
+	    [defaultStreamManager assignedDriverNameForOutput: NO],
+	    [defaultStreamManager assignedDriverNameForOutput: YES],
+	    format.sampleRate / 1000.0,
+	    format.channelCount,
+	    format.frameCount];
+}
+
+- (int) assignedDriverIndexForOutput: (BOOL) outputDevices
+{
+    return SNDGetAssignedDriverIndex(outputDevices);
+}
+
+- (BOOL) setAssignedDriverToIndex: (unsigned int) driverIndex forOutput: (BOOL) forOutputDevices
+{
+    return SNDSetDriverIndex(driverIndex, forOutputDevices);
+}
+
+- (NSString *) assignedDriverNameForOutput: (BOOL) outputDevices
+{
+    NSArray *outputDriverNames = [SndStreamManager driverNamesForOutput: outputDevices];
+    
+    return [outputDriverNames objectAtIndex: [self assignedDriverIndexForOutput: outputDevices]];
+}
+
+- (BOOL) setOutputBufferSize: (int) frames
+{
+    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
