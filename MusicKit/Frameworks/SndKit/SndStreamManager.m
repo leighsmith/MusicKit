@@ -198,7 +198,7 @@ static SndStreamManager *defaultStreamManager = nil;
 - (void) dealloc
 {
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[manager] starting dealloc\n");
+    NSLog(@"[SndStreamManager] starting dealloc\n");
 #endif
     
     if (active)
@@ -213,7 +213,7 @@ static SndStreamManager *defaultStreamManager = nil;
     [bgdm_threadLock release];
     
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[manager] ending dealloc\n");
+    NSLog(@"[SndStreamManager] ending dealloc\n");
 #endif
     
     [super dealloc];
@@ -327,7 +327,7 @@ static SndStreamManager *defaultStreamManager = nil;
     [self retain]; // TODO eeek, why is this necessary?
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"SndManager::entering delegate thread\n");
+    NSLog(@"[SndStreamManager] entering delegate thread\n");
 #endif
 
     while (bgdm_sem != BGDM_threadStopped) {
@@ -373,7 +373,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	}
 	else if (bgdm_sem == BGDM_abortNow) {
 #if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"SndManager::Killing delegate message thread.\n");
+	    NSLog(@"[SndStreamManager] Killing delegate message thread.\n");
 #endif
 	    bgdm_sem = BGDM_threadStopped;
 	    break;
@@ -391,7 +391,7 @@ static SndStreamManager *defaultStreamManager = nil;
      * extra thread but it won't cause a problem
      */
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"SndManager::exiting delegate thread\n");
+    NSLog(@"[SndStreamManager] exiting delegate thread\n");
 #endif
 
     [NSThread exit];
@@ -414,7 +414,7 @@ static SndStreamManager *defaultStreamManager = nil;
     //[self retain]; // I presume this is to register the retain on the local autorelease pool?
     
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"SndManager::entering bg thread\n");
+    NSLog(@"[SndStreamManager] entering bg thread\n");
 #endif
     
     while (1) {
@@ -425,7 +425,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	    bg_sem = 0;
 	    isStopping = FALSE;
 #if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"SndManager::startStreaming - Stream starting!\n");
+	    NSLog(@"[SndStreamManager] startStreaming - Stream starting!\n");
 #endif
 	    [bg_threadLock unlockWithCondition:BG_hasStarted];
 	    continue;
@@ -433,7 +433,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	else if (bg_sem == BG_stopNow) {
 	    SNDStreamStop();
 #if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"SndManager::stopStreaming -  stream stopping");
+	    NSLog(@"[SndStreamManager] stopStreaming -  stream stopping");
 #endif
 	    active  = FALSE;
 	    nowTime = 0.0;
@@ -449,7 +449,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	    }
 	    
 #if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"[manager] delegete message thread is inactive.\n");
+	    NSLog(@"[SndStreamManager] delegete message thread is inactive.\n");
 #endif
 	    
 	    break;
@@ -464,7 +464,7 @@ static SndStreamManager *defaultStreamManager = nil;
     [localPool release];
     
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"SndManager::exiting bg thread\n");
+    NSLog(@"[SndStreamManager] exiting bg thread\n");
 #endif
     /* even if there is a new thread is created between the following two
 	* statements, that would be ok -- there would temporarily be one
@@ -516,11 +516,11 @@ static SndStreamManager *defaultStreamManager = nil;
     if (active) {
 	isStopping = TRUE;
 #if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[manager] sending shutdown to mixer...\n");
+	NSLog(@"[SndStreamManager] sending shutdown to mixer...\n");
 #endif
 	[mixer finishMixing];
 #if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[manager] about to send shutdown to stream...\n");
+	NSLog(@"[SndStreamManager] about to send shutdown to stream...\n");
 #endif
 	
 	[bg_threadLock lock];
@@ -528,11 +528,11 @@ static SndStreamManager *defaultStreamManager = nil;
 	[bg_threadLock unlockWithCondition: BG_hasFlag];
 	
 #if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[manager] shutdown sent.\n");
+	NSLog(@"[SndStreamManager] shutdown sent.\n");
 #endif
     }
     else {
-	NSLog(@"SndManager::stopStreaming - Error: stopStreaming called when not streaming!\n");
+	NSLog(@"[SndStreamManager] stopStreaming - Error: stopStreaming called when not streaming!\n");
     }
 }
 
@@ -594,22 +594,22 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
     SndAudioBuffer *outB = (streamOutputBuffer == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: streamOutputBuffer];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] --> processAudio sampleCount = %ld, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
+    NSLog(@"[SndStreamManager] --> processAudio sampleCount = %ld, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
         (long) sampleCount, streamOutputBuffer, streamOutputBuffer->streamData);
-    NSLog(@"[Manager] --> processAudio sampleCount = %ld, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
+    NSLog(@"[SndStreamManager] --> processAudio sampleCount = %ld, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
 	  (long) sampleCount, streamInputBuffer, streamInputBuffer->streamData);
-    // NSLog(@"[Manager] --> processAudio outB = %@\n", outB);
+    // NSLog(@"[SndStreamManager] --> processAudio outB = %@\n", outB);
 #endif
     
     [(SndStreamManager *) manager processStreamAtTime: sampleCount input: inB output: outB];
     [outB fillSNDStreamBuffer: streamOutputBuffer];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] About to release pool...\n");
+    NSLog(@"[SndStreamManager] About to release pool...\n");
 #endif
     [localPool release];
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] Released pool...\n");
+    NSLog(@"[SndStreamManager] Released pool...\n");
 #endif
 }
 
@@ -625,7 +625,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
                       output: (SndAudioBuffer *) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] Entering processStreamAtTime %lf inB %@, outB %@\n", sampleCount, inB, outB);
+    NSLog(@"[SndStreamManager] Entering processStreamAtTime %lf inB %@, outB %@\n", sampleCount, inB, outB);
 #endif
     if (active) {
 	// Set our current notion of time.
@@ -644,23 +644,26 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
 	}
 
 #if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[Manager] nowTime: %.3f sampleCount: %.3f\n", nowTime, sampleCount);
+	NSLog(@"[SndStreamManager] nowTime: %.3f sampleCount: %.3f\n", nowTime, sampleCount);
 #endif
 	[mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
 #if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[Manager] post mixer\n");
+	NSLog(@"[SndStreamManager] post mixer\n");
 #endif
 	if ([mixer clientCount] == 0) { // Shut down the Stream if there are no clients.
 	    [self stopStreaming];
 #if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"[Manager] signalling a stop stream...\n");
+	    NSLog(@"[SndStreamManager] signalling a stop stream...\n");
 #endif
 	}
 #if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START
 	{
-	    float *pF =  [outB data];
-	    pF[0] = 1.0f;
-	    pF[1] = 1.0f;
+	    float *outgoingSamples =  [outB data];
+	    int channelIndex;
+
+	    for(channelIndex = 0; channelIndex < [outb channelCount]; channelIndex++) {
+		outgoingSamples[channelIndex] = 1.0f;
+	    }
 	}
 #endif
     }
@@ -670,11 +673,11 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
 	// Currently we rely on the sound hardware interface to ensure that playing the output buffer that 
 	// has not been filled will play ok. Otherwise we could zero (silence) the buffer.
 #if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
+	NSLog(@"[SndStreamManager] processStreamAtTime - called when not active...?");
 #endif
     }
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] Leaving...\n");
+    NSLog(@"[SndStreamManager] Leaving...\n");
 #endif
 }
 

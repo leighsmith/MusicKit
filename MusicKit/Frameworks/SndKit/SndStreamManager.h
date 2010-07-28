@@ -232,10 +232,13 @@
 - (SndFormat) format;
 
 /*!
-  @brief   Return the current time as understood by the SndStreamManager
+  @brief   Return the current time as understood by the SndStreamManager.
   
-  
-  @return     nowTime as a double 
+  The current time indicates the time at the start of the next buffer to be mixed and then played. 
+  This is about as close to actual playing time as can be calculated. The actual time of play will 
+  depend on the operating system dependent latency between receiving a buffer to play and actually
+  sending it to the DAC.
+  @return     nowTime as a double floating point value of time in seconds.
 */
 - (double) nowTime;
 

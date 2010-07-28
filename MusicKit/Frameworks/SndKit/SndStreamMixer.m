@@ -69,6 +69,7 @@
 - (NSString *) description
 {
     int c = [self clientCount];
+    
     return [NSString stringWithFormat: @"%@ with %i client%s", [super description], c, c > 1 ? "s" : ""];
 }
 
@@ -191,7 +192,7 @@
 
 - (int) clientCount
 {
-  return [streamClients count];
+    return [streamClients count];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +213,7 @@
 
 - (SndAudioProcessorChain *) audioProcessorChain
 {
-  return [[processorChain retain] autorelease]; 
+    return [[processorChain retain] autorelease]; 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,11 +223,13 @@
 - (void) resetTime: (double) originTimeInSeconds
 {
     int clientCount, clientIndex;
+    
     [streamClientsLock lock];   
     clientCount = [streamClients count];
     if (clientCount > 0) {
         for (clientIndex = 0; clientIndex < clientCount; clientIndex++) {
             SndStreamClient *client = [streamClients objectAtIndex: clientIndex];
+	    
             [client resetTime: originTimeInSeconds];
         }
     }
@@ -237,13 +240,14 @@
 // clientAtIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndStreamClient*) clientAtIndex: (int) clientIndex
+- (SndStreamClient *) clientAtIndex: (int) clientIndex
 {
-  SndStreamClient *client;
-  [streamClientsLock lock];
-  client = [[[streamClients objectAtIndex: clientIndex] retain] autorelease];
-  [streamClientsLock unlock];
-  return client;
+    SndStreamClient *client;
+    
+    [streamClientsLock lock];
+    client = [[[streamClients objectAtIndex: clientIndex] retain] autorelease];
+    [streamClientsLock unlock];
+    return client;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

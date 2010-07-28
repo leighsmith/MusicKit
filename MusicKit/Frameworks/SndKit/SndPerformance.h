@@ -262,20 +262,20 @@ startPosition: (double) startPosition
 
 /*!
   @brief Returns a string containing a brief description of the performance object.
-  @return     A string containing a brief description of the performance object.
+  @return A string containing a brief description of the performance object.
 */
 - (NSString *) description;
 
 /*!
-  @return   Boolean - YES/TRUE if the performance is paused
+  @return   Boolean - YES/TRUE if the performance is paused. NO if the performance is playing.
 */
 - (BOOL) isPaused;
 
 /*!
-  @param    b a flag to signal whether or not the performance is paused.
+  @param    isPaused a flag to signal whether or not the performance is paused.
   @return   self
 */
-- setPaused: (BOOL) b;
+- setPaused: (BOOL) isPaused;
 
 /*!
   @brief Pauses a performance
