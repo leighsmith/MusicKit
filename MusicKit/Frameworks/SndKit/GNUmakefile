@@ -143,9 +143,6 @@ $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 # Extra DLL exports file
 # $(MY_NAME)_DLL_DEF = $(MY_NAME).def
 
-# SRCS = $(LIBRARY_NAME:=.m)
-# HDRS = $(LIBRARY_NAME:=.h)
-
 -include GNUmakefile.preamble
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))

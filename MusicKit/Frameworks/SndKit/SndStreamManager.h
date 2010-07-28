@@ -131,7 +131,7 @@
 /*!
   @brief   Returns an NSString with description of SndStreamManager
   @return     Returns an NSString with description of SndStreamManager
-*/
+ */
 - (NSString *) description;
 
 /*!

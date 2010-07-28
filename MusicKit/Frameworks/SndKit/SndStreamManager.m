@@ -253,7 +253,15 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (BOOL) setOutputBufferSize: (int) frames
 {
-    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]));
+    BOOL success = SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]), YES);
+
+    format = [Snd nativeFormat];
+    return success;
+}
+
+- (BOOL) setInputBufferSize: (int) frames
+{
+    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]), NO);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

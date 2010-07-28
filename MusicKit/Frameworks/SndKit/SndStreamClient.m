@@ -68,7 +68,7 @@ enum {
 - init
 {
     // TODO is this even necessary anymore?
-#if 1
+#if 0
     Snd *s = [Snd new];
     [s release];
 #endif
