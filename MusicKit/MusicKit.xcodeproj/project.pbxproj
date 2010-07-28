@@ -472,6 +472,12 @@
 		D847902107A8BDB400F7C83A /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
 		D847902207A8BDB400F7C83A /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D847902307A8BDB400F7C83A /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D84905E011E504B400D7AAC8 /* SignalProcessingController.m in Sources */ = {isa = PBXBuildFile; fileRef = D84905DF11E504B400D7AAC8 /* SignalProcessingController.m */; };
+		D84905E711E506CB00D7AAC8 /* SignalProcessing.xib in Resources */ = {isa = PBXBuildFile; fileRef = D84905E611E506CB00D7AAC8 /* SignalProcessing.xib */; };
+		D849067411E5240500D7AAC8 /* SndStreamInput.m in Sources */ = {isa = PBXBuildFile; fileRef = D849067311E5240500D7AAC8 /* SndStreamInput.m */; };
+		D84906DF11E53A2F00D7AAC8 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
+		D84906E011E53A2F00D7AAC8 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D84906EF11E53CB100D7AAC8 /* SignalProcessing_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D84906EE11E53CB100D7AAC8 /* SignalProcessing_main.m */; };
 		D84CDEE0061F57D5007B002D /* SndPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = D84CDEDE061F57D5007B002D /* SndPasteboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D84CDEE1061F57D5007B002D /* SndPasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = D84CDEDF061F57D5007B002D /* SndPasteboard.m */; };
 		D84E1E6805B5E4C5002B493F /* EchoFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = D84E1E6205B5E4C5002B493F /* EchoFilter.h */; };
@@ -1781,6 +1787,14 @@
 		D8465EFE0FC76555006488CE /* MusicKit_README.dsssl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MusicKit_README.dsssl; path = Documentation/SGML/MusicKit_README.dsssl; sourceTree = "<group>"; };
 		D847900E07A8B84500F7C83A /* MusicKitConfig.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MusicKitConfig.h; path = Frameworks/MusicKit/MusicKitConfig.h; sourceTree = "<group>"; };
 		D847900F07A8B84500F7C83A /* MusicKitConfig.h.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MusicKitConfig.h.in; path = Frameworks/MusicKit/MusicKitConfig.h.in; sourceTree = "<group>"; };
+		D84905D111E5039E00D7AAC8 /* SignalProcessing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalProcessing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D84905D311E5039E00D7AAC8 /* SignalProcessing-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SignalProcessing-Info.plist"; path = "Examples/SignalProcessing/SignalProcessing-Info.plist"; sourceTree = "<group>"; };
+		D84905DE11E504B400D7AAC8 /* SignalProcessingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalProcessingController.h; path = Examples/SignalProcessing/SignalProcessingController.h; sourceTree = "<group>"; };
+		D84905DF11E504B400D7AAC8 /* SignalProcessingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SignalProcessingController.m; path = Examples/SignalProcessing/SignalProcessingController.m; sourceTree = "<group>"; };
+		D84905E311E506C000D7AAC8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Examples/SignalProcessing/English.lproj/SignalProcessing.xib; sourceTree = "<group>"; };
+		D849067211E5240500D7AAC8 /* SndStreamInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndStreamInput.h; path = Examples/SignalProcessing/SndStreamInput.h; sourceTree = "<group>"; };
+		D849067311E5240500D7AAC8 /* SndStreamInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndStreamInput.m; path = Examples/SignalProcessing/SndStreamInput.m; sourceTree = "<group>"; };
+		D84906EE11E53CB100D7AAC8 /* SignalProcessing_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SignalProcessing_main.m; path = Examples/SignalProcessing/SignalProcessing_main.m; sourceTree = "<group>"; };
 		D84B2D9C09D558A900766BD4 /* Makefile.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 30; name = Makefile.in; path = Documentation/Makefile.in; sourceTree = "<group>"; };
 		D84CDEDE061F57D5007B002D /* SndPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndPasteboard.h; path = Frameworks/SndKit/SndPasteboard.h; sourceTree = "<group>"; };
 		D84CDEDF061F57D5007B002D /* SndPasteboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPasteboard.m; path = Frameworks/SndKit/SndPasteboard.m; sourceTree = "<group>"; };
@@ -2200,6 +2214,7 @@
 		D88FEDD405A110B60024FD88 /* libdsp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = libdsp.h; path = Frameworks/MKDSP_Native/libdsp.h; sourceTree = "<group>"; };
 		D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = smsrc_dependencies.h; path = Frameworks/MKDSP_Native/smsrc_dependencies.h; sourceTree = "<group>"; };
 		D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKDSPDefines.h; path = Frameworks/MKDSP_Native/MKDSPDefines.h; sourceTree = "<group>"; };
+		D8934DE211EBABBD00FF4CF9 /* libmathCommon.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmathCommon.dylib; path = /usr/lib/system/libmathCommon.dylib; sourceTree = "<absolute>"; };
 		D8A1DC0209F64B3E0094B3F5 /* mixscorefiles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mixscorefiles; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = mixscorefiles_main.m; path = Examples/mixscorefiles/mixscorefiles_main.m; sourceTree = "<group>"; };
 		D8A1DC1909F64BC90094B3F5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README.txt; path = Examples/mixscorefiles/README.txt; sourceTree = "<group>"; };
@@ -2454,6 +2469,15 @@
 			files = (
 				D8E1DDE807CA78320018F8F3 /* MKPerformSndMIDI.framework in Frameworks */,
 				D8E1DDE907CA78320018F8F3 /* SndKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84905CF11E5039E00D7AAC8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D84906DF11E53A2F00D7AAC8 /* MKPerformSndMIDI.framework in Frameworks */,
+				D84906E011E53A2F00D7AAC8 /* SndKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3573,6 +3597,7 @@
 				D886C3D50FA64809000AC7C4 /* playscorefile2 */,
 				D80151BF0FA64B24002FB882 /* playpart */,
 				D8D2A3C70FA90537008DBF68 /* PlayNote.app */,
+				D84905D111E5039E00D7AAC8 /* SignalProcessing.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3584,6 +3609,52 @@
 				D847900F07A8B84500F7C83A /* MusicKitConfig.h.in */,
 			);
 			name = "Configured Headers";
+			sourceTree = "<group>";
+		};
+		D84905BE11E5012500D7AAC8 /* SignalProcessing */ = {
+			isa = PBXGroup;
+			children = (
+				D84905C111E5015600D7AAC8 /* Supporting Files */,
+				D84905C411E5033500D7AAC8 /* Classes */,
+				D84905C711E5034100D7AAC8 /* Other Sources */,
+				D84905CA11E5035700D7AAC8 /* Interfaces */,
+			);
+			name = SignalProcessing;
+			sourceTree = "<group>";
+		};
+		D84905C111E5015600D7AAC8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D84905D311E5039E00D7AAC8 /* SignalProcessing-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D84905C411E5033500D7AAC8 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				D849067211E5240500D7AAC8 /* SndStreamInput.h */,
+				D849067311E5240500D7AAC8 /* SndStreamInput.m */,
+				D84905DE11E504B400D7AAC8 /* SignalProcessingController.h */,
+				D84905DF11E504B400D7AAC8 /* SignalProcessingController.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		D84905C711E5034100D7AAC8 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				D84906EE11E53CB100D7AAC8 /* SignalProcessing_main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		D84905CA11E5035700D7AAC8 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				D84905E611E506CB00D7AAC8 /* SignalProcessing.xib */,
+			);
+			name = Interfaces;
 			sourceTree = "<group>";
 		};
 		D84E1E4B05B5E444002B493F /* Classes */ = {
@@ -4546,6 +4617,7 @@
 		D8708E6305B493CA0074C18D /* Sound Examples */ = {
 			isa = PBXGroup;
 			children = (
+				D84905BE11E5012500D7AAC8 /* SignalProcessing */,
 				D84E219F05B70846002B493F /* extractchannel */,
 				D84E216405B707AA002B493F /* maxamp */,
 				D84E20F405B70575002B493F /* mixsounds */,
@@ -5567,6 +5639,7 @@
 				4289989B10359CF0005FEC40 /* Music */,
 				D8DB4E61059FA0D100624233 /* Documentation */,
 				D84395EA059FAA450054BEEE /* Products */,
+				D8934DE211EBABBD00FF4CF9 /* libmathCommon.dylib */,
 			);
 			comments = "This is the main MacOS X Xcode project file which will build the MusicKit and SndKit frameworks, Palettes, Tools, Examples, and Applications.\n\nNot all applications are able to be compiled at the moment since the unit generators are still to be converted from 56001 DSP assembly language. This is an ongoing project.\n\nThe entire project should build without warnings.\n\nSee http://www.musickit.org for most up to date info on the MusicKit.";
 			sourceTree = "<group>";
@@ -6438,6 +6511,23 @@
 			productReference = D844A7C907C827CD0086A55B /* playsndfaders */;
 			productType = "com.apple.product-type.tool";
 		};
+		D84905D011E5039E00D7AAC8 /* SignalProcessing */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D84905D911E5039F00D7AAC8 /* Build configuration list for PBXNativeTarget "SignalProcessing" */;
+			buildPhases = (
+				D84905CD11E5039E00D7AAC8 /* Resources */,
+				D84905CE11E5039E00D7AAC8 /* Sources */,
+				D84905CF11E5039E00D7AAC8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SignalProcessing;
+			productName = SignalProcessing;
+			productReference = D84905D111E5039E00D7AAC8 /* SignalProcessing.app */;
+			productType = "com.apple.product-type.application";
+		};
 		D84E1E5E05B5E487002B493F /* MidiEcho */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8B44F68099617E500B5C3A4 /* Build configuration list for PBXNativeTarget "MidiEcho" */;
@@ -7088,6 +7178,7 @@
 				D80151BE0FA64B24002FB882 /* playpart */,
 				D8A1DC0109F64B3E0094B3F5 /* mixscorefiles */,
 				D8E1DDF907CA78B40018F8F3 /* MultipleSoundPlayer */,
+				D84905D011E5039E00D7AAC8 /* SignalProcessing */,
 				D85A2F49061F347D0065380E /* Spectro (Application) */,
 				D88C502806C7E37100D33D99 /* PatchCord (Application) */,
 				D85E27D106FA098200385C32 /* PatchCord (Framework) */,
@@ -7154,6 +7245,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84905CD11E5039E00D7AAC8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D84905E711E506CB00D7AAC8 /* SignalProcessing.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7693,6 +7792,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8E1DDB807CA77EE0018F8F3 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84905CE11E5039E00D7AAC8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D84905E011E504B400D7AAC8 /* SignalProcessingController.m in Sources */,
+				D849067411E5240500D7AAC8 /* SndStreamInput.m in Sources */,
+				D84906EF11E53CB100D7AAC8 /* SignalProcessing_main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8395,6 +8504,14 @@
 			name = EnvelopeEd.sgml;
 			sourceTree = "<group>";
 		};
+		D84905E611E506CB00D7AAC8 /* SignalProcessing.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D84905E311E506C000D7AAC8 /* English */,
+			);
+			name = SignalProcessing.xib;
+			sourceTree = "<group>";
+		};
 		D84E1F5805B5E4FC002B493F /* Info.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -8956,6 +9073,137 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = playscorefile;
+			};
+			name = Default;
+		};
+		D84905D411E5039F00D7AAC8 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Examples/SignalProcessing/SignalProcessing-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/lib/system,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SignalProcessing;
+			};
+			name = Development;
+		};
+		D84905D511E5039F00D7AAC8 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "SignalProcessing-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/lib/system,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SignalProcessing;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D84905D611E5039F00D7AAC8 /* Legacy Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "SignalProcessing-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/lib/system,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SignalProcessing;
+			};
+			name = "Legacy Deployment";
+		};
+		D84905D711E5039F00D7AAC8 /* Embedded */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "SignalProcessing-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/lib/system,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SignalProcessing;
+			};
+			name = Embedded;
+		};
+		D84905D811E5039F00D7AAC8 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "SignalProcessing-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/lib/system,
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = SignalProcessing;
 			};
 			name = Default;
 		};
@@ -15377,6 +15625,18 @@
 				D8EB69AE10713E5500400D74 /* Legacy Deployment */,
 				D81589A60F90EDC300E38A7D /* Embedded */,
 				D81589A70F90EDC300E38A7D /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		D84905D911E5039F00D7AAC8 /* Build configuration list for PBXNativeTarget "SignalProcessing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D84905D411E5039F00D7AAC8 /* Development */,
+				D84905D511E5039F00D7AAC8 /* Deployment */,
+				D84905D611E5039F00D7AAC8 /* Legacy Deployment */,
+				D84905D711E5039F00D7AAC8 /* Embedded */,
+				D84905D811E5039F00D7AAC8 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
