@@ -2,7 +2,7 @@
   $Id$
 
   Description:
-    Defines the C entry points to the Sound Library.
+    Defines the C entry points to the Sound Library for portaudio.
 
     These routines emulate an internal SoundKit module.
     This is intended to hide all the operating system evil behind a banal C function interface.
@@ -45,8 +45,10 @@ extern "C" {
 
 // "class variables" 
 static BOOL             initialised = FALSE;
-static char             **driverList;
-static unsigned int     driverIndex = 0;
+static const char       **outputDeviceList;
+static const char       **inputDeviceList;
+static unsigned int     outputDeviceIndex = 0;
+static unsigned int     inputDeviceIndex = 0;
 static char             **speakerConfigurationList;
 
 static int              numOfDevices;
@@ -54,7 +56,7 @@ static BOOL             inputInit = FALSE;
 
 // portaudio specific variables
 static long             bufferSizeInFrames = DEFAULT_BUFFER_SIZE;
-static PaStream         *stream;
+static PaStream         *stream = NULL; // init to NULL to catch unused case.
 static BOOL             isMuted = FALSE;
 static BOOL             useNativeBufferSize = TRUE;
 
@@ -65,48 +67,60 @@ static PaTime firstSampleTime = -1.0; // indicates this has not been assigned.
 static float *lastRecvdInputBuffer = NULL;
 
 
-static BOOL retrieveDriverList(void)
+static const char **retrieveDriverList(BOOL forOutputDevices)
 {
     int driverIndex = 0;
     numOfDevices = Pa_GetDeviceCount();
+    char **driverList;
 
-    NSLog(@"Number of portaudio devices %d\n", numOfDevices);
+    // NSLog(@"Number of portaudio devices %d\n", numOfDevices);
     if(numOfDevices < 0) { // Error getting devices.
         NSLog(@"PortAudio Error retrieving number of devices %s\n", Pa_GetErrorText(numOfDevices));
-        return FALSE;
+        return NULL;
     }
     if((driverList = (char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
           NSLog(@"Unable to malloc driver list for %d devices\n", numOfDevices);
-          return FALSE;
+          return NULL;
     }
-    for (driverIndex = 0 ; driverIndex < numOfDevices ; driverIndex++) {
-        const char *name = Pa_GetDeviceInfo(driverIndex)->name;
+    driverIndex = 0;
+    while (driverIndex < numOfDevices) {
+	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(driverIndex);
+        const char *name = deviceInfo->name;
         char *deviceName;
 
-        if((deviceName = (char *) malloc((strlen(name) + 1) * sizeof(char))) == NULL) {
-            NSLog(@"Unable to malloc deviceName string\n");
-            return FALSE;
-        }
-        strcpy(deviceName, name);
-        driverList[driverIndex] = deviceName;
+#if 0
+	NSLog(@"%s max input channels %d, max output channels %d\n", name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
+	NSLog(@"input latency %lf -> %lf\n", deviceInfo->defaultLowInputLatency, deviceInfo->defaultHighInputLatency);
+	NSLog(@"output latency %lf -> %lf\n", deviceInfo->defaultLowOutputLatency, deviceInfo->defaultHighOutputLatency);
+#endif
+
+	if((forOutputDevices && deviceInfo->maxOutputChannels > 0) ||
+	   (!forOutputDevices && deviceInfo->maxInputChannels > 0)) {
+	    if((deviceName = (char *) malloc((strlen(name) + 1) * sizeof(char))) == NULL) {
+		NSLog(@"Unable to malloc deviceName string\n");
+		return NULL;
+	    }
+	    strcpy(deviceName, name);
+	    driverList[driverIndex] = deviceName;
+	    driverIndex++;
+	}
     }
     driverList[driverIndex] = NULL;
-    return TRUE;
+    return (const char **) driverList;
 }
 
-BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes)
+BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutputDevices)
 {
     long newBufferSizeInFrames = newBufferSizeInBytes / BYTES_PER_FRAME;
 
-    if (Pa_IsStreamActive(stream))
+    if (stream != NULL && Pa_IsStreamActive(stream))
         return FALSE;
     if ((float)newBufferSizeInBytes /(float) BYTES_PER_FRAME != newBufferSizeInFrames) {
         NSLog(@"output device - error setting buffer size. Buffer must be multiple of %d\n", BYTES_PER_FRAME);
         return FALSE;
     }
     bufferSizeInFrames = newBufferSizeInFrames;
-    // if we set the size, we force the streaming to use it, not the
-    // native size.
+    // if we set the size, we force the streaming to use it, not the native size.
     useNativeBufferSize = FALSE;  
     return TRUE;
 }
@@ -191,6 +205,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     }
 
     // Debugging
+#if 1
     { 
 	const PaHostApiInfo *hostAPIInfo;
 	NSLog(@"Default Host API index %d\n", Pa_GetDefaultHostApi());
@@ -198,9 +213,14 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 	hostAPIInfo = Pa_GetHostApiInfo(Pa_GetDefaultHostApi());
 	NSLog(@"Host API named: %s\n", hostAPIInfo->name);
     }
+#endif
 
-    if(!retrieveDriverList())
+    if((outputDeviceList = retrieveDriverList(TRUE)) == NULL)
         return FALSE;
+
+    if((inputDeviceList = retrieveDriverList(FALSE)) == NULL)
+        return FALSE;
+
     if(!initialised)
         initialised = TRUE;   // SNDSetDriverIndex() needs to think we're initialised.
     inputInit = TRUE;
@@ -246,33 +266,34 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // Returns NULL if the driver names were unobtainable.
 // The client application should not attempt to free the pointers.
 // TODO return driverIndex by reference
-PERFORM_API const char **SNDGetAvailableDriverNames(BOOL outputDrivers)
+PERFORM_API const char **SNDGetAvailableDriverNames(BOOL forOutputDevices)
 {
     // We need the initialisation to retrieve the driver list.
     if(!initialised)
         SNDInit(TRUE);
 
-    return (const char **) driverList;
+    return forOutputDevices ? outputDeviceList : inputDeviceList;
 }
 
 
-// Match the driverDescription against the driverList
-PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL outputDrivers)
+// Match the driverDescription against the outputDeviceList
+PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL forOutputDevices)
 {
-  // This needs to be called after initialising.
-  if(!initialised)
+    // This needs to be called after initialising.
+    if(initialised && selectedIndex >= 0 && selectedIndex < numOfDevices) {
+	if(forOutputDevices)
+	    outputDeviceIndex = selectedIndex;
+	else
+	    inputDeviceIndex = selectedIndex;
+	return TRUE;
+    }
     return FALSE;
-  else if(selectedIndex >= 0 && selectedIndex < numOfDevices) {
-    driverIndex = selectedIndex;
-    return TRUE;
-  }
-  return FALSE;
 }
 
-// Match the driverDescription against the driverList
-PERFORM_API unsigned int SNDGetAssignedDriverIndex(BOOL outputDrivers)
+// Match the driverDescription against the outputDeviceList
+PERFORM_API unsigned int SNDGetAssignedDriverIndex(BOOL forOutputDevices)
 {
-  return driverIndex;
+    return forOutputDevices ? outputDeviceIndex : inputDeviceIndex;
 }
 
 PERFORM_API BOOL SNDIsMuted(void)
@@ -296,7 +317,9 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
 {
     PaError err;
     int data = 0;
-    BOOL r = TRUE;
+    BOOL streamStartedOK = TRUE;
+    PaStreamParameters inputStreamParameters;
+    PaStreamParameters outputStreamParameters;
     
     if(!initialised)
         return FALSE;  // invalid sound structure.
@@ -308,28 +331,44 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
 
-    err = Pa_OpenDefaultStream(
-        &stream,		/* passes back stream pointer */
-        DEFAULT_IN_CHANNELS,	/* stereo input */
-        DEFAULT_OUT_CHANNELS,	/* stereo output */
-        paFloat32,		/* 32 bit floating point output paFloat32 */
-				/* note: this value instructs portaudio
-                                   what sample size to expect, which
-                                   is a different constant to that used
-                                   to talk to the SndKit (SND_FORMAT_*)
-                                 */
-        DEFAULT_SAMPLE_RATE,	/* sample rate */
-        useNativeBufferSize ? paFramesPerBufferUnspecified : bufferSizeInFrames, /* frames per buffer */
-        vendBuffersToStreamManagerIOProc, /* specify our custom callback */
-        &data);        /* pass our data through to callback */
+    inputStreamParameters.device = inputDeviceIndex;
+    inputStreamParameters.channelCount = DEFAULT_IN_CHANNELS;
+    /* 32 bit floating point output paFloat32. */
+    /* note: this value instructs portaudio what sample size to expect, which
+       is a different constant to that used to talk to the SndKit (SND_FORMAT_*)
+     */
+    inputStreamParameters.sampleFormat = paFloat32;
+    inputStreamParameters.suggestedLatency = 0; /* These values are probably wrong */
+    inputStreamParameters.hostApiSpecificStreamInfo = NULL;
 
+    outputStreamParameters.device = outputDeviceIndex;
+    outputStreamParameters.channelCount = DEFAULT_OUT_CHANNELS;
+    outputStreamParameters.sampleFormat = paFloat32;
+    outputStreamParameters.suggestedLatency = 0; /* These values are probably wrong */
+    outputStreamParameters.hostApiSpecificStreamInfo = NULL;
+	
+    err = Pa_OpenStream(&stream,		/* passes back stream pointer */
+			&inputStreamParameters,
+			&outputStreamParameters,
+			DEFAULT_SAMPLE_RATE,	/* sample rate */
+			useNativeBufferSize ? paFramesPerBufferUnspecified : bufferSizeInFrames, /* frames per buffer */
+			paNoFlag,			  /* stream flags */
+			vendBuffersToStreamManagerIOProc, /* specify our custom callback */
+			&data);				  /* pass our data through to callback */
     if(err != paNoError) {
         NSLog(@"SNDStreamStart: PortAudio Pa_OpenDefaultStream error: %s\n", Pa_GetErrorText(err));
         return FALSE;
     }
 
+#if 0
+    NSLog(@"inputStreamParameters.suggestedLatency = %lf\n", inputStreamParameters.suggestedLatency);
+    NSLog(@"outputStreamParameters.suggestedLatency = %lf\n", outputStreamParameters.suggestedLatency);
+    NSLog(@"useNativeBufferSize %d bufferSizeInFrames %d\n", useNativeBufferSize, useNativeBufferSize ? paFramesPerBufferUnspecified : bufferSizeInFrames);
+#endif
+
     if (inputInit) {
-        long bufferSizeInBytes = bufferSizeInFrames * BYTES_PER_FRAME;
+        long bufferSizeInBytes = bufferSizeInFrames * DEFAULT_IN_CHANNELS * sizeof(float);
+
         if ((lastRecvdInputBuffer = (float *) malloc(bufferSizeInBytes)) == NULL)
             return FALSE;
         memset(lastRecvdInputBuffer, 0, bufferSizeInBytes);
@@ -338,10 +377,10 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     err = Pa_StartStream(stream);
     if(err != paNoError) {
         NSLog(@"SNDStreamStart: PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText(err));
-        r = FALSE;
+        streamStartedOK = FALSE;
     }
 
-    return r;
+    return streamStartedOK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -350,27 +389,26 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
 
 PERFORM_API BOOL SNDStreamStop(void)
 {
-    BOOL r = TRUE;
-    PaError err;
-    err = Pa_StopStream(stream);
+    BOOL streamStoppedOK = TRUE;
+    PaError err = Pa_StopStream(stream);
+
     if( err != paNoError ) {
         NSLog(@"PortAudio Pa_StopStream error: %s\n", Pa_GetErrorText( err ) );
-        r = FALSE;
+        streamStoppedOK = FALSE;
     }
 
     err = Pa_CloseStream(stream);
     if( err != paNoError ) {
         NSLog(@"PortAudio Pa_CloseStream error: %s\n", Pa_GetErrorText( err ) );
-        r = FALSE;
+        streamStoppedOK = FALSE;
     }
 
-//    SNDTerminate();
     if (inputInit) {
         free(lastRecvdInputBuffer);
         lastRecvdInputBuffer = NULL;
     }
-    // NSLog(@"SNDStreamStopped\n" );
-    return r;
+    // NSLog(@"SNDStreamStopped %d\n", streamStoppedOK);
+    return streamStoppedOK;
 }
 
 

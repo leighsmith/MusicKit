@@ -134,13 +134,14 @@ PERFORM_API void SNDSetMute(BOOL muted);
 
 /*!
   @function       SNDSetBufferSizeInBytes
-  @brief       Mute or unmute the currently playing sound..
-  @param          liBufferSizeInBytes
-  number of bytes in buffer. Note that current implementation
-  uses stereo float output buffers, which therefore take 8 bytes
-  per sample frame.
+  @brief          Changes the buffer size used for input or output.
+  @param          newBufferSizeInBytes  Number of bytes in buffer. 
+  @param          forOutputDevices TRUE to change the output buffer size, FALSE to change the input buffer size.
+
+  Note that current implementation uses stereo float output buffers, which therefore take
+  8 bytes per sample frame.
 */
-PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
+PERFORM_API BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutputDevices);
 
 /*!
   @function       SNDStreamNativeFormat
