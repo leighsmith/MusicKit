@@ -206,11 +206,11 @@
   mixer.
   
   Do not call this method - it is part of the audio callback handler.
-  @param      sampleCount Time in samples
-  @param      inB inputBuffer
-  @param      outB
+  @param      bufferTime Time in seconds when the buffer will play.
+  @param      inB The input buffer holding samples recorded from the ADC.
+  @param      outB The output buffer holding samples to be played.
 */
-- (void) processStreamAtTime: (double) sampleCount
+- (void) processStreamAtTime: (double) bufferTime
                        input: (SndAudioBuffer *) inB
                       output: (SndAudioBuffer *) outB;
 

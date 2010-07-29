@@ -28,7 +28,7 @@
 #define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 
-static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *obj);
+static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *obj);
 
 ////////////////////////////////////////////////////////////////////////////////
 // The enums are dual purpose -- they serve as condition locks for
@@ -581,7 +581,7 @@ static SndStreamManager *defaultStreamManager = nil;
 // processAudio
 ////////////////////////////////////////////////////////////////////////////////
 
-static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *manager)
+static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *manager)
 {
     // These could be made instance variables which are just wrapped
     // around each of the SNDStreamBuffers, to avoid allocation costs. 
@@ -594,14 +594,14 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
     SndAudioBuffer *outB = (streamOutputBuffer == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: streamOutputBuffer];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[SndStreamManager] --> processAudio sampleCount = %ld, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
-        (long) sampleCount, streamOutputBuffer, streamOutputBuffer->streamData);
-    NSLog(@"[SndStreamManager] --> processAudio sampleCount = %ld, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
-	  (long) sampleCount, streamInputBuffer, streamInputBuffer->streamData);
+    NSLog(@"[SndStreamManager] --> processAudio bufferTime = %lf, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
+	  bufferTime, streamOutputBuffer, streamOutputBuffer->streamData);
+    NSLog(@"[SndStreamManager] --> processAudio bufferTime = %lf, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
+	  bufferTime, streamInputBuffer, streamInputBuffer->streamData);
     // NSLog(@"[SndStreamManager] --> processAudio outB = %@\n", outB);
 #endif
     
-    [(SndStreamManager *) manager processStreamAtTime: sampleCount input: inB output: outB];
+    [(SndStreamManager *) manager processStreamAtTime: bufferTime input: inB output: outB];
     [outB fillSNDStreamBuffer: streamOutputBuffer];
 
 #if SNDSTREAMMANAGER_DEBUG
@@ -620,32 +620,18 @@ static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer,
 // processing
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) processStreamAtTime: (double) sampleCount
+- (void) processStreamAtTime: (double) bufferTime
                        input: (SndAudioBuffer *) inB
                       output: (SndAudioBuffer *) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[SndStreamManager] Entering processStreamAtTime %lf inB %@, outB %@\n", sampleCount, inB, outB);
+    NSLog(@"[SndStreamManager] Entering processStreamAtTime %lf seconds inB %@, outB %@\n", bufferTime, inB, outB);
 #endif
     if (active) {
-	// Set our current notion of time.
-	if (outB != nil) {
-	    // Calculate nowTime from sampleCount. This guards against deinterleaved streams repeatedly
-	    // requesting processing at the same sampleCount value causing nowTime to over-increment.
-	    nowTime = sampleCount / [outB samplingRate];
-	    // TODO Earlier versions calculated nowTime by preincrementing by the buffer duration. 
-	    // This put nowTime at the end of the buffer, not at the start. 
-	    // I don't think it matters but that needs checking and setting a policy. 
-	    // Here's what we would need to do to recreate those semantics:
-	    // nowTime = (sampleCount + [outB duration]) / [outB samplingRate];
-	}
-	else if (inB != nil) {
-	    nowTime = sampleCount / [inB samplingRate];
-	}
+	// Set our current notion of time from bufferTime. This guards against deinterleaved streams repeatedly
+	// requesting processing at the same bufferTime value causing nowTime to over-increment.
+	nowTime = bufferTime;
 
-#if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[SndStreamManager] nowTime: %.3f sampleCount: %.3f\n", nowTime, sampleCount);
-#endif
 	[mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"[SndStreamManager] post mixer\n");
