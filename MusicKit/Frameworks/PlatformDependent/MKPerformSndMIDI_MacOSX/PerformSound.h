@@ -60,10 +60,10 @@ typedef struct SNDStreamBuffer {
   @brief Defines the format of the callback when a stream of full duplex buffers are received.
  
   The descriptors "in" and "out" are with respect to the audio hardware, i.e out == play.
-  @param sampleTime
+  @param sampleTime The time the buffer will be played in seconds.
   @param inStream Pointer to a SNDStreamBuffer containing the received sample data.
   @param outStream Pointer to a SNDStreamBuffer containing the sample data to be played.
-  @param userData
+  @param userData An untyped pointer to data supplied when calling SNDStreamStart().
 */
 typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream, SNDStreamBuffer *outStream, void *userData);
 
