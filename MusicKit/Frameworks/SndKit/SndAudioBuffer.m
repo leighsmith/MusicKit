@@ -19,9 +19,12 @@
 #import "SndAudioBuffer.h"
 #import "SndMuLaw.h"
 
-// vector library support is currently only available on MacOS X...
-#ifdef __APPLE_CC__
+// vector library support is currently only available on MacOS X.
+// But there are a small set of SSE replacement routines under GCC.
+#if defined(__APPLE_CC__)
 #import <vecLib/vDSP.h>
+#elif (__i386__ && __GNUC__)
+#import "vDSP.h"
 #endif
 
 #define SNDAUDIOBUFFER_DEBUG_MIXING 0
@@ -422,9 +425,11 @@
     out += startFrame * buffNumChannels;
     // TODO we need a universal vector mixer for all destination sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
-#ifdef __APPLE_CC__
+#if defined(__APPLE_CC__) // || (__i386__ && __GNUC__)
+	NSLog(@"vectors in %p, out %p, lengthInSamples %d", in, out, lengthInSamples);
 	vDSP_vadd(in, 1, out, 1, out, 1, lengthInSamples);
 #else
+#warning Vector units not available, using scalar mixing.
 	unsigned long sampleIndex;
 	
 	for (sampleIndex = 0; sampleIndex < lengthInSamples; sampleIndex++) {

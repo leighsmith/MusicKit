@@ -90,7 +90,8 @@ $(MY_NAME)_OBJC_FILES = \
          Sndfilterkit.m
 
 $(MY_NAME)_C_FILES = \
-         SndEndianFunctions.c
+         SndEndianFunctions.c \
+         vDSP.c
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \

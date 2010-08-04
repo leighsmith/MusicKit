@@ -89,8 +89,6 @@
 
     clientCount = [streamClients count];
     
-//    [outB mixWithBuffer: inB];
-
 #if SNDSTREAMMIXER_DEBUG
     NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n", nowTime);
 #endif
