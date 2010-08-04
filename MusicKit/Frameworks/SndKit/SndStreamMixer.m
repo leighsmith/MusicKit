@@ -203,7 +203,7 @@
 {
     [streamClientsLock lock];    // wait for current processBuffers to finish.
     if ([streamClients count] > 0)
-	[streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];    
+	[streamClients makeObjectsPerformSelector: @selector(finishStreaming)];    
     [streamClientsLock unlock];
 }
 

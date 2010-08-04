@@ -67,12 +67,6 @@ enum {
 
 - init
 {
-    // TODO is this even necessary anymore?
-#if 0
-    Snd *s = [Snd new];
-    [s release];
-#endif
-    
     self = [super init];
     if(self != nil) {
 	// Modern audio hardware can have quite small buffers (i.e 4096 bytes), yet we want to do
@@ -738,17 +732,15 @@ static void inline setThreadPriority()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// managerIsShuttingDown
+// finishStreaming
 ////////////////////////////////////////////////////////////////////////////////
 
-- managerIsShuttingDown
+- (void) finishStreaming
 {
     // Need lock to make sure the synthesis thread is paused before shutting down!
     [synthThreadLock lock];
     active = FALSE;
-    [synthThreadLock unlock];
-    
-    return self;
+    [synthThreadLock unlock];    
 }
 
 ////////////////////////////////////////////////////////////////////////////////

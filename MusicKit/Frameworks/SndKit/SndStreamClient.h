@@ -217,18 +217,16 @@ enum {
 /*!
   @brief   Accessor for the current input buffer
   
-  
   @return     Returns the input buffer member
 */
 - (SndAudioBuffer *) synthInputBuffer;
 
 /*!
-  @brief 
+  @brief Tell the client to finish streaming.
   
-  Message sent by the manager to tell any clients still connected to it that it is about to disappear
-  @return     Returns self
+  Message sent by the manager to tell any clients still connected to it that the manager is about to finish running.
 */
-- managerIsShuttingDown;
+- (void) finishStreaming;
 
 /*!
   @brief   The main synthesis/processing thread method 
