@@ -59,7 +59,7 @@ multiple instances of a subclass providing audio processor chains. Probably unne
 */
 @interface SndStreamInput : SndStreamClient 
 {
-    /*! @var isReceivingInput YES when the instance is actively receiving samles from the audio hardware. */
+    /*! @var isReceivingInput YES when the instance is actively receiving samples from the audio hardware. */
     BOOL isReceivingInput;
 
     // Latency statistics.

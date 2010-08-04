@@ -51,6 +51,7 @@
 {
     latencyIndex = 0;
 
+#if 0
     if (![self isActive]) {
 	// hmm, should probably wait here for the welcomeClient to occur.
 	
@@ -59,6 +60,8 @@
     }
 
     active = YES;
+#endif
+    
     isReceivingInput = YES;
     
     return isReceivingInput;
@@ -72,7 +75,7 @@
 {
    // we need to disconnectFromStream;
     isReceivingInput = NO;
-    active = NO;
+    // [self finishStreaming]; // this is the problem
 }
 
 - (BOOL) isReceivingInput
@@ -103,7 +106,7 @@
     SndAudioBuffer *currentSynthOutputBuffer = [self synthOutputBuffer];
     unsigned long outputBufferLength = [currentSynthOutputBuffer lengthInSampleFrames];
     
-    if ([self isReceivingInput]) { // only playback input if recording is enabled.
+    if (isReceivingInput) { // only playback input if recording is enabled.
 	SndAudioBuffer *inBuffer = [self synthInputBuffer];
 	// NSRange wholeInputBufferRange = { 0, [inBuffer lengthInSampleFrames] };
 
