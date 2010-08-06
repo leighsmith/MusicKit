@@ -75,7 +75,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	    defaultStreamManager = [[SndStreamManager alloc] init];  // create our default SndStreamManager on default input and output devices.
 	}
 	if([defaults boolForKey: @"SndShowDriverSelected"]) {
-            NSLog(@"SndStreamManager +initialise: output driver selected is %@\n", defaultStreamManager);
+            NSLog(@"SndStreamManager +initialise: default driver selected is %@\n", defaultStreamManager);
         }
 	if([defaults boolForKey: @"SndShowSpeakerConfiguration"]) {
 	    const char **speakerNames = SNDSpeakerConfiguration();
@@ -114,16 +114,12 @@ static SndStreamManager *defaultStreamManager = nil;
     return [[defaultStreamManager retain] autorelease];
 }
 
-// TODO verify it works.
-#if 0
-
 + streamManagerOnDeviceForInput: (NSString *) inputDeviceName 
 		deviceForOutput: (NSString *) outputDeviceName 
 {
     return [[[SndStreamManager alloc] initOnDeviceForInput: inputDeviceName
 					   deviceForOutput: outputDeviceName] autorelease];
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // init
@@ -229,10 +225,11 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ input: %@ output: %@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
+    return [NSString stringWithFormat: @"%@ (%sactive) input: %@ output: %@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
 	    [super description],
-	    [defaultStreamManager assignedDriverNameForOutput: NO],
-	    [defaultStreamManager assignedDriverNameForOutput: YES],
+	    [self isActive] ? "" : "in",
+	    [self assignedDriverNameForOutput: NO],
+	    [self assignedDriverNameForOutput: YES],
 	    format.sampleRate / 1000.0,
 	    format.channelCount,
 	    format.frameCount];
@@ -246,7 +243,7 @@ static SndStreamManager *defaultStreamManager = nil;
 - (BOOL) setAssignedDriverToIndex: (unsigned int) driverIndex forOutput: (BOOL) forOutputDevices
 {
     BOOL success;
-    BOOL wasActive = active;
+//    BOOL wasActive = active;
 
     // Need to check we are already streaming before stopping and restarting.
     // enfore that changing the driver index will always cause streaming if the class is
