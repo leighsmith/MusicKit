@@ -101,6 +101,21 @@
 + (NSArray *) driverNamesForOutput: (BOOL) forOutputDevices;
 
 /*!
+  @brief Initialise a SndStreamManager instance on the default input and output devices.
+
+  The actual devices chosen are platform dependent.
+ */
+- init;
+
+/*!
+  @brief Initialise a SndStreamManager instance on the named input and output devices.
+
+  The input and output device names must match those in the arrays returned by
+  +driverNamesForOutput:.
+ */
+- initOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) outputDeviceName;
+
+/*!
   @brief Returns the index into the NSArray returned by +driverNamesForOutput: for the current driver.
   @param forOutputDevices YES to retrieve the assigned output device number, NO to retrieve the assigned input device number.
  */
@@ -152,35 +167,6 @@
   when the last client disconnects from the manager.
 */
 - (void) stopStreaming;
-
-/*!
-  @brief   a very lightweight thread used for starting and stopping
-  the audio streams
-  
-  You should never need to call this. The manager can instruct
-  the starting and stopping of streams by setting bg_sem to
-  BG_startNow or BG_stopNow, and setting the bg_threadLock
-  condition. The thread is created on this method when a stream
-  is to begin, if it does not exist already.
-*/
-- (void) streamStartStopThread;
-
-/*!
-  @brief   A very lightweight thread used for sending delegate messages
-  from the background threads to the main thread.
-  @param      ports A pair of NSPorts in an NSArray, used for setting up the
-  distributed object between this thread and the main thread.
-  
-  You should never need to call this. The manager calls this method
-  as it starts up (in <I>init</I>) then the thread just sits there
-  waiting for a signal to say that there's a delegate message sitting
-  in an array, waiting to be sent. The delegate message should have
-  been sent to -sendMessageInMainThreadToTarget:sel:arg1:arg2:. After arriving
-  in the delegate message thread it is dispatched to the main thread
-  via Distributed Objects, and will be sent on to the requested
-  delegate at the next convenient time in the NSRunLoop.
-*/
-- (void) delegateMessageThread: (NSArray *) ports;
 
 /*!
   @brief   Adds an SndStreamClient to the manager's mixer.

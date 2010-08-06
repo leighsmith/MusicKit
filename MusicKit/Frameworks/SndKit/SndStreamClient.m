@@ -445,15 +445,15 @@ enum {
 	}
     }
 
-    if (bDisconnect) {
+    if (disconnectClientFromManager) {
 	if (processedInputBuffersCount == 0 && processedOutputBuffersCount == 0) {
 	    [manager removeClient: self];
 	    [self setManager: nil];
 	    [self freeBufferMem];
 	    [self didFinishStreaming];
-	    bDisconnect = FALSE;
+	    disconnectClientFromManager = FALSE;
 #if SNDSTREAMCLIENT_DEBUG
-	    NSLog(@"[%@] disconnected\n", clientName);
+	    NSLog(@"[%@] disconnected from manager\n", clientName);
 #endif
 	}
     }
@@ -595,6 +595,7 @@ static void inline setThreadPriority()
 #endif
 #endif
     active = TRUE;
+    disconnectClientFromManager = FALSE;
 #if SNDSTREAMCLIENT_DEBUG                  
 //    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
 #endif
@@ -607,7 +608,7 @@ static void inline setThreadPriority()
 	    synthInputBuffer = [[inputQueue popNextPendingBuffer] retain];
         }
 #if SNDSTREAMCLIENT_DEBUG
-        NSLog(@"[%@] SYNTH THREAD: going to processBuffers\n", clientName);
+        NSLog(@"[%@] SYNTH THREAD: preparing to processBuffers\n", clientName);
 #endif
         [synthThreadLock lock];
 #if SNDSTREAMCLIENT_DEBUG
@@ -651,7 +652,7 @@ static void inline setThreadPriority()
         }
         [innerPool release];
     }
-    bDisconnect = TRUE;
+    disconnectClientFromManager = TRUE;
     [self autorelease]; // Reduce the retain count now the thread is finishing.
     [localPool release];
 #if SNDSTREAMCLIENT_DEBUG

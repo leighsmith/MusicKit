@@ -135,8 +135,8 @@ enum {
     BOOL       delegateRespondsToInputBufferSkipSelector;
     /*! A conditional speeding up delegation messaging.*/
     BOOL       delegateRespondsToDidProcessBufferSelector;
-    /*! */
-    BOOL       bDisconnect;
+    /*! Indicates to disconnect a client from it's manager, when the client's processing thread ends. */
+    BOOL       disconnectClientFromManager;
 }
 
 /*!

@@ -356,7 +356,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
 			vendBuffersToStreamManagerIOProc, /* specify our custom callback */
 			&data);				  /* pass our data through to callback */
     if(err != paNoError) {
-        NSLog(@"SNDStreamStart: PortAudio Pa_OpenDefaultStream error: %s\n", Pa_GetErrorText(err));
+        NSLog(@"SNDStreamStart: PortAudio Pa_OpenStream error: %s\n", Pa_GetErrorText(err));
         return FALSE;
     }
 

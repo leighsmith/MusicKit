@@ -25,7 +25,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define SNDSTREAMMANAGER_DEBUG                  0
+#define SNDSTREAMMANAGER_STARTSTOP_DEBUG        0
 #define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
+#define SNDSTREAMMANAGER_PROCESSING_DEBUG       0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 
 static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *obj);
@@ -33,7 +35,7 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
 ////////////////////////////////////////////////////////////////////////////////
 // The enums are dual purpose -- they serve as condition locks for
 // bg_threadlock, and they also serve as the values held by
-// bg_sem to tell the bg thread which activity to perform.
+// bg_sem to tell the background streaming manager thread which activity to perform.
 ////////////////////////////////////////////////////////////////////////////////
 
 enum {
@@ -43,10 +45,10 @@ enum {
   BG_startNow,
   BG_abortNow,
   BG_hasStarted,
-  BG_threadStopped,
-  BG_threadInactive
+  BG_threadStopped
 };
 
+// States for the background delegate messaging thread
 enum {
   BGDM_ready,
   BGDM_hasFlag,
@@ -115,30 +117,13 @@ static SndStreamManager *defaultStreamManager = nil;
 // TODO verify it works.
 #if 0
 
-+ streamManagerOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) deviceName 
++ streamManagerOnDeviceForInput: (NSString *) inputDeviceName 
+		deviceForOutput: (NSString *) outputDeviceName 
 {
-    return [SndStreamManager alloc] initOnDeviceForOutput: 
-}
-
-- initOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) outputDeviceName 
-{
-    if([self init]) {
-	NSArray *inputNames = [SndStreamManager driverNamesForOutput: NO];
-	NSArray *outputNames  = [SndStreamManager driverNamesForOutput: YES];
-
-	// TODO find the device indices for input and output names
-	int outputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
-	int inputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
-	
-	[self setAssignedDriverToIndex: outputDeviceIndex forOutput: YES];
-	[self setAssignedDriverToIndex: inputDeviceIndex forOutput: NO];
-	
-	return self;
-    }
-    return nil;
+    return [[[SndStreamManager alloc] initOnDeviceForInput: inputDeviceName
+					   deviceForOutput: outputDeviceName] autorelease];
 }
 #endif
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // init
@@ -164,11 +149,11 @@ static SndStreamManager *defaultStreamManager = nil;
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
 	NSLog(@"Native format of streaming audio buffer: %@\n", SndFormatDescription(format));
     
-    /* might as well set up the delegate background thread now too */
+    /* might as well set up the delegate messaging thread now too */
     
     if ([[NSRunLoop currentRunLoop] currentMode] != nil || NSApp) {
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
-	NSLog(@"[SndStreamManager::init] Run loop detected - delegate messaging enabled\n");
+	NSLog(@"[SndStreamManager] -init Run loop detected - delegate messaging enabled\n");
 #endif
 	delegateMessageArray = [NSMutableArray new];
 	managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
@@ -185,10 +170,29 @@ static SndStreamManager *defaultStreamManager = nil;
     }
     else {
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
-	NSLog(@"[SndStreamManager::init] No runloop or NSApp detected - delegate messaging disabled\n");
+	NSLog(@"[SndStreamManager] -init No runloop or NSApp detected - delegate messaging disabled\n");
 #endif
     }
     return self;
+}
+
+- initOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) outputDeviceName 
+{
+    if([self init]) {
+	NSArray *outputNames  = [SndStreamManager driverNamesForOutput: YES];
+	NSArray *inputNames = [SndStreamManager driverNamesForOutput: NO];
+
+	// Find the device indices for input and output names.
+	int outputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
+	int inputDeviceIndex = [inputNames indexOfObject: inputDeviceName];
+	
+	if(outputDeviceIndex != NSNotFound && inputDeviceIndex != NSNotFound) {
+	    [self setAssignedDriverToIndex: outputDeviceIndex forOutput: YES];
+	    [self setAssignedDriverToIndex: inputDeviceIndex forOutput: NO];
+	}
+	return self;
+    }
+    return nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +245,19 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (BOOL) setAssignedDriverToIndex: (unsigned int) driverIndex forOutput: (BOOL) forOutputDevices
 {
-    return SNDSetDriverIndex(driverIndex, forOutputDevices);
+    BOOL success;
+    BOOL wasActive = active;
+
+    // Need to check we are already streaming before stopping and restarting.
+    // enfore that changing the driver index will always cause streaming if the class is
+    // initialised as such.
+//  if(wasActive)
+//	[self stopStreaming];
+    success = SNDSetDriverIndex(driverIndex, forOutputDevices);
+//  NSLog(@"set the driver wasActive = %d active = %d\n", wasActive, active);
+//  if(wasActive)
+//	[self startStreaming];
+    return success;
 }
 
 - (NSString *) assignedDriverNameForOutput: (BOOL) outputDevices
@@ -281,16 +297,15 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (void) startStreaming
 {
-  // Tell MKPerformSndMidi to start sending us buffers, register the
-  // processStreamAtTime: selector as the callback for it to use.
-  // keep a copy of the format we decided to open to build the initial
-  // buffers for each Client. (Recall: Buffers have format info, hence
-  // we send a buffer to each client as a way of passing format as well
-  // as giving them somethin' to write into. (though they will need two -
-  // one to display as the current finished output, one to synth into)
+    // Tell MKPerformSndMidi to start sending us buffers, register the
+    // processStreamAtTime: selector as the callback for it to use.
+    // keep a copy of the format we decided to open to build the initial
+    // buffers for each Client. (Recall: Buffers have format info, hence
+    // we send a buffer to each client as a way of passing format as well
+    // as giving them somethin' to write into. (though they will need two -
+    // one to display as the current finished output, one to synth into)
     
-  // if all goes well with init,
-  // active = TRUE
+    // if all goes well with the stream thread starting, active will be set TRUE.
     
     if (!bg_active) {
 	[NSThread detachNewThreadSelector: @selector(streamStartStopThread)
@@ -308,7 +323,7 @@ static SndStreamManager *defaultStreamManager = nil;
 // _sendDelegateInvocation:
 //
 // INTERNAL USE ONLY. Used as part of the delegate system for passing
-// delegate messages out of background threads into the foreground thread.
+// delegate messages out of managing threads into the foreground thread.
 //
 // We cast to unsigned long to prevent MacOSX (and maybe GNUstep) from interpreting
 // the argument as an NSInvocation. When it does this, it tries to be too smart, and
@@ -324,18 +339,29 @@ static SndStreamManager *defaultStreamManager = nil;
     [(NSInvocation *) mesg invoke];
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// delegateMessageThread:
-////////////////////////////////////////////////////////////////////////////////
+/*
+  A very lightweight thread used for sending delegate messages
+  from the manager threads to the main thread.
 
+  The parameter ports is a pair of NSPorts in an NSArray, used for setting up the
+  distributed object between this thread and the main thread.
+  
+  The manager calls this method as it starts up (in -init) then the thread just sits there
+  waiting for a signal to say that there's a delegate message sitting
+  in an array, waiting to be sent. The delegate message should have
+  been sent to -sendMessageInMainThreadToTarget:sel:arg1:arg2:. After arriving
+  in the delegate message thread it is dispatched to the main thread
+  via Distributed Objects, and will be sent on to the requested
+  delegate at the next convenient time in the NSRunLoop.
+*/
 - (void) delegateMessageThread: (NSArray *) ports
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
     id controllerProxy = nil;
 
-    [self retain]; // TODO eeek, why is this necessary?
+    // [self retain]; // TODO eeek, why is this necessary?
 
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
     NSLog(@"[SndStreamManager] entering delegate thread\n");
 #endif
 
@@ -381,10 +407,11 @@ static SndStreamManager *defaultStreamManager = nil;
 	    continue;
 	}
 	else if (bgdm_sem == BGDM_abortNow) {
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
 	    NSLog(@"[SndStreamManager] Killing delegate message thread.\n");
 #endif
 	    bgdm_sem = BGDM_threadStopped;
+	    [bgdm_threadLock unlockWithCondition: bgdm_sem];
 	    break;
 	}
 	else {
@@ -393,27 +420,33 @@ static SndStreamManager *defaultStreamManager = nil;
 	}
 	[bgdm_threadLock unlockWithCondition: bgdm_sem];
     }
-    [self release];  // TODO eeek, why is this necessary?
+    // [self release];  // TODO eeek, why is this necessary?
     [localPool release];
     /* even if there is a new thread is created between the following two
      * statements, that would be ok -- there would temporarily be one
      * extra thread but it won't cause a problem
      */
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
     NSLog(@"[SndStreamManager] exiting delegate thread\n");
 #endif
 
     [NSThread exit];
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// streamStartStopThread: watches for semaphore from processing thread that it
-// should be stopped. Doing it from this thread means that the playback thread
-// doesn't have to stop itself, which is a particular problem on portaudio
-// implementations where a pthread_join is attempted on the playback thread from
-// the thread telling it to stop (which until now was the same thread)
-////////////////////////////////////////////////////////////////////////////////
+/*
+  A very lightweight thread used for starting and stopping the audio streams.
+  
+  The manager can instruct the starting and stopping of streams by setting bg_sem to
+  BG_startNow or BG_stopNow, and setting the bg_threadLock
+  condition. The thread is created on this method when a stream
+  is to begin, if it does not exist already.
 
+  streamStartStopThread: watches for semaphore from processing thread that it
+  should be stopped. Doing it from this thread means that the playback thread
+  doesn't have to stop itself, which is a particular problem on portaudio
+  implementations where a pthread_join is attempted on the playback thread from
+  the thread telling it to stop (which until now was the same thread)
+*/
 - (void) streamStartStopThread
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
@@ -422,8 +455,8 @@ static SndStreamManager *defaultStreamManager = nil;
     isStopping = FALSE;
     //[self retain]; // I presume this is to register the retain on the local autorelease pool?
     
-#if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[SndStreamManager] entering bg thread\n");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+    NSLog(@"[SndStreamManager] streamStartStopThread - entering background streaming manager thread\n");
 #endif
     
     while (1) {
@@ -433,22 +466,23 @@ static SndStreamManager *defaultStreamManager = nil;
 	    nowTime = 0.0;
 	    bg_sem = 0;
 	    isStopping = FALSE;
-#if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"[SndStreamManager] startStreaming - Stream starting!\n");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+		NSLog(@"[SndStreamManager] streamStartStopThread - stream starting! active = %d\n", active);
 #endif
-	    [bg_threadLock unlockWithCondition:BG_hasStarted];
+	    [bg_threadLock unlockWithCondition: BG_hasStarted];
 	    continue;
 	}
 	else if (bg_sem == BG_stopNow) {
 	    SNDStreamStop();
-#if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"[SndStreamManager] stopStreaming -  stream stopping");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+	    NSLog(@"[SndStreamManager] streamStartStopThread -  stream stopping");
 #endif
 	    active  = FALSE;
 	    nowTime = 0.0;
 	    bg_sem  = 0;
 	    
 	    if ([[NSRunLoop currentRunLoop] currentMode] != nil || NSApp) {
+		// NSLog(@"[SndStreamManager] streamStartStopThread - sending delegate message for stopping\n");
 		[bgdm_threadLock lock];
 		bgdm_sem = BGDM_abortNow;
 		[bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
@@ -457,8 +491,8 @@ static SndStreamManager *defaultStreamManager = nil;
 		[bgdm_threadLock unlockWithCondition: BGDM_threadInactive];
 	    }
 	    
-#if SNDSTREAMMANAGER_DEBUG
-	    NSLog(@"[SndStreamManager] delegete message thread is inactive.\n");
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
+	    NSLog(@"[SndStreamManager] streamStartStopThread - delegate message thread is inactive.\n");
 #endif
 	    
 	    break;
@@ -468,17 +502,17 @@ static SndStreamManager *defaultStreamManager = nil;
 	}
     }
     bg_active = FALSE;
-    [bg_threadLock unlockWithCondition:BG_threadStopped];
+    [bg_threadLock unlockWithCondition: BG_threadStopped];
     //[self release];
     [localPool release];
     
-#if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[SndStreamManager] exiting bg thread\n");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+    NSLog(@"[SndStreamManager] exiting background streaming manager thread\n");
 #endif
     /* even if there is a new thread is created between the following two
-	* statements, that would be ok -- there would temporarily be one
-	* extra thread but it won't cause a problem
-	*/
+     * statements, that would be ok -- there would temporarily be one
+     * extra thread but it won't cause a problem
+     */
     [NSThread exit];
 }
 
@@ -516,7 +550,6 @@ static SndStreamManager *defaultStreamManager = nil;
 // Responsible for calling low-level C stuff to stop a stream,
 // and unregister the processStreamAtTime: selector as the callback function.
 ////////////////////////////////////////////////////////////////////////////////
-
 - (void) stopStreaming
 {
     if (isStopping) {
@@ -524,21 +557,25 @@ static SndStreamManager *defaultStreamManager = nil;
     }
     if (active) {
 	isStopping = TRUE;
-#if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[SndStreamManager] sending shutdown to mixer...\n");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+	NSLog(@"[SndStreamManager] stopStreaming sending shutdown to mixer...\n");
 #endif
 	[mixer finishMixing];
-#if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[SndStreamManager] about to send shutdown to stream...\n");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+	NSLog(@"[SndStreamManager] stopStreaming about to send shutdown to stream...\n");
 #endif
 	
 	[bg_threadLock lock];
 	bg_sem = BG_stopNow;
 	[bg_threadLock unlockWithCondition: BG_hasFlag];
 	
-#if SNDSTREAMMANAGER_DEBUG
-	NSLog(@"[SndStreamManager] shutdown sent.\n");
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+	NSLog(@"[SndStreamManager] stopStreaming shutdown sent.\n");
 #endif
+	[bg_threadLock lockWhenCondition: BG_threadStopped];
+	// NSLog(@"stopStreaming streaming Thread has stopped, unlocking\n");
+	// NSLog(@"mixer client count %d\n", [mixer clientCount]);
+	[bg_threadLock unlockWithCondition: BG_threadStopped];
     }
     else {
 	NSLog(@"[SndStreamManager] stopStreaming - Error: stopStreaming called when not streaming!\n");
@@ -602,7 +639,7 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
     SndAudioBuffer *inB  = (streamInputBuffer  == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: streamInputBuffer ];
     SndAudioBuffer *outB = (streamOutputBuffer == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: streamOutputBuffer];
 
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
     NSLog(@"[SndStreamManager] --> processAudio bufferTime = %lf, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
 	  bufferTime, streamOutputBuffer, streamOutputBuffer->streamData);
     NSLog(@"[SndStreamManager] --> processAudio bufferTime = %lf, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
@@ -613,11 +650,11 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
     [(SndStreamManager *) manager processStreamAtTime: bufferTime input: inB output: outB];
     [outB fillSNDStreamBuffer: streamOutputBuffer];
 
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
     NSLog(@"[SndStreamManager] About to release pool...\n");
 #endif
     [localPool release];
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
     NSLog(@"[SndStreamManager] Released pool...\n");
 #endif
 }
@@ -633,7 +670,7 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
                        input: (SndAudioBuffer *) inB
                       output: (SndAudioBuffer *) outB
 {
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
     NSLog(@"[SndStreamManager] Entering processStreamAtTime %lf seconds inB %@, outB %@\n", bufferTime, inB, outB);
 #endif
     if (active) {
@@ -642,14 +679,15 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
 	nowTime = bufferTime;
 
 	[mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
 	NSLog(@"[SndStreamManager] post mixer\n");
 #endif
+	// NSLog(@"processStreamAtTime: mixer client count %d\n", [mixer clientCount]);
 	if ([mixer clientCount] == 0) { // Shut down the Stream if there are no clients.
-	    [self stopStreaming];
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
 	    NSLog(@"[SndStreamManager] signalling a stop stream...\n");
 #endif
+	    [self stopStreaming];
 	}
 #if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START
 	{
@@ -667,11 +705,11 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
 	// after AudioDeviceStart() is called, before SNDStartStream has returned to set the active ivar.
 	// Currently we rely on the sound hardware interface to ensure that playing the output buffer that 
 	// has not been filled will play ok. Otherwise we could zero (silence) the buffer.
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
 	NSLog(@"[SndStreamManager] processStreamAtTime - called when not active...?");
 #endif
     }
-#if SNDSTREAMMANAGER_DEBUG
+#if SNDSTREAMMANAGER_PROCESSING_DEBUG
     NSLog(@"[SndStreamManager] Leaving...\n");
 #endif
 }

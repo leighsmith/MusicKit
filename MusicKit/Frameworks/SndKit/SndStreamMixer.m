@@ -38,15 +38,17 @@
 
 - init
 {
-    if(streamClients == nil) 
-      streamClients = [[NSMutableArray arrayWithCapacity: 10] retain];
+    self = [super init];
+    if(self) {
+	if(streamClients == nil) 
+	    streamClients = [[NSMutableArray arrayWithCapacity: 10] retain];
       
-    if(streamClientsLock == nil) 
-      streamClientsLock = [NSRecursiveLock new];
+	if(streamClientsLock == nil) 
+	    streamClientsLock = [NSRecursiveLock new];
       
-    if (processorChain == nil) 
-      processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
-      
+	if (processorChain == nil) 
+	    processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
+    }
     return self;
 }
 
@@ -57,8 +59,11 @@
 - (void) dealloc
 {
   [processorChain release];
+  processorChain = nil;
   [streamClients release];
+  streamClients = nil;
   [streamClientsLock release];
+  streamClientsLock = nil;
   [super dealloc];
 }
 
@@ -173,7 +178,7 @@
     if (clientPresent) {
         [streamClientsLock lock];
         [streamClients removeObject: client];        
-#if SNDSTREAMMIXER_DEBUG    
+#if SNDSTREAMMIXER_DEBUG
         NSLog(@"[mixer] -removeClient: Removed client");
 #endif
         [streamClientsLock unlock];
