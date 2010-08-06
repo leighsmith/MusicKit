@@ -189,20 +189,19 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @return Returns an id.
   @brief Finds and returns the named Snd object.
 
-  First the named Snd
-              table is searched; if the sound isn't found, then the method looks
-              for <i>&ldquo;aName</i>.snd&rdquo; in the sound segment of the
-              application's executable file. Finally, <i>the file</i> is searched
-              for in the following directories (in order):
+  First the named Snd table is searched; if the sound isn't found, then the method looks
+  for <i>&ldquo;aName</i>.snd&rdquo; in the sound segment of the
+  application's executable file. Finally, <i>the file</i> is searched
+  for in the following directories (in order):
 
-	      <UL>
-              <LI>~/Library/Sounds</LI>
-              <LI>/LocalLibrary/Sounds</LI>
-              <LI>/NextLibrary/Sounds</LI>
-	      </UL>
+   <UL>
+   <LI>~/Library/Sounds</LI>
+   <LI>/LocalLibrary/Sounds</LI>
+   <LI>/NextLibrary/Sounds</LI>
+   </UL>
               
-              where <b>~</b> represents the user's home directory.
-              If the Snd eludes the search, <b>nil</b> is returned.
+   where <b>~</b> represents the user's home directory.
+   If the Snd eludes the search, <b>nil</b> is returned.
 */
 + findSoundFor: (NSString *) aName;
 
@@ -229,6 +228,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @return
 */
 + addName: (NSString *) name fromSection: (NSString *) sectionName;
+
 /*!
   @brief
   @param      aName
@@ -476,6 +476,30 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @return Returns a SndFormat structure.
  */
 + (SndFormat) nativeFormat;
+
+/*!
+  @brief Returns the native format (sampling rate, resolution and channels) used by the sound
+  playback or input hardware in streaming audio.
+ 
+  The native format is the format sounds loaded and audio buffers created in which will incur
+  the least processing overhead in order to play or record. Playback and recording can be in 
+  a different format, the direction is determined by the forOutputDevices boolean parameter.
+  @param forOutputDevices YES to return the native format of playback hardware, NO to return 
+  the native format of input hardware.
+  @return Returns a SndFormat structure.
+ */
++ (SndFormat) nativeFormatForOutput: (BOOL) forOutputDevices;
+
+/*!
+  @brief Returns the native format (sampling rate, resolution and channels) used by the sound
+  input hardware in streaming audio.
+ 
+  The native format is the format sounds loaded and audio buffers created in which will incur
+  the least processing overhead in order to record. Playback could be in 
+  a different format.
+  @return Returns a SndFormat structure.
+ */
++ (SndFormat) nativeInputFormat;
 
 /*!
   @return Returns an error code.

@@ -611,13 +611,24 @@
                     channelCount: soundFormat.channelCount];
 }
 
-+ (SndFormat) nativeFormat
++ (SndFormat) nativeFormatForOutput: (BOOL) forOutputDevices
 {
     SNDStreamBuffer nativeStreamBufferFormat;
-
-    SNDStreamNativeFormat(&nativeStreamBufferFormat, YES); // check output only.
-    return SndFormatOfSNDStreamBuffer(&nativeStreamBufferFormat);
+    
+    SNDStreamNativeFormat(&nativeStreamBufferFormat, forOutputDevices);
+    return SndFormatOfSNDStreamBuffer(&nativeStreamBufferFormat);    
 }
+
++ (SndFormat) nativeFormat
+{
+    return [Snd nativeFormatForOutput: YES];  // check output only.
+}
+
++ (SndFormat) nativeInputFormat
+{
+    return [Snd nativeFormatForOutput: NO];  // check input only.
+}
+
 
 - (int) convertToNativeFormat
 {

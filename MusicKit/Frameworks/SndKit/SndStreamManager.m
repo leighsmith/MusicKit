@@ -251,7 +251,7 @@ static SndStreamManager *defaultStreamManager = nil;
     return [outputDriverNames objectAtIndex: [self assignedDriverIndexForOutput: outputDevices]];
 }
 
-- (BOOL) setOutputBufferSize: (int) frames
+- (BOOL) setOutputBufferSize: (unsigned int) frames
 {
     BOOL success = SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]), YES);
 
@@ -259,9 +259,18 @@ static SndStreamManager *defaultStreamManager = nil;
     return success;
 }
 
-- (BOOL) setInputBufferSize: (int) frames
+- (BOOL) setInputBufferSize: (unsigned int) frames
 {
-    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]), NO);
+    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeInputFormat]), NO);
+}
+
+// We only export a single method to change both input and output buffers by the same amount since
+// managing different sized input and output buffers is very difficult to avoid starvation and the SndStreamMixer 
+// and SndAudioBuffer methods don't currently handle those cases anyway. We can always export the individual buffer
+// changing methods in the future.
+- (BOOL) setHardwareBufferSize: (unsigned int) frames
+{
+    return [self setOutputBufferSize: frames] && [self setInputBufferSize: frames];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

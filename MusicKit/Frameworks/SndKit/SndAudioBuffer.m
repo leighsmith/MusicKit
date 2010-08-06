@@ -426,7 +426,7 @@
     // TODO we need a universal vector mixer for all destination sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
 #if defined(__APPLE_CC__) // || (__i386__ && __GNUC__)
-	NSLog(@"vectors in %p, out %p, lengthInSamples %d", in, out, lengthInSamples);
+	// NSLog(@"vectors in %p, out %p, lengthInSamples %d", in, out, lengthInSamples);
 	vDSP_vadd(in, 1, out, 1, out, 1, lengthInSamples);
 #else
 #warning Vector units not available, using scalar mixing.

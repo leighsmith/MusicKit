@@ -121,12 +121,15 @@
 - (NSString *) assignedDriverNameForOutput: (BOOL) forOutputDevices;
 
 /*!
-  @brief Sets the number of sample frames used by the audio hardware.
+  @brief Sets the number of sample frames used by the audio input and output hardware.
  
+  The buffer size refers to the number of samples which are output to the DAC in one write operation 
+  and input to the ADC in one read operation. Both input and output buffers are enforced to be the same.
+
   @param frames Sets the number of frames (channel independent) in the hardware buffer, if possible.
   @return Returns YES if able to change the hardware, NO if unable to change.
  */
-- (BOOL) setOutputBufferSize: (int) frames;
+- (BOOL) setHardwareBufferSize: (unsigned int) frames;
 
 /*!
   @brief   Returns an NSString with description of SndStreamManager
