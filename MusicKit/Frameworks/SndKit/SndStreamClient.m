@@ -451,6 +451,8 @@ enum {
 	    [self setManager: nil];
 	    [self freeBufferMem];
 	    [self didFinishStreaming];
+	    [outputBufferLock lockWhenCondition: OB_isInit];
+	    [outputBufferLock unlockWithCondition: OB_notInit]; // declare the output buffer uninitialised in case it is re-welcomed.
 	    disconnectClientFromManager = FALSE;
 #if SNDSTREAMCLIENT_DEBUG
 	    NSLog(@"[%@] disconnected from manager\n", clientName);
@@ -777,14 +779,15 @@ static void inline setThreadPriority()
 
 - lockOutputBuffer
 {
-  [outputBufferLock lock];
-  return self;
+    // The condition guards against locking before the output buffer is initialised from the manager.
+    [outputBufferLock lockWhenCondition: OB_isInit];
+    return self;
 }
 
 - unlockOutputBuffer
 {
-  [outputBufferLock unlock];
-  return self;
+    [outputBufferLock unlockWithCondition: OB_isInit];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

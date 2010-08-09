@@ -470,16 +470,18 @@ static SndStreamManager *defaultStreamManager = nil;
 	    continue;
 	}
 	else if (bg_sem == BG_stopNow) {
-	    SNDStreamStop();
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
 	    NSLog(@"[SndStreamManager] streamStartStopThread -  stream stopping");
 #endif
 	    active  = FALSE;
 	    nowTime = 0.0;
 	    bg_sem  = 0;
+	    SNDStreamStop();
 	    
 	    if ([[NSRunLoop currentRunLoop] currentMode] != nil || NSApp) {
-		// NSLog(@"[SndStreamManager] streamStartStopThread - sending delegate message for stopping\n");
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
+		NSLog(@"[SndStreamManager] streamStartStopThread - sending delegate message for stopping\n");
+#endif
 		[bgdm_threadLock lock];
 		bgdm_sem = BGDM_abortNow;
 		[bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
@@ -506,7 +508,7 @@ static SndStreamManager *defaultStreamManager = nil;
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
     NSLog(@"[SndStreamManager] exiting background streaming manager thread\n");
 #endif
-    /* even if there is a new thread is created between the following two
+    /* even if there is a new thread which is created between the following two
      * statements, that would be ok -- there would temporarily be one
      * extra thread but it won't cause a problem
      */
@@ -570,9 +572,10 @@ static SndStreamManager *defaultStreamManager = nil;
 	NSLog(@"[SndStreamManager] stopStreaming shutdown sent.\n");
 #endif
 	[bg_threadLock lockWhenCondition: BG_threadStopped];
-	// NSLog(@"stopStreaming streaming Thread has stopped, unlocking\n");
-	// NSLog(@"mixer client count %d\n", [mixer clientCount]);
-	[bg_threadLock unlockWithCondition: BG_threadStopped];
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+	NSLog(@"[SndStreamManager] stopStreaming streaming Thread has stopped, unlocking, mixer client count %d\n", [mixer clientCount]);
+#endif
+	[bg_threadLock unlockWithCondition: BG_threadStopped]; // unlock remaining in thread stopped state.
     }
     else {
 	NSLog(@"[SndStreamManager] stopStreaming - Error: stopStreaming called when not streaming!\n");
