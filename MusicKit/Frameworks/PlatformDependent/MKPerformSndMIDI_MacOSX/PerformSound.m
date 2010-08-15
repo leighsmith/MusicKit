@@ -26,11 +26,11 @@
 extern "C" {
 #endif
 
-#define DEBUG_DESCRIPTION   1  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE    1  // dump the check of the audio buffer size.
-#define DEBUG_STARTSTOPMSG  1  // dump stream start/stop msgs
+#define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
+#define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
+#define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 #define DEBUG_CALLBACK      0  // dump vendOutputBuffersToStreamManagerIOProc info.
-#define DEBUG_IOPROCUSAGE   1  // dump the usage of AudioStreams by IOProcs.
+#define DEBUG_IOPROCUSAGE   0  // dump the usage of AudioStreams by IOProcs.
 #define CHECK_DEVICE_RUNNING_STATUS 0   
 
 #define DEFAULT_BUFFERSIZE 16384  // The buffer size we want if we are not guessing the device.
@@ -39,8 +39,6 @@ extern "C" {
 static BOOL initialised = FALSE;
 static BOOL inputInit = FALSE;
 
-static const char   **outputDriverList;
-static const char   **inputDriverList;
 static char         **speakerConfigurationList;
 static unsigned int outputDriverIndex = 0;
 static unsigned int inputDriverIndex = 0;
@@ -570,7 +568,7 @@ static AudioDeviceID *getDeviceIDs(BOOL forOutputDevices, unsigned int *numOfDev
     unsigned int deviceIDIndex, allDevicesCount;
     
     hardwarePropertyAddress.mSelector = kAudioHardwarePropertyDevices;
-    hardwarePropertyAddress.mScope = kAudioObjectPropertyScopeGlobal; // Always global
+    hardwarePropertyAddress.mScope = kAudioObjectPropertyScopeGlobal; // Always global.
     hardwarePropertyAddress.mElement = kAudioObjectPropertyElementMaster;
 
     *numOfDevices = 0; // ensure in the case of errors we have no devices.
@@ -585,7 +583,6 @@ static AudioDeviceID *getDeviceIDs(BOOL forOutputDevices, unsigned int *numOfDev
     
     // Find out how many devices (input or output) are on the system.
     allDevicesCount = propertySize / sizeof(AudioDeviceID);
-    NSLog(@"allDevicesCount = %d\n", allDevicesCount);
 
     // Allocate space for all the devices so that we can receive them from getting the property data.
     if((allDeviceIDs = (AudioDeviceID *) malloc(propertySize)) == NULL) {
@@ -606,20 +603,18 @@ static AudioDeviceID *getDeviceIDs(BOOL forOutputDevices, unsigned int *numOfDev
 	return NULL;
     }
     
-    // Loop through the devices and check their input or output status
+    // Loop through the devices and check their input or output status.
     for(deviceIDIndex = 0; deviceIDIndex < allDevicesCount; deviceIDIndex++) {
 	BOOL interleavedChannels;
 	int numberOfStreams;
 	
 	getStreamChannelConfiguration(allDeviceIDs[deviceIDIndex], forOutputDevices, &interleavedChannels, &numberOfStreams);
-	NSLog(@"dev id %d number of streams %d\n", allDeviceIDs[deviceIDIndex], numberOfStreams);
 	
 	if(numberOfStreams > 0) {
 	    deviceIDs[*numOfDevices] = allDeviceIDs[deviceIDIndex];
 	    (*numOfDevices)++;
 	}
-    }
-    
+    }    
     free(allDeviceIDs);
     
     return deviceIDs;  // Caller is responsible for freeing the array.
@@ -634,10 +629,7 @@ static AudioDeviceID *getDeviceIDs(BOOL forOutputDevices, unsigned int *numOfDev
 
 static const char **retrieveDriverList(BOOL forOutputDevice)
 {
-    OSStatus CAstatus;
-    UInt32 propertySize;
     AudioDeviceID *deviceIDs;
-    AudioObjectPropertyAddress deviceNamePropertyAddress;
     char **driverList;
     unsigned int driverIndex = 0;
     unsigned int numOfDevices;
@@ -654,6 +646,9 @@ static const char **retrieveDriverList(BOOL forOutputDevice)
     for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
 	NSString *deviceName;
 	const char *utf8DeviceName;
+	UInt32 propertySize;
+	OSStatus CAstatus;
+	AudioObjectPropertyAddress deviceNamePropertyAddress;
 
 	deviceNamePropertyAddress.mSelector = kAudioObjectPropertyName;
 	deviceNamePropertyAddress.mScope = forOutputDevice ? kAudioDevicePropertyScopeOutput : kAudioDevicePropertyScopeInput;
@@ -988,11 +983,6 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 {
     BOOL settingInputBufferSize = FALSE;
     
-    if((outputDriverList = retrieveDriverList(TRUE)) == NULL)
-        return FALSE;
-    if((inputDriverList = retrieveDriverList(FALSE)) == NULL)
-        return FALSE;
-
     if(!initialised) {
         initialised = TRUE;                   // SNDSetDriverIndex() needs to think we're initialised.
         inputLock   = [[NSLock alloc] init];
