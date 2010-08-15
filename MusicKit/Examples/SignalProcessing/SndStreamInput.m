@@ -19,6 +19,7 @@
     if (self != nil) {
 	[self setNeedsInput: YES];
 	[self setGeneratesOutput: YES];
+	[self setClientName: @"SndStreamInput"];
 	isReceivingInput = NO;
     }
     return self;
@@ -50,18 +51,6 @@
 - (BOOL) startReceivingInput
 {
     latencyIndex = 0;
-
-#if 0
-    if (![self isActive]) {
-	// hmm, should probably wait here for the welcomeClient to occur.
-	
-	[outputBufferLock lockWhenCondition: OB_isInit];
-	[outputBufferLock unlockWithCondition: OB_isInit];
-    }
-
-    active = YES;
-#endif
-    
     isReceivingInput = YES;
     
     return isReceivingInput;
@@ -73,9 +62,7 @@
 
 - (void) stopReceivingInput
 {
-   // we need to disconnectFromStream;
     isReceivingInput = NO;
-    // [self finishStreaming]; // this is the problem
 }
 
 - (BOOL) isReceivingInput
@@ -108,8 +95,10 @@
     
     if (isReceivingInput) { // only playback input if recording is enabled.
 	SndAudioBuffer *inBuffer = [self synthInputBuffer];
-	// NSRange wholeInputBufferRange = { 0, [inBuffer lengthInSampleFrames] };
+	NSRange wholeInputBufferRange = { 0, [inBuffer lengthInSampleFrames] };
 
+	// NSLog(@"output buffer length %ld input buffer length %ld\n", outputBufferLength, [inBuffer lengthInSampleFrames]);
+	
 	// This probably is only ever true once, at the first run, not on each record.
 	if ([self synthesisTime] == 0) {
 	    if (delegate != nil && [delegate respondsToSelector: @selector(didStartReceivingInput)]) 
@@ -117,11 +106,11 @@
 	}
 	// Just make the output buffer be the input buffer
 	// this will then process with the clients audio processor chain.
-	// [currentSynthOutputBuffer copyFromBuffer: inBuffer intoRange: wholeInputBufferRange];
-	[currentSynthOutputBuffer mixWithBuffer: inBuffer
-				      fromStart: 0
-					  toEnd: outputBufferLength
-				      canExpand: YES];
+	[currentSynthOutputBuffer copyFromBuffer: inBuffer intoRange: wholeInputBufferRange];
+	//[currentSynthOutputBuffer mixWithBuffer: inBuffer
+	//			      fromStart: 0
+	//				  toEnd: outputBufferLength
+	//			      canExpand: YES];
 	// NSLog(@"inBuffer %@\n", inBuffer);
 	// NSLog(@"input queue %@\n", inputQueue);
 	// NSLog(@"currentSynthOutputBuffer %@\n", currentSynthOutputBuffer);

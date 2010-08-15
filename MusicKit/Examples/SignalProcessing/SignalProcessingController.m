@@ -16,6 +16,8 @@
 
 #import "SignalProcessingController.h"
 
+#define BUFFER_SIZE 256
+
 @implementation SignalProcessingController
 
 - (IBAction) startProcessing: (id) sender
@@ -41,10 +43,37 @@
 
 - (IBAction) outputSourceSelected: (id) sender
 {
+    NSString *inputDriverName, *outputDriverName;
+    
+#if 0 // Windows
+    NSArray *driverNames = [SndStreamManager driverNamesForOutput: YES];
+    unsigned int newDriverIndex = ([streamManager assignedDriverIndexForOutput: YES] + 1) % [driverNames count];
+    
+    // On Windows ASIO devices the output must match the input so we enforce the same device for input & output.
+    inputDriverName = [driverNames objectAtIndex: newDriverIndex];
+    outputDriverName = [driverNames objectAtIndex: newDriverIndex];
+#else
+    inputDriverName = [soundInputDriverPopup titleOfSelectedItem];
+    outputDriverName = [soundOutputDriverPopup titleOfSelectedItem];
+#endif
+#if 1
+    NSLog(@"Selected for input %@ & output %@", inputDriverName, outputDriverName);
+    [streamManager stopStreaming]; // shut the streaming down early to release the device.
+    NSLog(@"stream manager retain count %d\n", [streamManager retainCount]);
+    [streamManager release];
+    streamManager = [[SndStreamManager alloc] initOnDeviceForInput: inputDriverName 
+						   deviceForOutput: outputDriverName];
+    // Must re-add the clients.
+    NSLog(@"streamInput = %@\n", streamInput);
+    [streamManager addClient: streamInput];
+    [streamManager addClient: [SndPlayer defaultSndPlayer]];
+    NSLog(@"Assigned input %@ output %@",
+	  [streamManager assignedDriverNameForOutput: NO], [streamManager assignedDriverNameForOutput: YES]);
+#else
     // TODO Must Restart sound to use the new driver.
-    NSLog(@"Selected for output %@", [soundOutputDriverPopup titleOfSelectedItem]);
     if(![streamManager setAssignedDriverToIndex: [soundOutputDriverPopup indexOfSelectedItem] forOutput: YES])
 	NSLog(@"Unable to set output device to %@", [soundOutputDriverPopup titleOfSelectedItem]);
+#endif
     NSLog(@"stream manager = %@", streamManager);
 }
 
@@ -65,7 +94,8 @@
     [soundInputDriverPopup selectItemAtIndex: [streamManager assignedDriverIndexForOutput: NO]];
     [soundOutputDriverPopup removeAllItems]; // remove placeholder, in a blitzkrieg kind of way...
     [soundOutputDriverPopup addItemsWithTitles: [SndStreamManager driverNamesForOutput: YES]];
-    [soundOutputDriverPopup selectItemAtIndex: [streamManager assignedDriverIndexForOutput: YES]];    
+    [soundOutputDriverPopup selectItemAtIndex: [streamManager assignedDriverIndexForOutput: YES]];
+    NSLog(@"output devices: %@", [SndStreamManager driverNamesForOutput: YES]);
 }
 
 - (IBAction) enableReverb: (id) sender
@@ -81,7 +111,7 @@
 - (IBAction) playSound: (id) sender
 {
     if(![soundToPlay isPlaying]) {
-	[soundToPlay play];
+	SndPerformance *performance = [soundToPlay play];
     }
     else {
 	[soundToPlay stop];
@@ -123,7 +153,7 @@
 	
 	reverb = [[SndAudioProcessorReverb alloc] init];
 	distortion = [[SndAudioProcessorDistortion alloc] init];
-	[distortion setBoostAmount: 0.8];
+	[distortion setBoostAmount: 0.6];
 	//[distortion setHardness: 0.6];
 	
 	streamInput = [[SndStreamInput alloc] init];
@@ -138,11 +168,17 @@
 	[liveFader setActive: YES];
 	[audioProcessorChain setPostFader: liveFader];
 
-	streamManager = [SndStreamManager defaultStreamManager];
-	// TODO how do we manage different input and output devices?
-	// deviceSpecificStreamManager = [[SndStreamManager streamManagerOnDevice: deviceName] retain];
+	streamManager = [[SndStreamManager defaultStreamManager] retain];
 
+	// TODO compute new output buffer size based on original size together with minimum
+	// size = 128/44100 seconds.
+#if 0
+	if(![streamManager setHardwareBufferSize: BUFFER_SIZE])
+	    NSLog(@"Unable to set the output buffer size to %d\n", BUFFER_SIZE);
+#endif	
+	
 	[streamManager addClient: streamInput];
+	NSLog(@"streamManager is %@", streamManager);
     }
     return self;
 }
