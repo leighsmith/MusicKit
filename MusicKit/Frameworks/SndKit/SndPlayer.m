@@ -56,35 +56,35 @@ static SndPlayer *defaultSndPlayer;
 
 - init
 {
-  self = [super init];
-  if (self) {
-    SNDStreamBuffer s;
-      
-    SNDStreamNativeFormat(&s, YES); /* get maximum length for processing buffer of output stream. */
-    s.streamData = NULL;
-
-    nativelyFormattedStreamingBuffer = [[SndAudioBuffer audioBufferWithSNDStreamBuffer: &s] retain];
-    
-    remainConnectedToManager = TRUE;
-    autoStartManager = TRUE;
-    if (toBePlayed == nil)
-      toBePlayed = [[NSMutableArray alloc] initWithCapacity: 10];
-    else
-      [toBePlayed removeAllObjects];
-
-    if (playing == nil)
-      playing = [[NSMutableArray alloc] initWithCapacity: 10];
-    else
-      [playing removeAllObjects];
-
-    if (playingLock == nil)
-      playingLock  = [NSRecursiveLock new];  // controls adding and removing sounds from the playing list.
-    if (removalArray == nil)
-      removalArray = [NSMutableArray new];
-
-    [self setClientName: @"SndPlayer"];
-  }
-  return self;
+    self = [super init];
+    if (self) {
+	SNDStreamBuffer nativeOutputBuffer;
+	
+	SNDStreamNativeFormat(&nativeOutputBuffer, YES); /* get maximum length for processing buffer of output stream. */
+	nativeOutputBuffer.streamData = NULL;
+	
+	nativelyFormattedStreamingBuffer = [[SndAudioBuffer audioBufferWithSNDStreamBuffer: &nativeOutputBuffer] retain];
+	
+	remainConnectedToManager = TRUE;
+	autoStartManager = TRUE;
+	if (toBePlayed == nil)
+	    toBePlayed = [[NSMutableArray alloc] initWithCapacity: 10];
+	else
+	    [toBePlayed removeAllObjects];
+	
+	if (playing == nil)
+	    playing = [[NSMutableArray alloc] initWithCapacity: 10];
+	else
+	    [playing removeAllObjects];
+	
+	if (playingLock == nil)
+	    playingLock  = [NSRecursiveLock new];  // controls adding and removing sounds from the playing list.
+	if (removalArray == nil)
+	    removalArray = [NSMutableArray new];
+	
+	[self setClientName: @"SndPlayer"];
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,19 +137,19 @@ static SndPlayer *defaultSndPlayer;
 
 - startPerformance: (SndPerformance *) performance
 {
-  Snd *snd = [performance snd];
-  [playing addObject: performance];
-  // The delay between receiving this delegate and when the audio is actually played
-  // is an extra buffer, therefore: delay == buffLength/sampleRate after the delegate
-  // message has been received.
+    Snd *snd = [performance snd];
+    [playing addObject: performance];
+    // The delay between receiving this delegate and when the audio is actually played
+    // is an extra buffer, therefore: delay == buffLength/sampleRate after the delegate
+    // message has been received.
 
-  //    [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
-  //                  duringPerformance: performance];
-  [manager sendMessageInMainThreadToTarget: snd
-                                       sel: @selector(tellDelegateString:duringPerformance:)
-                                      arg1: @"willPlay:duringPerformance:"
-                                      arg2: performance];
-  return self;
+    //    [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
+    //                  duringPerformance: performance];
+    [manager sendMessageInMainThreadToTarget: snd
+					 sel: @selector(tellDelegateString:duringPerformance:)
+					arg1: @"willPlay:duringPerformance:"
+					arg2: performance];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ static SndPlayer *defaultSndPlayer;
     unsigned long   stopAtSample;
 
     if(![self isActive]) {
-	[[SndStreamManager defaultStreamManager] addClient: self];
+	[manager addClient: self];
     }
     [playingLock lock];
 #if SNDPLAYER_DEBUG
@@ -233,7 +233,7 @@ static SndPlayer *defaultSndPlayer;
   double playT;
 
   if(![self isActive])
-    [[SndStreamManager defaultStreamManager] addClient: self];
+    [manager addClient: self];
 
   playT = (dt < 0.0) ? [self streamTime] : [self streamTime] + dt;
 
@@ -297,7 +297,7 @@ static SndPlayer *defaultSndPlayer;
 	return nil;
     }
     if(![self isActive]) {
-	[[SndStreamManager defaultStreamManager] addClient: self];
+	[manager addClient: self];
     }
 #if SNDPLAYER_DEBUG
     NSLog(@"SndPlayer::playSnd (4) - atStreamTime:%f beginAtIndex:%li endAtIndex:%li clientTime:%f streamTime:%f\n",
@@ -494,7 +494,7 @@ static SndPlayer *defaultSndPlayer;
 ////////////////////////////////////////////////////////////////////////////////
 // processBuffers
 //
-// This is the big cheese, the main enchilada.
+// This is the big cheese, the main enchilada, the method that does the main processing.
 //
 // nowTime must be the CLIENT now time as this is a process-head capable
 // thread - our client's synthesis sense of time is ahead of the manager's
