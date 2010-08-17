@@ -22,7 +22,9 @@
     IBOutlet NSPopUpButton *soundInputDriverPopup;
     IBOutlet NSPopUpButton *soundOutputDriverPopup;
     IBOutlet NSButton *playButton;
-
+    
+    /*! bufferSize The size of each hardware buffer, and therefore latency, in samples. */
+    unsigned int bufferSize;
     /*! The stream manager, managing clients on the sound hardware */
     SndStreamManager *streamManager;
     /*! An subclass of SndStreamClient that reflects it's input to output, possibly processed by it's SndAudioProcessorChain */

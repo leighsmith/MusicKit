@@ -16,7 +16,7 @@
 
 #import "SignalProcessingController.h"
 
-#define BUFFER_SIZE 256
+#define CHANGE_BUFFER_SIZES 1  // Monkey with the buffer sizes.
 
 @implementation SignalProcessingController
 
@@ -44,18 +44,21 @@
 - (IBAction) outputSourceSelected: (id) sender
 {
     NSString *inputDriverName, *outputDriverName;
+    NSArray *existingClients = [streamManager clients];
+    unsigned int clientIndex;
     
-#if 0 // Windows
+    // On Windows ASIO devices the output must match the input so we enforce the same device for input & output.
+#if 0
     NSArray *driverNames = [SndStreamManager driverNamesForOutput: YES];
     unsigned int newDriverIndex = ([streamManager assignedDriverIndexForOutput: YES] + 1) % [driverNames count];
     
-    // On Windows ASIO devices the output must match the input so we enforce the same device for input & output.
     inputDriverName = [driverNames objectAtIndex: newDriverIndex];
     outputDriverName = [driverNames objectAtIndex: newDriverIndex];
 #else
     inputDriverName = [soundInputDriverPopup titleOfSelectedItem];
     outputDriverName = [soundOutputDriverPopup titleOfSelectedItem];
 #endif
+    // TODO Must Restart sound to use the new driver.
 #if 1
     NSLog(@"Selected for input %@ & output %@", inputDriverName, outputDriverName);
     [streamManager stopStreaming]; // shut the streaming down early to release the device.
@@ -63,18 +66,27 @@
     [streamManager release];
     streamManager = [[SndStreamManager alloc] initOnDeviceForInput: inputDriverName 
 						   deviceForOutput: outputDriverName];
-    // Must re-add the clients.
-    NSLog(@"streamInput = %@\n", streamInput);
-    [streamManager addClient: streamInput];
-    [streamManager addClient: [SndPlayer defaultSndPlayer]];
-    NSLog(@"Assigned input %@ output %@",
-	  [streamManager assignedDriverNameForOutput: NO], [streamManager assignedDriverNameForOutput: YES]);
+#if CHANGE_BUFFER_SIZES
+    if(![streamManager setHardwareBufferSize: bufferSize])
+	NSLog(@"Unable to set the input and output buffer sizes to %d\n", bufferSize);
+#endif
+    
+    // Must re-add the clients to the new stream manager.
+    for(clientIndex = 0; clientIndex < [existingClients count]; clientIndex++) {
+	NSLog(@"Adding client %@\n", [existingClients objectAtIndex: clientIndex]);
+	[streamManager addClient: [existingClients objectAtIndex: clientIndex]];
+    }
+    
 #else
-    // TODO Must Restart sound to use the new driver.
+    // In the perfect world where we don't have to initialise afresh the SndStreamManager.
     if(![streamManager setAssignedDriverToIndex: [soundOutputDriverPopup indexOfSelectedItem] forOutput: YES])
 	NSLog(@"Unable to set output device to %@", [soundOutputDriverPopup titleOfSelectedItem]);
 #endif
+    NSLog(@"Assigned input %@ output %@",
+	  [streamManager assignedDriverNameForOutput: NO], [streamManager assignedDriverNameForOutput: YES]);
     NSLog(@"stream manager = %@", streamManager);
+    NSLog(@"input buffer size in frames %d", [streamManager inputBufferSize]);
+    NSLog(@"output buffer size in frames %d", [streamManager outputBufferSize]);
 }
 
 - (IBAction) setVolume: (id) sender
@@ -172,13 +184,20 @@
 
 	// TODO compute new output buffer size based on original size together with minimum
 	// size = 128/44100 seconds.
-#if 0
-	if(![streamManager setHardwareBufferSize: BUFFER_SIZE])
-	    NSLog(@"Unable to set the output buffer size to %d\n", BUFFER_SIZE);
+	bufferSize = 128;
+#if CHANGE_BUFFER_SIZES
+	if(![streamManager setHardwareBufferSize: bufferSize])
+	    NSLog(@"Unable to set the input and output buffer sizes to %d\n", bufferSize);
 #endif	
 	
 	[streamManager addClient: streamInput];
+	// Explicitly add the SndPlayer so it doesn't attempt to always use the default stream manager
+	// in the case of where we initialised with defined devices using +streamManagerOnDeviceForInput:deviceForOutput:
+	[streamManager addClient: [SndPlayer defaultSndPlayer]]; 
+
 	NSLog(@"streamManager is %@", streamManager);
+	NSLog(@"input buffer size in frames %d", [streamManager inputBufferSize]);
+	NSLog(@"output buffer size in frames %d", [streamManager outputBufferSize]);
     }
     return self;
 }
