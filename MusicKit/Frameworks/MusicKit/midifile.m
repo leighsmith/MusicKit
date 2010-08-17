@@ -112,7 +112,7 @@ void MKMIDIFileEndReading(MKMIDIFileIn *p)
     p = NULL; 
 }
 
-enum {unrecognized = -1,endOfStream = 0,ok = 1,undefined,
+enum {unrecognized = -1,endOfStream = 0,midiIO_ok = 1,undefined,
 	/* Multi-packet sys excl: */
 	firstISysExcl,middleISysExcl,endISysExcl, 
 	/* Single-packet sys excl */
@@ -137,9 +137,9 @@ static int readChunkType(NSMutableData *midiStream,char *buf,unsigned int *strea
         }
     [midiStream getBytes:buf range:range4];
     buf[4] = '\0';
-//    return (count == 4)? ok : 0;
+//    return (count == 4)? midiIO_ok : 0;
     *streamPos += 4;
-    return ok;
+    return midiIO_ok;
 }
 
 static int readLong(NSMutableData *midiStream, int *n,unsigned int *streamPos)
@@ -152,9 +152,9 @@ static int readLong(NSMutableData *midiStream, int *n,unsigned int *streamPos)
 //    int count = NXRead(midiStream,n,4);
     [midiStream getBytes:n range:range4];
     *n = NSSwapBigIntToHost(*n);
-//    return (count == 4)? ok : 0;
+//    return (count == 4)? midiIO_ok : 0;
     *streamPos += 4;
-    return ok;
+    return midiIO_ok;
 }
 
 static int readBytes(NSMutableData *midiStream, unsigned char *bytes,int n,unsigned int *streamPos)
@@ -166,9 +166,9 @@ static int readBytes(NSMutableData *midiStream, unsigned char *bytes,int n,unsig
         }
 //    int count = NXRead(midiStream,bytes,n);
     [midiStream getBytes:bytes range:rangen];
-//    return (count == n) ? ok : 0;
+//    return (count == n) ? midiIO_ok : 0;
     *streamPos += n;
-    return ok;
+    return midiIO_ok;
 }
 
 static int readShort(NSMutableData *midiStream, short *n,unsigned int *streamPos)
@@ -181,9 +181,9 @@ static int readShort(NSMutableData *midiStream, short *n,unsigned int *streamPos
 //    int count = NXRead(midiStream,n,2);
     [midiStream getBytes:n range:range2];
     *n = NSSwapBigShortToHost(*n);
-//    return (count == 2)? ok : 0;
+//    return (count == 2)? midiIO_ok : 0;
     *streamPos += 2;
-    return ok;
+    return midiIO_ok;
 }
 
 static int readVariableQuantity(NSMutableData *midiStream, int *n, unsigned int *streamPos)
@@ -198,7 +198,7 @@ static int readVariableQuantity(NSMutableData *midiStream, int *n, unsigned int 
           m = (m<<7) + (temp & 127);
         else {
             *n = (m<<7) + (temp & 127);
-            return ok;
+            return midiIO_ok;
         }
     }
 
@@ -210,7 +210,7 @@ static int readVariableQuantity(NSMutableData *midiStream, int *n, unsigned int 
 	  m = (m<<7) + (temp & 127);
 	else {
 	    *n = (m<<7) + (temp & 127);
-	    return ok;
+	    return midiIO_ok;
 	}
     }
  */
@@ -230,7 +230,7 @@ static int readTrackHeader(MKMIDIFileIn *p,unsigned int *streamPos)
     p->currentOffset = 0;
     if (!readLong(p->midiStream,&size,streamPos)) 
       return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 static void checkRealloc(MKMIDIFileIn *p,int newSize)
@@ -268,7 +268,7 @@ static int readMetaevent(MKMIDIFileIn *p,unsigned int *streamPos)
 	if (!readBytes(p->midiStream,&(p->data[1]),p->nData - 1,streamPos))
 	  return endOfStream;
 	p->data[p->nData] = '\0';
-	return ok;
+	return midiIO_ok;
     }
     else if (theByte == TRACKCHANGE) { 		/* end of track */
 	temp = readTrackHeader(p,streamPos);
@@ -346,7 +346,7 @@ static int readMetaevent(MKMIDIFileIn *p,unsigned int *streamPos)
     }
 
     *streamPos += varQuantityLength;
-    return ok;
+    return midiIO_ok;
 }
 
 /* We do not support multi-packet system exclusive messages with different
@@ -425,7 +425,7 @@ int MKMIDIFileReadPreamble(MKMIDIFileIn *p,int *level,int *trackCount)
     p->currentTrack = -1;
 //    p->timeScale = 60000000.0 / (double)(p->division * p->quantaSize);
     p->timeScale = 1000000.0/(double)(p->division * p->quantaSize);
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
@@ -468,11 +468,11 @@ int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
 		    break;
 		case endISysExcl:
 		    p->quanta += quantaTime;
-		    return ok;
+		    return midiIO_ok;
 		case endOfStream:
 		case sysExcl:
 		    p->quanta = quantaTime;
-		    return ok;
+		    return midiIO_ok;
 		default:
 		    break;
 	    }
@@ -508,7 +508,7 @@ int MKMIDIFileReadEvent(register MKMIDIFileIn *p)
                     p->streamPos = poin;
 		}
 	    }
-	    return ok;
+	    return midiIO_ok;
 	}
     }
 }
@@ -525,9 +525,9 @@ static int writeBytes(MKMIDIFileOut *p, const unsigned char *bytes, int count)
     p->currentCount += count;
 /*    if (bytesWritten != count)
       return endOfStream;
-    else return ok;
+    else return midiIO_ok;
  */
-    return ok;
+    return midiIO_ok;
 }
 
 static int writeByte(MKMIDIFileOut *p, unsigned char n)
@@ -543,7 +543,7 @@ static int writeShort(MKMIDIFileOut *p, short n)
     n = NSSwapHostShortToBig(n);
     /*bytesWritten = */ [p->midiStream appendBytes:&n length:2];
     p->currentCount += 2;//bytesWritten;
-//    return (bytesWritten == 2) ? ok : endOfStream;
+//    return (bytesWritten == 2) ? midiIO_ok : endOfStream;
     return 2;
 }
 
@@ -553,7 +553,7 @@ static int writeLong(MKMIDIFileOut *p, int n)
     n = NSSwapHostIntToBig(n);
    /* bytesWritten = */[p->midiStream appendBytes:&n length:4];
     p->currentCount += 4;//bytesWritten;
-//    return (bytesWritten == 4) ? ok : endOfStream;
+//    return (bytesWritten == 4) ? midiIO_ok : endOfStream;
         return 4;
 }
 
@@ -561,7 +561,7 @@ static int writeChunkType(MKMIDIFileOut *p, char *buf)
 {
     /*int bytesWritten = */[p->midiStream appendBytes:buf length:4];
     p->currentCount += 4;//bytesWritten;
-//    return (bytesWritten == 4) ? ok : endOfStream;
+//    return (bytesWritten == 4) ? midiIO_ok : endOfStream;
     return 4;
 }
 
@@ -623,7 +623,7 @@ int MKMIDIFileEndWriting(MKMIDIFileOut *p)
   [p->midiStream replaceBytesInRange: replaceRange withBytes: &ntracks];
 
   if(p) { free(p); p = NULL; };
-  return ok;
+  return midiIO_ok;
 }
 
 int MKMIDIFileBeginWritingTrack(MKMIDIFileOut *p, NSString *trackName)
@@ -651,7 +651,7 @@ int MKMIDIFileBeginWritingTrack(MKMIDIFileOut *p, NSString *trackName)
 		return endOfStream;
 	}
     }
-    return ok;
+    return midiIO_ok;
 }
 
 static int writeTime(MKMIDIFileOut *p, int quanta)
@@ -661,7 +661,7 @@ static int writeTime(MKMIDIFileOut *p, int quanta)
     p->lastTime = thisTime;
     if (!writeVariableQuantity(p,deltaTime)) 
       return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileEndWritingTrack(MKMIDIFileOut *p,int quanta)
@@ -686,7 +686,7 @@ int MKMIDIFileEndWritingTrack(MKMIDIFileOut *p,int quanta)
     [p->midiStream replaceBytesInRange: replaceRange withBytes: &cc];
 
     p->currentCount = 0; /* Signals other functions that we've just finished a track. */
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileWriteSig(MKMIDIFileOut *p,int quanta,short metaevent,unsigned data)
@@ -707,14 +707,14 @@ int MKMIDIFileWriteText(MKMIDIFileOut *p,int quanta,short metaevent,NSString *te
 {
     int i;
     if (!text)
-      return ok;
+      return midiIO_ok;
     i = [text length];
     if (!writeTime(p,quanta) || 
 	!writeByte(p,0xff) ||
 	!writeByte(p,metaevent) ||
 	!writeVariableQuantity(p,i) || !writeBytes(p,(const unsigned char *)[text UTF8String],i))
       return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileWriteSMPTEoffset(MKMIDIFileOut *p, unsigned char hr, unsigned char min,
@@ -727,7 +727,7 @@ int MKMIDIFileWriteSMPTEoffset(MKMIDIFileOut *p, unsigned char hr, unsigned char
 	!writeByte(p,5) || !writeByte(p,hr) || !writeByte(p,min) ||
 	!writeByte(p,sec) || !writeByte(p,fr) || !writeByte(p,ff))
       return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileWriteSequenceNumber(MKMIDIFileOut *p, int data)
@@ -738,7 +738,7 @@ int MKMIDIFileWriteSequenceNumber(MKMIDIFileOut *p, int data)
 	!writeByte(p,2) ||
 	!writeShort(p,data))
 	return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileWriteTempo(MKMIDIFileOut *p, int quanta, double beatsPerMinute)
@@ -762,7 +762,7 @@ int MKMIDIFileWriteTempo(MKMIDIFileOut *p, int quanta, double beatsPerMinute)
 	!writeByte(p,TEMPOCHANGE) || 
 	!writeLong(p,n)) 
       return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileWriteEvent(register MKMIDIFileOut *p, int quanta, int nData, unsigned char *bytes)
@@ -775,7 +775,7 @@ int MKMIDIFileWriteEvent(register MKMIDIFileOut *p, int quanta, int nData, unsig
 	return endOfStream;
     if (!writeBytes(p,bytes,nData)) 
       return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 int MKMIDIFileWriteSysExcl(MKMIDIFileOut *p, int quanta, int nData, unsigned char *bytes)
@@ -783,7 +783,7 @@ int MKMIDIFileWriteSysExcl(MKMIDIFileOut *p, int quanta, int nData, unsigned cha
     if (!writeTime(p,quanta) || !writeByte(p,MIDI_SYSEXCL) ||
 	!writeVariableQuantity(p,nData) || !writeBytes(p,bytes,nData))
 	return endOfStream;
-    return ok;
+    return midiIO_ok;
 }
 
 #if 0

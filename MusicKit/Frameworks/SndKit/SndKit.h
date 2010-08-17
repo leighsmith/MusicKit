@@ -84,3 +84,7 @@
 #import "SndBreakpoint.h"
 #import "SndEnvelope.h"
 #import "SndAudioBufferQueue.h"
+#if defined(__APPLE_CC__) // Only Apple defines AudioUnits.
+#import "SndAudioUnitProcessor.h"
+#import "SndAudioUnitController.h"
+#endif

@@ -93,6 +93,17 @@
 + (SndStreamManager *) defaultStreamManager;
 
 /*!
+  @brief Creates and returns an autoreleased instance with the specified devices for output and input.
+ 
+  The input and output device names must match those in the arrays returned by
+  +driverNamesForOutput:.
+  @param inputDeviceName Name of the device to stream audio from.
+  @param outputDeviceName Name of the device to stream audio to.
+*/
++ streamManagerOnDeviceForInput: (NSString *) inputDeviceName 
+		deviceForOutput: (NSString *) outputDeviceName;
+
+/*!
   @brief Returns an NSArray of NSStrings listing the sound drivers available.
   
   @param forOutputDevices YES to retrieve only the output devices, NO to retrieve only the input devices.
@@ -112,6 +123,8 @@
 
   The input and output device names must match those in the arrays returned by
   +driverNamesForOutput:.
+  @param inputDeviceName Name of the device to stream audio from.
+  @param outputDeviceName Name of the device to stream audio to.
  */
 - initOnDeviceForInput: (NSString *) inputDeviceName deviceForOutput: (NSString *) outputDeviceName;
 
@@ -145,6 +158,18 @@
   @return Returns YES if able to change the hardware, NO if unable to change.
  */
 - (BOOL) setHardwareBufferSize: (unsigned int) frames;
+
+/*!
+  @brief Returns the number of sample frames currently used by the audio input hardware.
+  @return Returns 0 if unable to retrieve the size of the audio input buffer.
+ */
+- (long) inputBufferSize;
+
+/*!
+  @brief Returns the number of sample frames currently used by the audio output hardware.
+  @return Returns 0 if unable to retrieve the size of the audio output buffer.
+ */
+- (long) outputBufferSize;
 
 /*!
   @brief   Returns an NSString with description of SndStreamManager
@@ -189,6 +214,12 @@
   @return     TRUE if the client was successfully removed.
 */
 - (BOOL) removeClient: (SndStreamClient *) client;
+
+/*!
+  @brief Returns an NSArray of clients of the SndStreamManager instance.
+  @return Return the clients in an immutable autoreleased array.
+ */
+- (NSArray *) clients;
 
 /*!
   @brief   Passes new input and output buffers from the underlying API to the

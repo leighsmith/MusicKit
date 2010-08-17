@@ -790,7 +790,7 @@ static long getBufferSize(AudioDeviceID deviceID, BOOL forOutputDevice)
 
     /* fetch the buffer size for informational purposes */
     if (!getDeviceProperty(deviceID, forOutputDevice, kAudioDevicePropertyBufferSize, &currentBufferSizeInBytes, sizeof(currentBufferSizeInBytes))) {
-	return FALSE;
+	return 0;
     }
         
     return currentBufferSizeInBytes;
@@ -973,13 +973,13 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
 ////////////////////////////////////////////////////////////////////////////////
 // SNDInit
 //
-// Takes a parameter indicating whether to guess the device to select.
-// This allows us to hard code devices or use heuristics to prevent the user
+// Takes a parameter indicating whether to select the default device to use.
+// This allows us to hard code devices or use default to prevent the user
 // having to always select the best device to use.
 // If we guess or not, we still do get a driver initialised.
 ////////////////////////////////////////////////////////////////////////////////
 
-PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
+PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
 {
     BOOL settingInputBufferSize = FALSE;
     
@@ -989,7 +989,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     }
 
     /* initialize CoreAudio device */
-    if(guessTheDevice) {
+    if(useDefaultDevice) {
 	BOOL noError;
 	
         /* Get the default sound output device */
@@ -1009,7 +1009,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 	    return FALSE;
 	}
 	
-	// If we are guessing the device, retrieve and use the standard buffer size.
+	// If we are using the default device, retrieve and use the standard buffer size.
 	outputBufferSizeInBytes = getBufferSize(outputDeviceID, TRUE);
 
 #if DEBUG_BUFFERSIZE
@@ -1019,11 +1019,12 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         outputDriverIndex = findDeviceInDriverList(outputDeviceID, TRUE);  
     }
     else {
-        NSLog(@"SNDInit() Didn't guess the device\n");
+        NSLog(@"SNDInit() Didn't use default device, using first\n");
         outputDriverIndex = 0;
     }
 
-    if(!setOutputDevice(outputDeviceID, !guessTheDevice))
+    // if we are not using the default device, we should set the buffer size.
+    if(!setOutputDevice(outputDeviceID, !useDefaultDevice))
         return FALSE;
 
     if(!settingInputBufferSize) {
@@ -1033,6 +1034,11 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 	NSLog(@"get input buffer size inputBufferSizeInBytes = %ld\n", inputBufferSizeInBytes);
 #endif
     }
+    // We have a condition that can cause confusion: if a device is opened and the buffer size is set different
+    // from the default, and then only the opposite direction device is changed, if we initialise the buffer 
+    // size from the hardware the size will remain set and probably not matching buffer sizes. This isn't always
+    // a problem, depending on the client.
+    // inputBufferSize = outputBufferSize;
     inputInit = setInputDevice(inputDeviceID, settingInputBufferSize);	
 
     return TRUE;
@@ -1078,6 +1084,18 @@ PERFORM_API BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutp
     return TRUE;
 }
 
+PERFORM_API long SNDGetBufferSizeInBytes(BOOL forOutputDevices)
+{
+    AudioDeviceID deviceId = forOutputDevices ? outputDeviceID : inputDeviceID;
+    long bufferSize;
+    
+    if(!(bufferSize = getBufferSize(deviceId, forOutputDevices))) {
+	NSLog(@"%s device - error getting buffer size\n", forOutputDevices ? "output" : "input");
+	return 0;
+    }
+    return bufferSize;
+}
+    
 // Returns an array of strings listing the available drivers.
 // Returns NULL if the driver names were unobtainable.
 // The client application should not attempt to free the pointers.

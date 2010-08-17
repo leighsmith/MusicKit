@@ -76,7 +76,7 @@ typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream,
   The <tt>guessTheDevice</tt> parameter allows hard coding devices or using heuristics
   to prevent the user having to always select the best device to use.
   Whether guessing or not, a driver is still initialised.
-  @return         Returns a YES if initialised correctly, NO if unable to initialise the device,
+  @return         Returns a TRUE if initialised correctly, FALSE if unable to initialise the device,
   such as an unavailable sound interface.
 */
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice);
@@ -84,7 +84,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice);
 /*!
   @function       SNDTerminate
   @brief          Terminate the connection to the Sound hardware initialised with SNDInit.
-  @return         Returns YES if terminated correctly, NO if unable to terminate the device,
+  @return         Returns TRUE if terminated correctly, FALSE if unable to terminate the device,
   such as an unavailable sound interface.
  */
 PERFORM_API BOOL SNDTerminate(void);
@@ -92,7 +92,7 @@ PERFORM_API BOOL SNDTerminate(void);
 /*!
   @function       SNDGetAvailableDriverNames
   @brief          Retrieve a list of available driver descriptions.
-  @param	  outputDrivers Set to YES to retrieve only names of output drivers, NO to retrieve only names of input drivers.
+  @param	  outputDrivers Set to TRUE to retrieve only names of output drivers, FALSE to retrieve only names of input drivers.
   @return         Returns a NULL terminated array of readable strings of each driver's name.
 */
 PERFORM_API const char **SNDGetAvailableDriverNames(BOOL outputDrivers);
@@ -101,15 +101,15 @@ PERFORM_API const char **SNDGetAvailableDriverNames(BOOL outputDrivers);
   @function       SNDSetDriverIndex
   @brief          Assign currently active driver.
   @param          selectedIndex The 0 base index into the driver table returned by SNDGetAvailableDriverNames
-  @param	  outputDrivers Set to YES to set the assigned driver index of output drivers only, NO to set the index of input drivers only.
-  @return         Returns YES if able to set the index, no if unable (for example selectedIndex out of bounds).
+  @param	  outputDrivers Set to TRUE to set the assigned driver index of output drivers only, FALSE to set the index of input drivers only.
+  @return         Returns TRUE if able to set the index, FALSE if unable (for example selectedIndex out of bounds).
 */
 PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL outputDrivers);
 
 /*!
   @function       SNDGetAssignedDriverIndex
   @brief          Return the index into driverList currently selected.
-  @param	  outputDrivers Set to YES to retrieve the assigned driver index of output drivers only, NO to retrieve the index of input drivers only.
+  @param	  outputDrivers Set to TRUE to retrieve the assigned driver index of output drivers only, FALSE to retrieve the index of input drivers only.
   @return         Returns the index (0 base).
 */
 PERFORM_API unsigned int SNDGetAssignedDriverIndex(BOOL outputDrivers);
@@ -117,14 +117,14 @@ PERFORM_API unsigned int SNDGetAssignedDriverIndex(BOOL outputDrivers);
 /*!
   @function       SNDIsMuted
   @brief          Determine if all the sound output is muted.
-  @return         Returns YES if the currently playing sound is muted.
+  @return         Returns TRUE if the currently playing sound is muted.
 */
 PERFORM_API BOOL SNDIsMuted(void);
 
 /*!
   @function       SNDSetMute
   @brief          Mute or unmute all sound output.
-  @param          muted YES to mute, NO to unmute.
+  @param          muted TRUE to mute, FALSE to unmute.
 */
 PERFORM_API void SNDSetMute(BOOL muted);
 
@@ -133,11 +133,23 @@ PERFORM_API void SNDSetMute(BOOL muted);
   @brief          Set the buffer size  used for input or output in bytes.
   @param          newBufferSizeInBytes  Number of bytes in buffer. 
   @param          forOutputDevices TRUE to change the output buffer size, FALSE to change the input buffer size.
+  @return	  Returns TRUE if able to set the buffer size, FALSE if unable to set it.
 
   Note that current implementation uses stereo float output buffers, which therefore take
   8 bytes per sample frame.
 */
 PERFORM_API BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutputDevices);
+
+/*!
+  @function       SNDGetBufferSizeInBytes
+  @brief          Returns the buffer size used for input or output in bytes.
+  @param          forOutputDevices TRUE to return the output buffer size, FALSE to return the input buffer size.
+  @return	  Returns buffer size in bytes, or 0 if unable to retrieve the buffer size.
+ 
+  Note that current implementation uses stereo float output buffers, which therefore take
+  8 bytes per sample frame.
+ */
+PERFORM_API long SNDGetBufferSizeInBytes(BOOL forOutputDevices);
 
 /*!
   @function SNDSpeakerConfiguration
@@ -155,7 +167,7 @@ PERFORM_API const char **SNDSpeakerConfiguration(void);
   @function       SNDStreamNativeFormat
   @brief          Return the format of the sound data preferred by the operating system in the provided SNDStreamBuffer.
   @param          streamFormat Pointer to an allocated block of memory into which to put the SNDStreamBuffer format parameters.
-  @param          isOutputStream YES if the stream is for output, i.e. playback, NO if the stream is for input, i.e. recording.
+  @param          isOutputStream TRUE if the stream is for output, i.e. playback, FALSE if the stream is for input, i.e. recording.
   
   Does not set streamData field of SNDStreamBuffer structure.
  */
@@ -166,14 +178,14 @@ PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat, BOOL isOut
   @brief          Starts the streaming.
   @param          newStreamProcessor Pointer to the function call-back for sending and receiving stream buffers.
   @param          userData Any parameter to be passed back in the call-back function parameter list.
-  @return         Returns YES if streaming was able to start, NO if there was some problem starting streaming.
+  @return         Returns TRUE if streaming was able to start, FALSE if there was some problem starting streaming.
  */
 PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
 
 /*!
   @function       SNDStreamStop
   @brief          Stops the streaming.
-  @return         Returns YES if streaming was able to be stopped, NO if there was some problem stopping streaming.
+  @return         Returns TRUE if streaming was able to be stopped, FALSE if there was some problem stopping streaming.
  */
 PERFORM_API BOOL SNDStreamStop(void);
 

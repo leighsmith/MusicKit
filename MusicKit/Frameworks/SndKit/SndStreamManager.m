@@ -286,6 +286,16 @@ static SndStreamManager *defaultStreamManager = nil;
     return [self setOutputBufferSize: frames] && [self setInputBufferSize: frames];
 }
 
+- (long) inputBufferSize
+{
+    return SNDGetBufferSizeInBytes(NO) / SndFrameSize([Snd nativeInputFormat]);
+}
+
+- (long) outputBufferSize
+{
+    return SNDGetBufferSizeInBytes(YES) / SndFrameSize([Snd nativeInputFormat]);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // startStreaming: responsible for calling low-level C stuff to get a stream
 // happening, and register the processStreamAtTime: selector as the callback
@@ -611,6 +621,11 @@ static SndStreamManager *defaultStreamManager = nil;
 - (BOOL) removeClient: (SndStreamClient *) client
 {
     return [mixer removeClient: client];
+}
+
+- (NSArray *) clients
+{
+    return [mixer clients];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

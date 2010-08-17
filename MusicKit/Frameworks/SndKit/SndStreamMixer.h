@@ -92,6 +92,12 @@
 - (int) addClient: (SndStreamClient *) client;
 
 /*!
+  @brief Returns an NSArray of clients of the SndStreamMixer instance.
+  @return Return the clients in an immutable autoreleased array.
+ */
+- (NSArray *) clients;
+
+/*!
   @brief Informs the receiver that all mixing is to be completed, that mixing clients and buffers are to be updated.
   
   This should be sent when the manager is shutting down.
