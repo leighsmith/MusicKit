@@ -39,6 +39,8 @@
 	be a Cocoa window that contains the Cocoa Audio Unit user interface instance.
      */
     NSWindow  *cocoaAUWindow;
+    /*! audioUnitUIView The Cocoa AudioUnit View. This is the content view of cocoaAUWindow, but can also be retrieved independently. */
+    NSView *audioUnitUIView; 
     /*! The AudioUnit SndAudioProcessor instance this instance controls. */
     SndAudioUnitProcessor *audioUnitProcessor;
 }
@@ -58,10 +60,21 @@
 - (SndAudioUnitProcessor *) audioUnitProcessor;
 
 /*!
-  @brief Returns the window displaying and managing the window.
+  @brief Returns the window displaying and managing the audio unit view (Carbon or Cocoa).
  */
- - (NSWindow *) window;
+- (NSWindow *) window;
 
+/*!
+  @brief Returns the NSView of the AudioUnit user interface.
+ 
+  Use this method if it necessary to embed the AudioUnit user interface inside an existing window.
+  If you want the AudioUnit user interface to have it's own window, use -window to retrieve an existing one.
+ */
+- (NSView *) contentView;
+
+/*!
+  @brief 
+  */
 - (void) reinitializeController;
 
 @end
