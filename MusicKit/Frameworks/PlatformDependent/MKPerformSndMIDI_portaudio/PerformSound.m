@@ -125,6 +125,12 @@ BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutputDevices)
     return TRUE;
 }
 
+long SNDGetBufferSizeInBytes(BOOL forOutputDevices)
+{
+    // TODO Pa_getBufferSize())
+    return useNativeBufferSize ? 0 : bufferSizeInFrames * BYTES_PER_FRAME;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // vendBuffersToStreamManagerIOProc
 //

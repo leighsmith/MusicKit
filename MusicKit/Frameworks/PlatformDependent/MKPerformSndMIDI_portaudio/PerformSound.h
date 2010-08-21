@@ -144,6 +144,17 @@ PERFORM_API void SNDSetMute(BOOL muted);
 PERFORM_API BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutputDevices);
 
 /*!
+  @function       SNDGetBufferSizeInBytes
+  @brief          Returns the buffer size used for input or output in bytes.
+  @param          forOutputDevices TRUE to return the output buffer size, FALSE to return the input buffer size.
+  @return	  Returns buffer size in bytes, or 0 if unable to retrieve the buffer size.
+ 
+  Note that current implementation uses stereo float output buffers, which therefore take
+  8 bytes per sample frame.
+ */
+PERFORM_API long SNDGetBufferSizeInBytes(BOOL forOutputDevices);
+
+/*!
   @function       SNDStreamNativeFormat
   @brief       Return in the SNDStreamBuffer, the format of the sound data preferred by the operating system.
   @param          streamFormat Pointer to an allocated block of memory into which to put the SNDStreamBuffer format parameters.
