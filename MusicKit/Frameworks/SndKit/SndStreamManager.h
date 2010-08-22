@@ -64,8 +64,9 @@
     /*! bg_threadLock used for signalling to background thread to start streaming,
         stop streaming, or abort itself. */
     NSConditionLock *bg_threadLock;
-    /*! bgdm_threadLock used for ? */
+    /*! bgdm_threadLock used for controlling access to back ground delegate messaging code. */
     NSConditionLock *bgdm_threadLock;
+
     NSLock          *delegateMessageArrayLock;
     NSMutableArray  *delegateMessageArray;
     NSConnection    *threadConnection;

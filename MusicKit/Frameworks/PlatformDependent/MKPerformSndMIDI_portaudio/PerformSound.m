@@ -113,8 +113,8 @@ BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutputDevices)
 {
     long newBufferSizeInFrames = newBufferSizeInBytes / BYTES_PER_FRAME;
 
-    if (stream != NULL && Pa_IsStreamActive(stream))
-        return FALSE;
+    // We allow changes to occur while the streaming is active since the changes only
+    // occur when streaming is started anyway, in portaudio.
     if ((float)newBufferSizeInBytes /(float) BYTES_PER_FRAME != newBufferSizeInFrames) {
         NSLog(@"output device - error setting buffer size. Buffer must be multiple of %d\n", BYTES_PER_FRAME);
         return FALSE;

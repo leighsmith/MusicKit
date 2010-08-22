@@ -198,7 +198,7 @@ static SndStreamManager *defaultStreamManager = nil;
 - (void) dealloc
 {
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[SndStreamManager] starting dealloc\n");
+    NSLog(@"%@ starting dealloc\n", [super description]);
 #endif
     
     if (active)
@@ -213,7 +213,7 @@ static SndStreamManager *defaultStreamManager = nil;
     [bgdm_threadLock release];
     
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[SndStreamManager] ending dealloc\n");
+    NSLog(@"%@ ending dealloc\n", [super description]);
 #endif
     
     [super dealloc];
