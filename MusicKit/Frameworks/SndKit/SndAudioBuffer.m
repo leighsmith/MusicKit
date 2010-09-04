@@ -280,6 +280,7 @@
 - (void) dealloc
 {
     [data release];
+    data = nil;
     [super dealloc];
 }
 

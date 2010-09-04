@@ -108,9 +108,8 @@ void SndChannelDecrease(void *inPtr,
     float *sumFloat = (float *) calloc(newNumChannels, sizeof(float));
     double *sumDouble = (double *) calloc(newNumChannels, sizeof(double));
     int *channelSumCount = (int *) calloc(newNumChannels, sizeof(int));
-    
+
     // Now determine how many old channels are to be summed for each new channel.
-    channelSumCount = calloc(newNumChannels, sizeof(int));
     for (oldChannelIndex = 0; oldChannelIndex < oldNumChannels; oldChannelIndex++) {
 	channelSumCount[map[oldChannelIndex]]++;
     }
@@ -264,6 +263,7 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
     }
     else if ((oldNumChannels > newNumChannels) && (oldNumChannels % newNumChannels == 0)) {
 	unsigned int oldChanIndex, newChanIndex;
+
 	if((channelMap = malloc(oldNumChannels * sizeof(short))) == NULL)
             NSLog(@"Unable to malloc channelMap for %d channels\n", oldNumChannels);
 
@@ -279,6 +279,7 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
 		
 	/* channel reduction will have already been done by resample routine if the sampling rate was changed */
 	SndChannelDecrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, theDataFormat, channelMap);
+        free(channelMap);
     }
     else {
 	NSLog(@"Can't convert from %d to %d channels (output must be %s of input)\n", oldNumChannels, newNumChannels,
@@ -815,8 +816,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 				      frameCount: sampleFrames
 				      dataFormat: format.dataFormat];
 
-	if(error != SND_ERR_NONE)
+	if(error != SND_ERR_NONE) {
+	    NSLog(@"Unable to convert from %d channels to %d channels", format.channelCount, toChannelCount);
 	    return nil;
+	}
 	convertedSomething = YES;
     }
 
