@@ -1,0 +1,32 @@
+# -*- Makefile -*-
+#  $Id: GNUmakefile.preamble.in 3324 2005-07-29 09:10:00Z leighsmith $
+#
+# @configure_input@
+#
+# Build script for the MusicKit on GNUstep systems.
+# See Makefile.in for the build process on MacOS X systems.
+#
+#  Original Author: Leigh M. Smith <leigh@leighsmith.com>
+#
+# Copyright (c) 2010, The MusicKit Project.  All rights reserved.
+#
+# Permission is granted to use and modify this code for commercial and 
+# non-commercial purposes so long as the author attribution and copyright 
+# messages remain intact and accompany all relevant code.
+
+ADDITIONAL_FLAGS += @DEFS@
+
+ADDITIONAL_CPPFLAGS += @CPPFLAGS@
+
+ADDITIONAL_LDFLAGS += @LDFLAGS@
+
+ifneq (mingw32, $(GNUSTEP_TARGET_OS))
+  PKG_CONFIG=$(shell which pkg-config 2>/dev/null)
+  ifneq ($(PKG_CONFIG),"")
+    SNDFILE_LIBS=$(shell pkg-config --libs sndfile 2>/dev/null)
+    ifneq ($(SNDFILE_LIBS),)
+      LIBRARIES_DEPEND_UPON += $(SNDFILE_LIBS)
+      SndKit_CPPFLAGS += $(shell pkg-config --cflags)
+    endif
+  endif
+endif
