@@ -50,13 +50,13 @@ typedef enum {
 }
 
 /*!
-  @brief   Factory method 
-  @param      n Buffer queue length
+  @brief   Factory method.
+  @param   numberOfBuffers Buffer queue length.
   
-  Creates a fresh new SndAudioBufferQueue, sets the eventual number of buffers to <em>n</em>.
-  @return     An SndAudioBufferQueue
+  Creates a fresh new SndAudioBufferQueue, sets the eventual number of buffers to <em>numberOfBuffers</em>.
+  @return     An autoreleased SndAudioBufferQueue instance.
 */
-+ audioBufferQueueWithLength: (int) n;
++ audioBufferQueueWithLength: (int) numberOfBuffers;
 
 - init;
 - (void) dealloc;
@@ -69,27 +69,37 @@ typedef enum {
 	  need to use one less than the full number of buffers initialized with, such that we never
 	  exceed the maximum. For example, if we initialize with 4 buffers, at best we can hold only
   3 processed buffers so we can add a pending buffer, before then popping a processed buffer.
-  @param      n Number of buffers.
+  @param      numberOfBuffers Number of buffers.
   @return     Returns self.
 */
-- initQueueWithLength: (int) n;
+- initQueueWithLength: (int) numberOfBuffers;
 
 /*!
-  @brief
+  @brief Returns the next buffer that is yet to be processed.
   
+  In contexts where the queue is used for input and output processing, the returned buffer can be interpreted as: 
+  <UL>
+  <LI><b>output</b> - The next buffer to be synthesized / produced</li>
+  <LI><b>input</b>  - The next input buffer to be processed</li>
+  </UL>
+ 
   Blocks the calling thread until a buffer is present for popping.
-  @return     <UL><LI><b>output</b> - The next buffer to be synthesized / produced</li>
-  <LI><b>input</b>  - The next input buffer to be processed</li></ul>
+  @return     Returns an autoreleased SndAudioBuffer instance.
 */
 - (SndAudioBuffer*) popNextPendingBuffer;
 
 /*!
-  @brief   Returns the next 
-  
+  @brief Returns the next buffer that has already been processed.
+ 
+  In contexts where the queue is used for input and output processing, the returned buffer can be interpreted as: 
+    <UL>
+    <LI><b>output</b> - The next buffer to be consumed by the world at large</li>
+    <LI><b>input</b>  - The next buffer to be filled with input material</li>
+    </UL>
+ 
   Blocks the calling thread until a buffer is present for popping.
-  @return     <UL><LI><b>output</b> - The next buffer to be consumed by the world at large</li>
-  <LI><b>input</b>  - The next buffer to be filled with input material</li></ul>
-*/
+  @return     Returns an autoreleased SndAudioBuffer instance.
+ */
 - (SndAudioBuffer*) popNextProcessedBuffer;
 
 /*!
@@ -140,7 +150,7 @@ typedef enum {
   head room in a multi-threaded environment.
   @return     Returns self.
 */
-- prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff;
+- (BOOL) prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff;
 
 /*!
   @brief Returns the total number of buffers being shuffled about betwixt pending and processed queues.

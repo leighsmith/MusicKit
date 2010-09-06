@@ -101,12 +101,12 @@ enum {
     /*!  A FIFO queue of SndAudioBuffers holding those pending input and those processed. */
     SndAudioBufferQueue *inputQueue;
     
-    /*! */
+    /*! Controls access to the  output queue, particularly when changing the synthOutputBuffer. */
     NSConditionLock *synthThreadLock;
     /*! Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
     NSConditionLock *outputBufferLock;
 
-    /*! */
+    /*! When YES, the client is actively processing streamed audio. When NO the client thread is not running. */
     BOOL       active;
     /*! Indicates this client processes audio data received from a SndStreamMixer instance by -startProcessingNextBufferWithInput:nowTime: */
     BOOL       needsInput;
@@ -213,6 +213,13 @@ enum {
   @return     Returns the buffer to be synthesized as a SndAudioBuffer instance.
 */
 - (SndAudioBuffer *) synthOutputBuffer;
+
+/*!
+  @brief Moves the synthOutputBuffer onto the processed section of the queue, replacing it with the next empty pending buffer.
+
+  This is typically used internally in a SndStreamClient subclass to process multiple output buffers.
+ */
+- (void) rotateSynthOutputBuffer;
 
 /*!
   @brief   Accessor for the current input buffer

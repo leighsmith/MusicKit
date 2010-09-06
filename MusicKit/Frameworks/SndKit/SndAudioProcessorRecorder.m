@@ -339,7 +339,7 @@
 	}
     }
 #if SNDAUDIOPROCRECORDER_DEBUG
-    NSLog(@"SndAudioProcessor -stopRecordingWait:disconnectFromStream: \n");
+    NSLog(@"SndAudioProcessorRecorder -stopRecordingWait: \n");
 #endif
     
     return self;

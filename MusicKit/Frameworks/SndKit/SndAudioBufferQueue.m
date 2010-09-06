@@ -113,6 +113,7 @@ enum {
 - (SndAudioBuffer*) popNextPendingBuffer
 {
     SndAudioBuffer *ab = nil;
+    
     [pendingBuffersLock lockWhenCondition: ABQ_hasData];
 #if SNDABQ_DEBUG    
     printf("pop pending...\n");
@@ -133,6 +134,7 @@ enum {
 - (SndAudioBuffer*) popNextProcessedBuffer
 {
     SndAudioBuffer *ab = nil;
+    
     [processedBuffersLock lockWhenCondition: ABQ_hasData];
 #if SNDABQ_DEBUG    
     printf("pop processed...\n");
@@ -246,11 +248,11 @@ enum {
 // prepareQueueAsType:withBufferPrototype:
 ////////////////////////////////////////////////////////////////////////////////
 
-- prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff
+- (BOOL) prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff
 {
     if (buff == nil) {
 	NSLog(@"SndAudioBufferQueue::prepareQueueAsType - ERROR: buff is nil!\n");
-	return self;
+	return NO;
     }
     switch (type) {
 	case audioBufferQueue_typeInput: {
@@ -277,7 +279,7 @@ enum {
 	}
 	break;
     }
-    return self;
+    return YES;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

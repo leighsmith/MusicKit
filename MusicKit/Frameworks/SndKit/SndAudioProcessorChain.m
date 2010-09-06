@@ -70,7 +70,7 @@
     newSAPC->postFader = [postFader copy];
 
     newSAPC->nowTime = [self nowTime];
-    [newSAPC setBypass: [self isBypassingFX]];
+    [newSAPC setBypassProcessors: [self isBypassingFX]];
     
     return newSAPC; // don't release, copy is supposed to retain.
 }
@@ -92,16 +92,6 @@
 {
     return [NSString stringWithFormat: @"%@ audioProcessors: %@, postFader %@ %@\n", 
 	[super description], audioProcessorArray, postFader, bypassProcessing ? @"(bypassed)" : @"(active)"];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// bypassProcessors
-////////////////////////////////////////////////////////////////////////////////
-
-- bypassProcessors: (BOOL) b
-{
-    bypassProcessing = b;
-    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -251,7 +241,7 @@
 // setBypass
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setBypass: (BOOL) b
+- (void) setBypassProcessors: (BOOL) b
 {
   bypassProcessing = b;
 }

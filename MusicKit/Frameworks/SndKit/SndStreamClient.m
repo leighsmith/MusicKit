@@ -716,6 +716,20 @@ static void inline setThreadPriority()
     return [[exposedOutputBuffer retain] autorelease];
 }
 
+// Place synthOutputBuffer on the processed section of the queue, replace with the next pending buffer.
+- (void) rotateSynthOutputBuffer
+{
+    // This should be locked by the synthThreadLock, but since we expect it to be run from within subclass -processBuffers
+    // which will already be protected by a lock, we leave it unprotected.
+    // [synthThreadLock lock];
+    // TODO we could update the clientNowTime, but it is updated correctly in -processingThread.
+    [outputQueue addProcessedBuffer: synthOutputBuffer];
+    [synthOutputBuffer release];
+    synthOutputBuffer = [[outputQueue popNextPendingBuffer] retain];
+    // TODO Need to check if we exhaust those pending. We should manufacture them, but perhaps not on demand.
+    // [synthThreadLock unlock];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // synthOutputBuffer
 ////////////////////////////////////////////////////////////////////////////////

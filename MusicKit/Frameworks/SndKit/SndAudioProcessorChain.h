@@ -42,7 +42,7 @@
 }
 
 /*!
-  @brief   Factory method
+  @brief   Factory method.
   @return     A freshly initialized, autoreleased SndAudioProcessorChain.
 */
 + audioProcessorChain;
@@ -56,58 +56,43 @@
 - init;
 
 /*!
-  @brief   Destructor
-*/
-- (void) dealloc;
-
-/*!
-  @brief   Sets the internal FX bypass flag
-  @param      b Bypass flag - TRUE if bypass is to be enabled
-  @return     self.
-*/
-- bypassProcessors: (BOOL) b; 
-
-/*!
-  @brief   Adds an SndAudioProcessor to the FX chain
+  @brief   Adds an SndAudioProcessor to the end of the effects chain.
   
-  
-  @param      proc The SndAudioProcessor to be added to the FX chain
+  @param      proc The SndAudioProcessor to be added to the effects chain
   @return     Self
 */
 - addAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
-  @brief   Inserts an SndAudioProcessor into the FX chain at a specific location.
+  @brief   Inserts an SndAudioProcessor into the effects chain at a specific location.
   
   
-  @param      newAudioProcessor The SndAudioProcessor to be added to the FX chain.
-  @param      processorIndex The location in the FX chain to insert the SndAudioProcessor.
+  @param      newAudioProcessor The SndAudioProcessor to be added to the effects chain.
+  @param      processorIndex The location in the effects chain to insert the SndAudioProcessor.
   @return     Returns self
 */
 - insertAudioProcessor: (SndAudioProcessor *) newAudioProcessor
 	       atIndex: (int) processorIndex;
 
 /*!
-  @brief   Removes an SndAudioProcesor from the FX chain
+  @brief   Removes an SndAudioProcesor from the effects chain
   
   
-  @param      proc SndAudioProcessor to be removed from the FX chain
+  @param      proc SndAudioProcessor to be removed from the effects chain
   @return     self
 */
 - removeAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
-  @brief   Removes an SndAudioProcesor from the FX chain
+  @brief   Removes an SndAudioProcesor from the effects chain
   
-  
-  @param      index The base 0 entry in FX chain to remove
+  @param      index The base 0 entry in effects chain to remove.
   @return     self
  */
 - removeAudioProcessorAtIndex: (int) index;
 
 /*!
-  @brief   Get the processor at a certain index
-  
+  @brief   Get the processor at a certain index.
   
   @param      index Base zero reference to the SndAudioProcessor required.
   @return     Returns an autoreleased SndAudioProcessor.
@@ -121,17 +106,17 @@
 - removeAllProcessors;
 
 /*!
-  @brief   Process the provided audio buffer with the chain of SndAudioProcessors
+  @brief   Process the provided audio buffer with the chain of SndAudioProcessors.
   
   The t parameter tells the processor chain at what time
   the buffer is destined to start to be played. This
   matches up with the time the SndStreamClients were given
   for generating this same buffer.
   @param      buff A SndAudioBuffer instance of valid sound data.
-  @param      t The time in seconds the buffer is intended to be played.
+  @param      timeInSeconds The time in seconds the buffer is intended to be played.
   @return     Returns self.
 */
-- processBuffer: (SndAudioBuffer *) buff forTime: (double) t;
+- processBuffer: (SndAudioBuffer *) buff forTime: (double) timeInSeconds;
 
 /*!
   @brief   Returns the number of processors in the audio processor chain.
@@ -148,24 +133,21 @@
 - (NSArray *) processorArray;
 
 /*!
-  @brief
-  
-  
-  @return     TRUE is FX chain is being bypassed
+  @brief Return the state of the effects chain bypass.
+ 
+  @return     YES is effects chain is being bypassed
 */
 - (BOOL) isBypassingFX;
 
 /*!
-  @brief
+  @brief Sets the audio processor chain to be bypassed or not.
   
-  
-  @param      b Bypass flag - TRUE to enable bypass 
+  @param      bypassEffectsChain Bypass flag - YES to enable bypassing the effects processing.
 */
-- (void) setBypass: (BOOL) b;
+- (void) setBypassProcessors: (BOOL) bypassEffectsChain;
 
 /*!
   @brief   Returns the SndAudioFader which is the last effect at the end of this SndAudioProcessorChain instance.
-  
   
   @return     id of the postFader object at the end of the chain
 */
@@ -182,7 +164,6 @@
 
 /*!
   @brief   Returns the time the buffer is to be played.
-  
   
   @return     Returns a double Indicating the play start time of the buffer being
   processed in seconds.
