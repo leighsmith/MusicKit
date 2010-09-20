@@ -470,27 +470,36 @@ enum {
 #if defined(__APPLE__)
 int get_bus_speed()
 {
-    int mib[2]; // Management Information Base
-    unsigned int miblen;
+    int managementInformationBase[2]; // Management Information Base
+    unsigned int mibLength;
     int busSpeed;
     int retval;
-    size_t len;
+    size_t busSpeedLength;
 
-    mib[0] = CTL_HW;
-    mib[1] = HW_BUS_FREQ;
-    miblen = 2;
-    len = 4;
-    retval = sysctl(mib, miblen, &busSpeed, &len, NULL, 0);
+    managementInformationBase[0] = CTL_HW;
+    managementInformationBase[1] = HW_BUS_FREQ;
+    mibLength = 2;
+    busSpeedLength = 4;
+    retval = sysctl(managementInformationBase, mibLength, &busSpeed, &busSpeedLength, NULL, 0);
 
     /* check retval to ensure we got a valid bus speed, see man 3 sysctl for info */
-    if(retval != 0) {
-	NSLog(@"Unable to obtain bus speed!\n");
-	return 0;
+    if(retval != 0 || busSpeedLength != sizeof(int)) {
+	// Recent Mac's for some reason do not define their bus speed with HW_BUS_FREQ.
+	// In that case, we retrieve the time base frequency "used by the OS and is the basis of all timing services".
+#ifdef HW_TB_FREQ
+	managementInformationBase[0] = CTL_HW;
+	managementInformationBase[1] = HW_TB_FREQ;
+	busSpeedLength = 4;
+	retval = sysctl(managementInformationBase, mibLength, &busSpeed, &busSpeedLength, NULL, 0);
+#endif	
+	/* check retval to ensure we got a valid bus speed, see man 3 sysctl for info */
+	if(retval != 0 || busSpeedLength != sizeof(int)) {
+	    NSLog(@"get_bus_speed() Unable to obtain bus speed!\n");
+	    return 0;
+	}
     }
-    else {
-	//NSLog(@"bus speed %d\n", busSpeed);
-	return busSpeed;
-    }
+    //NSLog(@"get_bus_speed() bus speed %d\n", busSpeed);
+    return busSpeed;
 }
 
 #endif
@@ -500,38 +509,48 @@ static void inline setThreadPriority()
 #if defined(__APPLE__)
     struct thread_time_constraint_policy ttcpolicy;
     kern_return_t theError;
+    int bus_speed = get_bus_speed();
 
-    /* This is in AbsoluteTime units, which are equal to
-	1/4 the bus speed on most machines. */
+    /* This is in AbsoluteTime units, which are equal to 1/4 the bus speed on most machines. */
     
     // hard-coded numbers are approximations for 100 MHz bus speed.
-    // assume that app deals in frame-sized chunks, e.g. 30 per second.
     // ttcpolicy.period=833333;
-    ttcpolicy.period = (get_bus_speed() / 30 * 4);
-    // ttcpolicy.period = (get_bus_speed() / (60 * 4));
     // ttcpolicy.computation=60000;
-    ttcpolicy.computation = (get_bus_speed() / (360 * 4));
-    // ttcpolicy.computation = (get_bus_speed() / (720 * 4));
     // ttcpolicy.constraint=120000;
-    ttcpolicy.constraint = (get_bus_speed() / (180 * 4));
-    // ttcpolicy.constraint = (get_bus_speed() / (360 * 4));
-    ttcpolicy.preemptible = 1;
+    
+    // assume that app deals in frame-sized chunks, e.g. 30 per second.
+    // Unfortunately bus_speed seems no longer supported.
+    ttcpolicy.period = (bus_speed / (30 * 4));
+    ttcpolicy.computation = (bus_speed / (360 * 4));
+    ttcpolicy.constraint = (bus_speed / (180 * 4));
 
+    // assume that app deals in frame-sized chunks, e.g. 30 per second.
+    // Doesn't seem to do any conversion from nanoseconds to absolute units.
+    // ttcpolicy.period = UnsignedWideToUInt64(NanosecondsToAbsolute(UInt64ToUnsignedWide((UInt64) 1000000000)));
+    // 360 per second
+    // ttcpolicy.computation = UnsignedWideToUInt64(NanosecondsToAbsolute(UInt64ToUnsignedWide((UInt64) 83333333)));
+    // 180 per second
+    // ttcpolicy.constraint = UnsignedWideToUInt64(NanosecondsToAbsolute(UInt64ToUnsignedWide((UInt64) 166666666)));
+
+    ttcpolicy.preemptible = 1;
+    
     theError = thread_policy_set(mach_thread_self(),
-				 THREAD_TIME_CONSTRAINT_POLICY, (int *)&ttcpolicy,
+				 THREAD_TIME_CONSTRAINT_POLICY, 
+				 (thread_policy_t) &ttcpolicy,
 				 THREAD_TIME_CONSTRAINT_POLICY_COUNT);
 
     if (theError != KERN_SUCCESS)
-	NSLog(@"Can't do thread_policy_set\n");
+	NSLog(@"SndStreamClient setThreadPriority(): Can't do thread_policy_set, error %d\n", theError);
 #if SNDSTREAMCLIENT_DEBUG
-    {
-	UInt64 nanoseconds = (UInt64) 33333333;
-	AbsoluteTime abso = NanosecondsToAbsolute(UInt64ToUnsignedWide(nanoseconds));
-	UInt64 abso2 = UnsignedWideToUInt64(abso);
-	NSLog(@"cast absolute time period is %ld\n", (uint32_t) abso2);
-    }
-    NSLog(@"bus speed = %d, period = %d, computation = %d, constraint = %d\n",
-	  get_bus_speed(), ttcpolicy.period, ttcpolicy.computation, ttcpolicy.constraint);
+//    {
+//	UInt64 nanoseconds = (UInt64) 1000000000;
+//	AbsoluteTime abso = NanosecondsToAbsolute(UInt64ToUnsignedWide(nanoseconds));
+//	UInt64 abso2 = UnsignedWideToUInt64(abso);
+//	NSLog(@"SndStreamClient setThreadPriority(): cast absolute time period is %ld\n", (uint32_t) abso2);
+//	NSLog(@"SndStreamClient setThreadPriority(): cast absolute time period is %ld\n", (uint32_t) UnsignedWideToUInt64(AbsoluteToNanoseconds(UInt64ToUnsignedWide((UInt64) 6666666))));
+//    }
+    NSLog(@"SndStreamClient setThreadPriority(): bus speed = %d, period = %d, computation = %d, constraint = %d\n",
+	  bus_speed, ttcpolicy.period, ttcpolicy.computation, ttcpolicy.constraint);
 #endif
 #else  
 /* POSIX_RT, must be running with root privileges, or with ulimit -r hard and soft limits set greater than zero. */
@@ -544,27 +563,27 @@ static void inline setThreadPriority()
     struct rlimit rl;
 
     policy = sched_getscheduler(0); // policy of current process.
-    NSLog(@"current process scheduler policy %d\n", policy);
+    NSLog(@"SndStreamClient setThreadPriority(): current process scheduler policy %d\n", policy);
     if(getrlimit(RLIMIT_RTPRIO, &rl) != 0)
-	NSLog(@"Unable to getrlimit\n");
+	NSLog(@"SndStreamClient setThreadPriority(): Unable to getrlimit\n");
     else
-	NSLog(@"rlimit cur %d max %d\n", rl.rlim_cur, rl.rlim_max);
+	NSLog(@"SndStreamClient setThreadPriority(): rlimit cur %d max %d\n", rl.rlim_cur, rl.rlim_max);
 #endif
 
     memset(&sp, 0, sizeof(struct sched_param));
     sp.sched_priority = sched_get_priority_max(SCHED_RR);
     // Attempt to get the highest priority. This is probably excessive, but for now we'll
     // do it like this. Probably we should set to half the priority range.
-    NSLog(@"Set thread real-time priority to max priority = %d\n", sp.sched_priority);
+    NSLog(@"SndStreamClient setThreadPriority(): Set thread real-time priority to max priority = %d\n", sp.sched_priority);
     theError = pthread_setschedparam(pthread_self(), SCHED_RR, &sp);
     if (theError == -1) {
-	NSLog(@"SndStreamClient: Can't set thread real-time priority, errno = %d, max priority = %d\n",
+	NSLog(@"SndStreamClient setThreadPriority(): Can't set thread real-time priority, errno = %d, max priority = %d\n",
 	      errno, sp.sched_priority);
     }
 #else
     int theError = sched_setscheduler(getpid(), SCHED_RR);
     if (theError == -1)
-	NSLog(@"Can't set real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
+	NSLog(@"SndStreamClient setThreadPriority(): Can't set real-time priority, errno = %d, min priority = %d\n", errno,sp.sched_priority);
 #endif
 #endif
 }
@@ -583,23 +602,13 @@ static void inline setThreadPriority()
     [self retain]; // Increase the retain count to avoid NSAutoreleasePool removing this while it's playing.
 
 #ifdef SET_THREAD_PRIORITY
-//#if defined(__APPLE__)
-// Currently we don't seem to be able to escalate the thread priority, so we do so using sched_setscheduler.
-#if 1
+    // It isn't actually possible to escalate the thread priority, so we do so using sched_setscheduler.
     setThreadPriority();
-#else
-    // Do this for GNUstep only, for MacOS X, we retain the more fine grained specification of thread behaviour.
-    // Make this thread top priority to avoid sound breaking up.
-    [NSThread setThreadPriority: 1.0];
-    // GNUstep spec differs from Cocoa. Cocoa returns a BOOL indicating success, on
-    // GNUstep we have to check the final thread priority. 
-    NSLog(@"Current SndStreamClient thread priority %f\n", [NSThread threadPriority]);
-#endif
 #endif
     active = TRUE;
     disconnectClientFromManager = FALSE;
 #if SNDSTREAMCLIENT_DEBUG                  
-//    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
+    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
 #endif
     while (active) {
 	innerPool = [NSAutoreleasePool new];

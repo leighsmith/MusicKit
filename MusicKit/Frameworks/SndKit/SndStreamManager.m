@@ -201,8 +201,10 @@ static SndStreamManager *defaultStreamManager = nil;
     NSLog(@"%@ starting dealloc\n", [super description]);
 #endif
     
-    if (active)
-	NSLog(@"SndStreamManager::dealloc - Error: stream is still active!!!");
+    if (active) {
+	NSLog(@"[SndStreamManager] -dealloc: stream is still active, stopping streaming");
+	[self stopStreaming];
+    }
     
     [mixer release];
     
@@ -366,7 +368,8 @@ static SndStreamManager *defaultStreamManager = nil;
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
     id controllerProxy = nil;
 
-    // [self retain]; // TODO eeek, why is this necessary?
+    // TODO eeek, why is this necessary? I presume this is to register the retain on the local autorelease pool?
+    // [self retain]; 
 
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
     NSLog(@"[SndStreamManager] entering delegate thread\n");
@@ -376,12 +379,13 @@ static SndStreamManager *defaultStreamManager = nil;
 	[bgdm_threadLock lockWhenCondition: BGDM_hasFlag];
 	if (bgdm_sem == BGDM_delegateMessageReady)  {
 	    NSInvocation *delegateMessage = nil;
-	    int count;
 	    
 	    // quickly release the lock so we don't deadlock if the queued messages take
 	    // a while to go through.
 	    [bgdm_threadLock unlockWithCondition: bgdm_sem];
 	    while (1) {
+		int count;
+
 		[delegateMessageArrayLock lock];
 		count = [delegateMessageArray count];
 		if (count) { // Get the first message off the queue
@@ -437,7 +441,7 @@ static SndStreamManager *defaultStreamManager = nil;
     NSLog(@"[SndStreamManager] exiting delegate thread\n");
 #endif
 
-    [NSThread exit];
+    // [NSThread exit]; unnecessary
 }
 
 /*
@@ -518,11 +522,7 @@ static SndStreamManager *defaultStreamManager = nil;
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
     NSLog(@"[SndStreamManager] exiting background streaming manager thread\n");
 #endif
-    /* even if there is a new thread which is created between the following two
-     * statements, that would be ok -- there would temporarily be one
-     * extra thread but it won't cause a problem
-     */
-    [NSThread exit];
+    // Exiting this method will exit the thread.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
