@@ -42,6 +42,8 @@
 #import "SndAudioBufferQueue.h"
 
 #define SNDSTREAMCLIENT_DEBUG 0
+#define SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG 0
+
 // This works ok on 667Mhz G4 processors. Slower hardware should require more. YMMV. 
 #define DEFAULT_NUMBER_OF_BUFFERS 8
 
@@ -274,21 +276,23 @@ enum {
 // welcomeClientWithBuffer:manager:
 ////////////////////////////////////////////////////////////////////////////////
 
-- welcomeClientWithBuffer: (SndAudioBuffer *) buffer manager: (SndStreamManager *) streamManager
+- welcomeClientWithInputBuffer: (SndAudioBuffer *) inputBuffer 
+		  outputBuffer: (SndAudioBuffer *) outputBuffer
+		       manager: (SndStreamManager *) streamManager
 {
     // The client shouldn't be active when we are welcoming it with a new manager.
     if(!active) {
         [outputBufferLock lockWhenCondition: OB_notInit];
-        exposedOutputBuffer = [buffer retain];
+        exposedOutputBuffer = [outputBuffer retain];
         [outputBufferLock unlockWithCondition: OB_isInit];
 
         if (needsInput) {
-            [inputQueue prepareQueueAsType: audioBufferQueue_typeInput withBufferPrototype: buffer];
+            [inputQueue prepareQueueAsType: audioBufferQueue_typeInput withBufferPrototype: inputBuffer];
         }
         if (generatesOutput) {
-            [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: buffer];
+            [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: outputBuffer];
         }        
-        [self prepareToStreamWithBuffer: buffer];
+        [self prepareToStreamWithBuffer: outputBuffer]; // TODO should separate by input and output buffers.
         [self setManager: streamManager];
         
         clientNowTime = [streamManager nowTime]; // reset nowTime to the manager's sense of time
@@ -368,6 +372,22 @@ enum {
     return processedBufferDuration;
 }
 
+- (void) disconnectFromManager
+{
+    // We disconnect the client from the manager, regardless of how many buffers remain to be processed. These are discarded.
+    [manager removeClient: self];
+    [self setManager: nil];
+    [self freeBufferMem];
+    [self didFinishStreaming];
+    [outputBufferLock lockWhenCondition: OB_isInit];
+    [outputBufferLock unlockWithCondition: OB_notInit]; // declare the output buffer uninitialised in case it is re-welcomed.
+    disconnectClientFromManager = FALSE;
+#if SNDSTREAMCLIENT_DEBUG
+    NSLog(@"[%@] disconnected from manager, while %d input, %d output buffers remained to process.\n", 
+	  clientName, [inputQueue processedBuffersCount], [outputQueue processedBuffersCount]);
+#endif    
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // startProcessingNextBufferWithInput:
 // Swap the synth and output buffers, fire off next round of synthesis (in subclasses).  
@@ -378,7 +398,7 @@ enum {
 // possibly behind-the-synthesis-time-front manager.
 ////////////////////////////////////////////////////////////////////////////////
 
-- startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) managerTime
+- (BOOL) startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) managerTime
 {
     int processedInputBuffersCount = 0, processedOutputBuffersCount = 0;
 
@@ -414,7 +434,7 @@ enum {
     }
 
 #if SNDSTREAMCLIENT_DEBUG                  
-    NSLog(@"startProcessingNextBufferWithInput nowTime = %f\n", managerTime);
+    NSLog(@"[%@] startProcessingNextBufferWithInput nowTime = %f\n", clientName, managerTime);
 #endif
     // If this client processes received input audio, copy the newly received audio buffer into the exposed buffer of the input queue.
     if (needsInput) {
@@ -445,25 +465,18 @@ enum {
 	}
     }
 
-    if (disconnectClientFromManager) {
-	if (processedInputBuffersCount == 0 && processedOutputBuffersCount == 0) {
-	    [manager removeClient: self];
-	    [self setManager: nil];
-	    [self freeBufferMem];
-	    [self didFinishStreaming];
-	    [outputBufferLock lockWhenCondition: OB_isInit];
-	    [outputBufferLock unlockWithCondition: OB_notInit]; // declare the output buffer uninitialised in case it is re-welcomed.
-	    disconnectClientFromManager = FALSE;
-#if SNDSTREAMCLIENT_DEBUG
-	    NSLog(@"[%@] disconnected from manager\n", clientName);
-#endif
-	}
-    }
-#if SNDSTREAMCLIENT_DEBUG
-    NSLog(@"[%@] Input: %@ Output: %@\n", clientName, inputQueue, outputQueue);
-#endif
+    // NSLog(@"[%@] checking disconnectClientFromManager %d.\n", clientName, disconnectClientFromManager);
 
-    return self;
+    if (disconnectClientFromManager) {
+	[self disconnectFromManager];
+	return NO;
+    }
+    else {
+#if SNDSTREAMCLIENT_DEBUG
+	NSLog(@"[%@] Input: %@ Output: %@\n", clientName, inputQueue, outputQueue);
+#endif
+	return YES;
+    }
 }
 
 #ifdef SET_THREAD_PRIORITY
@@ -597,7 +610,6 @@ static void inline setThreadPriority()
 - (void) processingThread
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-    NSAutoreleasePool *innerPool;
 
     [self retain]; // Increase the retain count to avoid NSAutoreleasePool removing this while it's playing.
 
@@ -607,31 +619,34 @@ static void inline setThreadPriority()
 #endif
     active = TRUE;
     disconnectClientFromManager = FALSE;
-#if SNDSTREAMCLIENT_DEBUG                  
-    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
+    [[NSThread currentThread] setName: clientName]; // Just for debugging.
+#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG                  
+    NSLog(@"SYNTH THREAD: (%@) starting processing thread\n", [NSThread currentThread]);
 #endif
     while (active) {
-	innerPool = [NSAutoreleasePool new];
+	NSAutoreleasePool *innerPool = [NSAutoreleasePool new];
+	
 	if (generatesOutput) {
 	    synthOutputBuffer = [[[outputQueue popNextPendingBuffer] retain] zero];
         }
         if (needsInput) {
 	    synthInputBuffer = [[inputQueue popNextPendingBuffer] retain];
         }
-#if SNDSTREAMCLIENT_DEBUG
+#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
         NSLog(@"[%@] SYNTH THREAD: preparing to processBuffers\n", clientName);
 #endif
         [synthThreadLock lock];
-#if SNDSTREAMCLIENT_DEBUG
+#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
         NSLog(@"[%@] SYNTH THREAD: ... LOCKED\n", clientName);
 #endif
         {
 	    NSAutoreleasePool *innerPool2 = [NSAutoreleasePool new];
+	    
 	    // processBuffers in the sub-class should fill or modify synthOutputBuffer and/or retrieve synthInputBuffer.
 	    [self processBuffers];
 	    [innerPool2 release];
         }
-#if SNDSTREAMCLIENT_DEBUG
+#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
         NSLog(@"[%@] SYNTH THREAD: ... done processBuffers\n", clientName);
 #endif
         if (synthOutputBuffer != nil) {
@@ -653,7 +668,7 @@ static void inline setThreadPriority()
 
         [synthThreadLock unlock];
 
-#if SNDSTREAMCLIENT_DEBUG
+#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
         NSLog(@"[%@] SYNTH THREAD: ... UNLOCKED\n", clientName);
 #endif
 
@@ -666,8 +681,8 @@ static void inline setThreadPriority()
     disconnectClientFromManager = TRUE;
     [self autorelease]; // Reduce the retain count now the thread is finishing.
     [localPool release];
-#if SNDSTREAMCLIENT_DEBUG
-    NSLog(@"[%@] SndStreamClient: processing thread stopped\n", clientName);
+#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
+    NSLog(@"SYNTH THREAD: (%@) processing thread ended\n", [NSThread currentThread]);
 #endif
     [NSThread exit];
 }
@@ -743,7 +758,7 @@ static void inline setThreadPriority()
 // synthOutputBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioBuffer*) synthOutputBuffer
+- (SndAudioBuffer *) synthOutputBuffer
 {
   return [[synthOutputBuffer retain] autorelease];
 }
@@ -752,7 +767,7 @@ static void inline setThreadPriority()
 // synthInputBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioBuffer*) synthInputBuffer
+- (SndAudioBuffer *) synthInputBuffer
 {
   return [[synthInputBuffer retain] autorelease];
 }
@@ -766,7 +781,7 @@ static void inline setThreadPriority()
     // Need lock to make sure the synthesis thread is paused before shutting down!
     [synthThreadLock lock];
     active = FALSE;
-    [synthThreadLock unlock];    
+    [synthThreadLock unlock];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -156,22 +156,25 @@ enum {
 /*!
   @brief   Initialize the client with a buffer showing manager format and start its thread.
   
-  Each SndStreamClient instance receives welcomeClientWithBuffer:manager: message
+  Each SndStreamClient instance receives welcomeClientWithInputBuffer:outputBuffer:manager: message
   from SndStreamManager when the client is first added to the manager. The receiving
   instance is supplied the first output buffer to use. This method prepares input
   and/or output queues as needed then initiates one thread per stream client.
   The SndStreamClient method processingThread is executed by that thread.
-  @param      buff The buffer to use for output and as a prototype for I/O SndAudioBufferQueues.
-  @param      m The SndStreamManager responsible for this client.
+  @param      inputBuffer The buffer to use for as a prototype for input SndAudioBufferQueues.
+  @param      outputBuffer The buffer to use for output and as a prototype for output SndAudioBufferQueues.
+  @param      streamManager The SndStreamManager responsible for this client.
   @return     Returns self
 */
-- welcomeClientWithBuffer: (SndAudioBuffer *) buff manager: (SndStreamManager *) m;
+- welcomeClientWithInputBuffer: (SndAudioBuffer *) inputBuffer 
+		  outputBuffer: (SndAudioBuffer *) outputBuffer
+		       manager: (SndStreamManager *) streamManager;
 
 /*!
   @brief   Initiates the generation of the next buffer which will be retrieved by the
 		SndStreamMixer in the next iteration.
   
-  SndStreamMixer in the method processInBuffer:outBuffer:nowTime:
+  SndStreamMixer in it's method -processInBuffer:outBuffer:nowTime:
   iterates through all its SndStreamClients sending them the message
   startProcessingNextBufferWithInput:nowTime: after retrieving the
   SndStreamClient's outputBuffer. This method is responsible for placing
@@ -180,9 +183,9 @@ enum {
   retrieved as the next processed buffer using popNextProcessedBuffer.
   @param      inB The Input Buffer. Ignore input buffer if you don't want it.
   @param      t The current now time.
-  @return     Returns self.
+  @return     Returns YES if able to process the next buffer, NO if the client was disconnected from the SndStreamManager.
 */
-- startProcessingNextBufferWithInput: (SndAudioBuffer *) inB nowTime: (double) t;
+- (BOOL) startProcessingNextBufferWithInput: (SndAudioBuffer *) inB nowTime: (double) t;
 
 /*!
   @brief Any audio buffers which have been processed and awaiting to be retrieved by the

@@ -53,8 +53,10 @@
     BOOL            active;
     /*! bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
     BOOL            bg_active;
-    /*! format SndFormat containing stream format information. */
-    SndFormat       format;
+    /*! outputFormat SndFormat containing stream format information for output. */
+    SndFormat       outputFormat;
+    /*! inputFormat SndFormat containing stream format information for input. */
+    SndFormat       inputFormat;    
     /*! nowTime Manager's conception of time, in seconds. */
     double          nowTime;
     /*! bg_sem Semaphore to the background thread to start/stop streaming. */
@@ -236,18 +238,7 @@
                       output: (SndAudioBuffer *) outB;
 
 /*!
-  @brief   Sets the format to be used during streaming
-  
-  Do not call this method - it is called as part of the start-streaming
-  process. The stream format used is the native format coming up from 
-  the devices below.
-  @param      newFormat A SndFormat structure.
-  @return     Returns self.
-*/
-- setFormat: (SndFormat) newFormat;
-
-/*!
-  @brief Returns the format to be used during streaming.
+  @brief Returns the output format to be used during streaming.
   @return   Returns a SndFormat structure.
  */
 - (SndFormat) format;

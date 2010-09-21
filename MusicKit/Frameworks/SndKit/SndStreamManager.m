@@ -75,7 +75,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	    defaultStreamManager = [[SndStreamManager alloc] init];  // create our default SndStreamManager on default input and output devices.
 	}
 	if([defaults boolForKey: @"SndShowDriverSelected"]) {
-            NSLog(@"SndStreamManager +initialise: default driver selected is %@\n", defaultStreamManager);
+            NSLog(@"SndStreamManager +initialise: driver selected for default stream manager is %@\n", defaultStreamManager);
         }
 	if([defaults boolForKey: @"SndShowSpeakerConfiguration"]) {
 	    const char **speakerNames = SNDSpeakerConfiguration();
@@ -141,9 +141,11 @@ static SndStreamManager *defaultStreamManager = nil;
     bg_active     = FALSE;
     nowTime       = 0.0;
     bDelegateMessagingEnabled = FALSE;
-    format = [Snd nativeFormat];
+    outputFormat = [Snd nativeFormat];
+    inputFormat = [Snd nativeInputFormat];
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
-	NSLog(@"Native format of streaming audio buffer: %@\n", SndFormatDescription(format));
+	NSLog(@"Native format of streaming audio buffer output: (%@) input: (%@)\n", 
+	      SndFormatDescription(outputFormat), SndFormatDescription(inputFormat));
     
     /* might as well set up the delegate messaging thread now too */
     
@@ -227,14 +229,13 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ (%sactive) input: %@ output: %@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
+    return [NSString stringWithFormat: @"%@ (%sactive) input: %@ (%@) output: %@ (%@)",
 	    [super description],
 	    [self isActive] ? "" : "in",
 	    [self assignedDriverNameForOutput: NO],
+	    SndFormatDescription(inputFormat),
 	    [self assignedDriverNameForOutput: YES],
-	    format.sampleRate / 1000.0,
-	    format.channelCount,
-	    format.frameCount];
+	    SndFormatDescription(outputFormat)];
 }
 
 - (int) assignedDriverIndexForOutput: (BOOL) outputDevices
@@ -270,13 +271,16 @@ static SndStreamManager *defaultStreamManager = nil;
 {
     BOOL success = SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeFormat]), YES);
 
-    format = [Snd nativeFormat];
+    outputFormat = [Snd nativeFormat];
     return success;
 }
 
 - (BOOL) setInputBufferSize: (unsigned int) frames
 {
-    return SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeInputFormat]), NO);
+    BOOL success = SNDSetBufferSizeInBytes(frames * SndFrameSize([Snd nativeInputFormat]), NO);
+
+    inputFormat = [Snd nativeInputFormat];
+    return success;
 }
 
 // We only export a single method to change both input and output buffers by the same amount since
@@ -290,12 +294,12 @@ static SndStreamManager *defaultStreamManager = nil;
 
 - (long) inputBufferSize
 {
-    return SNDGetBufferSizeInBytes(NO) / SndFrameSize([Snd nativeInputFormat]);
+    return SNDGetBufferSizeInBytes(NO) / SndFrameSize(inputFormat);
 }
 
 - (long) outputBufferSize
 {
-    return SNDGetBufferSizeInBytes(YES) / SndFrameSize([Snd nativeInputFormat]);
+    return SNDGetBufferSizeInBytes(YES) / SndFrameSize(outputFormat);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +456,7 @@ static SndStreamManager *defaultStreamManager = nil;
   condition. The thread is created on this method when a stream
   is to begin, if it does not exist already.
 
-  streamStartStopThread: watches for semaphore from processing thread that it
+  streamStartStopThread: watches for a semaphore from the processing thread that it
   should be stopped. Doing it from this thread means that the playback thread
   doesn't have to stop itself, which is a particular problem on portaudio
   implementations where a pthread_join is attempted on the playback thread from
@@ -464,7 +468,7 @@ static SndStreamManager *defaultStreamManager = nil;
     
     bg_active = TRUE;
     isStopping = FALSE;
-    //[self retain]; // I presume this is to register the retain on the local autorelease pool?
+    //[self retain]; // I presume this is to register the retain on the local autorelease pool, but perhaps it's not necessary?
     
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
     NSLog(@"[SndStreamManager] streamStartStopThread - entering background streaming manager thread\n");
@@ -485,7 +489,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	}
 	else if (bg_sem == BG_stopNow) {
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
-	    NSLog(@"[SndStreamManager] streamStartStopThread -  stream stopping");
+	    NSLog(@"[SndStreamManager] streamStartStopThread - stream stopping");
 #endif
 	    active  = FALSE;
 	    nowTime = 0.0;
@@ -567,11 +571,11 @@ static SndStreamManager *defaultStreamManager = nil;
     if (active) {
 	isStopping = TRUE;
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
-	NSLog(@"[SndStreamManager] stopStreaming sending shutdown to mixer...\n");
+	NSLog(@"[SndStreamManager stopStreaming] sending shutdown to mixer...\n");
 #endif
 	[mixer finishMixing];
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
-	NSLog(@"[SndStreamManager] stopStreaming about to send shutdown to stream...\n");
+	NSLog(@"[SndStreamManager stopStreaming] about to send shutdown to stream...\n");
 #endif
 	
 	[bg_threadLock lock];
@@ -579,16 +583,21 @@ static SndStreamManager *defaultStreamManager = nil;
 	[bg_threadLock unlockWithCondition: BG_hasFlag];
 	
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
-	NSLog(@"[SndStreamManager] stopStreaming shutdown sent.\n");
+	NSLog(@"[SndStreamManager stopStreaming] shutdown sent.\n");
 #endif
 	[bg_threadLock lockWhenCondition: BG_threadStopped];
+	// We need to force disconnection of each client from the manager.
+	// If we don't, the streamStartStopThread can end before the mixer can send startProcessingNextBufferWithInput
+	// which would ultimately disconnect the client from the manager.
+	[[self clients] makeObjectsPerformSelector: @selector(disconnectFromManager)];    
+
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
-	NSLog(@"[SndStreamManager] stopStreaming streaming Thread has stopped, unlocking, mixer client count %d\n", [mixer clientCount]);
+	NSLog(@"[SndStreamManager stopStreaming] streaming thread has stopped, unlocking, mixer client count %d\n", [mixer clientCount]);
 #endif
-	[bg_threadLock unlockWithCondition: BG_threadStopped]; // unlock remaining in thread stopped state.
+	[bg_threadLock unlockWithCondition: BG_threadStopped]; // unlock, remaining in thread stopped state.
     }
     else {
-	NSLog(@"[SndStreamManager] stopStreaming - Error: stopStreaming called when not streaming!\n");
+	NSLog(@"[SndStreamManager stopStreaming] Error: stopStreaming called when not streaming!\n");
     }
 }
 
@@ -606,10 +615,12 @@ static SndStreamManager *defaultStreamManager = nil;
     BOOL alreadyRegistered = (oldClientCount == clientCount);
     
     if (!alreadyRegistered) {
-	SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
+	SndAudioBuffer *inputBufferPrototype = [SndAudioBuffer audioBufferWithFormat: inputFormat];
+	SndAudioBuffer *outputBufferPrototype = [SndAudioBuffer audioBufferWithFormat: outputFormat];
+
+	[client welcomeClientWithInputBuffer: inputBufferPrototype outputBuffer: outputBufferPrototype manager: self];
 	if (oldClientCount == 0 && !active) // There were no clients previously - better start the stream...
 	    [self startStreaming];
-	[client welcomeClientWithBuffer: buff manager: self];
     }
     return active;
 }
@@ -630,11 +641,12 @@ static SndStreamManager *defaultStreamManager = nil;
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Don't call!!! only for setting format properties for testing.
+// The stream format used is the native format coming up from the devices below.
 ////////////////////////////////////////////////////////////////////////////////
 
 - setFormat: (SndFormat) newFormat
 {
-    format = newFormat;
+    outputFormat = newFormat;
     return self;
 }
 
@@ -695,7 +707,7 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
 
 	[mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
 #if SNDSTREAMMANAGER_PROCESSING_DEBUG
-	NSLog(@"[SndStreamManager] post mixer\n");
+	NSLog(@"[SndStreamManager] after mixing\n");
 #endif
 	// NSLog(@"processStreamAtTime: mixer client count %d\n", [mixer clientCount]);
 	if ([mixer clientCount] == 0) { // Shut down the Stream if there are no clients.
@@ -736,11 +748,11 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
 - (double) nowTime         { return nowTime; }
 - (SndStreamMixer*) mixer  { return mixer;   }
 - (BOOL)   isActive        { return active;  }
-- (double) samplingRate    { return format.sampleRate; }
+- (double) samplingRate    { return outputFormat.sampleRate; }
 
 - (SndFormat) format
 {
-    return format;
+    return outputFormat;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

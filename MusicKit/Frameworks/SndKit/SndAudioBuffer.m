@@ -293,7 +293,7 @@
     float sampleMin, sampleMax;
     
     [self findMin: &sampleMin max: &sampleMax];
-    return [NSString stringWithFormat: @"%@ %@ (min: %.2f, max: %.2f)",
+    return [NSString stringWithFormat: @"%@ (%@) (min: %.2f, max: %.2f)",
         [super description], SndFormatDescription(format), sampleMin, sampleMax];
 }
 

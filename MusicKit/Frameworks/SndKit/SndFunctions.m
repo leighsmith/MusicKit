@@ -171,7 +171,7 @@ float SndConvertLinearToDecibels(float lin)
 
 NSString *SndFormatDescription(SndFormat format)
 {
-    return [NSString stringWithFormat: @"(frames: %li duration: %fs dataFormat: %@ samplingRate: %.2f channels: %i)",
+    return [NSString stringWithFormat: @"frames: %li duration: %fs dataFormat: %@ samplingRate: %.2fHz channels: %i",
 	format.frameCount, format.frameCount / format.sampleRate, SndFormatName(format.dataFormat, NO), format.sampleRate, format.channelCount];
 }
 

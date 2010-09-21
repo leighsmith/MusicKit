@@ -86,21 +86,20 @@
         outBuffer: (SndAudioBuffer *) outB
           nowTime: (double) t
 {
-    int clientCount, clientIndex;
+    int clientIndex;
 
     lastNowTime = nowTime;
     nowTime = t;
     [streamClientsLock lock];
 
-    clientCount = [streamClients count];
-    
 #if SNDSTREAMMIXER_DEBUG
     NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n", nowTime);
 #endif
 
     [outB zero];
 
-    for (clientIndex = 0; clientIndex < clientCount; clientIndex++) {
+    // We dynamically check the streamClients count, since it may alter when calling -startProcessingNextBufferWithInput:
+    for (clientIndex = 0; clientIndex < [streamClients count]; clientIndex++) {
 	SndStreamClient *client = [streamClients objectAtIndex: clientIndex];
 
 	if ([client generatesOutput]) {
@@ -115,6 +114,7 @@
 	    if (currentlyExposedOutputBuffer != nil) {
 #if SNDSTREAMMIXER_DEBUG
 		long framesMixed = [outB mixWithBuffer: currentlyExposedOutputBuffer];
+		
 		NSLog(@"[mixer] Mixed %ld frames from mixing buffer %p\n", framesMixed, currentlyExposedOutputBuffer);
 #else
 		[outB mixWithBuffer: currentlyExposedOutputBuffer];

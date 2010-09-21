@@ -471,7 +471,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"%@ %@",
+    return [NSString stringWithFormat: @"%@ (%@)",
         [super description], SndFormatDescription(soundFormat)];
 }
 
