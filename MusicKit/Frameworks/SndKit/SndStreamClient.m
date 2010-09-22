@@ -207,16 +207,6 @@ enum {
   return self; 
 }
 
-- setManager: (SndStreamManager *) m
-{
-    if (!active) {
-        manager = m;
-    }
-    else
-        NSLog(@"SndStreamClient -setManager: Can't setManager whilst streaming!");
-    return self;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // basic accessors
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,6 +246,21 @@ enum {
     }
     else
 	return [manager nowTime];
+}
+
+/*
+ Sets the SndStreamManager for this client.
+ 
+ Should never be called from another class, it is invoked as part of the 
+ process of a manager welcoming a client into the fray.
+ */
+- (void) setManager: (SndStreamManager *) newStreamManager
+{
+    if (!active) {
+        manager = newStreamManager; // We don't retain since it would create a cycle.
+    }
+    else
+        NSLog(@"SndStreamClient -setManager: Can't setManager whilst streaming!\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

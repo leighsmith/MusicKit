@@ -355,16 +355,6 @@ enum {
 - setNeedsInput: (BOOL) yesOrNo;
 
 /*!
-  @brief   Sets the SndStreamManager for this client.
-  
-  Should never be called explicitly, it is invoked as part of the 
-  process of a manager welcoming a client into the fray.
-  @param      m The new SndStreamManager instance.
-  @return     Returns self.
-*/
-- setManager: (SndStreamManager *) m;
-
-/*!
   @brief   Blocks calling thread until outputBuffer is available for locking.  
   
   Lock the output buffer before doing anything with it, otherwise 

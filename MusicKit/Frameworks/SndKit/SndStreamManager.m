@@ -578,23 +578,27 @@ static SndStreamManager *defaultStreamManager = nil;
 	NSLog(@"[SndStreamManager stopStreaming] about to send shutdown to stream...\n");
 #endif
 	
+	// We need to wait for disconnection of each client from the manager.
+	// If we don't, the streamStartStopThread can end before the mixer can send startProcessingNextBufferWithInput
+	// which should disconnect the client from the manager. Therefore the clients stay connected and are not 
+	// reinitialisable due to output buffer locks not being unlocked.
+	while([mixer clientCount] != 0) {
+	    [bg_threadLock lock];
+	    // NSLog(@"[SndStreamManager stopStreaming] waiting on mixer client count %d\n", [mixer clientCount]);
+	    [bg_threadLock unlock];
+	}	    
 	[bg_threadLock lock];
 	bg_sem = BG_stopNow;
 	[bg_threadLock unlockWithCondition: BG_hasFlag];
-	
+
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
 	NSLog(@"[SndStreamManager stopStreaming] shutdown sent.\n");
 #endif
 	[bg_threadLock lockWhenCondition: BG_threadStopped];
-	// We need to force disconnection of each client from the manager.
-	// If we don't, the streamStartStopThread can end before the mixer can send startProcessingNextBufferWithInput
-	// which would ultimately disconnect the client from the manager.
-	[[self clients] makeObjectsPerformSelector: @selector(disconnectFromManager)];    
-
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
 	NSLog(@"[SndStreamManager stopStreaming] streaming thread has stopped, unlocking, mixer client count %d\n", [mixer clientCount]);
-#endif
-	[bg_threadLock unlockWithCondition: BG_threadStopped]; // unlock, remaining in thread stopped state.
+#endif	    
+	[bg_threadLock unlockWithCondition: BG_threadStopped]; // unlock, remaining in thread stopped state.	    
     }
     else {
 	NSLog(@"[SndStreamManager stopStreaming] Error: stopStreaming called when not streaming!\n");
