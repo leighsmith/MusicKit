@@ -1015,12 +1015,18 @@ PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
 #if DEBUG_BUFFERSIZE
 	NSLog(@"get output buffer size outputBufferSizeInBytes = %ld\n", outputBufferSizeInBytes);
 #endif
-        // find the default output device ID in the driver list and return its index
-        outputDriverIndex = findDeviceInDriverList(outputDeviceID, TRUE);  
+        // find the default output device ID in the driver list and assign its index
+        outputDriverIndex = findDeviceInDriverList(outputDeviceID, TRUE);
+	// NSLog(@"default output driver index = %d\n", outputDriverIndex);
+
+	// find the default input device ID in the driver list and assign its index
+        inputDriverIndex = findDeviceInDriverList(inputDeviceID, FALSE);
+	// NSLog(@"default input driver index = %d\n", inputDriverIndex);
     }
     else {
         NSLog(@"SNDInit() Didn't use default device, using first\n");
-        outputDriverIndex = 0;
+	outputDriverIndex = 0;
+	inputDriverIndex = 0;
     }
 
     // if we are not using the default device, we should set the buffer size.
@@ -1075,10 +1081,12 @@ PERFORM_API BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutp
 {
     AudioDeviceID deviceId = forOutputDevices ? outputDeviceID : inputDeviceID;
     
-    if (isDeviceRunning(deviceId, forOutputDevices))
-	return FALSE;
+    if (isDeviceRunning(deviceId, forOutputDevices)) {
+	NSLog(@"SNDSetBufferSizeInBytes of %s device - error setting buffer size, already running\n", forOutputDevices ? "output" : "input", newBufferSizeInBytes);
+	// return FALSE; // We disable exiting with an error if the device is running, we can have situations where it is better to try to change and see what happens.
+    }
     if(!setBufferSize(deviceId, newBufferSizeInBytes, forOutputDevices)) {
-	NSLog(@"%s device - error setting buffer size to %d bytes\n", forOutputDevices ? "output" : "input", newBufferSizeInBytes);
+	NSLog(@"SNDSetBufferSizeInBytes of %s device - error setting buffer size to %d bytes\n", forOutputDevices ? "output" : "input", newBufferSizeInBytes);
 	return FALSE;
     }
     return TRUE;
