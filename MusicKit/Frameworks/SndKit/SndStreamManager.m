@@ -571,8 +571,10 @@ static SndStreamManager *defaultStreamManager = nil;
     if (active) {
 	isStopping = TRUE;
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
-	NSLog(@"[SndStreamManager stopStreaming] sending shutdown to mixer...\n");
+	NSLog(@"[SndStreamManager stopStreaming] sending shutdown to mixer, client count = %d...\n",
+	      [mixer clientCount]);
 #endif
+	[NSThread sleepForTimeInterval: 0.250]; // sleep for 250mS to let the clients shut down.
 	[mixer finishMixing];
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
 	NSLog(@"[SndStreamManager stopStreaming] about to send shutdown to stream...\n");
@@ -583,10 +585,12 @@ static SndStreamManager *defaultStreamManager = nil;
 	// which should disconnect the client from the manager. Therefore the clients stay connected and are not 
 	// reinitialisable due to output buffer locks not being unlocked.
 	while([mixer clientCount] != 0) {
-	    [bg_threadLock lock];
-	    // NSLog(@"[SndStreamManager stopStreaming] waiting on mixer client count %d\n", [mixer clientCount]);
+ 	    [bg_threadLock lock];
+#if SNDSTREAMMANAGER_STARTSTOP_DEBUG
+	    NSLog(@"[SndStreamManager stopStreaming] locked, waiting on mixer, client count %d\n", [mixer clientCount]);
+#endif
 	    [bg_threadLock unlock];
-	}	    
+	}
 	[bg_threadLock lock];
 	bg_sem = BG_stopNow;
 	[bg_threadLock unlockWithCondition: BG_hasFlag];
