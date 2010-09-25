@@ -23,7 +23,7 @@
   @brief Wraps an audio unit and it's signal processing behaviour.
   
   There is one AudioUnit per SndAudioUnitProcessor instance.
-  In this context it forms the Model in an MVC triumvariate with SndAudioUnitController managing
+  In this context it forms the Model in an MVC triumvirate with SndAudioUnitController managing
   the display of the Audio Units GUI and the management of parameter changes.
 */
 

@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 #define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
+#define DEBUG_BUFFERSIZE    1  // dump the check of the audio buffer size.
 #define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 #define DEBUG_CALLBACK      0  // dump vendOutputBuffersToStreamManagerIOProc info.
 #define DEBUG_IOPROCUSAGE   0  // dump the usage of AudioStreams by IOProcs.
@@ -787,13 +787,15 @@ static BOOL getAudioStreamsToVend(AudioDeviceID deviceID,
 static long getBufferSize(AudioDeviceID deviceID, BOOL forOutputDevice)
 {
     long currentBufferSizeInBytes;
-
-    /* fetch the buffer size for informational purposes */
+    int numberOfStreams = forOutputDevice ? outputNumberOfStreams : inputNumberOfStreams;
+    
+    /* fetch the buffer size per stream */
     if (!getDeviceProperty(deviceID, forOutputDevice, kAudioDevicePropertyBufferSize, &currentBufferSizeInBytes, sizeof(currentBufferSizeInBytes))) {
 	return 0;
     }
         
-    return currentBufferSizeInBytes;
+    // If the device is non-interleaved, we return the buffer size as it will be returned to the caller, i.e. always interleaved.
+    return currentBufferSizeInBytes * numberOfStreams;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -807,6 +809,9 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     OSStatus CAstatus;
     UInt32 propertySize;
     AudioObjectPropertyAddress bufferSizePropertyAddress;
+    int numberOfStreams = forOutputDevice ? outputNumberOfStreams : inputNumberOfStreams;
+    long streamBufferSizeInBytes = bufferSizeToSetInBytes / numberOfStreams;
+    long newStreamBufferSizeInBytes;
     long newBufferSizeInBytes;
 
     /* fetch the buffer size as another level of error checking. */
@@ -821,27 +826,31 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     }
 
 #if DEBUG_BUFFERSIZE // only needed for debugging
-    NSLog(@"Setting the %s buffer size to %ld bytes\n", forOutputDevice ? "output" : "input", bufferSizeToSetInBytes);
+    NSLog(@"Setting the %s stream buffer size to %ld bytes\n", forOutputDevice ? "output" : "input", streamBufferSizeInBytes);
 #endif
 
     /* set the buffer size of the device */
-    CAstatus = AudioObjectSetPropertyData(deviceID, &bufferSizePropertyAddress, 0, NULL, propertySize, &bufferSizeToSetInBytes);
+    CAstatus = AudioObjectSetPropertyData(deviceID, &bufferSizePropertyAddress, 0, NULL, propertySize, &streamBufferSizeInBytes);
     if (CAstatus) {
         NSLog(@"AudioObjectSetPropertyData (output) returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
     
     /* fetch the buffer size to check */
-    if (!getDeviceProperty(deviceID, forOutputDevice, kAudioDevicePropertyBufferSize, &newBufferSizeInBytes, sizeof(newBufferSizeInBytes))) {
+    if (!getDeviceProperty(deviceID, forOutputDevice, kAudioDevicePropertyBufferSize, &newStreamBufferSizeInBytes, sizeof(newStreamBufferSizeInBytes))) {
 	return FALSE;
     }
+    newBufferSizeInBytes = newStreamBufferSizeInBytes * numberOfStreams;
     if(forOutputDevice)
 	outputBufferSizeInBytes = newBufferSizeInBytes;
     else 
 	inputBufferSizeInBytes = newBufferSizeInBytes;
 
 #if DEBUG_BUFFERSIZE // only needed for debugging
-    NSLog(@"after setting, %s buffer size (CAstatus:%s), bufferSizeInBytes = %ld\n", forOutputDevice ? "output" : "input", getCoreAudioErrorStr(CAstatus), newBufferSizeInBytes);
+    NSLog(@"after setting, %s buffer size (CAstatus:%s), bufferSizeInBytes = %ld\n", 
+	  forOutputDevice ? "output" : "input", 
+	  getCoreAudioErrorStr(CAstatus), 
+	  newBufferSizeInBytes);
 #endif
     
     if (newBufferSizeInBytes != bufferSizeToSetInBytes) {
@@ -850,9 +859,9 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
         return FALSE;
     }
     if(forOutputDevice)
-	outputBufferSizeInFrames = outputBufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame;
+	outputBufferSizeInFrames = outputBufferSizeInBytes / (outputStreamBasicDescription.mBytesPerFrame * numberOfStreams);
     else 
-	inputBufferSizeInFrames = inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame;
+	inputBufferSizeInFrames = inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * numberOfStreams);
     
     return TRUE;
 }
@@ -890,7 +899,8 @@ static BOOL getSpeakerConfiguration(AudioDeviceID outputDeviceID)
     return TRUE;
 }
 
-static BOOL setOutputDevice(AudioDeviceID outputDeviceID, BOOL setTheBufferSize)
+// Doesn't actually change the device, just initialises our state 
+static BOOL setOutputDevice(AudioDeviceID outputDeviceID)
 {
 #if DEBUG_DESCRIPTION
     NSLog(@"OUTPUT ===========\n");
@@ -905,14 +915,6 @@ static BOOL setOutputDevice(AudioDeviceID outputDeviceID, BOOL setTheBufferSize)
         NSLog(@"setOutputDevice() - error determining basic description\n");
         return FALSE;
     }
-    if(setTheBufferSize) {
-	if(!setBufferSize(outputDeviceID, outputBufferSizeInBytes, TRUE)) {
-	    NSLog(@"setOutputDevice() - error setting buffer size\n");
-	    return FALSE;
-	}
-    }
-    else
-	outputBufferSizeInFrames = outputBufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame;
 
     if(!getSpeakerConfiguration(outputDeviceID)) {
 	NSLog(@"couldn't retrieve speaker configuration\n");
@@ -929,11 +931,15 @@ static BOOL setOutputDevice(AudioDeviceID outputDeviceID, BOOL setTheBufferSize)
 	NSLog(@"Couldn't retrieve output stream's channel configuration\n");
 	// return FALSE; // We should probably let this slide.
     }
-    
+    // retrieve and use the device buffer size.
+    outputBufferSizeInBytes = getBufferSize(outputDeviceID, TRUE);
+    outputBufferSizeInFrames = outputBufferSizeInBytes / (outputStreamBasicDescription.mBytesPerFrame * outputNumberOfStreams);
+
     return TRUE;
 }
 
-static BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
+// Doesn't actually change the device, just initialises our state 
+static BOOL setInputDevice(AudioDeviceID inputDeviceID)
 {
 #if DEBUG_DESCRIPTION
     NSLog(@"INPUT =========== inputDeviceID = %d\n", inputDeviceID);
@@ -947,14 +953,6 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
         NSLog(@"setInputDevice() - error determining basic setup\n");
         return FALSE;
     }
-    if(setTheBufferSize) {
-        if(!setBufferSize(inputDeviceID, inputBufferSizeInBytes, FALSE)) {
-            NSLog(@"setInputDevice() - error setting buffer size\n");
-            return FALSE;
-        }
-    }
-    else
-	inputBufferSizeInFrames = inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame;
 
 #if CHECK_DEVICE_RUNNING_STATUS
     if(isDeviceRunning(inputDeviceID, FALSE)) {
@@ -966,6 +964,8 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
 	NSLog(@"Couldn't retrieve input stream's channel configuration\n");
 	// return FALSE; // We should probably let this slide.
     }
+    inputBufferSizeInBytes = getBufferSize(inputDeviceID, FALSE);
+    inputBufferSizeInFrames = inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * inputNumberOfStreams);
     
     return TRUE;
 }
@@ -981,8 +981,6 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID, BOOL setTheBufferSize)
 
 PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
 {
-    BOOL settingInputBufferSize = FALSE;
-    
     if(!initialised) {
         initialised = TRUE;                   // SNDSetDriverIndex() needs to think we're initialised.
         inputLock   = [[NSLock alloc] init];
@@ -995,30 +993,21 @@ PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
         /* Get the default sound output device */
 	noError = getDeviceProperty(kAudioObjectSystemObject, TRUE, kAudioHardwarePropertyDefaultOutputDevice, &outputDeviceID, sizeof(AudioDeviceID));
 	// NSLog(@"Default output device ID %d\n", outputDeviceID);
-	
 	if(!noError) {
 	    NSLog(@"SNDInit() Output: kAudioObjectSystemObject kAudioHardwarePropertyDefaultOutputDevice returned FALSE\n");
 	    return FALSE;
 	}
-
+        // find the default output device ID in the driver list and assign its index
+        outputDriverIndex = findDeviceInDriverList(outputDeviceID, TRUE);
+	// NSLog(@"default output driver index = %d\n", outputDriverIndex);
+	
+        /* Get the default sound input device */
 	noError = getDeviceProperty(kAudioObjectSystemObject, FALSE, kAudioHardwarePropertyDefaultInputDevice, &inputDeviceID, sizeof(AudioDeviceID));
 	// NSLog(@"Default input device ID %d\n", inputDeviceID);
-
 	if(!noError) {
 	    NSLog(@"SNDInit() Input: kAudioObjectSystemObject kAudioHardwarePropertyDefaultInputDevice returned FALSE\n");
 	    return FALSE;
 	}
-	
-	// If we are using the default device, retrieve and use the standard buffer size.
-	outputBufferSizeInBytes = getBufferSize(outputDeviceID, TRUE);
-
-#if DEBUG_BUFFERSIZE
-	NSLog(@"get output buffer size outputBufferSizeInBytes = %ld\n", outputBufferSizeInBytes);
-#endif
-        // find the default output device ID in the driver list and assign its index
-        outputDriverIndex = findDeviceInDriverList(outputDeviceID, TRUE);
-	// NSLog(@"default output driver index = %d\n", outputDriverIndex);
-
 	// find the default input device ID in the driver list and assign its index
         inputDriverIndex = findDeviceInDriverList(inputDeviceID, FALSE);
 	// NSLog(@"default input driver index = %d\n", inputDriverIndex);
@@ -1027,27 +1016,38 @@ PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
         NSLog(@"SNDInit() Didn't use default device, using first\n");
 	outputDriverIndex = 0;
 	inputDriverIndex = 0;
+	outputDeviceID = deviceIDOfDriverIndex(outputDriverIndex, TRUE);
+	// if we are not using the default device, we should set the buffer size.
+	if(!setBufferSize(outputDeviceID, outputBufferSizeInBytes, TRUE)) {
+	    NSLog(@"SNDInit() - error setting output buffer size\n");
+	    return FALSE;
+	}
+	
+	inputDeviceID = deviceIDOfDriverIndex(inputDriverIndex, FALSE);
+	if(!setBufferSize(inputDeviceID, inputBufferSizeInBytes, FALSE)) {
+	    NSLog(@"SNDInit() - error setting output buffer size\n");
+	    return FALSE;
+	}	
     }
 
-    // if we are not using the default device, we should set the buffer size.
-    if(!setOutputDevice(outputDeviceID, !useDefaultDevice))
-        return FALSE;
-
-    if(!settingInputBufferSize) {
-	// If we are not setting the buffer size, then initialise our saved size from the hardware.
-	inputBufferSizeInBytes = getBufferSize(inputDeviceID, FALSE);
-#if DEBUG_BUFFERSIZE
-	NSLog(@"get input buffer size inputBufferSizeInBytes = %ld\n", inputBufferSizeInBytes);
-#endif
-    }
+    // We set the output and input devices to initialise the rest of the state.
+    if(!setOutputDevice(outputDeviceID))
+	return FALSE;
+    
     // We have a condition that can cause confusion: if a device is opened and the buffer size is set different
     // from the default, and then only the opposite direction device is changed, if we initialise the buffer 
     // size from the hardware the size will remain set and probably not matching buffer sizes. This isn't always
     // a problem, depending on the client.
     // inputBufferSize = outputBufferSize;
-    inputInit = setInputDevice(inputDeviceID, settingInputBufferSize);	
-
-    return TRUE;
+    inputInit = setInputDevice(inputDeviceID);
+    
+#if DEBUG_BUFFERSIZE
+    NSLog(@"SNDInit() outputBufferSizeInBytes = %ld, outputInterleavedChannels %d outputNumberOfStreams %d\n",
+	  outputBufferSizeInBytes, outputInterleavedChannels, outputNumberOfStreams);
+    NSLog(@"SNDInit() inputBufferSizeInBytes = %ld, inputInterleavedChannels %d inputNumberOfStreams %d\n",
+	  inputBufferSizeInBytes, inputInterleavedChannels, inputNumberOfStreams);
+#endif
+    return inputInit;
 }
 
 // Shut down what we started up in SndInit();
@@ -1127,16 +1127,17 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex, BOOL forOutputDri
 		outputDeviceID = deviceID;
 		outputDriverIndex = selectedIndex;
 		
-		if(!setOutputDevice(outputDeviceID, FALSE))
+		if(!setOutputDevice(outputDeviceID))
 		    return FALSE; // TODO this will leave the stream stopped.
 	    }
 	    else {
 		inputDeviceID = deviceID;
 		inputDriverIndex = selectedIndex;
 		
-		if(!(inputInit = setInputDevice(inputDeviceID, TRUE)))
+		if(!(inputInit = setInputDevice(inputDeviceID)))
 		    return FALSE; // TODO this will leave the stream stopped.
 	    }
+
 	    if(wasStreaming)
 		SNDStreamStart(savedStreamProcessor, streamUserData);
 	    return TRUE;

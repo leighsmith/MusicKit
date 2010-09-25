@@ -90,8 +90,7 @@
 #define COUNT_MSG_QUEUE_LENGTH 0
 
 static BOOL separateThread = NO;
-static NSTimer *timedEntry = NOTIMEDENTRY; /* Only used for DPS client mode */
-					   /* sb: now NSTimer instead of void*. Not DPS. */
+static NSTimer *timedEntry = NOTIMEDENTRY; /* sb: now NSTimer instead of void*. */
 static BOOL inPerformance = NO;   /* YES if we're currently in performance. */
 static BOOL dontHang = YES;       /* NO if we are expecting asynchronous input, e.g. MIDI or mouse */
 static BOOL isClocked = YES;      /* YES if we should stay synced up to the clock.

@@ -144,7 +144,7 @@ static SndStreamManager *defaultStreamManager = nil;
     outputFormat = [Snd nativeFormat];
     inputFormat = [Snd nativeInputFormat];
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
-	NSLog(@"Native format of streaming audio buffer output: (%@) input: (%@)\n", 
+	NSLog(@"Default native format of streaming audio buffer output: (%@) input: (%@)\n", 
 	      SndFormatDescription(outputFormat), SndFormatDescription(inputFormat));
     
     /* might as well set up the delegate messaging thread now too */
@@ -254,6 +254,10 @@ static SndStreamManager *defaultStreamManager = nil;
 //  if(wasActive)
 //	[self stopStreaming];
     success = SNDSetDriverIndex(driverIndex, forOutputDevices);
+    if(forOutputDevices)
+	outputFormat = [Snd nativeFormat];
+    else
+	inputFormat = [Snd nativeInputFormat];
 //  NSLog(@"set the driver wasActive = %d active = %d\n", wasActive, active);
 //  if(wasActive)
 //	[self startStreaming];
