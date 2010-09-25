@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 #define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE    1  // dump the check of the audio buffer size.
+#define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
 #define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 #define DEBUG_CALLBACK      0  // dump vendOutputBuffersToStreamManagerIOProc info.
 #define DEBUG_IOPROCUSAGE   0  // dump the usage of AudioStreams by IOProcs.
@@ -788,6 +788,7 @@ static long getBufferSize(AudioDeviceID deviceID, BOOL forOutputDevice)
 {
     long currentBufferSizeInBytes;
     int numberOfStreams = forOutputDevice ? outputNumberOfStreams : inputNumberOfStreams;
+    BOOL notInterleaved = (forOutputDevice && !outputInterleavedChannels) || (!forOutputDevice && !inputInterleavedChannels);
     
     /* fetch the buffer size per stream */
     if (!getDeviceProperty(deviceID, forOutputDevice, kAudioDevicePropertyBufferSize, &currentBufferSizeInBytes, sizeof(currentBufferSizeInBytes))) {
@@ -795,7 +796,9 @@ static long getBufferSize(AudioDeviceID deviceID, BOOL forOutputDevice)
     }
         
     // If the device is non-interleaved, we return the buffer size as it will be returned to the caller, i.e. always interleaved.
-    return currentBufferSizeInBytes * numberOfStreams;
+    // return currentBufferSizeInBytes * numberOfStreams;
+    // TODO this is actually not right: We should be retrieving all streams and then returning them as a fully interleaved buffer.
+    return notInterleaved ? currentBufferSizeInBytes * numberOfStreams : currentBufferSizeInBytes;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -810,7 +813,8 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     UInt32 propertySize;
     AudioObjectPropertyAddress bufferSizePropertyAddress;
     int numberOfStreams = forOutputDevice ? outputNumberOfStreams : inputNumberOfStreams;
-    long streamBufferSizeInBytes = bufferSizeToSetInBytes / numberOfStreams;
+    BOOL notInterleaved = (forOutputDevice && !outputInterleavedChannels) || (!forOutputDevice && !inputInterleavedChannels);
+    long streamBufferSizeInBytes = notInterleaved ? bufferSizeToSetInBytes / numberOfStreams : bufferSizeToSetInBytes;
     long newStreamBufferSizeInBytes;
     long newBufferSizeInBytes;
 
@@ -840,7 +844,7 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
     if (!getDeviceProperty(deviceID, forOutputDevice, kAudioDevicePropertyBufferSize, &newStreamBufferSizeInBytes, sizeof(newStreamBufferSizeInBytes))) {
 	return FALSE;
     }
-    newBufferSizeInBytes = newStreamBufferSizeInBytes * numberOfStreams;
+    newBufferSizeInBytes = notInterleaved ? newStreamBufferSizeInBytes * numberOfStreams : newStreamBufferSizeInBytes;
     if(forOutputDevice)
 	outputBufferSizeInBytes = newBufferSizeInBytes;
     else 
@@ -859,9 +863,9 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
         return FALSE;
     }
     if(forOutputDevice)
-	outputBufferSizeInFrames = outputBufferSizeInBytes / (outputStreamBasicDescription.mBytesPerFrame * numberOfStreams);
+	outputBufferSizeInFrames = outputBufferSizeInBytes / (outputStreamBasicDescription.mBytesPerFrame * (notInterleaved ? numberOfStreams : 1));
     else 
-	inputBufferSizeInFrames = inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * numberOfStreams);
+	inputBufferSizeInFrames = inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * (notInterleaved ? numberOfStreams : 1));
     
     return TRUE;
 }
@@ -933,7 +937,8 @@ static BOOL setOutputDevice(AudioDeviceID outputDeviceID)
     }
     // retrieve and use the device buffer size.
     outputBufferSizeInBytes = getBufferSize(outputDeviceID, TRUE);
-    outputBufferSizeInFrames = outputBufferSizeInBytes / (outputStreamBasicDescription.mBytesPerFrame * outputNumberOfStreams);
+    outputBufferSizeInFrames = outputInterleavedChannels ? outputBufferSizeInBytes / outputStreamBasicDescription.mBytesPerFrame :
+							   outputBufferSizeInBytes / (outputStreamBasicDescription.mBytesPerFrame * outputNumberOfStreams);
 
     return TRUE;
 }
@@ -965,8 +970,8 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID)
 	// return FALSE; // We should probably let this slide.
     }
     inputBufferSizeInBytes = getBufferSize(inputDeviceID, FALSE);
-    inputBufferSizeInFrames = inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * inputNumberOfStreams);
-    
+    inputBufferSizeInFrames = inputInterleavedChannels ? inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame :
+							 inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * inputNumberOfStreams);
     return TRUE;
 }
 
