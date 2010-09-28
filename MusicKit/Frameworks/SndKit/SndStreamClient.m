@@ -42,14 +42,17 @@
 #import "SndAudioBufferQueue.h"
 
 #define SNDSTREAMCLIENT_DEBUG 0
-#define SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG 0
+#define SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD 0
+#define SNDSTREAMCLIENT_DEBUG_DEALLOC 0
+#define SNDSTREAMCLIENT_DEBUG_CONNECTION 0
 
 // This works ok on 667Mhz G4 processors. Slower hardware should require more. YMMV. 
 #define DEFAULT_NUMBER_OF_BUFFERS 8
 
 enum {
-    SC_noData,
-    SC_hasData
+    SC_connected,
+    SC_disconnecting,
+    SC_disconnected
 };
 
 @implementation SndStreamClient
@@ -82,6 +85,9 @@ enum {
 	}
 	if (outputBufferLock == nil) {
 	    outputBufferLock = [[NSConditionLock alloc] initWithCondition: OB_notInit];
+	}
+	if (managerConnectionLock == nil) {
+	    managerConnectionLock = [[NSConditionLock alloc] initWithCondition: SC_disconnected];
 	}
 	if (processorChain == nil)
 	    processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
@@ -134,38 +140,60 @@ enum {
     return self;
 }
 
+#if SNDSTREAMCLIENT_DEBUG_DEALLOC
+- (void) release
+{
+    NSLog(@"releasing %@ (Thread %@) retain count = %d\n", clientName, [NSThread currentThread], [self retainCount]);
+    [super release];
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // dealloc
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) dealloc
 {
-#if SNDSTREAMCLIENT_DEBUG            
-      NSLog(@"[%@] dealloc: 1\n", clientName);
+#if SNDSTREAMCLIENT_DEBUG_DEALLOC
+      NSLog(@"[%@] dealloc: 1, thread %@\n", clientName, [NSThread currentThread]);
 #endif          
 
     [self freeBufferMem];
     
     [outputQueue release];
+    outputQueue = nil;
     [inputQueue  release];
+    inputQueue = nil;
 
-#if SNDSTREAMCLIENT_DEBUG            
+#if SNDSTREAMCLIENT_DEBUG_DEALLOC
       NSLog(@"[%@] dealloc: 2\n", clientName);
 #endif          
 
-    if (processorChain)
+    if (processorChain) {
         [processorChain release];
+	processorChain = nil;
+    }
         
-    if (synthThreadLock)
+    if (synthThreadLock) {
         [synthThreadLock release];    
+	synthThreadLock = nil;
+    }
         
-    if (outputBufferLock)    
+    if (outputBufferLock) {
         [outputBufferLock release];    
+	outputBufferLock = nil;
+    }
     
-#if SNDSTREAMCLIENT_DEBUG            
+    if (managerConnectionLock) {
+        [managerConnectionLock release];    
+	managerConnectionLock = nil;
+    }
+    
+#if SNDSTREAMCLIENT_DEBUG_DEALLOC
       NSLog(@"[%@] dealloc: 3\n", clientName);
 #endif          
     [clientName release];
+    clientName = nil;
 
     [super dealloc];
 }
@@ -257,7 +285,7 @@ enum {
 - (void) setManager: (SndStreamManager *) newStreamManager
 {
     if (!active) {
-        manager = newStreamManager; // We don't retain since it would create a cycle.
+        manager = newStreamManager; // We don't retain since it would create a retain cycle.
     }
     else
         NSLog(@"SndStreamClient -setManager: Can't setManager whilst streaming!\n");
@@ -298,8 +326,10 @@ enum {
             [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: outputBuffer];
         }        
         [self prepareToStreamWithBuffer: outputBuffer]; // TODO should separate by input and output buffers.
+	[managerConnectionLock lockWhenCondition: SC_disconnected];
         [self setManager: streamManager];
-        
+	[managerConnectionLock unlockWithCondition: SC_connected];
+	
         clientNowTime = [streamManager nowTime]; // reset nowTime to the manager's sense of time
 
         [NSThread detachNewThreadSelector: @selector(processingThread)
@@ -379,6 +409,9 @@ enum {
 
 - (void) disconnectFromManager
 {
+#if SNDSTREAMCLIENT_DEBUG_CONNECTION
+    NSLog(@"%@ About to disconnect from manager, retain count %d\n", self, [self retainCount]);
+#endif
     // We disconnect the client from the manager, regardless of how many buffers remain to be processed. These are discarded.
     [manager removeClient: self];
     [self setManager: nil];
@@ -386,8 +419,8 @@ enum {
     [self didFinishStreaming];
     [outputBufferLock lockWhenCondition: OB_isInit];
     [outputBufferLock unlockWithCondition: OB_notInit]; // declare the output buffer uninitialised in case it is re-welcomed.
-    disconnectClientFromManager = FALSE;
-#if SNDSTREAMCLIENT_DEBUG
+#if SNDSTREAMCLIENT_DEBUG_CONNECTION
+    NSLog(@"%@ retain count = %d\n", self, [self retainCount]);
     NSLog(@"[%@] disconnected from manager, while %d input, %d output buffers remained to process.\n", 
 	  clientName, [inputQueue processedBuffersCount], [outputQueue processedBuffersCount]);
 #endif    
@@ -470,10 +503,9 @@ enum {
 	}
     }
 
-    // NSLog(@"[%@] checking disconnectClientFromManager %d.\n", clientName, disconnectClientFromManager);
-
-    if (disconnectClientFromManager) {
+    if ([managerConnectionLock tryLockWhenCondition: SC_disconnecting]) {
 	[self disconnectFromManager];
+	[managerConnectionLock unlockWithCondition: SC_disconnected];
 	return NO;
     }
     else {
@@ -616,16 +648,16 @@ static void inline setThreadPriority()
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
 
-    [self retain]; // Increase the retain count to avoid NSAutoreleasePool removing this while it's playing.
+    //[self retain]; // Increase the retain count to avoid NSAutoreleasePool removing this while it's playing.
 
 #ifdef SET_THREAD_PRIORITY
     // It isn't actually possible to escalate the thread priority, so we do so using sched_setscheduler.
     setThreadPriority();
 #endif
-    active = TRUE;
-    disconnectClientFromManager = FALSE;
     [[NSThread currentThread] setName: clientName]; // Just for debugging.
-#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG                  
+    active = TRUE;
+    [managerConnectionLock lockWhenCondition: SC_connected];
+#if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD                  
     NSLog(@"SYNTH THREAD: (%@) starting processing thread\n", [NSThread currentThread]);
 #endif
     while (active) {
@@ -637,11 +669,11 @@ static void inline setThreadPriority()
         if (needsInput) {
 	    synthInputBuffer = [[inputQueue popNextPendingBuffer] retain];
         }
-#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
+#if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD
         NSLog(@"[%@] SYNTH THREAD: preparing to processBuffers\n", clientName);
 #endif
         [synthThreadLock lock];
-#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
+#if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD
         NSLog(@"[%@] SYNTH THREAD: ... LOCKED\n", clientName);
 #endif
         {
@@ -651,7 +683,7 @@ static void inline setThreadPriority()
 	    [self processBuffers];
 	    [innerPool2 release];
         }
-#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
+#if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD
         NSLog(@"[%@] SYNTH THREAD: ... done processBuffers\n", clientName);
 #endif
         if (synthOutputBuffer != nil) {
@@ -673,7 +705,7 @@ static void inline setThreadPriority()
 
         [synthThreadLock unlock];
 
-#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
+#if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD
         NSLog(@"[%@] SYNTH THREAD: ... UNLOCKED\n", clientName);
 #endif
 
@@ -683,13 +715,15 @@ static void inline setThreadPriority()
         }
         [innerPool release];
     }
-    disconnectClientFromManager = TRUE;
-    [self autorelease]; // Reduce the retain count now the thread is finishing.
+    [managerConnectionLock unlockWithCondition: SC_disconnecting];
+    [managerConnectionLock lockWhenCondition: SC_disconnected];
+    //[self release]; // Reduce the retain count now the thread is finishing.
     [localPool release];
-#if SNDSTREAMCLIENT_SYNTHTHREAD_DEBUG
+    [managerConnectionLock unlockWithCondition: SC_disconnected];
+#if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD
     NSLog(@"SYNTH THREAD: (%@) processing thread ended\n", [NSThread currentThread]);
 #endif
-    [NSThread exit];
+    // [NSThread exit];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

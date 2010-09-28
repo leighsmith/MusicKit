@@ -17,6 +17,7 @@
 
 #import <Foundation/Foundation.h>
 
+// Output buffer lock states (conditions).
 enum {
     OB_notInit,
     OB_isInit
@@ -105,7 +106,9 @@ enum {
     NSConditionLock *synthThreadLock;
     /*! Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
     NSConditionLock *outputBufferLock;
-
+    /*! Controls the connection and disconnection of the client from it's manager, when the client's processing thread ends. This guards against racing releasing the client. */
+    NSConditionLock *managerConnectionLock;
+    
     /*! When YES, the client is actively processing streamed audio. When NO the client thread is not running. */
     BOOL       active;
     /*! Indicates this client processes audio data received from a SndStreamMixer instance by -startProcessingNextBufferWithInput:nowTime: */
@@ -135,8 +138,6 @@ enum {
     BOOL       delegateRespondsToInputBufferSkipSelector;
     /*! A conditional speeding up delegation messaging.*/
     BOOL       delegateRespondsToDidProcessBufferSelector;
-    /*! Indicates to disconnect a client from it's manager, when the client's processing thread ends. */
-    BOOL       disconnectClientFromManager;
 }
 
 /*!

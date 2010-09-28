@@ -376,13 +376,14 @@ static SndStreamManager *defaultStreamManager = nil;
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
     id controllerProxy = nil;
 
-    // TODO eeek, why is this necessary? I presume this is to register the retain on the local autorelease pool?
+    // TODO I presume this is to register the retain on the local autorelease pool? It may not be necessary.
     // [self retain]; 
 
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
     NSLog(@"[SndStreamManager] entering delegate thread\n");
 #endif
 
+    [[NSThread currentThread] setName: @"SndStreamManager delegateMessageThread"];
     while (bgdm_sem != BGDM_threadStopped) {
 	[bgdm_threadLock lockWhenCondition: BGDM_hasFlag];
 	if (bgdm_sem == BGDM_delegateMessageReady)  {
@@ -439,7 +440,7 @@ static SndStreamManager *defaultStreamManager = nil;
 	}
 	[bgdm_threadLock unlockWithCondition: bgdm_sem];
     }
-    // [self release];  // TODO eeek, why is this necessary?
+    // [self release];  // TODO is this necessary?
     [localPool release];
     /* even if there is a new thread is created between the following two
      * statements, that would be ok -- there would temporarily be one
@@ -472,8 +473,9 @@ static SndStreamManager *defaultStreamManager = nil;
     
     bg_active = TRUE;
     isStopping = FALSE;
-    //[self retain]; // I presume this is to register the retain on the local autorelease pool, but perhaps it's not necessary?
-    
+    // [self retain]; // I presume this is to register the retain on the local autorelease pool, but perhaps it's not necessary?
+    [[NSThread currentThread] setName: @"streamStartStopThread"]; // Just for debugging.
+
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
     NSLog(@"[SndStreamManager] streamStartStopThread - entering background streaming manager thread\n");
 #endif
@@ -524,7 +526,7 @@ static SndStreamManager *defaultStreamManager = nil;
     }
     bg_active = FALSE;
     [bg_threadLock unlockWithCondition: BG_threadStopped];
-    //[self release];
+    // [self release];
     [localPool release];
     
 #if SNDSTREAMMANAGER_STARTSTOP_DEBUG
@@ -684,8 +686,9 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
     NSLog(@"[SndStreamManager] --> processAudio bufferTime = %lf, streamInputBuffer = %p, streamInputBuffer->streamData = %p\n", 
 	  bufferTime, streamInputBuffer, streamInputBuffer->streamData);
     // NSLog(@"[SndStreamManager] --> processAudio outB = %@\n", outB);
+    [[NSThread currentThread] setName: @"SndStreamManager processAudio"]; // Just for debugging.
 #endif
-    
+
     [(SndStreamManager *) manager processStreamAtTime: bufferTime input: inB output: outB];
     [outB fillSNDStreamBuffer: streamOutputBuffer];
 
