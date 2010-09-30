@@ -32,7 +32,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define SNDAUDIOPROCRECORDER_DEBUG 0
-#define BUFFER_DURATION 2.0 // Number of seconds the buffer will hold before writing to disk
+
+#define QUEUE_DURATION 2.0 // Number of seconds the buffer queue will hold before writing to disk
+#define NUMBER_OF_BUFFERS 32 // Default number of buffers, duration is NUMBER_OF_BUFFERS * [buffer durationInSeconds].
 
 @implementation SndAudioProcessorRecorder
 
@@ -53,7 +55,8 @@
 	// We create a queue to use to save buffers which are to be written to disk by a separate thread.
 	// This is to keep the time spent in processReplacingInputBuffer:outputBuffer: to a minimum avoiding
 	// file writing latencies interrupting the stream processing.
-	writingQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 32] retain];
+	// TODO either calculate from the number of buffers or from the queue duration.
+	writingQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: NUMBER_OF_BUFFERS] retain];
 	writingFileHandle = nil;
     }
     return self;
@@ -124,17 +127,20 @@
 - (BOOL) prepareToRecordForDuration: (double) recordDuration
 {
     if (!isRecording) {
-	SndFormat managerFormat = [[SndStreamManager defaultStreamManager] format];
+	// TODO this makes the assumption that the audio processor chain has already been
+	// initialised and processing and has a usable format to return.
+	SndFormat chainFormat = [[self audioProcessorChain] format];
 	SndAudioBuffer *recordBuffer;
 	
 	// TODO could use recordDuration to determine number of buffers the queue should have
-	// int numberOfBuffers = recordDuration * managerFormat.sampleRate / managerFormat.frameCount;
+	// int numberOfBuffers = recordDuration * chainFormat.sampleRate / chainFormat.frameCount;
 	
-	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: managerFormat] retain];
+	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: chainFormat] retain];
 #if SNDAUDIOPROCRECORDER_DEBUG  
 	NSLog(@"recordBuffer %@, should use %d buffers\n", recordBuffer, numberOfBuffers);
 #endif
 	[writingQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: recordBuffer];
+	// [writingQueue setBufferCount: numberOfBuffers];
 	[recordBuffer release];
 	return YES;
     }
@@ -297,7 +303,7 @@
     fileFormat.sampleRate = samplingRate;
     
     // Create a temporary buffer of 1 second duration for buffering before writing to disk.
-    if (![self prepareToRecordForDuration: BUFFER_DURATION]) {
+    if (![self prepareToRecordForDuration: QUEUE_DURATION]) {
 	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordForDuration.\n");
     }
     else if (![self setUpRecordFile: filename withFormat: fileFormat]) {

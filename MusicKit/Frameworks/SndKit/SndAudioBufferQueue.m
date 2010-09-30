@@ -233,6 +233,22 @@ enum {
     return numBuffers;
 }
 
+// For redefining the queue dynamically.
+// TODO should enable to copy over the existing buffers.
+- (void) setBufferCount: (int) newNumberOfBuffers
+{
+    [pendingBuffersLock lock];
+    [pendingBuffers release];
+    pendingBuffers = [[NSMutableArray arrayWithCapacity: newNumberOfBuffers] retain];
+    [pendingBuffersLock unlockWithCondition: ABQ_noData];
+
+    [processedBuffersLock lock];
+    [processedBuffers release];
+    processedBuffers = [[NSMutableArray arrayWithCapacity: newNumberOfBuffers] retain];
+    [processedBuffersLock unlockWithCondition: ABQ_noData];
+    numBuffers = newNumberOfBuffers;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // freeBuffers
 ////////////////////////////////////////////////////////////////////////////////

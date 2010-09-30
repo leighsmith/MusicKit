@@ -98,23 +98,21 @@
 // addAudioProcessor
 ////////////////////////////////////////////////////////////////////////////////
 
-- addAudioProcessor: (SndAudioProcessor *) proc
+- (void) addAudioProcessor: (SndAudioProcessor *) proc
 {
     [audioProcessorArray addObject: proc];
     [proc setAudioProcessorChain: self];
-    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // insertAudioProcessor:atIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- insertAudioProcessor: (SndAudioProcessor *) proc
-	       atIndex: (int) processorIndex
+- (void) insertAudioProcessor: (SndAudioProcessor *) proc
+		      atIndex: (int) processorIndex
 {
     [audioProcessorArray insertObject: proc atIndex: processorIndex];
     [proc setAudioProcessorChain: self];
-    return self;    
 }
 
 
@@ -122,20 +120,20 @@
 // removeAudioProcessor
 ////////////////////////////////////////////////////////////////////////////////
 
-- removeAudioProcessor: (SndAudioProcessor *) proc
+- (void) removeAudioProcessor: (SndAudioProcessor *) proc
 {
+    //NSLog(@"Removing %@\n", proc);
     [audioProcessorArray removeObject: proc];
-    return self;
+    //NSLog(@"Removed it\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // removeAudioProcessorAtIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- removeAudioProcessorAtIndex: (int) index
+- (void) removeAudioProcessorAtIndex: (int) index
 {
     [audioProcessorArray removeObjectAtIndex: index];
-    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,10 +149,14 @@
 // removeAllProcessors
 ////////////////////////////////////////////////////////////////////////////////
 
-- removeAllProcessors
+- (void) removeAllProcessors
 {
     [audioProcessorArray removeAllObjects];
-    return self;
+}
+
+- (SndFormat) format
+{
+    return [processorOutputBuffer format];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +225,7 @@
 // processorArray
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSArray*) processorArray
+- (NSArray *) processorArray
 {
     return audioProcessorArray;
 }
@@ -234,7 +236,7 @@
 
 - (BOOL) isBypassingFX
 {
-  return bypassProcessing;
+    return bypassProcessing;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -243,7 +245,7 @@
 
 - (void) setBypassProcessors: (BOOL) b
 {
-  bypassProcessing = b;
+    bypassProcessing = b;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +254,7 @@
 
 - (SndAudioFader *) postFader
 {
-  return [[(id)postFader retain] autorelease];
+    return [[(id)postFader retain] autorelease];
 }
 
 - (void) setPostFader: (SndAudioFader *) newPostFader

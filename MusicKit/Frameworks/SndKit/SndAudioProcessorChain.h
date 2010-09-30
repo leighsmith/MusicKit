@@ -55,13 +55,14 @@
 */
 - init;
 
+// TODO perhaps add initWithFormat: (SndFormat) newFormat to prime the chain format?
+
 /*!
   @brief   Adds an SndAudioProcessor to the end of the effects chain.
   
   @param      proc The SndAudioProcessor to be added to the effects chain
-  @return     Self
 */
-- addAudioProcessor: (SndAudioProcessor*) proc;
+- (void) addAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
   @brief   Inserts an SndAudioProcessor into the effects chain at a specific location.
@@ -69,27 +70,23 @@
   
   @param      newAudioProcessor The SndAudioProcessor to be added to the effects chain.
   @param      processorIndex The location in the effects chain to insert the SndAudioProcessor.
-  @return     Returns self
 */
-- insertAudioProcessor: (SndAudioProcessor *) newAudioProcessor
-	       atIndex: (int) processorIndex;
+- (void) insertAudioProcessor: (SndAudioProcessor *) newAudioProcessor
+		      atIndex: (int) processorIndex;
 
 /*!
   @brief   Removes an SndAudioProcesor from the effects chain
   
-  
   @param      proc SndAudioProcessor to be removed from the effects chain
-  @return     self
 */
-- removeAudioProcessor: (SndAudioProcessor*) proc;
+- (void) removeAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
   @brief   Removes an SndAudioProcesor from the effects chain
   
   @param      index The base 0 entry in effects chain to remove.
-  @return     self
  */
-- removeAudioProcessorAtIndex: (int) index;
+- (void) removeAudioProcessorAtIndex: (int) index;
 
 /*!
   @brief   Get the processor at a certain index.
@@ -101,9 +98,8 @@
 
 /*!
   @brief   Removes all processors from the processor chain.
-  @return     Returns self.
 */
-- removeAllProcessors;
+- (void) removeAllProcessors;
 
 /*!
   @brief   Process the provided audio buffer with the chain of SndAudioProcessors.
@@ -142,7 +138,7 @@
 /*!
   @brief Sets the audio processor chain to be bypassed or not.
   
-  @param      bypassEffectsChain Bypass flag - YES to enable bypassing the effects processing.
+  @param bypassEffectsChain Bypass flag - YES to enable bypassing the effects processing.
 */
 - (void) setBypassProcessors: (BOOL) bypassEffectsChain;
 
@@ -163,12 +159,19 @@
 - (void) setPostFader: (SndAudioFader *) newPostFader;
 
 /*!
-  @brief   Returns the time the buffer is to be played.
+  @brief  Returns the time the buffer is to be played.
   
-  @return     Returns a double Indicating the play start time of the buffer being
-  processed in seconds.
+  @return Returns a double Indicating the play start time of the buffer being processed in seconds.
 */
 - (double) nowTime;
+
+/*!
+  @brief Returns the format of the buffers being processed by the SndAudioProcessors in the SndAudioProcessorChain.
+
+  Note currently the format will only be meaningful after the receiver has begun processing buffers.
+  @return Returns a SndFormat structure.
+ */
+- (SndFormat) format;
 
 @end
 
