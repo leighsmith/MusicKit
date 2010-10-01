@@ -119,13 +119,11 @@
 	SndAudioBuffer *outB;
 	[self lockOutputBuffer];
 	outB = [self outputBuffer]; 
-	r    = [recorder prepareToRecordForDuration: time
-				     withDataFormat: [outB dataFormat]
-				       channelCount: [outB channelCount]
-				       samplingRate: [outB samplingRate]];
+	r    = [recorder prepareToRecordWithQueueDuration: time
+						 ofFormat: [outB format]];
 	[self unlockOutputBuffer];
 #else
-	r    = [recorder prepareToRecordForDuration: time];
+	r = [recorder prepareToRecordWithQueueDuration: time];
 #endif
     }
     return r;

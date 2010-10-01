@@ -121,21 +121,21 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// prepareToRecordForDuration:
+// prepareToRecordWithQueueDuration:ofFormat:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) prepareToRecordForDuration: (double) recordDuration
+- (BOOL) prepareToRecordWithQueueDuration: (double) durationOfBuffering
+				 ofFormat: (SndFormat) queueFormat
 {
     if (!isRecording) {
 	// TODO this makes the assumption that the audio processor chain has already been
 	// initialised and processing and has a usable format to return.
-	SndFormat chainFormat = [[self audioProcessorChain] format];
 	SndAudioBuffer *recordBuffer;
 	
-	// TODO could use recordDuration to determine number of buffers the queue should have
-	// int numberOfBuffers = recordDuration * chainFormat.sampleRate / chainFormat.frameCount;
+	// TODO should use durationOfBuffering to determine number of buffers the queue should have
+	// int numberOfBuffers = durationOfBuffering * queueFormat.sampleRate / queueFormat.frameCount;
 	
-	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: chainFormat] retain];
+	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: queueFormat] retain];
 #if SNDAUDIOPROCRECORDER_DEBUG  
 	NSLog(@"recordBuffer %@, should use %d buffers\n", recordBuffer, numberOfBuffers);
 #endif
@@ -145,9 +145,18 @@
 	return YES;
     }
 #if SNDAUDIOPROCRECORDER_DEBUG  
-    NSLog(@"SndAudioProcessorRecorder -prepareToRecordForDuration - Error: already recording!\n");
+    NSLog(@"SndAudioProcessorRecorder -prepareToRecordWithQueueDuration:ofFormat: - Error: already recording!\n");
 #endif
     return NO;
+}
+
+- (BOOL) prepareToRecordWithQueueDuration: (double) durationOfBuffering
+{
+    // TODO this makes the assumption that the audio processor chain has already been
+    // initialised and processing and has a usable format to return.
+    SndFormat chainFormat = [[self audioProcessorChain] format];
+
+    return [self prepareToRecordWithQueueDuration: durationOfBuffering ofFormat: chainFormat];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -302,9 +311,9 @@
     fileFormat.channelCount = channelCount;
     fileFormat.sampleRate = samplingRate;
     
-    // Create a temporary buffer of 1 second duration for buffering before writing to disk.
-    if (![self prepareToRecordForDuration: QUEUE_DURATION]) {
-	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordForDuration.\n");
+    // Create a temporary buffer of QUEUE_DURATION seconds duration for buffering before writing to disk.
+    if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION]) {
+	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration.\n");
     }
     else if (![self setUpRecordFile: filename withFormat: fileFormat]) {
 	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in setUpRecordFile\n");

@@ -20,6 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define SNDSTREAMMIXER_DEBUG 0
+#define SNDSTREAMMIXER_DEBUG_PROCESSBUFFER 0
 
 @implementation SndStreamMixer
 
@@ -92,7 +93,7 @@
     nowTime = t;
     [streamClientsLock lock];
 
-#if SNDSTREAMMIXER_DEBUG
+#if SNDSTREAMMIXER_DEBUG_PROCESSBUFFER
     NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n", nowTime);
 #endif
 
@@ -126,6 +127,7 @@
 	    [client unlockOutputBuffer];
 	}
 	
+	// NSLog(@"about to start processing next buffer for client %@\n", [client clientName]);
 	// Each client should have a second synthing buffer, and a synth thread.
 	[client startProcessingNextBufferWithInput: inB nowTime: nowTime];	
     }

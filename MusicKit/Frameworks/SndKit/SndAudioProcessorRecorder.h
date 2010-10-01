@@ -86,16 +86,26 @@ enum SndRecorderParam {
 }
 
 /*!
+  @brief Prepares the buffer used for recording.
+  @param durationOfBuffering The duration (in seconds) of the buffering that should used in recording.
+  @return Return YES if able to prepare correctly, NO if there was a problem.
+*/
+- (BOOL) prepareToRecordWithQueueDuration: (double) durationOfBuffering;
+
+/*!
+  @brief Prepares the buffer used for recording.
+  @param durationOfBuffering The duration (in seconds) of the buffering that should used in recording.
+  @param queueFormat The format of the buffers to be expected.
+  @return Return YES if able to prepare correctly, NO if there was a problem.
+*/
+- (BOOL) prepareToRecordWithQueueDuration: (double) durationOfBuffering
+				 ofFormat: (SndFormat) queueFormat;
+
+/*!
   @brief   Returns whether the receiver is currently recording.
   @return  YES if currently recording.
 */
 - (BOOL) isRecording;
-
-/*!
-  @brief Sets the buffer used for recording.
-  @return YES if able to prepare correctly, NO if there was a problem.
- */
-- (BOOL) prepareToRecordForDuration: (double) recordDuration;
 
 /*!
   @brief YES if recording started ok.
@@ -143,8 +153,12 @@ enum SndRecorderParam {
 
 /*!
   @brief Sets the linear amplitude the stream must rise above before recording begins.
+
+  To record all samples, including leading silence, set a negative amplitude, i.e -1.0.
+  @param amplitudeThreshold The amplitude is a normalised value between silence (0.0) 
+  and maximum dynamic range (1.0).
 */
-- (void) setStartTriggerThreshold: (float) f;
+- (void) setStartTriggerThreshold: (float) amplitudeThreshold;
 
 - copyWithZone: (NSZone *) zone;
 

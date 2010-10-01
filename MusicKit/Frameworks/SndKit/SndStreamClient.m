@@ -433,7 +433,7 @@ enum {
 // If input isn't needed, just ignore it (eg, if this isn't an FX unit).
 //
 // Note we do NOT adjust the client time here, as this is called by the
-// possibly behind-the-synthesis-time-front manager.
+// possibly behind-the-synthesis-time-front SndStreamManager.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) managerTime
@@ -503,6 +503,7 @@ enum {
 	}
     }
 
+    // NSLog(@"testing the lock for SC_disconnecting state\n");
     if ([managerConnectionLock tryLockWhenCondition: SC_disconnecting]) {
 	[self disconnectFromManager];
 	[managerConnectionLock unlockWithCondition: SC_disconnected];
@@ -641,7 +642,7 @@ static void inline setThreadPriority()
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
-// processingThread
+// processingThread - the synthesis thread. Actual synthesis is done by subclasses in -processBuffers
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) processingThread
