@@ -365,12 +365,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // mixWithBuffer:fromStart:toEnd:canExpand
-//
-// Note: This is only an interim proof of concept implementation and doesn't
-// manage all combinations of formats. Instead of adding extra formats, this
-// code should be changed to use a version of SndConvertSound() that
-// has been suitably modified to accept presupplied buffers.
-//  (SndConvertSound() currently allocates them itself).
 ////////////////////////////////////////////////////////////////////////////////
 
 - (long) mixWithBuffer: (SndAudioBuffer *) buff
@@ -401,7 +395,7 @@
     lengthInSamples = frameCount * buffNumChannels; // number of samples for all channels.
 
     // Check whether we need to convert formats of buffers
-    if (buffDataFormat != selfDataFormat) {
+    if (![self hasSameFormatAsBuffer: buff]) {
 	if (canExpandInPlace && selfNumChannels == buffNumChannels) { /* expand in place - saves allocating new buffer/data object */
 	    SndChangeSampleType([buff bytes], [buff bytes], buffDataFormat, selfDataFormat, lengthInSamples);
 	    in = [buff bytes];
@@ -411,10 +405,11 @@
 						     channelCount: selfNumChannels
 						     samplingRate: [self samplingRate]] retain];
 	    in = [convertedBuffer bytes];
+	    // NSLog(@"buff = %@, convertedBuffer = %@\n", buff, convertedBuffer);
 	}
 #if SNDAUDIOBUFFER_DEBUG_MIXING
-	NSLog(@"mixWithBuffer: had to convert from format %d, channels %d to format %d, channels = %d\n", 
-            buffDataFormat, buffNumChannels, selfDataFormat, selfNumChannels);
+	NSLog(@"mixWithBuffer: had to convert from format %@, channels %d to format %@, channels = %d\n", 
+            SndFormatName(buffDataFormat, NO), buffNumChannels, SndFormatName(selfDataFormat, NO), selfNumChannels);
 #endif
     }
     else {
