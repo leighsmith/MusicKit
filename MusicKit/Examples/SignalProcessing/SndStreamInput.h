@@ -24,38 +24,10 @@
   @abstract Copies input streams to output streams, allowing audio processing to be applied to it.
   @discussion
     
-So should there be multiple StreamRecorders attached to the input stream, or a single SndStreamInput which mixes
-multiple instances of a subclass providing audio processor chains. Probably unnecessary.
-
-
     ATTENTION!!!
       Presumptions made to get this class off the ground quickly: The incoming
       stream is made of 32-bit floats, and the saved file is made of 16-bit ints!
 
-    BIG TODO: general purpose format stuff 
-
-      Using the client currently requires an explicit connect-to-stream manager
-      call:
- 
-    SndStreamRecorder *rec = [SndStreamRecorder inputStreamPlayer];
-    [[SndStreamManager defaultStreamManager] addClient: rec];
- 
-    then either...
- 
-    [rec startReceivingInputToFile: "/tmp/incomingsound.snd"];
-    (time passes...)
-    [rec stopReceivingInput];
- 
-    or:
-
-    [rec prepareForReceivingInput: 10.5]; //record for 10.5 seonds
-    [rec startReceivingInput];
-
-    TODO:
-    - Obviously the big todo here is to get general purpose stream and file
-      or format conversion happening!
-    - Also, output is currently buffered + written (in stream-to-file mode) in
-      44100-frame chunks; this should be more general.
 */
 @interface SndStreamInput : SndStreamClient 
 {
@@ -69,9 +41,9 @@ multiple instances of a subclass providing audio processor chains. Probably unne
 }
 
 /*! 
-    @method     init
-    @abstract   Initialises the receiver.
-    @result     Returns the initialised instance.
+  @method     init
+  @abstract   Initialises the receiver.
+  @result     Returns the initialised instance.
 */
 - init;
 

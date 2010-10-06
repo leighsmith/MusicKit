@@ -1,8 +1,12 @@
 //
 //  $Id$
 //
-//  Created by Leigh Smith on Jul 9th 2010.
-//  Copyright (c) 2010 Oz Music Code LLC. All rights reserved.
+//  Created by: Leigh Smith <leigh@leighsmith.com> on Jul 9th 2010.
+//  Copyright (c) 2010, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 
 #import "SndStreamInput.h"
@@ -17,6 +21,7 @@
 {
     self = [super init];
     if (self != nil) {
+	latencyIndex = 0;
 	[self setNeedsInput: YES];
 	[self setGeneratesOutput: YES];
 	[self setClientName: @"SndStreamInput"];
@@ -91,26 +96,55 @@
 {  
     // TODO handle when the output stream is not the same as the input stream.
     SndAudioBuffer *currentSynthOutputBuffer = [self synthOutputBuffer];
-    unsigned long outputBufferLength = [currentSynthOutputBuffer lengthInSampleFrames];
+    NSRange outputBufferRange = { 0, [currentSynthOutputBuffer lengthInSampleFrames] };
     
     if (isReceivingInput) { // only playback input if recording is enabled.
 	SndAudioBuffer *inBuffer = [self synthInputBuffer];
 	NSRange wholeInputBufferRange = { 0, [inBuffer lengthInSampleFrames] };
 
-	// NSLog(@"output buffer length %ld input buffer length %ld\n", outputBufferLength, [inBuffer lengthInSampleFrames]);
-	
+	// NSLog(@"output buffer length %ld input buffer length %ld\n", outputBufferRange.length, wholeInputBufferRange.length);
+
 	// This probably is only ever true once, at the first run, not on each record.
 	if ([self synthesisTime] == 0) {
 	    if (delegate != nil && [delegate respondsToSelector: @selector(didStartReceivingInput)]) 
 		[delegate didStartReceivingInput: self];
 	}
-	// Just make the output buffer be the input buffer
-	// this will then process with the clients audio processor chain.
-	[currentSynthOutputBuffer copyFromBuffer: inBuffer intoRange: wholeInputBufferRange];
-	//[currentSynthOutputBuffer mixWithBuffer: inBuffer
-	//			      fromStart: 0
-	//				  toEnd: outputBufferLength
-	//			      canExpand: YES];
+	if(wholeInputBufferRange.length > outputBufferRange.length) {
+	    NSRange fillFromInputRange = { 0, outputBufferRange.length }; // Should be an ivar
+	    
+	    while(NSMaxRange(fillFromInputRange) < wholeInputBufferRange.length) {
+		// TODO copy a partial length buffer into synthOutputBuffer
+		[currentSynthOutputBuffer copyFromBuffer: inBuffer 
+					  intoFrameRange: outputBufferRange
+					  fromFrameRange: fillFromInputRange];
+		// Since we will be rotating the buffer, process it with the audioProcessorChain.
+		[processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
+		// Retire the synth output buffer so we can work on the next.
+		[self rotateSynthOutputBuffer];
+		currentSynthOutputBuffer = [self synthOutputBuffer];
+		fillFromInputRange.location += fillFromInputRange.length;
+		fillFromInputRange.length = MIN(fillFromInputRange.length - 0, outputBufferRange.length);
+	    }
+	}
+	else if(wholeInputBufferRange.length < outputBufferRange.length) {
+	    NSLog(@"output buffer larger than input buffer"); 
+	    // TODO copy a partial length buffer into synthOutputBuffer
+	    [currentSynthOutputBuffer copyFromBuffer: inBuffer 
+				      intoFrameRange: outputBufferRange // change to be a portion of the buffer.
+				      fromFrameRange: wholeInputBufferRange];
+	}
+	else {
+	    // Just make the output buffer be the input buffer
+	    // this will then process with the clients audio processor chain.
+	    if([inBuffer hasSameFormatAsBuffer: currentSynthOutputBuffer]) 
+		[currentSynthOutputBuffer copyFromBuffer: inBuffer intoRange: outputBufferRange];
+	    else {
+		[currentSynthOutputBuffer mixWithBuffer: inBuffer
+					      fromStart: 0
+						  toEnd: outputBufferRange.length
+					      canExpand: YES];
+	    }
+	}
 	// NSLog(@"inBuffer %@\n", inBuffer);
 	// NSLog(@"input queue %@\n", inputQueue);
 	// NSLog(@"currentSynthOutputBuffer %@\n", currentSynthOutputBuffer);
