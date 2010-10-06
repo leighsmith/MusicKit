@@ -26,11 +26,13 @@
 extern "C" {
 #endif
 
-#define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
-#define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
-#define DEBUG_CALLBACK      0  // dump vendOutputBuffersToStreamManagerIOProc info.
-#define DEBUG_IOPROCUSAGE   0  // dump the usage of AudioStreams by IOProcs.
+#define DEBUG_DESCRIPTION     0  // dump the description of the audio device.
+#define DEBUG_BUFFERSIZE      0  // dump the check of the audio buffer size.
+#define DEBUG_STARTSTOPMSG    0  // dump stream start/stop msgs
+#define DEBUG_OUTPUT_CALLBACK 0  // dump vendOutputBuffersToStreamManagerIOProc info for output.
+#define DEBUG_INPUT_CALLBACK  0  // dump vendOutputBuffersToStreamManagerIOProc info for input.
+#define DEBUG_IOPROCUSAGE     0  // dump the usage of AudioStreams by IOProcs.
+
 #define CHECK_DEVICE_RUNNING_STATUS 0   
 
 #define DEFAULT_BUFFERSIZE 16384  // The buffer size we want if we are not guessing the device.
@@ -197,7 +199,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
     SNDStreamBuffer inStream, outStream;
     unsigned int interleavedStreamIndex;
 
-#if DEBUG_CALLBACK
+#if DEBUG_OUTPUT_CALLBACK
     NSLog(@"[vendOutputBuffersToStreamManagerIOProc] starting vend...\n");
 #endif
 
@@ -208,7 +210,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
         firstSampleTime = AudioConvertHostTimeToNanos(inOutputTime->mHostTime);
     }
 
-#if DEBUG_CALLBACK
+#if DEBUG_OUTPUT_CALLBACK
     NSLog(@"[vendOutputBuffersToStreamManagerIOProc] number of buffers = input %ld, output %ld\n",
 	    inInputData->mNumberBuffers, outOutputData->mNumberBuffers);    
 #endif
@@ -219,21 +221,6 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	NSLog(@"[vendOutputBuffersToStreamManagerIOProc] assertion outOutputData->mNumberBuffers (%ld) == outputStreamIOProcUsage->mNumberStreams (%ld) failed\n",
 	    outOutputData->mNumberBuffers, outputStreamIOProcUsage->mNumberStreams);
     }
-
-    // to tell the client the format it is receiving.
-    if (inputInit) {
-	// inInputData->mNumberBuffers can differ from inputStreamIOProcUsage->mNumberStreams, since the former describes outDevices
-	// number of input buffers, whereas the latter can describe the streams on potentially a different device.
-	// TODO The whole approach of using two vending IOProcs which initiate one stream manager callback needs rethinking.
-	if(inputStreamIOProcUsage->mStreamIsOn[0] &&
-	   inInputData->mBuffers[0].mData != NULL) {
-	    // TODO we only copy across the first buffers data to inputBuffer.
-	    memcpy(inputBuffer, inInputData->mBuffers[0].mData, inputBufferSizeInBytes);
-	}
-	else {
-	    inStream.streamData = NULL;
-	}
-    }
     
     // TODO we need to determine if the streams are themselves interleaved and if so iterate through them.
     interleavedStreamIndex = 0; 
@@ -243,7 +230,6 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	SNDStreamNativeFormat(&outStream, TRUE);
 	SNDStreamNativeFormat(&inStream, FALSE);
 	
-	inStream.streamData = inputBuffer;
 	if(outputStreamIOProcUsage->mStreamIsOn[interleavedStreamIndex]) {
 	    if(outputInterleavedChannels)
 		outStream.streamData = outOutputData->mBuffers[interleavedStreamIndex].mData;
@@ -258,12 +244,19 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	
 	[inputLock lock];
 	
+	// to tell the client the format it is receiving.
 	if (!inputInit) {
-#if DEBUG_CALLBACK
+#if DEBUG_OUTPUT_CALLBACK
 	    NSLog(@"[vendOutputBuffersToStreamManagerIOProc] no input initialized, zeroing input buffer...\n");
 #endif		
 	    memset(inputBuffer, 0, inputBufferSizeInBytes);
 	}
+	//NSLog(@"inStream dataFormat %d frameCount %ld channelCount %d sampleRate %lf\n",
+	//      inStream.dataFormat, inStream.frameCount, inStream.channelCount, inStream.sampleRate);
+	      
+	// TODO The whole approach of using two vending IOProcs which initiate one stream manager callback may need 
+	// rethinking so that there are two stream manager callbacks.
+	inStream.streamData = inputStreamIOProcUsage->mStreamIsOn[0] ? inputBuffer : NULL;
 	
 	// hand over the stream buffers to the processor/stream manager.
 	// the output time goes out as a relative time in seconds, with a datum from the
@@ -275,8 +268,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	
 	[inputLock unlock];
 	
-	// If the hardware only accepts non-interleaved buffers, deinterleave the SndStreamManager buffer
-	// into each output stream.
+	// If the hardware only accepts non-interleaved buffers, deinterleave the SndStreamManager generated buffer into each output stream.
 	if(!outputInterleavedChannels) {
 	    unsigned int bufferIndex;
 
@@ -285,7 +277,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 		    memset(outOutputData->mBuffers[bufferIndex].mData, 0, outputBufferSizeInBytes);
 		}
 		else {
-#if DEBUG_CALLBACK
+#if DEBUG_OUTPUT_CALLBACK
 		    NSLog(@"[vendOutputBuffersToStreamManagerIOProc] deinterleaving to buffer[%d] channels = %d\n", bufferIndex, outOutputData->mBuffers[bufferIndex].mNumberChannels);
 		    NSLog(@"[vendOutputBuffersToStreamManagerIOProc] stream is on = %d\n", outputStreamIOProcUsage->mStreamIsOn[bufferIndex]);
 #endif	    		
@@ -305,7 +297,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 	}
     }
     
-#if DEBUG_CALLBACK
+#if DEBUG_OUTPUT_CALLBACK
     NSLog(@"[vendOutputBuffersToStreamManagerIOProc] ending vend...\n");
 #endif
 
@@ -323,7 +315,7 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                           void *inClientData)
 {
     
-#if DEBUG_CALLBACK    
+#if DEBUG_INPUT_CALLBACK    
     NSLog(@"[SND] starting vendInputBuffersToStreamManagerIOProc...\n");
 #endif
     if (inputBuffer) {
@@ -342,12 +334,13 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         for(bufferIndex = 0; bufferIndex < inInputData->mNumberBuffers; bufferIndex++) {
             if (inputInit && inInputData->mNumberBuffers != 0) {
 		[inputLock lock];
-		if(!inputInterleavedChannels) {
-#if DEBUG_CALLBACK
-		    NSLog(@"[SND] vend input interleaving to buffer[%d] channels = %d\n", bufferIndex, inInputData->mBuffers[bufferIndex].mNumberChannels);
-		    NSLog(@"[SND] stream is on = %d\n", inputStreamIOProcUsage->mStreamIsOn[bufferIndex]);
-		    NSLog(@"channel count = %d, frame count = %d\n", inStream.channelCount, inStream.frameCount);
+#if DEBUG_INPUT_CALLBACK
+		NSLog(@"[SND] vend input interleaving %d to buffer[%d] channels = %d\n", 
+		      inputInterleavedChannels, bufferIndex, inInputData->mBuffers[bufferIndex].mNumberChannels);
+		NSLog(@"[SND] stream is on = %d\n", inputStreamIOProcUsage->mStreamIsOn[bufferIndex]);
+		NSLog(@"[SND] channel count = %d, frame count = %d\n", inStream.channelCount, inStream.frameCount);
 #endif	    		
+		if(!inputInterleavedChannels) {
 		    interleaveChannel(bufferIndex, 
 				      inStream.channelCount, 
 				      (float *) inInputData->mBuffers[bufferIndex].mData,
@@ -355,9 +348,10 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
 				      inStream.frameCount);
 		}
 		else {
-		    memcpy(inputBuffer, inInputData->mBuffers[bufferIndex].mData, inputBufferSizeInBytes);
 #if 0 // silence the input to see if the data input is being starved by locking.
 		    memset(inputBuffer, 0, inputBufferSizeInBytes);
+#else
+		    memcpy(inputBuffer, inInputData->mBuffers[bufferIndex].mData, inputBufferSizeInBytes);
 #endif
 		}
 		[inputLock unlock];
@@ -365,12 +359,12 @@ static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         }
     }
     else {
-#if DEBUG_CALLBACK    
+#if DEBUG_INPUT_CALLBACK    
         NSLog(@"[SND] input vendInputBuffersToStreamManagerIOProc: input buffer is NULL!\n");
 #endif
     }
     
-#if DEBUG_CALLBACK    
+#if DEBUG_INPUT_CALLBACK    
     NSLog(@"[SND] ending vendInputBuffersToStreamManagerIOProc...\n");
 #endif
     
@@ -412,11 +406,12 @@ static BOOL getStreamChannelConfiguration(AudioDeviceID deviceID, BOOL forOutput
     }
     
 #if DEBUG_DESCRIPTION
-    NSLog(@"%s streamConfigurationList number of streams %d\n", forOutputDevice ? "output" : "input", streamConfigurationList->mNumberBuffers);
+    NSLog(@"%d: %s streamConfigurationList number of streams %d\n", deviceID, forOutputDevice ? "output" : "input", streamConfigurationList->mNumberBuffers);
 #endif
     for(streamIndex = 0; streamIndex < streamConfigurationList->mNumberBuffers; streamIndex++) {
 #if DEBUG_DESCRIPTION
-	NSLog(@"stream %d holds %d channels\n", streamIndex, streamConfigurationList->mBuffers[streamIndex].mNumberChannels);
+	NSLog(@"stream %d holds %d channels, buffer size %d bytes\n", streamIndex, 
+	      streamConfigurationList->mBuffers[streamIndex].mNumberChannels, streamConfigurationList->mBuffers[streamIndex].mDataByteSize);
 #endif
 	if(streamConfigurationList->mBuffers[streamIndex].mNumberChannels > maxChannelsPerStream)
 	    maxChannelsPerStream = streamConfigurationList->mBuffers[streamIndex].mNumberChannels;
@@ -424,7 +419,7 @@ static BOOL getStreamChannelConfiguration(AudioDeviceID deviceID, BOOL forOutput
     
     *interleavedChannels = streamConfigurationList->mNumberBuffers <= 1 || maxChannelsPerStream > 1;
 #if DEBUG_DESCRIPTION
-    NSLog(@"interleavedChannels = %d\n", *interleavedChannels);
+    NSLog(@"interleavedChannels = %d, maxChannelsPerStream = %d\n", *interleavedChannels, maxChannelsPerStream);
 #endif
     free(streamConfigurationList);
     
@@ -443,7 +438,9 @@ static BOOL getStreamChannelConfiguration(AudioDeviceID deviceID, BOOL forOutput
 	return FALSE;
     }
     *numberOfStreams = propertySize / sizeof(AudioStreamID);
-    
+#if DEBUG_DESCRIPTION
+    NSLog(@"number of streams = %d\n", *numberOfStreams);
+#endif    
     CAstatus = AudioObjectGetPropertyData(deviceID, &devicePropertyAddress, 0, NULL, &propertySize, streamIdentifiers);
     if (CAstatus) {
 	NSLog(@"kAudioDevicePropertyStreams returned %s\n", getCoreAudioErrorStr(CAstatus));
@@ -972,6 +969,8 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID)
     inputBufferSizeInBytes = getBufferSize(inputDeviceID, FALSE);
     inputBufferSizeInFrames = inputInterleavedChannels ? inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame :
 							 inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * inputNumberOfStreams);
+
+    NSLog(@"setInputDevice() inputBufferSizeInBytes %d inputBufferSizeInFrames %d\n", inputBufferSizeInBytes, inputBufferSizeInFrames);
     return TRUE;
 }
 
@@ -1202,13 +1201,13 @@ PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat, BOOL isOut
     // if it's a non-interleaved set of mono CoreAudio streams, count those, otherwise count the number of interleaved channels per frame.
     streamFormat->channelCount = interleavedChannels ? streamBasicDescription->mChannelsPerFrame : numberOfStreams;
 
-    // Rather than setting the stream data explicitly NULL, we just leave it.
+    // Rather than setting the stream data explicitly NULL, we just leave it so the buffer can be reused.
     // streamFormat->streamData = NULL;
 #if 0
-    NSLog(@"SNDStreamNativeFormat for %s frameCount %d sampleRate %lf channels %d\n", 
+    NSLog(@"SNDStreamNativeFormat for %s frameCount %d sampleRate %lf channels %d interleaved %d streams %d\n", 
 	  isOutputStream ? "output" : "input",
-	  streamFormat->frameCount, streamFormat->sampleRate, streamFormat->channelCount);
-#endif   
+	  streamFormat->frameCount, streamFormat->sampleRate, streamFormat->channelCount, interleavedChannels, numberOfStreams);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
