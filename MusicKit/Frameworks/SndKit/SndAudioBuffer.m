@@ -392,7 +392,8 @@
     }
 
     frameCount = MIN(incomingLengthInSampleFrames, endFrame - startFrame);
-    lengthInSamples = frameCount * buffNumChannels; // number of samples for all channels.
+    // number of samples for all channels. This remains correct following buffer conversion, if necessary.
+    lengthInSamples = frameCount * selfNumChannels; 
 
     // Check whether we need to convert formats of buffers
     if (![self hasSameFormatAsBuffer: buff]) {
@@ -418,7 +419,7 @@
 	NSLog(@"mixWithBuffer: no conversion mixing.");
 #endif
     }
-    out += startFrame * buffNumChannels;
+    out += startFrame * selfNumChannels; // use selfNumChannels since we may have changed the channel count.
     // TODO we need a universal vector mixer for all destination sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
 #if defined(__APPLE_CC__) // || (__i386__ && __GNUC__)
@@ -433,7 +434,10 @@
 	}
 #endif
 #if SNDAUDIOBUFFER_DEBUG_MIXING
-	NSLog(@"out[0]: %f   lengthInSamples:%li\n", out[0], lengthInSamples);
+	NSLog(@"out[0]: %f in[0]: %f lengthInSamples:%li\n", out[0], in[0], lengthInSamples);
+	NSLog(@"out[1]: %f in[1]: %f lengthInSamples:%li\n", out[1], in[1], lengthInSamples);
+	NSLog(@"out[2]: %f in[2]: %f lengthInSamples:%li\n", out[2], in[2], lengthInSamples);
+	NSLog(@"out[3]: %f in[3]: %f lengthInSamples:%li\n", out[3], in[3], lengthInSamples);
 #endif
     }
     else {

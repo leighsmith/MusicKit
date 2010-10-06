@@ -36,6 +36,9 @@ OF THIS AGREEMENT.
 #import "SndAudioBuffer.h"
 
 #define DEBUG_CHANNEL_MAPPING 0  // 1 to dump out the channel map.
+#define FIXED_CHANNEL_MAPPING 1  // 1 to not do malloc's during channel mapping.
+#define MAX_CHANNEL_MAPPING 32   // Maximum number of channels expected in an audio stream if not doing mallocs.
+
 #define CONVERTFORMATERR(from, to) NSLog(@"Sorry, unsupported conversion from format %@ to %@.\n", SndFormatName((from), NO), SndFormatName((to), NO));
 
 
@@ -227,11 +230,20 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
                     frameCount: (unsigned int) numberOfSampleFrames
                     dataFormat: (SndSampleFormat) theDataFormat
 {
-    short *channelMap; // TODO either pass this in or use the speakerConfiguration ivar.
+#if FIXED_CHANNEL_MAPPING  // If malloc proves to be too processor heavy 
+    short channelMap[MAX_CHANNEL_MAPPING];
 
+    if(newNumChannels > MAX_CHANNEL_MAPPING)
+	NSLog(@"Channels to be mixed %d exceeds maximum number of channels %d", newNumChannels, MAX_CHANNEL_MAPPING);
+#else
+    short *channelMap; // TODO either pass this in or use the speakerConfiguration ivar.
+#endif
+    
     if ((newNumChannels > oldNumChannels) && (newNumChannels % oldNumChannels == 0)) {
+#if !FIXED_CHANNEL_MAPPING
         if((channelMap = malloc(newNumChannels * sizeof(short))) == NULL)
             NSLog(@"Unable to malloc channelMap for %d channels\n", newNumChannels);
+#endif
 
 	if(oldNumChannels == 2 && newNumChannels > 2) {
             unsigned int chanIndex;
@@ -251,7 +263,6 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
         else {
             unsigned int oldChanIndex, newChanIndex;
             unsigned int newChansPerOld = newNumChannels / oldNumChannels; /* multiply factor - number of new channels per original one */
-            // short channelMap[128]; // If malloc proves to be too processor heavy 
 
             // create the channelMap duplicating the old index every newChansPerOld 
             for (oldChanIndex = 0; oldChanIndex < oldNumChannels; oldChanIndex++)
@@ -259,13 +270,17 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
                     channelMap[oldChanIndex * newChansPerOld + newChanIndex] = oldChanIndex;
         }
         SndChannelMap(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, format.dataFormat, channelMap);
+#if !FIXED_CHANNEL_MAPPING
         free(channelMap);
+#endif
     }
     else if ((oldNumChannels > newNumChannels) && (oldNumChannels % newNumChannels == 0)) {
 	unsigned int oldChanIndex, newChanIndex;
 
+#if !FIXED_CHANNEL_MAPPING
 	if((channelMap = malloc(oldNumChannels * sizeof(short))) == NULL)
             NSLog(@"Unable to malloc channelMap for %d channels\n", oldNumChannels);
+#endif
 
 	// NSLog(@"channel mapping old %d to new %d\n", oldNumChannels, newNumChannels);
 	// create the channelMap duplicating the new indexes in sequence
@@ -279,7 +294,9 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
 		
 	/* channel reduction will have already been done by resample routine if the sampling rate was changed */
 	SndChannelDecrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, theDataFormat, channelMap);
+#if !FIXED_CHANNEL_MAPPING
         free(channelMap);
+#endif
     }
     else {
 	NSLog(@"Can't convert from %d to %d channels (output must be %s of input)\n", oldNumChannels, newNumChannels,
@@ -827,12 +844,9 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 	[newBuffer copyDataFromBuffer: self];
     }
     
-    if([newBuffer convertToSampleFormat: toDataFormat] == nil)
-	return nil;
-
     // newBuffer is already autoreleased but we retain and autorelease it again so that the current thread
-    // will autorelease it.
-    return [[newBuffer retain] autorelease];
+    // will autorelease it. Convert the data format if necessary.
+    return [[[newBuffer convertToSampleFormat: toDataFormat] retain] autorelease];
 }
 
 @end

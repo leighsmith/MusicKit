@@ -315,7 +315,7 @@
     }
     else {
 	if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION ofFormat: fileFormat]) {
-	    NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration.\n");
+	    NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration:ofFormat:.\n");
 	}
     }
     
