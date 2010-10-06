@@ -135,7 +135,8 @@
 
 - (BOOL) startRecordingToFile: (NSString*) filename
 {
-    BOOL b = FALSE;
+    BOOL beganRecordingOK = FALSE;
+    SndFormat inputFormat = [Snd nativeInputFormat];
     
     if (![self isActive]) {
 	[[SndStreamManager defaultStreamManager] addClient: self]; // hmm, should probably wait here for the welcomeClient to occur.
@@ -146,12 +147,14 @@
     if ([recorder isRecording]) 
 	NSLog(@"SndStreamRecorder -startRecordingToFile: Error: already recording!\n");
     
-    b = [recorder startRecordingToFile: filename
-			withDataFormat: [exposedOutputBuffer dataFormat]
-			  channelCount: [exposedOutputBuffer channelCount]
-			  samplingRate: [exposedOutputBuffer samplingRate]];
+    beganRecordingOK = [recorder startRecordingToFile: filename
+				       withDataFormat: inputFormat.dataFormat
+					 channelCount: inputFormat.channelCount
+					 samplingRate: inputFormat.sampleRate];
+//    beganRecordingOK = [recorder startRecordingToFile: filename
+//					   withFormat: inputFormat];
     
-    return b;
+    return beganRecordingOK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

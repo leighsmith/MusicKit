@@ -119,19 +119,34 @@ enum SndRecorderParam {
   This method is not normally called, use startRecordingToFile:withDataFormat:channelCount:samplingRate:
   instead. This method, setUpRecordFile:withFormat: is defined here in order to facilitate overriding
   in subclasses.
+  @param filename path of the file to record to.
+  @param format The format of the file. The frameCount field is ignored.
   @return Returns YES if able to open the file for writing, NO if there is an error.
  */
 - (BOOL) setUpRecordFile: (NSString *) filename
 	      withFormat: (SndFormat) format;
 
 /*!
-  @brief   Begins recording to the given format in the given format.
-  @return  Returns YES if able to open the file for writing, NO if there is an error.
+  @brief Begins recording to the named file in the given format.
+  @param filename path of the file to record to.
+  @param dataFormat The data format specifying dynamic range.
+  @param channelCount The number of channels to write.
+  @param sampleRate The sample rate in Hz.
+  @return Returns YES if able to open the file for writing, NO if there is an error.
 */
 - (BOOL) startRecordingToFile: (NSString*) filename
                withDataFormat: (SndSampleFormat) dataFormat
-                 channelCount: (int) chanChan
-                 samplingRate: (int) samRate;
+                 channelCount: (int) chanCount
+                 samplingRate: (int) sampleRate;
+
+/*!
+  @brief Begins recording to the named file in the given format.
+  @param filename path of the file to record to.
+  @param newFileFormat The file format to write to. The field frameCount should match the audio processor chain.
+  @return Returns YES if able to open the file for writing, NO if there is an error.
+ */ 
+- (BOOL) startRecordingToFile: (NSString *) filename
+		   withFormat: (SndFormat) newFileFormat;
 
 /*!
   @brief Stops the recording of the stream to file.

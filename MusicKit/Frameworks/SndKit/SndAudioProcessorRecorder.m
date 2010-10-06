@@ -303,19 +303,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) startRecordingToFile: (NSString *) filename
-               withDataFormat: (SndSampleFormat) dataFormat
-                 channelCount: (int) channelCount
-                 samplingRate: (int) samplingRate
+		   withFormat: (SndFormat) newFileFormat
 {
-    fileFormat.dataFormat = dataFormat;
-    fileFormat.channelCount = channelCount;
-    fileFormat.sampleRate = samplingRate;
+    fileFormat = newFileFormat;
     
     // Create a temporary buffer of QUEUE_DURATION seconds duration for buffering before writing to disk.
-    if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION]) {
-	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration.\n");
+    if (audioProcessorChain) {
+	if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION]) {
+	    NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration.\n");
+	}
     }
-    else if (![self setUpRecordFile: filename withFormat: fileFormat]) {
+    else {
+	if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION ofFormat: fileFormat]) {
+	    NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration.\n");
+	}
+    }
+    
+    if (![self setUpRecordFile: filename withFormat: fileFormat]) {
 	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in setUpRecordFile\n");
     }
     else {
@@ -326,6 +330,19 @@
 	[NSThread detachNewThreadSelector: @selector(fileWritingThread:) toTarget: self withObject: nil];
     }
     return isRecording;
+}
+
+- (BOOL) startRecordingToFile: (NSString *) filename
+               withDataFormat: (SndSampleFormat) dataFormat
+                 channelCount: (int) channelCount
+                 samplingRate: (int) samplingRate
+{
+    fileFormat.dataFormat = dataFormat;
+    fileFormat.channelCount = channelCount;
+    fileFormat.sampleRate = samplingRate;
+    fileFormat.frameCount = [Snd nativeInputFormat].frameCount;
+    
+    return [self startRecordingToFile: filename withFormat: fileFormat];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
