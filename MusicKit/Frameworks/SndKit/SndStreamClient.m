@@ -12,9 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __MINGW32__
- #define SET_THREAD_PRIORITY 1
-#endif
+#define SET_THREAD_PRIORITY 1
 
 #if SET_THREAD_PRIORITY
  #if defined(__APPLE__)
@@ -30,8 +28,8 @@
 
 #include <sys/time.h>
 
-#ifndef __MINGW32__
 #import <pthread.h>
+#ifndef __MINGW32__
 #include <sys/resource.h>
 #endif
 
@@ -605,20 +603,19 @@ static void inline setThreadPriority()
 #endif
 #else  
 /* POSIX_RT, must be running with root privileges, or with ulimit -r hard and soft limits set greater than zero. */
-#ifndef __MINGW32__
     struct sched_param sp;
     int theError;
 
 #if 0 // Debugging scheduling.
     int policy;
-    struct rlimit rl;
+    //struct rlimit rl;
 
     policy = sched_getscheduler(0); // policy of current process.
     NSLog(@"SndStreamClient setThreadPriority(): current process scheduler policy %d\n", policy);
-    if(getrlimit(RLIMIT_RTPRIO, &rl) != 0)
-	NSLog(@"SndStreamClient setThreadPriority(): Unable to getrlimit\n");
-    else
-	NSLog(@"SndStreamClient setThreadPriority(): rlimit cur %d max %d\n", rl.rlim_cur, rl.rlim_max);
+//    if(getrlimit(RLIMIT_RTPRIO, &rl) != 0)
+//	NSLog(@"SndStreamClient setThreadPriority(): Unable to getrlimit\n");
+//    else
+//	NSLog(@"SndStreamClient setThreadPriority(): rlimit cur %d max %d\n", rl.rlim_cur, rl.rlim_max);
 #endif
 
     memset(&sp, 0, sizeof(struct sched_param));
@@ -631,11 +628,6 @@ static void inline setThreadPriority()
 	NSLog(@"SndStreamClient setThreadPriority(): Can't set thread real-time priority, errno = %d, max priority = %d\n",
 	      errno, sp.sched_priority);
     }
-#else
-    int theError = sched_setscheduler(getpid(), SCHED_RR);
-    if (theError == -1)
-	NSLog(@"SndStreamClient setThreadPriority(): Can't set real-time priority, errno = %d, min priority = %d\n", errno,sp.sched_priority);
-#endif
 #endif
 }
 
