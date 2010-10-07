@@ -17,8 +17,9 @@
 
 CONFIG = OTHER_CFLAGS="@DEFS@ @CFLAGS@ @CPPFLAGS@" LDFLAGS="@LDFLAGS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 PROJECT = -project MusicKit.xcodeproj
-SDK = # -sdk macosx10.6 # disabled for now
-XCODEBUILD = xcodebuild $(PROJECT) $(SDK)
+SDK = # -sdk macosx10.5 # defaults to highest SDK on system.
+XCODECONFIG = # -configuration "Legacy Deployment" # defaults to Development
+XCODEBUILD = xcodebuild $(PROJECT) $(SDK) $(XCODECONFIG)
 # This allows overriding this on the command line.
 DSTROOT=/
 # This is for building with "sudo make install" and allows overriding on the command line.
