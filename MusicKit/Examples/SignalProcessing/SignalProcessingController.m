@@ -16,7 +16,9 @@
 
 #import "SignalProcessingController.h"
 
-#define CHANGE_BUFFER_SIZES 1  // Monkey with the buffer sizes.
+#define CHANGE_BUFFER_SIZES 0  // Monkey with the buffer sizes.
+#define BUFFER_SIZE 128
+#define MUST_REINITIALISE_STREAMMANAGER 1
 
 @implementation SignalProcessingController
 
@@ -48,7 +50,7 @@
     unsigned int clientIndex;
     
     // On Windows ASIO devices the output must match the input so we enforce the same device for input & output.
-#if 0
+#if defined(WIN32)
     NSArray *driverNames = [SndStreamManager driverNamesForOutput: YES];
     unsigned int newDriverIndex = ([streamManager assignedDriverIndexForOutput: YES] + 1) % [driverNames count];
     
@@ -58,8 +60,7 @@
     inputDriverName = [soundInputDriverPopup titleOfSelectedItem];
     outputDriverName = [soundOutputDriverPopup titleOfSelectedItem];
 #endif
-    // TODO Must Restart sound to use the new driver.
-#if 1
+#if MUST_REINITIALISE_STREAMMANAGER
     NSLog(@"Selected for input %@ & output %@", inputDriverName, outputDriverName);
     [streamManager stopStreaming]; // shut the streaming down early to release the device.
     NSLog(@"stream manager retain count %d\n", [streamManager retainCount]);
@@ -79,14 +80,16 @@
     
 #else
     // In the perfect world where we don't have to initialise afresh the SndStreamManager.
+    if(![streamManager setAssignedDriverToIndex: [soundInputDriverPopup indexOfSelectedItem] forOutput: NO])
+	NSLog(@"Unable to set input device to %@", [soundInputDriverPopup titleOfSelectedItem]);
     if(![streamManager setAssignedDriverToIndex: [soundOutputDriverPopup indexOfSelectedItem] forOutput: YES])
 	NSLog(@"Unable to set output device to %@", [soundOutputDriverPopup titleOfSelectedItem]);
 #endif
     NSLog(@"Assigned input %@ output %@",
 	  [streamManager assignedDriverNameForOutput: NO], [streamManager assignedDriverNameForOutput: YES]);
     NSLog(@"stream manager = %@", streamManager);
-    NSLog(@"input buffer size in frames %d", [streamManager inputBufferSize]);
-    NSLog(@"output buffer size in frames %d", [streamManager outputBufferSize]);
+    NSLog(@"input buffer size in frames %d\n", [streamManager inputBufferSize]);
+    NSLog(@"output buffer size in frames %d\n", [streamManager outputBufferSize]);
 }
 
 - (IBAction) setVolume: (id) sender
@@ -124,6 +127,7 @@
 {
     if(![soundToPlay isPlaying]) {
 	SndPerformance *performance = [soundToPlay play];
+	NSLog(@"We're playing now: %@", performance);
     }
     else {
 	[soundToPlay stop];
@@ -183,8 +187,8 @@
 	streamManager = [[SndStreamManager defaultStreamManager] retain];
 
 	// TODO compute new output buffer size based on original size together with minimum
-	// size = 128/44100 seconds.
-	bufferSize = 128;
+	// size = BUFFER_SIZE/44100 seconds.
+	bufferSize = BUFFER_SIZE;
 #if CHANGE_BUFFER_SIZES
 	if(![streamManager setHardwareBufferSize: bufferSize])
 	    NSLog(@"Unable to set the input and output buffer sizes to %d\n", bufferSize);
@@ -197,13 +201,14 @@
 
 	NSLog(@"streamManager is %@", streamManager);
 	NSLog(@"input buffer size in frames %d", [streamManager inputBufferSize]);
-	NSLog(@"output buffer size in frames %d", [streamManager outputBufferSize]);
+	NSLog(@"output buffer size in frames %d", [streamManager outputBufferSize]);	
     }
     return self;
 }
 
 - (void) dealloc
 {
+    NSLog(@"Deallocating SignalProcessingController");
     [streamManager release];
     streamManager = nil;
     if(soundToPlay != nil) {
@@ -226,6 +231,11 @@
 - (void) applicationDidFinishLaunching: (id) sender
 {
     [self displaySoundPreferences];
+}
+
+- (void)applicationWillTerminate: (NSNotification *) aNotification
+{
+    [streamManager stopStreaming]; // explicitly stop the streaming so the threads halt.    
 }
 
 @end
