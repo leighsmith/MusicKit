@@ -213,6 +213,10 @@
 		D80151DF0FA64D47002FB882 /* MKUnitGenerators.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D85F905207DFE7D4009DC57B /* MKUnitGenerators.framework */; };
 		D80151E00FA64D47002FB882 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
 		D80151E10FA64D47002FB882 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
+		D80246EE122EB60F00A88264 /* SndVSTController.h in Headers */ = {isa = PBXBuildFile; fileRef = D80246EA122EB60F00A88264 /* SndVSTController.h */; };
+		D80246EF122EB60F00A88264 /* SndVSTController.m in Sources */ = {isa = PBXBuildFile; fileRef = D80246EB122EB60F00A88264 /* SndVSTController.m */; };
+		D80246F0122EB60F00A88264 /* SndVSTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D80246EC122EB60F00A88264 /* SndVSTProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D80246F1122EB60F00A88264 /* SndVSTProcessor.mm in Sources */ = {isa = PBXBuildFile; fileRef = D80246ED122EB60F00A88264 /* SndVSTProcessor.mm */; };
 		D804E064063DB32C0098E73C /* SndPlaying.m in Sources */ = {isa = PBXBuildFile; fileRef = D804E063063DB32C0098E73C /* SndPlaying.m */; };
 		D80DA57D0764C8A20052DFAF /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D80DA57E0764C8A20052DFAF /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D82AC3B905A0F6DA00780F57 /* SndKit.framework */; };
@@ -1520,6 +1524,10 @@
 		D80151CD0FA64B77002FB882 /* playpart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playpart.m; path = Examples/playpart/playpart.m; sourceTree = "<group>"; };
 		D80151CE0FA64B77002FB882 /* playpart_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playpart_main.m; path = Examples/playpart/playpart_main.m; sourceTree = "<group>"; };
 		D80151D50FA64BAD002FB882 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = Examples/playpart/README.txt; sourceTree = "<group>"; };
+		D80246EA122EB60F00A88264 /* SndVSTController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndVSTController.h; path = Frameworks/PlatformDependent/VSTPlugins/SndVSTController.h; sourceTree = "<group>"; };
+		D80246EB122EB60F00A88264 /* SndVSTController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndVSTController.m; path = Frameworks/PlatformDependent/VSTPlugins/SndVSTController.m; sourceTree = "<group>"; };
+		D80246EC122EB60F00A88264 /* SndVSTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndVSTProcessor.h; path = Frameworks/PlatformDependent/VSTPlugins/SndVSTProcessor.h; sourceTree = "<group>"; };
+		D80246ED122EB60F00A88264 /* SndVSTProcessor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SndVSTProcessor.mm; path = Frameworks/PlatformDependent/VSTPlugins/SndVSTProcessor.mm; sourceTree = "<group>"; };
 		D804E063063DB32C0098E73C /* SndPlaying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPlaying.m; path = Frameworks/SndKit/SndPlaying.m; sourceTree = "<group>"; };
 		D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsCore.framework; path = Library/PrivateFrameworks/DevToolsCore.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsSupport.framework; path = Library/PrivateFrameworks/DevToolsSupport.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
@@ -2897,6 +2905,17 @@
 				D80151CE0FA64B77002FB882 /* playpart_main.m */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		D80246E7122EB5CC00A88264 /* VST Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				D80246EA122EB60F00A88264 /* SndVSTController.h */,
+				D80246EB122EB60F00A88264 /* SndVSTController.m */,
+				D80246EC122EB60F00A88264 /* SndVSTProcessor.h */,
+				D80246ED122EB60F00A88264 /* SndVSTProcessor.mm */,
+			);
+			name = "VST Plugins";
 			sourceTree = "<group>";
 		};
 		D80D48720B5D6523002E9A64 /* Classes */ = {
@@ -5275,6 +5294,7 @@
 				D88FE36A05A0FD100024FD88 /* Classes */,
 				D88FE35905A0FCE80024FD88 /* FreeVerb */,
 				D8A441EE10777A2C00E12376 /* AudioUnits */,
+				D80246E7122EB5CC00A88264 /* VST Plugins */,
 			);
 			name = AudioProcessors;
 			sourceTree = "<group>";
@@ -6068,6 +6088,8 @@
 				D81B13010628D9FF009058DB /* SndStretchableScroller.h in Headers */,
 				D8227E750F8B343100681ED5 /* SndReverbAllpassFilter.h in Headers */,
 				D8227E770F8B343100681ED5 /* SndReverbCombFilter.h in Headers */,
+				D80246EE122EB60F00A88264 /* SndVSTController.h in Headers */,
+				D80246F0122EB60F00A88264 /* SndVSTProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7759,6 +7781,8 @@
 				D8227E780F8B343100681ED5 /* SndReverbCombFilter.m in Sources */,
 				D8A441F610777A7300E12376 /* SndAudioUnitController.m in Sources */,
 				D8A441F810777A7300E12376 /* SndAudioUnitProcessor.m in Sources */,
+				D80246EF122EB60F00A88264 /* SndVSTController.m in Sources */,
+				D80246F1122EB60F00A88264 /* SndVSTProcessor.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14154,7 +14178,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = "$(inherited) /usr/local/include";
+				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
 			};
 			name = "Legacy Deployment";
 		};
@@ -14402,6 +14426,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
 				WARNING_CFLAGS = "-Wmost";
 			};
 			name = "Legacy Deployment";

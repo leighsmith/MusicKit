@@ -969,8 +969,6 @@ static BOOL setInputDevice(AudioDeviceID inputDeviceID)
     inputBufferSizeInBytes = getBufferSize(inputDeviceID, FALSE);
     inputBufferSizeInFrames = inputInterleavedChannels ? inputBufferSizeInBytes / inputStreamBasicDescription.mBytesPerFrame :
 							 inputBufferSizeInBytes / (inputStreamBasicDescription.mBytesPerFrame * inputNumberOfStreams);
-
-    NSLog(@"setInputDevice() inputBufferSizeInBytes %d inputBufferSizeInFrames %d\n", inputBufferSizeInBytes, inputBufferSizeInFrames);
     return TRUE;
 }
 

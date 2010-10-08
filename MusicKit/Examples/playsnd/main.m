@@ -25,7 +25,7 @@
 #define V_MIN  6
 #define V_PATCH 2
 
-#define USE_SNDEXPT 0
+#define USE_SNDONDISK 0
 
 static int returnCode = 0;
 
@@ -43,6 +43,16 @@ void printError(int possibleReturnCode, char *format, ...)
     
     if (returnCode == 0)
 	returnCode = possibleReturnCode;
+}
+
+void showOutputDevices(char *textOffset)
+{
+    int deviceIndex;
+    NSArray *deviceNames = [SndStreamManager driverNamesForOutput: YES];
+    
+    for(deviceIndex = 0; deviceIndex < [deviceNames count]; deviceIndex++) {
+	printf("%s\"%s\"\n", textOffset, [[deviceNames objectAtIndex: deviceIndex] UTF8String]);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +80,14 @@ void showHelp(const char *absolutePath)
            "  -S     shoutcast as MP3 stream to an icecast server running on local host\n"\
            "  -a A   shoutcast server address (either form: abc.com or 127.0.0.1)\n"\
            "  -P N   shoutcast port number\n"\
-           "  -p A   shoutcast server password\n");
+           "  -p A   shoutcast server password\n"\
+	   "  -D dev Device name for playback\n");
          /*
            " -o N  offset playback time by N samples\n"\
            " -E N  playback duration, in seconds\n"\
 	 */
+    printf("\nAvailable devices are:\n");
+    showOutputDevices("  ");
 }
 
 #if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
@@ -115,19 +128,94 @@ BOOL playsnd_close_shoutcast()
 #endif
 }
 
+int playSoundFile(NSString *soundFileName, long startTimeInSamples, long durationInSamples, 
+		  float timeOffset, float deltaTime, BOOL showInfo, BOOL displayTime, BOOL useReverb,
+		  NSString *deviceName)
+{
+    int waitCount = 0;
+    int maxWait;
+    SndPlayer *player = [SndPlayer defaultSndPlayer];
+    SndError error;
+#if USE_SNDONDISK
+    Snd *soundToPlay = [SndOnDisk new];
+#else
+    Snd *soundToPlay = [Snd new];
+#endif
+    SndStreamManager *streamManager;
+    SndPerformance *perf;
+    
+    
+    if(deviceName) {
+	streamManager = [SndStreamManager streamManagerOnDeviceForInput: nil deviceForOutput: deviceName];
+    }
+    else
+	streamManager = [SndStreamManager defaultStreamManager];
+    error = [soundToPlay readSoundfile: soundFileName];
+    if(error != SND_ERR_NONE) {
+	//printError(-2, "Can't read sound file %s\n", [fm fileSystemRepresentationWithPath: soundFileName]);
+	printError(-2, "Can't read sound file %s, error %d\n", [soundFileName UTF8String], error);
+	return -2;
+    }
+    
+#if !USE_SNDONDISK
+    [soundToPlay convertToSampleFormat: SND_FORMAT_FLOAT];
+#endif
+    if (showInfo) {
+	NSLog(@"%@", [soundToPlay description]);
+	[soundToPlay release];
+	return 0;
+    }
+    
+    if (durationInSamples == -1) {
+	durationInSamples = [soundToPlay lengthInSampleFrames];
+	maxWait = [soundToPlay duration] + 5 + timeOffset + 1;
+    }
+    else
+	maxWait = durationInSamples / [soundToPlay samplingRate] + 5 + timeOffset + 1;
+    
+    maxWait /= deltaTime;
+    
+    [player setRemainConnectedToManager: FALSE];
+    
+    if (useReverb) {
+	SndAudioProcessorReverb *rv = [[[SndAudioProcessorReverb alloc] init] autorelease];
+	[rv setActive: TRUE];
+	[[player audioProcessorChain] addAudioProcessor: rv];
+    }
+    perf = [soundToPlay playInFuture: timeOffset
+			 beginSample: startTimeInSamples
+			 sampleCount: durationInSamples];
+    [perf setDeltaTime: deltaTime];
+    if (displayTime)
+	printf("Sound duration: %.3f\n", [soundToPlay duration]);
+    
+    // Wait for stream manager to go inactive, signalling the sound has finished playing
+    while ([streamManager isActive] && waitCount < maxWait) {
+	[NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1]];
+	waitCount++;
+	if (displayTime)
+	    printf("Time: %4i seconds\n", waitCount);
+    }
+    if (waitCount >= maxWait) {
+	fprintf(stderr, "Aborting wait for stream manager shutdown - taking too long.\n");
+	fprintf(stderr, "(snd dur:%.3f, maxwait:%i)\n", [soundToPlay duration], maxWait);
+    }
+    return 0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // main
 ////////////////////////////////////////////////////////////////////////////////
 
-int main (int argc, const char * argv[])
+int main(int argc, const char * argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    BOOL   bTimeOutputFlag    = FALSE;
+    BOOL   displayTime        = FALSE;
     BOOL   bMP3Shoutcast      = FALSE;
     BOOL   useReverb          = FALSE;
     BOOL   showInfo           = FALSE;
     long   startTimeInSamples = 0;
-    double durationInSamples  = -1;
+    long   durationInSamples  = -1;
     float  timeOffset         = 0.0f;
     double deltaTime = 1.0;
     int    i = 1;
@@ -141,14 +229,9 @@ int main (int argc, const char * argv[])
     NSString *shoutcastSourcePassword = @"";
     int       shoutcastPortNumber     = 0;
 #endif
-#if USE_SNDEXPT
-    Snd *soundToPlay = [SndExpt new];
-#else
-    Snd *soundToPlay = [Snd new];
-#endif
-    NSString          *extension = nil;
-    NSFileManager     *fm       = [NSFileManager defaultManager];
-    BOOL               bFileExists = FALSE, bIsDir = FALSE;
+    NSString *extension = nil;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    BOOL bFileExists = FALSE, bIsDir = FALSE;
 
     if (argc == 1) {
         showHelp(argv[0]);
@@ -163,7 +246,7 @@ int main (int argc, const char * argv[])
 		    if (i < argc) timeOffset = atof(argv[i]);
 		    else          printError(-1, "No time offset in seconds value given after option -O\n");
 		    break;
-		case 't': bTimeOutputFlag = TRUE;                       break;
+		case 't': displayTime = TRUE;                       break;
 		case 'r': useReverb       = TRUE;                       break;
 		case 'R':
 		    i++;
@@ -243,68 +326,12 @@ int main (int argc, const char * argv[])
         printError(-2, "Can't find sound file %s\n", [fm fileSystemRepresentationWithPath: soundFileName]);
     }
     else {
-        int waitCount = 0;
-        int maxWait;
-        SndPlayer  *player = [SndPlayer defaultSndPlayer];
-	SndError error;
-
-	error = [soundToPlay readSoundfile: soundFileName];
-        if(error != SND_ERR_NONE) {
-            //printError(-2, "Can't read sound file %s\n", [fm fileSystemRepresentationWithPath: soundFileName]);
-            printError(-2, "Can't read sound file %s, error %d\n", [soundFileName UTF8String], error);
-            return returnCode;
-        }
-
-#if !USE_SNDEXPT
-        [soundToPlay convertToSampleFormat: SND_FORMAT_FLOAT];
-#endif
-        if (showInfo) {
-	    NSLog(@"%@", [soundToPlay description]);
-	    [soundToPlay release];
-	    return 0;
-        }
-	
-        if (durationInSamples == -1) {
-	    durationInSamples = [soundToPlay lengthInSampleFrames];
-	    maxWait = [soundToPlay duration] + 5 + timeOffset + 1;
-	}
-        else
-	    maxWait = durationInSamples / [soundToPlay samplingRate] + 5 + timeOffset + 1;
-
-        maxWait /= deltaTime;
-
-        [player setRemainConnectedToManager: FALSE];
-
-        if (useReverb) {
-            SndAudioProcessorReverb *rv = [[[SndAudioProcessorReverb alloc] init] autorelease];
-            [rv setActive: TRUE];
-            [[player audioProcessorChain] addAudioProcessor: rv];
-        }
-        if (bMP3Shoutcast) {
+	if (bMP3Shoutcast) {
 	    bMP3Shoutcast = playsnd_init_shoutcast(shoutcastServerAddress, shoutcastPortNumber, shoutcastSourcePassword);
-        }
-        {
-	    SndPerformance *perf;
-	    
-	    perf = [soundToPlay playInFuture: timeOffset
-	               beginSample: startTimeInSamples
-		       sampleCount: durationInSamples];
-	    [perf setDeltaTime: deltaTime];
-        }
-        if (bTimeOutputFlag) printf("Sound duration: %.3f\n", [soundToPlay duration]);
-	
-        // Wait for stream manager to go inactive, signalling the sound has finished playing
-        while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
-	    [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1]];
-	    waitCount++;
-	    if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
-        }
-        if (waitCount >= maxWait) {
-	    fprintf(stderr, "Aborting wait for stream manager shutdown - taking too long.\n");
-	    fprintf(stderr, "(snd dur:%.3f, maxwait:%i)\n", [soundToPlay duration], maxWait);
-        }
-        if (bMP3Shoutcast)
-	    playsnd_close_shoutcast();
+	}
+	returnCode = playSoundFile(soundFileName, startTimeInSamples, durationInSamples, timeOffset, deltaTime, showInfo, displayTime, useReverb, nil);
+	if (bMP3Shoutcast)
+	    playsnd_close_shoutcast();    
     }
     [pool release];
     return returnCode;
