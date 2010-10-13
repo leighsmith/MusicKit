@@ -86,28 +86,24 @@
 - (BOOL) startRecordingToFile: (NSString *) filename;
 
 /*! 
-  @brief   Sets up the record file. 
+  @brief   Stops the recording to file.
 
-  For internal use - you shouldn't have to call this.
-  @return     Boolean indicating success
+  The recorder instance will wait for intermediate buffers to 
+  be flushed to disk. The recorder will then disconnect from the stream.
 */
-- stopRecording;
+- (void) stopRecording;
 
 /*! 
-  @brief   Sets up the record file.
+  @brief   Stops the recording to file. Optionally stay connected to the stream.
 
-  For internal use - you shouldn't have to call this.
-  @param      bWait TRUE if the recorder should wait for intermediate buffers to 
-  be flushed to disk. FALSE if you want immediate cessation of 
-  recording.
+  For internal use only.
   @param      bDisconnectFromStream TRUE if you want the client to disconnect
   from the stream manager, FALSE otherwise. Leaving the client
   connected ensures the audio streams stay open, and minimizes
   start-recording set-up time. Downside is a slight CPU hit
   from the background streaming going on. 
-  @return     Boolean indicating success
 */
-- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream;
+- (void) stopRecordingAndDisconnectFromStream: (BOOL) bDisconnectFromStream;
 
 @end
 

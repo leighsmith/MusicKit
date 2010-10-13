@@ -150,15 +150,10 @@ enum SndRecorderParam {
 
 /*!
   @brief Stops the recording of the stream to file.
-  @return Returns self.
-*/
-- stopRecording;
 
-/*!
-  @brief TODO remove this, redundant, always wait until the queue clears.
-  @return Returns self.
+  Waits until the queue clears.
 */
-- stopRecordingWait: (BOOL) wait;
+- (void) stopRecording;
 
 /*!
   @brief Returns the number of frames recorded.

@@ -209,12 +209,18 @@ static SndStreamManager *defaultStreamManager = nil;
     }
     
     [mixer release];
+    mixer = nil;
     
     [delegateMessageArray release];
+    delegateMessageArray = nil;
     
     [delegateMessageArrayLock release];
+    delegateMessageArrayLock = nil;
+
     [bg_threadLock release];
+    bg_threadLock = nil;
     [bgdm_threadLock release];
+    bgdm_threadLock = nil;
     
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"%@ ending dealloc\n", [super description]);
@@ -532,7 +538,9 @@ static SndStreamManager *defaultStreamManager = nil;
 #if SNDSTREAMMANAGER_DEBUG_STARTSTOP
     NSLog(@"[SndStreamManager] exiting background streaming manager thread\n");
 #endif
-    // Exiting this method will exit the thread.
+    // Exiting this method will exit the thread, but on GNUstep, we need to be explicit
+    // about ending the thread.
+    // [NSThread exit];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -725,9 +733,9 @@ static void processAudio(double bufferTime, SNDStreamBuffer *streamInputBuffer, 
 	NSLog(@"[SndStreamManager] after mixing\n");
 #endif
 	// NSLog(@"processStreamAtTime: mixer client count %d\n", [mixer clientCount]);
-	if ([mixer clientCount] == 0) { // Shut down the Stream if there are no clients.
+	if ([mixer clientCount] == 0) { // Shut down the stream if there are no clients.
 #if SNDSTREAMMANAGER_DEBUG_STARTSTOP
-	    NSLog(@"[SndStreamManager] signalling a stop stream...\n");
+	    // NSLog(@"[SndStreamManager] signalling a stop stream...\n");
 #endif
 	    [self stopStreaming];
 	}

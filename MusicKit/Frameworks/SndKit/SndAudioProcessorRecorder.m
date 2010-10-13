@@ -62,22 +62,6 @@
     return self;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// dealloc
-////////////////////////////////////////////////////////////////////////////////
-
-- (void) dealloc
-{
-    [self stopRecording];
-    [writingQueue release];
-    writingQueue = nil;
-    [recordFileName release];
-    recordFileName = nil;
-    [writingFileHandle release];
-    writingFileHandle = nil;
-    [super dealloc];
-}
-
 - copyWithZone: (NSZone *) zone
 {
     SndAudioProcessorRecorder *newRecorder = [[[self class] allocWithZone: zone] init];
@@ -346,20 +330,10 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// stopRecording
-////////////////////////////////////////////////////////////////////////////////
-
-- stopRecording
-{
-    stopSignal = YES; // signal to recording thread that we wanna stop.
-    return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // stopRecordingWait:
 ////////////////////////////////////////////////////////////////////////////////
 
-- stopRecordingWait: (BOOL) waitUntilSaved
+- (void) stopRecordingWait: (BOOL) waitUntilSaved
 {
     float timeWaiting = 0.0;
     stopSignal = YES; // signal to recording thread that we want to stop.
@@ -373,8 +347,32 @@
 #if SNDAUDIOPROCRECORDER_DEBUG
     NSLog(@"SndAudioProcessorRecorder -stopRecordingWait: \n");
 #endif
-    
-    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// dealloc
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) dealloc
+{
+    // If we are deallocing, we are already way too late to wait for the stream to finish.
+    [self stopRecordingWait: NO]; 
+    [writingQueue release];
+    writingQueue = nil;
+    [recordFileName release];
+    recordFileName = nil;
+    [writingFileHandle release];
+    writingFileHandle = nil;
+    [super dealloc];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// stopRecording
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) stopRecording
+{
+   [self stopRecordingWait: YES];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -67,24 +67,22 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// stopRecording
+// stopRecordingAndDisconnectFromStream:
 ////////////////////////////////////////////////////////////////////////////////
 
-- stopRecording
+- (void) stopRecordingAndDisconnectFromStream: (BOOL) bDisconnectFromStream
 {
     [recorder stopRecording];
-    return self;
+    active = !bDisconnectFromStream;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// stopRecordingWait:disconnectFromStream:
+// stopRecording
 ////////////////////////////////////////////////////////////////////////////////
 
-- stopRecordingWait: (BOOL) bWaitUntilSaved disconnectFromStream: (BOOL) bDisconnectFromStream
+- (void) stopRecording
 {
-    [recorder stopRecordingWait: bWaitUntilSaved];
-    active = !bDisconnectFromStream;
-    return self;
+    [self stopRecordingAndDisconnectFromStream: YES];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

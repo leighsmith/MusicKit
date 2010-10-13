@@ -145,7 +145,6 @@ startPosition: (double) startPosition
 - (double) deltaTime;
 - (void) setDeltaTime: (double) _deltaTime;
 
-
 /*!
   @brief   Returns the sample to start playing from.
   @return     Returns the sample index to start playing from.
@@ -256,34 +255,31 @@ startPosition: (double) startPosition
 - (BOOL) isEqual: (id) anotherPerformance;
 
 /*!
-  @brief   Destructor
-*/
-- (void) dealloc;
-
-/*!
   @brief Returns a string containing a brief description of the performance object.
   @return A string containing a brief description of the performance object.
 */
 - (NSString *) description;
 
 /*!
+  @brief Returns if the performance is paused.
   @return   Boolean - YES/TRUE if the performance is paused. NO if the performance is playing.
 */
 - (BOOL) isPaused;
 
 /*!
+  @brief Pauses the performance.
   @param    isPaused a flag to signal whether or not the performance is paused.
   @return   self
 */
 - setPaused: (BOOL) isPaused;
 
 /*!
-  @brief Pauses a performance
+  @brief Pauses a performance.
 */
 - pause;
 
 /*!
-  @brief Resumes a paused performance
+  @brief Resumes a paused performance.
 */
 - resume;
 
@@ -295,34 +291,33 @@ startPosition: (double) startPosition
 - (BOOL) isPlaying;
 
 /*!
+  @brief Returns the SndAudioProcessorChain associated with this performance.
   @return The audioProcessorChain associated with this performance 
 */
 - (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
+  @brief Assigns an new SndAudioProcessorChain to effect the performance of a Snd instance.
   @param anAudioProcessorChain
 */
 - (void) setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain;
 
 /*!
-  @param bufferToFill A SndAudioBuffer that will be filled with samples.
-  @param buffLength The intended number of samples TODO or bytes? to retrieve.
-  @return Returns the final buffer length, which may be less than the requested amount in the case of
-	  a premature stop, or simply reaching the end of the data. 
   @brief Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
   	      (which allows us to play a sub-section of a sound).
 
-  playIndex is updated, and looping is
-  respected. In the case of the end of the sound being encountered, a smaller buffer will
-  be filled, and the smaller size is returned.
- */
+  playIndex is updated, and looping is respected. In the case of the end of the sound
+  being encountered, a smaller buffer will be filled, and the smaller size is returned.
+  @param bufferToFill A SndAudioBuffer that will be filled with samples.
+  @param buffLength The intended number of samples TODO or bytes? to retrieve.
+  @return Returns the final buffer length, which may be less than the requested amount in the case of
+  a premature stop, or simply reaching the end of the data. 
+  */
 - (long) retrievePerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength;
 
 /*!
   @brief Tests if the play index has reached the end index, indicating that the performance
-  has completed.
-
-  
+  has completed.  
  */
 - (BOOL) atEndOfPerformance;
 
