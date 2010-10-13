@@ -580,6 +580,9 @@ static SndStreamManager *defaultStreamManager = nil;
 - (void) stopStreaming
 {
     if (isStopping) {
+#if SNDSTREAMMANAGER_DEBUG_STARTSTOP
+	NSLog(@"We are already stopping, so we ignore additional stopStreaming messages\n");
+#endif
 	return;
     }
     if (active) {
@@ -658,6 +661,18 @@ static SndStreamManager *defaultStreamManager = nil;
 - (NSArray *) clients
 {
     return [mixer clients];
+}
+
+- (BOOL) removeAllClients
+{
+    NSArray *clients = [self clients];
+    unsigned int clientIndex;
+    BOOL success = YES;
+
+    for(clientIndex = 0; clientIndex < [clients count]; clientIndex++) {
+	success = success && [self removeClient: [clients objectAtIndex: clientIndex]];
+    }
+    return success;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

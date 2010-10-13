@@ -203,20 +203,28 @@
   is NOT added again. If the client is the first connected to
   the manager, the manager will automatically start streaming.
   @param      client The SndStreamClient instance to begin managing and mixing.
-  @return     TRUE if client was successfully added, FALSE if the client is
+  @return     YES if client was successfully added, FALSE if the client is
   already registered, or the audio device couldn't start streaming.
 */
 - (BOOL) addClient: (SndStreamClient *) client;
 
 /*!
-  @brief   Removes the SndStreamClient from the manager's mixer
+  @brief   Removes the SndStreamClient from the manager's mixer.
   
   If the removed client was the last client connected to the
   manager, streaming will be automatically shut down.
   @param      client The client to be disconnected from the manager.
-  @return     TRUE if the client was successfully removed.
+  @return     YES if the client was successfully removed.
 */
 - (BOOL) removeClient: (SndStreamClient *) client;
+
+/*!
+  @brief Removes all the SndStreamClients from the manager's mixer. 
+  
+  Streaming will be automatically shut down.
+  @return Returns YES only if all the clients were successfully removed.
+*/
+- (BOOL) removeAllClients;
 
 /*!
   @brief Returns an NSArray of clients of the SndStreamManager instance.
@@ -264,7 +272,7 @@
   @brief   indicates whether streaming is happening (active) 
   
   
-  @return     TRUE if streaming is active
+  @return     YES if streaming is active
 */
 - (BOOL) isActive;
 

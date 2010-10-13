@@ -191,7 +191,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// closeRecordFile:
+// closeRecordFile
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) closeRecordFile
@@ -244,6 +244,7 @@
 	// This will sleep waiting for an available buffer on the queue.
 	// We have to inject a final empty buffer on the queue to finally retrieve the buffer and exit the loop.
 	SndAudioBuffer *bufferToWrite = [writingQueue popNextProcessedBuffer];
+
 	[self writeToFileBuffer: bufferToWrite];
 	[writingQueue addPendingBuffer: bufferToWrite];
 	[bufferPool release];
@@ -338,14 +339,14 @@
     float timeWaiting = 0.0;
     stopSignal = YES; // signal to recording thread that we want to stop.
     
-    if (waitUntilSaved) {
-	while (recordFile != NULL && timeWaiting < 3.0) {
+    if (waitUntilSaved) { // If we wait, we wait a maximum of 30 seconds to write the file.
+	while (recordFile != NULL && timeWaiting < 30.0) {
 	    [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.1]];
 	    timeWaiting += 0.1;
 	}
     }
 #if SNDAUDIOPROCRECORDER_DEBUG
-    NSLog(@"SndAudioProcessorRecorder -stopRecordingWait: \n");
+    NSLog(@"SndAudioProcessorRecorder -stopRecordingWait: %d, waited %f\n", waitUntilSaved, timeWaiting);
 #endif
 }
 
