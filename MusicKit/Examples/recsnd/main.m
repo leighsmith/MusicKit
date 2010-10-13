@@ -81,7 +81,7 @@ void doRecord(const char* recordFilename, double recordDuration)
 	getchar();
     }
     
-    [recorder stopRecordingWait: TRUE disconnectFromStream: TRUE];
+    [recorder stopRecording];
     
     if (!bSilent) 
         printf("Done.\n");
