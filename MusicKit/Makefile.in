@@ -18,8 +18,8 @@
 CONFIG = OTHER_CFLAGS="@DEFS@ @CFLAGS@ @CPPFLAGS@" LDFLAGS="@LDFLAGS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 PROJECT = -project MusicKit.xcodeproj
 SDK = # -sdk macosx10.5 # defaults to highest SDK on system.
-XCODECONFIG = # -configuration "Legacy Deployment" # defaults to Development
-XCODEBUILD = xcodebuild $(PROJECT) $(SDK) $(XCODECONFIG)
+XCODECONFIG = Deployment # defaults to Development, also useful: "Legacy Deployment" 
+XCODEBUILD = xcodebuild $(PROJECT) $(SDK)
 # This allows overriding this on the command line.
 DSTROOT=/
 # This is for building with "sudo make install" and allows overriding on the command line.
@@ -30,32 +30,32 @@ SYMROOT=/tmp/build
 # This allows overriding this on the command line.
 VERSION=0.0.0
 
-.PHONY: all install frameworks palettes utilities examples applciations documentation installdocs clean cleandocs
+.PHONY: all install frameworks palettes utilities examples applications documentation installdocs clean cleandocs
 
 all:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Development build DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration $(XCODECONFIG) build DSTROOT=$(DSTROOT) $(CONFIG)
 
 install:
-	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
+	$(XCODEBUILD) -target "MusicKit (Aggregate)" -configuration $(XCODECONFIG) install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
 
 frameworks:
-	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
+	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration $(XCODECONFIG) install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
 
 # Embedded builds and installs the frameworks only, with the Embedded build configuration.
 embedded:
 	$(XCODEBUILD) -target "Frameworks Only (Aggregate)" -configuration Embedded install DSTROOT=$(DSTROOT) OBJROOT=$(OBJROOT) SYMROOT=$(SYMROOT) VERSION=$(VERSION) $(CONFIG)
 
 palettes:
-	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Palettes Only (Aggregate)" -configuration $(XCODECONFIG) install DSTROOT=$(DSTROOT) $(CONFIG)
 
 utilities:
-	$(XCODEBUILD) -target "Utilities Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Utilities Only (Aggregate)" -configuration $(XCODECONFIG) install DSTROOT=$(DSTROOT) $(CONFIG)
 
 examples:
-	$(XCODEBUILD) -target "Examples Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Examples Only (Aggregate)" -configuration $(XCODECONFIG) install DSTROOT=$(DSTROOT) $(CONFIG)
 
 applications:
-	$(XCODEBUILD) -target "Applications Only (Aggregate)" -configuration Deployment install DSTROOT=$(DSTROOT) $(CONFIG)
+	$(XCODEBUILD) -target "Applications Only (Aggregate)" -configuration $(XCODECONFIG) install DSTROOT=$(DSTROOT) $(CONFIG)
 
 documentation:
 	$(MAKE) -C Documentation DSTROOT=$(DSTROOT) VERSION=$(VERSION)
