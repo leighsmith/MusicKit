@@ -622,7 +622,7 @@ static void inline setThreadPriority()
     sp.sched_priority = sched_get_priority_max(SCHED_RR);
     // Attempt to get the highest priority. This is probably excessive, but for now we'll
     // do it like this. Probably we should set to half the priority range.
-    NSLog(@"SndStreamClient setThreadPriority(): Set thread real-time priority to max priority = %d\n", sp.sched_priority);
+    // NSLog(@"SndStreamClient setThreadPriority(): Set thread real-time priority to max priority = %d\n", sp.sched_priority);
     theError = pthread_setschedparam(pthread_self(), SCHED_RR, &sp);
     if (theError == -1) {
 	NSLog(@"SndStreamClient setThreadPriority(): Can't set thread real-time priority, errno = %d, max priority = %d\n",
@@ -714,8 +714,10 @@ static void inline setThreadPriority()
     [localPool release];
     [managerConnectionLock unlockWithCondition: SC_disconnected];
 #if SNDSTREAMCLIENT_DEBUG_SYNTHTHREAD
-    NSLog(@"SYNTH THREAD: (%@) processing thread ended\n", [NSThread currentThread]);
+    NSLog(@"SYNTH THREAD: (%@ %@) processing thread ended\n", [NSThread currentThread], clientName);
 #endif
+    // TODO Exiting this method will exit the thread, but on GNUstep, perhaps we need to be explicit
+    // about ending the thread?
     // [NSThread exit];
 }
 

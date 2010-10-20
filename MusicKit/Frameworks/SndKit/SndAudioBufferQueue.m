@@ -102,8 +102,10 @@ enum {
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"%@ numBuffers:%i pending:%i processed:%i",
-	[super description], numBuffers, [pendingBuffers count], [processedBuffers count]];
+    return [NSString stringWithFormat: @"%@ numBuffers:%i currently pending:%i, max pending:%i currently processed:%i max processed:%i",
+		     [super description], numBuffers, 
+		     [pendingBuffers count], maximumPendingBuffers,
+		     [processedBuffers count], maximumProcessedBuffers];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +118,12 @@ enum {
     
     [pendingBuffersLock lockWhenCondition: ABQ_hasData];
 #if SNDABQ_DEBUG    
-    printf("pop pending...\n");
+    NSLog(@"pop pending...\n");
 #endif
   // NSLog(@"[pendingBuffers objectAtIndex: 0] retainCount %d\n", [[pendingBuffers objectAtIndex: 0] retainCount]);
+    if([pendingBuffers count] == 0) {
+	NSLog(@"Warning: -popNextPendingBuffer attempted to pop a buffer from an empty pending queue\n");
+    }
     ab = [[pendingBuffers objectAtIndex: 0] retain]; // retain so it's not released by removeObjectAtIndex: below.
 						     // NSLog(@"ab %@ retainCount %d\n", ab, [ab retainCount]);
     [pendingBuffers removeObjectAtIndex: 0];
@@ -137,8 +142,11 @@ enum {
     
     [processedBuffersLock lockWhenCondition: ABQ_hasData];
 #if SNDABQ_DEBUG    
-    printf("pop processed...\n");
+    NSLog(@"pop processed...\n");
 #endif
+    if([processedBuffers count] == 0) {
+	NSLog(@"Warning: -popNextProcessedBuffer attempted to pop a buffer from an empty processed queue\n");
+    }
     ab = [[processedBuffers objectAtIndex: 0] retain]; // retain so it's not released by removeObjectAtIndex: below.
     [processedBuffers removeObjectAtIndex: 0];
     [processedBuffersLock unlockWithCondition: ([processedBuffers count] > 0 ? ABQ_hasData : ABQ_noData)];
@@ -156,9 +164,11 @@ enum {
     else {
 	[pendingBuffersLock lock];
 #if SNDABQ_DEBUG    
-	printf("add pending...\n");
+	NSLog(@"add pending...\n");
 #endif
 	[pendingBuffers addObject: audioBuffer];
+	if(maximumPendingBuffers < [pendingBuffers count])
+	    maximumPendingBuffers = [pendingBuffers count];
 	[pendingBuffersLock unlockWithCondition: ABQ_hasData];
     }
     return self;
@@ -175,9 +185,11 @@ enum {
     else {
 	[processedBuffersLock lock];
 #if SNDABQ_DEBUG    
-	printf("add processed...\n");
+	NSLog(@"add processed...\n");
 #endif    
 	[processedBuffers addObject: audioBuffer];
+	if(maximumProcessedBuffers < [processedBuffers count])
+	    maximumProcessedBuffers = [processedBuffers count];
 	[processedBuffersLock unlockWithCondition: ABQ_hasData];
     }
     return self;
@@ -289,7 +301,7 @@ enum {
 	    [processedBuffersLock lock];
 	    [processedBuffersLock unlockWithCondition: ABQ_noData];
 	    [pendingBuffersLock lock];
-	    for (pendingBufferIndex = 0; pendingBufferIndex < numBuffers - 1; pendingBufferIndex++)
+	    for (pendingBufferIndex = 0; pendingBufferIndex < numBuffers; pendingBufferIndex++)
 		[pendingBuffers addObject: [buff copy]];
 	    [pendingBuffersLock unlockWithCondition: ABQ_hasData];
 	}

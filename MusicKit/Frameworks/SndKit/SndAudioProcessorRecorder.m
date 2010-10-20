@@ -121,6 +121,7 @@
 	
 	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: queueFormat] retain];
 #if SNDAUDIOPROCRECORDER_DEBUG  
+	// NSLog(@"recordBuffer %@, should use %d buffers\n", recordBuffer, numberOfBuffers);
 	NSLog(@"recordBuffer %@, should use %d buffers\n", recordBuffer, numberOfBuffers);
 #endif
 	[writingQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: recordBuffer];
@@ -347,6 +348,7 @@
     }
 #if SNDAUDIOPROCRECORDER_DEBUG
     NSLog(@"SndAudioProcessorRecorder -stopRecordingWait: %d, waited %f\n", waitUntilSaved, timeWaiting);
+    NSLog(@"SndAudioProcessorRecorder writingQueue %@\n", writingQueue);
 #endif
 }
 

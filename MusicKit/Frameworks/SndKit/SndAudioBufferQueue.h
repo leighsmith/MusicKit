@@ -46,7 +46,11 @@ typedef enum {
     /*! Lock for thread safety around processed buffers array */
     NSConditionLock *processedBuffersLock;
     /*! Total number of buffers in the queue, both pending and processed */
-    int              numBuffers;
+    unsigned int numBuffers;
+    /*! Maximum number of buffers ever stored in pending queue */
+    unsigned int maximumPendingBuffers;
+    /*! Maximum number of buffers ever stored in process queue */
+    unsigned int maximumProcessedBuffers;
 }
 
 /*!
