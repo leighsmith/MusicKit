@@ -166,6 +166,14 @@ PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat,
 				       BOOL isOutputStream);
 
 /*!
+  @function       SNDGetLatency
+  @brief          Returns the latency of the input or output stream in seconds.
+  @param          forOutputDevices TRUE to return the output latency, FALSE to return the input latency.
+  @return	  Returns latency in seconds, or 0 if unable to retrieve the latency measure.
+ */
+PERFORM_API float SNDGetLatency(BOOL forOutputDevices);
+
+/*!
   @function       SNDStreamStart
   @brief       Starts the streaming.
   @param          newStreamProcessor Pointer to the function call-back for sending and receiving stream buffers.

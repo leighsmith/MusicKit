@@ -121,7 +121,6 @@
 	
 	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: queueFormat] retain];
 #if SNDAUDIOPROCRECORDER_DEBUG  
-	// NSLog(@"recordBuffer %@, should use %d buffers\n", recordBuffer, numberOfBuffers);
 	NSLog(@"recordBuffer %@, should use %d buffers\n", recordBuffer, numberOfBuffers);
 #endif
 	[writingQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: recordBuffer];
@@ -198,15 +197,15 @@
 - (BOOL) closeRecordFile
 {
 #if HAVE_LIBSNDFILE
-    stopSignal = NO;
     isRecording = NO; // Halt all recording then close the file.
+    stopSignal = NO;
     sf_close(recordFile);
 #endif
     recordFile = NULL;
     framesRecorded = 0;
     
 #if SNDAUDIOPROCRECORDER_DEBUG
-    NSLog(@"SndAudioProcessor -closeRecordFile - closed\n");
+    NSLog(@"SndAudioProcessorRecorder -closeRecordFile - closed\n");
 #endif
     
     return YES;
@@ -222,15 +221,18 @@
 									 channelCount: fileFormat.channelCount
 									 samplingRate: fileFormat.sampleRate];
     SndFormat recordBufferFormat = [bufferFormattedForFile format];
-    int error;
     
     // NSLog(@"saveBuffer length: %ld recordBufferFormat.frameCount %ld\n", [saveBuffer lengthInSampleFrames], recordBufferFormat.frameCount);
-    // NSLog(@"saveBuffer: %@ bufferFormattedForFile: %@\n", saveBuffer, bufferFormattedForFile);
-    // TODO make SndWriteSampleData a SndAudioBuffer method? [bufferFormattedForFile writeToFile: recordFile];
-    error = SndWriteSampleData(recordFile, [bufferFormattedForFile bytes], recordBufferFormat);
-    if(error != SND_ERR_NONE)
-	NSLog(@"SndAudioProcessorRecorder writeToFileBuffer problem writing buffer\n");
-    framesRecorded += recordBufferFormat.frameCount;
+    if(recordBufferFormat.frameCount) {
+	int error;
+
+	// NSLog(@"saveBuffer: %@ bufferFormattedForFile: %@\n", saveBuffer, bufferFormattedForFile);
+	// TODO make SndWriteSampleData a SndAudioBuffer method? [bufferFormattedForFile writeToFile: recordFile];
+	error = SndWriteSampleData(recordFile, [bufferFormattedForFile bytes], recordBufferFormat);
+	if(error != SND_ERR_NONE)
+	    NSLog(@"SndAudioProcessorRecorder writeToFileBuffer problem writing buffer\n");
+	framesRecorded += recordBufferFormat.frameCount;
+    }
 }
 
 - (void) fileWritingThread: (id) emptyArgument
@@ -451,17 +453,15 @@
 #if SNDAUDIOPROCRECORDER_DEBUG > 1
 	NSLog(@"SndAudioProcessorRecorder -processReplacing: Finished recording\n");        
 #endif    
-	if (framesRecorded == 0)
-	    return NO;
-	else { 
+	if (framesRecorded) { 
 	    // Write a single empty buffer to allow the file writing thread to exit, 
 	    // otherwise it will sleep waiting on a processed buffer.
 	    SndAudioBuffer *bufferForWriting = [writingQueue popNextPendingBuffer];
 
 	    [bufferForWriting setLengthInSampleFrames: 0];
 	    [writingQueue addProcessedBuffer: bufferForWriting];
-	    return NO;
-	}	    
+	}
+	return NO;
     }
     if(isRecording) {
 	float *inputData = (float *) [inB bytes];          // TODO this assumes the data is always floats.

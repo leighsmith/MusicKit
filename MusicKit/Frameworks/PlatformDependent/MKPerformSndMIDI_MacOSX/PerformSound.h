@@ -152,6 +152,14 @@ PERFORM_API BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes, BOOL forOutp
 PERFORM_API long SNDGetBufferSizeInBytes(BOOL forOutputDevices);
 
 /*!
+  @function       SNDGetLatency
+  @brief          Returns the latency of the input or output stream in seconds.
+  @param          forOutputDevices TRUE to return the output latency, FALSE to return the input latency.
+  @return	  Returns latency in seconds, or 0 if unable to retrieve the latency measure.
+ */
+PERFORM_API float SNDGetLatency(BOOL forOutputDevices);
+
+/*!
   @function SNDSpeakerConfiguration
   @brief Returns an array of character pointers listing the names of each channel.
   

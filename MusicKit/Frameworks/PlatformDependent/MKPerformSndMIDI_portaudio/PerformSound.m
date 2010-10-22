@@ -201,7 +201,7 @@ static int vendBuffersToStreamManagerIOProc(const void *inputBuffer,
 // This allows us to hard code devices or use heuristics to prevent the user
 // having to always select the best device to use.
 // If we guess or not, we still do get a driver initialised.
-PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
+PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
 {
     PaError err = Pa_Initialize();
 
@@ -211,7 +211,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     }
 
     // Debugging
-#if 1
+#if 0
     { 
 	const PaHostApiInfo *hostAPIInfo;
 	NSLog(@"Default Host API index %d\n", Pa_GetDefaultHostApi());
@@ -234,10 +234,8 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     // If we guess the device, then we retrieve the buffer size of the 
     // default device and use that, rather than using the buffer size
     // defined in DEFAULT_BUFFER_SIZE.
-    if(guessTheDevice) {
+    if(useDefaultDevice) {
 #if 0
-         const PaStreamInfo *streamInfo;
-
          err = Pa_OpenDefaultStream(
  				   &stream,                         /* passes back stream pointer */
  				   DEFAULT_IN_CHANNELS,          /* stereo input */
@@ -253,15 +251,11 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
          vendBuffersToStreamManagerIOProc, /* specify our custom callback */
          NULL);        /* pass our data through to callback */
 
- 	streamInfo = Pa_GetStreamInfo(stream);
- 	bufferSizeInFrames = streamInfo->outputLatency * streamInfo->sampleRate;
-
- 	NSLog(@"outputLatency = %lf seconds, sample rate %lf, bufferSize in Frames = %ld\n",
- 	      streamInfo->outputLatency, streamInfo->sampleRate, bufferSizeInFrames);
-
  	Pa_CloseStream(stream);
 	useNativeBufferSize = TRUE;
 #else
+	outputDeviceIndex = Pa_GetDefaultOutputDevice();
+	inputDeviceIndex = Pa_GetDefaultInputDevice();
 	useNativeBufferSize = FALSE;
 #endif
     }
@@ -312,6 +306,19 @@ PERFORM_API void SNDSetMute(BOOL aFlag)
     isMuted = aFlag;
 }
 
+PERFORM_API float SNDGetLatency(BOOL forOutputDevices)
+{
+    if(stream) {
+	const PaStreamInfo *streamInfo = Pa_GetStreamInfo(stream);
+
+	// NSLog(@"output latency = %lf seconds, input latency = %lf sample rate = %lf\n",
+	//       streamInfo->outputLatency, streamInfo->inputLatency, streamInfo->sampleRate);
+	return forOutputDevices ? streamInfo->outputLatency : streamInfo->inputLatency;
+    }
+    else
+	return 0.0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // SNDStreamStart
 //
@@ -326,7 +333,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     BOOL streamStartedOK = TRUE;
     PaStreamParameters inputStreamParameters;
     PaStreamParameters outputStreamParameters;
-    
+
     if(!initialised)
         return FALSE;  // invalid sound structure.
 

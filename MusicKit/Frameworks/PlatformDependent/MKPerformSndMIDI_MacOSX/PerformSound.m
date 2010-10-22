@@ -1052,7 +1052,7 @@ PERFORM_API BOOL SNDInit(BOOL useDefaultDevice)
     return inputInit;
 }
 
-// Shut down what we started up in SndInit();
+// Shut down what we started up in SNDInit();
 PERFORM_API BOOL SNDTerminate(void)
 {
     [inputLock release];
@@ -1106,6 +1106,12 @@ PERFORM_API long SNDGetBufferSizeInBytes(BOOL forOutputDevices)
     return bufferSize;
 }
     
+PERFORM_API float SNDGetLatency(BOOL forOutputDevices)
+{
+    // Unused for now.
+    return forOutputDevices ? 0.0 : 0.0;
+}
+
 // Returns an array of strings listing the available drivers.
 // Returns NULL if the driver names were unobtainable.
 // The client application should not attempt to free the pointers.

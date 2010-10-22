@@ -312,6 +312,16 @@ static SndStreamManager *defaultStreamManager = nil;
     return SNDGetBufferSizeInBytes(YES) / SndFrameSize(outputFormat);
 }
 
+- (float) inputLatency
+{
+    return SNDGetLatency(NO);
+}
+
+- (float) outputLatency
+{
+    return SNDGetLatency(YES);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // startStreaming: responsible for calling low-level C stuff to get a stream
 // happening, and register the processStreamAtTime: selector as the callback

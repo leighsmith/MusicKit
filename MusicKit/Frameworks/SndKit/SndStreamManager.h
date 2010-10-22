@@ -175,6 +175,28 @@
 - (long) outputBufferSize;
 
 /*!
+  @brief Returns an estimate of the number of seconds of latency between the hardware
+  recording audio and when it will first be processed by this class's processStreamAtTime:
+  method.
+
+  Note that SndStreamClients may create their own additional latency, based on the number and size of
+  processing buffers they use.
+  @return Returns 0.0 if unable to retrieve the latency of the audio input.
+ */
+- (float) inputLatency;
+
+/*!
+  @brief Returns an estimate of the number of seconds of latency between when an audio
+  buffer will be dispatched to be output by this class's processStreamAtTime:
+  method and when the hardware will play it.
+
+  Note that SndStreamClients may create their own additional latency, based on the number and size of
+  processing buffers they use.
+  @return Returns 0.0 if unable to retrieve the latency of the audio output.
+ */
+- (float) outputLatency;
+
+/*!
   @brief   Returns an NSString with description of SndStreamManager
   @return     Returns an NSString with description of SndStreamManager
  */
