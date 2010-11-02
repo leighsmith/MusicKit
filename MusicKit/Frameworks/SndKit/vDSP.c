@@ -9,7 +9,7 @@
 #include <xmmintrin.h>
 
 #define FLOATS_PER_REGISTER 4
-#define USE_INTRINSICS 0
+#define USE_INTRINSICS 1
 
 typedef float v4sf __attribute__ ((vector_size (16)));
 
@@ -133,3 +133,49 @@ void vDSP_vrsum(const float *input, unsigned int inputStride,
 
 
 #endif
+
+
+void vDSP_vramp(float *initialValue,
+		float *increment,
+		float *result,
+		unsigned int resultStride,
+		unsigned int vectorLength)
+{
+    register v4sf increments;
+    register v4sf current_base;
+    v4sf *out = (v4sf *) result;
+    unsigned int index;
+    static float  __attribute__ ((aligned (16))) incrementInitialiser[4] = { 1.0f, 2.0f, 3.0f, 4.0f };
+
+    /* Create a set of 4 increments */
+    increments = *((v4sf *) incrementInitialiser) * _mm_set_ps1(*increment);
+    current_base = _mm_set_ps1(*initialValue - *increment);
+
+    for(index = 0; index < vectorLength / FLOATS_PER_REGISTER; index++) {
+	current_base = current_base + increments;
+	*out = current_base;
+	current_base = _mm_shuffle_ps(current_base, current_base, 0xff);
+	out += resultStride;
+    }
+}
+
+void vDSP_vsadd(float *input,
+		unsigned int inputStride,
+		float *scalarOperand,
+		float *result,
+		unsigned int resultStride,
+		unsigned int vectorLength)
+{
+    register v4sf base;
+    v4sf *in = (v4sf *) input, *out = (v4sf *) result;
+    unsigned int index;
+
+    /* Create a set of 4 increments */
+    base = _mm_set_ps1(*scalarOperand);
+
+    for(index = 0; index < vectorLength / FLOATS_PER_REGISTER; index++) {
+	*out = base + *in;
+	out += resultStride;
+	in += inputStride;
+    }
+}
