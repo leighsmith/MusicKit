@@ -3,3 +3,4 @@
 /config.status
 /autom4te.cache
 /Makefile
+/*.xcodeproj/*.mode*
