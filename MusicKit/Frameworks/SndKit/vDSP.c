@@ -1,19 +1,24 @@
 /*
-  Replacement DSP functions emulating the behaviour of Apple's vDSP library
+  $Id$
 
-  $Id:$
+  Description: 
+    Replacement DSP functions emulating the behaviour of Apple's vDSP library on Intel
+    SSE2 architecture. Currently this is gcc specific. Should be compiled with -msse2.
 
-  should be compiled with -msse2
+  Original Author: Leigh M. Smith
+
+  Copyright (c) 2010 The MusicKit Project. All Rights Reserved.
 */
 #include "vDSP.h"
 #include <xmmintrin.h>
 
 #define FLOATS_PER_REGISTER 4
-#define USE_INTRINSICS 1
+/* The non-intrinsics version is much faster on Windows, at least */
+#define USE_INTRINSICS 0
 
 typedef float v4sf __attribute__ ((vector_size (16)));
 
-inline void vDSP_vadd(const float input1[], unsigned int input1Stride, 
+void vDSP_vadd(const float input1[], unsigned int input1Stride, 
 		      const float input2[], unsigned int input2Stride, 
 		      float result[], unsigned int resultStride, 
 		      unsigned int size)
@@ -24,7 +29,6 @@ inline void vDSP_vadd(const float input1[], unsigned int input1Stride,
     for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
 	*out = *in1 + *in2;
 	/* *out = __builtin_ia32_addv4sf(*in1, *in2); */
-        /* *out = __builtin_ia32_addss(*in1, *in2); */
 	/* *out = __builtin_ia32_addps(*in1, *in2); */
 	in1 += input1Stride;
 	in2 += input2Stride;
@@ -32,7 +36,24 @@ inline void vDSP_vadd(const float input1[], unsigned int input1Stride,
     }
 }
 
-inline void vDSP_vdiv(const float input1[], unsigned int input1Stride, 
+void vDSP_vsub(const float input1[], unsigned int input1Stride, 
+		      const float input2[], unsigned int input2Stride, 
+		      float result[], unsigned int resultStride, 
+		      unsigned int size)
+{
+    v4sf *in1 = (v4sf *) input1, *in2 = (v4sf *) input2, *out = (v4sf *) result;
+    unsigned int index;
+
+    for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
+	*out = *in1 - *in2;
+	/* *out = __builtin_ia32_subps(*in1, *in2); */
+	in1 += input1Stride;
+	in2 += input2Stride;
+	out += resultStride;
+    }
+}
+
+void vDSP_vdiv(const float input1[], unsigned int input1Stride, 
 		      const float input2[], unsigned int input2Stride,
 		      float result[], unsigned int resultStride,
 		      unsigned int size)
@@ -43,48 +64,11 @@ inline void vDSP_vdiv(const float input1[], unsigned int input1Stride,
     for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
 	*out = *in1 / *in2;
 	/* *out = __builtin_ia32_vdiv4sf(*in1, *in2); */
-        /* *out = __builtin_ia32_addss(*in1, *in2); */
-	/* *out = __builtin_ia32_addps(*in1, *in2); */
 	in1 += input1Stride;
 	in2 += input2Stride;
 	out += resultStride;
     }
 }
-
-#if 0
-inline void vDSP_vrsum(const float input[], unsigned int inputStride, const float scaling[], 
-		       float result[], unsigned int resultStride, unsigned int size)
-{
-    v4sf *in = (v4sf *) input, *out = (v4sf *) result;
-    unsigned int index;
-    float previous;
-
-    for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
-	/* register */ float previous;
-	v4sf shifted1;
-	v4sf shifted2;
-	v4sf half_sum;
-
-        // TODO incorporate scaling.
-
-	shifted1 = *in; // *in = a0, a1, a2, a3
-	// shift 1 float to the left: 0, a0, a1, a2
-	__builtin_ia32_pslld(shifted1, 4);
-	// move in the previous vector wide summation: s, a0, a1, a2
-	__builtin_ia32_movss(shifted1, previous);
-	// Add 4 32bit single precision floats: a0 + s, a1 + a0, a2 + a1, a3 + a2 
-	half_sum = __builtin_ia32_addps(*in, shifted1);
-	// shift the summation two floats to the left: 0, 0, a0 + s, a1 + a0
-	shifted2 = __builtin_ia32_pslld(half_sum, 8);
-	// Add 4 32bit single precision floats: a0 + s, a1 + a0, a2 + a1 + a0 + s, a3 + a2 + a1 + a0
-	*out = __builtin_ia32_addps(half_sum, shifted2);
-	_builtin_ia32_movnti(previous, *out, 4);
-	in += inputStride;
-	out += resultStride;
-    }
-}
-
-#else 
 
 void vDSP_vrsum(const float *input, unsigned int inputStride,
 	     const float *scalingValue,
@@ -109,8 +93,7 @@ void vDSP_vrsum(const float *input, unsigned int inputStride,
     scaling = _mm_load_ss(scalingValue); 	/* load the scaling value into xmm2 */
     *result = 0.0f;
 
-    // accumulator = 0.0f;  	/* Zero the accumulator xmm1 */
-    accumulator = _mm_xor_ps(accumulator, accumulator);  	/* Zero the accumulator */
+    accumulator = _mm_setzero_ps();  	/* Zero the accumulator */
     for(vectorIndex = 0; vectorIndex < size - 1; vectorIndex++) {
 #if USE_INTRINSICS
 	currentValue = _mm_load_ss(inputPtr); /* read from input into currentValue */
@@ -130,10 +113,6 @@ void vDSP_vrsum(const float *input, unsigned int inputStride,
 	inputPtr += inputStride;
     }
 }
-
-
-#endif
-
 
 void vDSP_vramp(float *initialValue,
 		float *increment,
@@ -178,4 +157,29 @@ void vDSP_vsadd(float *input,
 	out += resultStride;
 	in += inputStride;
     }
+}
+
+/* We do it the old fashioned SSE2 way, rather than use the DPPS instruction to support older hardware */
+void vDSP_dotpr(const float input1[],
+		unsigned int input1Stride,
+		const float input2[],
+		unsigned int input2Stride,
+		float *result,
+		unsigned int size)
+{
+    v4sf *in1 = (v4sf *) input1, *in2 = (v4sf *) input2;
+    register v4sf accumulator;
+    float finalSummation[4];
+    unsigned int index;
+
+    accumulator = _mm_setzero_ps();  	/* Zero the accumulator */
+    for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
+	register v4sf multiplied = _mm_mul_ps(*in1, *in2);
+
+	accumulator = _mm_add_ps(accumulator, multiplied);
+	in1 += input1Stride;
+	in2 += input2Stride;
+    }
+    _mm_store_ps(finalSummation, accumulator);
+    *result = finalSummation[0] + finalSummation[1] + finalSummation[2] + finalSummation[3];
 }

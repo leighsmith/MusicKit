@@ -1,10 +1,14 @@
-/*!
-  $Id:$
+/*
+  $Id$
 
-  @brief Replacement DSP functions emulating the behaviour of Apple's vDSP library
+  Description: 
+    Replacement DSP functions emulating the behaviour of Apple's vDSP library on Intel
+    SSE2 architecture. Should be compiled with -msse2.
 
-  This is gcc specific.
- */
+  Original Author: Leigh M. Smith
+
+  Copyright (c) 2010 The MusicKit Project. All Rights Reserved.
+*/
 
 /*!
   @brief Adds vector A to vector B and leaves the result in vector C; single precision.
@@ -18,6 +22,17 @@ inline void vDSP_vadd(const float input1[], unsigned int stride1,
 		      float result[], unsigned int strideResult,
 		      unsigned int size);
 
+/*!
+  @brief Adds vector A to vector B and leaves the result in vector C; single precision.
+
+  This performs the following operation:
+
+  $C_{n}{K} = A_{n}{I} - B_{n}{J} n = {0, N-1}$
+ */
+inline void vDSP_vsub(const float input1[], unsigned int stride1,
+		      const float input2[], unsigned int stride2,
+		      float result[], unsigned int strideResult,
+		      unsigned int size);
 
 /*!
   @brief Divides vector A by vector B and leaves the result in vector C; single precision.
@@ -68,7 +83,7 @@ void vDSP_vramp(float *initialValue,
 		unsigned int vectorLength);
 
 /*!
-  @brief Vector scalar add; single precision.
+  @brief Add the scalar value to each element in the vector.
 
   $C_{nK} = A_{nI} + B$ $n = {0, N-1}$
 
@@ -81,3 +96,14 @@ void vDSP_vsadd(float *input,
 		float *result,
 		unsigned int resultStride,
 		unsigned int vectorLength);
+
+/*!
+  @brief Computes the dot product of vectors A and B and leaves the result in scalar *C.
+
+ */
+void vDSP_dotpr(const float input1[],
+		unsigned int inputStride1,
+		const float input2[],
+		unsigned int inputStride2,
+		float *result,
+		unsigned int size);
