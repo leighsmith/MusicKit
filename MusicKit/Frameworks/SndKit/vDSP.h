@@ -10,6 +10,13 @@
   Copyright (c) 2010 The MusicKit Project. All Rights Reserved.
 */
 
+#ifndef _VDSP_H_
+#define _VDSP_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif 
+
 /*!
   @brief Adds vector A to vector B and leaves the result in vector C; single precision.
 
@@ -17,7 +24,7 @@
 
   $C_{n}{K} = A_{n}{I} + B_{n}{J} n = {0, N-1}$
  */
-inline void vDSP_vadd(const float input1[], unsigned int stride1,
+void vDSP_vadd(const float input1[], unsigned int stride1,
 		      const float input2[], unsigned int stride2,
 		      float result[], unsigned int strideResult,
 		      unsigned int size);
@@ -29,7 +36,7 @@ inline void vDSP_vadd(const float input1[], unsigned int stride1,
 
   $C_{n}{K} = A_{n}{I} - B_{n}{J} n = {0, N-1}$
  */
-inline void vDSP_vsub(const float input1[], unsigned int stride1,
+void vDSP_vsub(const float input1[], unsigned int stride1,
 		      const float input2[], unsigned int stride2,
 		      float result[], unsigned int strideResult,
 		      unsigned int size);
@@ -41,7 +48,7 @@ inline void vDSP_vsub(const float input1[], unsigned int stride1,
 
   $C_{n}{K} = A_{n}{I} / B_{n}{J} n = {0, N-1}$
  */
-inline void vDSP_vdiv(const float input1[], unsigned int input1Stride, 
+void vDSP_vdiv(const float input1[], unsigned int input1Stride, 
 		      const float input2[], unsigned int input2Stride,
 		      float result[], unsigned int resultStride,
 		      unsigned int size);
@@ -107,3 +114,9 @@ void vDSP_dotpr(const float input1[],
 		unsigned int inputStride2,
 		float *result,
 		unsigned int size);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

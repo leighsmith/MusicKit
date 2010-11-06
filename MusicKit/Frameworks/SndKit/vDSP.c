@@ -18,6 +18,10 @@
 
 typedef float v4sf __attribute__ ((vector_size (16)));
 
+#ifdef __cplusplus
+extern "C" {
+#endif 
+
 void vDSP_vadd(const float input1[], unsigned int input1Stride, 
 		      const float input2[], unsigned int input2Stride, 
 		      float result[], unsigned int resultStride, 
@@ -45,7 +49,7 @@ void vDSP_vsub(const float input1[], unsigned int input1Stride,
     unsigned int index;
 
     for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
-	*out = *in1 - *in2;
+	*out = *in2 - *in1;
 	/* *out = __builtin_ia32_subps(*in1, *in2); */
 	in1 += input1Stride;
 	in2 += input2Stride;
@@ -62,7 +66,7 @@ void vDSP_vdiv(const float input1[], unsigned int input1Stride,
     unsigned int index;
 
     for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
-	*out = *in1 / *in2;
+	*out = *in2 / *in1;
 	/* *out = __builtin_ia32_vdiv4sf(*in1, *in2); */
 	in1 += input1Stride;
 	in2 += input2Stride;
@@ -93,7 +97,14 @@ void vDSP_vrsum(const float *input, unsigned int inputStride,
     scaling = _mm_load_ss(scalingValue); 	/* load the scaling value into xmm2 */
     *result = 0.0f;
 
+#if USE_INTRINSICS
     accumulator = _mm_setzero_ps();  	/* Zero the accumulator */
+#else
+    asm volatile ("xorps %%xmm1, %%xmm1\n\t"
+		  : /* no output */
+		  : /* no input */
+		  : "%xmm1");
+#endif
     for(vectorIndex = 0; vectorIndex < size - 1; vectorIndex++) {
 #if USE_INTRINSICS
 	currentValue = _mm_load_ss(inputPtr); /* read from input into currentValue */
@@ -168,18 +179,53 @@ void vDSP_dotpr(const float input1[],
 		unsigned int size)
 {
     v4sf *in1 = (v4sf *) input1, *in2 = (v4sf *) input2;
-    register v4sf accumulator;
+#if USE_INTRINSICS
+    /* We need to declare this static, since declaring it a register doesn't guarantee
+     * it isn't demoted to an auto, which can create a hairy situation that the
+     * accumulator's location on the stack may not be properly aligned. */
+    static __attribute__ ((aligned (16))) v4sf accumulator;
+#else
+    register v4sf accumulator asm("%xmm2");
+#endif
     float finalSummation[4];
     unsigned int index;
 
+#if USE_INTRINSICS
     accumulator = _mm_setzero_ps();  	/* Zero the accumulator */
+#else
+    asm volatile ("xorps %%xmm2, %%xmm2\n\t"
+		  : /* no output */
+		  : /* no input */
+		  : "%xmm2");
+#endif
     for(index = 0; index < size / FLOATS_PER_REGISTER; index++) {
-	register v4sf multiplied = _mm_mul_ps(*in1, *in2);
+#if USE_INTRINSICS
+	accumulator = _mm_add_ps(accumulator, _mm_mul_ps(*in1, *in2));
+#else
+	asm volatile ("movaps %0, %%xmm0\n\t" /* load in1 */
+		      "movaps %1, %%xmm1\n\t" /* load in2 */
+		      "mulps %%xmm0, %%xmm1\n\t" /* multiply both, store in xmm1. */
+		      "addps %%xmm1, %%xmm2\n\t"  /* add to accumulator (xmm2), saving there.*/
+		      : /* no output */
+		      : "m"(*in1), "m"(*in2)
+		      : "%xmm0", "%xmm1", "%xmm2");
 
-	accumulator = _mm_add_ps(accumulator, multiplied);
+#endif
 	in1 += input1Stride;
 	in2 += input2Stride;
     }
-    _mm_store_ps(finalSummation, accumulator);
+#if USE_INTRINSICS
+    _mm_storeu_ps(finalSummation, accumulator);
+#else
+    asm volatile ("movups %%xmm2, %0\n\t"
+		  : "=m"(finalSummation)
+		  : /* no inputs */
+		  : "%xmm2");
+#endif
+    /* Now sum the 4 floats in the vector */
     *result = finalSummation[0] + finalSummation[1] + finalSummation[2] + finalSummation[3];
 }
+
+#ifdef __cplusplus
+}
+#endif

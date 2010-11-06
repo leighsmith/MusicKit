@@ -32,6 +32,9 @@ SK_COMPILE_MP3_ENCODER = yes
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARY_NAME = libSndKit
   MY_NAME = $(LIBRARY_NAME)
+  # Extra DLL exports file
+  $(LIBRARY_NAME)_DLL_DEF = $(LIBRARY_NAME).def
+  ADDITIONAL_LDFLAGS += -Wl,--output-def,$(LIBRARY_NAME).def
 else
   FRAMEWORK_NAME = SndKit
   MY_NAME=$(FRAMEWORK_NAME)
@@ -137,7 +140,8 @@ $(MY_NAME)_HEADER_FILES = \
          SndView.h\
          Sndfilterkit.h \
          Sndlargefilter.h \
-         Sndsmallfilter.h
+         Sndsmallfilter.h \
+	 vDSP.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 

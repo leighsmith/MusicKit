@@ -1,0 +1,64 @@
+# -*- makefile -*-
+#
+#   GNUmakefile.postamble
+#
+#   Project specific makefile rules
+#
+#   Uncomment the targets you want.
+#   The double colons (::) are important, do not make them single colons
+#   otherwise the normal makefile rules will not be performed.
+#
+
+# For Linux, perhaps
+# LIB_INSTALL=/GNUstep/Local/Library/Libraries
+LIB_INSTALL=/GNUstep/Local/Library/Libraries
+
+# Things to do before compiling
+# before-all::
+
+# Things to do after compiling
+after-all:: $(LIBRARY_NAME).lib
+
+# Create a MSVC compatible import library from the .def file.
+# Note: In order for lib.exe to run outside of MSVC needs extra PATH entries.
+# TODO Need to determine the version numbering of the DLL
+$(LIBRARY_NAME).lib: $(LIBRARY_NAME).def
+	lib /machine:i386 /def:$($(LIBRARY_NAME)_DLL_DEF) /name:$(LIBRARY_NAME)-0.dll
+
+# Things to do before installing
+# before-install::
+
+# Things to do after installing
+# TODO Need to determine the version numbering of the DLL
+# TODO The location for the DLL install needs to be better described.
+after-install::
+	$(INSTALL) $(LIBRARY_NAME).lib $(LIB_INSTALL)
+
+# Packaging
+# cp -r  /c/GNUstep/GNUstep/Local/Library/Headers/PopGameAudio ~/Sources/PopgameAudioNewDLLs
+
+# Things to do before uninstalling
+# before-uninstall::
+
+# Things to do after uninstalling
+# after-uninstall::
+
+# Things to do before cleaning
+# before-clean::
+
+# Things to do after cleaning
+after-clean::
+	rm $(LIBRARY_NAME).exp $(LIBRARY_NAME).lib
+
+# Things to do before distcleaning
+# before-distclean::
+
+# Things to do after distcleaning
+# after-distclean::
+
+# Things to do before checking
+# before-check::
+
+# Things to do after checking
+# after-check::
+
