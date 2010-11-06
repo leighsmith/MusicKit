@@ -22,7 +22,7 @@
 // vector library support is currently only available on MacOS X.
 // But there are a small set of SSE replacement routines under GCC.
 #if defined(__APPLE_CC__)
-#import <vecLib/vDSP.h>
+#import <vecLib/vecLib.h>
 #elif (__i386__ && __GNUC__)
 #import "vDSP.h"
 #endif
@@ -725,11 +725,14 @@
     return SndDataSize(format);
 }
 
-- (void) findMin: (float *) pMin max: (float *) pMax
+- (void) findMin: (float *) pMin 
+	      at: (unsigned long *) minLocation 
+	     max: (float *) pMax 
+	      at: (unsigned long *) maxLocation
 {
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
 // #ifndef __APPLE_CC__
-#if 1
+#if 0
     unsigned long sampleIndex;
     const void *samplePtr = [data bytes];
     *pMin = 0.0;
@@ -750,55 +753,63 @@
 	    NSLog(@"findMin:max: unsupported format %d\n", format.dataFormat);
 	}
 	
-	if (sample < *pMin)
+	if (sample < *pMin) {
 	    *pMin = sample;
-	else if (sample > *pMax)
+	    *minLocation = sampleIndex;
+	}
+	else if (sample > *pMax) {
 	    *pMax = sample;
+	    *maxLocation = sampleIndex;
+	}
     }
 #else
-    // Altivec implementation
+    // vector implementation
     switch(format.dataFormat) {
 	case SND_FORMAT_FLOAT: {
-	    const vector float *samplePtr = (vector float *) [data bytes];
-	    unsigned int vectorsInBuffer = samplesInBuffer / 4; // TODO FLOATS_IN_ALTIVECTOR
-	    unsigned int vectorIndex;
-	    vector unsigned int minusZero;
-	    vector float max, min;
-	    vector float rotatedMax, partialMax;
-	    vector float rotatedMin, partialMin;
+	    const vFloat *samplePtr = (vFloat *) [data bytes];
+	    int32_t maxIndex = vIsmax(samplesInBuffer, samplePtr);
+	    int32_t minIndex = vIsmin(samplesInBuffer, samplePtr);
 	    
-	    minusZero = vec_splat_u32(-1); 
-	    minusZero = vec_sl(minusZero, minusZero);
-	    min = max = (vector float) minusZero;
-	    
-	    for(vectorIndex = 0; vectorIndex < vectorsInBuffer; vectorIndex++) {
-		max = vec_max(max, samplePtr[vectorIndex]);
-		min = vec_min(min, samplePtr[vectorIndex]);
-	    }
-	    // We now have the max and min for each element location in the vector,
-	    // we now need to determine which is the max/min within the vector.
-	    rotatedMax = vec_sld(max, max, 4);			// rotate one float left = [2,3,4,1]
-	    partialMax = vec_max(max, rotatedMax);		// compare = [1>2, 2>3, 3>4, 4>1] -> highest and second highest values.
-	    rotatedMax = vec_sld(partialMax, partialMax, 8);    // rotate result two floats = [3>4, 4>1, 1>2, 2>3]
-	    max = vec_max(partialMax, rotatedMax);		// compare = [(1>2)>(3>4), (2>3)>(4>1), (3>4)>(1>2), (4>1)>(2>3)]
-	    // Choose the first element from the vector for the maximum value within the vector.
-	    vec_ste(max, 0, pMax);
-
-	    // determine min within the vector
-	    rotatedMin = vec_sld(min, min, 4);			// rotate one float left = [2,3,4,1]
-	    partialMin = vec_min(min, rotatedMin);		// compare = [1<2, 2<3, 3<4, 4<1] -> highest and second highest values.
-	    rotatedMin = vec_sld(partialMin, partialMin, 8);    // rotate result two floats = [3<4, 4<1, 1<2, 2<3]
-	    min = vec_min(partialMin, rotatedMin);		// compare = [(1<2)<(3<4), (2<3)<(4<1), (3<4)<(1<2), (4<1)<(2<3)]
-	    // Choose the first element from the vector for the minimum value within the vector.
-	    vec_ste(min, 0, pMin);
-	}
-	break;
+	    *pMax = ((float *) samplePtr)[maxIndex];
+	    *maxLocation = maxIndex;
+	    *pMin = ((float *) samplePtr)[minIndex];    
+	    *minLocation = minIndex;
+	    break;
 	// case SND_FORMAT_LINEAR_16:
         // break;
 	default:
-	    NSLog(@"findMin:max: unsupported format %d\n", format.dataFormat);
+	    NSLog(@"findMin:at:max:at: unsupported format %d\n", format.dataFormat);
+	}
     }
 #endif
+}
+
+- (void) findMin: (float *) pMin max: (float *) pMax
+{
+    unsigned long minLocation, maxLocation;
+    
+    [self findMin: pMin at: &minLocation max: pMax at: &maxLocation];
+}
+
+- (double) findMaximumMagnitudeAt: (unsigned long *) sampleIndex
+{
+    float minAmp, maxAmp;
+    unsigned long minLocation, maxLocation;
+    float absMinAmp, absMaxAmp;
+    
+    [self findMin: &minAmp at: &minLocation max: &maxAmp at: &maxLocation];
+    absMinAmp = fabs(minAmp);
+    absMaxAmp = fabs(maxAmp);
+    if(absMinAmp > absMaxAmp) {
+	if(sampleIndex)
+	    *sampleIndex = minLocation;
+	return absMinAmp;
+    }
+    else {
+	if(sampleIndex)
+	    *sampleIndex = maxLocation;
+	return absMaxAmp;
+    }
 }
 
 - (double) maximumAmplitude

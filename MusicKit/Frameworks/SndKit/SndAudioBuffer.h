@@ -387,6 +387,24 @@ typedef enum {
 - (void) findMin: (float *) pMin max: (float *) pMax;
 
 /*!
+  @brief Finds the maximum and minimum sample values in the audio buffer and returns them as floats along with their locations.
+  @param pMin Points to a float to store the minimum sample value (between -1.0 and 1.0).
+  @param minLocation Points to an unsigned long to store the sample index of the minimum sample.
+  @param pMax Points to a float to store the maximum sample value (between -1.0 and 1.0).
+  @param maxLocation Points to an unsigned long to store the sample index of the maximum sample.
+ */
+- (void) findMin: (float *) pMin 
+	      at: (unsigned long *) minLocation 
+	     max: (float *) pMax 
+	      at: (unsigned long *) maxLocation;
+
+/*!
+  @brief Finds the maximum absolute value amplitude sample in the audio buffer and returns it's index.
+  @param sampleIndex Points to an unsigned long to store the sample index of the maximum magnitude sample.
+ */
+- (double) findMaximumMagnitudeAt: (unsigned long *) sampleIndex;
+
+/*!
   @brief Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
   @return Returns the maximum value of a sample.
  */
