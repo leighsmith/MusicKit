@@ -88,7 +88,6 @@ void vDSP_vrsum(const float *input, unsigned int inputStride,
     register float *resultPtr = result + 1;
 #else
     register unsigned int vectorIndex;
-    register v4sf accumulator asm("%xmm1");
     v4sf scaling;
     const float *inputPtr = input + 1;
     float *resultPtr = result + 1;
@@ -184,8 +183,6 @@ void vDSP_dotpr(const float input1[],
      * it isn't demoted to an auto, which can create a hairy situation that the
      * accumulator's location on the stack may not be properly aligned. */
     static __attribute__ ((aligned (16))) v4sf accumulator;
-#else
-    register v4sf accumulator asm("%xmm2");
 #endif
     float finalSummation[4];
     unsigned int index;
