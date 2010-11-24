@@ -731,8 +731,27 @@
 	      at: (unsigned long *) maxLocation
 {
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
-// #ifndef __APPLE_CC__
-#if 0
+#if defined(__APPLE_CC__)  // || (__i386__ && __GNUC__)
+    // vector implementation
+    switch(format.dataFormat) {
+	case SND_FORMAT_FLOAT: {
+	    const vFloat *samplePtr = (vFloat *) [data bytes];
+	    int32_t maxIndex = vIsmax(samplesInBuffer, samplePtr);
+	    int32_t minIndex = vIsmin(samplesInBuffer, samplePtr);
+	    
+	    *pMax = ((float *) samplePtr)[maxIndex];
+	    *maxLocation = maxIndex;
+	    *pMin = ((float *) samplePtr)[minIndex];    
+	    *minLocation = minIndex;
+	    break;
+	// case SND_FORMAT_LINEAR_16:
+        // break;
+	default:
+	    NSLog(@"findMin:at:max:at: unsupported format %d\n", format.dataFormat);
+	}
+    }
+#else
+#warning Vector units not available, using scalar max/min finding.
     unsigned long sampleIndex;
     const void *samplePtr = [data bytes];
     *pMin = 0.0;
@@ -760,25 +779,6 @@
 	else if (sample > *pMax) {
 	    *pMax = sample;
 	    *maxLocation = sampleIndex;
-	}
-    }
-#else
-    // vector implementation
-    switch(format.dataFormat) {
-	case SND_FORMAT_FLOAT: {
-	    const vFloat *samplePtr = (vFloat *) [data bytes];
-	    int32_t maxIndex = vIsmax(samplesInBuffer, samplePtr);
-	    int32_t minIndex = vIsmin(samplesInBuffer, samplePtr);
-	    
-	    *pMax = ((float *) samplePtr)[maxIndex];
-	    *maxLocation = maxIndex;
-	    *pMin = ((float *) samplePtr)[minIndex];    
-	    *minLocation = minIndex;
-	    break;
-	// case SND_FORMAT_LINEAR_16:
-        // break;
-	default:
-	    NSLog(@"findMin:at:max:at: unsupported format %d\n", format.dataFormat);
 	}
     }
 #endif
