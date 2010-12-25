@@ -79,6 +79,7 @@ static NSMutableArray *fxClassesArray = nil;
 {
     NSString *className = [@"SndAudioProcessor" stringByAppendingString: processorName];
     SndAudioProcessor *processor = [NSClassFromString(className) new];
+
     return [processor autorelease];
 }
 
@@ -274,7 +275,7 @@ static NSMutableArray *fxClassesArray = nil;
   // no processing? return FALSE!
   // remember to check active in derived classes.
 
-  // in derived classes, return TRUE if the output buffer has been written to
+  // in derived classes, return TRUE if the output buffer has been written to.
   return FALSE;
 }
 

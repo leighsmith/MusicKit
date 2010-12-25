@@ -402,7 +402,22 @@ typedef enum {
   @brief Finds the maximum absolute value amplitude sample in the audio buffer and returns it's index.
   @param sampleIndex Points to an unsigned long to store the sample index of the maximum magnitude sample.
  */
-- (double) findMaximumMagnitudeAt: (unsigned long *) sampleIndex;
+- (float) findMaximumMagnitudeAt: (unsigned long *) sampleIndex;
+
+/*!
+  @brief Finds the maximum absolute value amplitude sample in the audio buffer and returns it's index.
+  @param frameIndex Points to an unsigned long to store the frame index of the maximum magnitude sample.
+  @param channel Points to an unsigned int to store the channel of the maximum magnitude sample.
+ */
+- (float) findMaximumMagnitudeAt: (unsigned long *) frameIndex channel: (unsigned int *) channel;
+
+/*!
+  @brief Returns the root mean squared amplitude of each channel in the audio buffer.
+  @param rmsAmpPerChannel Points to an array of floats to receive each channels RMS amplitude value.
+ 
+  Note that <I>rmsAmpPerChannel</I> must point to a sufficient number of floats to match the number of channels in the buffer.
+ */
+- (void) amplitudeRMSOfChannels: (float *) rmsAmpPerChannel;
 
 /*!
   @brief Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
@@ -431,10 +446,19 @@ typedef enum {
   @param frameIndex The frame index, between 0 and the value returned by <B>lengthInSampleFrames</B>
                     less one, inclusive.
   @param channel The channel index, between 0 and the number of channels in the buffer (channelCount - 1)
-                 to retrieve a single channel, channelCount to average all channels to a single value.
+                 to retrieve a single channel, use channelCount to average all channels to a single value.
   @return Returns a normalised sample value as a float regardless of the data format.
  */
 - (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel;
+
+/*!
+  @brief Allows assignment of a normalised sample in the buffer, given the frame number (time position) and channel number.
+  @param sampleValue A value specified as a bivalent normalised value (between -1.0 and 1.0).
+  @param frameIndex The frame index, between 0 and the value returned by <B>lengthInSampleFrames</B> less one, inclusive.
+  @param channel The channel index, between 0 and the number of channels in the buffer (channelCount - 1).
+  @return Returns YES if able to assign the value, NO if the parameters specified an address outside the buffer.
+ */
+- (BOOL) setSample: (float) sampleValue atFrameIndex: (unsigned long) frameIndex channel: (int) channelNumber;
 
 /*!
   @brief Retrieve the channels used for stereo presentation (left and right).

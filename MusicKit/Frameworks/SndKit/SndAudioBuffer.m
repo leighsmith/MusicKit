@@ -293,7 +293,7 @@
     float sampleMin, sampleMax;
     
     [self findMin: &sampleMin max: &sampleMax];
-    return [NSString stringWithFormat: @"%@ (%@) (min: %.2f, max: %.2f)",
+    return [NSString stringWithFormat: @"%@ (%@) (min: %.3f, max: %.3f)",
         [super description], SndFormatDescription(format), sampleMin, sampleMax];
 }
 
@@ -731,6 +731,7 @@
 	      at: (unsigned long *) maxLocation
 {
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
+    
 #if defined(__APPLE_CC__)  // || (__i386__ && __GNUC__)
     // vector implementation
     switch(format.dataFormat) {
@@ -740,9 +741,9 @@
 	    int32_t minIndex = vIsmin(samplesInBuffer, samplePtr);
 	    
 	    *pMax = ((float *) samplePtr)[maxIndex];
-	    *maxLocation = maxIndex;
+	    *maxLocation = (unsigned long) maxIndex;
 	    *pMin = ((float *) samplePtr)[minIndex];    
-	    *minLocation = minIndex;
+	    *minLocation = (unsigned long) minIndex;
 	    break;
 	// case SND_FORMAT_LINEAR_16:
         // break;
@@ -791,7 +792,7 @@
     [self findMin: pMin at: &minLocation max: pMax at: &maxLocation];
 }
 
-- (double) findMaximumMagnitudeAt: (unsigned long *) sampleIndex
+- (float) findMaximumMagnitudeAt: (unsigned long *) sampleIndex
 {
     float minAmp, maxAmp;
     unsigned long minLocation, maxLocation;
@@ -810,6 +811,45 @@
 	    *sampleIndex = maxLocation;
 	return absMaxAmp;
     }
+}
+
+- (float) findMaximumMagnitudeAt: (unsigned long *) frameIndex channel: (unsigned int *) channel
+{
+    unsigned long sampleIndex;
+    float maximumMagnitude = [self findMaximumMagnitudeAt: &sampleIndex];
+    
+    *frameIndex = sampleIndex / [self channelCount];
+    *channel = sampleIndex % [self channelCount];
+    return maximumMagnitude;
+}
+
+// Return an array of RMS values, for the number of channels.
+- (void) amplitudeRMSOfChannels: (float *) rmsAmpPerChannel
+{
+    unsigned long framesInBuffer = [self lengthInSampleFrames];
+    const float *samplePtr = (const float *) [data bytes];
+    unsigned int channelIndex;
+    
+#if defined(__APPLE_CC__)  // || (__i386__ && __GNUC__)
+    // vector implementation
+    for (channelIndex = 0; channelIndex < format.channelCount; channelIndex++) {
+	float sumOfSquares = 0.0;
+
+	vDSP_dotpr(samplePtr + channelIndex, format.channelCount, samplePtr + channelIndex, format.channelCount, &sumOfSquares, framesInBuffer);
+	rmsAmpPerChannel[channelIndex] = sqrt(sumOfSquares / framesInBuffer);
+	// NSLog(@"rmsAmpPerChannel = %p channelIndex = %d\n", rmsAmpPerChannel, channelIndex);
+    }
+#else
+    for (channelIndex = 0; channelIndex < format.channelCount; channelIndex++) {
+	unsigned frameIndex;
+        float sumOfSquares = 0.0;
+
+	for (frameIndex = 0; frameIndex < framesInBuffer; frameIndex++) {
+	    sumOfSquares += samplePtr[frameIndex] * samplePtr[frameIndex]; // Multiply and add.
+	}
+	rmsAmpPerChannel[channelIndex] = sqrt(sumOfSquares / framesInBuffer);
+    }
+#endif
 }
 
 - (double) maximumAmplitude

@@ -470,7 +470,22 @@
 	int channelCount = [inB channelCount];
 	unsigned long sampleCount = inBuffLengthInFrames * channelCount;
 	unsigned long sampleIndex;
-	
+
+#if 0
+	if(!startedRecording) {
+	    float sampleMagnitude = [inB findMaximumMagnitudeAt: &sampleIndex];
+	    
+	    if(sampleMagnitude > startTriggerThreshold) {
+		unsigned long frameIndex = sampleIndex / channelCount;
+		
+		startedRecording = YES; // to start the saving of buffers below.
+		// Now determine which frame this sample is within in order to calculate sample to begin copying from.
+		aboveThresholdRange.location = frameIndex;
+		aboveThresholdRange.length = inBuffLengthInFrames - frameIndex;
+		// NSLog(@"aboveThresholdRange %ld, %ld\n", aboveThresholdRange.location, aboveThresholdRange.length);
+	    }
+	}
+#else
 	for (sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++) {
 	    float sampleMagnitude = fabs(inputData[sampleIndex]);
 
@@ -487,7 +502,7 @@
 		break;  // Once we found the first frame above the threshold, we can start the copy.
 	    }
 	}
-	
+#endif	
 	// do NOT make this an 'else' with the above 'if', allow it to drop through.
 	if (startedRecording) {
 	    NSRange shortenedBufferRange;
