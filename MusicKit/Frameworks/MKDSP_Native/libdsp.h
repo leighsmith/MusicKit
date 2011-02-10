@@ -121,7 +121,7 @@ MKDSP_API char *DSPTimeStampStr(DSPFix48 *aTimeStampP);
 
 /* ============================= _DSPString.c ============================== */
 
-MKDSP_API char *DSPCat(char *f1, const char *f2);
+MKDSP_API char *DSPCat(const char *f1, const char *f2);
 /* 
  * Concatenate two strings into the returned string.
  * Uses malloc to create the returned string.
