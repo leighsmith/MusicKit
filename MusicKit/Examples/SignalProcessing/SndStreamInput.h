@@ -21,7 +21,7 @@
 
 /*!
   @class SndStreamInput
-  @abstract Copies input streams to output streams, allowing audio processing to be applied to it.
+  @brief Copies input streams to output streams, allowing audio processing to be applied to it.
   @discussion
     
     ATTENTION!!!
@@ -42,14 +42,14 @@
 
 /*! 
   @method     init
-  @abstract   Initialises the receiver.
+  @brief   Initialises the receiver.
   @result     Returns the initialised instance.
 */
 - init;
 
 /*! 
   @method     startReceivingInput 
-  @abstract   Begins recording.
+  @brief   Begins recording.
   @discussion This method may be overriden in subclasses to initialise the destination of the recording.
   @result     Returns YES if able to start recording.
 */
@@ -57,20 +57,20 @@
 
 /*! 
   @method     stopReceivingInput
-  @abstract   Manually stops recording.
+  @brief   Manually stops recording.
   @discussion Immediately stops recording. Other methods can be used to stop recording after a given amount of time.
 */
 - (void) stopReceivingInput;
 
 /*!
   @method isReceivingInput
-  @abstract Returns whether the receiver is currently receiving audio samples.
+  @brief Returns whether the receiver is currently receiving audio samples.
  */
 - (BOOL) isReceivingInput;
 
 /*!
   @method averageLatencyForOutput:
-  @abstract Returns the average latency for either the input or output processing.
+  @brief Returns the average latency for either the input or output processing in samples.
 
   The average is computed over a maximum of the last MAX_LATENCY_TIMES processing.
 
@@ -83,14 +83,14 @@
 
 /*! 
  @protocol StreamRecorderDelegate
- @abstract Protocol for a SndStreamInput delegate
+ @brief Protocol for a SndStreamInput delegate
  @discussion To come.
 */
 @protocol StreamRecorderDelegate <SndStreamClientDelegate>
 
 /*! 
     @method   didStartReceivingInput:sender
-    @abstract   Message sent to delegate just before the recording thread enters
+    @brief   Message sent to delegate just before the recording thread enters
                 its processBuffers loop, indicating it is waiting for the first 
                 buffer to arrive.
     @discussion Protocol method for SndStreamRecorderDelegate
@@ -100,7 +100,7 @@
 
 /*! 
     @method     didFinishReceivingInput:sender
-    @abstract   Message sent to delegate when recording has completed. This is 
+    @brief   Message sent to delegate when recording has completed. This is 
                 caused by either a user event stopping streaming to disk, or the 
                 recording thread reaching the limit of a record-to-memory buffer, 
                 and is sent after the final bytes have been delivered to their 

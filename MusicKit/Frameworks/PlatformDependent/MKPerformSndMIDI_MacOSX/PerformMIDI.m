@@ -49,13 +49,9 @@ static MIDIPortRef     outPort = NULL;
 static MIDIPortRef     inPort = NULL;
 static MIDIEndpointRef *claimedDestinations = NULL;
 static MIDIEndpointRef *claimedSources = NULL;
-static MKMDReplyFunctions *userFuncs;   // functions to be called on reception from the driver.
+static MKMDReplyFunctions userReplyFunctions;   // functions to be called on reception from the driver.
 
 static MKMDReplyPort   dataReplyPort;	// mach port-like port to reply received MIDI on.
-  //static MKMDReplyPort   queue_port;	// mach port-like port to reply when queue is available.
-static const MIDIPacketList *receivedPacketList;
-static void (*callbackFn)(void *);
-static void *callbackParam;
 
 // Amount of time in seconds estimated for the current collection of MIDI packets to play.
 static long playEndTimeEstimate = 0;
@@ -73,15 +69,52 @@ static int timeStampToMKTime(MIDITimeStamp timeStamp)
     return (int) ((timeStamp - datumRefTime) / quantumFactor);
 }
 
-// called on reception of MIDI packets.
-static void readProc(const MIDIPacketList *pktlist, void *refCon, void *connRefCon)
+// Called on reception of MIDI packets. Calls back into the MusicKit. Typically userData is a MKMidi instance.
+static void replyDispatch(const MIDIPacketList *receivedPacketList, void *savedReplyFunctions, void *userData)
 {
-    if(callbackFn != NULL) {
-        receivedPacketList = pktlist;
-        (*callbackFn)(callbackParam);
+    short incomingUnit;
+    // replyFunctions
+    MKMDReplyFunctions *userFuncs = (MKMDReplyFunctions *) savedReplyFunctions;
+
+#if 0
+    if (userFuncs->alarmReply) {
+	(*(userFuncs->alarmReply))(reply_port,time,actualTime);
+    }
+    if (userFuncs->queueReply) {
+	(*(userFuncs->queueReply))(reply_port,unit);
+    }
+    if (userFuncs->exceptionReply) {
+	(*(userFuncs->exceptionReply))(reply_port,exception);
+    }
+#endif
+    if (userFuncs->dataReply) {
+	unsigned int packetIndex;
+	int dataIndex;    
+	MIDIPacket *packet = (MIDIPacket *) receivedPacketList->packet;	// remove const (!)
+	
+	for (packetIndex = 0; packetIndex < receivedPacketList->numPackets; ++packetIndex) {
+	    MKMDRawEvent *events = (MKMDRawEvent *) malloc(sizeof(MKMDRawEvent) * packet->length);
+	    
+	    // NSLog(@"replyDispatch %p received packet of %d: ", userData, packet->length);
+	    for (dataIndex = 0; dataIndex < packet->length; ++dataIndex) {
+		// NSLog(@"%02X ", packet->data[dataIndex]);
+		events[dataIndex].byte = packet->data[dataIndex];
+		events[dataIndex].time = timeStampToMKTime(packet->timeStamp);
+	    }
+	    // NSLog(@"\n");
+	    // claimedSources[unit] == 0; // determine from refCon and connRefCon
+	    incomingUnit = 0; // TODO determine the unit the data was received on.
+	    if(dataReplyPort != MKMD_PORT_NULL)
+		(*(userFuncs->dataReply))(userData, incomingUnit, events, packet->length);
+	    else
+		NSLog(@"not receiving MIDI since dataReplyPort is null!\n");
+	    free(events);
+	    packet = MIDIPacketNext(packet);
+	}
     }
 }
-
+    
+    
 // Return the available port and driver names and the index of the current selected port.
 // A NULL char * terminates the list a la argv behaviour.
 // The order in which the driver names and available ports are returned is fixed, and a unit
@@ -167,6 +200,7 @@ PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
 // returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
 // that has meaning.
 // hostname should eventually be a URL.
+// TODO this is problematic, there could be many MIDI devices on a named host.
 PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
     if(*hostname) {
@@ -178,7 +212,7 @@ PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 }
 
 /* Routine MKMDBecomeOwner */
-PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port)
+PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port, MKMDReplyFunctions *replyFunctions)
 {
     // create client and ports
     NSString *executable;
@@ -204,8 +238,10 @@ PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort o
     if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr)
 	return MKMD_ERROR_UNKNOWN_ERROR;
     // NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
-    if((result = MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort)) != noErr)
+    userReplyFunctions = *replyFunctions; // Make a local copy of the reply functions.
+    if((result = MIDIInputPortCreate(client, CFSTR("Input port"), replyDispatch, &userReplyFunctions, &inPort)) != noErr)
 	return MKMD_ERROR_UNKNOWN_ERROR;
+    // NSLog(@"in MKMDBecomeOwner MIDIInputPortCreate inPort %p\n", inPort);
     // NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
     if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr)
        return MKMD_ERROR_UNKNOWN_ERROR;
@@ -224,6 +260,7 @@ PERFORM_API MKMDReturn MKMDReleaseOwnership(MKMDPort mididriver_port, MKMDOwnerP
     if(MIDIPortDispose(outPort) != noErr)
         return MKMD_ERROR_BUSY;
 
+    // NSLog(@"MKMDReleaseOwnership called before MIDIPortDispose\n");
     if(MIDIPortDispose(inPort) != noErr)
         return MKMD_ERROR_BUSY;
         
@@ -337,7 +374,8 @@ PERFORM_API MKMDReturn MKMDStopClock(MKMDPort mididriver_port, MKMDOwnerPort own
 PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 				     MKMDPort mididriver_port,
 				     MKMDOwnerPort owner_port,
-				     short unit)
+				     short unit,
+				     void *userData)
 {
     ItemCount destinationCount;
     ItemCount sourceCount;
@@ -350,18 +388,29 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	sourceCount = MIDIGetNumberOfSources();
 	// NSLog(@"MKMDClaimUnit %ld sources\n", sourceCount);
 	if(sourceCount > 0) {
+	    // If we haven't yet allocated ourselves tables for remembering the claimed sources, do so.
 	    if(claimedSources == NULL) {
-		if((claimedSources = malloc(sourceCount * sizeof(MIDIEndpointRef))) == NULL)
-		    NSLog(@"Couldn't allocate %ld sources\n", sourceCount);
+		if((claimedSources = calloc(sourceCount, sizeof(MIDIEndpointRef))) == NULL)
+		    NSLog(@"Couldn't allocate %ld MIDI sources\n", sourceCount);
 	    }
-	    claimedSources[unit] = MIDIGetSource(unit);
-	    if(claimedSources[unit] == NULL)
-		return MKMD_ERROR_UNKNOWN_ERROR;
-	    if(MIDIPortConnectSource(inPort, claimedSources[unit], NULL) != noErr)
-		return MKMD_ERROR_UNKNOWN_ERROR;
+	    // We have to guard against attempting to connect to the same source twice. If we do, MIDIPortConnectSource will save both connections
+	    // and the userData in the order received, but then there is no way to disconnect the source in a different order, which is important 
+	    // since we want to communicate the userData back to the MKMidi reply function.
+	    if(!claimedSources[unit]) {
+		claimedSources[unit] = MIDIGetSource(unit);
+		if(claimedSources[unit] == NULL)
+		    return MKMD_ERROR_UNKNOWN_ERROR;
+		// NSLog(@"Connecting inPort %p unit %d source is %x with userData %p\n", inPort, unit, claimedSources[unit], userData);
+		if(MIDIPortConnectSource(inPort, claimedSources[unit], userData) != noErr)
+		    return MKMD_ERROR_UNKNOWN_ERROR;		
+	    }
+	    else {
+		return MKMD_ERROR_UNIT_UNAVAILABLE;
+	    }
 	}
 	else {
 	    NSLog(@"No MIDI sources present\n");
+	    return MKMD_ERROR_UNKNOWN_ERROR;
 	}
     }
     else {
@@ -390,6 +439,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	}
 	else {
 	    NSLog(@"No MIDI destinations present\n");
+	    return MKMD_ERROR_UNKNOWN_ERROR;
 	}	
     }
     return MKMD_SUCCESS;
@@ -399,14 +449,26 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 PERFORM_API MKMDReturn MKMDReleaseUnit(BOOL input,
 				       MKMDPort mididriver_port,
 				       MKMDOwnerPort owner_port,
-				       short unit)
+				       short unit,
+				       void *userData)
 {
 #if FUNCLOG
     fprintf(debug, "MKMDReleaseUnit %d called\n", unit);
 #endif
     if(input) {
-	if(MIDIPortDisconnectSource(inPort, claimedSources[unit]) != noErr)
-	    return MKMD_ERROR_UNKNOWN_ERROR;	
+	// NSLog(@"MKMDReleaseUnit %d called, userData %p\n", unit, userData);
+	if(claimedSources[unit]) {
+	    OSStatus result = MIDIPortDisconnectSource(inPort, claimedSources[unit]);
+
+	    // NSLog(@"Attempting disconnect of inPort %p source %p result %d", inPort, claimedSources[unit], result);
+	    if(result != noErr)
+		return MKMD_ERROR_UNKNOWN_ERROR;	
+	    claimedSources[unit] = NULL;	    
+	}
+	else {
+	    // NSLog(@"disconnect source was null %p", claimedSources[unit]);
+	    return MKMD_ERROR_UNIT_UNAVAILABLE;
+	}
     }
     else {
     // Not quite sure how to rescind destinations, or if we even need to.
@@ -655,47 +717,6 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
     return MKMD_SUCCESS;
 }
 
-// probably need to look at the msg to determine what to do.
-static void replyDispatch(MKMDReplyFunctions *userFuncs)
-{
-    short incomingUnit;
-    if (userFuncs->dataReply) {
-        unsigned int packetIndex;
-        int dataIndex;    
-        MIDIPacket *packet = (MIDIPacket *) receivedPacketList->packet;	// remove const (!)
-	
-        for (packetIndex = 0; packetIndex < receivedPacketList->numPackets; ++packetIndex) {
-            MKMDRawEvent *events = (MKMDRawEvent *) malloc(sizeof(MKMDRawEvent) * packet->length);
-
-            // NSLog(@"received packet of %d: ", packet->length);
-            for (dataIndex = 0; dataIndex < packet->length; ++dataIndex) {
-                // NSLog(@"%02X ", packet->data[dataIndex]);
-                events[dataIndex].byte = packet->data[dataIndex];
-                events[dataIndex].time = timeStampToMKTime(packet->timeStamp);
-            }
-            // NSLog(@"\n");
-            // claimedSources[unit] == 0; // determine from refCon and connRefCon
-            incomingUnit = 0; // TODO determine the unit the data was received on.
-            if(dataReplyPort != MKMD_PORT_NULL)
-                (*(userFuncs->dataReply))(dataReplyPort, incomingUnit, events, packet->length);
-            else
-                fprintf(stderr, "not receiving MIDI since dataReplyPort is null!\n");
-            free(events);
-            packet = MIDIPacketNext(packet);
-        }
-    }
-#if 0
-    if (userFuncs->alarmReply) {
-	(*(userFuncs->alarmReply))(reply_port,time,actualTime);
-    }
-    if (userFuncs->queueReply) {
-	(*(userFuncs->queueReply))(reply_port,unit);
-    }
-    if (userFuncs->exceptionReply) {
-	(*(userFuncs->exceptionReply))(reply_port,exception);
-    }
-#endif
-}
 
 // This should wait until a reply is received on port_set or until timeout.
 // For MacOS X, this is achieved by waiting for the playEndTimeEstimate, which is the time we
@@ -708,8 +729,8 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
 #if FUNCLOG
     fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
 #endif
-    userFuncs = funcs;
-    // since readProc will be called asynchronously when data is available, don't wait, just return
+    userReplyFunctions = *funcs;
+    // since replyDispatch will be called asynchronously when data is available, don't wait, just return
     if(timeout != MKMD_NO_TIMEOUT) { 
         playEndTimeEstimate = playEndTimeEstimate < timeout ? playEndTimeEstimate : timeout;
     }
@@ -730,20 +751,20 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
                              beforeDate: [datumAsDate dateByAddingTimeInterval: delayEstimateInSeconds]]; // MacOS 10.6 Cocoa
 #endif
     
-    // Should be calling userFuncs appropriately.
+    // Should be calling userReplyFunctions appropriately.
     
     playEndTimeEstimate = 0;
     return MKMD_SUCCESS;
 }
 
 // Here we save up the reply functions and then dispatch them.
-PERFORM_API MKMDReturn MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs)
+PERFORM_API MKMDReturn MKMDHandleReply(void *userData, MKMDReplyFunctions *funcs)
 {
 #if FUNCLOG
     fprintf(debug, "MKMDHandleReply called\n");
 #endif
-    userFuncs = funcs;
-    replyDispatch(userFuncs);
+    userReplyFunctions = *funcs;
+    // replyDispatch(&userReplyFunctions, userData);
     return MKMD_SUCCESS;
 }
 
@@ -754,13 +775,13 @@ PERFORM_API MKMDReturn MKMDSetReplyCallback (
 	MKMDOwnerPort owner_port,
 	short unit,
         void (*newCallbackFn)(void *),
-        void *newCallbackParam)
+        void *newMKMidiInstance)
 {
 #if FUNCLOG
     fprintf(debug, "MKMDSetReplyCallback called\n");
 #endif
-    callbackFn = newCallbackFn;
-    callbackParam = newCallbackParam;
+    //callbackFn = newCallbackFn;
+    //mkmidiReceivers[unit] = newMKMidiInstance;
     return MKMD_SUCCESS;
 }
 

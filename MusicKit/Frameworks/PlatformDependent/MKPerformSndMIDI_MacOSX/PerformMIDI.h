@@ -102,7 +102,7 @@ typedef int MKMDReturn;
 #define MKMD_PORT_NULL 0
 
 /*!
-  @brief Each raw event consists of a MIDI message byte and a time stamp.
+  @brief Each raw event consists of a single MIDI message byte and a time stamp.
 */
 typedef struct {
     /*! @brief Absolute time in quanta. */
@@ -186,12 +186,12 @@ typedef MKMDRawEvent *MKMDRawEventPtr;
 /*!
   @typedef MKMDDataReplyFunction
   @brief Reply function communicating received MIDI data.
-  @param replyPort The communications port for the reply.
+  @param userData User data supplied via MKMDHandleReply().
   @param unit The MIDI port (cable) the data is to be sent to.
   @param events A count terminated array of MIDI events.
   @param count Number of MIDI events received.
 */
-typedef void (*MKMDDataReplyFunction) (MKMDReplyPort replyPort, short unit, MKMDRawEvent *events, unsigned int count);
+typedef void (*MKMDDataReplyFunction) (void *userData, short unit, MKMDRawEvent *events, unsigned int count);
 
 /*!
   @typedef MKMDAlarmReplyFunction
@@ -250,10 +250,11 @@ PERFORM_API MKMDPort
   @brief Takes ownership of the driver.
   @param mididriver_port Port indicating and enabling communication with the MIDI driver.
   @param owner_port Port indicating and enabling communication with the owner (calling routine).
+  @param replyFunctions Nominates functions called back when MIDI data is received or other exceptions.
   @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port);
+    MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port, MKMDReplyFunctions *replyFunctions);
 
 /*!
   @function MKMDReleaseOwnership
@@ -272,10 +273,11 @@ PERFORM_API MKMDReturn
   @param driver Port indicating and enabling communication with the MIDI driver.
   @param owner Port indicating and enabling communication with the owner (calling routine).
   @param unit Indicates the MIDI port (cable) in a multiple MIDI port driver.
+  @param userData A pointer to user data that will be returned when calling the reply functions supplied to MKMDBecomeOwner().
   @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDClaimUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDClaimUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit, void *userData);
 
 /*!
   @function MKMDReleaseUnit
@@ -283,10 +285,11 @@ PERFORM_API MKMDReturn
   @param driver Port indicating and enabling communication with the MIDI driver.
   @param owner Port indicating and enabling communication with the owner (calling routine).
   @param unit Indicates the MIDI port (cable) in a multiple MIDI port driver.
+  @param userData A pointer to user data that was supplied to MKMDClaimUnit().
   @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDReleaseUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDReleaseUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit, void *userData);
 
 /*!
   @function MKMDSetClockMode
@@ -447,7 +450,7 @@ PERFORM_API MKMDReturn
   @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs);
+    MKMDHandleReply(void *userData, MKMDReplyFunctions *funcs);
 
 /*!
   @function MKMDSetReplyCallback

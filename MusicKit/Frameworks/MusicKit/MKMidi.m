@@ -191,19 +191,18 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 #define DEFAULT_SYSEX_MSGLEN 256
 
 // class variables
-static int addedPortsCount = 0;
+static int addedPortsCount = 0; // For MTC.
 // Maps driver names to MKMidi instances. This is a slight misnomer since instances are added when 
 // they are initialised, not when they are opened, yet they are removed when they are closed, not deallocated.
 static NSMutableDictionary *openDrivers = nil;  
-static MKMidi *receivingMidi = nil;           // the instance that has received the MIDI driver NSPort machMessage
 static NSMutableArray *bidirectionalDriverNames = nil;
 static NSMutableArray *inputDriverNames = nil;
 static NSMutableArray *outputDriverNames = nil;
 static unsigned int systemDefaultDriverNum;   // index into the midiDriverNames and units that the operating system has nominated as default
-static double mtcTimeOffset = 0;
+static double mtcTimeOffset = 0;    // TODO should this be an ivar?
 
 /* Some forward decls */
-void handleCallBack(void *midiObj);
+static void midi_data_reply(void *receivingMidiPtr, short unit, MKMDRawEvent *events, unsigned int count);
 
 /* TYPE: Archiving; Writes object.
  You never send this message directly.  
@@ -340,7 +339,7 @@ NSString *midiDriverErrorString(int errorCode)
     return (synchConductor && mtcMidiObj == self);
 }
 
-// This method searches for any other Midi objects on hostname NOT matching the specified unit.
+// This method searches for any other open MKMidi instances on hostname NOT matching the specified unit.
 + (NSMutableArray *) midisOnHost: (NSString *) midiHostname
 	      otherThanInputUnit: (int) midiInputUnit
 		    orOutputUnit: (int) midiOutputUnit
@@ -353,8 +352,7 @@ NSString *midiDriverErrorString(int errorCode)
     
     while ((midiObj = [enumerator nextObject])) {
         if ([midiObj->hostname isEqualToString: midiHostname] && 
-	    (midiObj->inputUnit != midiInputUnit) &&
-	    (midiObj->outputUnit != midiOutputUnit))
+	    ((midiObj->inputUnit != midiInputUnit) || (midiObj->outputUnit != midiOutputUnit)))
             [midisNotMatching addObject: midiObj];
     }
     return midisNotMatching;
@@ -371,10 +369,12 @@ NSString *midiDriverErrorString(int errorCode)
     otherMidis = [MKMidi midisOnHost: hostname otherThanInputUnit: inputUnit orOutputUnit: outputUnit];
     
     if (INPUTENABLED(ioMode)) {
-	MKMDReleaseUnit(YES, devicePort, ownerPort, inputUnit);
+	if(MKMDReleaseUnit(YES, devicePort, ownerPort, inputUnit, (void *) self) != MKMD_SUCCESS)
+	    NSLog(@"Unable to release input unit %d, was not claimed.", inputUnit);
     }
     if (OUTPUTENABLED(ioMode)) {
-	MKMDReleaseUnit(NO, devicePort, ownerPort, outputUnit);
+	if(MKMDReleaseUnit(NO, devicePort, ownerPort, outputUnit, (void *) self) != MKMD_SUCCESS)
+	    NSLog(@"Unable to release output unit %d, was not claimed.", outputUnit);
     }
     if ([self unitHasMTC])
         [self tearDownMTC];
@@ -400,7 +400,7 @@ NSString *midiDriverErrorString(int errorCode)
     // This is actually a bit too early to remove ourselves from the port table, since we were added during initOnDevice:hostname:.
     // However we can not do this in dealloc since removeObjectForKey: will release the object causing a dealloc infinite loop.
     // This is almost the right place to remove it, since it is now closed and cannot receive further MIDI.
-    [openDrivers removeObjectForKey: midiDevName]; 
+    [openDrivers removeObjectForKey: midiDevName];
     return YES;
 }
 
@@ -447,8 +447,12 @@ NSString *midiDriverErrorString(int errorCode)
         }
     }
     if (!ownerPort) {
+	/* Tells driver funcs to call: */ 
+	// TODO MKMDReplyFunctions recvStruct = { midi_data_reply, my_alarm_reply, my_exception_reply, 0};
+	MKMDReplyFunctions recvStruct = { midi_data_reply, NULL, NULL, NULL};
+	
         ownerPort++;
-	r = MKMDBecomeOwner(devicePort, ownerPort);
+	r = MKMDBecomeOwner(devicePort, ownerPort, &recvStruct);
 	if (r != MKMD_SUCCESS) {
 	    isOwner = NO;
 	    MKErrorCode(MK_musicKitErr, UNAVAIL_DRIVER_ERROR);
@@ -457,7 +461,7 @@ NSString *midiDriverErrorString(int errorCode)
 	}
     }
     if (INPUTENABLED(ioMode)) {
-	r = MKMDClaimUnit(YES, devicePort, ownerPort, inputUnit);
+	r = MKMDClaimUnit(YES, devicePort, ownerPort, inputUnit, (void *) self);
 	if (r != MKMD_SUCCESS) {
 	    MKErrorCode(MK_musicKitErr, UNAVAIL_UNIT_ERROR);
 	    [self closeMidiDevice];
@@ -465,7 +469,7 @@ NSString *midiDriverErrorString(int errorCode)
 	}
     }
     if (OUTPUTENABLED(ioMode)) {
-	r = MKMDClaimUnit(NO, devicePort, ownerPort, outputUnit);
+	r = MKMDClaimUnit(NO, devicePort, ownerPort, outputUnit, (void *) self);
 	if (r != MKMD_SUCCESS) {
 	    MKErrorCode(MK_musicKitErr, UNAVAIL_UNIT_ERROR);
 	    [self closeMidiDevice];
@@ -490,7 +494,6 @@ NSString *midiDriverErrorString(int errorCode)
     /* Input */
     if (INPUTENABLED(ioMode)) {
         recvPort++;
-        MKMDSetReplyCallback(devicePort, ownerPort, inputUnit, handleCallBack, (void *) self);
     }
     if (OUTPUTENABLED(ioMode)) {
         queuePort++;
@@ -550,24 +553,24 @@ static void awaitMidiOutDone(MKMidi *self, int timeOut)
     waitForRoom(self, self->queueSize, timeOut);
 }
 
-static int stopMidiClock(MKMidi *self)
+- (int) stopMidiClock
 {
     MKMDReturn r;
     
-    if (self->synchConductor) {
-	r = MKMDRequestExceptions(self->devicePort, self->ownerPort, MKMD_PORT_NULL);
+    if (synchConductor) {
+	r = MKMDRequestExceptions(devicePort, ownerPort, MKMD_PORT_NULL);
 	if (r != MKMD_SUCCESS)
 	    MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"stopMidiClock MKMDRequestExceptions");
-	r = MKMDSetClockMode(self->devicePort, self->ownerPort, self->inputUnit, MKMD_CLOCK_MODE_INTERNAL);
+	r = MKMDSetClockMode(devicePort, ownerPort, inputUnit, MKMD_CLOCK_MODE_INTERNAL);
 	if (r != MKMD_SUCCESS)
 	    MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"stopMidiClock MKMDSetClockMode");
-        r = MKMDRequestAlarm(self->devicePort, self->ownerPort, MKMD_PORT_NULL, 0);
+        r = MKMDRequestAlarm(devicePort, ownerPort, MKMD_PORT_NULL, 0);
 	if (r != MKMD_SUCCESS)
 	    MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"stopMidiClock MKMDRequestAlarm");
-	self->alarmPending = NO;
+	alarmPending = NO;
 	return r;
     }
-    r = MKMDStopClock(self->devicePort, self->ownerPort);
+    r = MKMDStopClock(devicePort, ownerPort);
     if (r != MKMD_SUCCESS)
 	MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"stopMidiClock MKMDStopClock");
     return r;
@@ -602,7 +605,7 @@ static int resetAndStopMidiClock(MKMidi *self)
 {
     MKMDReturn r;
     
-    stopMidiClock(self);
+    [self stopMidiClock];
     r = MKMDSetClockTime(self->devicePort, self->ownerPort, 0);
     if (r != MKMD_SUCCESS)
       MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resetAndStopMidiClock");
@@ -928,37 +931,41 @@ static int incomingDataCount = 0;
 
 // midi_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply.
 // It may be called multiple times successively with events from the MKMDHandleReply mechanism.
-static void midi_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
+static void midi_data_reply(void *receivingMidiPtr, short unit, MKMDRawEvent *events, unsigned int eventCount) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
     unsigned char statusByte;
+    MKMidi *receivingMidi = (MKMidi *) receivingMidiPtr;
+    // since the callback is coming in from the cold harsh world of C, not cozy ObjC:
+    NSAutoreleasePool *handlerPool = [[NSAutoreleasePool alloc] init]; 
 
-    // check we assigned this in handleMachMessage/handleCallback and it survives the driver.
-    if(receivingMidi == nil) { 
-        MKErrorCode(MK_musicKitErr, @"Internal error, receiving MKMidi has not been assigned");
-        return;
-    }
-    ptr = MIDIINPTR(receivingMidi);
-    if(receivingMidi->displayReceivedMIDI)
-	NSLog(@"MKMidi received %d bytes: first is %02X\n", count, events->byte);
-    for (incomingDataCount = count; incomingDataCount--; events++) {
-	if ((statusByte = parseMidiByte(events->byte, ptr))) {
-	    if (statusByte == MIDI_SYSEXCL)
-                aNote = handleSysExclbyte(ptr, events->byte); /* not retained or autoreleased */
-	    else
-                aNote = _MKMidiToMusicKit(ptr, statusByte); /* autoreleased */
-	    if (aNote) {
-                sendIncomingNote(ptr->chan, aNote, receivingMidi, events->time);
-		/* sending the MKNote can have unknown side-effects, since the
-		 * user defines the behavior here.  For example, the MKMidi obj 
-		 * could be aborted or re-opened. It could even be freed!
-		 * So when we abort, we clear incomingDataCount.  This 
-		 * guarantees that we won't be left in a bad state */
+    // check we assigned this in handleMachMessage and it survives the driver.
+    if(receivingMidi) {
+	ptr = MIDIINPTR(receivingMidi);
+	// NSLog(@"receivingMIDI %@ events %p ptr = %p\n", receivingMidi, events, ptr);
+	if(receivingMidi->displayReceivedMIDI)
+	    NSLog(@"%@ received %d bytes: first is %02X\n", receivingMidi, eventCount, events->byte);
+	for (incomingDataCount = eventCount; incomingDataCount--; events++) {
+	    if ((statusByte = parseMidiByte(events->byte, ptr))) {
+		if (statusByte == MIDI_SYSEXCL)
+		    aNote = handleSysExclbyte(ptr, events->byte); /* not retained or autoreleased */
+		else
+		    aNote = _MKMidiToMusicKit(ptr, statusByte); /* autoreleased */
+		if (aNote) {
+		    sendIncomingNote(ptr->chan, aNote, receivingMidi, events->time);
+		    /* sending the MKNote can have unknown side-effects, since the
+		     * user defines the behavior here.  For example, the MKMidi obj 
+		     * could be aborted or re-opened. It could even be freed!
+		     * So when we abort, we clear incomingDataCount.  This 
+		     * guarantees that we won't be left in a bad state */
+		}
 	    }
 	}
     }
-    // since midi_data_reply can be called several times successively, we let the 
-    // handleMachMessage/handleCallback routines reset receivingMidi to nil.
+    else {
+	MKErrorCode(MK_musicKitErr, @"Internal error, receiving MKMidi has not been assigned");
+    }
+    [handlerPool release];
 }
 
 /*sb: added the following method to handle mach messages. This replaces the earlier function
@@ -985,46 +992,16 @@ static void midi_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *
     // if the error is from midiAlarm or Exception, CLOCK_ERROR rather than INPUT_ERROR should be used.
     errorMessage = INPUT_ERROR;
 
-    receivingMidi = self;
     // Eventually MKMDHandleReply should be unnecessary, when we receive the MIDI data direct into handlePortMessage
     // Then we can merge this method and midi_data_reply into a single handlePortMessage. 
+    // TODO we should indicate which MKMidi instance we are talking to by passing in self instead of msg.
     r = MKMDHandleReply(msg, &recvStruct);        /* This gets data */
     if (r != MKMD_SUCCESS) {
       MKErrorCode(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
     }
-
-    // to rigorously check handleMachMessage does its job, detects spurious wrong messages being sent.
-    receivingMidi = nil; 
 }
 
-// The alternative to using a Mach message is to use a call back function to receive the MIDI data.
-void handleCallBack(void *midiObj)
-{
-    NSString *errorMessage;
-    MKMDReturn result;
-    /* Tells driver funcs to call: */ 
-    // TODO MKMDReplyFunctions recvStruct = { midi_data_reply, my_alarm_reply, my_exception_reply, 0};
-    MKMDReplyFunctions recvStruct = { midi_data_reply, 0, 0, 0};
-    // since the callback is coming in from the cold harsh world of C, not cozy ObjC:
-    NSAutoreleasePool *handlerPool = [[NSAutoreleasePool alloc] init]; 
-
-    // TODO determine what the port is that called this method, then set the appropriate my_*_reply function
-    // and error message.
-    // TODO if the error is from midiAlarm or Exception, CLOCK_ERROR rather than INPUT_ERROR should be used.
-    errorMessage = INPUT_ERROR;
-
-    receivingMidi = (MKMidi *) midiObj;
-    // NSLog(@"receivingMIDI %@\n", receivingMidi);
-    result = MKMDHandleReply(NULL, &recvStruct);        /* This gets data */
-    if (result != MKMD_SUCCESS) {
-	MKErrorCode(MK_machErr, errorMessage, midiDriverErrorString(result), @"midiIn");
-    }
-    
-    // to rigorously check handleCallBack does its job, detects spurious wrong messages being sent.
-    receivingMidi = nil; 
-    [handlerPool release];
-}
-/* Input configuration */
+/* Input configuration */
 
 - setUseInputTimeStamps: (BOOL) yesOrNo
 {
@@ -1255,9 +1232,11 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ %s %@, unit %d, on host %@", [super description],
+    NSString *hostnameDisplay = [hostname length] ? [NSString stringWithFormat: @"host %@", hostname] : @"local host";
+    
+    return [NSString stringWithFormat: @"%@ %s %@, unit %d, on %@", [super description],
       ioMode == MKMidiInputOnly ? "Input from" : ioMode == MKMidiOutputOnly ? "Output to" : "I/O from/to",
-	midiDevName, ioMode == MKMidiInputOnly ? inputUnit : outputUnit, hostname];
+	midiDevName, ioMode == MKMidiInputOnly ? inputUnit : outputUnit, hostnameDisplay];
 }
 
 // Here we initialize our class variables.
@@ -1665,7 +1644,7 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
     case MK_devStopped:
 	return self;
     case MK_devRunning:
-	stopMidiClock(self);
+	[self stopMidiClock];
 	if (INPUTENABLED(ioMode)) 
 	    [self listenToMIDI: NO];
 	if (OUTPUTENABLED(ioMode)) 
@@ -1718,6 +1697,7 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
     case MK_devOpen:
 	if (INPUTENABLED(ioMode)) {
 	    _pIn = (void *)_MKFinishMidiIn(MIDIINPTR(self));
+	    // NSLog(@"[%@ close]: _pIn = %p\n", self, _pIn);
 	    incomingDataCount = 0;
 	}
 	if (OUTPUTENABLED(ioMode)) {
@@ -1794,7 +1774,7 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
 
 - (MKNoteReceiver *) channelNoteReceiver: (unsigned) channel
   /* Returns the NoteReceiver corresponding to the specified channel or nil
-     if none. If n is 0, returns the NoteReceiver used for MKNotes fasioned
+     if none. If n is 0, returns the MKNoteReceiver used for MKNotes fashioned
      from midi channel mode and system messages. */
 { 
     return (channel > MIDI_NUMCHANS) ? nil : [noteReceivers objectAtIndex: channel];

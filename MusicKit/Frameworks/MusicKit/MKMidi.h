@@ -460,13 +460,13 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
 
   The NSArray object will be autoreleased, although its contents (the
   MKNoteReceiver objects themselves) will not be released.
-  @return Returns an id.
+  @return Returns an NSArray instance.
 */
 - (NSArray *) noteReceivers;
 
 /*!
   @brief Returns the default MKNoteSender
-  @return Returns an id.
+  @return Returns an MKNoteSender instance.
 */
 - (MKNoteSender *) noteSender;
 
@@ -475,7 +475,7 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
 
   The NSArray object will be autoreleased, although its contents (the
   MKNoteSender objects themselves) will not be released.
-  @return Returns an id.
+  @return Returns an NSArray instance.
 */
 - (NSArray *) noteSenders;
   

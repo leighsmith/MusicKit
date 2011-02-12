@@ -1452,6 +1452,42 @@ outOfLoop:
   return nil;
 }
 
+- (MKPart *) partAtIndex: (NSUInteger) partIndex
+{
+    return [parts objectAtIndex: partIndex];
+}
+
+- (MKPart *) partTitled: (NSString *) partTitleToFind
+{
+    int partIndex, numOfParts = [parts count];
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	MKPart *mkp = [parts objectAtIndex: partIndex];
+	MKNote *infoNote = [mkp infoNote];
+	
+	if ([infoNote isParPresent: MK_title]) {
+	    NSString *s = [infoNote parAsString: MK_title];
+	    
+	    if ([s isEqualToString: partTitleToFind])
+		return mkp;
+	}
+    }
+    return nil;
+}
+
+- (MKPart *) partNamed: (NSString *) partNameToFind
+{
+    int partIndex, numOfParts = [parts count];
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	MKPart *mkp = [parts objectAtIndex: partIndex];
+	NSString *candidatePartName = [mkp partName];
+	
+	if ([candidatePartName isEqualToString: partNameToFind])
+	    return mkp;
+    }
+    return nil;
+}
 
 /* Manipulating notes. ------------------------------- */
 
@@ -1562,38 +1598,6 @@ static BOOL isUnarchiving = NO;
     [scoreDescription appendFormat: @"With MKScore info note:\n%@", [[self infoNote] description]];
     
     return scoreDescription;
-}
-
-- (MKPart *) partTitled: (NSString *) partTitleToFind
-{
-    int partIndex, numOfParts = [parts count];
-    
-    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
-	MKPart *mkp = [parts objectAtIndex: partIndex];
-	MKNote *infoNote = [mkp infoNote];
-	
-	if ([infoNote isParPresent: MK_title]) {
-	    NSString *s = [infoNote parAsString: MK_title];
-	    
-	    if ([s isEqualToString: partTitleToFind])
-		return mkp;
-	}
-    }
-    return nil;
-}
-
-- (MKPart *) partNamed: (NSString *) partNameToFind
-{
-    int partIndex, numOfParts = [parts count];
-    
-    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
-	MKPart *mkp = [parts objectAtIndex: partIndex];
-	NSString *candidatePartName = [mkp partName];
-	
-	if ([candidatePartName isEqualToString: partNameToFind])
-	    return mkp;
-    }
-    return nil;
 }
 
 @end

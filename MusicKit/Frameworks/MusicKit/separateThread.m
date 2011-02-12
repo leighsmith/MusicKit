@@ -117,7 +117,8 @@ static void adjustTimedEntry(double nextMsgTime);
 {
     if (inPerformance)
         return nil;
-    if ([_MKClassMidi() _disableThreadChange])
+    // Removed the checking with _MKClassMidi() since that can force the reinitialization of MKMidi after it has already been initialized.
+    if ([MKMidi _disableThreadChange])
         return nil;
     separateThread = yesOrNo;
     return self;

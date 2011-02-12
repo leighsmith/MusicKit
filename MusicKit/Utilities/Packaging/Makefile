@@ -116,9 +116,10 @@ tag: check_version
 	@echo "Tagged revision $(SVNREV) as $(SRCDISTNAME) release of $(DISTNAME) in Subversion repository"
 
 # just tar the file ready for transmission, no point compressing.
-$(BINARY_TARBALL): $(BINARY_PACKAGEFILE)
+$(BINARY_TARBALL): # $(BINARY_PACKAGEFILE)
 	# cd $(WORKINGDIR); \
 	# $(TAR) cf $@ $(BINARY_PACKAGEFILE)
+	@echo "Nowdays we use the PackageMaker.app to do the packaging of the binaries."
 	@echo "Finished. Final package is located at $@"
 
 # Do the packaging.

@@ -515,9 +515,30 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @brief Creates and returns a NSMutableArray containing the receiver's MKParts.
  
   The MKParts themselves aren't copied.
-  @return Returns an id.
+  @return Returns a NSMutableArray of MKParts.
 */
 - (NSMutableArray *) parts;
+
+/*!
+  @brief Retrieve the partIndex'th MKPart stored in the receiver.
+  @return Returns a MKPart instance or nil if 0 < partIndex > [MKScore partCount].
+ */
+- (MKPart *) partAtIndex: (NSUInteger) partIndex;
+
+/*!
+  @brief Returns the MKPart whose info note has an MK_title parameter
+   equal to partTitleToFind, nil if it couldn't be found.
+  @param  partTitleToFind
+  @return Returns the MKPart, nil if it couldn't be found.
+ */
+- (MKPart *) partTitled: (NSString *) partTitleToFind;
+
+/*!
+  @brief Returns the MKPart named partNameToFind, nil if it couldn't be found.
+  @param  partNameToFind
+  @return Returns the MKPart named partNameToFind, nil if it couldn't be found.
+ */
+- (MKPart *) partNamed: (NSString *) partNameToFind;
 
 /*!
   @brief Returns an NSArray of all MKNotes in all MKParts in the receiver.
@@ -813,21 +834,6 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 - writeMidifileStream: (NSMutableData *) aStream 
          firstTimeTag: (double) firstTimeTag
           lastTimeTag: (double) lastTimeTag;
-
-/*!
-  @brief Returns the MKPart whose info note has an MK_title parameter
-  equal to partTitleToFind, nil if it couldn't be found.
-  @param  partTitleToFind
-  @return Returns the MKPart, nil if it couldn't be found.
-*/
-- (MKPart *) partTitled: (NSString *) partTitleToFind;
-
-/*!
-  @brief Returns the MKPart named partNameToFind, nil if it couldn't be found.
-  @param  partNameToFind
-  @return Returns the MKPart named partNameToFind, nil if it couldn't be found.
- */
-- (MKPart *) partNamed: (NSString *) partNameToFind;
 
 @end
 

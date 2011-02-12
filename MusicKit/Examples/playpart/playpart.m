@@ -143,9 +143,9 @@ int computeNotes(void)
 
      /* MKConductor's startPerformance method
        does not return until the performance is over.  Note, however, that
-       if the Conductor is in a different mode, startPerformance returns 
+       if the MKConductor is in a different mode, startPerformance returns 
        immediately (if it is in clocked mode or if you have specified that the 
-       performance is to occur in a separate thread).  See the Conductor 
+       performance is to occur in a separate thread).  See the MKConductor 
        documentation for details. 
        */
 

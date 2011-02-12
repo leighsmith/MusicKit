@@ -590,7 +590,7 @@ static void parameterListener(void *audioProcessorInstance, void *inObject, cons
 #endif	
     }
     else {
-	NSLog(@"unimplemented non-interleaved audio unit!\n");
+	NSLog(@"unimplemented interleaved audio unit!\n");
 	return NO;
     }
     
