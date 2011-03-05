@@ -1018,7 +1018,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - (void) setPartName: (NSString *) newPartName
 {
-    MKNameObject(newPartName, self);    
+    if(!MKNameObject(newPartName, self))
+	NSLog(@"Problem naming part %@ to %@\n", self, newPartName);
 }
 
 - (void) encodeWithCoder: (NSCoder *) aCoder

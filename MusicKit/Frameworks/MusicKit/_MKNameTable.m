@@ -255,6 +255,7 @@ static BOOL isCSym(const register char *sym)
   return YES;
 }
 
+// TODO work directly on NSString, not on char *.
 static void convertToCSym(const register char *sym,register char *newSym)
 /* newSym is assumed to be allocated to be at least the length of sym.
 Returns newSym. */
@@ -265,24 +266,26 @@ Returns newSym. */
   *newSym = '\0';
 }
 
+/* Converts sym to new C formatted symbol, returns the new symbol (autoreleased), and
+sets *wasChanged to YES. If sym is already a legal symbol, returns sym, and sets *wasChanged to NO. */
 NSString *_MKSymbolize(NSString *sym,BOOL *wasChanged)
-/* Converts sym to new symbol, returns the new symbol (malloced),and
-sets *wasChanged to YES. If sym is already a legal symbol, does not malloc,
-returns sym, and sets *wasChagned to NO. */
 {
   char     *newSym = NULL;
   NSString *result = nil;
-  if (sym == nil) { *wasChanged = NO; return sym; }
+    
+  if (sym == nil) { 
+      *wasChanged = NO;
+      return sym; 
+  }
 
   if (isCSym([sym UTF8String])) { /* DAJ. Jan 27, 1996. Added null check */
     *wasChanged = NO;
     return sym;
   }
-  _MK_MALLOC(newSym,char,[sym lengthOfBytesUsingEncoding: NSUTF8StringEncoding] + 1);
-  convertToCSym([sym UTF8String],newSym);
-  //    *wasChanged = NO;
+  _MK_MALLOC(newSym, char, [sym lengthOfBytesUsingEncoding: NSUTF8StringEncoding] + 1);
+  convertToCSym([sym UTF8String], newSym);
   *wasChanged = YES; /* DAJ -- Jan 27, 96. Plugged leak */
-  result = [[NSString alloc] initWithCString: newSym];
+  result = [NSString stringWithUTF8String: newSym]; // autoreleased
   free(newSym);
   newSym = NULL;
   return result;
@@ -334,10 +337,9 @@ BOOL MKNameObject(NSString * nameStr,id object)
   if (![nameStr length]) /* Added check for !*name - DAJ 1/28/96 */
     return NO;
 
-  name = _MKSymbolize(nameStr ,&wasChanged); /* Convert to valid sf name */
-  rtnVal = (_MKNameTableAddName(mkNameTable,name,object,object,_MK_BACKHASHBIT,YES) != NULL);
-  if (wasChanged)
-    [name autorelease];
+  name = _MKSymbolize(nameStr, &wasChanged); /* Convert to valid sf name */
+  rtnVal = (_MKNameTableAddName(mkNameTable, name, object, object, _MK_BACKHASHBIT, YES) != NULL);
+
   return rtnVal;
 }
 

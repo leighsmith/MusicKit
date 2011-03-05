@@ -130,36 +130,36 @@ int MKHighestPar()
   return highestPar;
 }
 
-int _MKGetPar(NSString *aName,_ParName **aPar)
-/* Gets parameter name, installing if necessary. Also returns _ParName
-object by reference. */
+/* Gets parameter name, installing if necessary. Also returns _ParName object by reference. */
+int _MKGetPar(NSString *aName, _ParName **aPar)
 {
-  unsigned short type;
-  if (aName == nil) return MK_noPar;
-  if (![aName lengthOfBytesUsingEncoding: NSUTF8StringEncoding]) {
-    return MK_noPar; /* DAJ - Jan 27, 96 */
-  }
-  *aPar = _MKGetNamedGlobal(aName,&type);
-  if (*aPar)
-    return (int)_MKGetParNamePar(*aPar);
-  else {
-    /* Allocates a new parameter number and sets obj's instance variable
-	   to that number. */
+    unsigned short type;
+    
+    if (aName == nil) 
+	return MK_noPar;
+    if (![aName lengthOfBytesUsingEncoding: NSUTF8StringEncoding]) {
+	return MK_noPar; /* DAJ - Jan 27, 96 */
+    }
+    *aPar = _MKGetNamedGlobal(aName,&type);
+    if (*aPar)
+	return (int) _MKGetParNamePar(*aPar);
+    else {
+	/* Allocates a new parameter number and sets obj's instance variable to that number. */
 #       define EXPANDAMT 5
-    BOOL wasChanged;
-    aName = _MKSymbolize(aName,&wasChanged); /* Make valid sf symbol */
-    *aPar = newParName(aName,++highestPar);
-    if (wasChanged) /* _MKSymbolize copied the string */
-      [aName autorelease];//sb: was free(aName);
-      if (highestPar >= parArrSize) {
-        _MK_REALLOC(parIds, _ParName *, (highestPar + EXPANDAMT));
-        parArrSize = highestPar + EXPANDAMT;
-      }
-      parIds[highestPar] = *aPar;
-      if (MKIsTraced(MK_TRACEPARS))
-        NSLog(@"Adding new parameter %@\n",(*aPar)->s);
-      return highestPar;
-  }
+	BOOL wasChanged;
+	
+	aName = _MKSymbolize(aName, &wasChanged); /* Make valid sf symbol */
+	*aPar = newParName(aName, ++highestPar);
+	if (wasChanged) /* _MKSymbolize copied the string */
+	    if (highestPar >= parArrSize) {
+		_MK_REALLOC(parIds, _ParName *, (highestPar + EXPANDAMT));
+		parArrSize = highestPar + EXPANDAMT;
+	    }
+	parIds[highestPar] = *aPar;
+	if (MKIsTraced(MK_TRACEPARS))
+	    NSLog(@"Adding new parameter %@\n", (*aPar)->s);
+	return highestPar;
+    }
 }
 
 static void initSyns()
