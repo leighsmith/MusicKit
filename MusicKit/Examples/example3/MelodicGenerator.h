@@ -3,7 +3,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MyObject: NSObject
+@interface MelodicGenerator: NSObject
 {
     int numQuarterNotes;
     int numEighthNotes;
