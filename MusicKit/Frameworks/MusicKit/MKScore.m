@@ -1481,9 +1481,8 @@ outOfLoop:
     
     for (partIndex = 0; partIndex < numOfParts; partIndex++) {
 	MKPart *mkp = [parts objectAtIndex: partIndex];
-	NSString *candidatePartName = [mkp partName];
 	
-	if ([candidatePartName isEqualToString: partNameToFind])
+	if ([mkp isNamed: partNameToFind])
 	    return mkp;
     }
     return nil;

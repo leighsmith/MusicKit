@@ -668,9 +668,19 @@ You can find out if the NSArray is currently sorted by the -<b>isSorted</b> meth
 /*!
   @brief Assigns the name of the receiver.
   @param newPartName An NSString for the new name of the part.
-  @brief The part name is used when reading and writing parts to a Scorefile.
+ 
+  The part name is used when reading and writing parts to a Scorefile.
  */
 - (void) setPartName: (NSString *) newPartName;
+
+/*!
+  @brief Returns YES or NO if the part is named the given string.
+  @param partNameToFind The string to compare to the part name.
+  
+  Since part names are formatted ("symbolized") for use in Scorefiles, this method
+  compares the symbolized versions of the part name and the query name.
+ */
+- (BOOL) isNamed: (NSString *) partNameToFind;
 
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 - (id) initWithCoder: (NSCoder *) aDecoder;

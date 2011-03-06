@@ -1022,6 +1022,14 @@ static void removeNote(MKPart *self, MKNote *aNote)
 	NSLog(@"Problem naming part %@ to %@\n", self, newPartName);
 }
 
+- (BOOL) isNamed: (NSString *) partNameToFind
+{
+    BOOL didSymbolize;
+    NSString *symbolizedPartNameToFind = _MKSymbolize(partNameToFind, &didSymbolize);
+    
+    return [[self partName] isEqualToString: symbolizedPartNameToFind];
+}
+
 - (void) encodeWithCoder: (NSCoder *) aCoder
     /* You never send this message directly.
     Archives MKNotes and info. Also archives MKScore using
