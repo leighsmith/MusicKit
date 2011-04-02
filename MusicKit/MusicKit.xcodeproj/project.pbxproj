@@ -618,8 +618,8 @@
 		D861CCCC0F8E9392002F1A16 /* stopbutton.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCC20F8E9392002F1A16 /* stopbutton.tiff */; };
 		D861CCCD0F8E9392002F1A16 /* stopbuttonH.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D861CCC30F8E9392002F1A16 /* stopbuttonH.tiff */; };
 		D866B62F07447C97007AD17E /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
-		D8684F60081CA74700926058 /* MyObject.h in Resources */ = {isa = PBXBuildFile; fileRef = D8684F5E081CA74700926058 /* MyObject.h */; };
-		D8684F61081CA74700926058 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8684F5F081CA74700926058 /* MyObject.m */; };
+		D8684F60081CA74700926058 /* MelodicGenerator.h in Resources */ = {isa = PBXBuildFile; fileRef = D8684F5E081CA74700926058 /* MelodicGenerator.h */; };
+		D8684F61081CA74700926058 /* MelodicGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = D8684F5F081CA74700926058 /* MelodicGenerator.m */; };
 		D8684F65081CA75E00926058 /* example3_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8684F64081CA75E00926058 /* example3_main.m */; };
 		D8684F6A081CA77400926058 /* example3.nib in Resources */ = {isa = PBXBuildFile; fileRef = D8684F68081CA77400926058 /* example3.nib */; };
 		D8684FED081CB7EB00926058 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
@@ -867,7 +867,6 @@
 		D8A441F610777A7300E12376 /* SndAudioUnitController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A441F210777A7300E12376 /* SndAudioUnitController.m */; };
 		D8A441F710777A7300E12376 /* SndAudioUnitProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D8A441F810777A7300E12376 /* SndAudioUnitProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A441F410777A7300E12376 /* SndAudioUnitProcessor.m */; };
-		D8A441FD10777AA000E12376 /* AUCarbonWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */; };
 		D8A442241077D58C00E12376 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442231077D58C00E12376 /* AudioToolbox.framework */; };
 		D8A4422A1077D5BF00E12376 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442291077D5BF00E12376 /* AudioUnit.framework */; };
 		D8A442481077D6AF00E12376 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A442471077D6AF00E12376 /* Carbon.framework */; };
@@ -1972,8 +1971,8 @@
 		D861CCC30F8E9392002F1A16 /* stopbuttonH.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = stopbuttonH.tiff; path = Applications/Spectro/stopbuttonH.tiff; sourceTree = "<group>"; };
 		D8684F4D081CA69900926058 /* example3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example3.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8684F4F081CA69900926058 /* example3-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "example3-Info.plist"; path = "Examples/example3/example3-Info.plist"; sourceTree = SOURCE_ROOT; };
-		D8684F5E081CA74700926058 /* MyObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MyObject.h; path = Examples/example3/MyObject.h; sourceTree = "<group>"; };
-		D8684F5F081CA74700926058 /* MyObject.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MyObject.m; path = Examples/example3/MyObject.m; sourceTree = "<group>"; };
+		D8684F5E081CA74700926058 /* MelodicGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MelodicGenerator.h; path = Examples/example3/MelodicGenerator.h; sourceTree = "<group>"; };
+		D8684F5F081CA74700926058 /* MelodicGenerator.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = MelodicGenerator.m; path = Examples/example3/MelodicGenerator.m; sourceTree = "<group>"; };
 		D8684F64081CA75E00926058 /* example3_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = example3_main.m; path = Examples/example3/example3_main.m; sourceTree = "<group>"; };
 		D8684F69081CA77400926058 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Examples/example3/English.lproj/example3.nib; sourceTree = "<group>"; };
 		D8685005081CBBB600926058 /* NotePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotePlayer.h; path = Examples/example2/NotePlayer.h; sourceTree = "<group>"; };
@@ -2235,7 +2234,6 @@
 		D8A441F210777A7300E12376 /* SndAudioUnitController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndAudioUnitController.m; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitController.m; sourceTree = "<group>"; };
 		D8A441F310777A7300E12376 /* SndAudioUnitProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndAudioUnitProcessor.h; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitProcessor.h; sourceTree = "<group>"; };
 		D8A441F410777A7300E12376 /* SndAudioUnitProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndAudioUnitProcessor.m; path = Frameworks/PlatformDependent/AudioUnits/SndAudioUnitProcessor.m; sourceTree = "<group>"; };
-		D8A441FC10777AA000E12376 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Frameworks/PlatformDependent/AudioUnits/English.lproj/AUCarbonWindow.nib; sourceTree = "<group>"; };
 		D8A442231077D58C00E12376 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		D8A442291077D5BF00E12376 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		D8A442471077D6AF00E12376 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -3373,7 +3371,6 @@
 			isa = PBXGroup;
 			children = (
 				D88FE38505A0FF940024FD88 /* SndAudioProcessorInspector.nib */,
-				D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */,
 			);
 			name = Interfaces;
 			sourceTree = "<group>";
@@ -4214,8 +4211,8 @@
 		D8684F52081CA6CB00926058 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D8684F5E081CA74700926058 /* MyObject.h */,
-				D8684F5F081CA74700926058 /* MyObject.m */,
+				D8684F5E081CA74700926058 /* MelodicGenerator.h */,
+				D8684F5F081CA74700926058 /* MelodicGenerator.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -5345,10 +5342,10 @@
 				D88FE29B05A0F8430024FD88 /* SndAudioProcessorDistortion.h */,
 				D88FE29C05A0F8430024FD88 /* SndAudioProcessorDistortion.m */,
 				D88FE29D05A0F8430024FD88 /* SndAudioProcessorFlanger.h */,
-				D88FE29E05A0F8430024FD88 /* SndAudioProcessorFlanger.m */,
 				D88FE2A105A0F8430024FD88 /* SndAudioProcessorMP3Encoder.h */,
 				D88FE2A205A0F8430024FD88 /* SndAudioProcessorMP3Encoder.m */,
 				D88FE2A305A0F8430024FD88 /* SndAudioProcessorNoiseGate.h */,
+				D88FE29E05A0F8430024FD88 /* SndAudioProcessorFlanger.m */,
 				D88FE2A405A0F8430024FD88 /* SndAudioProcessorNoiseGate.m */,
 				D88FE2A505A0F8430024FD88 /* SndAudioProcessorRecorder.h */,
 				D88FE2A605A0F8430024FD88 /* SndAudioProcessorRecorder.m */,
@@ -7152,7 +7149,11 @@
 			};
 			buildConfigurationList = D8B44FEA099617E500B5C3A4 /* Build configuration list for PBXProject "MusicKit" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = D8DB4E48059FA05500624233;
 			productRefGroup = D84395EA059FAA450054BEEE /* Products */;
 			projectDirPath = "";
@@ -7259,7 +7260,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D88FE38705A0FF940024FD88 /* SndAudioProcessorInspector.nib in Resources */,
-				D8A441FD10777AA000E12376 /* AUCarbonWindow.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7367,7 +7367,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8684F60081CA74700926058 /* MyObject.h in Resources */,
+				D8684F60081CA74700926058 /* MelodicGenerator.h in Resources */,
 				D8684F6A081CA77400926058 /* example3.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7554,7 +7554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/zsh;
-			shellScript = "#!/bin/zsh\n# Changes all libraries linked from /usr/local/lib or /sw/lib/ to relative install_names\n# of \"@loader_path/Resources\" (when linked against the Framework dylib) or \"@loader_path\"\n# (when linked against another dylib) & copies in the linked dylibs.\nnewpath=\"@loader_path/Resources\"\n# We can't use LD_DYLIB_INSTALL_NAME since that can be relative when building for embedded frameworks.\n#libraries_to_examine=($LD_DYLIB_INSTALL_NAME)\nlibraries_to_examine=($BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH)\n\nwhile [ ${(w)#libraries_to_examine} != 0 ]; do\n    library=${libraries_to_examine[1]} # take the first on the list.\n    # echo Processing library: $library\n    non_standard_libs=(`otool -L $library | awk '/(\\/usr\\/local\\/lib|\\/sw\\/lib).* \\(/ { printf(\"%s \", $1); }'`)\n    # echo Libraries to copy: $non_standard_libs\n    libraries_copied=()\n    for library_to_copy in $non_standard_libs; do\n        # since non_standard_libs can have the name of the library itself, don't process that.\n        library_to_copy_basename=`basename $library_to_copy`\n        if [ $library_to_copy_basename != `basename $library` ]; then\n            new_install_name=${library_to_copy/\\/(sw|usr\\/local)\\/lib/$newpath}\n            echo install_name_tool -change $library_to_copy $new_install_name  $library\n            install_name_tool -change $library_to_copy $new_install_name  $library\n\t       installed_library=$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$library_to_copy_basename\n\t       if [ ! -f $installed_library ]; then\n                echo cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n                cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n\t       fi\n\t       libraries_copied=($libraries_copied $installed_library)\n        fi\n    done\n    # append all valid libraries onto the non standard libs list for examination.\n    libraries_to_examine=($libraries_to_examine[2,-1] $libraries_copied)\n    # echo Non standard Libraries to eval: $libraries_to_examine\n    newpath=\"@loader_path\" # All remaining install_names reside next to the dylib.\ndone\n";
+			shellScript = "#!/bin/zsh\n# Changes all libraries linked from /usr/local/lib or /sw/lib/ to relative install_names\n# of \"@loader_path/Resources\" (when linked against the Framework dylib) or \"@loader_path\"\n# (when linked against another dylib) & copies in the linked dylibs.\nnewpath=\"@loader_path/Resources\"\n# We can't use LD_DYLIB_INSTALL_NAME since that can be relative when building for embedded frameworks.\n#libraries_to_examine=($LD_DYLIB_INSTALL_NAME)\nlibraries_to_examine=($BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH)\n\nwhile [ ${(w)#libraries_to_examine} != 0 ]; do\n    library=${libraries_to_examine[1]} # take the first on the list.\n    echo Processing library: $library\n    non_standard_libs=(`otool -L $library | awk '/(\\/usr\\/local\\/lib|\\/sw\\/lib).* \\(/ { printf(\"%s \", $1); }'`)\n    echo Libraries to copy: $non_standard_libs\n    libraries_copied=()\n    for library_to_copy in $non_standard_libs; do\n        # since non_standard_libs can have the name of the library itself, don't process that.\n        library_to_copy_basename=`basename $library_to_copy`\n        if [ $library_to_copy_basename != `basename $library` ]; then\n            new_install_name=${library_to_copy/\\/(sw|usr\\/local)\\/lib/$newpath}\n            echo install_name_tool -change $library_to_copy $new_install_name  $library\n            install_name_tool -change $library_to_copy $new_install_name  $library\n\t       installed_library=$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/$library_to_copy_basename\n\t       if [ ! -f $installed_library ]; then\n                echo cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n                cp $library_to_copy $TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n\t       fi\n\t       libraries_copied=($libraries_copied $installed_library)\n        fi\n    done\n    # append all valid libraries onto the non standard libs list for examination.\n    libraries_to_examine=($libraries_to_examine[2,-1] $libraries_copied)\n    # echo Non standard Libraries to eval: $libraries_to_examine\n    newpath=\"@loader_path\" # All remaining install_names reside next to the dylib.\ndone\n";
 			showEnvVarsInLog = 0;
 		};
 		D83CADCA0FE997660000CF19 /* ShellScript */ = {
@@ -7970,7 +7970,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8684F61081CA74700926058 /* MyObject.m in Sources */,
+				D8684F61081CA74700926058 /* MelodicGenerator.m in Sources */,
 				D8684F65081CA75E00926058 /* example3_main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8825,14 +8825,6 @@
 				D88FE38605A0FF940024FD88 /* English */,
 			);
 			name = SndAudioProcessorInspector.nib;
-			sourceTree = "<group>";
-		};
-		D8A441FB10777AA000E12376 /* AUCarbonWindow.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D8A441FC10777AA000E12376 /* English */,
-			);
-			name = AUCarbonWindow.nib;
 			sourceTree = "<group>";
 		};
 		D8CFD2700B5D67DD003AB3C3 /* metronome.nib */ = {
