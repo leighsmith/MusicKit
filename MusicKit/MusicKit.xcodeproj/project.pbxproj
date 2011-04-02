@@ -444,8 +444,8 @@
 		D837ABBB06C8102B00A6CFEB /* GuitarFretboardView.h in Headers */ = {isa = PBXBuildFile; fileRef = D837ABB606C8102B00A6CFEB /* GuitarFretboardView.h */; };
 		D837ABBC06C8102B00A6CFEB /* GuitarString.h in Headers */ = {isa = PBXBuildFile; fileRef = D837ABB706C8102B00A6CFEB /* GuitarString.h */; };
 		D837ABBD06C8102B00A6CFEB /* Segment.h in Headers */ = {isa = PBXBuildFile; fileRef = D837ABB806C8102B00A6CFEB /* Segment.h */; };
-		D837ABCA06C8104F00A6CFEB /* AxonNGC77.nib in Resources */ = {isa = PBXBuildFile; fileRef = D837ABC606C8104F00A6CFEB /* AxonNGC77.nib */; };
-		D837ABCB06C8104F00A6CFEB /* Segment.nib in Resources */ = {isa = PBXBuildFile; fileRef = D837ABC806C8104F00A6CFEB /* Segment.nib */; };
+		D837ABCA06C8104F00A6CFEB /* AxonNGC77.xib in Resources */ = {isa = PBXBuildFile; fileRef = D837ABC606C8104F00A6CFEB /* AxonNGC77.xib */; };
+		D837ABCB06C8104F00A6CFEB /* Segment.xib in Resources */ = {isa = PBXBuildFile; fileRef = D837ABC806C8104F00A6CFEB /* Segment.xib */; };
 		D837AC4706C8199300A6CFEB /* quadraverb.nib in Resources */ = {isa = PBXBuildFile; fileRef = D837AC4506C8199300A6CFEB /* quadraverb.nib */; };
 		D837AC4B06C819AA00A6CFEB /* QVFrontPanel.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D837AC4A06C819AA00A6CFEB /* QVFrontPanel.tiff */; };
 		D837AC5006C819C200A6CFEB /* QuadraverbGT.h in Headers */ = {isa = PBXBuildFile; fileRef = D837AC4E06C819C200A6CFEB /* QuadraverbGT.h */; };
@@ -1773,8 +1773,8 @@
 		D837ABB606C8102B00A6CFEB /* GuitarFretboardView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = GuitarFretboardView.h; path = Applications/PatchCord/AxonNGC77.subproj/GuitarFretboardView.h; sourceTree = "<group>"; };
 		D837ABB706C8102B00A6CFEB /* GuitarString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = GuitarString.h; path = Applications/PatchCord/AxonNGC77.subproj/GuitarString.h; sourceTree = "<group>"; };
 		D837ABB806C8102B00A6CFEB /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Segment.h; path = Applications/PatchCord/AxonNGC77.subproj/Segment.h; sourceTree = "<group>"; };
-		D837ABC706C8104F00A6CFEB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/PatchCord/AxonNGC77.subproj/English.lproj/AxonNGC77.nib; sourceTree = "<group>"; };
-		D837ABC906C8104F00A6CFEB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/PatchCord/AxonNGC77.subproj/English.lproj/Segment.nib; sourceTree = "<group>"; };
+		D837ABC706C8104F00A6CFEB /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Applications/PatchCord/AxonNGC77.subproj/English.lproj/AxonNGC77.xib; sourceTree = "<group>"; };
+		D837ABC906C8104F00A6CFEB /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Applications/PatchCord/AxonNGC77.subproj/English.lproj/Segment.xib; sourceTree = "<group>"; };
 		D837AC4606C8199300A6CFEB /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = Applications/PatchCord/Quadraverb.subproj/English.lproj/quadraverb.nib; sourceTree = "<group>"; };
 		D837AC4A06C819AA00A6CFEB /* QVFrontPanel.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = QVFrontPanel.tiff; path = Applications/PatchCord/Quadraverb.subproj/QVFrontPanel.tiff; sourceTree = "<group>"; };
 		D837AC4E06C819C200A6CFEB /* QuadraverbGT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QuadraverbGT.h; path = Applications/PatchCord/Quadraverb.subproj/QuadraverbGT.h; sourceTree = "<group>"; };
@@ -3458,8 +3458,8 @@
 		D837ABC306C8103A00A6CFEB /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
-				D837ABC606C8104F00A6CFEB /* AxonNGC77.nib */,
-				D837ABC806C8104F00A6CFEB /* Segment.nib */,
+				D837ABC606C8104F00A6CFEB /* AxonNGC77.xib */,
+				D837ABC806C8104F00A6CFEB /* Segment.xib */,
 			);
 			name = Interfaces;
 			sourceTree = "<group>";
@@ -7465,8 +7465,8 @@
 				D837ABA506C80F8C00A6CFEB /* PWM.tiff in Resources */,
 				D837ABA606C80F8C00A6CFEB /* Ramp.tiff in Resources */,
 				D837ABAB06C80FA500A6CFEB /* juno106.nib in Resources */,
-				D837ABCA06C8104F00A6CFEB /* AxonNGC77.nib in Resources */,
-				D837ABCB06C8104F00A6CFEB /* Segment.nib in Resources */,
+				D837ABCA06C8104F00A6CFEB /* AxonNGC77.xib in Resources */,
+				D837ABCB06C8104F00A6CFEB /* Segment.xib in Resources */,
 				D837AC4706C8199300A6CFEB /* quadraverb.nib in Resources */,
 				D837AC4B06C819AA00A6CFEB /* QVFrontPanel.tiff in Resources */,
 				D837AC6506C81A9300A6CFEB /* ProphetVS.nib in Resources */,
@@ -8488,20 +8488,20 @@
 			name = juno106.nib;
 			sourceTree = "<group>";
 		};
-		D837ABC606C8104F00A6CFEB /* AxonNGC77.nib */ = {
+		D837ABC606C8104F00A6CFEB /* AxonNGC77.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				D837ABC706C8104F00A6CFEB /* English */,
 			);
-			name = AxonNGC77.nib;
+			name = AxonNGC77.xib;
 			sourceTree = "<group>";
 		};
-		D837ABC806C8104F00A6CFEB /* Segment.nib */ = {
+		D837ABC806C8104F00A6CFEB /* Segment.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				D837ABC906C8104F00A6CFEB /* English */,
 			);
-			name = Segment.nib;
+			name = Segment.xib;
 			sourceTree = "<group>";
 		};
 		D837AC4506C8199300A6CFEB /* quadraverb.nib */ = {
