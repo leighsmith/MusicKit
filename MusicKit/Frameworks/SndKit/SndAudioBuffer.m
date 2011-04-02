@@ -385,9 +385,9 @@
     SndAudioBuffer *convertedBuffer = nil;
     
     if (startFrame > lengthInSampleFrames)
-	NSLog(@"mixWithBuffer: startFrame %i is > length %i", startFrame, lengthInSampleFrames);
+	NSLog(@"mixWithBuffer: startFrame %lu is > length %lu", startFrame, lengthInSampleFrames);
     else if (endFrame > lengthInSampleFrames) {
-	NSLog(@"mixWithBuffer: endFrame %i is > length %i - truncating", endFrame, lengthInSampleFrames);
+	NSLog(@"mixWithBuffer: endFrame %lu is > length %lu - truncating", endFrame, lengthInSampleFrames);
 	endFrame = lengthInSampleFrames;
     }
 
@@ -564,7 +564,7 @@
     short *fromData = [fromBuffer bytes];
     
     if (bufferFrameRange.length > format.frameCount) {
-	NSLog(@"frameRange length %ld exceeds buffer length %ld\n", format.frameCount, bufferFrameRange.length);
+	NSLog(@"frameRange length %ld exceeds buffer length %u\n", format.frameCount, bufferFrameRange.length);
     }
 
     // Catch the trivial case where both buffers have the same format (although the frame counts can differ),

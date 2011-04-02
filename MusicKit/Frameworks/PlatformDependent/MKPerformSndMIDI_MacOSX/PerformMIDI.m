@@ -179,8 +179,10 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
     
     // always create at least one entry for the terminating NULL pointer.
     driverList = (const char **) malloc(([driverNameList count] + 1) * sizeof(char *));
-    if(driverList == NULL)
+    if(driverList == NULL) {
 	NSLog(@"Unable to allocate driverList of %d drivers, driverNameList %@\n", [driverNameList count] + 1, driverNameList);
+        return NULL;
+    }
     for(driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
 	driverList[driverListIndex] = [[driverNameList objectAtIndex: driverListIndex] UTF8String];
     }
@@ -235,17 +237,23 @@ PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort o
 #else
     // NSLog(@"in MKMDBecomeOwner before MIDIClientCreate, appname: %@\n", executable);
 #endif
-    if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr)
-	return MKMD_ERROR_UNKNOWN_ERROR;
+    if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr) {
+        NSLog(@"Unable to create MIDI Client %ld", result);
+        return MKMD_ERROR_UNKNOWN_ERROR;
+    }
     // NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
     userReplyFunctions = *replyFunctions; // Make a local copy of the reply functions.
-    if((result = MIDIInputPortCreate(client, CFSTR("Input port"), replyDispatch, &userReplyFunctions, &inPort)) != noErr)
+    if((result = MIDIInputPortCreate(client, CFSTR("Input port"), replyDispatch, &userReplyFunctions, &inPort)) != noErr) {
+        NSLog(@"Unable to create MIDI Input Port %ld", result);
 	return MKMD_ERROR_UNKNOWN_ERROR;
+    }
     // NSLog(@"in MKMDBecomeOwner MIDIInputPortCreate inPort %p\n", inPort);
     // NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
-    if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr)
+    if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr) {
+        NSLog(@"Unable to create MIDI Output Port %ld", result);
        return MKMD_ERROR_UNKNOWN_ERROR;
-
+    }
+    
     return MKMD_SUCCESS;
 }
 
@@ -598,9 +606,7 @@ PERFORM_API MKMDReturn MKMDSendData (
         // send all same-time bytes in a separate packet.
         packet = MIDIPacketListAdd(pktlist, sizeof(pbuf), packet, playTime, bufferIndex, buffer);
         if(packet == NULL) {
-#if FUNCLOG
-            fprintf(debug, "couldn't add packet to packet list\n");
-#endif
+            NSLog(@"couldn't add packet to packet list\n");
             free(buffer);
             return MKMD_ERROR_QUEUE_FULL;
         }
@@ -610,9 +616,7 @@ PERFORM_API MKMDReturn MKMDSendData (
 #endif
 
     if((errCode = MIDISend(outPort, claimedDestinations[unit], pktlist)) != noErr) {
-#if FUNCLOG
-        fprintf(debug, "couldn't send packet list errCode = %d\n", (int) errCode);
-#endif
+        NSLog(@"couldn't send packet list errCode = %d\n", (int) errCode);
         free(buffer);
         return MKMD_ERROR_UNKNOWN_ERROR;
     }

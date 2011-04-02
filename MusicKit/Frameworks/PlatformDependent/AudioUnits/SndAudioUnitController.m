@@ -241,7 +241,7 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
 	    free(editors);
 	}
 	else {
-	    NSLog(@"Unable to retrieve the UI component list property info err = %d", err); 
+	    NSLog(@"Unable to retrieve the UI component list property info err = %ld", err); 
 	}
     }
     
@@ -371,7 +371,7 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
 				      cocoaViewInfo,
 				      &dataSize);
 	if(result != noErr) {
-	    NSLog(@"AudioUnitGetProperty(kAudioUnitProperty_CocoaUI) error %d cocoaViewInfo %p dataSize %d\n",
+	    NSLog(@"AudioUnitGetProperty(kAudioUnitProperty_CocoaUI) error %ld cocoaViewInfo %p dataSize %lu\n",
 		  result, cocoaViewInfo, dataSize);
 	    return nil;
 	}
