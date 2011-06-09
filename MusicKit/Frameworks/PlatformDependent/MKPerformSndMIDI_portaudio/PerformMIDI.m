@@ -1,4 +1,5 @@
 /*
+  -*- objc -*-
   $Id$
   Defined In: The MusicKit
 
@@ -68,7 +69,8 @@ PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
 /* Routine MKMDBecomeOwner */
 PERFORM_API kern_return_t MKMDBecomeOwner (
 	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port)
+	MKMDOwnerPort owner_port, 
+	MKMDReplyFunctions *replyFunctions)
 {
     PmError error;
 
@@ -206,7 +208,8 @@ PERFORM_API kern_return_t MKMDStopClock (
 PERFORM_API kern_return_t MKMDClaimUnit (BOOL input,
 					 MKMDPort mididriver_port,
 					 MKMDOwnerPort owner_port,
-					 short unit)
+					 short unit,
+					 void *userData)
 {
     PmError error;
     PmDeviceID deviceID;
@@ -266,7 +269,8 @@ PERFORM_API kern_return_t MKMDClaimUnit (BOOL input,
 PERFORM_API kern_return_t MKMDReleaseUnit (BOOL input,
 					   MKMDPort mididriver_port,
 					   MKMDOwnerPort owner_port,
-					   short unit)
+					   short unit, 
+					   void *userData)
 {
 #if FUNCLOG
     NSLog(@"MKMDReleaseUnit called\n");

@@ -2045,7 +2045,7 @@ non-private, should check for valid orchIndex.  */
     return orch->_simFP;
 }
 
-static void _traceMsg(FILE *simFP, int typeOfInfo, NSString *fmt, char *ap)
+static void _traceMsg(FILE *simFP, int typeOfInfo, NSString *fmt, va_list ap)
 /* See trace: below */
 {
     if (MKIsTraced(typeOfInfo)) {

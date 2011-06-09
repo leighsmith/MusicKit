@@ -296,29 +296,22 @@ PERFORM_API MKMDPort
 
 /******* Managing ownership of the driver ********/
 /*!
-  @function       MKMDBecomeOwner
-  @brief       Takes ownership of the driver.
-  @param          mididriver_port
-  Port indicating and enabling communication
-			with the MIDI driver.
-  @param          owner_port
-  Port indicating and enabling communication
-			with the owner (calling routine).
-  @return         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
+  @function MKMDBecomeOwner
+  @brief Takes ownership of the driver.
+  @param mididriver_port Port indicating and enabling communication with the MIDI driver.
+  @param owner_port Port indicating and enabling communication with the owner (calling routine).
+  @param replyFunctions Nominates functions called back when MIDI data is received or other exceptions.
+  @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port);
+    MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port, MKMDReplyFunctions *replyFunctions);
 
 /*!
-  @function       MKMDReleaseOwnership
-  @brief       Releases ownership of the driver.
-  @param          mididriver_port
-  Port indicating and enabling communication
-			with the MIDI driver.
-  @param          owner_port
-  Port indicating and enabling communication
-			with the owner (calling routine).
-  @return         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
+  @function MKMDReleaseOwnership
+  @brief Releases ownership of the driver.
+  @param mididriver_port Port indicating and enabling communication with the MIDI driver.
+  @param owner_port Port indicating and enabling communication with the owner (calling routine).
+  @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
     MKMDReleaseOwnership(MKMDPort mididriver_port, MKMDOwnerPort owner_port);
@@ -326,45 +319,30 @@ PERFORM_API MKMDReturn
 
 /*** Claiming a particular serial port (ownership of driver required) *****/
 /*!
-  @function       MKMDClaimUnit
-  @brief       Claiming a particular MIDI port (cable). 
-  Ownership of driver is required.
-  @param          input
-  Indicates if the unit to release is a unit
-  capable of input.
-  @param          driver
-  Port indicating and enabling communication
-			with the MIDI driver.
-  @param          owner
-  Port indicating and enabling communication
-			with the owner (calling routine).
-  @param          unit
-  Indicates the MIDI port (cable) in a multiple
-			MIDI port driver.
-  @return         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
+  @function MKMDClaimUnit
+  @brief Claiming a particular MIDI port (cable). Ownership of driver is required.
+  @param input Indicates if the unit to release is a unit capable of input.
+  @param driver Port indicating and enabling communication with the MIDI driver.
+  @param owner Port indicating and enabling communication with the owner (calling routine).
+  @param unit Indicates the MIDI port (cable) in a multiple MIDI port driver.
+  @param userData A pointer to user data that will be returned when calling the reply functions supplied to MKMDBecomeOwner().
+  @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDClaimUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDClaimUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit, void *userData);
 
 /*!
-  @function       MKMDReleaseUnit
-  @brief       Releases ownership of a particular MIDI port (cable).
-  @param          input
-  Indicates if the unit to release is a unit
-  capable of input.
-  @param          driver
-  Port indicating and enabling communication
-			with the MIDI driver.
-  @param          owner
-  Port indicating and enabling communication
-			with the owner (calling routine).
-  @param          unit
-  Indicates the MIDI port (cable) in a multiple
-			MIDI port driver.
-  @return         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
+  @function MKMDReleaseUnit
+  @brief Releases ownership of a particular MIDI port (cable).
+  @param input Indicates if the unit to release is a unit capable of input.
+  @param driver Port indicating and enabling communication with the MIDI driver.
+  @param owner Port indicating and enabling communication with the owner (calling routine).
+  @param unit Indicates the MIDI port (cable) in a multiple MIDI port driver.
+  @param userData A pointer to user data that was supplied to MKMDClaimUnit().
+  @return Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDReleaseUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDReleaseUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit, void *userData);
 
 /******** Controlling the clock ****************/
 

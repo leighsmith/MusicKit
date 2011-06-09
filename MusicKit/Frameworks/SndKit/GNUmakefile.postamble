@@ -17,7 +17,9 @@ LIB_INSTALL=/GNUstep/Local/Library/Libraries
 # before-all::
 
 # Things to do after compiling
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
 after-all:: $(LIBRARY_NAME).lib
+endif
 
 # Create a MSVC compatible import library from the .def file.
 # Note: In order for lib.exe to run outside of MSVC needs extra PATH entries.
@@ -29,13 +31,15 @@ $(LIBRARY_NAME).lib: $(LIBRARY_NAME).def
 # before-install::
 
 # Things to do after installing
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
 # TODO Need to determine the version numbering of the DLL
 # TODO The location for the DLL install needs to be better described.
 after-install::
 	$(INSTALL) $(LIBRARY_NAME).lib $(LIB_INSTALL)
+endif
 
 # Packaging
-# cp -r  /c/GNUstep/GNUstep/Local/Library/Headers/PopGameAudio ~/Sources/PopgameAudioNewDLLs
+# cp -r  /c/GNUstep/GNUstep/Local/Library/Headers/SndKit ~/Sources/SndKitDLLs
 
 # Things to do before uninstalling
 # before-uninstall::

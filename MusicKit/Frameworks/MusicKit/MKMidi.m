@@ -1,4 +1,5 @@
 /*
+  -*- objc -*-
   $Id$
   Defined In: The MusicKit
   HEADER FILES: MusicKit.h

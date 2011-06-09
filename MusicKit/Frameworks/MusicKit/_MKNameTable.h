@@ -36,7 +36,7 @@ Modification history:
     NSMapTable *types;
 }
 
-- (id) initWithCapacity: (unsigned) capacity;
+- (id) initWithCapacity: (NSUInteger) capacity;
 - (void) dealloc;
 
 @end
