@@ -37,18 +37,23 @@ void printSoundReport(NSString *filename, Snd *snd)
 int main (int argc, const char * argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSString *filename;
-    Snd *snd;
     int argIndex;
 
     for(argIndex = 1; argIndex < argc; argIndex++) {
-	filename = [NSString stringWithUTF8String: argv[argIndex]];
-	snd = [[Snd alloc] initFromSoundfile: filename];
-	if(snd != nil) {
-	    printSoundReport(filename, snd);
-	}
+        NSString *filename = [NSString stringWithUTF8String: argv[argIndex]];
+        Snd *snd;
+        
+        if ([[filename pathExtension] isEqualToString: @"mp3"]) {
+            snd = [[SndMP3 alloc] initFromSoundfile: filename];
+       }
+        else {
+            snd = [[Snd alloc] initFromSoundfile: filename];
+        }
+        if(snd != nil) {
+            printSoundReport(filename, snd);
+        }
     }
-	    
+    
     [pool release];
     return 0;
 }

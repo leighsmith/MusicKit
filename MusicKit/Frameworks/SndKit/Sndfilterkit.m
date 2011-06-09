@@ -67,6 +67,8 @@
 
 #if defined(WIN32) || (defined(__FreeBSD_version) && (__FreeBSD_version < 500000))
 #include <malloc.h>
+#else
+#include <stdlib.h>
 #endif
 
 #import <math.h>
@@ -316,34 +318,41 @@ int readFilter(char *filterFile, SND_HWORD **ImpP, SND_HWORD **ImpDP, SND_UHWORD
     if (fp == NULL)
 	return(1);
     
-    fscanf(fp, "ScaleFactor ");
-    if (1 != fscanf(fp,"%d",&temp))
+    if (fscanf(fp, "ScaleFactor ") != 1)
+	return(2);
+    if (fscanf(fp, "%d", &temp) != 1)
 	return(2);
     *LpScl = temp;
     
-    fscanf(fp, "\nLength ");
-    if (1 != fscanf(fp,"%d",&temp))
+    if (fscanf(fp, "\nLength ") != 1)
+	return(3);
+    if (fscanf(fp, "%d", &temp) != 1)
 	return(3);
     *Nwing = temp;
     
-    fscanf(fp, "\nNmult ");
-    if (1 != fscanf(fp,"%d",&temp))
+    if (fscanf(fp, "\nNmult ") != 1)
+	return(4);
+    if (fscanf(fp, "%d", &temp) != 1)
 	return(4);
     *Nmult = temp;
     
     Imp = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
     
-    fscanf(fp, "\nCoeffs:\n");
-    for (i=0; i<*Nwing; i++)  { /* Get array of 16-bit filter coefficients */
-        fscanf(fp, "%d\n", &temp);
+    if(fscanf(fp, "\nCoeffs:\n") != 1)
+	return(5);
+    for (i = 0; i < *Nwing; i++)  { /* Get array of 16-bit filter coefficients */
+        if(fscanf(fp, "%d\n", &temp) != 1)
+	    return(5);
         Imp[i] = temp;
     }
     
     ImpD = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
     
-    fscanf(fp, "\nDifferences:\n");
+    if(fscanf(fp, "\nDifferences:\n") != 1)
+	return(6);
     for (i = 0; i < *Nwing; i++)  { /* Get array of 16bit filter coeff differences */
-        fscanf(fp, "%d\n", &temp);
+        if(fscanf(fp, "%d\n", &temp) != 1)
+	    return(6);
         ImpD[i] = temp;
     }
     
