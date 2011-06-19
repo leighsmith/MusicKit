@@ -85,6 +85,7 @@ $(MY_NAME)_OBJC_FILES = \
          SndStreamManager.m \
          SndStreamMixer.m \
          SndStreamRecorder.m \
+         SndStreamInput.m \
          SndStretchableScroller.m \
          SndTable.m \
          SndView.m \
@@ -136,6 +137,7 @@ $(MY_NAME)_HEADER_FILES = \
          SndStreamManager.h \
          SndStreamMixer.h \
          SndStreamRecorder.h \
+         SndStreamInput.h \
          SndTable.h \
          SndView.h\
          Sndfilterkit.h \
