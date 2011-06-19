@@ -168,7 +168,7 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
     else
 	stopDelay--;
     if (!stopDelay) {
-	[self setFloatValue:-1.0];
+	[self setFloatValue: -1.0];
 	[self drawCurrentValue];
 	[[self window] flushWindow];
 //	_NSSKRemoveTimedEntry((_NSSKTimedEntry) self->_timedEntry);
@@ -184,7 +184,7 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 	    }
 	    else
 		self->minValue = self->maxValue = aveVal = peakVal = 0.0;
-	    [self setFloatValue:peakVal];
+	    [self setFloatValue: peakVal];
 	    [self drawCurrentValue];
 	    [[self window] flushWindow];
 //	    PSWait();
@@ -203,69 +203,96 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
  *
  */
 
-+ (void)initialize {
++ (void) initialize 
+{
     if (self == [SndMeter class]) {
-	[SndMeter setVersion:1];
+	[SndMeter setVersion: 1];
     }
 }
 
-- (id)initWithFrame:(NSRect)frameRect {
-    [super initWithFrame:frameRect];
+- (id) initWithFrame: (NSRect) frameRect
+{
+    [super initWithFrame: frameRect];
     holdTime = 0.7; // in seconds
-    [self setBackgroundColor:[NSColor darkGrayColor]];
-    [self setForegroundColor:[NSColor lightGrayColor]];
-    [self setPeakColor:[NSColor whiteColor]];
+    [self setBackgroundColor: [NSColor darkGrayColor]];
+    [self setForegroundColor: [NSColor lightGrayColor]];
+    [self setPeakColor: [NSColor whiteColor]];
     smFlags.bezeled = YES;
+    smFlags.displayPeakValue = YES;
     return self;
 }
 
-- (float)floatValue { return currentValue; }
-- (float)peakValue { return currentPeak; }
-- (float)minValue { return minValue; }
-- (float)maxValue { return maxValue; }
+- (float) floatValue { return currentValue; }
+- (float) peakValue { return currentPeak; }
+- (float) minValue { return minValue; }
+- (float) maxValue { return maxValue; }
 
-- (void)setHoldTime:(float)seconds { holdTime = seconds;
+- (void) setHoldTime: (float) seconds 
+{ 
+    holdTime = seconds;
 }
-- (float)holdTime { return holdTime; }
 
-- (void)setBackgroundColor:(NSColor *)color;
+- (float) holdTime 
+{
+    return holdTime;
+}
+
+- (void) setBackgroundColor: (NSColor *) color;
 {
     [backgroundColor autorelease];
-    backgroundColor = [color copyWithZone:[self zone]];
-    [self setNeedsDisplay:YES];
+    backgroundColor = [color copyWithZone: [self zone]];
+    [self setNeedsDisplay: YES];
 }
 
-- (NSColor *)backgroundColor
+- (NSColor *) backgroundColor
 {
     return backgroundColor;
 }
 
-- (void)setForegroundColor:(NSColor *)color;
+- (void) setForegroundColor: (NSColor *) color;
 {
     [foregroundColor autorelease];
-    foregroundColor = [color copyWithZone:[self zone]];
-    [self setNeedsDisplay:YES];
+    foregroundColor = [color copyWithZone: [self zone]];
+    [self setNeedsDisplay: YES];
 }
 
-- (NSColor *)foregroundColor;
+- (NSColor *) foregroundColor;
 {
     return foregroundColor;
 }
 
-- (void)setPeakColor:(NSColor *)color;
+- (void) setPeakColor: (NSColor *) color;
 {
     [peakColor autorelease];
-    peakColor = [color copyWithZone:[self zone]];
-    [self setNeedsDisplay:YES];
+    peakColor = [color copyWithZone: [self zone]];
+    [self setNeedsDisplay: YES];
 }
 
-- (NSColor *)peakColor;
+- (NSColor *) peakColor;
 {
     return peakColor;
 }
 
-- (Snd *)sound { return sound; }
-- (void) setSound:(Snd*) aSound { sound = aSound; }
+- (void) setDisplayPeak: (BOOL) yesOrNo
+{
+    smFlags.displayPeakValue = yesOrNo;
+}
+
+- (BOOL) isDisplayingPeak
+{
+    return smFlags.displayPeakValue;
+}
+
+- (Snd *) sound 
+{
+    return [[sound retain] autorelease]; 
+}
+
+- (void) setSound: (Snd *) aSound 
+{
+    [sound release];
+    sound = [aSound retain];
+}
 
 - (void)run: (id) sender
 {
@@ -293,24 +320,24 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
     smFlags.shouldStop = NO;
 }
 
-- (void)stop:(id)sender
+- (void) stop: (id) sender
 {
     if (smFlags.running) {
 	smFlags.shouldStop = YES;
     }
 }
 
-- (BOOL)isRunning
+- (BOOL) isRunning
 {
     return smFlags.running;
 }
 
-- (BOOL)isBezeled
+- (BOOL) isBezeled
 {
     return smFlags.bezeled;
 }
 
-- (void)setBezeled:(BOOL)aFlag
+- (void) setBezeled: (BOOL) aFlag
 {
     smFlags.bezeled = aFlag? YES : NO;
     [self setNeedsDisplay:YES];
@@ -335,12 +362,13 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 	currentPeak = currentValue;
 //	_peakTime = foo.low_val;
     }
-    [self setNeedsDisplay:YES];
+    [self setNeedsDisplay: YES];
 }
 
-- (void)drawRect:(NSRect)rects
+- (void) drawRect: (NSRect) rects
 {
     NSRect temp = [self bounds];
+    
     if (smFlags.bezeled) {
 	NSDrawGrayBezel(temp, temp);	/* This second rect should really be NULL... */
 	temp = NSInsetRect(temp, 2.0, 2.0);
@@ -394,13 +422,15 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 	    // PSrectfill(x,y,w,h);
 	    NSRectFill(meterRect);
 	}
-	[peakColor set];
-	// PSrectfill(x+peakOffset,y,PEAK_WIDTH,h);
-	peakRect.origin.x = meterRect.origin.x + peakOffset;
-	peakRect.origin.y = meterRect.origin.y;
-	peakRect.size.width = PEAK_WIDTH;
-	peakRect.size.height = meterRect.size.height;
-	NSRectFill(peakRect);
+        if(smFlags.displayPeakValue) {
+            [peakColor set];
+            // PSrectfill(x+peakOffset,y,PEAK_WIDTH,h);
+            peakRect.origin.x = meterRect.origin.x + peakOffset;
+            peakRect.origin.y = meterRect.origin.y;
+            peakRect.size.width = PEAK_WIDTH;
+            peakRect.size.height = meterRect.size.height;
+            NSRectFill(peakRect);
+        }
     }
     else {
 	[backgroundColor set];
@@ -409,7 +439,8 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
     }
 }
 
-- (void)encodeWithCoder:(NSCoder *)stream {
+- (void) encodeWithCoder: (NSCoder *) stream
+{
     [super encodeWithCoder:stream];
     [stream encodeValuesOfObjCTypes:"@fffff@@@s",&sound,&currentValue,
     			&currentPeak, &minValue, &maxValue,
@@ -418,8 +449,10 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 
 }
 
-- (id)initWithCoder:(NSCoder *)stream {
+- (id) initWithCoder: (NSCoder *) stream
+{
     int version;
+    
     self = [super initWithCoder:stream];
     version = [stream versionForClassName:@"SndMeter"];
     if (version == 0) {
@@ -444,10 +477,11 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 
 }
 
-- (void)dealloc {
+- (void) dealloc {
     [backgroundColor release];
     [foregroundColor release];
     [peakColor release];
+    [sound release];
     [super dealloc];
 }
 

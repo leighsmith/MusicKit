@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  $Id$
+//  $Id: SndStreamInput.h 3687 2010-07-14 19:35:23Z leighsmith $
 //
-//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//  Original Author: Leigh M. Smith <leigh@leighsmith.com>
 //
-//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//  Copyright (c) 2010, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -24,7 +24,7 @@
   @brief Copies input streams to output streams, allowing audio processing to be applied to it.
   @discussion
     
-    ATTENTION!!!
+   ATTENTION!!!
       Presumptions made to get this class off the ground quickly: The incoming
       stream is made of 32-bit floats, and the saved file is made of 16-bit ints!
 
@@ -41,9 +41,9 @@
 }
 
 /*! 
-  @method     init
+    @method     init
   @brief   Initialises the receiver.
-  @result     Returns the initialised instance.
+    @result     Returns the initialised instance.
 */
 - init;
 

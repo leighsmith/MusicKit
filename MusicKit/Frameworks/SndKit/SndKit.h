@@ -58,14 +58,13 @@
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
 #import "SndOnDisk.h"
-
-#import "SndView.h"
 #import "SndError.h"
 #import "SndStreamManager.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamMixer.h"
+#import "SndStreamInput.h"
 #import "SndAudioProcessorMP3Encoder.h"
 #import "SndMP3.h"
 #import "SndAudioProcessor.h"
@@ -84,6 +83,11 @@
 #import "SndBreakpoint.h"
 #import "SndEnvelope.h"
 #import "SndAudioBufferQueue.h"
+
+// GUI classes, requires AppKit.h
+#import "SndView.h"
+#import "SndMeter.h"
+
 #if defined(__APPLE_CC__) // Only Apple defines AudioUnits.
 #import "SndAudioUnitProcessor.h"
 #import "SndAudioUnitController.h"

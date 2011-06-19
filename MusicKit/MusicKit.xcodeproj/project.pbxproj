@@ -420,6 +420,8 @@
 		D828FA050780CDEF00215EB9 /* PianoRoll.icns in Resources */ = {isa = PBXBuildFile; fileRef = D828FA030780CDEF00215EB9 /* PianoRoll.icns */; };
 		D828FA060780CDEF00215EB9 /* PianoRoll.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D828FA040780CDEF00215EB9 /* PianoRoll.tiff */; };
 		D828FA410780CFD200215EB9 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
+		D82D42F113AE616700F6CE50 /* SndStreamInput.h in Headers */ = {isa = PBXBuildFile; fileRef = D82D42EF13AE616700F6CE50 /* SndStreamInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D82D42F213AE616700F6CE50 /* SndStreamInput.m in Sources */ = {isa = PBXBuildFile; fileRef = D82D42F013AE616700F6CE50 /* SndStreamInput.m */; };
 		D834DA7C0FA6467000EEBC03 /* MKDSP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FED7105A10EAF0024FD88 /* MKDSP.framework */; };
 		D834DA7D0FA6467000EEBC03 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D84395E9059FAA450054BEEE /* MKPerformSndMIDI.framework */; };
 		D834DA7E0FA6467000EEBC03 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D825564A05A211B400B0192B /* MusicKit.framework */; };
@@ -1753,6 +1755,8 @@
 		D828FA5C0780D1F500215EB9 /* EnvelopeEd-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EnvelopeEd-Info.plist"; path = "Applications/EnvelopeEd/EnvelopeEd-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D82AC3B905A0F6DA00780F57 /* SndKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SndKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D82AC3BA05A0F6DA00780F57 /* SndKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SndKit-Info.plist"; path = "Frameworks/SndKit/SndKit-Info.plist"; sourceTree = SOURCE_ROOT; };
+		D82D42EF13AE616700F6CE50 /* SndStreamInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndStreamInput.h; path = Frameworks/SndKit/SndStreamInput.h; sourceTree = "<group>"; };
+		D82D42F013AE616700F6CE50 /* SndStreamInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndStreamInput.m; path = Frameworks/SndKit/SndStreamInput.m; sourceTree = "<group>"; };
 		D8379A830FEE8C6E00E7B708 /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon16x16.png; path = Applications/ScorePlayer/Images/icon16x16.png; sourceTree = "<group>"; };
 		D8379A8A0FEE8CBA00E7B708 /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon16x16.png; path = Applications/Spectro/icon16x16.png; sourceTree = "<group>"; };
 		D8379AA20FEEC3DD00E7B708 /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon16x16.png; path = Applications/EnvelopeEd/icon16x16.png; sourceTree = "<group>"; };
@@ -3339,8 +3343,6 @@
 				D88FE2B605A0F8430024FD88 /* SndEnvelope.h */,
 				D88FE2B705A0F8430024FD88 /* SndEnvelope.m */,
 				D88FE34305A0FBC10024FD88 /* SndFileIO.m */,
-				D88FE30505A0F9E40024FD88 /* SndMeter.h */,
-				D88FE30605A0F9E40024FD88 /* SndMeter.m */,
 				D88FE30705A0F9E40024FD88 /* SndMP3.h */,
 				D88FE30805A0F9E40024FD88 /* SndMP3.m */,
 				D84CDEDE061F57D5007B002D /* SndPasteboard.h */,
@@ -3358,6 +3360,8 @@
 				D88FE31905A0F9E40024FD88 /* SndStreamMixer.m */,
 				D88FE31A05A0F9E40024FD88 /* SndStreamRecorder.h */,
 				D88FE31B05A0F9E40024FD88 /* SndStreamRecorder.m */,
+				D82D42EF13AE616700F6CE50 /* SndStreamInput.h */,
+				D82D42F013AE616700F6CE50 /* SndStreamInput.m */,
 				D88FE31C05A0F9E40024FD88 /* SndTable.h */,
 				D88FE31D05A0F9E40024FD88 /* SndTable.m */,
 				D88FE30205A0F9670024FD88 /* GUI */,
@@ -5311,6 +5315,8 @@
 				D88FE2B105A0F8430024FD88 /* SndDisplayData.m */,
 				D88FE2B205A0F8430024FD88 /* SndDisplayDataList.h */,
 				D88FE2B305A0F8430024FD88 /* SndDisplayDataList.m */,
+				D88FE30505A0F9E40024FD88 /* SndMeter.h */,
+				D88FE30605A0F9E40024FD88 /* SndMeter.m */,
 			);
 			name = GUI;
 			sourceTree = "<group>";
@@ -6077,6 +6083,7 @@
 				D88FE34705A0FBC10024FD88 /* Sndsmallfilter.h in Headers */,
 				D88FE34805A0FBC10024FD88 /* SndFunctions.h in Headers */,
 				D88FE35005A0FC990024FD88 /* SndKit.h in Headers */,
+				D82D42F113AE616700F6CE50 /* SndStreamInput.h in Headers */,
 				D88FE35105A0FC990024FD88 /* SndKitConfig.h in Headers */,
 				D88FE35605A0FCC00024FD88 /* SndFormat.h in Headers */,
 				D88FE37B05A0FEB80024FD88 /* denormals.h in Headers */,
@@ -7783,6 +7790,7 @@
 				D8A441F810777A7300E12376 /* SndAudioUnitProcessor.m in Sources */,
 				D80246EF122EB60F00A88264 /* SndVSTController.m in Sources */,
 				D80246F1122EB60F00A88264 /* SndVSTProcessor.mm in Sources */,
+				D82D42F213AE616700F6CE50 /* SndStreamInput.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

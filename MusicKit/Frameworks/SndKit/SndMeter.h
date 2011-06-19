@@ -86,7 +86,8 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
       unsigned int running:1;
       unsigned int bezeled:1;
       unsigned int shouldStop:1;
-      unsigned int _reservedFlags:13;
+      unsigned int displayPeakValue:1;
+      unsigned int _reservedFlags:12;
     } smFlags;
     void *_timedEntry;
     int _valTime;
@@ -202,6 +203,17 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
 - (NSColor *) peakColor;
 
 /*!
+  @brief Enable or disable the display of the SndMeter's peak bubble.
+ */
+- (void) setDisplayPeak: (BOOL) yesOrNo;
+
+/*!
+  @brief Returns the state of displaying the peak bubble.
+  @return Returns YES or NO indicating if the peak bubble will be displayed.
+ */
+- (BOOL) isDisplayingPeak;
+
+/*!
   @brief Returns the Snd object that the SndMeter is metering.
   @return Returns a Snd instance.  
 */
@@ -261,9 +273,10 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
 /*!
   @brief  Sets the current running value to <i>aValue</i>.
 
-  You never invoke this method directly; it's invoked automatically
+  It is not commont to invoke this method directly; it's invoked automatically
   when the SndMeter is running. However, you can reimplement this
-  method in a subclass of SndMeter. 
+  method in a subclass of SndMeter. It can also be used to set the meter value to
+  an initial value.
   @param  aValue is a float.
 */
 - (void) setFloatValue: (float) aValue;

@@ -1,5 +1,5 @@
 //
-//  $Id$
+//  $Id: SndStreamInput.m 3729 2010-10-06 20:11:30Z leighsmith $
 //
 //  Created by: Leigh Smith <leigh@leighsmith.com> on Jul 9th 2010.
 //  Copyright (c) 2010, The MusicKit Project.  All rights reserved.
@@ -98,7 +98,7 @@
     SndAudioBuffer *currentSynthOutputBuffer = [self synthOutputBuffer];
     NSRange outputBufferRange = { 0, [currentSynthOutputBuffer lengthInSampleFrames] };
     
-    if (isReceivingInput) { // only playback input if recording is enabled.
+    if ([self isReceivingInput]) { // only playback input if recording is enabled.
 	SndAudioBuffer *inBuffer = [self synthInputBuffer];
 	NSRange wholeInputBufferRange = { 0, [inBuffer lengthInSampleFrames] };
 
@@ -139,13 +139,32 @@
 	    if([inBuffer hasSameFormatAsBuffer: currentSynthOutputBuffer]) 
 		[currentSynthOutputBuffer copyFromBuffer: inBuffer intoRange: outputBufferRange];
 	    else {
+		// NSLog(@"mixing currentSynthOutputBuffer %@ with inBuffer %@\n", currentSynthOutputBuffer, inBuffer);
 		[currentSynthOutputBuffer mixWithBuffer: inBuffer
 					      fromStart: 0
 						  toEnd: outputBufferRange.length
 					      canExpand: YES];
+#if 0
+		if(0) {
+		    unsigned long maxFrame;
+		    unsigned int maxChannel;
+
+		    float rmsAmpPerChannel[10] = { 0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+		    float maxMagnitude = [inBuffer findMaximumMagnitudeAt: &maxFrame channel: &maxChannel];
+
+		    //[inBuffer amplitudeRMSOfChannels: rmsAmpPerChannel];
+		    //printf("inBuffer RMS amp of %f, %f\n", rmsAmpPerChannel[0], rmsAmpPerChannel[1]);
+		    printf("inBuffer                 max magnitude %f at frame %ld channel %u\n", maxMagnitude, maxFrame, maxChannel);
+		    maxMagnitude = [currentSynthOutputBuffer findMaximumMagnitudeAt: &maxFrame channel: &maxChannel];
+		    printf("currentSynthOutputBuffer max magnitude %f at frame %ld channel %u\n", maxMagnitude, maxFrame, maxChannel);
+		}
+#endif
 	    }
 	}
-	// NSLog(@"inBuffer %@\n", inBuffer);
+	//if([inBuffer maximumAmplitude] > 0.0) {
+	    // NSLog(@"inBuffer %@\n", inBuffer);
+	//}
+	
 	// NSLog(@"input queue %@\n", inputQueue);
 	// NSLog(@"currentSynthOutputBuffer %@\n", currentSynthOutputBuffer);
 	// NSLog(@"output queue %@\n", outputQueue);
