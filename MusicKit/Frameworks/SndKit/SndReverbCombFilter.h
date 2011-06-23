@@ -29,11 +29,11 @@
     float damp1;
     float damp2;
     float *buffer;
-    int	  bufferSize;
-    int	  bufferIndex;
+    NSUInteger bufferSize;
+    NSUInteger bufferIndex;
 }
 
-- initWithLength: (int) size;
+- initWithLength: (NSUInteger) size;
 
 - (float) process: (float) input;
 

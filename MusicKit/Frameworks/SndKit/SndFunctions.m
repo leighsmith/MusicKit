@@ -30,6 +30,7 @@ CONDITIONS OF THIS AGREEMENT.
 
 #import <Foundation/Foundation.h>
 #import <math.h>
+#import <arpa/inet.h>  // for ntohs() and htons().
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
 #import "SndResample.h"

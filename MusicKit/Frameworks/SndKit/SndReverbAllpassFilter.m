@@ -25,7 +25,7 @@
 
 @implementation SndReverbAllpassFilter
 
-- initWithLength: (int) size
+- initWithLength: (NSUInteger) size
 {
     self = [super init];
     if (self != nil) {

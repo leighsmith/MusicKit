@@ -25,7 +25,7 @@
 
 @implementation SndReverbCombFilter
 
-- initWithLength: (int) size
+- initWithLength: (NSUInteger) size
 {
     self = [super init];
     if (self != nil) {
@@ -47,7 +47,7 @@
 
 - (void) mute
 {
-    int sampleIndex;
+    NSUInteger sampleIndex;
     
     for (sampleIndex = 0; sampleIndex < bufferSize; sampleIndex++)
 	buffer[sampleIndex] = 0;

@@ -26,11 +26,11 @@
 {
     float feedback;
     float *buffer;
-    int	  bufferSize;
-    int   bufferIndex;
+    NSUInteger bufferSize;
+    NSUInteger bufferIndex;
 }
 
-- initWithLength: (int) size;
+- initWithLength: (NSUInteger) size;
 
 - (void) processBuffer: (float *) input
 	     replacing: (float *) output
