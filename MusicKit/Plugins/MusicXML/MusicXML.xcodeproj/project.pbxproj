@@ -1,0 +1,820 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		089C1680FE841241C02AAC07 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
+		1058C7AFFEA557BF11CA2CBB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
+		D8F028C01842A9A900EE0FE9 /* MKXMLAttributesParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EB027EF28D01A80103 /* MKXMLAttributesParser.h */; };
+		D8F028C11842A9A900EE0FE9 /* MKXMLAttributeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EC027EF28D01A80103 /* MKXMLAttributeStack.h */; };
+		D8F028C21842A9A900EE0FE9 /* MKXMLClefParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261ED027EF28D01A80103 /* MKXMLClefParser.h */; };
+		D8F028C31842A9A900EE0FE9 /* MKXMLCounterAlterationParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EE027EF28D01A80103 /* MKXMLCounterAlterationParser.h */; };
+		D8F028C41842A9A900EE0FE9 /* MKXMLDirectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EF027EF28D01A80103 /* MKXMLDirectionParser.h */; };
+		D8F028C51842A9A900EE0FE9 /* MKXMLEncodingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F0027EF28D01A80103 /* MKXMLEncodingParser.h */; };
+		D8F028C61842A9A900EE0FE9 /* MKXMLIdentificationParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F1027EF28D01A80103 /* MKXMLIdentificationParser.h */; };
+		D8F028C71842A9A900EE0FE9 /* MKXMLKeyParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F2027EF28D01A80103 /* MKXMLKeyParser.h */; };
+		D8F028C81842A9A900EE0FE9 /* MKXMLMeasureParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F3027EF28D01A80103 /* MKXMLMeasureParser.h */; };
+		D8F028C91842A9A900EE0FE9 /* MKXMLMidiInstrumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F4027EF28D01A80103 /* MKXMLMidiInstrumentParser.h */; };
+		D8F028CA1842A9A900EE0FE9 /* MKXMLNoteParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F5027EF28D01A80103 /* MKXMLNoteParser.h */; };
+		D8F028CB1842A9A900EE0FE9 /* MKXMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F6027EF28D01A80103 /* MKXMLParser.h */; };
+		D8F028CC1842A9A900EE0FE9 /* MKXMLPartListParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F7027EF28D01A80103 /* MKXMLPartListParser.h */; };
+		D8F028CD1842A9A900EE0FE9 /* MKXMLPartParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F8027EF28D01A80103 /* MKXMLPartParser.h */; };
+		D8F028CE1842A9A900EE0FE9 /* MKXMLPitchParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F9027EF28D01A80103 /* MKXMLPitchParser.h */; };
+		D8F028CF1842A9A900EE0FE9 /* MKXMLSAXHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FA027EF28D01A80103 /* MKXMLSAXHandler.h */; };
+		D8F028D01842A9A900EE0FE9 /* MKXMLScoreInstrumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FB027EF28D01A80103 /* MKXMLScoreInstrumentParser.h */; };
+		D8F028D11842A9A900EE0FE9 /* MKXMLScorePartParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FC027EF28D01A80103 /* MKXMLScorePartParser.h */; };
+		D8F028D21842A9A900EE0FE9 /* MKXMLScorePartwiseParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FD027EF28D01A80103 /* MKXMLScorePartwiseParser.h */; };
+		D8F028D31842A9A900EE0FE9 /* MKXMLScoreTimewiseParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FE027EF28D01A80103 /* MKXMLScoreTimewiseParser.h */; };
+		D8F028D41842A9A900EE0FE9 /* MKXMLSingleValueParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FF027EF28D01A80103 /* MKXMLSingleValueParser.h */; };
+		D8F028D51842A9A900EE0FE9 /* MKXMLSoundParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26200027EF28D01A80103 /* MKXMLSoundParser.h */; };
+		D8F028D61842A9A900EE0FE9 /* MKXMLTimeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26201027EF28D01A80103 /* MKXMLTimeParser.h */; };
+		D8F028D71842A9A900EE0FE9 /* MKXMLWorkParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26202027EF28D01A80103 /* MKXMLWorkParser.h */; };
+		D8F028D81842A9A900EE0FE9 /* MusicXML.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26220027EF6F101A80103 /* MusicXML.h */; };
+		D8F028D91842A9A900EE0FE9 /* MKXMLObjectContainerParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D048AE0280204E01A80103 /* MKXMLObjectContainerParser.h */; };
+		D8F028DB1842A9A900EE0FE9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
+		D8F028DD1842A9A900EE0FE9 /* MKXMLAttributesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BA027EF23001A80103 /* MKXMLAttributesParser.m */; };
+		D8F028DE1842A9A900EE0FE9 /* MKXMLAttributeStack.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BB027EF23001A80103 /* MKXMLAttributeStack.m */; };
+		D8F028DF1842A9A900EE0FE9 /* MKXMLClefParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BC027EF23001A80103 /* MKXMLClefParser.m */; };
+		D8F028E01842A9A900EE0FE9 /* MKXMLCounterAlterationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BD027EF23001A80103 /* MKXMLCounterAlterationParser.m */; };
+		D8F028E11842A9A900EE0FE9 /* MKXMLDirectionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BE027EF23001A80103 /* MKXMLDirectionParser.m */; };
+		D8F028E21842A9A900EE0FE9 /* MKXMLEncodingParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BF027EF23001A80103 /* MKXMLEncodingParser.m */; };
+		D8F028E31842A9A900EE0FE9 /* MKXMLIdentificationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C0027EF23001A80103 /* MKXMLIdentificationParser.m */; };
+		D8F028E41842A9A900EE0FE9 /* MKXMLKeyParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C1027EF23001A80103 /* MKXMLKeyParser.m */; };
+		D8F028E51842A9A900EE0FE9 /* MKXMLMeasureParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C2027EF23001A80103 /* MKXMLMeasureParser.m */; };
+		D8F028E61842A9A900EE0FE9 /* MKXMLMidiInstrumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C3027EF23001A80103 /* MKXMLMidiInstrumentParser.m */; };
+		D8F028E71842A9A900EE0FE9 /* MKXMLNoteParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C4027EF23001A80103 /* MKXMLNoteParser.m */; };
+		D8F028E81842A9A900EE0FE9 /* MKXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C5027EF23001A80103 /* MKXMLParser.m */; };
+		D8F028E91842A9A900EE0FE9 /* MKXMLPartListParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C6027EF23001A80103 /* MKXMLPartListParser.m */; };
+		D8F028EA1842A9A900EE0FE9 /* MKXMLPartParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C7027EF23001A80103 /* MKXMLPartParser.m */; };
+		D8F028EB1842A9A900EE0FE9 /* MKXMLPitchParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C8027EF23001A80103 /* MKXMLPitchParser.m */; };
+		D8F028EC1842A9A900EE0FE9 /* MKXMLSAXHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C9027EF23001A80103 /* MKXMLSAXHandler.m */; };
+		D8F028ED1842A9A900EE0FE9 /* MKXMLScoreInstrumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CA027EF23001A80103 /* MKXMLScoreInstrumentParser.m */; };
+		D8F028EE1842A9A900EE0FE9 /* MKXMLScorePartParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CB027EF23001A80103 /* MKXMLScorePartParser.m */; };
+		D8F028EF1842A9A900EE0FE9 /* MKXMLScorePartwiseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CC027EF23001A80103 /* MKXMLScorePartwiseParser.m */; };
+		D8F028F01842A9A900EE0FE9 /* MKXMLScoreTimewiseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CD027EF23001A80103 /* MKXMLScoreTimewiseParser.m */; };
+		D8F028F11842A9A900EE0FE9 /* MKXMLSingleValueParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CE027EF23001A80103 /* MKXMLSingleValueParser.m */; };
+		D8F028F21842A9A900EE0FE9 /* MKXMLSoundParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CF027EF23001A80103 /* MKXMLSoundParser.m */; };
+		D8F028F31842A9A900EE0FE9 /* MKXMLTimeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261D0027EF23001A80103 /* MKXMLTimeParser.m */; };
+		D8F028F41842A9A900EE0FE9 /* MKXMLWorkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261D1027EF23001A80103 /* MKXMLWorkParser.m */; };
+		D8F028F51842A9A900EE0FE9 /* MusicXML.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D26221027EF6F101A80103 /* MusicXML.m */; };
+		D8F028F61842A9A900EE0FE9 /* MKXMLObjectContainerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D048AF0280204E01A80103 /* MKXMLObjectContainerParser.m */; };
+		D8F028F81842A9A900EE0FE9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
+		D8F028F91842A9A900EE0FE9 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5D2621B027EF3D101A80103 /* MusicKit.framework */; };
+		F5D048B00280204E01A80103 /* MKXMLObjectContainerParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D048AE0280204E01A80103 /* MKXMLObjectContainerParser.h */; };
+		F5D048B10280204E01A80103 /* MKXMLObjectContainerParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D048AF0280204E01A80103 /* MKXMLObjectContainerParser.m */; };
+		F5D261D3027EF23001A80103 /* MKXMLAttributesParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BA027EF23001A80103 /* MKXMLAttributesParser.m */; };
+		F5D261D4027EF23001A80103 /* MKXMLAttributeStack.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BB027EF23001A80103 /* MKXMLAttributeStack.m */; };
+		F5D261D5027EF23001A80103 /* MKXMLClefParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BC027EF23001A80103 /* MKXMLClefParser.m */; };
+		F5D261D6027EF23001A80103 /* MKXMLCounterAlterationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BD027EF23001A80103 /* MKXMLCounterAlterationParser.m */; };
+		F5D261D7027EF23001A80103 /* MKXMLDirectionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BE027EF23001A80103 /* MKXMLDirectionParser.m */; };
+		F5D261D8027EF23001A80103 /* MKXMLEncodingParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261BF027EF23001A80103 /* MKXMLEncodingParser.m */; };
+		F5D261D9027EF23001A80103 /* MKXMLIdentificationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C0027EF23001A80103 /* MKXMLIdentificationParser.m */; };
+		F5D261DA027EF23001A80103 /* MKXMLKeyParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C1027EF23001A80103 /* MKXMLKeyParser.m */; };
+		F5D261DB027EF23001A80103 /* MKXMLMeasureParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C2027EF23001A80103 /* MKXMLMeasureParser.m */; };
+		F5D261DC027EF23001A80103 /* MKXMLMidiInstrumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C3027EF23001A80103 /* MKXMLMidiInstrumentParser.m */; };
+		F5D261DD027EF23001A80103 /* MKXMLNoteParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C4027EF23001A80103 /* MKXMLNoteParser.m */; };
+		F5D261DE027EF23001A80103 /* MKXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C5027EF23001A80103 /* MKXMLParser.m */; };
+		F5D261DF027EF23001A80103 /* MKXMLPartListParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C6027EF23001A80103 /* MKXMLPartListParser.m */; };
+		F5D261E0027EF23001A80103 /* MKXMLPartParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C7027EF23001A80103 /* MKXMLPartParser.m */; };
+		F5D261E1027EF23001A80103 /* MKXMLPitchParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C8027EF23001A80103 /* MKXMLPitchParser.m */; };
+		F5D261E2027EF23001A80103 /* MKXMLSAXHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261C9027EF23001A80103 /* MKXMLSAXHandler.m */; };
+		F5D261E3027EF23001A80103 /* MKXMLScoreInstrumentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CA027EF23001A80103 /* MKXMLScoreInstrumentParser.m */; };
+		F5D261E4027EF23001A80103 /* MKXMLScorePartParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CB027EF23001A80103 /* MKXMLScorePartParser.m */; };
+		F5D261E5027EF23001A80103 /* MKXMLScorePartwiseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CC027EF23001A80103 /* MKXMLScorePartwiseParser.m */; };
+		F5D261E6027EF23001A80103 /* MKXMLScoreTimewiseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CD027EF23001A80103 /* MKXMLScoreTimewiseParser.m */; };
+		F5D261E7027EF23001A80103 /* MKXMLSingleValueParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CE027EF23001A80103 /* MKXMLSingleValueParser.m */; };
+		F5D261E8027EF23001A80103 /* MKXMLSoundParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261CF027EF23001A80103 /* MKXMLSoundParser.m */; };
+		F5D261E9027EF23001A80103 /* MKXMLTimeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261D0027EF23001A80103 /* MKXMLTimeParser.m */; };
+		F5D261EA027EF23001A80103 /* MKXMLWorkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D261D1027EF23001A80103 /* MKXMLWorkParser.m */; };
+		F5D26203027EF28D01A80103 /* MKXMLAttributesParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EB027EF28D01A80103 /* MKXMLAttributesParser.h */; };
+		F5D26204027EF28D01A80103 /* MKXMLAttributeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EC027EF28D01A80103 /* MKXMLAttributeStack.h */; };
+		F5D26205027EF28D01A80103 /* MKXMLClefParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261ED027EF28D01A80103 /* MKXMLClefParser.h */; };
+		F5D26206027EF28D01A80103 /* MKXMLCounterAlterationParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EE027EF28D01A80103 /* MKXMLCounterAlterationParser.h */; };
+		F5D26207027EF28D01A80103 /* MKXMLDirectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261EF027EF28D01A80103 /* MKXMLDirectionParser.h */; };
+		F5D26208027EF28D01A80103 /* MKXMLEncodingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F0027EF28D01A80103 /* MKXMLEncodingParser.h */; };
+		F5D26209027EF28D01A80103 /* MKXMLIdentificationParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F1027EF28D01A80103 /* MKXMLIdentificationParser.h */; };
+		F5D2620A027EF28D01A80103 /* MKXMLKeyParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F2027EF28D01A80103 /* MKXMLKeyParser.h */; };
+		F5D2620B027EF28D01A80103 /* MKXMLMeasureParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F3027EF28D01A80103 /* MKXMLMeasureParser.h */; };
+		F5D2620C027EF28D01A80103 /* MKXMLMidiInstrumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F4027EF28D01A80103 /* MKXMLMidiInstrumentParser.h */; };
+		F5D2620D027EF28D01A80103 /* MKXMLNoteParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F5027EF28D01A80103 /* MKXMLNoteParser.h */; };
+		F5D2620E027EF28D01A80103 /* MKXMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F6027EF28D01A80103 /* MKXMLParser.h */; };
+		F5D2620F027EF28D01A80103 /* MKXMLPartListParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F7027EF28D01A80103 /* MKXMLPartListParser.h */; };
+		F5D26210027EF28D01A80103 /* MKXMLPartParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F8027EF28D01A80103 /* MKXMLPartParser.h */; };
+		F5D26211027EF28D01A80103 /* MKXMLPitchParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261F9027EF28D01A80103 /* MKXMLPitchParser.h */; };
+		F5D26212027EF28D01A80103 /* MKXMLSAXHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FA027EF28D01A80103 /* MKXMLSAXHandler.h */; };
+		F5D26213027EF28D01A80103 /* MKXMLScoreInstrumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FB027EF28D01A80103 /* MKXMLScoreInstrumentParser.h */; };
+		F5D26214027EF28D01A80103 /* MKXMLScorePartParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FC027EF28D01A80103 /* MKXMLScorePartParser.h */; };
+		F5D26215027EF28D01A80103 /* MKXMLScorePartwiseParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FD027EF28D01A80103 /* MKXMLScorePartwiseParser.h */; };
+		F5D26216027EF28D01A80103 /* MKXMLScoreTimewiseParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FE027EF28D01A80103 /* MKXMLScoreTimewiseParser.h */; };
+		F5D26217027EF28D01A80103 /* MKXMLSingleValueParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D261FF027EF28D01A80103 /* MKXMLSingleValueParser.h */; };
+		F5D26218027EF28D01A80103 /* MKXMLSoundParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26200027EF28D01A80103 /* MKXMLSoundParser.h */; };
+		F5D26219027EF28D01A80103 /* MKXMLTimeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26201027EF28D01A80103 /* MKXMLTimeParser.h */; };
+		F5D2621A027EF28D01A80103 /* MKXMLWorkParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26202027EF28D01A80103 /* MKXMLWorkParser.h */; };
+		F5D2621C027EF3D101A80103 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5D2621B027EF3D101A80103 /* MusicKit.framework */; };
+		F5D26222027EF6F101A80103 /* MusicXML.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D26220027EF6F101A80103 /* MusicXML.h */; };
+		F5D26223027EF6F101A80103 /* MusicXML.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D26221027EF6F101A80103 /* MusicXML.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBundleTarget section */
+		089C1673FE841209C02AAC07 /* MusicXML */ = {
+			isa = PBXBundleTarget;
+			buildConfigurationList = D8F028B91842A9A200EE0FE9 /* Build configuration list for PBXBundleTarget "MusicXML" */;
+			buildPhases = (
+				089C1674FE841209C02AAC07 /* Headers */,
+				089C1675FE841209C02AAC07 /* Resources */,
+				089C1676FE841209C02AAC07 /* Sources */,
+				089C1677FE841209C02AAC07 /* Frameworks */,
+				089C1679FE841209C02AAC07 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = MusicXML;
+			productInstallPath = "$(HOME)/Library/MusicKitPlugins";
+			productName = MusicXML;
+			productReference = 014CEA410018CDE011CA2923 /* MusicXML.mkplugin */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MusicXML</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSPrincipalClass</key>
+	<string>MusicXML</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXBundleTarget section */
+
+/* Begin PBXFileReference section */
+		014CEA410018CDE011CA2923 /* MusicXML.mkplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = MusicXML.mkplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		D8F028FF1842A9A900EE0FE9 /* Info-MusicXML__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-MusicXML__Upgraded_.plist"; sourceTree = "<group>"; };
+		D8F029001842A9A900EE0FE9 /* MusicXML.mkplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MusicXML.mkplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5D048AE0280204E01A80103 /* MKXMLObjectContainerParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLObjectContainerParser.h; sourceTree = "<group>"; };
+		F5D048AF0280204E01A80103 /* MKXMLObjectContainerParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLObjectContainerParser.m; sourceTree = "<group>"; };
+		F5D261BA027EF23001A80103 /* MKXMLAttributesParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLAttributesParser.m; sourceTree = "<group>"; };
+		F5D261BB027EF23001A80103 /* MKXMLAttributeStack.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLAttributeStack.m; sourceTree = "<group>"; };
+		F5D261BC027EF23001A80103 /* MKXMLClefParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLClefParser.m; sourceTree = "<group>"; };
+		F5D261BD027EF23001A80103 /* MKXMLCounterAlterationParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLCounterAlterationParser.m; sourceTree = "<group>"; };
+		F5D261BE027EF23001A80103 /* MKXMLDirectionParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLDirectionParser.m; sourceTree = "<group>"; };
+		F5D261BF027EF23001A80103 /* MKXMLEncodingParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLEncodingParser.m; sourceTree = "<group>"; };
+		F5D261C0027EF23001A80103 /* MKXMLIdentificationParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLIdentificationParser.m; sourceTree = "<group>"; };
+		F5D261C1027EF23001A80103 /* MKXMLKeyParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLKeyParser.m; sourceTree = "<group>"; };
+		F5D261C2027EF23001A80103 /* MKXMLMeasureParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLMeasureParser.m; sourceTree = "<group>"; };
+		F5D261C3027EF23001A80103 /* MKXMLMidiInstrumentParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLMidiInstrumentParser.m; sourceTree = "<group>"; };
+		F5D261C4027EF23001A80103 /* MKXMLNoteParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLNoteParser.m; sourceTree = "<group>"; };
+		F5D261C5027EF23001A80103 /* MKXMLParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLParser.m; sourceTree = "<group>"; };
+		F5D261C6027EF23001A80103 /* MKXMLPartListParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLPartListParser.m; sourceTree = "<group>"; };
+		F5D261C7027EF23001A80103 /* MKXMLPartParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLPartParser.m; sourceTree = "<group>"; };
+		F5D261C8027EF23001A80103 /* MKXMLPitchParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLPitchParser.m; sourceTree = "<group>"; };
+		F5D261C9027EF23001A80103 /* MKXMLSAXHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLSAXHandler.m; sourceTree = "<group>"; };
+		F5D261CA027EF23001A80103 /* MKXMLScoreInstrumentParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLScoreInstrumentParser.m; sourceTree = "<group>"; };
+		F5D261CB027EF23001A80103 /* MKXMLScorePartParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLScorePartParser.m; sourceTree = "<group>"; };
+		F5D261CC027EF23001A80103 /* MKXMLScorePartwiseParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLScorePartwiseParser.m; sourceTree = "<group>"; };
+		F5D261CD027EF23001A80103 /* MKXMLScoreTimewiseParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLScoreTimewiseParser.m; sourceTree = "<group>"; };
+		F5D261CE027EF23001A80103 /* MKXMLSingleValueParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLSingleValueParser.m; sourceTree = "<group>"; };
+		F5D261CF027EF23001A80103 /* MKXMLSoundParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLSoundParser.m; sourceTree = "<group>"; };
+		F5D261D0027EF23001A80103 /* MKXMLTimeParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLTimeParser.m; sourceTree = "<group>"; };
+		F5D261D1027EF23001A80103 /* MKXMLWorkParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKXMLWorkParser.m; sourceTree = "<group>"; };
+		F5D261EB027EF28D01A80103 /* MKXMLAttributesParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLAttributesParser.h; sourceTree = "<group>"; };
+		F5D261EC027EF28D01A80103 /* MKXMLAttributeStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLAttributeStack.h; sourceTree = "<group>"; };
+		F5D261ED027EF28D01A80103 /* MKXMLClefParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLClefParser.h; sourceTree = "<group>"; };
+		F5D261EE027EF28D01A80103 /* MKXMLCounterAlterationParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLCounterAlterationParser.h; sourceTree = "<group>"; };
+		F5D261EF027EF28D01A80103 /* MKXMLDirectionParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLDirectionParser.h; sourceTree = "<group>"; };
+		F5D261F0027EF28D01A80103 /* MKXMLEncodingParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLEncodingParser.h; sourceTree = "<group>"; };
+		F5D261F1027EF28D01A80103 /* MKXMLIdentificationParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLIdentificationParser.h; sourceTree = "<group>"; };
+		F5D261F2027EF28D01A80103 /* MKXMLKeyParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLKeyParser.h; sourceTree = "<group>"; };
+		F5D261F3027EF28D01A80103 /* MKXMLMeasureParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLMeasureParser.h; sourceTree = "<group>"; };
+		F5D261F4027EF28D01A80103 /* MKXMLMidiInstrumentParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLMidiInstrumentParser.h; sourceTree = "<group>"; };
+		F5D261F5027EF28D01A80103 /* MKXMLNoteParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLNoteParser.h; sourceTree = "<group>"; };
+		F5D261F6027EF28D01A80103 /* MKXMLParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLParser.h; sourceTree = "<group>"; };
+		F5D261F7027EF28D01A80103 /* MKXMLPartListParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLPartListParser.h; sourceTree = "<group>"; };
+		F5D261F8027EF28D01A80103 /* MKXMLPartParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLPartParser.h; sourceTree = "<group>"; };
+		F5D261F9027EF28D01A80103 /* MKXMLPitchParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLPitchParser.h; sourceTree = "<group>"; };
+		F5D261FA027EF28D01A80103 /* MKXMLSAXHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLSAXHandler.h; sourceTree = "<group>"; };
+		F5D261FB027EF28D01A80103 /* MKXMLScoreInstrumentParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLScoreInstrumentParser.h; sourceTree = "<group>"; };
+		F5D261FC027EF28D01A80103 /* MKXMLScorePartParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLScorePartParser.h; sourceTree = "<group>"; };
+		F5D261FD027EF28D01A80103 /* MKXMLScorePartwiseParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLScorePartwiseParser.h; sourceTree = "<group>"; };
+		F5D261FE027EF28D01A80103 /* MKXMLScoreTimewiseParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLScoreTimewiseParser.h; sourceTree = "<group>"; };
+		F5D261FF027EF28D01A80103 /* MKXMLSingleValueParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLSingleValueParser.h; sourceTree = "<group>"; };
+		F5D26200027EF28D01A80103 /* MKXMLSoundParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLSoundParser.h; sourceTree = "<group>"; };
+		F5D26201027EF28D01A80103 /* MKXMLTimeParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLTimeParser.h; sourceTree = "<group>"; };
+		F5D26202027EF28D01A80103 /* MKXMLWorkParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKXMLWorkParser.h; sourceTree = "<group>"; };
+		F5D2621B027EF3D101A80103 /* MusicKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MusicKit.framework; path = /Library/Frameworks/MusicKit.framework; sourceTree = "<absolute>"; };
+		F5D2621D027EF5CD01A80103 /* mut.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = mut.xml; sourceTree = "<group>"; };
+		F5D2621E027EF5CD01A80103 /* reve-timewise.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "reve-timewise.xml"; sourceTree = "<group>"; };
+		F5D2621F027EF5CD01A80103 /* reve.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = reve.xml; sourceTree = "<group>"; };
+		F5D26220027EF6F101A80103 /* MusicXML.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MusicXML.h; sourceTree = "<group>"; };
+		F5D26221027EF6F101A80103 /* MusicXML.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MusicXML.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		089C1677FE841209C02AAC07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1058C7AFFEA557BF11CA2CBB /* Cocoa.framework in Frameworks */,
+				F5D2621C027EF3D101A80103 /* MusicKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F028F71842A9A900EE0FE9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F028F81842A9A900EE0FE9 /* Cocoa.framework in Frameworks */,
+				D8F028F91842A9A900EE0FE9 /* MusicKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		089C166AFE841209C02AAC07 /* MusicXML */ = {
+			isa = PBXGroup;
+			children = (
+				F5D261B8027EF23001A80103 /* Headers */,
+				08FB77AFFE84173DC02AAC07 /* Classes */,
+				089C167CFE841241C02AAC07 /* Resources */,
+				F5D261B6027EF15201A80103 /* Supporting Files */,
+				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
+				19C28FB8FE9D52D311CA2CBB /* Products */,
+				D8F028FF1842A9A900EE0FE9 /* Info-MusicXML__Upgraded_.plist */,
+			);
+			name = MusicXML;
+			sourceTree = "<group>";
+		};
+		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */,
+				1058C7AEFEA557BF11CA2CBB /* Other Frameworks */,
+			);
+			name = "Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C167CFE841241C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
+				F5D2621D027EF5CD01A80103 /* mut.xml */,
+				F5D2621E027EF5CD01A80103 /* reve-timewise.xml */,
+				F5D2621F027EF5CD01A80103 /* reve.xml */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AFFE84173DC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F5D261BA027EF23001A80103 /* MKXMLAttributesParser.m */,
+				F5D261BB027EF23001A80103 /* MKXMLAttributeStack.m */,
+				F5D261BC027EF23001A80103 /* MKXMLClefParser.m */,
+				F5D261BD027EF23001A80103 /* MKXMLCounterAlterationParser.m */,
+				F5D261BE027EF23001A80103 /* MKXMLDirectionParser.m */,
+				F5D261BF027EF23001A80103 /* MKXMLEncodingParser.m */,
+				F5D261C0027EF23001A80103 /* MKXMLIdentificationParser.m */,
+				F5D261C1027EF23001A80103 /* MKXMLKeyParser.m */,
+				F5D261C2027EF23001A80103 /* MKXMLMeasureParser.m */,
+				F5D261C3027EF23001A80103 /* MKXMLMidiInstrumentParser.m */,
+				F5D261C4027EF23001A80103 /* MKXMLNoteParser.m */,
+				F5D048AF0280204E01A80103 /* MKXMLObjectContainerParser.m */,
+				F5D261C5027EF23001A80103 /* MKXMLParser.m */,
+				F5D261C6027EF23001A80103 /* MKXMLPartListParser.m */,
+				F5D261C7027EF23001A80103 /* MKXMLPartParser.m */,
+				F5D261C8027EF23001A80103 /* MKXMLPitchParser.m */,
+				F5D261C9027EF23001A80103 /* MKXMLSAXHandler.m */,
+				F5D261CA027EF23001A80103 /* MKXMLScoreInstrumentParser.m */,
+				F5D261CB027EF23001A80103 /* MKXMLScorePartParser.m */,
+				F5D261CC027EF23001A80103 /* MKXMLScorePartwiseParser.m */,
+				F5D261CD027EF23001A80103 /* MKXMLScoreTimewiseParser.m */,
+				F5D261CE027EF23001A80103 /* MKXMLSingleValueParser.m */,
+				F5D261CF027EF23001A80103 /* MKXMLSoundParser.m */,
+				F5D261D0027EF23001A80103 /* MKXMLTimeParser.m */,
+				F5D261D1027EF23001A80103 /* MKXMLWorkParser.m */,
+				F5D26221027EF6F101A80103 /* MusicXML.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
+				F5D2621B027EF3D101A80103 /* MusicKit.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				089C1672FE841209C02AAC07 /* Foundation.framework */,
+				089C167FFE841241C02AAC07 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FB8FE9D52D311CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				014CEA410018CDE011CA2923 /* MusicXML.mkplugin */,
+				D8F029001842A9A900EE0FE9 /* MusicXML.mkplugin */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F5D261B6027EF15201A80103 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F5D261B8027EF23001A80103 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				F5D261EB027EF28D01A80103 /* MKXMLAttributesParser.h */,
+				F5D261EC027EF28D01A80103 /* MKXMLAttributeStack.h */,
+				F5D261ED027EF28D01A80103 /* MKXMLClefParser.h */,
+				F5D261EE027EF28D01A80103 /* MKXMLCounterAlterationParser.h */,
+				F5D261EF027EF28D01A80103 /* MKXMLDirectionParser.h */,
+				F5D261F0027EF28D01A80103 /* MKXMLEncodingParser.h */,
+				F5D261F1027EF28D01A80103 /* MKXMLIdentificationParser.h */,
+				F5D261F2027EF28D01A80103 /* MKXMLKeyParser.h */,
+				F5D261F3027EF28D01A80103 /* MKXMLMeasureParser.h */,
+				F5D261F4027EF28D01A80103 /* MKXMLMidiInstrumentParser.h */,
+				F5D261F5027EF28D01A80103 /* MKXMLNoteParser.h */,
+				F5D048AE0280204E01A80103 /* MKXMLObjectContainerParser.h */,
+				F5D261F6027EF28D01A80103 /* MKXMLParser.h */,
+				F5D261F7027EF28D01A80103 /* MKXMLPartListParser.h */,
+				F5D261F8027EF28D01A80103 /* MKXMLPartParser.h */,
+				F5D261F9027EF28D01A80103 /* MKXMLPitchParser.h */,
+				F5D261FA027EF28D01A80103 /* MKXMLSAXHandler.h */,
+				F5D261FB027EF28D01A80103 /* MKXMLScoreInstrumentParser.h */,
+				F5D261FC027EF28D01A80103 /* MKXMLScorePartParser.h */,
+				F5D261FD027EF28D01A80103 /* MKXMLScorePartwiseParser.h */,
+				F5D261FE027EF28D01A80103 /* MKXMLScoreTimewiseParser.h */,
+				F5D261FF027EF28D01A80103 /* MKXMLSingleValueParser.h */,
+				F5D26200027EF28D01A80103 /* MKXMLSoundParser.h */,
+				F5D26201027EF28D01A80103 /* MKXMLTimeParser.h */,
+				F5D26202027EF28D01A80103 /* MKXMLWorkParser.h */,
+				F5D26220027EF6F101A80103 /* MusicXML.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		089C1674FE841209C02AAC07 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5D26203027EF28D01A80103 /* MKXMLAttributesParser.h in Headers */,
+				F5D26204027EF28D01A80103 /* MKXMLAttributeStack.h in Headers */,
+				F5D26205027EF28D01A80103 /* MKXMLClefParser.h in Headers */,
+				F5D26206027EF28D01A80103 /* MKXMLCounterAlterationParser.h in Headers */,
+				F5D26207027EF28D01A80103 /* MKXMLDirectionParser.h in Headers */,
+				F5D26208027EF28D01A80103 /* MKXMLEncodingParser.h in Headers */,
+				F5D26209027EF28D01A80103 /* MKXMLIdentificationParser.h in Headers */,
+				F5D2620A027EF28D01A80103 /* MKXMLKeyParser.h in Headers */,
+				F5D2620B027EF28D01A80103 /* MKXMLMeasureParser.h in Headers */,
+				F5D2620C027EF28D01A80103 /* MKXMLMidiInstrumentParser.h in Headers */,
+				F5D2620D027EF28D01A80103 /* MKXMLNoteParser.h in Headers */,
+				F5D2620E027EF28D01A80103 /* MKXMLParser.h in Headers */,
+				F5D2620F027EF28D01A80103 /* MKXMLPartListParser.h in Headers */,
+				F5D26210027EF28D01A80103 /* MKXMLPartParser.h in Headers */,
+				F5D26211027EF28D01A80103 /* MKXMLPitchParser.h in Headers */,
+				F5D26212027EF28D01A80103 /* MKXMLSAXHandler.h in Headers */,
+				F5D26213027EF28D01A80103 /* MKXMLScoreInstrumentParser.h in Headers */,
+				F5D26214027EF28D01A80103 /* MKXMLScorePartParser.h in Headers */,
+				F5D26215027EF28D01A80103 /* MKXMLScorePartwiseParser.h in Headers */,
+				F5D26216027EF28D01A80103 /* MKXMLScoreTimewiseParser.h in Headers */,
+				F5D26217027EF28D01A80103 /* MKXMLSingleValueParser.h in Headers */,
+				F5D26218027EF28D01A80103 /* MKXMLSoundParser.h in Headers */,
+				F5D26219027EF28D01A80103 /* MKXMLTimeParser.h in Headers */,
+				F5D2621A027EF28D01A80103 /* MKXMLWorkParser.h in Headers */,
+				F5D26222027EF6F101A80103 /* MusicXML.h in Headers */,
+				F5D048B00280204E01A80103 /* MKXMLObjectContainerParser.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F028BF1842A9A900EE0FE9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F028C01842A9A900EE0FE9 /* MKXMLAttributesParser.h in Headers */,
+				D8F028C11842A9A900EE0FE9 /* MKXMLAttributeStack.h in Headers */,
+				D8F028C21842A9A900EE0FE9 /* MKXMLClefParser.h in Headers */,
+				D8F028C31842A9A900EE0FE9 /* MKXMLCounterAlterationParser.h in Headers */,
+				D8F028C41842A9A900EE0FE9 /* MKXMLDirectionParser.h in Headers */,
+				D8F028C51842A9A900EE0FE9 /* MKXMLEncodingParser.h in Headers */,
+				D8F028C61842A9A900EE0FE9 /* MKXMLIdentificationParser.h in Headers */,
+				D8F028C71842A9A900EE0FE9 /* MKXMLKeyParser.h in Headers */,
+				D8F028C81842A9A900EE0FE9 /* MKXMLMeasureParser.h in Headers */,
+				D8F028C91842A9A900EE0FE9 /* MKXMLMidiInstrumentParser.h in Headers */,
+				D8F028CA1842A9A900EE0FE9 /* MKXMLNoteParser.h in Headers */,
+				D8F028CB1842A9A900EE0FE9 /* MKXMLParser.h in Headers */,
+				D8F028CC1842A9A900EE0FE9 /* MKXMLPartListParser.h in Headers */,
+				D8F028CD1842A9A900EE0FE9 /* MKXMLPartParser.h in Headers */,
+				D8F028CE1842A9A900EE0FE9 /* MKXMLPitchParser.h in Headers */,
+				D8F028CF1842A9A900EE0FE9 /* MKXMLSAXHandler.h in Headers */,
+				D8F028D01842A9A900EE0FE9 /* MKXMLScoreInstrumentParser.h in Headers */,
+				D8F028D11842A9A900EE0FE9 /* MKXMLScorePartParser.h in Headers */,
+				D8F028D21842A9A900EE0FE9 /* MKXMLScorePartwiseParser.h in Headers */,
+				D8F028D31842A9A900EE0FE9 /* MKXMLScoreTimewiseParser.h in Headers */,
+				D8F028D41842A9A900EE0FE9 /* MKXMLSingleValueParser.h in Headers */,
+				D8F028D51842A9A900EE0FE9 /* MKXMLSoundParser.h in Headers */,
+				D8F028D61842A9A900EE0FE9 /* MKXMLTimeParser.h in Headers */,
+				D8F028D71842A9A900EE0FE9 /* MKXMLWorkParser.h in Headers */,
+				D8F028D81842A9A900EE0FE9 /* MusicXML.h in Headers */,
+				D8F028D91842A9A900EE0FE9 /* MKXMLObjectContainerParser.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D8F028BE1842A9A900EE0FE9 /* MusicXML (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8F028FB1842A9A900EE0FE9 /* Build configuration list for PBXNativeTarget "MusicXML (Upgraded)" */;
+			buildPhases = (
+				D8F028BF1842A9A900EE0FE9 /* Headers */,
+				D8F028DA1842A9A900EE0FE9 /* Resources */,
+				D8F028DC1842A9A900EE0FE9 /* Sources */,
+				D8F028F71842A9A900EE0FE9 /* Frameworks */,
+				D8F028FA1842A9A900EE0FE9 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MusicXML (Upgraded)";
+			productInstallPath = "$(HOME)/Library/MusicKitPlugins";
+			productName = MusicXML;
+			productReference = D8F029001842A9A900EE0FE9 /* MusicXML.mkplugin */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		089C1669FE841209C02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8F028B81842A9A200EE0FE9 /* Build configuration list for PBXProject "MusicXML" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 089C166AFE841209C02AAC07 /* MusicXML */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8F028BE1842A9A900EE0FE9 /* MusicXML (Upgraded) */,
+				089C1673FE841209C02AAC07 /* MusicXML */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		089C1675FE841209C02AAC07 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				089C1680FE841241C02AAC07 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F028DA1842A9A900EE0FE9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F028DB1842A9A900EE0FE9 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		089C1679FE841209C02AAC07 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F028FA1842A9A900EE0FE9 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		089C1676FE841209C02AAC07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F5D261D3027EF23001A80103 /* MKXMLAttributesParser.m in Sources */,
+				F5D261D4027EF23001A80103 /* MKXMLAttributeStack.m in Sources */,
+				F5D261D5027EF23001A80103 /* MKXMLClefParser.m in Sources */,
+				F5D261D6027EF23001A80103 /* MKXMLCounterAlterationParser.m in Sources */,
+				F5D261D7027EF23001A80103 /* MKXMLDirectionParser.m in Sources */,
+				F5D261D8027EF23001A80103 /* MKXMLEncodingParser.m in Sources */,
+				F5D261D9027EF23001A80103 /* MKXMLIdentificationParser.m in Sources */,
+				F5D261DA027EF23001A80103 /* MKXMLKeyParser.m in Sources */,
+				F5D261DB027EF23001A80103 /* MKXMLMeasureParser.m in Sources */,
+				F5D261DC027EF23001A80103 /* MKXMLMidiInstrumentParser.m in Sources */,
+				F5D261DD027EF23001A80103 /* MKXMLNoteParser.m in Sources */,
+				F5D261DE027EF23001A80103 /* MKXMLParser.m in Sources */,
+				F5D261DF027EF23001A80103 /* MKXMLPartListParser.m in Sources */,
+				F5D261E0027EF23001A80103 /* MKXMLPartParser.m in Sources */,
+				F5D261E1027EF23001A80103 /* MKXMLPitchParser.m in Sources */,
+				F5D261E2027EF23001A80103 /* MKXMLSAXHandler.m in Sources */,
+				F5D261E3027EF23001A80103 /* MKXMLScoreInstrumentParser.m in Sources */,
+				F5D261E4027EF23001A80103 /* MKXMLScorePartParser.m in Sources */,
+				F5D261E5027EF23001A80103 /* MKXMLScorePartwiseParser.m in Sources */,
+				F5D261E6027EF23001A80103 /* MKXMLScoreTimewiseParser.m in Sources */,
+				F5D261E7027EF23001A80103 /* MKXMLSingleValueParser.m in Sources */,
+				F5D261E8027EF23001A80103 /* MKXMLSoundParser.m in Sources */,
+				F5D261E9027EF23001A80103 /* MKXMLTimeParser.m in Sources */,
+				F5D261EA027EF23001A80103 /* MKXMLWorkParser.m in Sources */,
+				F5D26223027EF6F101A80103 /* MusicXML.m in Sources */,
+				F5D048B10280204E01A80103 /* MKXMLObjectContainerParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F028DC1842A9A900EE0FE9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F028DD1842A9A900EE0FE9 /* MKXMLAttributesParser.m in Sources */,
+				D8F028DE1842A9A900EE0FE9 /* MKXMLAttributeStack.m in Sources */,
+				D8F028DF1842A9A900EE0FE9 /* MKXMLClefParser.m in Sources */,
+				D8F028E01842A9A900EE0FE9 /* MKXMLCounterAlterationParser.m in Sources */,
+				D8F028E11842A9A900EE0FE9 /* MKXMLDirectionParser.m in Sources */,
+				D8F028E21842A9A900EE0FE9 /* MKXMLEncodingParser.m in Sources */,
+				D8F028E31842A9A900EE0FE9 /* MKXMLIdentificationParser.m in Sources */,
+				D8F028E41842A9A900EE0FE9 /* MKXMLKeyParser.m in Sources */,
+				D8F028E51842A9A900EE0FE9 /* MKXMLMeasureParser.m in Sources */,
+				D8F028E61842A9A900EE0FE9 /* MKXMLMidiInstrumentParser.m in Sources */,
+				D8F028E71842A9A900EE0FE9 /* MKXMLNoteParser.m in Sources */,
+				D8F028E81842A9A900EE0FE9 /* MKXMLParser.m in Sources */,
+				D8F028E91842A9A900EE0FE9 /* MKXMLPartListParser.m in Sources */,
+				D8F028EA1842A9A900EE0FE9 /* MKXMLPartParser.m in Sources */,
+				D8F028EB1842A9A900EE0FE9 /* MKXMLPitchParser.m in Sources */,
+				D8F028EC1842A9A900EE0FE9 /* MKXMLSAXHandler.m in Sources */,
+				D8F028ED1842A9A900EE0FE9 /* MKXMLScoreInstrumentParser.m in Sources */,
+				D8F028EE1842A9A900EE0FE9 /* MKXMLScorePartParser.m in Sources */,
+				D8F028EF1842A9A900EE0FE9 /* MKXMLScorePartwiseParser.m in Sources */,
+				D8F028F01842A9A900EE0FE9 /* MKXMLScoreTimewiseParser.m in Sources */,
+				D8F028F11842A9A900EE0FE9 /* MKXMLSingleValueParser.m in Sources */,
+				D8F028F21842A9A900EE0FE9 /* MKXMLSoundParser.m in Sources */,
+				D8F028F31842A9A900EE0FE9 /* MKXMLTimeParser.m in Sources */,
+				D8F028F41842A9A900EE0FE9 /* MKXMLWorkParser.m in Sources */,
+				D8F028F51842A9A900EE0FE9 /* MusicXML.m in Sources */,
+				D8F028F61842A9A900EE0FE9 /* MKXMLObjectContainerParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C167EFE841241C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8F028B21842A9A100EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8F028B31842A9A100EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8F028B41842A9A100EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8F028B51842A9A100EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(HOME)/Library/MusicKitPlugins";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MusicXML;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = mkplugin;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F028B61842A9A100EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(HOME)/Library/MusicKitPlugins";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MusicXML;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = mkplugin;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F028B71842A9A100EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(HOME)/Library/MusicKitPlugins";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MusicXML;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = mkplugin;
+			};
+			name = Default;
+		};
+		D8F028FC1842A9A900EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "Info-MusicXML__Upgraded_.plist";
+				INSTALL_PATH = "$(HOME)/Library/MusicKitPlugins";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MusicXML;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = mkplugin;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F028FD1842A9A900EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "Info-MusicXML__Upgraded_.plist";
+				INSTALL_PATH = "$(HOME)/Library/MusicKitPlugins";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MusicXML;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = mkplugin;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F028FE1842A9A900EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "Info-MusicXML__Upgraded_.plist";
+				INSTALL_PATH = "$(HOME)/Library/MusicKitPlugins";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MusicXML;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = mkplugin;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8F028B81842A9A200EE0FE9 /* Build configuration list for PBXProject "MusicXML" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F028B21842A9A100EE0FE9 /* Development */,
+				D8F028B31842A9A100EE0FE9 /* Deployment */,
+				D8F028B41842A9A100EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F028B91842A9A200EE0FE9 /* Build configuration list for PBXBundleTarget "MusicXML" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F028B51842A9A100EE0FE9 /* Development */,
+				D8F028B61842A9A100EE0FE9 /* Deployment */,
+				D8F028B71842A9A100EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F028FB1842A9A900EE0FE9 /* Build configuration list for PBXNativeTarget "MusicXML (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F028FC1842A9A900EE0FE9 /* Development */,
+				D8F028FD1842A9A900EE0FE9 /* Deployment */,
+				D8F028FE1842A9A900EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
+}

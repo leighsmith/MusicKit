@@ -137,7 +137,7 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
     for(endpointIndex = 0; endpointIndex < endpointCount; endpointIndex++) {
 	MIDIEndpointRef endPoint = input ? MIDIGetSource(endpointIndex) : MIDIGetDestination(endpointIndex);
 	
-	if(endPoint != NULL) {
+	if(endPoint != (MIDIEndpointRef) NULL) {
 	    CFStringRef endPointName;
 	    /* CFDataRef connectionUniqueID; */
 	    OSStatus endpointPropertyError;
@@ -180,7 +180,7 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
     // always create at least one entry for the terminating NULL pointer.
     driverList = (const char **) malloc(([driverNameList count] + 1) * sizeof(char *));
     if(driverList == NULL) {
-	NSLog(@"Unable to allocate driverList of %d drivers, driverNameList %@\n", [driverNameList count] + 1, driverNameList);
+	NSLog(@"Unable to allocate driverList of %lu drivers, driverNameList %@\n", [driverNameList count] + 1, driverNameList);
         return NULL;
     }
     for(driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
@@ -238,19 +238,19 @@ PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort o
     // NSLog(@"in MKMDBecomeOwner before MIDIClientCreate, appname: %@\n", executable);
 #endif
     if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr) {
-        NSLog(@"Unable to create MIDI Client %ld", result);
+        NSLog(@"Unable to create MIDI Client %d", result);
         return MKMD_ERROR_UNKNOWN_ERROR;
     }
     // NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
     userReplyFunctions = *replyFunctions; // Make a local copy of the reply functions.
     if((result = MIDIInputPortCreate(client, CFSTR("Input port"), replyDispatch, &userReplyFunctions, &inPort)) != noErr) {
-        NSLog(@"Unable to create MIDI Input Port %ld", result);
+        NSLog(@"Unable to create MIDI Input Port %d", result);
 	return MKMD_ERROR_UNKNOWN_ERROR;
     }
     // NSLog(@"in MKMDBecomeOwner MIDIInputPortCreate inPort %p\n", inPort);
     // NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
     if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr) {
-        NSLog(@"Unable to create MIDI Output Port %ld", result);
+        NSLog(@"Unable to create MIDI Output Port %d", result);
        return MKMD_ERROR_UNKNOWN_ERROR;
     }
     
@@ -406,7 +406,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	    // since we want to communicate the userData back to the MKMidi reply function.
 	    if(!claimedSources[unit]) {
 		claimedSources[unit] = MIDIGetSource(unit);
-		if(claimedSources[unit] == NULL)
+		if(claimedSources[unit] == (MIDIEndpointRef) NULL)
 		    return MKMD_ERROR_UNKNOWN_ERROR;
 		// NSLog(@"Connecting inPort %p unit %d source is %x with userData %p\n", inPort, unit, claimedSources[unit], userData);
 		if(MIDIPortConnectSource(inPort, claimedSources[unit], userData) != noErr)
@@ -431,7 +431,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 		    NSLog(@"Couldn't allocate %ld destinations\n", destinationCount);
 	    }
 	    claimedDestinations[unit] = MIDIGetDestination(unit);
-	    if (claimedDestinations[unit] == NULL)
+	    if (claimedDestinations[unit] == (MIDIEndpointRef) NULL)
 		return MKMD_ERROR_UNKNOWN_ERROR;
 
 #if 0

@@ -230,6 +230,6 @@ typedef struct __DSPMemMap {	/* DSP memory map descriptor */
 #import "dsp_messages.h"
 #import "dsp_memory_map.h"
 
-#endif _LIBDSP_
+#endif // _LIBDSP_
 
 #endif

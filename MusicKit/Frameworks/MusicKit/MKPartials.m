@@ -257,7 +257,7 @@ double **arrPtr)
   [super dealloc];
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
 //trivial hash
   double p = 0;

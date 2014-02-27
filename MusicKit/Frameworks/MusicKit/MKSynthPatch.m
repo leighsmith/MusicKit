@@ -232,7 +232,7 @@ static void cancelMsgs(register id self)
        currentNote is nil, a default template is returned. */
 + patchTemplateFor: (MKNote *) currentNote
 {
-    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)];
     return nil;
 }
 
@@ -761,13 +761,12 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 /*//////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
 
-//#define DUMMY self
-#define DUMMY @""
 /*sb: defining DUMMY as self meant that when releasing an array containing the dummy,
- * self would also be deallocated. THe null string can be dealoced as many times as necessary.
+ * self would also be deallocated. The null string can be dealoced as many times as necessary.
  */
+#define DUMMY @""
 
-- (void)doesNotRecognizeSelector:(SEL)aSelector
+- (void) doesNotRecognizeSelector: (SEL) aSelector
     // Don't document this -- it's just for better error handling. 
 {
     if (!isAllocated) {
@@ -775,9 +774,10 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
         return;
     }
     if (synthElements) {
-	int count,i;
-	for (i = 0,count = [synthElements count]; i<count; i++) 
-	    if ([synthElements objectAtIndex:i] == DUMMY) {
+	int count = [synthElements count], i;
+        
+	for (i = 0; i < count; i++)
+	    if ([synthElements objectAtIndex: i] == DUMMY) {
 		MKError(@"Attempt to use a freed MKSynthPatch.");
                 return;
             }
@@ -899,7 +899,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 //////////////////////////////////////////////////////////////////////////////*/
 
 - _remove: aUG
-    /* Used by orch. This invalidates the integrity of the List object!. 
+    /* Used by orch. This invalidates the integrity of the List object!
        A safer implementation would substitute a dummy object. */
 {
     [synthElements replaceObjectAtIndex:_MKGetSynthElementSynthPatchLoc(aUG) withObject:DUMMY];
@@ -920,7 +920,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
  Must be method to avoid required load of MKSynthPatch by MKOrchestra. */
 - _prepareToFree: (MKSynthPatch **) headP : (MKSynthPatch **) tailP 
 {
-    int ix;
+    NSUInteger ix;
     id theArray;
     
     if (_whichList == _MK_ORCHTMPLIST) 

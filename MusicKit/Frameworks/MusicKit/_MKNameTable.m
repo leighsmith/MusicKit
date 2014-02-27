@@ -72,18 +72,18 @@ Modification history prior to use of a version control system:
 
 @implementation _MKNameTable
 
-- (id) initWithCapacity: (unsigned) capacity;
+- (id) initWithCapacity: (NSUInteger) capacity;
 {
   self = [super init];
   if (self != nil) {
-  // NSObjectMapKeyCallBacks are objects which will be retained/released (all our keys
-  // are NSStrings, so I'm happy with that)
-  // NSNonRetainedObjectMapValueCallBacks are objects, but will never be retained or
-  // released. This means that if the objects in question are ever dealloced, they MUST
-  // call MKRemoveObjectName() in their dealloc method, so the map tables don't hold
-  // dangling references.
-    symbols    = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,capacity); 
-    types      = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,capacity);
+      // NSObjectMapKeyCallBacks are objects which will be retained/released (all our keys
+      // are NSStrings, so I'm happy with that)
+      // NSNonRetainedObjectMapValueCallBacks are objects, but will never be retained or
+      // released. This means that if the objects in question are ever dealloced, they MUST
+      // call MKRemoveObjectName() in their dealloc method, so the map tables don't hold
+      // dangling references.
+      symbols = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, capacity);
+      types   = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, capacity);
   }
   return self;
 }

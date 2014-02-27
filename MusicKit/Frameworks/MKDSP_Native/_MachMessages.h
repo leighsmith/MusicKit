@@ -524,7 +524,7 @@ typedef struct {
  */
 #ifdef	_IO
 #define SOUNDIOCDEVPORT	_IO('A', 8)
-#endif	_IO
+#endif	// _IO
 
 /*
  * Routine prototypes
@@ -588,6 +588,6 @@ kern_return_t snd_reply_dsp_regs (
 	int		regs);		// DSP host I/F registers (not recieve)
 kern_return_t snd_reply_dsp_cond_true (	// reply indicating condition true
 	vm_address_t	ret_cond);	// reply_port, status and conditions
-#endif	KERNEL
+#endif	// KERNEL
 
 #endif

@@ -80,7 +80,7 @@
     return self;
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
 // trivial hash
   return length;
@@ -199,7 +199,7 @@
    NULL. 
 */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)]; return nil;
 }
 
 - (DSPDatum *) dataDSP

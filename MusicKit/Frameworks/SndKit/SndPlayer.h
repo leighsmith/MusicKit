@@ -203,8 +203,8 @@
   By default, the SndPlayer remains connected to the stream 
   manager, which in turn means that streaming is still active. 
   If you are only playing sounds occassionally, you may not wish 
-  to incur this slight overhead. The trade off is that if 
-  disconnection is set to be the behaviour, you will have a higher
+  to incur this slight overhead. The trade off is that if the behaviour
+  is set to be disconnection, you will have a higher
   performance cost when starting the play back of a new sound in 
   the future, as new threads are brought into existance, and 
   streaming is started up.
@@ -215,7 +215,6 @@
   @brief Indicates the current setting if the SndPlayer will remain connected to
   the stream manager when no sounds are pending or playing.
 
-  
   @return Returns TRUE if the SndPlayer will remain connected to the stream manager when
   no sounds are pending or playing, FALSE if it will disconnect.
 */
@@ -242,7 +241,6 @@
   @brief Assigns whether to automatically start the SndStreamManager controlling the
   the synthesis process when a sound is first played.
 
-  
   @param yesOrNo If yesOrNo is YES, the SndStreamManager will be automatically started, if NO, it will not be.
  */
 - setAutoStartManager: (BOOL) yesOrNo;
@@ -251,7 +249,6 @@
   @brief Returns the current state of whether the SndStreamManager will be automatically
   started when the SndPlayer is started.
 
-  
   @return Returns YES if the SndStreamManager will be automatically started, NO if not.
  */
 - (BOOL) autoStartManager;

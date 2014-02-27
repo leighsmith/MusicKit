@@ -1,0 +1,509 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D8B124401842A922001D6CDE /* SndViewP.h in Headers */ = {isa = PBXBuildFile; fileRef = F52EFCB301AD09F801A80103 /* SndViewP.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D8B124421842A922001D6CDE /* SndViewP.nib in Resources */ = {isa = PBXBuildFile; fileRef = F52EFCB501AD09F801A80103 /* SndViewP.nib */; };
+		D8B124431842A922001D6CDE /* palette.table in Resources */ = {isa = PBXBuildFile; fileRef = F52EFCB801AD09F801A80103 /* palette.table */; };
+		D8B124451842A922001D6CDE /* SndViewP.m in Sources */ = {isa = PBXBuildFile; fileRef = F52EFCB101AD09F801A80103 /* SndViewP.m */; settings = {ATTRIBUTES = (); }; };
+		D8B124471842A922001D6CDE /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC001AD09F801A80103 /* SndKit.framework */; };
+		D8B124481842A922001D6CDE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC101AD09F801A80103 /* Foundation.framework */; };
+		D8B124491842A922001D6CDE /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC201AD09F801A80103 /* AppKit.framework */; };
+		D8B1244A1842A922001D6CDE /* InterfaceBuilder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC301AD09F801A80103 /* InterfaceBuilder.framework */; };
+		F52EFCC901AD09F801A80103 /* SndViewP.h in Headers */ = {isa = PBXBuildFile; fileRef = F52EFCB301AD09F801A80103 /* SndViewP.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F52EFCCB01AD09F801A80103 /* SndViewP.nib in Resources */ = {isa = PBXBuildFile; fileRef = F52EFCB501AD09F801A80103 /* SndViewP.nib */; };
+		F52EFCCC01AD09F801A80103 /* palette.table in Resources */ = {isa = PBXBuildFile; fileRef = F52EFCB801AD09F801A80103 /* palette.table */; };
+		F52EFCCE01AD09F801A80103 /* SndViewP.m in Sources */ = {isa = PBXBuildFile; fileRef = F52EFCB101AD09F801A80103 /* SndViewP.m */; settings = {ATTRIBUTES = (); }; };
+		F52EFCD001AD09F801A80103 /* SndKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC001AD09F801A80103 /* SndKit.framework */; };
+		F52EFCD101AD09F801A80103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC101AD09F801A80103 /* Foundation.framework */; };
+		F52EFCD201AD09F801A80103 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC201AD09F801A80103 /* AppKit.framework */; };
+		F52EFCD301AD09F801A80103 /* InterfaceBuilder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F52EFCC301AD09F801A80103 /* InterfaceBuilder.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBundleTarget section */
+		F52EFCC701AD09F801A80103 /* SndViewP (Bundle) */ = {
+			isa = PBXBundleTarget;
+			buildConfigurationList = D8B124391842A91B001D6CDE /* Build configuration list for PBXBundleTarget "SndViewP (Bundle)" */;
+			buildPhases = (
+				F52EFCC801AD09F801A80103 /* Headers */,
+				F52EFCCA01AD09F801A80103 /* Resources */,
+				F52EFCCD01AD09F801A80103 /* Sources */,
+				F52EFCCF01AD09F801A80103 /* Frameworks */,
+				F52EFCD401AD09F801A80103 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "SndViewP (Bundle)";
+			productInstallPath = "\"$(LOCAL_LIBRARY_DIR)/Palettes\"";
+			productName = "SndViewP (Bundle)";
+			productReference = F52EFCC601AD09F801A80103 /* SndViewP.palette */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>SndViewP</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXBundleTarget section */
+
+/* Begin PBXFileReference section */
+		D8B124501842A922001D6CDE /* Info-SndViewP__Bundle___Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-SndViewP__Bundle___Upgraded_.plist"; sourceTree = "<group>"; };
+		D8B124511842A923001D6CDE /* SndViewP.palette */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SndViewP.palette; sourceTree = BUILT_PRODUCTS_DIR; };
+		F52EFCB101AD09F801A80103 /* SndViewP.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SndViewP.m; sourceTree = "<group>"; };
+		F52EFCB301AD09F801A80103 /* SndViewP.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SndViewP.h; sourceTree = "<group>"; };
+		F52EFCB601AD09F801A80103 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SndViewP.nib; sourceTree = "<group>"; };
+		F52EFCB801AD09F801A80103 /* palette.table */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = palette.table; sourceTree = "<group>"; };
+		F52EFCC001AD09F801A80103 /* SndKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SndKit.framework; path = /Library/Frameworks/SndKit.framework; sourceTree = "<absolute>"; };
+		F52EFCC101AD09F801A80103 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		F52EFCC201AD09F801A80103 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		F52EFCC301AD09F801A80103 /* InterfaceBuilder.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilder.framework; path = /System/Library/Frameworks/InterfaceBuilder.framework; sourceTree = "<absolute>"; };
+		F52EFCC601AD09F801A80103 /* SndViewP.palette */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = SndViewP.palette; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D8B124461842A922001D6CDE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B124471842A922001D6CDE /* SndKit.framework in Frameworks */,
+				D8B124481842A922001D6CDE /* Foundation.framework in Frameworks */,
+				D8B124491842A922001D6CDE /* AppKit.framework in Frameworks */,
+				D8B1244A1842A922001D6CDE /* InterfaceBuilder.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F52EFCCF01AD09F801A80103 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F52EFCD001AD09F801A80103 /* SndKit.framework in Frameworks */,
+				F52EFCD101AD09F801A80103 /* Foundation.framework in Frameworks */,
+				F52EFCD201AD09F801A80103 /* AppKit.framework in Frameworks */,
+				F52EFCD301AD09F801A80103 /* InterfaceBuilder.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F52EFCAF01AD09F801A80103 /* SndViewP */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCB001AD09F801A80103 /* Classes */,
+				F52EFCB201AD09F801A80103 /* Headers */,
+				F52EFCB401AD09F801A80103 /* Interfaces */,
+				F52EFCB701AD09F801A80103 /* Resources */,
+				F52EFCBF01AD09F801A80103 /* External Frameworks and Libraries */,
+				F52EFCC501AD09F801A80103 /* Products */,
+				D8B124501842A922001D6CDE /* Info-SndViewP__Bundle___Upgraded_.plist */,
+			);
+			name = SndViewP;
+			sourceTree = "<group>";
+		};
+		F52EFCB001AD09F801A80103 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCB101AD09F801A80103 /* SndViewP.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		F52EFCB201AD09F801A80103 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCB301AD09F801A80103 /* SndViewP.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		F52EFCB401AD09F801A80103 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCB501AD09F801A80103 /* SndViewP.nib */,
+			);
+			name = Interfaces;
+			sourceTree = "<group>";
+		};
+		F52EFCB701AD09F801A80103 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCB801AD09F801A80103 /* palette.table */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		F52EFCBF01AD09F801A80103 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCC001AD09F801A80103 /* SndKit.framework */,
+				F52EFCC101AD09F801A80103 /* Foundation.framework */,
+				F52EFCC201AD09F801A80103 /* AppKit.framework */,
+				F52EFCC301AD09F801A80103 /* InterfaceBuilder.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		F52EFCC501AD09F801A80103 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F52EFCC601AD09F801A80103 /* SndViewP.palette */,
+				D8B124511842A923001D6CDE /* SndViewP.palette */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D8B1243F1842A922001D6CDE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B124401842A922001D6CDE /* SndViewP.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F52EFCC801AD09F801A80103 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F52EFCC901AD09F801A80103 /* SndViewP.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D8B1243E1842A922001D6CDE /* SndViewP (Bundle) (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8B1244C1842A922001D6CDE /* Build configuration list for PBXNativeTarget "SndViewP (Bundle) (Upgraded)" */;
+			buildPhases = (
+				D8B1243F1842A922001D6CDE /* Headers */,
+				D8B124411842A922001D6CDE /* Resources */,
+				D8B124441842A922001D6CDE /* Sources */,
+				D8B124461842A922001D6CDE /* Frameworks */,
+				D8B1244B1842A922001D6CDE /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SndViewP (Bundle) (Upgraded)";
+			productInstallPath = "\"$(LOCAL_LIBRARY_DIR)/Palettes\"";
+			productName = "SndViewP (Bundle)";
+			productReference = D8B124511842A923001D6CDE /* SndViewP.palette */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F52EFCAE01AD09F801A80103 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8B124381842A91B001D6CDE /* Build configuration list for PBXProject "SndView" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = F52EFCAF01AD09F801A80103 /* SndViewP */;
+			productRefGroup = F52EFCC501AD09F801A80103 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8B1243E1842A922001D6CDE /* SndViewP (Bundle) (Upgraded) */,
+				F52EFCC701AD09F801A80103 /* SndViewP (Bundle) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D8B124411842A922001D6CDE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B124421842A922001D6CDE /* SndViewP.nib in Resources */,
+				D8B124431842A922001D6CDE /* palette.table in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F52EFCCA01AD09F801A80103 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F52EFCCB01AD09F801A80103 /* SndViewP.nib in Resources */,
+				F52EFCCC01AD09F801A80103 /* palette.table in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		D8B1244B1842A922001D6CDE /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F52EFCD401AD09F801A80103 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D8B124441842A922001D6CDE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B124451842A922001D6CDE /* SndViewP.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F52EFCCD01AD09F801A80103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F52EFCCE01AD09F801A80103 /* SndViewP.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F52EFCB501AD09F801A80103 /* SndViewP.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F52EFCB601AD09F801A80103 /* English */,
+			);
+			name = SndViewP.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8B124321842A91B001D6CDE /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8B124331842A91B001D6CDE /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8B124341842A91B001D6CDE /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8B124351842A91B001D6CDE /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = palette;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8B124361842A91B001D6CDE /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = palette;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8B124371842A91B001D6CDE /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_OPTIMIZATION_LEVEL = 2;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = palette;
+			};
+			name = Default;
+		};
+		D8B1244D1842A922001D6CDE /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-SndViewP__Bundle___Upgraded_.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = palette;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8B1244E1842A922001D6CDE /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-SndViewP__Bundle___Upgraded_.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = palette;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8B1244F1842A922001D6CDE /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-SndViewP__Bundle___Upgraded_.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Palettes";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SndViewP;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = palette;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8B124381842A91B001D6CDE /* Build configuration list for PBXProject "SndView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B124321842A91B001D6CDE /* Development */,
+				D8B124331842A91B001D6CDE /* Deployment */,
+				D8B124341842A91B001D6CDE /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8B124391842A91B001D6CDE /* Build configuration list for PBXBundleTarget "SndViewP (Bundle)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B124351842A91B001D6CDE /* Development */,
+				D8B124361842A91B001D6CDE /* Deployment */,
+				D8B124371842A91B001D6CDE /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8B1244C1842A922001D6CDE /* Build configuration list for PBXNativeTarget "SndViewP (Bundle) (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B1244D1842A922001D6CDE /* Development */,
+				D8B1244E1842A922001D6CDE /* Deployment */,
+				D8B1244F1842A922001D6CDE /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F52EFCAE01AD09F801A80103 /* Project object */;
+}

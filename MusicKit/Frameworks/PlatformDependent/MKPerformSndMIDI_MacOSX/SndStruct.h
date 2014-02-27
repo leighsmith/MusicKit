@@ -116,4 +116,4 @@ typedef struct {
 
 #endif
 
-#endif __SNDSTRUCT__
+#endif // __SNDSTRUCT__

@@ -22,7 +22,7 @@
 // vector library support is currently only available on MacOS X.
 // But there are a small set of SSE replacement routines under GCC.
 #if defined(__APPLE_CC__)
-#import <vecLib/vecLib.h>
+#import <Accelerate/Accelerate.h>
 #elif (__i386__ && __GNUC__)
 #import "vDSP.h"
 #endif
@@ -175,7 +175,7 @@
 	    dataLength = length;
 	
 	if (length < 0)
-	    NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0! frameSize = %d, range.length = %d", length, frameSize, rangeInFrames.length);
+	    NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0! frameSize = %d, range.length = %lu", length, frameSize, (unsigned long) rangeInFrames.length);
         
 	[data setLength: dataLength];
 	memcpy([data mutableBytes], ptr, dataLength);
@@ -526,10 +526,6 @@
 	NSLog(@"AudioBuffer::copyBytes:intoRange:format: ERR: param 'from' is nil!");
 	return nil;
     }
-    if (bytesRange.location < 0) {
-	NSLog(@"AudioBuffer::copyBytes:intoRange:format: ERR: param 'bytesRange' invalid location");
-	return nil;
-    }
     [data replaceBytesInRange: bytesRange withBytes: (const void *) bytes];
     format = newFormat;
     // Can extend the frame count.
@@ -564,7 +560,7 @@
     short *fromData = [fromBuffer bytes];
     
     if (bufferFrameRange.length > format.frameCount) {
-	NSLog(@"frameRange length %ld exceeds buffer length %u\n", format.frameCount, bufferFrameRange.length);
+	NSLog(@"frameRange length %ld exceeds buffer length %lu\n", format.frameCount, (unsigned long)bufferFrameRange.length);
     }
 
     // Catch the trivial case where both buffers have the same format (although the frame counts can differ),
@@ -700,19 +696,14 @@
     unsigned long oldLengthInBytes = SndDataSize(format);
     unsigned long newLengthInBytes = frameSizeInBytes * newSampleFrameCount;
 
-    if (newSampleFrameCount < 0) {
-	NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
+    if (format.frameCount < newSampleFrameCount) { // enlarge the data if setting longer
+        [data setLength: newLengthInBytes];
+        if (oldLengthInBytes < newLengthInBytes) {
+            NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};
+            [data resetBytesInRange: r];
+        }
     }
-    else {
-	if (format.frameCount < newSampleFrameCount) { // enlarge the data if setting longer
-	    [data setLength: newLengthInBytes];
-	    if (oldLengthInBytes < newLengthInBytes) {
-		NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};
-		[data resetBytesInRange: r];
-	    }	    
-	}
-	format.frameCount = newSampleFrameCount;
-    }
+    format.frameCount = newSampleFrameCount;
     return self;
 }
 

@@ -38,7 +38,7 @@ CONDITIONS OF THIS AGREEMENT.
 
 @implementation SndDisplayDataList
 
-static int pixelCompare(id x, id y, void *context)
+static NSInteger pixelCompare(id x, id y, void *context)
 {
     int first  = [(SndDisplayData *) x startPixel];
     int second = [(SndDisplayData *) y startPixel];

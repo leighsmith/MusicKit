@@ -167,10 +167,10 @@ id MKGetNoteClass(void)
 
 #define PARNUM(_x) ((_MKParameter *)_x)->parNum
 
-static unsigned hashFun(NSHashTable *info, const void *data)
+static NSUInteger hashFun(NSHashTable *info, const void *data)
 {
     // NSLog(@"hash function info = %x, parNum = %u\n", info, (unsigned) PARNUM(data));
-    return (unsigned) PARNUM(data);
+    return (NSUInteger) PARNUM(data);
 }
 
 static void retainFun(NSHashTable *info, const void *data)
@@ -1632,13 +1632,13 @@ static void copyPars(toObj,fromObj,override)
                 addParameter(toObj,aPar);
 }
 
--(unsigned)hash
+- (NSUInteger) hash
    /* MKNotes hash themselves based on their noteTag. */
 {
     return noteTag;
 }
 
--(BOOL)isEqual:aNote
+- (BOOL) isEqual: (MKNote *) aNote
    /* MKNotes are considered 'equal' if their noteTags are the same. */
 {
    return [aNote isKindOfClass: noteClass] && (((MKNote *)aNote)->noteTag == noteTag);

@@ -1352,7 +1352,7 @@ outOfLoop:
   * if newPart is not a kind of MKPart, returns nil.
   */
 {
-  int i = [parts indexOfObjectIdenticalTo: oldPart];
+  NSUInteger i = [parts indexOfObjectIdenticalTo: oldPart];
     
   if (i == NSNotFound)
       return nil;

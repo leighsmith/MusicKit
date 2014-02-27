@@ -32,7 +32,7 @@
     
     [self compactSamples]; // in case this is a pasted sound.
 
-    if (playBegin > [self lengthInSampleFrames] || playBegin < 0)
+    if (playBegin > [self lengthInSampleFrames])
         playBegin = 0;
     
     if (playEnd > [self lengthInSampleFrames] || playEnd < playBegin)
@@ -69,7 +69,7 @@
 // is done in playInFuture:beginSample:sampleCount:
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
 {
-//  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
+//  NSLog(@"Snd playAtTimeInSeconds: %f", t);
   return [[SndPlayer defaultSndPlayer] playSnd: self
                                atTimeInSeconds: t
                         startPositionInSeconds: 0

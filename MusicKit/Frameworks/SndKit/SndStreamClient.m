@@ -300,7 +300,7 @@ enum {
 	return nil;
     }
     else
-	return [[manager retain] autorelease];
+	return [[manager retain] autorelease];  // TODO should we be retaining & autoreleasing here?
 }
 
 ////////////////////////////////////////////////////////////////////////////////

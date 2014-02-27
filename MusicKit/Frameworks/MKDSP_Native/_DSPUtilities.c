@@ -155,7 +155,8 @@ DSP_BOOL _DSPGetFile(fpp, mode, name, dname)
 	return(TRUE);
     }
     
-    if ( exists = !( (*fpp = fopen(name,"r")) == NULL) )
+    exists = !( (*fpp = fopen(name,"r")) == NULL);
+    if (exists)
     {
 	if (*mode == *"r") return(TRUE);
 	else if (strncmp(name,"/dev/",5) ==0 )
@@ -970,7 +971,7 @@ int _DSPSaveMatD(mrows,ncols,imagf,name,rpart,ipart,fp)
 int _DSPSezYes()
 {
     char *reply;
-    reply = _DSPGetSN(NULL);
+    reply = _DSPGetSN(NULL, 0);
     if(*reply=='Y' || *reply=='y') return(TRUE);
 	else return(FALSE);
 }

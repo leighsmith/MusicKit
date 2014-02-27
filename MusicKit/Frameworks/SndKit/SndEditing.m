@@ -57,8 +57,7 @@
     SndAudioBuffer *destinationBuffer = [newSound->soundBuffers objectAtIndex: 0];
     NSRange destinationCopyRange = NSMakeRange(0, 0);
 
-    if (frameRange.location < 0 || 
-	frameRange.location > [self lengthInSampleFrames] ||
+    if (frameRange.location > [self lengthInSampleFrames] ||
 	frameRange.location + frameRange.length > [self lengthInSampleFrames]) 
 	return nil;
     
@@ -161,8 +160,7 @@
     NSRange rangeOfBufferToPreserve = NSMakeRange(0, 0);
     SndAudioBuffer *preservedBuffer;
     
-    if (frameRange.location < 0 || 
-	frameRange.location > [self lengthInSampleFrames] ||
+    if (frameRange.location > [self lengthInSampleFrames] ||
 	frameRange.location + frameRange.length > [self lengthInSampleFrames]) 
 	return SND_ERR_BAD_SIZE;
     if (!frameRange.length) 
@@ -344,7 +342,7 @@
 	    }
 	    oldCount = count;
 	}
-	NSLog(@"Looking for %ld, Ran through entire fragment list %d long, count %d, length now %ld\n",
+	NSLog(@"Looking for %ld, Ran through entire fragment list %d long, count %lu, length now %ld\n",
 	      frame, i, count, [self lengthInSampleFrames]);
 	*currentFrame = 0;
 	*fragmentLength = 0;
@@ -416,7 +414,7 @@
 	    bufferFragment.length = bufferFrameRange.length - framesFilled;
 	
 	if(bufferFragment.length == 0)
-	    NSLog(@"bufferFragment == 0, sndDataPtr == %p sndFragmentPtr == %p frameIndexWithinFragment %d fragmentLength %d\n", 
+	    NSLog(@"bufferFragment == 0, sndDataPtr == %p sndFragmentPtr == %p frameIndexWithinFragment %lu fragmentLength %lu\n",
 		  sndDataPtr, sndFragmentPtr, frameIndexWithinFragment, fragmentLength);
 	
 	// Matching sound and buffer formats, so we can just do a copy.
@@ -487,7 +485,7 @@
     // Nowdays, with better checking on the updates of sndFrameRange.length and sndFrameRange.location this should never occur,
     // so this check is probably redundant, but hey, it adds robustness which translates into saving someones
     // ears from hearing noise.
-    if (sndFrameRange.location >= 0 && bufferFrameRange.length > 0 && fillBufferToLength > 0) {
+    if (bufferFrameRange.length > 0 && fillBufferToLength > 0) {
 	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
 	numOfSamplesRead = [self fillAudioBuffer: bufferToFill
 					toLength: fillBufferToLength

@@ -65,7 +65,7 @@
   @see MKIsNoDVal().
   @ingroup NoDValFns
 */
-extern inline double MKGetNoDVal(void)
+inline double MKGetNoDVal(void)
 {
     union {double d; int i[2];} u;
     u.i[0] = _MK_NANHI;
@@ -88,7 +88,7 @@ extern inline double MKGetNoDVal(void)
   @return Returns an int.
   @ingroup NoDValFns
 */
-extern inline int MKIsNoDVal(double value)
+inline int MKIsNoDVal(double value)
 {
     union {double d; int i[2];} u;
     u.d = value;

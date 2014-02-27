@@ -1,0 +1,603 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		0348D9FD007130C5CFED3B96 /* WaveEdit (Application) */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D8F029461842AABB00EE0FE9 /* Build configuration list for PBXApplicationTarget "WaveEdit (Application)" */;
+			buildPhases = (
+				0348DA26007130C5CFED3B96 /* Headers */,
+				0348DA2C007130C5CFED3B96 /* Resources */,
+				0348DA30007130C5CFED3B96 /* Sources */,
+				0348DA38007130C5CFED3B96 /* Frameworks */,
+				0348DA40007130C5CFED3B96 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "WaveEdit (Application)";
+			productInstallPath = /LocalApps;
+			productName = "WaveEdit (Application)";
+			productReference = 0348DA25007130C5CFED3B96 /* WaveEdit.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>WaveEdit</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>foo.tiff</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>WaveEdit</string>
+	<key>NSPrincipalClass</key>
+	<string>Application</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		0348DA27007130C5CFED3B96 /* FFTControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA07007130C5CFED3B96 /* FFTControl.h */; };
+		0348DA28007130C5CFED3B96 /* FuncView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA08007130C5CFED3B96 /* FuncView.h */; };
+		0348DA29007130C5CFED3B96 /* ModView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA09007130C5CFED3B96 /* ModView.h */; };
+		0348DA2A007130C5CFED3B96 /* PhiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA0A007130C5CFED3B96 /* PhiView.h */; };
+		0348DA2B007130C5CFED3B96 /* Wave.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA0B007130C5CFED3B96 /* Wave.h */; };
+		0348DA2D007130C5CFED3B96 /* WaveEdit.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0348DA10007130C5CFED3B96 /* WaveEdit.nib */; };
+		0348DA2E007130C5CFED3B96 /* foo.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 0348DA13007130C5CFED3B96 /* foo.tiff */; };
+		0348DA2F007130C5CFED3B96 /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 0348DA15007130C5CFED3B96 /* Help */; };
+		0348DA31007130C5CFED3B96 /* FFTControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA01007130C5CFED3B96 /* FFTControl.m */; settings = {ATTRIBUTES = (); }; };
+		0348DA32007130C5CFED3B96 /* FuncView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA02007130C5CFED3B96 /* FuncView.m */; settings = {ATTRIBUTES = (); }; };
+		0348DA33007130C5CFED3B96 /* ModView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA03007130C5CFED3B96 /* ModView.m */; settings = {ATTRIBUTES = (); }; };
+		0348DA34007130C5CFED3B96 /* PhiView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA04007130C5CFED3B96 /* PhiView.m */; settings = {ATTRIBUTES = (); }; };
+		0348DA35007130C5CFED3B96 /* Wave.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA05007130C5CFED3B96 /* Wave.m */; settings = {ATTRIBUTES = (); }; };
+		0348DA36007130C5CFED3B96 /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA0D007130C5CFED3B96 /* fft.c */; settings = {ATTRIBUTES = (); }; };
+		0348DA37007130C5CFED3B96 /* WaveEdit_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA0E007130C5CFED3B96 /* WaveEdit_main.m */; settings = {ATTRIBUTES = (); }; };
+		D853733504055F1E00DC8C05 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853733404055F1E00DC8C05 /* MusicKit.framework */; };
+		D853733704055F3800DC8C05 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853733604055F3800DC8C05 /* Cocoa.framework */; };
+		D8F0294D1842AAC200EE0FE9 /* FFTControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA07007130C5CFED3B96 /* FFTControl.h */; };
+		D8F0294E1842AAC200EE0FE9 /* FuncView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA08007130C5CFED3B96 /* FuncView.h */; };
+		D8F0294F1842AAC200EE0FE9 /* ModView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA09007130C5CFED3B96 /* ModView.h */; };
+		D8F029501842AAC200EE0FE9 /* PhiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA0A007130C5CFED3B96 /* PhiView.h */; };
+		D8F029511842AAC200EE0FE9 /* Wave.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348DA0B007130C5CFED3B96 /* Wave.h */; };
+		D8F029531842AAC200EE0FE9 /* WaveEdit.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0348DA10007130C5CFED3B96 /* WaveEdit.nib */; };
+		D8F029541842AAC200EE0FE9 /* foo.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 0348DA13007130C5CFED3B96 /* foo.tiff */; };
+		D8F029551842AAC200EE0FE9 /* Help in Resources */ = {isa = PBXBuildFile; fileRef = 0348DA15007130C5CFED3B96 /* Help */; };
+		D8F029571842AAC200EE0FE9 /* FFTControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA01007130C5CFED3B96 /* FFTControl.m */; settings = {ATTRIBUTES = (); }; };
+		D8F029581842AAC200EE0FE9 /* FuncView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA02007130C5CFED3B96 /* FuncView.m */; settings = {ATTRIBUTES = (); }; };
+		D8F029591842AAC200EE0FE9 /* ModView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA03007130C5CFED3B96 /* ModView.m */; settings = {ATTRIBUTES = (); }; };
+		D8F0295A1842AAC200EE0FE9 /* PhiView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA04007130C5CFED3B96 /* PhiView.m */; settings = {ATTRIBUTES = (); }; };
+		D8F0295B1842AAC200EE0FE9 /* Wave.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA05007130C5CFED3B96 /* Wave.m */; settings = {ATTRIBUTES = (); }; };
+		D8F0295C1842AAC200EE0FE9 /* fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA0D007130C5CFED3B96 /* fft.c */; settings = {ATTRIBUTES = (); }; };
+		D8F0295D1842AAC200EE0FE9 /* WaveEdit_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348DA0E007130C5CFED3B96 /* WaveEdit_main.m */; settings = {ATTRIBUTES = (); }; };
+		D8F0295F1842AAC200EE0FE9 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853733404055F1E00DC8C05 /* MusicKit.framework */; };
+		D8F029601842AAC200EE0FE9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853733604055F3800DC8C05 /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0348DA01007130C5CFED3B96 /* FFTControl.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FFTControl.m; sourceTree = "<group>"; };
+		0348DA02007130C5CFED3B96 /* FuncView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FuncView.m; sourceTree = "<group>"; };
+		0348DA03007130C5CFED3B96 /* ModView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ModView.m; sourceTree = "<group>"; };
+		0348DA04007130C5CFED3B96 /* PhiView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PhiView.m; sourceTree = "<group>"; };
+		0348DA05007130C5CFED3B96 /* Wave.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Wave.m; sourceTree = "<group>"; };
+		0348DA07007130C5CFED3B96 /* FFTControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FFTControl.h; sourceTree = "<group>"; };
+		0348DA08007130C5CFED3B96 /* FuncView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FuncView.h; sourceTree = "<group>"; };
+		0348DA09007130C5CFED3B96 /* ModView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ModView.h; sourceTree = "<group>"; };
+		0348DA0A007130C5CFED3B96 /* PhiView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PhiView.h; sourceTree = "<group>"; };
+		0348DA0B007130C5CFED3B96 /* Wave.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Wave.h; sourceTree = "<group>"; };
+		0348DA0D007130C5CFED3B96 /* fft.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = fft.c; sourceTree = "<group>"; };
+		0348DA0E007130C5CFED3B96 /* WaveEdit_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WaveEdit_main.m; sourceTree = "<group>"; };
+		0348DA11007130C5CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WaveEdit.nib; sourceTree = "<group>"; };
+		0348DA13007130C5CFED3B96 /* foo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = foo.tiff; sourceTree = "<group>"; };
+		0348DA16007130C5CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/Help; sourceTree = "<group>"; };
+		0348DA18007130C5CFED3B96 /* Makefile.preamble */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Makefile.preamble; sourceTree = "<group>"; };
+		0348DA19007130C5CFED3B96 /* Makefile.postamble */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Makefile.postamble; sourceTree = "<group>"; };
+		0348DA1A007130C5CFED3B96 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		0348DA25007130C5CFED3B96 /* WaveEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = WaveEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D853733404055F1E00DC8C05 /* MusicKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MusicKit.framework; path = /Local/Library/Frameworks/MusicKit.framework; sourceTree = "<absolute>"; };
+		D853733604055F3800DC8C05 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		D8F029661842AAC200EE0FE9 /* Info-WaveEdit__Application___Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-WaveEdit__Application___Upgraded_.plist"; sourceTree = "<group>"; };
+		D8F029671842AAC200EE0FE9 /* WaveEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = WaveEdit.app; path = build/Development/WaveEdit.app; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0348DA38007130C5CFED3B96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D853733504055F1E00DC8C05 /* MusicKit.framework in Frameworks */,
+				D853733704055F3800DC8C05 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F0295E1842AAC200EE0FE9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F0295F1842AAC200EE0FE9 /* MusicKit.framework in Frameworks */,
+				D8F029601842AAC200EE0FE9 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0348D9FF007130C5CFED3B96 /* WaveEdit */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA00007130C5CFED3B96 /* Classes */,
+				0348DA06007130C5CFED3B96 /* Headers */,
+				0348DA0C007130C5CFED3B96 /* Other Sources */,
+				0348DA0F007130C5CFED3B96 /* Interfaces */,
+				0348DA12007130C5CFED3B96 /* Images */,
+				0348DA14007130C5CFED3B96 /* Resources */,
+				0348DA17007130C5CFED3B96 /* Supporting Files */,
+				0348DA1B007130C5CFED3B96 /* External Frameworks and Libraries */,
+				0348DA24007130C5CFED3B96 /* Products */,
+				D8F029661842AAC200EE0FE9 /* Info-WaveEdit__Application___Upgraded_.plist */,
+			);
+			name = WaveEdit;
+			sourceTree = "<group>";
+		};
+		0348DA00007130C5CFED3B96 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA01007130C5CFED3B96 /* FFTControl.m */,
+				0348DA02007130C5CFED3B96 /* FuncView.m */,
+				0348DA03007130C5CFED3B96 /* ModView.m */,
+				0348DA04007130C5CFED3B96 /* PhiView.m */,
+				0348DA05007130C5CFED3B96 /* Wave.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		0348DA06007130C5CFED3B96 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA07007130C5CFED3B96 /* FFTControl.h */,
+				0348DA08007130C5CFED3B96 /* FuncView.h */,
+				0348DA09007130C5CFED3B96 /* ModView.h */,
+				0348DA0A007130C5CFED3B96 /* PhiView.h */,
+				0348DA0B007130C5CFED3B96 /* Wave.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		0348DA0C007130C5CFED3B96 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA0D007130C5CFED3B96 /* fft.c */,
+				0348DA0E007130C5CFED3B96 /* WaveEdit_main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		0348DA0F007130C5CFED3B96 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA10007130C5CFED3B96 /* WaveEdit.nib */,
+			);
+			name = Interfaces;
+			sourceTree = "<group>";
+		};
+		0348DA12007130C5CFED3B96 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA13007130C5CFED3B96 /* foo.tiff */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		0348DA14007130C5CFED3B96 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA15007130C5CFED3B96 /* Help */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		0348DA17007130C5CFED3B96 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA18007130C5CFED3B96 /* Makefile.preamble */,
+				0348DA19007130C5CFED3B96 /* Makefile.postamble */,
+				0348DA1A007130C5CFED3B96 /* Makefile */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0348DA1B007130C5CFED3B96 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				D853733604055F3800DC8C05 /* Cocoa.framework */,
+				D853733404055F1E00DC8C05 /* MusicKit.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		0348DA24007130C5CFED3B96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0348DA25007130C5CFED3B96 /* WaveEdit.app */,
+				D8F029671842AAC200EE0FE9 /* WaveEdit.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0348DA26007130C5CFED3B96 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0348DA27007130C5CFED3B96 /* FFTControl.h in Headers */,
+				0348DA28007130C5CFED3B96 /* FuncView.h in Headers */,
+				0348DA29007130C5CFED3B96 /* ModView.h in Headers */,
+				0348DA2A007130C5CFED3B96 /* PhiView.h in Headers */,
+				0348DA2B007130C5CFED3B96 /* Wave.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F0294C1842AAC200EE0FE9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F0294D1842AAC200EE0FE9 /* FFTControl.h in Headers */,
+				D8F0294E1842AAC200EE0FE9 /* FuncView.h in Headers */,
+				D8F0294F1842AAC200EE0FE9 /* ModView.h in Headers */,
+				D8F029501842AAC200EE0FE9 /* PhiView.h in Headers */,
+				D8F029511842AAC200EE0FE9 /* Wave.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D8F0294B1842AAC200EE0FE9 /* WaveEdit (Application) (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8F029621842AAC200EE0FE9 /* Build configuration list for PBXNativeTarget "WaveEdit (Application) (Upgraded)" */;
+			buildPhases = (
+				D8F0294C1842AAC200EE0FE9 /* Headers */,
+				D8F029521842AAC200EE0FE9 /* Resources */,
+				D8F029561842AAC200EE0FE9 /* Sources */,
+				D8F0295E1842AAC200EE0FE9 /* Frameworks */,
+				D8F029611842AAC200EE0FE9 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "WaveEdit (Application) (Upgraded)";
+			productInstallPath = /LocalApps;
+			productName = "WaveEdit (Application)";
+			productReference = D8F029671842AAC200EE0FE9 /* WaveEdit.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0348D9FE007130C5CFED3B96 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8F029451842AABB00EE0FE9 /* Build configuration list for PBXProject "WaveEdit" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 0348D9FF007130C5CFED3B96 /* WaveEdit */;
+			productRefGroup = 0348DA24007130C5CFED3B96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8F0294B1842AAC200EE0FE9 /* WaveEdit (Application) (Upgraded) */,
+				0348D9FD007130C5CFED3B96 /* WaveEdit (Application) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0348DA2C007130C5CFED3B96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0348DA2D007130C5CFED3B96 /* WaveEdit.nib in Resources */,
+				0348DA2E007130C5CFED3B96 /* foo.tiff in Resources */,
+				0348DA2F007130C5CFED3B96 /* Help in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029521842AAC200EE0FE9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029531842AAC200EE0FE9 /* WaveEdit.nib in Resources */,
+				D8F029541842AAC200EE0FE9 /* foo.tiff in Resources */,
+				D8F029551842AAC200EE0FE9 /* Help in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		0348DA40007130C5CFED3B96 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029611842AAC200EE0FE9 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0348DA30007130C5CFED3B96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0348DA31007130C5CFED3B96 /* FFTControl.m in Sources */,
+				0348DA32007130C5CFED3B96 /* FuncView.m in Sources */,
+				0348DA33007130C5CFED3B96 /* ModView.m in Sources */,
+				0348DA34007130C5CFED3B96 /* PhiView.m in Sources */,
+				0348DA35007130C5CFED3B96 /* Wave.m in Sources */,
+				0348DA36007130C5CFED3B96 /* fft.c in Sources */,
+				0348DA37007130C5CFED3B96 /* WaveEdit_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029561842AAC200EE0FE9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029571842AAC200EE0FE9 /* FFTControl.m in Sources */,
+				D8F029581842AAC200EE0FE9 /* FuncView.m in Sources */,
+				D8F029591842AAC200EE0FE9 /* ModView.m in Sources */,
+				D8F0295A1842AAC200EE0FE9 /* PhiView.m in Sources */,
+				D8F0295B1842AAC200EE0FE9 /* Wave.m in Sources */,
+				D8F0295C1842AAC200EE0FE9 /* fft.c in Sources */,
+				D8F0295D1842AAC200EE0FE9 /* WaveEdit_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		0348DA10007130C5CFED3B96 /* WaveEdit.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0348DA11007130C5CFED3B96 /* English */,
+			);
+			name = WaveEdit.nib;
+			sourceTree = "<group>";
+		};
+		0348DA15007130C5CFED3B96 /* Help */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0348DA16007130C5CFED3B96 /* English */,
+			);
+			name = Help;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8F0293F1842AABB00EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8F029401842AABB00EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8F029411842AABB00EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8F029421842AABB00EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /LocalApps;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F029431842AABB00EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = /LocalApps;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F029441842AABB00EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				INSTALL_PATH = /LocalApps;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+		D8F029631842AAC200EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-WaveEdit__Application___Upgraded_.plist";
+				INSTALL_PATH = /LocalApps;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F029641842AAC200EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-WaveEdit__Application___Upgraded_.plist";
+				INSTALL_PATH = /LocalApps;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F029651842AAC200EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-WaveEdit__Application___Upgraded_.plist";
+				INSTALL_PATH = /LocalApps;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8F029451842AABB00EE0FE9 /* Build configuration list for PBXProject "WaveEdit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F0293F1842AABB00EE0FE9 /* Development */,
+				D8F029401842AABB00EE0FE9 /* Deployment */,
+				D8F029411842AABB00EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F029461842AABB00EE0FE9 /* Build configuration list for PBXApplicationTarget "WaveEdit (Application)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029421842AABB00EE0FE9 /* Development */,
+				D8F029431842AABB00EE0FE9 /* Deployment */,
+				D8F029441842AABB00EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F029621842AAC200EE0FE9 /* Build configuration list for PBXNativeTarget "WaveEdit (Application) (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029631842AAC200EE0FE9 /* Development */,
+				D8F029641842AAC200EE0FE9 /* Deployment */,
+				D8F029651842AAC200EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0348D9FE007130C5CFED3B96 /* Project object */;
+}

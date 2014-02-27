@@ -30,6 +30,8 @@
 
 #undef HAVE_LIBMP3LAME
 
+#undef HAVE_HIP_DECODE_INIT
+
 #undef HAVE_LIBSHOUT
 
 #undef HAVE_PORTAUDIO_H

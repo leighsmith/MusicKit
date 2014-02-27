@@ -134,7 +134,7 @@
       r = TRUE;
     }
     else { 
-      NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Error: Couldn't connect to server %s:%i with password [%s]...%i\n", 
+      NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Error: Couldn't connect to server %s:%i with password [%s]...%s\n", 
             shout_get_host(conn), shout_get_port(conn), shout_get_password(conn),
             shout_get_error(conn));
     }

@@ -1,0 +1,736 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		024133FA0044ABF8CFED3B96 /* edsnd (Application) */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D8A8B97818429E8D00E7D082 /* Build configuration list for PBXApplicationTarget "edsnd (Application)" */;
+			buildPhases = (
+				024133FB0044ABF8CFED3B96 /* Headers */,
+				024134080044ABF8CFED3B96 /* Resources */,
+				0241340F0044ABF8CFED3B96 /* Sources */,
+				024134230044ABF8CFED3B96 /* Frameworks */,
+				024134260044ABF8CFED3B96 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "edsnd (Application)";
+			productInstallPath = "$(HOME)/Apps";
+			productName = edsnd;
+			productReference = 024133F90044ABF8CFED3B96 /* edsnd.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>edsnd</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>sndapp.tiff</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>edsnd</string>
+	<key>NSPrincipalClass</key>
+	<string>EdsndApp</string>
+</dict>
+</plist>
+";
+		};
+		D8A8B97D18429E9600E7D082 /* edsnd (Application) (Copied) */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D8A8B9A718429E9600E7D082 /* Build configuration list for PBXApplicationTarget "edsnd (Application) (Copied)" */;
+			buildPhases = (
+				D8A8B97E18429E9600E7D082 /* Headers */,
+				D8A8B98B18429E9600E7D082 /* Resources */,
+				D8A8B99218429E9600E7D082 /* Sources */,
+				D8A8B9A518429E9600E7D082 /* Frameworks */,
+				D8A8B9A618429E9600E7D082 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "edsnd (Application) (Copied)";
+			productInstallPath = "$(HOME)/Apps";
+			productName = edsnd;
+			productReference = D8A8B9AB18429E9700E7D082 /* edsnd.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>edsnd</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>sndapp.tiff</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>edsnd</string>
+	<key>NSPrincipalClass</key>
+	<string>EdsndApp</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		024133FC0044ABF8CFED3B96 /* Animator.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D30044ABF8CFED3B96 /* Animator.h */; };
+		024133FD0044ABF8CFED3B96 /* EdsndApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D40044ABF8CFED3B96 /* EdsndApp.h */; };
+		024133FE0044ABF8CFED3B96 /* EdSoundView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D50044ABF8CFED3B96 /* EdSoundView.h */; };
+		024133FF0044ABF8CFED3B96 /* Envelope.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D60044ABF8CFED3B96 /* Envelope.h */; };
+		024134000044ABF8CFED3B96 /* EnvelopeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D70044ABF8CFED3B96 /* EnvelopeView.h */; };
+		024134010044ABF8CFED3B96 /* FFT.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D80044ABF8CFED3B96 /* FFT.h */; };
+		024134020044ABF8CFED3B96 /* FFTView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D90044ABF8CFED3B96 /* FFTView.h */; };
+		024134030044ABF8CFED3B96 /* ScrollingSound.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DA0044ABF8CFED3B96 /* ScrollingSound.h */; };
+		024134040044ABF8CFED3B96 /* SoundDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DB0044ABF8CFED3B96 /* SoundDocument.h */; };
+		024134050044ABF8CFED3B96 /* SpectrumView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DC0044ABF8CFED3B96 /* SpectrumView.h */; };
+		024134060044ABF8CFED3B96 /* Stopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DD0044ABF8CFED3B96 /* Stopwatch.h */; };
+		024134070044ABF8CFED3B96 /* UpPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DE0044ABF8CFED3B96 /* UpPanel.h */; };
+		024134090044ABF8CFED3B96 /* Stopwatch.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133E80044ABF8CFED3B96 /* Stopwatch.nib */; };
+		0241340A0044ABF8CFED3B96 /* Envelope.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133EA0044ABF8CFED3B96 /* Envelope.nib */; };
+		0241340B0044ABF8CFED3B96 /* snddoc.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133EC0044ABF8CFED3B96 /* snddoc.nib */; };
+		0241340C0044ABF8CFED3B96 /* edsnd.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133EE0044ABF8CFED3B96 /* edsnd.nib */; };
+		0241340D0044ABF8CFED3B96 /* FFT.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133F00044ABF8CFED3B96 /* FFT.nib */; };
+		0241340E0044ABF8CFED3B96 /* sndapp.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 024133F30044ABF8CFED3B96 /* sndapp.tiff */; };
+		024134100044ABF8CFED3B96 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C60044ABF8CFED3B96 /* Animator.m */; settings = {ATTRIBUTES = (); }; };
+		024134110044ABF8CFED3B96 /* EdsndApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C70044ABF8CFED3B96 /* EdsndApp.m */; settings = {ATTRIBUTES = (); }; };
+		024134120044ABF8CFED3B96 /* EdSoundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C80044ABF8CFED3B96 /* EdSoundView.m */; settings = {ATTRIBUTES = (); }; };
+		024134130044ABF8CFED3B96 /* Envelope.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C90044ABF8CFED3B96 /* Envelope.m */; settings = {ATTRIBUTES = (); }; };
+		024134140044ABF8CFED3B96 /* EnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CA0044ABF8CFED3B96 /* EnvelopeView.m */; settings = {ATTRIBUTES = (); }; };
+		024134150044ABF8CFED3B96 /* FFT.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CB0044ABF8CFED3B96 /* FFT.m */; settings = {ATTRIBUTES = (); }; };
+		024134160044ABF8CFED3B96 /* FFTView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CC0044ABF8CFED3B96 /* FFTView.m */; settings = {ATTRIBUTES = (); }; };
+		024134170044ABF8CFED3B96 /* ScrollingSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CD0044ABF8CFED3B96 /* ScrollingSound.m */; settings = {ATTRIBUTES = (); }; };
+		024134180044ABF8CFED3B96 /* SoundDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CE0044ABF8CFED3B96 /* SoundDocument.m */; settings = {ATTRIBUTES = (); }; };
+		024134190044ABF8CFED3B96 /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CF0044ABF8CFED3B96 /* SpectrumView.m */; settings = {ATTRIBUTES = (); }; };
+		0241341A0044ABF8CFED3B96 /* Stopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133D00044ABF8CFED3B96 /* Stopwatch.m */; settings = {ATTRIBUTES = (); }; };
+		0241341B0044ABF8CFED3B96 /* UpPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133D10044ABF8CFED3B96 /* UpPanel.m */; settings = {ATTRIBUTES = (); }; };
+		0241341C0044ABF8CFED3B96 /* PWenv.psw in Sources */ = {isa = PBXBuildFile; fileRef = 024133E00044ABF8CFED3B96 /* PWenv.psw */; settings = {ATTRIBUTES = (); }; };
+		0241341D0044ABF8CFED3B96 /* PWfft.psw in Sources */ = {isa = PBXBuildFile; fileRef = 024133E10044ABF8CFED3B96 /* PWfft.psw */; settings = {ATTRIBUTES = (); }; };
+		0241341E0044ABF8CFED3B96 /* PWSpectrum.psw in Sources */ = {isa = PBXBuildFile; fileRef = 024133E20044ABF8CFED3B96 /* PWSpectrum.psw */; settings = {ATTRIBUTES = (); }; };
+		0241341F0044ABF8CFED3B96 /* fft_net.c in Sources */ = {isa = PBXBuildFile; fileRef = 024133E30044ABF8CFED3B96 /* fft_net.c */; settings = {ATTRIBUTES = (); }; };
+		024134200044ABF8CFED3B96 /* edsnd_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133E40044ABF8CFED3B96 /* edsnd_main.m */; settings = {ATTRIBUTES = (); }; };
+		024134220044ABF8CFED3B96 /* SNDindirect.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133E60044ABF8CFED3B96 /* SNDindirect.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B97F18429E9600E7D082 /* Animator.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D30044ABF8CFED3B96 /* Animator.h */; };
+		D8A8B98018429E9600E7D082 /* EdsndApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D40044ABF8CFED3B96 /* EdsndApp.h */; };
+		D8A8B98118429E9600E7D082 /* EdSoundView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D50044ABF8CFED3B96 /* EdSoundView.h */; };
+		D8A8B98218429E9600E7D082 /* Envelope.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D60044ABF8CFED3B96 /* Envelope.h */; };
+		D8A8B98318429E9600E7D082 /* EnvelopeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D70044ABF8CFED3B96 /* EnvelopeView.h */; };
+		D8A8B98418429E9600E7D082 /* FFT.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D80044ABF8CFED3B96 /* FFT.h */; };
+		D8A8B98518429E9600E7D082 /* FFTView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133D90044ABF8CFED3B96 /* FFTView.h */; };
+		D8A8B98618429E9600E7D082 /* ScrollingSound.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DA0044ABF8CFED3B96 /* ScrollingSound.h */; };
+		D8A8B98718429E9600E7D082 /* SoundDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DB0044ABF8CFED3B96 /* SoundDocument.h */; };
+		D8A8B98818429E9600E7D082 /* SpectrumView.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DC0044ABF8CFED3B96 /* SpectrumView.h */; };
+		D8A8B98918429E9600E7D082 /* Stopwatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DD0044ABF8CFED3B96 /* Stopwatch.h */; };
+		D8A8B98A18429E9600E7D082 /* UpPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 024133DE0044ABF8CFED3B96 /* UpPanel.h */; };
+		D8A8B98C18429E9600E7D082 /* Stopwatch.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133E80044ABF8CFED3B96 /* Stopwatch.nib */; };
+		D8A8B98D18429E9600E7D082 /* Envelope.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133EA0044ABF8CFED3B96 /* Envelope.nib */; };
+		D8A8B98E18429E9600E7D082 /* snddoc.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133EC0044ABF8CFED3B96 /* snddoc.nib */; };
+		D8A8B98F18429E9600E7D082 /* edsnd.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133EE0044ABF8CFED3B96 /* edsnd.nib */; };
+		D8A8B99018429E9600E7D082 /* FFT.nib in Resources */ = {isa = PBXBuildFile; fileRef = 024133F00044ABF8CFED3B96 /* FFT.nib */; };
+		D8A8B99118429E9600E7D082 /* sndapp.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 024133F30044ABF8CFED3B96 /* sndapp.tiff */; };
+		D8A8B99318429E9600E7D082 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C60044ABF8CFED3B96 /* Animator.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99418429E9600E7D082 /* EdsndApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C70044ABF8CFED3B96 /* EdsndApp.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99518429E9600E7D082 /* EdSoundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C80044ABF8CFED3B96 /* EdSoundView.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99618429E9600E7D082 /* Envelope.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133C90044ABF8CFED3B96 /* Envelope.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99718429E9600E7D082 /* EnvelopeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CA0044ABF8CFED3B96 /* EnvelopeView.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99818429E9600E7D082 /* FFT.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CB0044ABF8CFED3B96 /* FFT.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99918429E9600E7D082 /* FFTView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CC0044ABF8CFED3B96 /* FFTView.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99A18429E9600E7D082 /* ScrollingSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CD0044ABF8CFED3B96 /* ScrollingSound.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99B18429E9600E7D082 /* SoundDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CE0044ABF8CFED3B96 /* SoundDocument.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99C18429E9600E7D082 /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133CF0044ABF8CFED3B96 /* SpectrumView.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99D18429E9600E7D082 /* Stopwatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133D00044ABF8CFED3B96 /* Stopwatch.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99E18429E9600E7D082 /* UpPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133D10044ABF8CFED3B96 /* UpPanel.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B99F18429E9600E7D082 /* PWenv.psw in Sources */ = {isa = PBXBuildFile; fileRef = 024133E00044ABF8CFED3B96 /* PWenv.psw */; settings = {ATTRIBUTES = (); }; };
+		D8A8B9A018429E9600E7D082 /* PWfft.psw in Sources */ = {isa = PBXBuildFile; fileRef = 024133E10044ABF8CFED3B96 /* PWfft.psw */; settings = {ATTRIBUTES = (); }; };
+		D8A8B9A118429E9600E7D082 /* PWSpectrum.psw in Sources */ = {isa = PBXBuildFile; fileRef = 024133E20044ABF8CFED3B96 /* PWSpectrum.psw */; settings = {ATTRIBUTES = (); }; };
+		D8A8B9A218429E9600E7D082 /* fft_net.c in Sources */ = {isa = PBXBuildFile; fileRef = 024133E30044ABF8CFED3B96 /* fft_net.c */; settings = {ATTRIBUTES = (); }; };
+		D8A8B9A318429E9600E7D082 /* edsnd_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133E40044ABF8CFED3B96 /* edsnd_main.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B9A418429E9600E7D082 /* SNDindirect.m in Sources */ = {isa = PBXBuildFile; fileRef = 024133E60044ABF8CFED3B96 /* SNDindirect.m */; settings = {ATTRIBUTES = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		024133C60044ABF8CFED3B96 /* Animator.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
+		024133C70044ABF8CFED3B96 /* EdsndApp.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = EdsndApp.m; sourceTree = "<group>"; };
+		024133C80044ABF8CFED3B96 /* EdSoundView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = EdSoundView.m; sourceTree = "<group>"; };
+		024133C90044ABF8CFED3B96 /* Envelope.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Envelope.m; sourceTree = "<group>"; };
+		024133CA0044ABF8CFED3B96 /* EnvelopeView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = EnvelopeView.m; sourceTree = "<group>"; };
+		024133CB0044ABF8CFED3B96 /* FFT.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FFT.m; sourceTree = "<group>"; };
+		024133CC0044ABF8CFED3B96 /* FFTView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FFTView.m; sourceTree = "<group>"; };
+		024133CD0044ABF8CFED3B96 /* ScrollingSound.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ScrollingSound.m; sourceTree = "<group>"; };
+		024133CE0044ABF8CFED3B96 /* SoundDocument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SoundDocument.m; sourceTree = "<group>"; };
+		024133CF0044ABF8CFED3B96 /* SpectrumView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SpectrumView.m; sourceTree = "<group>"; };
+		024133D00044ABF8CFED3B96 /* Stopwatch.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Stopwatch.m; sourceTree = "<group>"; };
+		024133D10044ABF8CFED3B96 /* UpPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UpPanel.m; sourceTree = "<group>"; };
+		024133D30044ABF8CFED3B96 /* Animator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
+		024133D40044ABF8CFED3B96 /* EdsndApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EdsndApp.h; sourceTree = "<group>"; };
+		024133D50044ABF8CFED3B96 /* EdSoundView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EdSoundView.h; sourceTree = "<group>"; };
+		024133D60044ABF8CFED3B96 /* Envelope.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Envelope.h; sourceTree = "<group>"; };
+		024133D70044ABF8CFED3B96 /* EnvelopeView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EnvelopeView.h; sourceTree = "<group>"; };
+		024133D80044ABF8CFED3B96 /* FFT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FFT.h; sourceTree = "<group>"; };
+		024133D90044ABF8CFED3B96 /* FFTView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FFTView.h; sourceTree = "<group>"; };
+		024133DA0044ABF8CFED3B96 /* ScrollingSound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScrollingSound.h; sourceTree = "<group>"; };
+		024133DB0044ABF8CFED3B96 /* SoundDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SoundDocument.h; sourceTree = "<group>"; };
+		024133DC0044ABF8CFED3B96 /* SpectrumView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SpectrumView.h; sourceTree = "<group>"; };
+		024133DD0044ABF8CFED3B96 /* Stopwatch.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Stopwatch.h; sourceTree = "<group>"; };
+		024133DE0044ABF8CFED3B96 /* UpPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UpPanel.h; sourceTree = "<group>"; };
+		024133E00044ABF8CFED3B96 /* PWenv.psw */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = PWenv.psw; sourceTree = "<group>"; };
+		024133E10044ABF8CFED3B96 /* PWfft.psw */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = PWfft.psw; sourceTree = "<group>"; };
+		024133E20044ABF8CFED3B96 /* PWSpectrum.psw */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = PWSpectrum.psw; sourceTree = "<group>"; };
+		024133E30044ABF8CFED3B96 /* fft_net.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = fft_net.c; sourceTree = "<group>"; };
+		024133E40044ABF8CFED3B96 /* edsnd_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = edsnd_main.m; sourceTree = "<group>"; };
+		024133E50044ABF8CFED3B96 /* fft.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = fft.m; sourceTree = "<group>"; };
+		024133E60044ABF8CFED3B96 /* SNDindirect.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SNDindirect.m; sourceTree = "<group>"; };
+		024133E90044ABF8CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Stopwatch.nib; sourceTree = "<group>"; };
+		024133EB0044ABF8CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Envelope.nib; sourceTree = "<group>"; };
+		024133ED0044ABF8CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/snddoc.nib; sourceTree = "<group>"; };
+		024133EF0044ABF8CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/edsnd.nib; sourceTree = "<group>"; };
+		024133F10044ABF8CFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/FFT.nib; sourceTree = "<group>"; };
+		024133F30044ABF8CFED3B96 /* sndapp.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = sndapp.tiff; sourceTree = "<group>"; };
+		024133F90044ABF8CFED3B96 /* edsnd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = edsnd.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8A8B9AB18429E9700E7D082 /* edsnd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = edsnd.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		024134230044ABF8CFED3B96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B9A518429E9600E7D082 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		024133C40044ABF8CFED3B96 /* edsnd */ = {
+			isa = PBXGroup;
+			children = (
+				024133C50044ABF8CFED3B96 /* Classes */,
+				024133D20044ABF8CFED3B96 /* Headers */,
+				024133DF0044ABF8CFED3B96 /* Other Sources */,
+				024133E70044ABF8CFED3B96 /* Interfaces */,
+				024133F20044ABF8CFED3B96 /* Images */,
+				024133F40044ABF8CFED3B96 /* External Frameworks and Libraries */,
+				024133F80044ABF8CFED3B96 /* Products */,
+			);
+			name = edsnd;
+			sourceTree = "<group>";
+		};
+		024133C50044ABF8CFED3B96 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				024133C60044ABF8CFED3B96 /* Animator.m */,
+				024133C70044ABF8CFED3B96 /* EdsndApp.m */,
+				024133C80044ABF8CFED3B96 /* EdSoundView.m */,
+				024133C90044ABF8CFED3B96 /* Envelope.m */,
+				024133CA0044ABF8CFED3B96 /* EnvelopeView.m */,
+				024133CB0044ABF8CFED3B96 /* FFT.m */,
+				024133CC0044ABF8CFED3B96 /* FFTView.m */,
+				024133CD0044ABF8CFED3B96 /* ScrollingSound.m */,
+				024133CE0044ABF8CFED3B96 /* SoundDocument.m */,
+				024133CF0044ABF8CFED3B96 /* SpectrumView.m */,
+				024133D00044ABF8CFED3B96 /* Stopwatch.m */,
+				024133D10044ABF8CFED3B96 /* UpPanel.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		024133D20044ABF8CFED3B96 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				024133D30044ABF8CFED3B96 /* Animator.h */,
+				024133D40044ABF8CFED3B96 /* EdsndApp.h */,
+				024133D50044ABF8CFED3B96 /* EdSoundView.h */,
+				024133D60044ABF8CFED3B96 /* Envelope.h */,
+				024133D70044ABF8CFED3B96 /* EnvelopeView.h */,
+				024133D80044ABF8CFED3B96 /* FFT.h */,
+				024133D90044ABF8CFED3B96 /* FFTView.h */,
+				024133DA0044ABF8CFED3B96 /* ScrollingSound.h */,
+				024133DB0044ABF8CFED3B96 /* SoundDocument.h */,
+				024133DC0044ABF8CFED3B96 /* SpectrumView.h */,
+				024133DD0044ABF8CFED3B96 /* Stopwatch.h */,
+				024133DE0044ABF8CFED3B96 /* UpPanel.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		024133DF0044ABF8CFED3B96 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				024133E00044ABF8CFED3B96 /* PWenv.psw */,
+				024133E10044ABF8CFED3B96 /* PWfft.psw */,
+				024133E20044ABF8CFED3B96 /* PWSpectrum.psw */,
+				024133E30044ABF8CFED3B96 /* fft_net.c */,
+				024133E40044ABF8CFED3B96 /* edsnd_main.m */,
+				024133E50044ABF8CFED3B96 /* fft.m */,
+				024133E60044ABF8CFED3B96 /* SNDindirect.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		024133E70044ABF8CFED3B96 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				024133E80044ABF8CFED3B96 /* Stopwatch.nib */,
+				024133EA0044ABF8CFED3B96 /* Envelope.nib */,
+				024133EC0044ABF8CFED3B96 /* snddoc.nib */,
+				024133EE0044ABF8CFED3B96 /* edsnd.nib */,
+				024133F00044ABF8CFED3B96 /* FFT.nib */,
+			);
+			name = Interfaces;
+			sourceTree = "<group>";
+		};
+		024133F20044ABF8CFED3B96 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				024133F30044ABF8CFED3B96 /* sndapp.tiff */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		024133F40044ABF8CFED3B96 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		024133F80044ABF8CFED3B96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				024133F90044ABF8CFED3B96 /* edsnd.app */,
+				D8A8B9AB18429E9700E7D082 /* edsnd.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		024133FB0044ABF8CFED3B96 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				024133FC0044ABF8CFED3B96 /* Animator.h in Headers */,
+				024133FD0044ABF8CFED3B96 /* EdsndApp.h in Headers */,
+				024133FE0044ABF8CFED3B96 /* EdSoundView.h in Headers */,
+				024133FF0044ABF8CFED3B96 /* Envelope.h in Headers */,
+				024134000044ABF8CFED3B96 /* EnvelopeView.h in Headers */,
+				024134010044ABF8CFED3B96 /* FFT.h in Headers */,
+				024134020044ABF8CFED3B96 /* FFTView.h in Headers */,
+				024134030044ABF8CFED3B96 /* ScrollingSound.h in Headers */,
+				024134040044ABF8CFED3B96 /* SoundDocument.h in Headers */,
+				024134050044ABF8CFED3B96 /* SpectrumView.h in Headers */,
+				024134060044ABF8CFED3B96 /* Stopwatch.h in Headers */,
+				024134070044ABF8CFED3B96 /* UpPanel.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B97E18429E9600E7D082 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B97F18429E9600E7D082 /* Animator.h in Headers */,
+				D8A8B98018429E9600E7D082 /* EdsndApp.h in Headers */,
+				D8A8B98118429E9600E7D082 /* EdSoundView.h in Headers */,
+				D8A8B98218429E9600E7D082 /* Envelope.h in Headers */,
+				D8A8B98318429E9600E7D082 /* EnvelopeView.h in Headers */,
+				D8A8B98418429E9600E7D082 /* FFT.h in Headers */,
+				D8A8B98518429E9600E7D082 /* FFTView.h in Headers */,
+				D8A8B98618429E9600E7D082 /* ScrollingSound.h in Headers */,
+				D8A8B98718429E9600E7D082 /* SoundDocument.h in Headers */,
+				D8A8B98818429E9600E7D082 /* SpectrumView.h in Headers */,
+				D8A8B98918429E9600E7D082 /* Stopwatch.h in Headers */,
+				D8A8B98A18429E9600E7D082 /* UpPanel.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXProject section */
+		024133C30044ABF8CFED3B96 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8A8B97718429E8D00E7D082 /* Build configuration list for PBXProject "edsnd" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 024133C40044ABF8CFED3B96 /* edsnd */;
+			productRefGroup = 024133F80044ABF8CFED3B96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8A8B97D18429E9600E7D082 /* edsnd (Application) (Copied) */,
+				024133FA0044ABF8CFED3B96 /* edsnd (Application) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		024134080044ABF8CFED3B96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				024134090044ABF8CFED3B96 /* Stopwatch.nib in Resources */,
+				0241340A0044ABF8CFED3B96 /* Envelope.nib in Resources */,
+				0241340B0044ABF8CFED3B96 /* snddoc.nib in Resources */,
+				0241340C0044ABF8CFED3B96 /* edsnd.nib in Resources */,
+				0241340D0044ABF8CFED3B96 /* FFT.nib in Resources */,
+				0241340E0044ABF8CFED3B96 /* sndapp.tiff in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B98B18429E9600E7D082 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B98C18429E9600E7D082 /* Stopwatch.nib in Resources */,
+				D8A8B98D18429E9600E7D082 /* Envelope.nib in Resources */,
+				D8A8B98E18429E9600E7D082 /* snddoc.nib in Resources */,
+				D8A8B98F18429E9600E7D082 /* edsnd.nib in Resources */,
+				D8A8B99018429E9600E7D082 /* FFT.nib in Resources */,
+				D8A8B99118429E9600E7D082 /* sndapp.tiff in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		024134260044ABF8CFED3B96 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B9A618429E9600E7D082 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0241340F0044ABF8CFED3B96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				024134100044ABF8CFED3B96 /* Animator.m in Sources */,
+				024134110044ABF8CFED3B96 /* EdsndApp.m in Sources */,
+				024134120044ABF8CFED3B96 /* EdSoundView.m in Sources */,
+				024134130044ABF8CFED3B96 /* Envelope.m in Sources */,
+				024134140044ABF8CFED3B96 /* EnvelopeView.m in Sources */,
+				024134150044ABF8CFED3B96 /* FFT.m in Sources */,
+				024134160044ABF8CFED3B96 /* FFTView.m in Sources */,
+				024134170044ABF8CFED3B96 /* ScrollingSound.m in Sources */,
+				024134180044ABF8CFED3B96 /* SoundDocument.m in Sources */,
+				024134190044ABF8CFED3B96 /* SpectrumView.m in Sources */,
+				0241341A0044ABF8CFED3B96 /* Stopwatch.m in Sources */,
+				0241341B0044ABF8CFED3B96 /* UpPanel.m in Sources */,
+				0241341C0044ABF8CFED3B96 /* PWenv.psw in Sources */,
+				0241341D0044ABF8CFED3B96 /* PWfft.psw in Sources */,
+				0241341E0044ABF8CFED3B96 /* PWSpectrum.psw in Sources */,
+				0241341F0044ABF8CFED3B96 /* fft_net.c in Sources */,
+				024134200044ABF8CFED3B96 /* edsnd_main.m in Sources */,
+				024134220044ABF8CFED3B96 /* SNDindirect.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B99218429E9600E7D082 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B99318429E9600E7D082 /* Animator.m in Sources */,
+				D8A8B99418429E9600E7D082 /* EdsndApp.m in Sources */,
+				D8A8B99518429E9600E7D082 /* EdSoundView.m in Sources */,
+				D8A8B99618429E9600E7D082 /* Envelope.m in Sources */,
+				D8A8B99718429E9600E7D082 /* EnvelopeView.m in Sources */,
+				D8A8B99818429E9600E7D082 /* FFT.m in Sources */,
+				D8A8B99918429E9600E7D082 /* FFTView.m in Sources */,
+				D8A8B99A18429E9600E7D082 /* ScrollingSound.m in Sources */,
+				D8A8B99B18429E9600E7D082 /* SoundDocument.m in Sources */,
+				D8A8B99C18429E9600E7D082 /* SpectrumView.m in Sources */,
+				D8A8B99D18429E9600E7D082 /* Stopwatch.m in Sources */,
+				D8A8B99E18429E9600E7D082 /* UpPanel.m in Sources */,
+				D8A8B99F18429E9600E7D082 /* PWenv.psw in Sources */,
+				D8A8B9A018429E9600E7D082 /* PWfft.psw in Sources */,
+				D8A8B9A118429E9600E7D082 /* PWSpectrum.psw in Sources */,
+				D8A8B9A218429E9600E7D082 /* fft_net.c in Sources */,
+				D8A8B9A318429E9600E7D082 /* edsnd_main.m in Sources */,
+				D8A8B9A418429E9600E7D082 /* SNDindirect.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		024133E80044ABF8CFED3B96 /* Stopwatch.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				024133E90044ABF8CFED3B96 /* English */,
+			);
+			name = Stopwatch.nib;
+			sourceTree = "<group>";
+		};
+		024133EA0044ABF8CFED3B96 /* Envelope.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				024133EB0044ABF8CFED3B96 /* English */,
+			);
+			name = Envelope.nib;
+			sourceTree = "<group>";
+		};
+		024133EC0044ABF8CFED3B96 /* snddoc.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				024133ED0044ABF8CFED3B96 /* English */,
+			);
+			name = snddoc.nib;
+			sourceTree = "<group>";
+		};
+		024133EE0044ABF8CFED3B96 /* edsnd.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				024133EF0044ABF8CFED3B96 /* English */,
+			);
+			name = edsnd.nib;
+			sourceTree = "<group>";
+		};
+		024133F00044ABF8CFED3B96 /* FFT.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				024133F10044ABF8CFED3B96 /* English */,
+			);
+			name = FFT.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8A8B97118429E8D00E7D082 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8A8B97218429E8D00E7D082 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8A8B97318429E8D00E7D082 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8A8B97418429E8D00E7D082 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = edsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8A8B97518429E8D00E7D082 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = edsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8A8B97618429E8D00E7D082 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = edsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+		D8A8B9A818429E9600E7D082 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = edsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8A8B9A918429E9600E7D082 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = edsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8A8B9AA18429E9600E7D082 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = edsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8A8B97718429E8D00E7D082 /* Build configuration list for PBXProject "edsnd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A8B97118429E8D00E7D082 /* Development */,
+				D8A8B97218429E8D00E7D082 /* Deployment */,
+				D8A8B97318429E8D00E7D082 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8A8B97818429E8D00E7D082 /* Build configuration list for PBXApplicationTarget "edsnd (Application)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A8B97418429E8D00E7D082 /* Development */,
+				D8A8B97518429E8D00E7D082 /* Deployment */,
+				D8A8B97618429E8D00E7D082 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8A8B9A718429E9600E7D082 /* Build configuration list for PBXApplicationTarget "edsnd (Application) (Copied)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A8B9A818429E9600E7D082 /* Development */,
+				D8A8B9A918429E9600E7D082 /* Deployment */,
+				D8A8B9AA18429E9600E7D082 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 024133C30044ABF8CFED3B96 /* Project object */;
+}

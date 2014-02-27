@@ -265,11 +265,11 @@ id _MKSetScorefileVarPostDaemon(self,funPtr)
     return rtnVal;
 }
 
-- writeScorefileStream:(NSMutableData *)aStream
+- writeScorefileStream: (NSMutableData *) aStream
     /* Writes <ScorefileVarName> = <value>. */
 {	
-    [aStream appendData:[[NSString stringWithFormat:@"%s = ", s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    _MKParWriteValueOn(myParameter,aStream,NULL);
+    [aStream appendData: [[NSString stringWithFormat: @"%@ = ", s] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    _MKParWriteValueOn(myParameter, aStream, NULL);
     return self;
 }
 

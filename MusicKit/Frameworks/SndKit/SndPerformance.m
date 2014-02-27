@@ -163,7 +163,7 @@ startPosition: (double) startPosition
   return equal;
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
     return [snd hash] + (unsigned) playTime * 256 + (unsigned) startAtIndex * 512 + (unsigned) endAtIndex * 1024 + (unsigned) deltaTime * 2048;
 }

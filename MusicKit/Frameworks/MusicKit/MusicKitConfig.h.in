@@ -19,7 +19,7 @@
 #define _MUSICKITCONFIG_H_
 
 /* autoconf generated definitions */
-#undef HAVE_LIBMP3HIP
+#undef HAVE_HIP_DECODE_INIT
 
 #undef HAVE_RANDOM
 

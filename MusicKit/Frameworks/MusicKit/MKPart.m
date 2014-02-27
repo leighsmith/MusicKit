@@ -300,7 +300,7 @@ static void removeNote(MKPart *self, MKNote *aNote);
     // Changed on K. Hamels suggestion, used to message to releaseSelfOnly but this would cause a dealloc loop.
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
     unsigned val = 0;
     if (info) {
@@ -413,8 +413,9 @@ static id sortIfNeeded(MKPart *self)
 
 static int findNoteIndex(MKPart *self, MKNote *aNote)
 {
-    int matchedNote;
-    if ((matchedNote = [self->notes indexOfObjectIdenticalTo:aNote]) != NSNotFound)
+    NSUInteger matchedNote;
+    
+    if ((matchedNote = [self->notes indexOfObjectIdenticalTo: aNote]) != NSNotFound)
 	return matchedNote;
     return -1;
 }
@@ -654,7 +655,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 	IMP addPart = [parts methodForSelector:@selector(addObject:)];
 # define ADDPART(x) (*addPart)(parts, @selector(addObject:), (x))
 	IMP partsIndexOfObjectIdenticalTo = [parts methodForSelector: @selector(indexOfObjectIdenticalTo:)];
-# define PARTSCONTAINSOBJECT(x) ( (int)((*partsIndexOfObjectIdenticalTo)\
+# define PARTSCONTAINSOBJECT(x) ( (NSUInteger)((*partsIndexOfObjectIdenticalTo)\
 					(parts, @selector(indexOfObjectIdenticalTo:), (x))) != NSNotFound )
 					    
 	suspendCompaction = YES;

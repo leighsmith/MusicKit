@@ -21,13 +21,7 @@ Modification history:
 #import "_MTCHelper.h"
 
 
-@implementation _MTCHelper:MKPerformer
-{
-    double timeSlip;
-    double period;
-    BOOL timeSlipped;
-    id theMTCCond;
-}
+@implementation _MTCHelper
 
 -init
 {

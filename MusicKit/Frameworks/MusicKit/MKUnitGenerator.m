@@ -306,7 +306,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
     /* This method is a subclass responsibility. It is automatically
        provided by the MKUnitGenerator creation utility, dspwrap. */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)];
     return NULL;
 }
 
@@ -314,7 +314,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
     /* This method is a subclass responsibility. It is automatically
        provided by the MKUnitGenerator creation utility, dspwrap. */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)];
     return NULL;
 }
 
@@ -857,15 +857,14 @@ static id specialAddressVal(MKUnitGenerator *self, unsigned int argNum, SEL orch
     register MKUGArgStruct *argP = &self->args[argNum];
     MKOrchAddrStruct *memP;
     if (errorChecks) {
-	if (argNum < 0 || argNum >= self->_classInfo->master->argCount)
+	if (argNum >= self->_classInfo->master->argCount)
 	  return argOutOfBoundsErr(argNum,self);
 	if (argP->addressMemSpace == DSP_MS_N)
 	  return addrSetErr(self,argNum);
     }
     NSCAssert(sizeof(id)==sizeof(int), @"specialAddressVal() assumes sizeof(id) == sizeof(int).");
     memObj = [[self orchestra] performSelector:orchSel 
-	    withObject:INTARG(((argP->addressMemSpace == DSP_MS_X) ? (int)MK_xPatch :
-			 (int)MK_yPatch))];
+	    withObject: INTARG(((argP->addressMemSpace == DSP_MS_X) ? (int) MK_xPatch : (int) MK_yPatch))];
     memP =  [memObj orchAddrPtr];
     if (optimize(self,argNum,argP,memP->address,0))
       return self;
@@ -951,9 +950,8 @@ extern int _MKOrchestraGetNoops(void);
         _instanceNumber,
         NSStringFromClass([self class])] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     if (synthPatch)
-        [s appendData:[[NSString stringWithFormat:@" in %s_0x%x\n",
-            [NSStringFromClass([synthPatch class]) UTF8String],
-            synthPatch] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [s appendData: [[NSString stringWithFormat: @" in %@_%@\n", NSStringFromClass([synthPatch class]), synthPatch]
+                        dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     else [s appendBytes:"\n" length:1];
     [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%@ I %06X\n",
         _instanceNumber,

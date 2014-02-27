@@ -53,13 +53,6 @@ static const float kOffsetForAUView_Y = 0;
 
 - (BOOL) closeView
 {
-    if (carbonView) {
-	if(CloseComponent(carbonView) != noErr) {
-	    NSLog(@"SndAudioUnitController: Unable to open audio unit carbon view component\n");
-	    return NO;
-	}
-	carbonView = 0;
-    }
     return YES;
 }
 
@@ -94,165 +87,6 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
     NSLog(@"parameter value %f\n", outValue); 	
 }
 #endif
-
-- (BOOL) loadCarbonWindowEntitled: (NSString *) windowTitle inNibNamed: (NSString *) nibName
-{
-    CFBundleRef bundleRef;
-    IBNibRef    nibRef;
-    OSStatus    err;
-    
-    // Calls the Core Foundation Bundle Services function CFBundleGetBundleWithIdentifier to obtain an instance
-    // of the framework's bundle (autoreleased).
-    bundleRef = CFBundleGetBundleWithIdentifier((CFStringRef) @"org.musickit.SndKit");
-    
-    // Create a reference to the Carbon window's nib file.
-    // The Core Foundation string you provide must be the name of the nib file, without the .nib extension.    
-    err = CreateNibReferenceWithCFBundle(bundleRef, (CFStringRef) nibName, &nibRef); 
-
-    if (err != noErr) {
-	NSLog(@"failed to create carbon nib reference to %@", nibName);
-	return NO;
-    }
-    
-    // Call the IB Services function CreateWindowFromNib to unarchive the named Carbon window from the nib file.
-    err = CreateWindowFromNib(nibRef, (CFStringRef) windowTitle, &auWindow); 
-    
-    if (err != noErr) {
-	NSLog(@"failed to create carbon window %@ from nib %@", windowTitle, nibName);
-	return NO;
-    }
-    
-    // For historical reasons, contrary to normal memory management policy initWithWindowRef: does not retain windowRef.
-    // It is therefore recommended that you make sure you retain windowRef before calling this method. If windowRef is
-    // still valid when the Cocoa window is deallocated, the Cocoa window will release it. However, doing so seems to 
-    // cause the windows to require two pushes of the close button.
-
-    // Make the unarchived window visible.
-    ShowWindow(auWindow);
-    
-    // Call the IB Services function DisposeNibReference to dispose of the reference to the nib file.
-    // We should call this function immediately after finishing unarchiving an object.
-    DisposeNibReference(nibRef);
-
-    // wrap the Carbon AU window in a NSWindow instance, since it's easier to manage.
-    cocoaAUWindow = [[NSWindow alloc] initWithWindowRef: auWindow];
-    
-    return YES;
-}
-
-- (BOOL) createCarbonWindowFromAudioUnit: (AudioUnit) editUnit displayComponent: (ComponentDescription *) inDesc
-{
-    NSSize windowSize;    
-    ControlRef viewPane;
-    Rect viewPaneControlBounds;
-    ControlRef rootControl;
-    Rect rootControlBounds;
-    NSString *windowTitle;
-    Component editComp = FindNextComponent(NULL, inDesc);
-    
-    if(editComp == NULL) {
-	NSLog(@"SndAudioUnitController: Couldn't find Audio Unit editor Component: %4.4s %4.4s\n",
-	      (char *) &inDesc->componentManufacturer, (char *) &inDesc->componentSubType);
-	return NO;
-    }
-
-    [self closeView];
-    
-    if(OpenAComponent(editComp, &carbonView) != noErr) {
-	NSLog(@"SndAudioUnitController: Unable to open audio unit carbon view component\n");
-	return NO;
-    }
-    
-    if(![self loadCarbonWindowEntitled: @"CarbonWindow" inNibNamed: @"AUCarbonWindow"])
-	return NO;
-
-    if(GetRootControl(auWindow, &rootControl) != noErr) {
-	NSLog(@"SndAudioUnitController: Unable to GetRootControl\n");
-	return NO;
-    }
-    
-    GetControlBounds(rootControl, &rootControlBounds);
-    Float32Point location = { kOffsetForAUView_X, kOffsetForAUView_Y };
-    Float32Point size = { (Float32) rootControlBounds.right, (Float32) rootControlBounds.bottom };
-        
-    if(AudioUnitCarbonViewCreate(carbonView, editUnit, auWindow, rootControl, &location, &size, &viewPane) != noErr) {
-	NSLog(@"SndAudioUnitController: Unable to AudioUnitCarbonViewCreate\n");
-	return NO;
-    }    
-    
-#if EVENT_LISTENING
-    AudioUnitCarbonViewSetEventListener(carbonView, eventListener, self);
-#endif
-    
-    GetControlBounds(viewPane, &viewPaneControlBounds);
-    // NSLog(@"viewPane %p viewPaneControlBounds.top %d, viewPaneControlBounds.right %d, viewPaneControlBounds.left %d, viewPaneControlBounds.bottom %d\n",
-    //	  viewPane, viewPaneControlBounds.top, viewPaneControlBounds.right, viewPaneControlBounds.left, viewPaneControlBounds.bottom);
-
-    windowSize.width = viewPaneControlBounds.right - viewPaneControlBounds.left; 
-    windowSize.height = viewPaneControlBounds.bottom - viewPaneControlBounds.top + 20;
-        
-    // NSLog(@"windowSize size (%f, %f)\n", windowSize.width, windowSize.height);
-    
-    // We have to do this with Carbon, since resizing using Cocoa methods doesn't seem to update the window in entirety.
-    SizeWindow(auWindow, windowSize.width, windowSize.height, YES);    
-    
-    // NSLog(@"auWindow %p\n", auWindow);
-    
-    windowTitle = [NSString stringWithFormat: @"%@ inspector", [audioUnitProcessor name]];
-    [cocoaAUWindow setTitle: windowTitle];
-    [cocoaAUWindow setReleasedWhenClosed: NO];
-
-    // NSLog(@"cocoaAUWindow %@ backingType %d\n", cocoaAUWindow, [cocoaAUWindow backingType]);
-    
-    return YES;
-}
-
-- (BOOL) createCarbonWindowFromAudioUnit: (AudioUnit) editUnit genericDisplayOnly: (BOOL) forceGeneric
-{
-    OSStatus err;
-    ComponentDescription editorComponentDesc;
-        
-    [self closeView];
-    
-    // set up to use generic UI component
-    editorComponentDesc.componentType = kAudioUnitCarbonViewComponentType;
-    editorComponentDesc.componentSubType = 'gnrc';
-    editorComponentDesc.componentManufacturer = 'appl';
-    editorComponentDesc.componentFlags = 0;
-    editorComponentDesc.componentFlagsMask = 0;
-    
-    if (!forceGeneric) {
-	// ask the AU for its first editor component
-	UInt32 propertySize;
-	err = AudioUnitGetPropertyInfo(editUnit, kAudioUnitProperty_GetUIComponentList,
-				       kAudioUnitScope_Global, 0, &propertySize, NULL);
-	if (err == noErr) {
-	    int nEditors = propertySize / sizeof(ComponentDescription);
-	    ComponentDescription *editors = malloc(sizeof(ComponentDescription) * nEditors);
-	    
-	    err = AudioUnitGetProperty(editUnit, kAudioUnitProperty_GetUIComponentList,
-				       kAudioUnitScope_Global, 0, editors, &propertySize);
-	    if (!err) {
-		// just pick the first one for now
-		// TODO we should display all nEditors.
-		editorComponentDesc = editors[0];
-	    }
-
-	    free(editors);
-	}
-	else {
-	    NSLog(@"Unable to retrieve the UI component list property info err = %ld", err); 
-	}
-    }
-    
-    return [self createCarbonWindowFromAudioUnit: editUnit displayComponent: &editorComponentDesc];
-}
-
-// Returns YES if able to create the carbon window and display it. NO if unable to display it.
-- (BOOL) createCarbonWindowFromAudioUnit: (AudioUnit) audioUnit
-{
-    return [self createCarbonWindowFromAudioUnit: audioUnit genericDisplayOnly: NO];
-}
 
 // Creates the Cocoa View and assigns it into the Cocoa Window.
 - (BOOL) createCocoaWindowFromAudioUnit: (AudioUnit) audioUnit 
@@ -330,10 +164,6 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
     // Basically clicking on the close button of a SndAudioUnitController window, being a Carbon window, seems to release
     // the window, not hide it. Therefore we need to check if the window is inactive (closed) or not. If inactive,
     // We need to recreate the object.
-    if (carbonView && !IsWindowActive(auWindow)) {	
-	[self createCarbonWindowFromAudioUnit: [audioUnitProcessor audioUnit]];
-	// NSLog(@"window not active, title %@ windowRef %p\n", [cocoaAUWindow title], auWindow);
-    }
 }
 
 - initWithAudioProcessor: (SndAudioUnitProcessor *) processor;
@@ -358,8 +188,8 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
     carbonView = 0; // default.
     if ((result != noErr) || (numberOfClasses == 0)) {
         // If we get here, the audio unit does not have a Cocoa UI.
-        // Instead create the Carbon UI in a separate window ready for display.
-	return [self createCarbonWindowFromAudioUnit: audioUnit] ? self : nil;
+        // Now that Carbon UI's are deprecated, we just return nil.
+	return nil;
     } 
     else {
 	AudioUnitCocoaViewInfo *cocoaViewInfo = (AudioUnitCocoaViewInfo *) malloc(dataSize);
@@ -371,8 +201,8 @@ static void eventListener(void *controller, AudioUnitCarbonView inView,
 				      cocoaViewInfo,
 				      &dataSize);
 	if(result != noErr) {
-	    NSLog(@"AudioUnitGetProperty(kAudioUnitProperty_CocoaUI) error %ld cocoaViewInfo %p dataSize %lu\n",
-		  result, cocoaViewInfo, dataSize);
+	    NSLog(@"AudioUnitGetProperty(kAudioUnitProperty_CocoaUI) error %ld cocoaViewInfo %p dataSize %u\n",
+		  (long) result, cocoaViewInfo, (UInt32) dataSize);
 	    return nil;
 	}
 	createdCocoaWindow = [self createCocoaWindowFromAudioUnit: audioUnit andCocoaViewInfo: cocoaViewInfo];

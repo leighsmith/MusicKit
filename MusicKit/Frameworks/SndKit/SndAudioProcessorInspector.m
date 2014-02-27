@@ -203,7 +203,7 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 // numberOfRowsInTableView:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (int) numberOfRowsInTableView: (NSTableView *) aTableView
+- (NSInteger) numberOfRowsInTableView: (NSTableView *) aTableView
 {
   if (theAudProc != nil)
     return [theAudProc paramCount];
@@ -216,7 +216,7 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 ////////////////////////////////////////////////////////////////////////////////
 
 - (id) tableView: (NSTableView*) aTableView objectValueForTableColumn: (NSTableColumn*) aTableColumn
-             row: (int) rowIndex
+             row: (NSInteger) rowIndex
 {
   if ([[aTableColumn identifier] isEqualToString: @"Name"]) {
     

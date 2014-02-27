@@ -586,5 +586,5 @@ PERFORM_API char *MKMDErrorString(MKMDReturn errorCode);
 PERFORM_API MKMDReturn 
     MKMDSetSystemIgnores(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned int ignoreBits);
 
-#endif _MKMD_
+#endif // _MKMD_
 

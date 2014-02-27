@@ -40,7 +40,7 @@
      */
     int outputBusNumber;
     /*! The number of parameters in this AudioUnit. */
-    int parameterListLength;
+    long int parameterListLength;
     /*! An array of AudioUnitParameterIDs used to refer to each AudioUnit parameter. */
     AudioUnitParameterID *parameterIDList;
     /*! Indicates if the AudioUnit accepts data as non-interleaved buffers (YES), or as a single interleaved buffer (NO). */

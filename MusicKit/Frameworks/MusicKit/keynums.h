@@ -23,7 +23,7 @@
   for more information.
  */
 typedef enum _MKKeyNum {
-    c00k =0,cs00k,d00k,ef00k,e00k,f00k,fs00k,g00k,af00k,a00k,bf00k,b00k,
+    c00k = 0,cs00k,d00k,ef00k,e00k,f00k,fs00k,g00k,af00k,a00k,bf00k,b00k,
     c0k,cs0k,d0k,ef0k,e0k,f0k,fs0k,g0k,af0k,a0k,bf0k,b0k,
     c1k,cs1k,d1k,ef1k,e1k,f1k,fs1k,g1k,af1k,a1k,bf1k,b1k,
     c2k,cs2k,d2k,ef2k,e2k,f2k,fs2k,g2k,af2k,a2k,bf2k,b2k,

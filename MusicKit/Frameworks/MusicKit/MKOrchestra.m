@@ -787,7 +787,7 @@ Returns self. */
 }
 
 /* Sends open to each orchestra object. Returns nil if one of the
-MKOrchestra returns nil, else self. */
+MKOrchestra returns nil, else self. TODO self should be replaced by the known singleton. */
 + open
 {
     return broadcastAndRtn(self, @selector(open));
@@ -2129,7 +2129,7 @@ DeltaT is included in the result. */
     /* Returns name of the specified OrchMemSegment. */
 {
     return ((whichSegment < 0 || whichSegment >= (int) MK_numOrchMemSegments)) ?
-    [NSString stringWithString: @"invalid"] : (NSString *) (orchMemSegmentNames[whichSegment]);
+        @"invalid" : (NSString *) (orchMemSegmentNames[whichSegment]);
 }
 
 /* Instance methods for UnitGenerator's resource allocation. ------------  */
@@ -2142,7 +2142,7 @@ off chip. */
     int leaper[LEAPERSIZE]; 
     if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC))
 	if (!self->isLoopOffChip)
-	    _MKOrchTrace(self,MK_TRACEORCHALLOC,@"Moving loop off chip.");
+	    _MKOrchTrace(self,MK_TRACEORCHALLOC, @"Moving loop off chip.");
     leaper[0] = NOOP;
     leaper[1] = JUMP;
     leaper[2] = leapTo;
@@ -2224,7 +2224,7 @@ static void adjustOrchTE(MKOrchestra *self,BOOL yesOrNo,BOOL reset) {
 	
         self->timedEntry = [[NSTimer timerWithTimeInterval: 5.0
                                                     target: self
-                                                  selector: (SEL) @selector(synchTime: )
+                                                  selector: @selector(synchTime:)
                                                   userInfo: (void *) self /*sb: ok*/
                                                    repeats: YES] retain];
         [[NSRunLoop currentRunLoop] addTimer: self->timedEntry

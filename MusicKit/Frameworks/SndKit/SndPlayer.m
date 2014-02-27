@@ -39,15 +39,15 @@ static SndPlayer *defaultSndPlayer;
 
 + player
 {
-  return [[SndPlayer new] autorelease];
+    return [[SndPlayer new] autorelease];
 }
 
-+ (SndPlayer*) defaultSndPlayer
++ (SndPlayer *) defaultSndPlayer
 {
-  if (defaultSndPlayer == nil) {
-    defaultSndPlayer = [SndPlayer new];
-  }
-  return [[defaultSndPlayer retain] autorelease];
+    if (defaultSndPlayer == nil) {
+        defaultSndPlayer = [SndPlayer new];
+    }
+    return [[defaultSndPlayer retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -229,23 +229,27 @@ static SndPlayer *defaultSndPlayer;
                 beginAtIndex: (unsigned long) beginAtIndex
                   endAtIndex: (unsigned long) endAtIndex
 {
-  SndPerformance *perf;
-  double playT;
+    SndPerformance *perf;
+    double playT;
 
-  if(![self isActive])
-    [manager addClient: self];
+    // If the SndPlayer is not yet a client of a manager, add it as one to the default manager.
+    if (manager == nil)
+        [[SndStreamManager defaultStreamManager] addClient: self];
 
-  playT = (dt < 0.0) ? [self streamTime] : [self streamTime] + dt;
+    if(![self isActive])
+        [manager addClient: self];
+
+    playT = (dt < 0.0) ? [self streamTime] : [self streamTime] + dt;
 
 #if SNDPLAYER_DEBUG
-  NSLog(@"SndPlayer::playSnd (2) withTimeOffset:%f begin:%li end:%li playT:%f clientNowTime:%f\n",
-          dt, beginAtIndex, endAtIndex, playT, clientNowTime);
+    NSLog(@"SndPlayer::playSnd (2) withTimeOffset:%f begin:%li end:%li playT:%f clientNowTime:%f\n",
+            dt, beginAtIndex, endAtIndex, playT, clientNowTime);
 #endif
-  perf = [self playSnd: s
-       atTimeInSeconds: playT
-          beginAtIndex: beginAtIndex
-	    endAtIndex: endAtIndex];
-  return perf;
+    perf = [self playSnd: s
+         atTimeInSeconds: playT
+            beginAtIndex: beginAtIndex
+              endAtIndex: endAtIndex];
+    return perf;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

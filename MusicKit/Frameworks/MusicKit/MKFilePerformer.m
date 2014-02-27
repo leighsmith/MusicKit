@@ -353,7 +353,7 @@ Modification history prior to commit to CVS repository:
    * method.
    */
 {
-    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)];
     return nil;
 }
 
@@ -369,7 +369,7 @@ Modification history prior to commit to CVS repository:
    * method.
    */
 {
-    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    [NSException raise: NSInvalidArgumentException format: @"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)];
     return nil;
 }
 

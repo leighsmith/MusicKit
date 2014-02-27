@@ -21,7 +21,7 @@
 #if HAVE_CONFIG_H
 # import "SndKitConfig.h"
 #endif
-#if HAVE_LIBMP3HIP
+#if HAVE_HIP_DECODE_INIT
 
 #import "SndMP3.h"
 #import "SndError.h"
@@ -363,13 +363,13 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 		layer = 4 - ((frameHeader >> 17) & 0x03);
 		// NSLog(@"MPEG v%d Layer %d\n", version, layer);
 		if (layer == 4) { // something is wrong!
-		    NSLog(@"Encountered error in MP3 bitstream at position %d, layer == 4\n", position);
+		    NSLog(@"Encountered error in MP3 bitstream at position %ld, layer == 4\n", position);
 		    position++;
 		}
 		else {
 		    bitrateIndex = (frameHeader >> 12) & 0x0F;
 		    if (bitrateIndex == MP3_BITRATEINDEX_BAD) {
-			NSLog(@"Encountered error in MP3 bitstream at position %d, bitrateIndex == MP3_BITRATEINDEX_BAD\n", position);
+			NSLog(@"Encountered error in MP3 bitstream at position %ld, bitrateIndex == MP3_BITRATEINDEX_BAD\n", position);
 			position++; // something is wrong!
 			continue;
 		    }
@@ -601,7 +601,8 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     
     int growSize = [self samplingRate] * 4;
     int pcmSize  = growSize;
-    short pcm[MAX_MPEG_SAMPLES_PER_FRAME * 2]; // conversion buffer, stereo 16 bit integers.
+    short pcmLeft[MAX_MPEG_SAMPLES_PER_FRAME]; // conversion buffer, stereo 16 bit integers.
+    short pcmRight[MAX_MPEG_SAMPLES_PER_FRAME]; // conversion buffer, stereo 16 bit integers.
     long mp3DataPos    = 0;
     long mp3DataLength = [mp3Data length];
     //    long length = 0;
@@ -612,6 +613,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     long samplesToStartIndex = 0;
     long samplesRecovered = 0;
     //    long frameID = 0;
+    mp3data_struct mp3HeaderData;
     
     bDecoding = TRUE;
     
@@ -621,7 +623,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     samplesToStartIndex = requestedStartSample;
     
     [decoderLock lock]; 
-    hip_decode_init(&mp3DataDescription);
+    mp3DataDescription = hip_decode_init();
     
     pcmData = [[NSMutableData alloc] initWithLength: pcmSize * sizeof(short) * 2];
     [pcmDataLock unlock];
@@ -633,9 +635,9 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 	if (mp3DataPos + mp3FeedAmount > mp3DataLength)
 	    mp3FeedAmount = mp3DataLength - mp3DataPos;
 	
-	bytes_created = hip_decode_headers(&mp3DataDescription, mp3DataBytes + mp3DataPos, mp3FeedAmount, (char *) pcm, 4608);
-	samplesCreated = bytes_created / sizeof(short) / (mp3DataDescription.stereo ? mp3DataDescription.stereo : 2);
-	// NSLog(@"samplesCreated = %d\n", samplesCreated);
+	bytes_created = hip_decode_headers(mp3DataDescription, mp3DataBytes + mp3DataPos, mp3FeedAmount, pcmLeft, pcmRight, &mp3HeaderData);
+	samplesCreated = bytes_created / sizeof(short) / (mp3HeaderData.stereo ? mp3HeaderData.stereo : 2);
+	NSLog(@"samplesCreated = %ld\n", samplesCreated);
 	mp3DataPos += mp3FeedAmount;
 	
 	if (samplesCreated > 0) {
@@ -655,17 +657,20 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 		[pcmDataLock lock];
 		while (samplesRecovered + sams_to_unpack > pcmSize) {
 		    pcmSize += growSize;
-		    [pcmData setLength: pcmSize * sizeof(short) * mp3DataDescription.stereo];
+		    [pcmData setLength: pcmSize * sizeof(short) * mp3HeaderData.stereo];
 		}
 		pData = [pcmData mutableBytes]; // get fresh pointer in case resize moved our data
-		for (i = offset; i < sams_to_unpack * mp3DataDescription.stereo; i++) {
-		    pData[pos++] = pcm[i];
+		for (i = offset; i < sams_to_unpack; i++) {
+		    pData[pos++] = pcmLeft[i];
+                    if (mp3HeaderData.stereo > 1) {
+                        pData[pos++] = pcmRight[i];
+                    }
 		}
 		samplesRecovered += sams_to_unpack;
 		[pcmDataLock unlock];
 	    }
 	}
-	sams_created_total  += samplesCreated;
+	sams_created_total += samplesCreated;
 	decodedSampleCount += samplesCreated;
 	iterations++;
 #if DEBUG_READING
@@ -771,9 +776,9 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
         //int bytesRetrieved;
         //int bytesToRetrieve = MAX_MPEG_SAMPLES_PER_FRAME * sizeof(short) * [self channelCount];
         
-        hip_decode_init(&mp3DataDescription);
+        mp3DataDescription = hip_decode_init();
         // Attempt to decode the first header in order to prime the HIP decoding process. We expect no data to be returned.
-        //bytesRetrieved = hip_decode_headers(&mp3DataDescription, (unsigned char *) [mp3Data bytes], encodedFrameLocations[1] - encodedFrameLocations[0], (char *) decodedPCM, bytesToRetrieve);
+        //bytesRetrieved = hip_decode_headers(mp3DataDescription, (unsigned char *) [mp3Data bytes], encodedFrameLocations[1] - encodedFrameLocations[0], (char *) decodedPCM, bytesToRetrieve);
         //if(bytesRetrieved != 0)  // Actually we'd have a problem if we did get data back.
             //NSLog(@"Retrieved non-zero number of bytes (%d) on first call to hip_decode_headers()!\n", bytesRetrieved);
     }
@@ -844,15 +849,14 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 
 - (void) resetMP3StreamForNoncontiguousFrame: (int) MP3FrameIDToDecode
 {
-    int framesToBacktrack;
+    mp3data_struct mp3HeaderData;
+    int framesToBacktrack = 0;
     int frameToRead;
-    unsigned char *mp3DataBytes = (unsigned char *) [mp3Data bytes];    
-    SndAudioBuffer *discardedDecodeBuffer = [SndAudioBuffer audioBufferWithDataFormat: SND_FORMAT_LINEAR_16
-									 channelCount: [self channelCount]
-									 samplingRate: [self samplingRate]
-									   frameCount: MAX_MPEG_SAMPLES_PER_FRAME];
+    unsigned char *mp3DataBytes = (unsigned char *) [mp3Data bytes];
+    short discardedDecodeBufferLeft[MAX_MPEG_SAMPLES_PER_FRAME];
+    short discardedDecodeBufferRight[MAX_MPEG_SAMPLES_PER_FRAME];
+    
     int bytesRetrieved;
-    int bytesToRetrieve = [discardedDecodeBuffer lengthInBytes];
     NSRange decodeRange;
 
 #if DEBUG_BACKTRACK
@@ -863,7 +867,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     decodeRange = [self decodeRangeOfBitstreamFrame: MP3FrameIDToDecode];
 
     // decode the header in order to determine the main_data_begin value in the Layer 3 sideinfo.
-    bytesRetrieved = hip_decode_headers(&mp3DataDescription, mp3DataBytes + decodeRange.location, decodeRange.length, (char *) [discardedDecodeBuffer bytes], bytesToRetrieve);
+    bytesRetrieved = hip_decode_headers(mp3DataDescription, mp3DataBytes + decodeRange.location, decodeRange.length, discardedDecodeBufferLeft, discardedDecodeBufferRight, &mp3HeaderData);
     // NSLog(@"resetMP3StreamForNoncontiguousFrame: reading frame %d to determine main_data_begin bytesToRetrieve = %d bytesRetrieved = %d\n",
     //  MP3FrameIDToDecode, bytesToRetrieve, bytesRetrieved);
     
@@ -872,16 +876,16 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
     // second call to hip_decode_headers) accounts for 1 extra frame, but hip_audiodata_precedesframes should account
     // for the other, unless the calculation of the number of bitstream frames corresponding to main_data_begin
     // is incorrect.
-    framesToBacktrack = hip_audiodata_precedesframes(&mp3DataDescription) + 2; // TODO 2
+//    framesToBacktrack = hip_audiodata_precedesframes(&mp3DataDescription) + 2; // TODO 2
 #if DEBUG_BACKTRACK
     NSLog(@"resetMP3StreamForNoncontiguousFrame: Need to back track %d MP3 frames from frame %d (just decoded)\n", framesToBacktrack, MP3FrameIDToDecode);
 #endif
-    hip_decode_reset(&mp3DataDescription);
+//    hip_decode_reset(&mp3DataDescription);
     
     for(frameToRead = MP3FrameIDToDecode - framesToBacktrack; frameToRead >= 0 && frameToRead < MP3FrameIDToDecode; frameToRead++) {
 	decodeRange = [self decodeRangeOfBitstreamFrame: frameToRead];
 
-	bytesRetrieved = hip_decode_headers(&mp3DataDescription, mp3DataBytes + decodeRange.location, decodeRange.length, (char *) [discardedDecodeBuffer bytes], bytesToRetrieve);
+	bytesRetrieved = hip_decode_headers(mp3DataDescription, mp3DataBytes + decodeRange.location, decodeRange.length, discardedDecodeBufferLeft, discardedDecodeBufferRight, &mp3HeaderData);
 #if DEBUG_BACKTRACK
 	if(bytesRetrieved == 0) {
 	    NSLog(@"resetMP3StreamForNoncontiguousFrame: Need more data in backtrack bytesRetrieved == 0, frameToRead = %d MP3FrameIDToDecode %d\n",
@@ -899,9 +903,11 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 // Decode the given MP3 frame ID from mp3Data, returning a decoded PCM SndAudioBuffer.
 - (SndAudioBuffer *) decodeMP3FrameID: (int) MP3FrameIDToDecode
 {
+    mp3data_struct mp3HeaderData;
     long framesCreated = 0;
+    long frameIndex;
+    int sampleIndex;
     int bytesRetrieved;
-    int bytesToRetrieve;
     NSRange decodeRange;
     unsigned char *mp3DataBytes = (unsigned char *) [mp3Data bytes];
     // Define our buffer to match the format we expect HIP to provide decoded output in.
@@ -910,6 +916,8 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 								    channelCount: [self channelCount]
 								    samplingRate: [self samplingRate]
 								      frameCount: MAX_MPEG_SAMPLES_PER_FRAME];
+    short decodedPCMBufferLeft[MAX_MPEG_SAMPLES_PER_FRAME];
+    short decodedPCMBufferRight[MAX_MPEG_SAMPLES_PER_FRAME];
     
     // TODO debugging
     int prevMP3FrameID;
@@ -939,16 +947,15 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 #endif
     
     // Decode a frame. The decoded data is cached.
-    bytesToRetrieve = [decodedPCMBuffer lengthInBytes];
-    bytesRetrieved = hip_decode_headers(&mp3DataDescription, mp3DataBytes + decodeRange.location, decodeRange.length, (char *) [decodedPCMBuffer bytes], bytesToRetrieve);
+    bytesRetrieved = hip_decode_headers(mp3DataDescription, mp3DataBytes + decodeRange.location, decodeRange.length, decodedPCMBufferLeft, decodedPCMBufferRight, &mp3HeaderData);
     // NSLog(@"decodeMP3FrameID: after hip_decode_headers() bytesToRetrieve = %d bytesRetrieved = %d\n", bytesToRetrieve, bytesRetrieved);
 
     /* bytesRetrieved = 0:  need more data to decode */
     /* bytesRetrieved = -1:  error.  Assume 0 pcm output */
     /* bytesRetrieved = otherwise: number of bytes output */
     if(bytesRetrieved < 0) {
-	NSLog(@"Error: hip_decode_headers error bytesToRetrieve = %d, bytesRetrieved = %d, decodeRange.location = %d, decodeRange.length = %d, decodedPCMBuffer %@\n",
-	      bytesToRetrieve, bytesRetrieved, decodeRange.location, decodeRange.length, decodedPCMBuffer);
+	NSLog(@"Error: hip_decode_headers error bytesRetrieved = %d, decodeRange.location = %lu, decodeRange.length = %lu, decodedPCMBuffer %@\n",
+	      bytesRetrieved, (unsigned long) decodeRange.location, (unsigned long) decodeRange.length, decodedPCMBuffer);
 	return 0;
     }
     if(bytesRetrieved == 0) {
@@ -965,14 +972,25 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 	    moreDataFrom = decodeRange.location;
 	else
 	    moreDataFrom = decodeRange.location + decodeRange.length;
-	bytesRetrieved = hip_decode_headers(&mp3DataDescription, mp3DataBytes + moreDataFrom, decodeRange.length, (char *) [decodedPCMBuffer bytes], bytesToRetrieve);
+	bytesRetrieved = hip_decode_headers(mp3DataDescription, mp3DataBytes + moreDataFrom, decodeRange.length, decodedPCMBufferLeft, decodedPCMBufferRight, &mp3HeaderData);
 
-	// NSLog(@"Decoding from %d, Retried hip_decode_headers, bytesRetrieved = %d\n", moreDataFrom, bytesRetrieved);
+	NSLog(@"Decoding from %ld, Retried hip_decode_headers, bytesRetrieved = %d\n", moreDataFrom, bytesRetrieved);
     }
-    framesCreated =  bytesRetrieved / sizeof(short) / (mp3DataDescription.stereo ? mp3DataDescription.stereo : 2);
+    framesCreated = bytesRetrieved / sizeof(short) / (mp3HeaderData.stereo ? mp3HeaderData.stereo : 2);
 #if DEBUG_DECODE
     NSLog(@"decodeMP3FrameID: framesCreated = %d\n", framesCreated);
 #endif
+    
+    // Interpolate the decoded buffers.
+    short *decodedPCMBufferSamples = (short *) [decodedPCMBuffer bytes];
+    for (sampleIndex = 0, frameIndex = 0; frameIndex < framesCreated; frameIndex++) {
+        decodedPCMBufferSamples[sampleIndex++] = decodedPCMBufferLeft[frameIndex];
+        if (mp3HeaderData.stereo > 1) {
+            decodedPCMBufferSamples[sampleIndex++] = decodedPCMBufferRight[frameIndex];
+        }
+    }
+
+    
     // TODO set the frame count of the decodedPCMBuffer.
     // [decodedPCMBuffer setLengthInSampleFrames: framesCreated];
     
@@ -1215,7 +1233,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 	        samplesInRange: (NSRange) sndReadingRange;
 {
     if(sndReadingRange.length <= 0) {
-	NSLog(@"insertIntoAudioBuffer:intoFrameRange:samplesInRange: with %d samples into buffer?\n", sndReadingRange.length);
+	NSLog(@"insertIntoAudioBuffer:intoFrameRange:samplesInRange: with %lu samples into buffer?\n", (unsigned long) sndReadingRange.length);
 	return 0;
     }
     if(preDecode)

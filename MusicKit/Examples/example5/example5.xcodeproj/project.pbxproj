@@ -1,0 +1,560 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		03722ACF0075128FCFED3B96 /* example5 (Application) */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D8F0297A1842AB7B00EE0FE9 /* Build configuration list for PBXApplicationTarget "example5 (Application)" */;
+			buildPhases = (
+				03722AD00075128FCFED3B96 /* Headers */,
+				03722AD20075128FCFED3B96 /* Resources */,
+				03722AD40075128FCFED3B96 /* Sources */,
+				03722AD70075128FCFED3B96 /* Frameworks */,
+				03722ADD0075128FCFED3B96 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "example5 (Application)";
+			productInstallPath = /Applications;
+			productName = "example5 (Application)";
+			productReference = 03722ACE0075128FCFED3B96 /* example5.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>example5</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>example5.nib</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		03722AD10075128FCFED3B96 /* MyCustomObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 03722AB80075128FCFED3B96 /* MyCustomObject.h */; };
+		03722AD30075128FCFED3B96 /* example5.nib in Resources */ = {isa = PBXBuildFile; fileRef = 03722ABC0075128FCFED3B96 /* example5.nib */; };
+		03722AD50075128FCFED3B96 /* MyCustomObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 03722AB60075128FCFED3B96 /* MyCustomObject.m */; settings = {ATTRIBUTES = (); }; };
+		03722AD60075128FCFED3B96 /* example5_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 03722ABA0075128FCFED3B96 /* example5_main.m */; settings = {ATTRIBUTES = (); }; };
+		03722AD80075128FCFED3B96 /* dsp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722AC70075128FCFED3B96 /* dsp.framework */; };
+		03722AD90075128FCFED3B96 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722AC80075128FCFED3B96 /* MKPerformSndMIDI.framework */; };
+		03722ADA0075128FCFED3B96 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722AC90075128FCFED3B96 /* MusicKit.framework */; };
+		03722ADB0075128FCFED3B96 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722ACA0075128FCFED3B96 /* AppKit.framework */; };
+		03722ADC0075128FCFED3B96 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722ACB0075128FCFED3B96 /* Foundation.framework */; };
+		D8F029811842AB8300EE0FE9 /* MyCustomObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 03722AB80075128FCFED3B96 /* MyCustomObject.h */; };
+		D8F029831842AB8300EE0FE9 /* example5.nib in Resources */ = {isa = PBXBuildFile; fileRef = 03722ABC0075128FCFED3B96 /* example5.nib */; };
+		D8F029851842AB8300EE0FE9 /* MyCustomObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 03722AB60075128FCFED3B96 /* MyCustomObject.m */; settings = {ATTRIBUTES = (); }; };
+		D8F029861842AB8300EE0FE9 /* example5_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 03722ABA0075128FCFED3B96 /* example5_main.m */; settings = {ATTRIBUTES = (); }; };
+		D8F029881842AB8300EE0FE9 /* dsp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722AC70075128FCFED3B96 /* dsp.framework */; };
+		D8F029891842AB8300EE0FE9 /* MKPerformSndMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722AC80075128FCFED3B96 /* MKPerformSndMIDI.framework */; };
+		D8F0298A1842AB8300EE0FE9 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722AC90075128FCFED3B96 /* MusicKit.framework */; };
+		D8F0298B1842AB8300EE0FE9 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722ACA0075128FCFED3B96 /* AppKit.framework */; };
+		D8F0298C1842AB8300EE0FE9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03722ACB0075128FCFED3B96 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		03722AB60075128FCFED3B96 /* MyCustomObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyCustomObject.m; sourceTree = "<group>"; };
+		03722AB80075128FCFED3B96 /* MyCustomObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyCustomObject.h; sourceTree = "<group>"; };
+		03722ABA0075128FCFED3B96 /* example5_main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = example5_main.m; sourceTree = "<group>"; };
+		03722ABD0075128FCFED3B96 /* English - windows */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = "English - windows"; path = "English.lproj/example5-windows.nib"; sourceTree = "<group>"; };
+		03722ABE0075128FCFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/example5.nib; sourceTree = "<group>"; };
+		03722AC00075128FCFED3B96 /* Makefile.preamble */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.preamble; sourceTree = "<group>"; };
+		03722AC10075128FCFED3B96 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		03722AC20075128FCFED3B96 /* Makefile.postamble */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.postamble; sourceTree = "<group>"; };
+		03722AC30075128FCFED3B96 /* m.template */ = {isa = PBXFileReference; lastKnownFileType = file; path = m.template; sourceTree = "<group>"; };
+		03722AC40075128FCFED3B96 /* h.template */ = {isa = PBXFileReference; lastKnownFileType = file; path = h.template; sourceTree = "<group>"; };
+		03722AC50075128FCFED3B96 /* java.template */ = {isa = PBXFileReference; lastKnownFileType = file; path = java.template; sourceTree = "<group>"; };
+		03722AC70075128FCFED3B96 /* dsp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = dsp.framework; path = /System/Library/Frameworks/dsp.framework; sourceTree = "<absolute>"; };
+		03722AC80075128FCFED3B96 /* MKPerformSndMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MKPerformSndMIDI.framework; path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MKPerformSndMIDI.framework; sourceTree = "<absolute>"; };
+		03722AC90075128FCFED3B96 /* MusicKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MusicKit.framework; path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MusicKit.framework; sourceTree = "<absolute>"; };
+		03722ACA0075128FCFED3B96 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		03722ACB0075128FCFED3B96 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		03722ACE0075128FCFED3B96 /* example5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = example5.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8F029921842AB8400EE0FE9 /* Info-example5__Application___Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-example5__Application___Upgraded_.plist"; sourceTree = "<group>"; };
+		D8F029931842AB8400EE0FE9 /* example5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = example5.app; path = build/Development/example5.app; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		03722AD70075128FCFED3B96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03722AD80075128FCFED3B96 /* dsp.framework in Frameworks */,
+				03722AD90075128FCFED3B96 /* MKPerformSndMIDI.framework in Frameworks */,
+				03722ADA0075128FCFED3B96 /* MusicKit.framework in Frameworks */,
+				03722ADB0075128FCFED3B96 /* AppKit.framework in Frameworks */,
+				03722ADC0075128FCFED3B96 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029871842AB8300EE0FE9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029881842AB8300EE0FE9 /* dsp.framework in Frameworks */,
+				D8F029891842AB8300EE0FE9 /* MKPerformSndMIDI.framework in Frameworks */,
+				D8F0298A1842AB8300EE0FE9 /* MusicKit.framework in Frameworks */,
+				D8F0298B1842AB8300EE0FE9 /* AppKit.framework in Frameworks */,
+				D8F0298C1842AB8300EE0FE9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		03722AB40075128FCFED3B96 /* example5 */ = {
+			isa = PBXGroup;
+			children = (
+				03722AB50075128FCFED3B96 /* Classes */,
+				03722AB70075128FCFED3B96 /* Headers */,
+				03722AB90075128FCFED3B96 /* Other Sources */,
+				03722ABB0075128FCFED3B96 /* Interfaces */,
+				03722ABF0075128FCFED3B96 /* Supporting Files */,
+				03722AC60075128FCFED3B96 /* External Frameworks and Libraries */,
+				03722ACD0075128FCFED3B96 /* Products */,
+				D8F029921842AB8400EE0FE9 /* Info-example5__Application___Upgraded_.plist */,
+			);
+			name = example5;
+			sourceTree = "<group>";
+		};
+		03722AB50075128FCFED3B96 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				03722AB60075128FCFED3B96 /* MyCustomObject.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		03722AB70075128FCFED3B96 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				03722AB80075128FCFED3B96 /* MyCustomObject.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		03722AB90075128FCFED3B96 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				03722ABA0075128FCFED3B96 /* example5_main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		03722ABB0075128FCFED3B96 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				03722ABC0075128FCFED3B96 /* example5.nib */,
+			);
+			name = Interfaces;
+			sourceTree = "<group>";
+		};
+		03722ABF0075128FCFED3B96 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				03722AC00075128FCFED3B96 /* Makefile.preamble */,
+				03722AC10075128FCFED3B96 /* Makefile */,
+				03722AC20075128FCFED3B96 /* Makefile.postamble */,
+				03722AC30075128FCFED3B96 /* m.template */,
+				03722AC40075128FCFED3B96 /* h.template */,
+				03722AC50075128FCFED3B96 /* java.template */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		03722AC60075128FCFED3B96 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				03722AC70075128FCFED3B96 /* dsp.framework */,
+				03722AC80075128FCFED3B96 /* MKPerformSndMIDI.framework */,
+				03722AC90075128FCFED3B96 /* MusicKit.framework */,
+				03722ACA0075128FCFED3B96 /* AppKit.framework */,
+				03722ACB0075128FCFED3B96 /* Foundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		03722ACD0075128FCFED3B96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				03722ACE0075128FCFED3B96 /* example5.app */,
+				D8F029931842AB8400EE0FE9 /* example5.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		03722AD00075128FCFED3B96 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03722AD10075128FCFED3B96 /* MyCustomObject.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029801842AB8300EE0FE9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029811842AB8300EE0FE9 /* MyCustomObject.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D8F0297F1842AB8300EE0FE9 /* example5 (Application) (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8F0298E1842AB8300EE0FE9 /* Build configuration list for PBXNativeTarget "example5 (Application) (Upgraded)" */;
+			buildPhases = (
+				D8F029801842AB8300EE0FE9 /* Headers */,
+				D8F029821842AB8300EE0FE9 /* Resources */,
+				D8F029841842AB8300EE0FE9 /* Sources */,
+				D8F029871842AB8300EE0FE9 /* Frameworks */,
+				D8F0298D1842AB8300EE0FE9 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "example5 (Application) (Upgraded)";
+			productInstallPath = /Applications;
+			productName = "example5 (Application)";
+			productReference = D8F029931842AB8400EE0FE9 /* example5.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		03722AB30075128FCFED3B96 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8F029791842AB7B00EE0FE9 /* Build configuration list for PBXProject "example5" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 0;
+			mainGroup = 03722AB40075128FCFED3B96 /* example5 */;
+			productRefGroup = 03722ACD0075128FCFED3B96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8F0297F1842AB8300EE0FE9 /* example5 (Application) (Upgraded) */,
+				03722ACF0075128FCFED3B96 /* example5 (Application) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		03722AD20075128FCFED3B96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03722AD30075128FCFED3B96 /* example5.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029821842AB8300EE0FE9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029831842AB8300EE0FE9 /* example5.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		03722ADD0075128FCFED3B96 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F0298D1842AB8300EE0FE9 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		03722AD40075128FCFED3B96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03722AD50075128FCFED3B96 /* MyCustomObject.m in Sources */,
+				03722AD60075128FCFED3B96 /* example5_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029841842AB8300EE0FE9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029851842AB8300EE0FE9 /* MyCustomObject.m in Sources */,
+				D8F029861842AB8300EE0FE9 /* example5_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		03722ABC0075128FCFED3B96 /* example5.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				03722ABD0075128FCFED3B96 /* English - windows */,
+				03722ABE0075128FCFED3B96 /* English */,
+			);
+			name = example5.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8F029731842AB7B00EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8F029741842AB7B00EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8F029751842AB7B00EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8F029761842AB7B00EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					/Network/Servers/whiteley/lauren/Local/Library/Frameworks,
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /Applications;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example5;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F029771842AB7B00EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					/Network/Servers/whiteley/lauren/Local/Library/Frameworks,
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = /Applications;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example5;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F029781842AB7B00EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					/Network/Servers/whiteley/lauren/Local/Library/Frameworks,
+				);
+				INSTALL_PATH = /Applications;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example5;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+		D8F0298F1842AB8300EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					/Network/Servers/whiteley/lauren/Local/Library/Frameworks,
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(LOCAL_LIBRARY_DIR)/Frameworks\\\"";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-example5__Application___Upgraded_.plist";
+				INSTALL_PATH = /Applications;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example5;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F029901842AB8300EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					/Network/Servers/whiteley/lauren/Local/Library/Frameworks,
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(LOCAL_LIBRARY_DIR)/Frameworks\\\"";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-example5__Application___Upgraded_.plist";
+				INSTALL_PATH = /Applications;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example5;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F029911842AB8300EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					/Network/Servers/whiteley/lauren/Local/Library/Frameworks,
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(LOCAL_LIBRARY_DIR)/Frameworks\\\"";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-example5__Application___Upgraded_.plist";
+				INSTALL_PATH = /Applications;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example5;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8F029791842AB7B00EE0FE9 /* Build configuration list for PBXProject "example5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029731842AB7B00EE0FE9 /* Development */,
+				D8F029741842AB7B00EE0FE9 /* Deployment */,
+				D8F029751842AB7B00EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F0297A1842AB7B00EE0FE9 /* Build configuration list for PBXApplicationTarget "example5 (Application)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029761842AB7B00EE0FE9 /* Development */,
+				D8F029771842AB7B00EE0FE9 /* Deployment */,
+				D8F029781842AB7B00EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F0298E1842AB8300EE0FE9 /* Build configuration list for PBXNativeTarget "example5 (Application) (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F0298F1842AB8300EE0FE9 /* Development */,
+				D8F029901842AB8300EE0FE9 /* Deployment */,
+				D8F029911842AB8300EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 03722AB30075128FCFED3B96 /* Project object */;
+}

@@ -424,7 +424,7 @@ unless the -install message is sent. */
 {
     // keyNum = MIDI_DATA(keyNum);
 
-    if (keyNumber < 0 || keyNumber > MIDI_NUMKEYS)
+    if ((unsigned int) keyNumber > MIDI_NUMKEYS)
 	return MK_NODVAL;
     return _MKParAsDouble(_MKSFVarGetParameter(pitchVars[(int) keyNumber]));
 }
@@ -432,7 +432,7 @@ unless the -install message is sent. */
 /* Returns freq For specified keyNum in the receiver or MK_NODVAL if the keyNum is illegal. */ 
 - (double) freqForKeyNum: (MKKeyNum) keyNumber
 {
-    if (keyNumber < 0 || keyNumber > MIDI_NUMKEYS)
+    if ((unsigned int) keyNumber > MIDI_NUMKEYS)
 	return MK_NODVAL;
     return [[frequencies objectAtIndex: keyNumber] doubleValue];
 }
@@ -440,7 +440,7 @@ unless the -install message is sent. */
 /* Sets frequency for specified keyNum in the receiver. Note that the change is not installed. */
 - setKeyNum: (MKKeyNum) aKeyNum toFreq: (double) freq
 {
-    if (aKeyNum > MIDI_NUMKEYS)
+    if ((unsigned int) aKeyNum > MIDI_NUMKEYS)
 	return nil;
     [frequencies insertObject: [NSNumber numberWithDouble: freq] atIndex: aKeyNum];
     return self;
@@ -453,7 +453,7 @@ the install message to that object.
 Returns self or nil if aKeyNum is out of bounds. */
 + setKeyNum: (MKKeyNum) aKeyNum toFreq: (double) freq
 {
-    if (aKeyNum > MIDI_NUMKEYS)
+    if ((unsigned int) aKeyNum > MIDI_NUMKEYS)
 	return nil;
     _MKSetDoubleSFVar(pitchVars[(int)aKeyNum],freq);
     return self;
@@ -465,7 +465,7 @@ Returns self or nil if aKeyNum is out of bounds. */
 {       
     register int i;
     register double fact;
-    if (aKeyNum > MIDI_NUMKEYS)
+    if ((unsigned int) aKeyNum > MIDI_NUMKEYS)
 	return nil;
     for (fact = 1.0, i = aKeyNum; i >= 0; i -= 12, fact *= .5)
         [frequencies replaceObjectAtIndex:i withObject: [NSNumber numberWithDouble: freq * fact]];
@@ -485,7 +485,7 @@ Returns self or nil if aKeyNum is out of bounds. */
     register int i;
     register double fact;
     
-    if (aKeyNum > MIDI_NUMKEYS)
+    if ((unsigned int) aKeyNum > MIDI_NUMKEYS)
 	return nil;
     dontSort = YES;
     for (fact = 1.0, i = aKeyNum; i >= 0; i -= 12, fact *= .5)

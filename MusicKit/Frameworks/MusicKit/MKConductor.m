@@ -685,16 +685,14 @@ static void condInit()
 {
     if (inPerformance)
       return nil;
-    self = [super allocWithZone:zone];
-    return self;
+    return [super allocWithZone:zone];
 }
 
 + alloc 
 {
     if (inPerformance)
       return nil;
-    self = [super alloc];
-    return self;
+    return [super alloc];
 }
 
 /* TYPE: Creating; Creates a new Conductor.
@@ -1880,7 +1878,7 @@ static double getNextMsgTime(MKConductor *aCond)
 {
 //    MKMsgStruct *p;
     NSString *queue = [NSString stringWithFormat:
-        @"%@\n  Next conductor 0x%x, Last conductor 0x%x\n",
+        @"%@\n  Next conductor %@, Last conductor %@\n",
 	[super description], _condNext, _condLast];
     NSString *timeStr = [NSString stringWithFormat: @"  time %lf beats, nextMsgTime %lf, timeOffset %lf\n",
        time, nextMsgTime, timeOffset];
@@ -1891,9 +1889,9 @@ static double getNextMsgTime(MKConductor *aCond)
         @"  archivingFlags %x, delegateFlags %x, delegate %@, activePerformers %@, MTCSynch %@\n",
         archivingFlags, delegateFlags, delegate, activePerformers, MTCSynch];
     NSString *pausing = [NSString stringWithFormat:
-        @"  %s, pauseOffset = %lf, pauseFor = 0x%x\n",
+        @"  %s, pauseOffset = %lf, pauseFor = %p\n",
         isPaused ? "Paused" : "Not paused", _pauseOffset, pauseFor];
-    NSString *msgs = [NSString stringWithFormat: @"  msgQueue = 0x%x: ", _msgQueue];
+    NSString *msgs = [NSString stringWithFormat: @"  msgQueue = %p: ", _msgQueue];
 
 //    for(p = _msgQueue; p != NULL; p = p->_next) {
 //        [msgs stringByAppendingFormat: @"t %lf [%@ arg1:%@ arg2:%@] conductor %s \n",

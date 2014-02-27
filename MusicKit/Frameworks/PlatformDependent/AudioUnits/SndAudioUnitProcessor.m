@@ -228,7 +228,7 @@ static OSStatus auInputCallback(void *inRefCon,
     
     AUstatus = AudioUnitGetParameter(audioUnit, parameterIDList[index], kAudioUnitScope_Global, inputBusNumber, &parameterValue);
     if (AUstatus) {
-        NSLog(@"paramValue: AudioUnitGetParameter %ld: %d\n", parameterIDList[index], AUstatus);
+        NSLog(@"paramValue: AudioUnitGetParameter %u: %d\n", parameterIDList[index], AUstatus);
         return 0.0f;
     }
     
@@ -331,7 +331,7 @@ static OSStatus auInputCallback(void *inRefCon,
     
     AUstatus = AudioUnitSetParameter(audioUnit, parameterIDList[index], kAudioUnitScope_Global, inputBusNumber, parameterValue, 0);
     if (AUstatus) {
-        NSLog(@"setParam:toValue: AudioUnitSetParameter %ld: %d\n", parameterIDList[index], AUstatus);
+        NSLog(@"setParam:toValue: AudioUnitSetParameter %u: %d\n", parameterIDList[index], AUstatus);
         return;
     }
 }

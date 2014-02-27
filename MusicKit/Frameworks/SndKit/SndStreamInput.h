@@ -82,11 +82,11 @@
 @end
 
 /*! 
- @protocol StreamRecorderDelegate
+ @protocol StreamInputDelegate
  @brief Protocol for a SndStreamInput delegate
- @discussion To come.
+ @discussion Provides methods to indicate when a stream begins and ends receiving audio input.
 */
-@protocol StreamRecorderDelegate <SndStreamClientDelegate>
+@protocol StreamInputDelegate <SndStreamClientDelegate>
 
 /*! 
     @method   didStartReceivingInput:sender

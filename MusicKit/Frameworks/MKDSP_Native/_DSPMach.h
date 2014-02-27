@@ -14,13 +14,7 @@
 
 #import <mach/mach.h>
 
-// kludge around missing definitions in MacOsX
-#if !defined(macosx)
-#define macosx (defined(__ppc__) && !defined(ppc))
-#define macosx_server (defined(__ppc__) && defined(ppc))
-#endif
-
-#if macosx
+#if defined(__APPLE__)
 typedef natural_t msg_type_t;
 typedef long msg_type_long_t;
 #endif

@@ -62,8 +62,8 @@ char *DSPCat(
     if ( f2 == NULL ) return(DSPCat(f1,"")); /* So you can say DSPCat(str,0) */
     cp = f12 = (char *) malloc( strlen(f1) + strlen(f2) + 1 );
     if (cp==NULL) _DSPErr("DSPCat: insufficient free storage");
-    while (*cp = *f1++) cp++;
-    while (*cp++ = *f2++);	  /* string copy */
+    while ((*cp = *f1++)) cp++;
+    while ((*cp++ = *f2++));	  /* string copy */
     return(f12);
 }
 
@@ -89,7 +89,7 @@ char *_DSPReCat(
     if ( f1 == NULL ) return(DSPCat(f2,"")); /* poor form of call */
     f12 = (char *) realloc(f1, (len1=strlen(f1)) + strlen(f2) + 1 );
     if (f12==NULL) _DSPErr("_DSPReCat: insufficient free storage");
-    for (cp = f12+len1; *cp++ = *f2++;); /* copy string 2 to end of string 1 */
+    for (cp = f12+len1; (*cp++ = *f2++);); /* copy string 2 to end of string 1 */
     return(f12);
 }
 

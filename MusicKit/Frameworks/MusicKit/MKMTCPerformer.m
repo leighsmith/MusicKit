@@ -204,8 +204,8 @@ void
 -(double)timeTag
   /* Can be called at any time to get current timetag in seconds */
 {
-    return (MKConvertMTCToSeconds(format,_hours,_minutes,_seconds,_frames) - 
-	    (MKGetDeltaTMode() == MK_DELTAT_DEVICE_LAG) ? MKGetDeltaT() : 0);
+    double deltaT = (MKGetDeltaTMode() == MK_DELTAT_DEVICE_LAG) ? MKGetDeltaT() : 0;
+    return MKConvertMTCToSeconds(format,_hours,_minutes,_seconds,_frames) - deltaT;
 }
 
 -activateSelf

@@ -21,11 +21,11 @@
 
 #import "SndKitConfig.h"
 
-#if HAVE_LIBMP3HIP
+#if HAVE_HIP_DECODE_INIT
 
 #import <Foundation/Foundation.h>
 #import "Snd.h"
-#import <hip.h>
+#import <lame/lame.h>
 
 /*!
   @class SndMP3
@@ -48,8 +48,8 @@
 {
     /*! @var mp3Data The MP3 bitstream (encoded) data. */
     NSData *mp3Data;
-    /*! @var mp3DataDescription Preserves the state of the MP3 stream decoding used by HIP. */
-    HIP_File mp3DataDescription;
+    /*! @var mp3DataDescription Preserves the state of the MP3 stream decoding used by hip. */
+    hip_t mp3DataDescription;
     /*! An array of longs which give the locations in the MP3 bitstream data of the start of each MP3 frame. */
     long *encodedFrameLocations;
     /*! The number of frame locations in encodedFrameLocations. */

@@ -268,7 +268,7 @@
     NSLog(@"Samples: %d data format: %x\n", sfinfo.frames, sfinfo.format);
 #endif
     if (startFrame > sfinfo.frames) {
-	NSLog(@"SndReadRange: startFrame > length (%i vs %i)\n", startFrame, sfinfo.frames);
+	NSLog(@"SndReadRange: startFrame > length (%lu vs %lld)\n", startFrame, sfinfo.frames);
 	return SND_ERR_CANNOT_READ;
     }
     if (frameCount < 0) {

@@ -34,7 +34,7 @@
     /*! A modifiable array of SndStreamClients currently being mixed. */
     NSMutableArray *streamClients;
     /*! Controls access to the clients preventing their addition or removal while being mixed. */
-    NSLock *streamClientsLock;
+    NSRecursiveLock *streamClientsLock;
     /*! A chain of SndAudioProcessors that is applied after mixing all the stream clients together. */
     SndAudioProcessorChain *processorChain;
     /*! The current time (in seconds) to mix up to, as updated from the SndStreamManager, passed into processInBuffer:outBuffer:nowTime. */

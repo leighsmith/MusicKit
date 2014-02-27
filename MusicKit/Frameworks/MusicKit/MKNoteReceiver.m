@@ -324,7 +324,7 @@ only the owner itself sends this message.
 
 - _disconnect: (MKNoteSender *) aNoteSender
 {
-    unsigned int returnedIndex;
+    NSUInteger returnedIndex;
     
     if ((returnedIndex = [noteSenders indexOfObjectIdenticalTo: aNoteSender]) != NSNotFound) {
         [noteSenders removeObjectAtIndex: returnedIndex];

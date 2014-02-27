@@ -90,8 +90,8 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ audioProcessors: %@, postFader %@ %@\n", 
-	[super description], audioProcessorArray, postFader, bypassProcessing ? @"(bypassed)" : @"(active)"];
+    return [NSString stringWithFormat: @"%@ %@ audioProcessors: %@, postFader %@\n", 
+	[super description], bypassProcessing ? @"(bypassed)" : @"(active)", audioProcessorArray, postFader];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +156,11 @@
 
 - (SndFormat) format
 {
+    // if we ask for the format before anything has been processed, it is slightly better to give a default
+    // format than a bogus one.
+    if (processorOutputBuffer == nil) {
+        processorOutputBuffer = [[SndAudioBuffer alloc] init];
+    }
     return [processorOutputBuffer format];
 }
 

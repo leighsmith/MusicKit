@@ -348,7 +348,7 @@ only the owner itself sends this message.
 
 - _disconnect: (MKNoteReceiver *) aNoteReceiver
 {
-    unsigned int i;
+    NSUInteger i;
     
     if (noteReceivers == nil) /* This can happen if you use finishUnarchiving to replace a MKNoteSender */
 	return self;
@@ -361,7 +361,7 @@ only the owner itself sends this message.
 
 - _connect: (MKNoteReceiver *) aNoteReceiver
 {
-    unsigned int i = [noteReceivers indexOfObject: aNoteReceiver];
+    NSUInteger i = [noteReceivers indexOfObject: aNoteReceiver];
     
     if (i != NSNotFound) 
 	return nil; /* Already there. */

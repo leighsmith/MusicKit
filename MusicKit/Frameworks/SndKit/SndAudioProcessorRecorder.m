@@ -140,6 +140,7 @@
     // initialised and processing and has a usable format to return.
     SndFormat chainFormat = [[self audioProcessorChain] format];
 
+    // NSLog(@"prepareToRecordWithQueueDuration: format %@", SndFormatDescription(chainFormat));
     return [self prepareToRecordWithQueueDuration: durationOfBuffering ofFormat: chainFormat];
 }
 
@@ -295,8 +296,15 @@
 {
     fileFormat = newFileFormat;
     
+#if SNDAUDIOPROCRECORDER_DEBUG > 0
+    NSLog(@"startRecordingToFile: %@ withFormat %@", filename, SndFormatDescription(newFileFormat));
+    NSLog(@"audioProcessorChain %@ format %@", [self audioProcessorChain], SndFormatDescription([[self audioProcessorChain] format]));
+#endif
+    
     // Create a temporary buffer of QUEUE_DURATION seconds duration for buffering before writing to disk.
-    if (audioProcessorChain) {
+#if 0
+    // TODO THIS IS A REAL PROBLEM, WHY SHOULD I BE TRYING TO OVERRIDE THE GIVEN FORMAT?
+    if ([self audioProcessorChain]) {
 	if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION]) {
 	    NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration.\n");
 	}
@@ -306,6 +314,11 @@
 	    NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration:ofFormat:.\n");
 	}
     }
+#else
+    if (![self prepareToRecordWithQueueDuration: QUEUE_DURATION ofFormat: fileFormat]) {
+        NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordWithQueueDuration:ofFormat:.\n");
+    }
+#endif
     
     if (![self setUpRecordFile: filename withFormat: fileFormat]) {
 	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in setUpRecordFile\n");

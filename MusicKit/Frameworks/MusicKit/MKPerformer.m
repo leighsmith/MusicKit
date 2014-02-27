@@ -341,7 +341,7 @@ Modification history:
    */
 {
     [NSException raise: NSInvalidArgumentException
-		format: @"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+		format: @"*** Subclass responsibility: %@", NSStringFromSelector(_cmd)];
     return nil;
 }
 
@@ -704,7 +704,7 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
    */
 {
     if (status != MK_inactive) {
-	NSLog(@"Assertion failed, %@ not inactive when deallocing\n");
+	NSLog(@"Assertion failed, %@ not inactive when deallocing\n", self);
 	/* if we get this, maybe we need to put self in a global list of non-dealloced objects for later cleanup */
     }
     if (_performMsgPtr != NULL) {

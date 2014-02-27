@@ -90,7 +90,7 @@ id MKGetSamplesClass(void)
     return self;
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
 //trivial hash
   return [sound hash] + 256 * tableType + 23 * curLoc + 32767 * amplitude
@@ -158,7 +158,7 @@ id MKGetSamplesClass(void)
     
     if([Snd isPathForSoundFile: aSoundfile])
 	aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
-#if HAVE_LIBMP3HIP
+#if HAVE_HIP_DECODE_INIT
     else if([SndMP3 isPathForSoundFile: aSoundfile])
 	aTmpSound = [[SndMP3 alloc] initFromSoundfile: aSoundfile];
 #endif

@@ -104,8 +104,8 @@ enum {
 {
     return [NSString stringWithFormat: @"%@ numBuffers:%i currently pending:%i, max pending:%i currently processed:%i max processed:%i",
 		     [super description], numBuffers, 
-		     [pendingBuffers count], maximumPendingBuffers,
-		     [processedBuffers count], maximumProcessedBuffers];
+		     (unsigned int) [pendingBuffers count], maximumPendingBuffers,
+		     (unsigned int) [processedBuffers count], maximumProcessedBuffers];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

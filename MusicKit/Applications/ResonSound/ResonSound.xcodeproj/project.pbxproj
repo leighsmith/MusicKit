@@ -1,0 +1,557 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		0348D9CA00711DEDCFED3B96 /* Reson (Application) */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D8A8B83018429C0400E7D082 /* Build configuration list for PBXApplicationTarget "Reson (Application)" */;
+			buildPhases = (
+				0348D9E900711DEDCFED3B96 /* Headers */,
+				0348D9EC00711DEDCFED3B96 /* Resources */,
+				0348D9F100711DEDCFED3B96 /* Sources */,
+				0348D9F500711DEDCFED3B96 /* Frameworks */,
+				0348D9FB00711DEDCFED3B96 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "Reson (Application)";
+			productInstallPath = "$(HOME)/Apps";
+			productName = "Reson (Application)";
+			productReference = 0348D9E800711DEDCFED3B96 /* Reson.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Reson</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>Reson.tiff</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>Reson</string>
+	<key>NSPrincipalClass</key>
+	<string>Application</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		0348D9EA00711DEDCFED3B96 /* ResonController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348D9D100711DEDCFED3B96 /* ResonController.h */; };
+		0348D9EB00711DEDCFED3B96 /* ResonSound.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348D9D200711DEDCFED3B96 /* ResonSound.h */; };
+		0348D9ED00711DEDCFED3B96 /* Info.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0348D9D600711DEDCFED3B96 /* Info.nib */; };
+		0348D9EE00711DEDCFED3B96 /* Reson.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0348D9D800711DEDCFED3B96 /* Reson.nib */; };
+		0348D9EF00711DEDCFED3B96 /* Reson.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 0348D9DB00711DEDCFED3B96 /* Reson.tiff */; };
+		0348D9F200711DEDCFED3B96 /* ResonController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348D9CE00711DEDCFED3B96 /* ResonController.m */; settings = {ATTRIBUTES = (); }; };
+		0348D9F300711DEDCFED3B96 /* ResonSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348D9CF00711DEDCFED3B96 /* ResonSound.m */; settings = {ATTRIBUTES = (); }; };
+		0348D9F400711DEDCFED3B96 /* Reson_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348D9D400711DEDCFED3B96 /* Reson_main.m */; settings = {ATTRIBUTES = (); }; };
+		D853732D04055D9100DC8C05 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853732C04055D9100DC8C05 /* Cocoa.framework */; };
+		D853732F04055DAB00DC8C05 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853732E04055DAB00DC8C05 /* MusicKit.framework */; };
+		D8A8B83718429C3700E7D082 /* ResonController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348D9D100711DEDCFED3B96 /* ResonController.h */; };
+		D8A8B83818429C3700E7D082 /* ResonSound.h in Headers */ = {isa = PBXBuildFile; fileRef = 0348D9D200711DEDCFED3B96 /* ResonSound.h */; };
+		D8A8B83A18429C3700E7D082 /* Info.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0348D9D600711DEDCFED3B96 /* Info.nib */; };
+		D8A8B83B18429C3700E7D082 /* Reson.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0348D9D800711DEDCFED3B96 /* Reson.nib */; };
+		D8A8B83C18429C3700E7D082 /* Reson.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 0348D9DB00711DEDCFED3B96 /* Reson.tiff */; };
+		D8A8B83E18429C3700E7D082 /* ResonController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348D9CE00711DEDCFED3B96 /* ResonController.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B83F18429C3700E7D082 /* ResonSound.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348D9CF00711DEDCFED3B96 /* ResonSound.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B84018429C3700E7D082 /* Reson_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0348D9D400711DEDCFED3B96 /* Reson_main.m */; settings = {ATTRIBUTES = (); }; };
+		D8A8B84218429C3700E7D082 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853732C04055D9100DC8C05 /* Cocoa.framework */; };
+		D8A8B84318429C3700E7D082 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D853732E04055DAB00DC8C05 /* MusicKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0348D9CE00711DEDCFED3B96 /* ResonController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ResonController.m; sourceTree = "<group>"; };
+		0348D9CF00711DEDCFED3B96 /* ResonSound.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ResonSound.m; sourceTree = "<group>"; };
+		0348D9D100711DEDCFED3B96 /* ResonController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResonController.h; sourceTree = "<group>"; };
+		0348D9D200711DEDCFED3B96 /* ResonSound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResonSound.h; sourceTree = "<group>"; };
+		0348D9D400711DEDCFED3B96 /* Reson_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Reson_main.m; sourceTree = "<group>"; };
+		0348D9D700711DEDCFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Info.nib; sourceTree = "<group>"; };
+		0348D9D900711DEDCFED3B96 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Reson.nib; sourceTree = "<group>"; };
+		0348D9DB00711DEDCFED3B96 /* Reson.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Reson.tiff; sourceTree = "<group>"; };
+		0348D9DF00711DEDCFED3B96 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		0348D9E800711DEDCFED3B96 /* Reson.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Reson.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D853732C04055D9100DC8C05 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		D853732E04055DAB00DC8C05 /* MusicKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MusicKit.framework; path = /Local/Library/Frameworks/MusicKit.framework; sourceTree = "<absolute>"; };
+		D8A8B84918429C3700E7D082 /* Info-Reson__Application___Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Reson__Application___Upgraded_.plist"; sourceTree = "<group>"; };
+		D8A8B84A18429C3700E7D082 /* Reson.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Reson.app; path = build/Development/Reson.app; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0348D9F500711DEDCFED3B96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D853732D04055D9100DC8C05 /* Cocoa.framework in Frameworks */,
+				D853732F04055DAB00DC8C05 /* MusicKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B84118429C3700E7D082 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B84218429C3700E7D082 /* Cocoa.framework in Frameworks */,
+				D8A8B84318429C3700E7D082 /* MusicKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0348D9CC00711DEDCFED3B96 /* Reson */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9CD00711DEDCFED3B96 /* Classes */,
+				0348D9D000711DEDCFED3B96 /* Headers */,
+				0348D9D300711DEDCFED3B96 /* Other Sources */,
+				0348D9D500711DEDCFED3B96 /* Interfaces */,
+				0348D9DA00711DEDCFED3B96 /* Images */,
+				0348D9DC00711DEDCFED3B96 /* Resources */,
+				0348D9DE00711DEDCFED3B96 /* Supporting Files */,
+				0348D9E000711DEDCFED3B96 /* External Frameworks and Libraries */,
+				0348D9E700711DEDCFED3B96 /* Products */,
+				D8A8B84918429C3700E7D082 /* Info-Reson__Application___Upgraded_.plist */,
+			);
+			name = Reson;
+			sourceTree = "<group>";
+		};
+		0348D9CD00711DEDCFED3B96 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9CE00711DEDCFED3B96 /* ResonController.m */,
+				0348D9CF00711DEDCFED3B96 /* ResonSound.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		0348D9D000711DEDCFED3B96 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9D100711DEDCFED3B96 /* ResonController.h */,
+				0348D9D200711DEDCFED3B96 /* ResonSound.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		0348D9D300711DEDCFED3B96 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9D400711DEDCFED3B96 /* Reson_main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		0348D9D500711DEDCFED3B96 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9D600711DEDCFED3B96 /* Info.nib */,
+				0348D9D800711DEDCFED3B96 /* Reson.nib */,
+			);
+			name = Interfaces;
+			sourceTree = "<group>";
+		};
+		0348D9DA00711DEDCFED3B96 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9DB00711DEDCFED3B96 /* Reson.tiff */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		0348D9DC00711DEDCFED3B96 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		0348D9DE00711DEDCFED3B96 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9DF00711DEDCFED3B96 /* Makefile */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0348D9E000711DEDCFED3B96 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				D853732C04055D9100DC8C05 /* Cocoa.framework */,
+				D853732E04055DAB00DC8C05 /* MusicKit.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		0348D9E700711DEDCFED3B96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0348D9E800711DEDCFED3B96 /* Reson.app */,
+				D8A8B84A18429C3700E7D082 /* Reson.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0348D9E900711DEDCFED3B96 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0348D9EA00711DEDCFED3B96 /* ResonController.h in Headers */,
+				0348D9EB00711DEDCFED3B96 /* ResonSound.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B83618429C3700E7D082 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B83718429C3700E7D082 /* ResonController.h in Headers */,
+				D8A8B83818429C3700E7D082 /* ResonSound.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D8A8B83518429C3700E7D082 /* Reson (Application) (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8A8B84518429C3700E7D082 /* Build configuration list for PBXNativeTarget "Reson (Application) (Upgraded)" */;
+			buildPhases = (
+				D8A8B83618429C3700E7D082 /* Headers */,
+				D8A8B83918429C3700E7D082 /* Resources */,
+				D8A8B83D18429C3700E7D082 /* Sources */,
+				D8A8B84118429C3700E7D082 /* Frameworks */,
+				D8A8B84418429C3700E7D082 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Reson (Application) (Upgraded)";
+			productInstallPath = "$(HOME)/Apps";
+			productName = "Reson (Application)";
+			productReference = D8A8B84A18429C3700E7D082 /* Reson.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0348D9CB00711DEDCFED3B96 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8A8B82F18429C0400E7D082 /* Build configuration list for PBXProject "ResonSound" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 0348D9CC00711DEDCFED3B96 /* Reson */;
+			productRefGroup = 0348D9E700711DEDCFED3B96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8A8B83518429C3700E7D082 /* Reson (Application) (Upgraded) */,
+				0348D9CA00711DEDCFED3B96 /* Reson (Application) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0348D9EC00711DEDCFED3B96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0348D9ED00711DEDCFED3B96 /* Info.nib in Resources */,
+				0348D9EE00711DEDCFED3B96 /* Reson.nib in Resources */,
+				0348D9EF00711DEDCFED3B96 /* Reson.tiff in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B83918429C3700E7D082 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B83A18429C3700E7D082 /* Info.nib in Resources */,
+				D8A8B83B18429C3700E7D082 /* Reson.nib in Resources */,
+				D8A8B83C18429C3700E7D082 /* Reson.tiff in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		0348D9FB00711DEDCFED3B96 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B84418429C3700E7D082 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0348D9F100711DEDCFED3B96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0348D9F200711DEDCFED3B96 /* ResonController.m in Sources */,
+				0348D9F300711DEDCFED3B96 /* ResonSound.m in Sources */,
+				0348D9F400711DEDCFED3B96 /* Reson_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8A8B83D18429C3700E7D082 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8B83E18429C3700E7D082 /* ResonController.m in Sources */,
+				D8A8B83F18429C3700E7D082 /* ResonSound.m in Sources */,
+				D8A8B84018429C3700E7D082 /* Reson_main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		0348D9D600711DEDCFED3B96 /* Info.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0348D9D700711DEDCFED3B96 /* English */,
+			);
+			name = Info.nib;
+			sourceTree = "<group>";
+		};
+		0348D9D800711DEDCFED3B96 /* Reson.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0348D9D900711DEDCFED3B96 /* English */,
+			);
+			name = Reson.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8A8B82918429C0400E7D082 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8A8B82A18429C0400E7D082 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8A8B82B18429C0400E7D082 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8A8B82C18429C0400E7D082 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Reson;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8A8B82D18429C0400E7D082 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Reson;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8A8B82E18429C0400E7D082 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Reson;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+		D8A8B84618429C3700E7D082 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-Reson__Application___Upgraded_.plist";
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Reson;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8A8B84718429C3700E7D082 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-Reson__Application___Upgraded_.plist";
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Reson;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8A8B84818429C3700E7D082 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Info-Reson__Application___Upgraded_.plist";
+				INSTALL_PATH = "$(HOME)/Apps";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Reson;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8A8B82F18429C0400E7D082 /* Build configuration list for PBXProject "ResonSound" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A8B82918429C0400E7D082 /* Development */,
+				D8A8B82A18429C0400E7D082 /* Deployment */,
+				D8A8B82B18429C0400E7D082 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8A8B83018429C0400E7D082 /* Build configuration list for PBXApplicationTarget "Reson (Application)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A8B82C18429C0400E7D082 /* Development */,
+				D8A8B82D18429C0400E7D082 /* Deployment */,
+				D8A8B82E18429C0400E7D082 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8A8B84518429C3700E7D082 /* Build configuration list for PBXNativeTarget "Reson (Application) (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A8B84618429C3700E7D082 /* Development */,
+				D8A8B84718429C3700E7D082 /* Deployment */,
+				D8A8B84818429C3700E7D082 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0348D9CB00711DEDCFED3B96 /* Project object */;
+}

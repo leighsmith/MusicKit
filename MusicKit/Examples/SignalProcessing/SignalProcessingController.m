@@ -15,12 +15,47 @@
  */
 
 #import "SignalProcessingController.h"
+#import <SndKit/SndVSTProcessor.h>
 
-#define CHANGE_BUFFER_SIZES 0  // Monkey with the buffer sizes.
+#define CHANGE_BUFFER_SIZES 1  // Monkey with the buffer sizes.
 #define BUFFER_SIZE 128
 #define MUST_REINITIALISE_STREAMMANAGER 1
 
 @implementation SignalProcessingController
+
+- testBufferMagnitude
+{
+    SndAudioBuffer *buff = [[SndAudioBuffer alloc] initWithDataFormat: SND_FORMAT_FLOAT
+							 channelCount: 2
+							 samplingRate: 44100
+							   frameCount: 128];
+    [buff zero];
+    unsigned long maxFrame;
+    unsigned int maxChannel;
+    float rmsAmpPerChannel[2] = { 0.0,  0.0 };
+    [buff setSample: 1.0 atFrameIndex: 32 channel: 1];
+
+    float maxMagnitude = [buff findMaximumMagnitudeAt: &maxFrame channel: &maxChannel];
+     
+    [buff amplitudeRMSOfChannels: rmsAmpPerChannel];
+    printf("inBuffer RMS amp of %f, %f\n", rmsAmpPerChannel[0], rmsAmpPerChannel[1]);
+    printf("inBuffer max magnitude %f at frame %ld channel %d\n", maxMagnitude, maxFrame, maxChannel);
+    printf("expected max %f\n", [buff sampleAtFrameIndex: 32 channel: 1]);
+}
+     
+- loadVSTPlugin
+{
+    // check for VST
+    NSDictionary *parameters = nil;
+    
+    NSLog(@"VST plugins: %@", [SndVSTProcessor availableAudioProcessors]);
+    
+    SndAudioProcessor *vstPluginProcessor = [[[SndVSTProcessor alloc] initWithParameterDictionary: parameters 
+											     name: @"TwangCombo"] autorelease];
+    if(vstPluginProcessor != nil) {
+	NSLog(@"VST plugin loaded: %@", vstPluginProcessor);
+    }
+ }
 
 - (IBAction) startProcessing: (id) sender
 {
@@ -186,6 +221,9 @@
 
 	streamManager = [[SndStreamManager defaultStreamManager] retain];
 
+	[self testBufferMagnitude];
+	[self loadVSTPlugin];
+	
 	// TODO compute new output buffer size based on original size together with minimum
 	// size = BUFFER_SIZE/44100 seconds.
 	bufferSize = BUFFER_SIZE;

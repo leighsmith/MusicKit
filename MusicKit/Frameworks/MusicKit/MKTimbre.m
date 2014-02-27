@@ -396,7 +396,8 @@ description:"d"];
 
 -removeWaveTable:(MKWaveTable *)aWaveTable
 {
-    int i;
+    NSUInteger i;
+    
     i = [waveTables indexOfObject:aWaveTable];
     if (i != NSNotFound) {
 	[waveTables removeObjectAtIndex:i];
@@ -456,7 +457,7 @@ description:"d"];
 {    
 //    MKWaveTable **p;
 //    int count;
-    int i;
+    NSUInteger i;
     if (!waveTables || !freqs)
 	return MK_NODVAL;
 
@@ -467,10 +468,9 @@ description:"d"];
 	if (*p == obj)
 	    return *((double *)[freqs elementAt:i]);
     */
-    if ((i=[waveTables indexOfObjectIdenticalTo:obj]) == NSNotFound)
+    if ((i = [waveTables indexOfObjectIdenticalTo: obj]) == NSNotFound)
         return MK_NODVAL;
-//    return *((double *)[freqs objectAtIndex:i]);
-    return [[freqs objectAtIndex:i] doubleValue];
+    return [[freqs objectAtIndex: i] doubleValue];
 }
 
 -(double)freqAt:(int)index

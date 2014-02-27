@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -822,7 +822,6 @@
 		D88FE39C05A101690024FD88 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FE39705A101690024FD88 /* ApplicationServices.framework */; };
 		D88FE39D05A101690024FD88 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FE39805A101690024FD88 /* Foundation.framework */; };
 		D88FE39E05A101690024FD88 /* System.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FE39905A101690024FD88 /* System.framework */; };
-		D88FE39F05A101690024FD88 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D88FE39A05A101690024FD88 /* vecLib.framework */; };
 		D88FED8205A10F800024FD88 /* _DSPCV.c in Sources */ = {isa = PBXBuildFile; fileRef = D88FED7B05A10F800024FD88 /* _DSPCV.c */; };
 		D88FED8305A10F800024FD88 /* _DSPString.c in Sources */ = {isa = PBXBuildFile; fileRef = D88FED7C05A10F800024FD88 /* _DSPString.c */; };
 		D88FED8405A10F800024FD88 /* _DSPUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = D88FED7D05A10F800024FD88 /* _DSPUtilities.c */; };
@@ -862,6 +861,7 @@
 		D88FEDD605A110B60024FD88 /* libdsp.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDD405A110B60024FD88 /* libdsp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D88FEDDA05A110D20024FD88 /* smsrc_dependencies.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */; };
 		D88FEDF105A112CF0024FD88 /* MKDSPDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D89E684C18BEA9F0009CDB90 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D89E684B18BEA9F0009CDB90 /* Accelerate.framework */; };
 		D8A1DC1809F64BAD0094B3F5 /* mixscorefiles_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */; };
 		D8A1DC5609F65BD10094B3F5 /* example4_main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5009F65BD10094B3F5 /* example4_main.m */; };
 		D8A1DC5709F65BD10094B3F5 /* MyObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D8A1DC5209F65BD10094B3F5 /* MyObject.m */; };
@@ -1530,8 +1530,7 @@
 		D80246EC122EB60F00A88264 /* SndVSTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndVSTProcessor.h; path = Frameworks/PlatformDependent/VSTPlugins/SndVSTProcessor.h; sourceTree = "<group>"; };
 		D80246ED122EB60F00A88264 /* SndVSTProcessor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SndVSTProcessor.mm; path = Frameworks/PlatformDependent/VSTPlugins/SndVSTProcessor.mm; sourceTree = "<group>"; };
 		D804E063063DB32C0098E73C /* SndPlaying.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndPlaying.m; path = Frameworks/SndKit/SndPlaying.m; sourceTree = "<group>"; };
-		D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsCore.framework; path = Library/PrivateFrameworks/DevToolsCore.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsSupport.framework; path = Library/PrivateFrameworks/DevToolsSupport.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
+		D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DevToolsSupport.framework; path = Library/PrivateFrameworks/DevToolsSupport.framework; sourceTree = DEVELOPER_DIR; };
 		D815897A0F90964D00E38A7D /* david.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = david.tiff; path = Examples/MidiLoop/david.tiff; sourceTree = "<group>"; };
 		D81589A10F90EDC200E38A7D /* playscorefile */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = playscorefile; sourceTree = BUILT_PRODUCTS_DIR; };
 		D81589AB0F90EE1200E38A7D /* playscorefile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = playscorefile.m; path = Examples/playscorefile/playscorefile.m; sourceTree = "<group>"; };
@@ -2046,7 +2045,7 @@
 		D879C3DC05A2B506005DB251 /* palette.table */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = palette.table; path = Palettes/SndView/palette.table; sourceTree = "<group>"; };
 		D879C41E05A2B577005DB251 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		D879C41F05A2B577005DB251 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		D87BF78A0F097C740078AD51 /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
+		D87BF78A0F097C740078AD51 /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = DEVELOPER_DIR; };
 		D87BF80E0F0985530078AD51 /* SndViewIBPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SndViewIBPlugin.h; path = Plugins/SndView/SndViewIBPlugin.h; sourceTree = "<group>"; };
 		D87BF80F0F0985530078AD51 /* SndViewIBPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SndViewIBPlugin.m; path = Plugins/SndView/SndViewIBPlugin.m; sourceTree = "<group>"; };
 		D87BF8160F0985E40078AD51 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
@@ -2225,7 +2224,7 @@
 		D88FEDD405A110B60024FD88 /* libdsp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = libdsp.h; path = Frameworks/MKDSP_Native/libdsp.h; sourceTree = "<group>"; };
 		D88FEDD905A110D20024FD88 /* smsrc_dependencies.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = smsrc_dependencies.h; path = Frameworks/MKDSP_Native/smsrc_dependencies.h; sourceTree = "<group>"; };
 		D88FEDF005A112CF0024FD88 /* MKDSPDefines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MKDSPDefines.h; path = Frameworks/MKDSP_Native/MKDSPDefines.h; sourceTree = "<group>"; };
-		D8934DE211EBABBD00FF4CF9 /* libmathCommon.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmathCommon.dylib; path = /usr/lib/system/libmathCommon.dylib; sourceTree = "<absolute>"; };
+		D89E684B18BEA9F0009CDB90 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		D8A1DC0209F64B3E0094B3F5 /* mixscorefiles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mixscorefiles; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8A1DC1709F64BAD0094B3F5 /* mixscorefiles_main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = mixscorefiles_main.m; path = Examples/mixscorefiles/mixscorefiles_main.m; sourceTree = "<group>"; };
 		D8A1DC1909F64BC90094B3F5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = README.txt; path = Examples/mixscorefiles/README.txt; sourceTree = "<group>"; };
@@ -2432,11 +2431,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D89E684C18BEA9F0009CDB90 /* Accelerate.framework in Frameworks */,
 				D88FE39B05A101690024FD88 /* AppKit.framework in Frameworks */,
 				D88FE39C05A101690024FD88 /* ApplicationServices.framework in Frameworks */,
 				D88FE39D05A101690024FD88 /* Foundation.framework in Frameworks */,
 				D88FE39E05A101690024FD88 /* System.framework in Frameworks */,
-				D88FE39F05A101690024FD88 /* vecLib.framework in Frameworks */,
 				D880FBC7077FD9B700FD03CC /* MKPerformSndMIDI.framework in Frameworks */,
 				D8A442241077D58C00E12376 /* AudioToolbox.framework in Frameworks */,
 				D8A4422A1077D5BF00E12376 /* AudioUnit.framework in Frameworks */,
@@ -5022,6 +5021,7 @@
 			children = (
 				D879C41E05A2B577005DB251 /* AppKit.framework */,
 				D879C41F05A2B577005DB251 /* Foundation.framework */,
+				D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */,
 			);
 			name = "External Frameworks";
 			sourceTree = "<group>";
@@ -5368,8 +5368,8 @@
 			children = (
 				D88FE39905A101690024FD88 /* System.framework */,
 				D88FE39805A101690024FD88 /* Foundation.framework */,
-				D88FE39605A101690024FD88 /* AppKit.framework */,
 				D88FE39A05A101690024FD88 /* vecLib.framework */,
+				D88FE39605A101690024FD88 /* AppKit.framework */,
 				D88FE39705A101690024FD88 /* ApplicationServices.framework */,
 				D8A442231077D58C00E12376 /* AudioToolbox.framework */,
 				D8A442291077D5BF00E12376 /* AudioUnit.framework */,
@@ -5651,8 +5651,6 @@
 		D8DB4E48059FA05500624233 = {
 			isa = PBXGroup;
 			children = (
-				D8050BEE0CDFB48B00D73356 /* DevToolsCore.framework */,
-				D8050BEF0CDFB48B00D73356 /* DevToolsSupport.framework */,
 				D8DB4E5B059FA0AA00624233 /* Frameworks */,
 				D8DB4E6F059FA12B00624233 /* Palettes */,
 				D8DB4E69059FA0E800624233 /* Plugins */,
@@ -5662,14 +5660,15 @@
 				4289989B10359CF0005FEC40 /* Music */,
 				D8DB4E61059FA0D100624233 /* Documentation */,
 				D84395EA059FAA450054BEEE /* Products */,
-				D8934DE211EBABBD00FF4CF9 /* libmathCommon.dylib */,
 			);
 			comments = "This is the main MacOS X Xcode project file which will build the MusicKit and SndKit frameworks, Palettes, Tools, Examples, and Applications.\n\nNot all applications are able to be compiled at the moment since the unit generators are still to be converted from 56001 DSP assembly language. This is an ongoing project.\n\nThe entire project should build without warnings.\n\nSee http://www.musickit.org for most up to date info on the MusicKit.";
 			sourceTree = "<group>";
+			tabWidth = 8;
 		};
 		D8DB4E5B059FA0AA00624233 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D89E684B18BEA9F0009CDB90 /* Accelerate.framework */,
 				D8DB4E74059FA17100624233 /* MKPerformSndMIDI */,
 				D8DB4E77059FA17D00624233 /* SndKit */,
 				D8DB4E7C059FA18600624233 /* MKDSP */,
@@ -7152,10 +7151,11 @@
 		D8DB4E4C059FA05500624233 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "MusicKit Project";
 			};
 			buildConfigurationList = D8B44FEA099617E500B5C3A4 /* Build configuration list for PBXProject "MusicKit" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -9104,6 +9104,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -9132,6 +9133,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -9160,6 +9162,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9185,6 +9188,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9210,6 +9214,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9234,12 +9239,15 @@
 		D86986A30ED9CA0E00E90F3F /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9265,12 +9273,15 @@
 		D86986A50ED9CA0E00E90F3F /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
@@ -9294,11 +9305,14 @@
 		D86986A60ED9CA0E00E90F3F /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9321,11 +9335,14 @@
 		D86986A70ED9CA0E00E90F3F /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9517,6 +9534,7 @@
 		D8A1DC4409F65B8A0094B3F5 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -9543,6 +9561,7 @@
 		D8A1DC4609F65B8A0094B3F5 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9567,6 +9586,7 @@
 		D8A1DC4709F65B8A0094B3F5 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9589,6 +9609,7 @@
 		D8A1DC4809F65B8A0094B3F5 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -9611,6 +9632,7 @@
 		D8B44F1E099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9642,6 +9664,7 @@
 		D8B44F1F099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9672,6 +9695,7 @@
 		D8B44F20099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9702,6 +9726,7 @@
 		D8B44F21099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.6;
@@ -9728,7 +9753,8 @@
 		D8B44F23099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lsndfile -lvorbis -logg -lshout";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURED_LIBS = "-lmp3lame -lsndfile -lvorbis -logg -lshout";
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9763,7 +9789,8 @@
 		D8B44F24099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURED_LIBS = "-lmp3lame -lshout -lsndfile -lvorbis -logg";
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9798,7 +9825,8 @@
 		D8B44F25099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURED_LIBS = "-lmp3lame -lshout -lsndfile -lvorbis -logg";
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9833,7 +9861,8 @@
 		D8B44F26099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURED_LIBS = "-lmp3lame -lshout -lsndfile -lvorbis -logg";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.6;
@@ -9865,6 +9894,7 @@
 		D8B44F28099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9897,6 +9927,7 @@
 		D8B44F29099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9928,6 +9959,7 @@
 		D8B44F2A099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -9959,6 +9991,7 @@
 		D8B44F2B099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.6;
@@ -9986,6 +10019,7 @@
 		D8B44F2D099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -10019,6 +10053,7 @@
 		D8B44F2E099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -10051,6 +10086,7 @@
 		D8B44F2F099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -10084,6 +10120,7 @@
 		D8B44F30099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.6;
@@ -10192,6 +10229,7 @@
 		D8B44F37099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10236,6 +10274,7 @@
 		D8B44F38099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DSTROOT)/$(INSTALL_PATH)",
@@ -10278,6 +10317,7 @@
 		D8B44F39099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -10313,6 +10353,7 @@
 		D8B44F3A099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
@@ -10801,6 +10842,7 @@
 		D8B44F55099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -10829,6 +10871,7 @@
 		D8B44F56099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -10856,6 +10899,7 @@
 		D8B44F57099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -10883,6 +10927,7 @@
 		D8B44F58099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -10906,6 +10951,7 @@
 		D8B44F5A099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -10934,6 +10980,7 @@
 		D8B44F5B099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -10961,6 +11008,7 @@
 		D8B44F5C099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -10988,6 +11036,7 @@
 		D8B44F5D099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -11011,6 +11060,7 @@
 		D8B44F5F099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -11039,6 +11089,7 @@
 		D8B44F60099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11066,6 +11117,7 @@
 		D8B44F61099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11093,6 +11145,7 @@
 		D8B44F62099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -11116,6 +11169,7 @@
 		D8B44F64099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -11144,6 +11198,7 @@
 		D8B44F65099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11171,6 +11226,7 @@
 		D8B44F66099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11198,6 +11254,7 @@
 		D8B44F67099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -11221,6 +11278,7 @@
 		D8B44F69099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -11249,6 +11307,7 @@
 		D8B44F6A099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11276,6 +11335,7 @@
 		D8B44F6B099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11303,6 +11363,7 @@
 		D8B44F6C099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -11326,6 +11387,7 @@
 		D8B44F6E099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -11354,6 +11416,7 @@
 		D8B44F6F099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11381,6 +11444,7 @@
 		D8B44F70099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -11408,6 +11472,7 @@
 		D8B44F71099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -12162,6 +12227,7 @@
 		D8B44F96099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -12192,6 +12258,7 @@
 		D8B44F97099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12221,6 +12288,7 @@
 		D8B44F98099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12250,6 +12318,7 @@
 		D8B44F99099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
@@ -12492,6 +12561,7 @@
 		D8B44FA5099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -12522,6 +12592,7 @@
 		D8B44FA6099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12551,6 +12622,7 @@
 		D8B44FA7099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12580,6 +12652,7 @@
 		D8B44FA8099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/example3/example3-Info.plist";
@@ -12684,6 +12757,7 @@
 		D8B44FAF099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -12712,6 +12786,7 @@
 		D8B44FB0099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12739,6 +12814,7 @@
 		D8B44FB1099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12766,6 +12842,7 @@
 		D8B44FB2099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -12789,6 +12866,7 @@
 		D8B44FB4099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -12817,6 +12895,7 @@
 		D8B44FB5099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12844,6 +12923,7 @@
 		D8B44FB6099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12871,6 +12951,7 @@
 		D8B44FB7099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -12894,6 +12975,7 @@
 		D8B44FB9099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -12924,6 +13006,7 @@
 		D8B44FBA099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12953,6 +13036,7 @@
 		D8B44FBB099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -12982,6 +13066,7 @@
 		D8B44FBC099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
@@ -13007,6 +13092,7 @@
 		D8B44FBE099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -13037,6 +13123,7 @@
 		D8B44FBF099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -13066,6 +13153,7 @@
 		D8B44FC0099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -13095,6 +13183,7 @@
 		D8B44FC1099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/ScorePlayer/ScorePlayer-Info.plist";
@@ -13120,6 +13209,7 @@
 		D8B44FC3099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -13150,6 +13240,7 @@
 		D8B44FC4099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -13179,6 +13270,7 @@
 		D8B44FC5099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -13208,6 +13300,7 @@
 		D8B44FC6099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/PianoRoll/PianoRoll-Info.plist";
@@ -13233,6 +13326,7 @@
 		D8B44FC8099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
@@ -13263,6 +13357,7 @@
 		D8B44FC9099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -13292,6 +13387,7 @@
 		D8B44FCA099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -13321,6 +13417,7 @@
 		D8B44FCB099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/EnvelopeEd/EnvelopeEd-Info.plist";
@@ -13587,6 +13684,7 @@
 		D8B44FDC099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13616,6 +13714,7 @@
 		D8B44FDD099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13644,6 +13743,7 @@
 		D8B44FDE099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13672,6 +13772,7 @@
 		D8B44FDF099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.6;
@@ -13696,6 +13797,7 @@
 		D8B44FE1099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13729,6 +13831,7 @@
 		D8B44FE2099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13761,6 +13864,7 @@
 		D8B44FE3099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13793,6 +13897,7 @@
 		D8B44FE4099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.6;
@@ -13821,6 +13926,7 @@
 		D8B44FE6099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13854,6 +13960,7 @@
 		D8B44FE7099617E500B5C3A4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13886,6 +13993,7 @@
 		D8B44FE8099617E500B5C3A4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -13918,6 +14026,7 @@
 		D8B44FE9099617E500B5C3A4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -13946,11 +14055,10 @@
 		D8B44FEB099617E500B5C3A4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
 				GCC_MODEL_TUNING = "";
 				LIBRARY_SEARCH_PATHS = /sw/lib;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				SDKROOT = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -13990,6 +14098,7 @@
 		D8CFD2640B5D66E0003AB3C3 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -14016,6 +14125,7 @@
 		D8CFD2660B5D66E0003AB3C3 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -14040,6 +14150,7 @@
 		D8CFD2670B5D66E0003AB3C3 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -14062,6 +14173,7 @@
 		D8CFD2680B5D66E0003AB3C3 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -14084,6 +14196,7 @@
 		D8D2A3CA0FA90539008DBF68 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -14108,6 +14221,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -14132,6 +14246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -14153,6 +14268,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -14173,11 +14289,11 @@
 		D8EB698810713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = 4.0;
+				GCC_VERSION = "";
 				MAC_OS_X_VERSION_MAX_ALLOWED = 1050;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
 			};
 			name = "Legacy Deployment";
@@ -14337,6 +14453,7 @@
 		D8EB699110713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14345,6 +14462,7 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				GCC_VERSION = "";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = .;
@@ -14367,7 +14485,8 @@
 		D8EB699210713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURED_LIBS = "-lmp3lame -lshout -lsndfile -lvorbis -logg";
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14402,6 +14521,7 @@
 		D8EB699310713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14434,6 +14554,7 @@
 		D8EB699410713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14466,6 +14587,7 @@
 		D8EB699510713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14494,6 +14616,7 @@
 		D8EB699610713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -14526,6 +14649,7 @@
 		D8EB699710713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DSTROOT)/$(INSTALL_PATH)",
@@ -14568,12 +14692,15 @@
 		D8EB699810713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(DEVELOPER_FRAMEWORKS_DIR)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(DEVELOPER_DIR)/Library/PrivateFrameworks\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
@@ -14702,6 +14829,7 @@
 		D8EB699D10713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -14731,6 +14859,7 @@
 		D8EB699E10713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -14755,6 +14884,7 @@
 		D8EB699F10713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -14779,6 +14909,7 @@
 		D8EB69A010713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -14806,6 +14937,7 @@
 		D8EB69A110713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -14833,6 +14965,7 @@
 		D8EB69A210713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -14860,6 +14993,7 @@
 		D8EB69A310713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -14887,6 +15021,7 @@
 		D8EB69A410713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -14914,6 +15049,7 @@
 		D8EB69A510713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15245,6 +15381,7 @@
 		D8EB69B210713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15274,6 +15411,7 @@
 		D8EB69B310713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15301,6 +15439,7 @@
 		D8EB69B410713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15328,6 +15467,7 @@
 		D8EB69B510713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -15360,6 +15500,7 @@
 		D8EB69B610713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15389,6 +15530,7 @@
 		D8EB69B710713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15418,6 +15560,7 @@
 		D8EB69B810713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15447,6 +15590,7 @@
 		D8EB69B910713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT)/$(INSTALL_PATH)";
 				GCC_ALTIVEC_EXTENSIONS = YES;
@@ -15476,6 +15620,7 @@
 		D8EB69BA10713E5500400D74 /* Legacy Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -15501,6 +15646,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -15524,6 +15670,7 @@
 		D8FD873809F6667C001E01B4 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -15550,6 +15697,7 @@
 		D8FD873A09F6667C001E01B4 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -15574,6 +15722,7 @@
 		D8FD873B09F6667C001E01B4 /* Embedded */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -15596,6 +15745,7 @@
 		D8FD873C09F6667C001E01B4 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

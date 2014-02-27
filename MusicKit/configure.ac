@@ -88,8 +88,13 @@ AC_CHECK_LIB(shout, shout_open)
 AC_CHECK_LIB(mp3lame, lame_init)
 
 # Will #if define out SndMP3.m if HIP isn't available
-AC_MSG_NOTICE([checking for MP3 decoding libraries])
+AC_MSG_NOTICE([checking for HIP MP3 decoding library])
+# hip used to live in it's own library, but is now part of LAME.
 AC_CHECK_LIB(mp3hip, hip_decode_init)
+AC_CHECK_LIB(mp3lame, hip_decode_init)
+# Once we've determined which library to use, we need to define a macro that can indicate
+# MP3 decoding is possible.
+AC_CHECK_FUNCS(hip_decode_init)
 
 # Create configure headers to control which library headers are included.
 AC_CONFIG_HEADERS(Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/MKPerformSndMIDIConfig.h \

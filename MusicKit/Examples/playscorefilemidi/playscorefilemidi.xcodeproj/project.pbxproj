@@ -1,0 +1,463 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0899F11EFFD585C4CFED3B96 /* playscorefilemidi.m in Sources */ = {isa = PBXBuildFile; fileRef = 0899F10CFFD585C4CFED3B96 /* playscorefilemidi.m */; settings = {ATTRIBUTES = (); }; };
+		0899F121FFD585C4CFED3B96 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0899F116FFD585C4CFED3B96 /* Foundation.framework */; };
+		0899F122FFD585C4CFED3B96 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0899F117FFD585C4CFED3B96 /* MusicKit.framework */; };
+		D8F029D61842AC4C00EE0FE9 /* playscorefilemidi.m in Sources */ = {isa = PBXBuildFile; fileRef = 0899F10CFFD585C4CFED3B96 /* playscorefilemidi.m */; settings = {ATTRIBUTES = (); }; };
+		D8F029D81842AC4C00EE0FE9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0899F116FFD585C4CFED3B96 /* Foundation.framework */; };
+		D8F029D91842AC4C00EE0FE9 /* MusicKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0899F117FFD585C4CFED3B96 /* MusicKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		D8F029E41842AC5200EE0FE9 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_x;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		D8F029E51842AC5200EE0FE9 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_x;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		D8F029E61842AC5200EE0FE9 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_x;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXFileReference section */
+		0899F10CFFD585C4CFED3B96 /* playscorefilemidi.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = playscorefilemidi.m; sourceTree = "<group>"; };
+		0899F113FFD585C4CFED3B96 /* README */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		0899F116FFD585C4CFED3B96 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		0899F117FFD585C4CFED3B96 /* MusicKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MusicKit.framework; path = /Library/Frameworks/MusicKit.framework; sourceTree = "<absolute>"; };
+		0899F11AFFD585C4CFED3B96 /* playscorefilemidi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = playscorefilemidi; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8F029DF1842AC4C00EE0FE9 /* playscorefilemidi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = playscorefilemidi; path = build/Development/playscorefilemidi; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0899F11FFFD585C4CFED3B96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0899F121FFD585C4CFED3B96 /* Foundation.framework in Frameworks */,
+				0899F122FFD585C4CFED3B96 /* MusicKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029D71842AC4C00EE0FE9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029D81842AC4C00EE0FE9 /* Foundation.framework in Frameworks */,
+				D8F029D91842AC4C00EE0FE9 /* MusicKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0899F10AFFD585C4CFED3B96 /* playscorefilemidi */ = {
+			isa = PBXGroup;
+			children = (
+				0899F10BFFD585C4CFED3B96 /* Classes */,
+				0899F10DFFD585C4CFED3B96 /* Supporting Files */,
+				0899F114FFD585C4CFED3B96 /* External Frameworks and Libraries */,
+				0899F119FFD585C4CFED3B96 /* Products */,
+			);
+			name = playscorefilemidi;
+			sourceTree = "<group>";
+		};
+		0899F10BFFD585C4CFED3B96 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0899F10CFFD585C4CFED3B96 /* playscorefilemidi.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		0899F10DFFD585C4CFED3B96 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0899F113FFD585C4CFED3B96 /* README */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0899F114FFD585C4CFED3B96 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				0899F116FFD585C4CFED3B96 /* Foundation.framework */,
+				0899F117FFD585C4CFED3B96 /* MusicKit.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		0899F119FFD585C4CFED3B96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0899F11AFFD585C4CFED3B96 /* playscorefilemidi */,
+				D8F029DF1842AC4C00EE0FE9 /* playscorefilemidi */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0899F11CFFD585C4CFED3B96 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029D41842AC4C00EE0FE9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		D8F029D31842AC4C00EE0FE9 /* playscorefilemidi (Tool) (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8F029DB1842AC4C00EE0FE9 /* Build configuration list for PBXNativeTarget "playscorefilemidi (Tool) (Upgraded)" */;
+			buildPhases = (
+				D8F029D41842AC4C00EE0FE9 /* Headers */,
+				D8F029D51842AC4C00EE0FE9 /* Sources */,
+				D8F029D71842AC4C00EE0FE9 /* Frameworks */,
+				D8F029DA1842AC4C00EE0FE9 /* Rez */,
+			);
+			buildRules = (
+				D8F029E41842AC5200EE0FE9 /* PBXBuildRule */,
+				D8F029E51842AC5200EE0FE9 /* PBXBuildRule */,
+				D8F029E61842AC5200EE0FE9 /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = "playscorefilemidi (Tool) (Upgraded)";
+			productInstallPath = /bin;
+			productName = playscorefilemidi;
+			productReference = D8F029DF1842AC4C00EE0FE9 /* playscorefilemidi */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0899F109FFD585C4CFED3B96 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D8F029CD1842AC4600EE0FE9 /* Build configuration list for PBXProject "playscorefilemidi" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 0899F10AFFD585C4CFED3B96 /* playscorefilemidi */;
+			productRefGroup = 0899F119FFD585C4CFED3B96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8F029D31842AC4C00EE0FE9 /* playscorefilemidi (Tool) (Upgraded) */,
+				0899F11BFFD585C4CFED3B96 /* playscorefilemidi (Tool) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXRezBuildPhase section */
+		0899F123FFD585C4CFED3B96 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029DA1842AC4C00EE0FE9 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0899F11DFFD585C4CFED3B96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0899F11EFFD585C4CFED3B96 /* playscorefilemidi.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F029D51842AC4C00EE0FE9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F029D61842AC4C00EE0FE9 /* playscorefilemidi.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXToolTarget section */
+		0899F11BFFD585C4CFED3B96 /* playscorefilemidi (Tool) */ = {
+			isa = PBXToolTarget;
+			buildConfigurationList = D8F029CE1842AC4600EE0FE9 /* Build configuration list for PBXToolTarget "playscorefilemidi (Tool)" */;
+			buildPhases = (
+				0899F11CFFD585C4CFED3B96 /* Headers */,
+				0899F11DFFD585C4CFED3B96 /* Sources */,
+				0899F11FFFD585C4CFED3B96 /* Frameworks */,
+				0899F123FFD585C4CFED3B96 /* Rez */,
+			);
+			dependencies = (
+			);
+			name = "playscorefilemidi (Tool)";
+			productInstallPath = /bin;
+			productName = playscorefilemidi;
+			productReference = 0899F11AFFD585C4CFED3B96 /* playscorefilemidi */;
+		};
+/* End PBXToolTarget section */
+
+/* Begin XCBuildConfiguration section */
+		D8F029C71842AC4600EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D8F029C81842AC4600EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D8F029C91842AC4600EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+		D8F029CA1842AC4600EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				COPY_PHASE_STRIP = NO;
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = 3.x;
+				INSTALL_PATH = /bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playscorefilemidi;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F029CB1842AC4600EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				COPY_PHASE_STRIP = YES;
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_VERSION = 3.x;
+				INSTALL_PATH = /bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playscorefilemidi;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F029CC1842AC4600EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
+				GCC_VERSION = 3.x;
+				INSTALL_PATH = /bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playscorefilemidi;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		D8F029DC1842AC4C00EE0FE9 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				COPY_PHASE_STRIP = NO;
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(LOCAL_LIBRARY_DIR)/Frameworks\\\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\\\"";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playscorefilemidi;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D8F029DD1842AC4C00EE0FE9 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				COPY_PHASE_STRIP = YES;
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(LOCAL_LIBRARY_DIR)/Frameworks\\\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\\\"";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				INSTALL_PATH = /bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playscorefilemidi;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D8F029DE1842AC4C00EE0FE9 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(LOCAL_LIBRARY_DIR)/Frameworks\\\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\\\"";
+				INSTALL_PATH = /bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playscorefilemidi;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8F029CD1842AC4600EE0FE9 /* Build configuration list for PBXProject "playscorefilemidi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029C71842AC4600EE0FE9 /* Development */,
+				D8F029C81842AC4600EE0FE9 /* Deployment */,
+				D8F029C91842AC4600EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F029CE1842AC4600EE0FE9 /* Build configuration list for PBXToolTarget "playscorefilemidi (Tool)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029CA1842AC4600EE0FE9 /* Development */,
+				D8F029CB1842AC4600EE0FE9 /* Deployment */,
+				D8F029CC1842AC4600EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D8F029DB1842AC4C00EE0FE9 /* Build configuration list for PBXNativeTarget "playscorefilemidi (Tool) (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F029DC1842AC4C00EE0FE9 /* Development */,
+				D8F029DD1842AC4C00EE0FE9 /* Deployment */,
+				D8F029DE1842AC4C00EE0FE9 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0899F109FFD585C4CFED3B96 /* Project object */;
+}

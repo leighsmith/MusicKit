@@ -249,7 +249,7 @@ id MKGetEnvelopeClass(void)
   return pointCount;
 }
 
-- (unsigned) hash
+- (NSUInteger) hash
 {
 // trivial hash
     return pointCount + 256 * stickPoint + 1000 * defaultSmoothing + 19 * samplingPeriod;

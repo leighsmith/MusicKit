@@ -366,7 +366,7 @@
 #define TIMEDSENDTO(conductor,receiver,selector,dt,notetag_arg) \
   { /* NSLog(@"dt=%lf\n",dt); */ \
     if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,notetag_arg]; \
-    else [receiver performSelector: selector withObject: (id) notetag_arg]; \
+    else [receiver performSelector: selector withObject: notetag_arg]; \
   }
 #endif
 

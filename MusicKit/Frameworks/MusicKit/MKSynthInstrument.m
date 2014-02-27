@@ -92,18 +92,14 @@ Modification history prior to commit to CVS repository:
 /* Set of active MKSynthPatches but not including those 
    which had no noteTag. Hash from noteTag to patch. */
 
-typedef struct {
-	@defs (MKSynthPatch)
-} synthPatchStruct;
 #import "SynthPatchPrivate.h"
 #import "SynthPatchList.h"
 
-@implementation MKSynthInstrument:MKInstrument /*sb moved to here (see above) */
+@implementation MKSynthInstrument /*sb moved to here (see above) */
 
-#define NEXT(_y) (((synthPatchStruct *)(_y))->_next)
 // #define NEXTSP(_x) ((NEXT(_x) != _x) ? _x : nil)
-#define NEXTSP(_x) (NEXT(_x))
 /* Beware when using this macro! The list may be changed by your operation */
+#define NEXTSP(_y) [((MKSynthPatch *) _y) next]
 
 #define WILD (-1)
 
@@ -114,16 +110,17 @@ static void CONSISTENCY_CHECK(SynthPatchList *aPatchList) {
 	NSLog(@"MKSynthInstrument accounting problem.");
 }
 
-static SynthPatchList *getList(MKSynthInstrument *self,id template)
+static SynthPatchList *getList(MKSynthInstrument *self, id template)
     /* Returns list matching template, else NULL. */
 {
+    register int patchListIndex;
+    
     /* Skip over the orphan list. */
-    register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex:1];
-    register SynthPatchList *last = tmp + [self->_patchLists count] - 1;
-    while (tmp < last)
-      if (tmp->template == template)
-	return tmp;
-      else tmp++;
+    for (patchListIndex = 1; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
+        if (tmp->template == template)
+            return tmp;
+    }
     return NULL;
 }
 
@@ -138,13 +135,14 @@ static SynthPatchList *addList(MKSynthInstrument *self,id template)
 
 static SynthPatchList *findListWithIdlePatch(MKSynthInstrument *self)
 {
-    /* Skip orphan list */
-    register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex:1];
-    register SynthPatchList *last = tmp + [self->_patchLists count] - 1;
-    while (tmp < last)
-      if (tmp->idleOldest) 
-	return tmp;
-      else tmp++;
+    register int patchListIndex;
+    
+    /* Skip over the orphan list. */
+    for (patchListIndex = 1; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
+        if (tmp->idleOldest)
+            return tmp;
+    }
     return NULL;
 }
 
@@ -387,21 +385,20 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
 
 static id findAltListRunningPatch(MKSynthInstrument *self,id aNote,SynthPatchList **aPatchList)
 {
-    /* Skip orphan list */
-    register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex:1];
-    register SynthPatchList *last = tmp + [self->_patchLists count] - 1;
-    id currentPatch;
-    while (tmp < last) {
+    register int patchListIndex;
+    
+    /* Skip over the orphan list. */
+    for (patchListIndex = 1; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
 	if (tmp != *aPatchList)
-	  if (tmp->activeOldest) { /* don't bother if there's no patches */
-	      currentPatch = [self preemptSynthPatchFor:aNote patches:
-			      tmp->activeOldest];
-	      if (currentPatch) {
-		  *aPatchList = tmp;
-		  return currentPatch;
-	      } 
-	  }
-	tmp++;
+            if (tmp->activeOldest) { /* don't bother if there's no patches */
+                id currentPatch = [self preemptSynthPatchFor: aNote patches: tmp->activeOldest];
+                
+                if (currentPatch) {
+                    *aPatchList = tmp;
+                    return currentPatch;
+                } 
+            }
     }
     return nil;
 }
@@ -620,13 +617,13 @@ static void alternatePatchMsg(void)
       }
       case MK_noteUpdate:
 	if (noteTag == MAXINT) { /* It's a broadcast */
-            register SynthPatchList *tmp = (SynthPatchList *)[_patchLists objectAtIndex:0];
-            register SynthPatchList *last = tmp + [_patchLists count];
-	    for (; tmp < last; tmp++) {
-		currentPatch = tmp->activeOldest;
+            int patchListIndex;
+	    for (patchListIndex = 0; patchListIndex < [_patchLists count]; patchListIndex++) {
+                register SynthPatchList *patchList = (SynthPatchList *)[_patchLists objectAtIndex: patchListIndex];
+		currentPatch = patchList->activeOldest;
 		if (currentPatch) {
                     do {
-                        [currentPatch noteUpdate:aNote];
+                        [currentPatch noteUpdate: aNote];
                     } while((currentPatch = NEXTSP(currentPatch))); 
                 }
 	    }
@@ -691,17 +688,15 @@ static void deallocIdleVoices(MKSynthInstrument *self,id orch)
        card. */
 {
     register id aPatch,nextPatch;
-    register SynthPatchList *aPatchList;
-    register SynthPatchList *last;
-    /* Skip orphan list */
-    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:1],
-	 last = aPatchList + [self->_patchLists count] - 1;
-	 (aPatchList < last);
-	 aPatchList++) {
+    register int patchListIndex;
+    
+    /* Skip over the orphan list. */
+    for (patchListIndex = 1; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *aPatchList = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
 	for (aPatch = aPatchList->idleOldest; aPatch; aPatch = nextPatch) {
-	    nextPatch = NEXTSP(aPatch);  
-	    if ((!orch) || ([aPatch orchestra] == orch)) 
-	      releaseIdlePatch(aPatch,aPatchList);
+	    nextPatch = NEXTSP(aPatch);
+	    if ((!orch) || ([aPatch orchestra] == orch))
+                releaseIdlePatch(aPatch,aPatchList);
 	}
     }
 }
@@ -711,13 +706,12 @@ static void orphanRunningVoices(MKSynthInstrument *self)
        from running, however. */
 {
     register id aPatch;
-    register SynthPatchList *aPatchList,*orphanList;
-    register SynthPatchList *last;
-    orphanList =  (SynthPatchList *)[self->_patchLists objectAtIndex:0];
-    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:1],
-	 last = aPatchList + [self->_patchLists count] - 1;
-	 (aPatchList < last);
-	 aPatchList++) {
+    register int patchListIndex;
+    register SynthPatchList *orphanList =  (SynthPatchList *)[self->_patchLists objectAtIndex:0];
+    
+    /* Skip over the orphan list. */
+    for (patchListIndex = 1; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *aPatchList = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
 	while (aPatchList->activeOldest)  {
             [aPatchList->activeOldest retain];
 	    aPatch = _MKRemoveSynthPatch(aPatchList->activeOldest,
@@ -818,22 +812,20 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
     return synthPatchClass;
 }
 
--allNotesOff
+- allNotesOff
     /* Broadcasts 'noteOff' to all running voices on given orch. (nil orch
        is wild card) Includes orphan patches. */
 {
     register id aPatch,nextPatch;
-    register SynthPatchList *aPatchList;
-    register SynthPatchList *last;
-    id aNote = [[MKNote allocWithZone:[self zone]] init];
-    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:0],
-	 last = aPatchList + [self->_patchLists count];
-	 (aPatchList < last);
-	 aPatchList++) {
+    id aNote = [[MKNote allocWithZone: [self zone]] init];
+    register int patchListIndex;
+    
+    for (patchListIndex = 0; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
 	for (aPatch = aPatchList->activeOldest; aPatch; aPatch = nextPatch) {
 	    nextPatch = NEXTSP(aPatch);  
 	    if ([(MKSynthPatch *) aPatch status] == MK_running)
-	      [aPatch noteOff:aNote];
+	      [aPatch noteOff: aNote];
 	}
     }
     return self;
@@ -844,18 +836,17 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
        is wild card) Includes orphan patches. */
 {
     register id aPatch,nextPatch;
-    register SynthPatchList *aPatchList;
-    register SynthPatchList *last;
-    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:0],
-	 last = aPatchList + [self->_patchLists count];
-	 (aPatchList < last);
-	 aPatchList++) {
+    register int patchListIndex;
+    
+    for (patchListIndex = 0; patchListIndex < [self->_patchLists count]; patchListIndex++) {
+        register SynthPatchList *aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex: patchListIndex];
 	for (aPatch = aPatchList->activeOldest; aPatch; aPatch = nextPatch) {
-	    nextPatch = NEXTSP(aPatch);  
-	    if ((!orch) || ([aPatch orchestra] == orch)) 
-	      [aPatch noteEnd];
+	    nextPatch = NEXTSP(aPatch);
+	    if ((!orch) || ([aPatch orchestra] == orch))
+                [aPatch noteEnd];
 	}
     }
+   
 }
 
 -abort

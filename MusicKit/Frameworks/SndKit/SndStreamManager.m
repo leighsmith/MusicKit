@@ -181,8 +181,8 @@ static SndStreamManager *defaultStreamManager = nil;
 	NSArray *inputNames = [SndStreamManager driverNamesForOutput: NO];
 
 	// Find the device indices for input and output names.
-	int outputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
-	int inputDeviceIndex = [inputNames indexOfObject: inputDeviceName];
+	NSInteger outputDeviceIndex = [outputNames indexOfObject: outputDeviceName];
+	NSInteger inputDeviceIndex = [inputNames indexOfObject: inputDeviceName];
 	
 	if(outputDeviceIndex != NSNotFound && inputDeviceIndex != NSNotFound) {
 	    [self setAssignedDriverToIndex: outputDeviceIndex forOutput: YES];
