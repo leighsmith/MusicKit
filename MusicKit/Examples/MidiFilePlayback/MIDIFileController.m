@@ -258,16 +258,19 @@
 - (void) setMIDIFilename: (id) sender
 {
     int result;
-    NSArray *fileTypes = [NSArray arrayWithObjects:@"midi", @"", nil];
+    NSArray *fileTypes = [NSArray arrayWithObjects: @"midi", @"mid", @"", nil];
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
 
-    [oPanel setAllowsMultipleSelection:NO];
-    result = [oPanel runModalForDirectory:midiPathName file:nil types:fileTypes];
+    [oPanel setAllowsMultipleSelection: NO];
+    [oPanel setDirectoryURL: [NSURL fileURLWithPath: midiPathName]];
+    [oPanel setAllowedFileTypes: fileTypes];
+    result = [oPanel runModal];
     if (result == NSOKButton) {
-        NSArray *filesToOpen = [oPanel filenames];
-        int i, count = [filesToOpen count];
-        for (i=0; i<count; i++) {
-            midiPathName = [filesToOpen objectAtIndex:i];
+        NSArray *URLsToOpen = [oPanel URLs];
+        int fileIndex, count = [URLsToOpen count];
+        
+        for (fileIndex = 0; fileIndex < count; fileIndex++) {
+            midiPathName = [[URLsToOpen objectAtIndex: fileIndex] path];
             [midiPathNameTextBox setStringValue: midiPathName];
             [playButton setEnabled: YES];
         }
@@ -279,16 +282,19 @@
 - (void) setKeymapFilename: (id) sender
 {
     int result;
-    NSArray *fileTypes = [NSArray arrayWithObject:@"plist"];
+    NSArray *fileTypes = [NSArray arrayWithObject: @"plist"];
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
 
-    [oPanel setAllowsMultipleSelection:NO];
-    result = [oPanel runModalForDirectory:keymapPathName file:nil types:fileTypes];
+    [oPanel setAllowsMultipleSelection: NO];
+    [oPanel setDirectoryURL: [NSURL fileURLWithPath: midiPathName]];
+    [oPanel setAllowedFileTypes: fileTypes];
+    result = [oPanel runModal];
     if (result == NSOKButton) {
-        NSArray *filesToOpen = [oPanel filenames];
-        int i, count = [filesToOpen count];
-        for (i = 0; i < count; i++) {
-            keymapPathName = [filesToOpen objectAtIndex: i];
+        NSArray *URLsToOpen = [oPanel URLs];
+        int fileIndex, count = [URLsToOpen count];
+        
+        for (fileIndex = 0; fileIndex < count; fileIndex++) {
+            keymapPathName = [[URLsToOpen objectAtIndex: fileIndex] path];
             keymap = [NSDictionary dictionaryWithContentsOfFile: keymapPathName];
             if(keymap == nil) {
                 NSLog(@"Couldn't load keymap file %@.\n", keymapPathName);
@@ -302,28 +308,28 @@
 }
 
 //@implementation MIDIFileController(ConductorDelegate)
-- conductorWillSeek:sender
+- conductorWillSeek: sender
 {
     return self;
 }
 
-- conductorDidSeek:sender
+- conductorDidSeek: sender
 {
     return self;
 }
 
-- conductorDidReverse:sender
+- conductorDidReverse: sender
 {
     return self;
 }
 
-- conductorDidPause:sender
+- conductorDidPause: sender
 {
     [midiInstrument allNotesOff];
     return self;
 }
 
-- conductorDidResume:sender
+- conductorDidResume: sender
 {
     return self;
 }
