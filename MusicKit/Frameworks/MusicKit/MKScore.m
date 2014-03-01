@@ -1200,15 +1200,10 @@ static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, in
 		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
 		    break;
 		case MKMIDI_keySig: {
-		    char str[5];
-		    
 		    /* Want sf signed, hence (char) cast  */
-		    int x = (int)((char) DATA[2]); /* sf */
-		    sprintf(&(str[0]), "%-2d ", x);
-		    x = (int) DATA[3]; /* mi */
-		    sprintf(&(str[3]), "%d", x);
-		    str[4] = '\0';
-		    MKSetNoteParToString(aNote, MK_keySignature, [NSString stringWithUTF8String: str]);
+		    int sf = (int)((char) DATA[2]); /* sf */
+		    int mi = (int)((char) DATA[3]); /* mi */
+		    MKSetNoteParToString(aNote, MK_keySignature, [NSString stringWithFormat: @"%-2d %d", sf, mi]);
 		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
 		    break;
 		}
