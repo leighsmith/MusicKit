@@ -5,7 +5,7 @@
  */
 #import "SysExReceiver.h"
 #import "MIDISysExSynth.h"
-#import "Bank.h"
+#import "PatchBankDocument.h"
 
 @implementation SysExReceiver
 
@@ -25,7 +25,7 @@
 }
 
 // set the delegate bank to save received respondant synth instances into.
-- (void) setDelegateBank: (Bank *) bank
+- (void) setDelegateBank: (PatchBankDocument *) bank
 {
     delegateBank = bank;
 }

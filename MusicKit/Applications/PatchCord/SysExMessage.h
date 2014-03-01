@@ -1,3 +1,10 @@
+/*!
+  @class SysExMessage
+  @author Leigh M. Smith
+  @description
+     Encapsulates MIDI system exclusive message creation, format conversion, reception and transmission.
+*/
+
 #import <AppKit/AppKit.h>
 #import <MusicKit/MusicKit.h>
 
@@ -15,7 +22,21 @@ typedef enum _exportFormat {
    NSMutableData *message;	// the sysex message data
 }
 
+/*!
+  @brief Open the default MIDI device for SysEx messages.
+ */
 + (void) open;
+
+/*!
+  @brief Open the named MIDI device for either input or output of SysEx messages.
+ */
++ (void) openOnDevice: (NSString *) deviceName forInput: (BOOL) isInput;
+
+/*!
+  @brief Returns an autoreleased MKMidi instance used for input or output.
+ */
++ (MKMidi *) midiDeviceForInput: (BOOL) isInput;
+
 + (void) close;
 + (void) registerSynth: (MIDISysExSynth *) sender;
 + (NSMutableArray *) registeredSynths;

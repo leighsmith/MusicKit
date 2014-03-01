@@ -1,21 +1,19 @@
 //
-//  $Id$
 //  PatchCord
 //
 //  Created by Leigh Smith
 //  Copyright 2001 The MusicKit Project. All rights reserved.
 //
 
-#import "Bank.h"
-//#import <EOControl/EOControl.h>
-#import "PreferencesManager.h"          // for preferences constants
+#import "PatchBankDocument.h"
+#import "PatchCordController.h"         // for preferences constants
 #import "SysExReceiver.h"               // in order to be it's delegate
 
 // Constant strings
 NSString *BANK_TYPE = @"MIDI";
 NSString *UNTITLED_PATCH = @"New Patch %03d";
 
-@implementation Bank
+@implementation PatchBankDocument
 
 static unsigned int patchCounter;
 
@@ -42,7 +40,7 @@ static unsigned int patchCounter;
 // returning the nib file name of the document
 - (NSString *) windowNibName 
 {
-    return @"Bank";
+    return @"PatchBank";
 }
 
 // -----------------------------------------------------------------------------
@@ -133,7 +131,7 @@ static unsigned int patchCounter;
     return [super validateMenuItem: aMenuItem];
 }
 
-// insert the synthesizer instance into the Bank TableView and the PatchBank model.
+// insert the synthesizer instance into the PatchBankDocument TableView and the PatchBank model.
 - (void) addPatch: (MIDISysExSynth *) synthToAdd
 {
     [patchBank newPatch: synthToAdd];
@@ -169,7 +167,7 @@ static unsigned int patchCounter;
     // received (shift selection to collect several together).
     if(![currentSynth catchesAllMessages]) {
         [currentSynth setBank: self];         // Let the synth know who its bank is.
-        [currentSynth setPatchDescription: [NSString stringWithFormat: UNTITLED_PATCH, [Bank bumpPatchCounter]]];
+        [currentSynth setPatchDescription: [NSString stringWithFormat: UNTITLED_PATCH, [PatchBankDocument bumpPatchCounter]]];
         [sendToSynthButton setEnabled: YES];      // Now we have a patch we enable the button for sending to a synth
     }
 }
@@ -244,7 +242,7 @@ static unsigned int patchCounter;
 
 @end
 
-@implementation Bank(SysExReceiverDelegate)
+@implementation PatchBankDocument(SysExReceiverDelegate)
 
 // We have made this bank a delegate for SysExReceiver, so we can retrieve the list of
 // synths that responded to the accept message
@@ -263,10 +261,10 @@ static unsigned int patchCounter;
 
 // TODO check if there are no more windows, in which case [SysExMessage disable]
 // figure out what to do once all banks are closed, should disable.
-// Hmm maybe, we could just do the same as synthLoader and create an untitled Bank.
+// Hmm maybe, we could just do the same as synthLoader and create an untitled PatchBankDocument.
 
 // Conform to the informal Table Data Source protocol as well as being the TableView's delegate
-@implementation Bank(NSTableDataSource)
+@implementation PatchBankDocument(NSTableDataSource)
 
 // Returns the number of patches within the bank.
 - (int) numberOfRowsInTableView: (NSTableView *) aTableView
@@ -326,7 +324,7 @@ static unsigned int patchCounter;
 
 @end
 
-@implementation Bank(NSTableViewDelegate)
+@implementation PatchBankDocument(NSTableViewDelegate)
 
 // Deny editing the Synth name
 - (BOOL) tableView: (NSTableView *) aTableView

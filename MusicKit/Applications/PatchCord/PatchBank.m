@@ -1,7 +1,7 @@
 /*
 PatchBank - a managed collection of dissimilar synth subclass instances, containing synth data.
 
- * This should allow collecting and archiving various Synth instances in a single file, searching through by using the patch as a key into the Bank archive.
+ * This should allow collecting and archiving various Synth instances in a single file, searching through by using the patch as a key into the PatchBankDocument archive.
  Banks - archiving objects
  Investigate bank files and the indexing kit, rather than a full
  database. This could be the case if we are storing in Ascii, which has
@@ -35,7 +35,7 @@ PatchBank - a managed collection of dissimilar synth subclass instances, contain
  The following two informational methods consider the same problem, banks, delegates?
  Probably should start thinking about the bank interface in order to fully define the
  synth multiple patch handling methods. Think of it in terms of a general object storage device.
- Bank - a managed collection of dissimilar synth subclass instances, containing synth data.
+ PatchBankDocument - a managed collection of dissimilar synth subclass instances, containing synth data.
  */
 // - (BOOL) canSendMultiplePatches
 
@@ -59,7 +59,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
 }
 
 // We should export the patch names and numbers for a particular device as a patch list to Sequence.app/patchlists and then run Sequence.app/patchlists/midi-convert to turn it into a patch list useful by Sequence. Will need to check the permissions for writing. The Name should be determined from the Class name of the Synth object.
-// - generatePatchListsForSequence called from Bank->Save To 
+// - generatePatchListsForSequence called from PatchBankDocument->Save To 
 - generatePatchListsForSequence
 {
      return self;
@@ -250,7 +250,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
 // If the patch already has been inserted into the bank we don't reinclude.
 - (void) newPatch: (id) patch
 {
-    unsigned int previousLocation;
+    NSUInteger previousLocation;
 
     [patch retain];
     previousLocation = [theBank indexOfObjectIdenticalTo: patch];
@@ -269,6 +269,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
     [sortOrder release];
     sortOrder = [newSortOrder retain];  // keep a copy of the sort order to write out to the MIDI file.
     [theBank release];     // release the old one
+    // TODO should this be a copy operation?
     theBank = [sorted retain];  // keep the new one
 }
 

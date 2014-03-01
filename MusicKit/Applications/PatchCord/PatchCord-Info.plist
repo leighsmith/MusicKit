@@ -16,7 +16,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
-			<string>Bank</string>
+			<string>PatchBankDocument</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>

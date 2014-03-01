@@ -21,7 +21,7 @@
 {
     [super initWithEmptyPatch];
     [self init];
-    [super initWithWindowNibName: @"unhandled" owner:self];
+    [super initWithWindowNibName: @"UnhandledSynth" owner:self];
     [[self window] makeKeyAndOrderFront:nil];     // make the window visible
     return self;
 }
@@ -105,7 +105,7 @@
     NSRange  selectedRange;
     NSRange  startRange;
     NSRange  hexStringRange;
-    unsigned int endLocation, startLocation, hexStringBegin;
+    NSUInteger endLocation, startLocation, hexStringBegin;
 
 // if aNotification // NSReturnTextMovement?
 

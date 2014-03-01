@@ -5,7 +5,7 @@
  * $Id$
  */
 #import "MIDISysExSynth.h"
-#import "Bank.h"
+#import "PatchBankDocument.h"
 
 @implementation MIDISysExSynth
 
@@ -26,7 +26,7 @@
     return self;
 }
 
-// Called from Bank where there is no data accompanying it.
+// Called from PatchBankDocument where there is no data accompanying it.
 // We need to initialise to a meaningful empty patch (randomise it) and 
 // at some point (as soon as it is
 // generated?, when commanded to, using sendPatch?) download that patch. 
@@ -155,7 +155,7 @@
 The following two informational methods consider the same problem, banks, delegates?
 Probably should start thinking about the bank interface in order to fully define the
 synth multiple patch handling methods. Think of it in terms of a general object storage device.
-Bank - a managed collection of dissimilar synth subclass instances, containing synth data.
+PatchBankDocument - a managed collection of dissimilar synth subclass instances, containing synth data.
 */
 
 // Indicates the synth can send a whole bunch of patches in a single sysex message.
@@ -256,16 +256,16 @@ patch name be derived from the description (when downloading) & vice-versa when 
     return NO;
 }
 
-// Assign which bank we are part of. A Bank is a document instance but assigning it as this sub-classes document
-// makes Bank handle the synth inspector window closing, which isn't what we want. We do need to know what Bank we
+// Assign which bank we are part of. A PatchBankDocument is a document instance but assigning it as this sub-classes document
+// makes PatchBankDocument handle the synth inspector window closing, which isn't what we want. We do need to know what PatchBankDocument we
 // are part of, hence the following two methods.
-- (void) setBank: (Bank *) b
+- (void) setBank: (PatchBankDocument *) b
 {
     bank = b;
 }
 
 // return the bank we belong within.
-- (Bank *) bank
+- (PatchBankDocument *) bank
 {
     return bank;
 }
@@ -289,7 +289,7 @@ patch name be derived from the description (when downloading) & vice-versa when 
 
     switch(result) {
     case NSAlertDefaultReturn:
-        [[self bank] addPatch: self];  // should this be in Bank.m?
+        [[self bank] addPatch: self];  // should this be in PatchBankDocument.m?
         return YES;
     case NSAlertAlternateReturn:
         return YES;

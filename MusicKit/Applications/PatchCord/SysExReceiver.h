@@ -1,8 +1,14 @@
-/* Object responsible for managing reception of system exclusive messages */
+/*!
+  @class SysExReceiver
+  @author Leigh M. Smith
+  @description
+     Object responsible for managing reception of system exclusive messages.
+ */
 #import <MusicKit/MusicKit.h>
 #import "SysExMessage.h"
+
 @class MIDISysExSynth;
-@class Bank;
+@class PatchBankDocument;
 
 @interface SysExReceiver: MKInstrument
 {
@@ -10,11 +16,11 @@
     SysExMessage *sysExMsg;		// The last received SysEx message
     NSMutableArray *registeredSynths;	// Synthesisers we communicate messages to.
     NSMutableArray *lastRespondantSynths;
-    Bank *delegateBank;                 // So we can notify our bank we created new MIDISysExSynth instances
+    PatchBankDocument *delegateBank;       // So we can notify our bank we created new MIDISysExSynth instances
 }
 
 - init;
-- (void) setDelegateBank: (Bank *) bank;
+- (void) setDelegateBank: (PatchBankDocument *) bank;
 - (void) registerSynth: (MIDISysExSynth *) synth;
 - (void) unregisterSynth: (MIDISysExSynth *) synth;
 - (NSMutableArray *) registeredSynths;
@@ -23,4 +29,5 @@
 - (void) respondToMsg: (SysExMessage *) sysExMsg;
 - (NSArray *) respondantSynths;
 - realizeNote: (MKNote *) theNote fromNoteReceiver: (MKNoteReceiver *) theReceiver;
+
 @end

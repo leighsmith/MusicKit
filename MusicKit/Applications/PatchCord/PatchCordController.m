@@ -1,20 +1,41 @@
 /*
- * SynthLoader.m created by leigh on Tue 28-Jul-1998
- * Responsible for initialising all the synthesiser objects from their bundles and starting up and closing down the
- * System Exclusive messaging.
+ * PatchCordController
  */
-#import "SysExMessage.h"	// to be able to open the SysEx interface.
-#import "SynthLoader.h"
-#import "UnhandledSynth.h"           // to be able to load Unhandled
-#import "PreferencesManager.h"       // to get untitled open preference
+#import "PatchCordController.h"
+#import "SysExMessage.h"                // to be able to open the SysEx interface.
 
+#import "UnhandledSynth.h"              // to be able to load Unhandled
 #import "Juno106.subproj/Juno106.h"             // kludge until bundle loading is working.
-#import "Quadraverb.subproj/QuadraverbGT.h"             // kludge until bundle loading is working.
-#import "AxonNGC77.subproj/AxonNGC77.h"             // kludge until bundle loading is working.
-#import "ProphetVS.subproj/ProphetVS.h"             // kludge until bundle loading is working.
+#import "Quadraverb.subproj/QuadraverbGT.h"     // kludge until bundle loading is working.
+#import "AxonNGC77.subproj/AxonNGC77.h"         // kludge until bundle loading is working.
+#import "ProphetVS.subproj/ProphetVS.h"         // kludge until bundle loading is working.
 
 
-@implementation SynthLoader
+@implementation PatchCordController
+
+// extract the version number from the NIB, perhaps we should be setting this via SVN and changing the Nib programmatically?
+- (NSString *) versionDescription
+{
+   return @"Version 2.1";
+}
+
+- (IBAction) setDriverName: (id) sender
+{
+    // assign the selected driver to SysExMessage
+    [SysExMessage openOnDevice: [sender titleOfSelectedItem] forInput: [sender tag] == 0];
+    // NSLog(@"Selected tag %ld: %@", (long) [sender tag], [SysExMessage driverName]);
+}
+
+// use SysExMessage drivers to initialise.
+- (void) initMIDIDriverPreferences
+{
+    [midiInputPopup removeAllItems];
+    [midiInputPopup addItemsWithTitles: [MKMidi getDriverNames]];
+    [midiInputPopup selectItemWithTitle: [[SysExMessage midiDeviceForInput: YES] driverName]];
+    [midiOutputPopup removeAllItems];
+    [midiOutputPopup addItemsWithTitles: [MKMidi getDriverNames]];
+    [midiOutputPopup selectItemWithTitle: [[SysExMessage midiDeviceForInput: NO] driverName]];
+}
 
 - (void) loadTheBundles
 {
@@ -22,11 +43,11 @@
     // if ([[NSUserDefaults standardUserDefaults] boolForKey: ShouldRespondToUnhandledSynths])
     {
 	MIDISysExSynth *respondantSynth1;
-
+        
 	// We load it first to ensure it has lowest priority registering as the default handler.
 	respondantSynth1 = [[UnhandledSynth alloc] init];
     }
-
+    
     // Load our bundles for those synths found.
     // search and find bundles for synths inside the main app, ~/Library/PatchCord, /Library/PatchCord etc.
     // NSString *libraryPaths = @"~/Library";
@@ -35,7 +56,7 @@
     // NSArray *synthBundlePaths = [NSBundle pathsForResourcesOfType: nil inDirectory: synthBundlesDirectory];
     NSArray *synthBundlePaths = [[NSBundle mainBundle] pathsForResourcesOfType: nil inDirectory: @"SysExSynths"];
     unsigned int pathIndex;
-       
+    
     // Should extract out the name, the icon to create ourselves an array of tiles
     for(pathIndex = 0; pathIndex < [synthBundlePaths count]; pathIndex++) {
 	NSString *bundlePath = [synthBundlePaths objectAtIndex: pathIndex];
@@ -50,7 +71,7 @@
 	    NSLog(@"synthInstance %@\n", synthInstance);
 	}
     }
-   
+    
     // TODO For now just load the ones we need
     //[[Juno106 alloc] init];
     //[[ProphetVS alloc] init];
@@ -58,20 +79,18 @@
     [[AxonNGC77 alloc] init];
 }
 
-- (void) awakeFromNib
-{
-    [NSApp setServicesProvider: self];
-    [SysExMessage open];     // Start MIDI things up
-    [self loadTheBundles];
-}
-
 @end
 
-@implementation SynthLoader(ApplicationDelegate)
+@implementation PatchCordController(ApplicationDelegate)
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification
 {
     // NSApplication *theApplication = [notification object];
+    [NSApp setServicesProvider: self];
+    [SysExMessage open];     // Start MIDI things up
+    [self initMIDIDriverPreferences]; // use SysExMessage MIDI drivers to initialise.
+    [self loadTheBundles];
+    [versionText setStringValue: [self versionDescription]];
 }
 
 - (void) applicationDidBecomeActive: (NSNotification *) notification
@@ -82,10 +101,11 @@
 - (BOOL) applicationOpenUntitledFile: (NSApplication *) theApplication
 {
     NSUserDefaults *patchcordDefaults = [NSUserDefaults standardUserDefaults];
-
+    
     if([patchcordDefaults objectForKey: OPENUNTITLED] == nil)
         [patchcordDefaults setBool: YES forKey: OPENUNTITLED];
-    return ![patchcordDefaults boolForKey: OPENUNTITLED];
+    NSLog(@"initial untitled %d", [patchcordDefaults boolForKey: OPENUNTITLED]);
+    return [patchcordDefaults boolForKey: OPENUNTITLED];
 }
 
 // Write file and end performance.
@@ -97,7 +117,7 @@
 
 @end
 
-@implementation SynthLoader(ServiceManager)
+@implementation PatchCordController(ServiceManager)
 
 // Currently handle ASCII strings as SysEx messages only.
 - (void) patchMessage: (NSPasteboard *) pasteboard
@@ -108,21 +128,21 @@
     NSString  *pboardString;
     SysExMessage *newsysex;
     NSDocumentController *dc;
-
+    
     // Look for NSString first...
     if (![ptypes containsObject: NSStringPboardType]) {
         *errorMessage = NSLocalizedString(@"Error: couldn't use text for SysEx message.",
-              @"pboard couldn't give string.");
+                                          @"pboard couldn't give string.");
         return;
     }
-
+    
     pboardString = [pasteboard stringForType: NSStringPboardType];  // can we return a NSString?
     if (pboardString == nil) {
         *errorMessage = NSLocalizedString(@"Error: couldn't use text for SysEx message.",
-                  @"pboard couldn't give string.");
+                                          @"pboard couldn't give string.");
         return;
     }
-
+    
     // create a new bank if there is not already one opened by the DocumentController
     dc = [NSDocumentController sharedDocumentController];
     if([[dc documents] count] == 0) {
@@ -130,11 +150,12 @@
 	
 	[dc openUntitledDocumentAndDisplay: YES error: &outError];
     }
-
+    
     // now create a sysex message and send it to the receiver to have it interpreted.
     newsysex = [[SysExMessage alloc] init];
     [newsysex initWithString: pboardString];
     [newsysex receive];
 }
+
 
 @end

@@ -1,6 +1,11 @@
-// Class holding a collection of MIDISysExSynths
+/*!
+  @class PatchBank
+  @author Leigh M. Smith
+  @description
+     Class holding a collection of MIDISysExSynths
+*/
 #import <AppKit/AppKit.h>
-#import <MIDISysExSynth.h>
+#import "MIDISysExSynth.h"
 
 @interface PatchBank: NSObject <NSCoding>
 {

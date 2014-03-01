@@ -1,6 +1,10 @@
-// Bank.h - interface for a column based display of the patches
-// Bank - responsible for controlling (managing) each PatchBank object (model) and it's view by loading the nib via
-// the NSDocument functionality.
+/*!
+  @class PatchBankDocument
+  @author Leigh M. Smith
+  @description
+    Responsible for controlling (managing) each PatchBank object (model) and it's view
+    by loading the nib via the NSDocument functionality.
+*/
 
 #import <AppKit/AppKit.h>
 #import "MIDISysExSynth.h"
@@ -12,7 +16,7 @@ extern NSString *BANK_FILE_EXTENSION;
 extern NSString *APP_NAME;
 extern NSString *UNTITLED_PATCH;
 
-@interface Bank : NSDocument {
+@interface PatchBankDocument : NSDocument {
     PatchBank *patchBank;	                  // Holds a collection of MIDISysExSynth objects
     MIDISysExSynth *currentSynth;                 // Synth loaded by the nib file
     IBOutlet NSPopUpButton *synthList;            // points to the pop-up list on the panel.
@@ -40,25 +44,25 @@ extern NSString *UNTITLED_PATCH;
 - (void) deletePatch: (id) sender;
 @end
 
-@interface Bank(SysExReceiverDelegate)
+@interface PatchBankDocument(SysExReceiverDelegate)
 - (void) receiverDidAcceptPatches: (SysExReceiver *) patchReceiver;
 @end
 
-@interface Bank(NSTableDataSource)
+@interface PatchBankDocument(NSTableDataSource)
 - (int) numberOfRowsInTableView: (NSTableView *) aTableView;
 - (id) tableView: (NSTableView *) aTableView
-    objectValueForTableColumn: (NSTableColumn *) aTableColumn
-    row: (int) rowIndex;
+objectValueForTableColumn: (NSTableColumn *) aTableColumn
+             row: (int) rowIndex;
 - (void) tableView: (NSTableView *) aTableView
     setObjectValue: (id) anObject
     forTableColumn: (NSTableColumn *) aTableColumn
     row: (int) rowIndex;
 @end
 
-@interface Bank(NSTableViewDelegate)
+@interface PatchBankDocument(NSTableViewDelegate)
 - (BOOL) tableView: (NSTableView *) aTableView
-    shouldEditTableColumn: (NSTableColumn *) aTableColumn
-    row: (int) rowIndex;
+shouldEditTableColumn: (NSTableColumn *) aTableColumn
+               row: (int) rowIndex;
 - (NSMutableArray *) sortOrder;
 - (void) tableViewColumnDidMove: (NSNotification *) notification;
 - (void) tableViewSelectionDidChange: (NSNotification *) notification;

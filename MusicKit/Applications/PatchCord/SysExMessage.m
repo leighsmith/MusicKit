@@ -8,7 +8,11 @@
 
 @implementation SysExMessage
 
-static MKMidi *sysExMidi;		// class variables holding our MIDI objects.
+// class variables holding our MIDI objects.
+/*! The MIDI device for receiving MIDI messages. */
+static MKMidi *sysExMidiInput;
+/*! The MIDI device for sending MIDI messages. */
+static MKMidi *sysExMidiOutput;
 static SysExReceiver *sysExReceiver;
 
 // Put any MusicKit errors up in an alert panel
@@ -22,35 +26,50 @@ static void handleMKError(NSString *msg)
 + (void) initialize
 {
     if (self == [SysExMessage class]) {
-	sysExMidi = nil;	// initialise our static class vars. 
-	sysExReceiver = nil;
+        MKSetErrorProc(handleMKError);
+	sysExMidiInput = nil;	// initialise our static class vars.
+	sysExMidiOutput = nil;	// initialise our static class vars.
+	sysExReceiver = [[SysExReceiver alloc] init];
     }
-    return;
+}
+
++ (void) openOnDevice: (NSString *) deviceName forInput: (BOOL) isInput
+{
+    if (sysExMidiInput) {
+        [sysExMidiInput close];
+        [sysExMidiInput release];
+    }
+    sysExMidiInput = [deviceName length] == 0 ? [[MKMidi midi] retain] : [[MKMidi midiOnDevice: deviceName] retain];
+    [[sysExMidiInput noteSender] connect: [sysExReceiver noteReceiver]];
+    [sysExMidiInput setUseInputTimeStamps: NO];
+    [sysExMidiInput open];
+    [sysExMidiInput run];
+    // [sysExMidiOutput setOutputTimed: NO];
+    [sysExMidiInput setOutputTimed: NO];
+    [MKConductor setFinishWhenEmpty: NO];
+    [MKConductor setClocked: YES];
+    [MKConductor startPerformance];
 }
 
 // Enable reception of MIDI data to our designated system exclusive receiver.
 + (void) open
 {
-    MKSetErrorProc(handleMKError);
-    sysExReceiver = [[SysExReceiver alloc] init];
-    sysExMidi = [[MKMidi midi] retain];
-    [[sysExMidi noteSender] connect: [sysExReceiver noteReceiver]];
-    [sysExMidi setOutputTimed: NO];
-    [sysExMidi setUseInputTimeStamps: NO];
-    [sysExMidi open];
-    [sysExMidi run];
-    [MKConductor setFinishWhenEmpty: NO];
-    [MKConductor setClocked: YES];
-    [MKConductor startPerformance];
+    [SysExMessage openOnDevice: @"" forInput: YES];
 }
 
 // close down the System Exclusive handling
 + (void) close
 {
     [MKConductor finishPerformance];
-    [sysExMidi stop];
-    [sysExMidi close];
-    [sysExMidi autorelease];
+    [sysExMidiInput stop];
+    [sysExMidiInput close];
+    [sysExMidiInput autorelease];
+    sysExMidiInput = nil;
+}
+
++ (MKMidi *) midiDeviceForInput: (BOOL) isInput
+{
+    return [[isInput ? sysExMidiInput : sysExMidiOutput retain] autorelease];
 }
 
 // Hand on synth registrations to the sysExReceiver.
@@ -208,12 +227,15 @@ static void handleMKError(NSString *msg)
 // send the given SysEx message
 - (void) send
 {
-    // [[sysExMidi noteReceiver] receiveAndFreeNote: [self note]];
+    BOOL loopBack = NO;
+    
+    NSLog(@"Note %@", [self note]);
+    // [[sysExMidiInput noteReceiver] receiveAndFreeNote: [self note]];
     // Ok for some reason this doesn't work??
-    [[sysExMidi noteReceiver] receiveNote: [self note]];
-//    NSLog(s);
-// loop back to check other synths, only for debugging, perhaps this should be a feature
-//[self receive];
+    if (!loopBack)
+        [[sysExMidiInput noteReceiver] receiveNote: [self note]];
+    else    // loop back to check other synths, only for debugging.
+        [self receive];
 }
 
 - (NSString *) description

@@ -1,5 +1,6 @@
 /*!
   @class MIDISysExSynth
+  @author Leigh M. Smith
   @description
      MIDISysExSynth is an abstract synthesiser class, the particular model of synth is a concrete subclass
      (with overloaded methods) and instance is the data, as there can be several patches of a particular
@@ -26,7 +27,8 @@
  */
 
 #import "SysExMessage.h"
-@class Bank;                   // Forward declaration of the Bank class
+
+@class PatchBankDocument;                   // Forward declaration of the PatchBankDocument class
 
 @interface MIDISysExSynth: NSWindowController <NSCoding>
 {
@@ -40,8 +42,8 @@
     int MIDIChannel;
     /*! the patchnumber on the channel this patch is associated with. */
     int MIDIpatchNumber;
-    /*! the Bank this patch resides in. */
-    Bank *bank;
+    /*! the PatchBankDocument this patch resides in. */
+    PatchBankDocument *bank;
     /*! single icon, perhaps part of nib */
     // icon
 }
@@ -242,12 +244,12 @@
 /*!
   @brief sets and returns the bank this synth patch is part of.
  */
-- (void) setBank: (Bank *) b;
+- (void) setBank: (PatchBankDocument *) b;
 
 /*!
   @brief 
  */
-- (Bank *) bank;
+- (PatchBankDocument *) bank;
 
 @end
 

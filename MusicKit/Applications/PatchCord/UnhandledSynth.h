@@ -1,11 +1,15 @@
+/*!
+  @class UnhandledSynth
+  @author Leigh M. Smith
+  @description
+     Presents a text user interface for System Exclusive messages which are not 
+     supported by more specific MIDISysExSynth subclasses.
+ */
+
 #import <AppKit/AppKit.h>
 #import "MIDISysExSynth.h"
 
-#if !defined(MAC_OS_X_VERSION_10_6) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
-@interface UnhandledSynth: MIDISysExSynth
-#else
 @interface UnhandledSynth: MIDISysExSynth <NSTextViewDelegate>
-#endif
 {
     IBOutlet id scrollingDisplay;   // Points to our NSText NSScrollView
     NSTextView *sysExText;	    // The NSTextView within the NSScrollView
