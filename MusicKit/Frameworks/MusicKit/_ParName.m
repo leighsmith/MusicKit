@@ -584,68 +584,69 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
 
 static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p, id dataObj,int type)
 {
-  id hashObj;
-  NSString * name;
-  BOOL binary = BINARY(p);
-  unsigned short tmp;
-  _MKToken declToken;
-  switch (type) {
-    case MK_envelope:
-      declToken = _MK_envelopeDecl;
-      break;
-    case MK_waveTable:
-      declToken = _MK_waveTableDecl;
-      break;
-    default:
-      declToken = _MK_objectDecl;
-      break;
-  }
-  if (binary) {
-    int val = (int)NSMapGet(p->_binaryIndecies, dataObj);
-    if (val) {
-      _MKWriteShort(aStream,type);
-      _MKWriteShort(aStream,val);
-      return;
+    id hashObj;
+    NSString *name;
+    BOOL binary = BINARY(p);
+    unsigned short tmp;
+    _MKToken declToken;
+    
+    switch (type) {
+        case MK_envelope:
+            declToken = _MK_envelopeDecl;
+            break;
+        case MK_waveTable:
+            declToken = _MK_waveTableDecl;
+            break;
+        default:
+            declToken = _MK_objectDecl;
+            break;
     }
-  }
-  if (!p) {         /* We're not writing a scorefile so don't give
-			 it a name. */
     if (binary) {
-      _MKWriteShort(aStream,type);
-      _MKWriteChar(aStream,'\0');
+        int val = (int)NSMapGet(p->_binaryIndecies, dataObj);
+        
+        if (val) {
+            _MKWriteShort(aStream, type);
+            _MKWriteShort(aStream, val);
+            return;
+        }
     }
-    writeObj(dataObj,aStream,declToken,binary);
-    return;
-  }
-  name = (NSString *)MKGetObjectName(dataObj);
-  if (!name) {
-    name = genAnonName(dataObj);
-    MKNameObject(name,dataObj);
-    name = (NSString *)MKGetObjectName(dataObj);
-  }
-  /* If we've gotten here, it's named and we're writing a scorefile. */
-  hashObj = _MKNameTableGetObjectForName(p->_nameTable,name,nil,&tmp);
-  if (hashObj && (hashObj != dataObj)) {     /* Resolve name collisions. */
-    name = _MKUniqueName(name,p->_nameTable,dataObj,&hashObj); /*sb: was _MKMakeStr(name) */
-  }
-  if (hashObj == dataObj)          /* It's already declared in file. */
-    [aStream appendData:[name dataUsingEncoding:NSNEXTSTEPStringEncoding]];        /* Just write name.
-      (If we got here, we must be
-      writing an ascii file) */
-  else {                           /* It's not been declared yet. */
-   if (binary) {
-	    _MKWriteShort(aStream,declToken);
-	    _MKWriteNSString(aStream,name);
-      NSMapInsert(p->_binaryIndecies,dataObj,(void *)(++(p->_highBinaryIndex)));
-   }
-   else {
-     [aStream appendData: [[NSString stringWithFormat:@"%s %@ = ", _MKTokName(declToken),name]
-                                    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-   }
-   writeObj(dataObj,aStream,declToken,binary);
-   _MKNameTableAddName(p->_nameTable,name,nil,dataObj,
-                     type | _MK_BACKHASHBIT,YES);
-  }
+    if (!p) {         /* We're not writing a scorefile so don't give it a name. */
+        if (binary) {
+            _MKWriteShort(aStream, type);
+            _MKWriteChar(aStream, '\0');
+        }
+        writeObj(dataObj,aStream, declToken, binary);
+        return;
+    }
+    name = (NSString *) MKGetObjectName(dataObj);
+    if (!name) {
+        name = genAnonName(dataObj);
+        MKNameObject(name, dataObj);
+        name = (NSString *) MKGetObjectName(dataObj);
+    }
+    /* If we've gotten here, it's named and we're writing a scorefile. */
+    hashObj = _MKNameTableGetObjectForName(p->_nameTable, name, nil, &tmp);
+    if (hashObj && (hashObj != dataObj)) {     /* Resolve name collisions. */
+        name = _MKUniqueName(name, p->_nameTable, dataObj, &hashObj); /*sb: was _MKMakeStr(name) */
+    }
+    if (hashObj == dataObj)          /* It's already declared in file. */
+        [aStream appendData: [name dataUsingEncoding: NSNEXTSTEPStringEncoding]];        /* Just write name.
+                                                                                          (If we got here, we must be
+                                                                                          writing an ascii file) */
+    else {                           /* It's not been declared yet. */
+        if (binary) {
+	    _MKWriteShort(aStream, declToken);
+	    _MKWriteNSString(aStream, name);
+            NSMapInsert(p->_binaryIndecies, dataObj, (++(p->_highBinaryIndex)));
+        }
+        else {
+            [aStream appendData: [[NSString stringWithFormat: @"%s %@ = ", _MKTokName(declToken), name]
+                                  dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+        }
+        writeObj(dataObj, aStream, declToken, binary);
+        _MKNameTableAddName(p->_nameTable, name, nil, dataObj,
+                            type | _MK_BACKHASHBIT, YES);
+    }
 }
 
 

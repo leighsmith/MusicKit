@@ -157,7 +157,7 @@ _MKWritePartDecl(MKPart *aPart, _MKScoreOutStruct * p, MKNote *aPartInfo)
     if (BINARY(p)) {
 	_MKWriteShort(p->_stream, _MK_part);
 	_MKWriteNSString(p->_stream, partName);
-	NSMapInsert(p->_binaryIndecies, aPart, (void *)(++(p->_highBinaryIndex)));
+	NSMapInsert(p->_binaryIndecies, aPart, (++(p->_highBinaryIndex)));
     }
     else 
 	[p->_stream appendData: [[NSString stringWithFormat: @"%s %@;\n", _MKTokNameNoCheck(_MK_part), partName]

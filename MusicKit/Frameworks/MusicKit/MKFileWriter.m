@@ -296,8 +296,8 @@ Modification history prior to commit to CVS repository:
 {
     [self finishFile];
     if (filename) {
-        if (![stream writeToFile:[filename stringByAppendingPathExtension:[self fileExtension]] atomically:YES])
-            MKErrorCode(MK_cantCloseFileErr,filename);
+        if (![stream writeToFile: [filename stringByAppendingPathExtension: [self fileExtension]] atomically: YES])
+            MKErrorCode(MK_cantCloseFileErr, filename);
 /*
 	if (close(_fd) == -1)
 	  MKErrorCode(MK_cantCloseFileErr,filename);

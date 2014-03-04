@@ -104,7 +104,7 @@ static void replyDispatch(const MIDIPacketList *receivedPacketList, void *savedR
 	    // NSLog(@"\n");
 	    // claimedSources[unit] == 0; // determine from refCon and connRefCon
 	    incomingUnit = 0; // TODO determine the unit the data was received on.
-	    if(dataReplyPort != MKMD_PORT_NULL)
+	    if (dataReplyPort != MKMD_PORT_NULL)
 		(*(userFuncs->dataReply))(userData, incomingUnit, events, packet->length);
 	    else
 		NSLog(@"not receiving MIDI since dataReplyPort is null!\n");
@@ -134,17 +134,17 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
     ItemCount endpointIndex;
     ItemCount endpointCount = input ? MIDIGetNumberOfSources() : MIDIGetNumberOfDestinations();
     
-    for(endpointIndex = 0; endpointIndex < endpointCount; endpointIndex++) {
+    for (endpointIndex = 0; endpointIndex < endpointCount; endpointIndex++) {
 	MIDIEndpointRef endPoint = input ? MIDIGetSource(endpointIndex) : MIDIGetDestination(endpointIndex);
 	
-	if(endPoint != (MIDIEndpointRef) NULL) {
+	if (endPoint != (MIDIEndpointRef) NULL) {
 	    CFStringRef endPointName;
 	    /* CFDataRef connectionUniqueID; */
 	    OSStatus endpointPropertyError;
 	    
 	    /*
 	    endpointPropertyError = MIDIObjectGetDataProperty(endPoint, kMIDIPropertyConnectionUniqueID, &connectionUniqueID);
-	    if(endpointPropertyError == noErr) {
+	    if (endpointPropertyError == noErr) {
 		fprintf(stderr, "endPointIndex %ld has %d uniqueIDs\n", endpointIndex, [(NSData *) connectionUniqueID length]);
 		OSStatus MIDIObjectFindByUniqueID(
 						  MIDIUniqueID      inUniqueID,
@@ -154,16 +154,16 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
 	    }
 	     */
 	    endpointPropertyError = MIDIObjectGetStringProperty(endPoint, kMIDIPropertyName, &endPointName);
-	    if(endpointPropertyError == noErr) { // We need the entity in order to determine the device name.
+	    if (endpointPropertyError == noErr) { // We need the entity in order to determine the device name.
 		MIDIEntityRef entityOfEndpoint; 
 		OSStatus entityError = MIDIEndpointGetEntity(endPoint, &entityOfEndpoint);
 
-		if(entityError == noErr) {
+		if (entityError == noErr) {
 		    CFStringRef deviceName;
 		    MIDIDeviceRef deviceOfEntity;
 		    OSStatus deviceError = MIDIEntityGetDevice(entityOfEndpoint, &deviceOfEntity);
 		    
-		    if(deviceError == noErr) {
+		    if (deviceError == noErr) {
 			MIDIObjectGetStringProperty(deviceOfEntity, kMIDIPropertyName, &deviceName);
 			[driverNameList addObject: [NSString stringWithFormat: @"%@ %@", (NSString *) deviceName, (NSString *) endPointName]];
 		    }
@@ -172,18 +172,18 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
 		    [driverNameList addObject: (NSString *) endPointName];		
 	    }
 	    else {
-		NSLog(@"Error getting endPoint's string property\n");
+		NSLog(@"Error getting MIDI Driver endPoint's string property\n");
 	    }
 	}
     }	
     
     // always create at least one entry for the terminating NULL pointer.
     driverList = (const char **) malloc(([driverNameList count] + 1) * sizeof(char *));
-    if(driverList == NULL) {
+    if (driverList == NULL) {
 	NSLog(@"Unable to allocate driverList of %lu drivers, driverNameList %@\n", [driverNameList count] + 1, driverNameList);
         return NULL;
     }
-    for(driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
+    for (driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
 	driverList[driverListIndex] = [[driverNameList objectAtIndex: driverListIndex] UTF8String];
     }
     driverList[driverListIndex] = NULL;
@@ -199,13 +199,13 @@ PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
     return errMsg;
 }
 
-// returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
+// Returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
 // that has meaning.
 // hostname should eventually be a URL.
 // TODO this is problematic, there could be many MIDI devices on a named host.
 PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
-    if(*hostname) {
+    if (*hostname) {
         NSLog(@"MIDI on remote hosts not yet implemented on MacOS X\n");
         return MKMD_PORT_NULL;
     }
@@ -221,14 +221,14 @@ PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort o
     OSStatus result;
 
 #if FUNCLOG
-    if(debug == NULL) {
+    if (debug == NULL) {
         // create a means to see where we are without having to tiptoe around the debugger.
-        if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
+        if ((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
             return MKMD_ERROR_UNKNOWN_ERROR;
     }
 #endif
     executable = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleExecutable"];
-    if(executable == nil) {
+    if (executable == nil) {
         executable = @"tool"; // TODO, this should determine the name from argv[0]
     }
 
@@ -237,19 +237,19 @@ PERFORM_API MKMDReturn MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort o
 #else
     // NSLog(@"in MKMDBecomeOwner before MIDIClientCreate, appname: %@\n", executable);
 #endif
-    if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr) {
+    if ((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr) {
         NSLog(@"Unable to create MIDI Client %d", result);
         return MKMD_ERROR_UNKNOWN_ERROR;
     }
     // NSLog(@"in MKMDBecomeOwner before MIDIInputPortCreate\n");
     userReplyFunctions = *replyFunctions; // Make a local copy of the reply functions.
-    if((result = MIDIInputPortCreate(client, CFSTR("Input port"), replyDispatch, &userReplyFunctions, &inPort)) != noErr) {
+    if ((result = MIDIInputPortCreate(client, CFSTR("Input port"), replyDispatch, &userReplyFunctions, &inPort)) != noErr) {
         NSLog(@"Unable to create MIDI Input Port %d", result);
 	return MKMD_ERROR_UNKNOWN_ERROR;
     }
     // NSLog(@"in MKMDBecomeOwner MIDIInputPortCreate inPort %p\n", inPort);
     // NSLog(@"in MKMDBecomeOwner before MIDIOutputPortCreate\n");
-    if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr) {
+    if ((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr) {
         NSLog(@"Unable to create MIDI Output Port %d", result);
        return MKMD_ERROR_UNKNOWN_ERROR;
     }
@@ -265,14 +265,14 @@ PERFORM_API MKMDReturn MKMDReleaseOwnership(MKMDPort mididriver_port, MKMDOwnerP
     fprintf(debug, "MKMDReleaseOwnership called\n");
     fclose(debug); // hopefully save what we did.
 #endif
-    if(MIDIPortDispose(outPort) != noErr)
+    if (MIDIPortDispose(outPort) != noErr)
         return MKMD_ERROR_BUSY;
 
     // NSLog(@"MKMDReleaseOwnership called before MIDIPortDispose\n");
-    if(MIDIPortDispose(inPort) != noErr)
+    if (MIDIPortDispose(inPort) != noErr)
         return MKMD_ERROR_BUSY;
         
-    if(MIDIClientDispose(client) != noErr)
+    if (MIDIClientDispose(client) != noErr)
         return MKMD_ERROR_BUSY;
     else
         return MKMD_SUCCESS;
@@ -334,7 +334,7 @@ PERFORM_API MKMDReturn MKMDSetClockTime (
     // defines datum to associate the integer time to the nanosecond time
     datumRefTime = MIDIGetCurrentTime();
     datumMilliSecTime = time;
-    if(datumAsDate)
+    if (datumAsDate)
         [datumAsDate release];
     datumAsDate = [[NSDate date] retain]; // Note the absolute date we set the time datum, for MKMDAwaitReply
 #if FUNCLOG
@@ -391,25 +391,25 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 #if FUNCLOG
     fprintf(debug, "MKMDClaimUnit called unit %d\n", unit);
 #endif
-    if(input) {
+    if (input) {
 	// open connections from all sources
 	sourceCount = MIDIGetNumberOfSources();
 	// NSLog(@"MKMDClaimUnit %ld sources\n", sourceCount);
-	if(sourceCount > 0) {
+	if (sourceCount > 0) {
 	    // If we haven't yet allocated ourselves tables for remembering the claimed sources, do so.
-	    if(claimedSources == NULL) {
-		if((claimedSources = calloc(sourceCount, sizeof(MIDIEndpointRef))) == NULL)
+	    if (claimedSources == NULL) {
+		if ((claimedSources = calloc(sourceCount, sizeof(MIDIEndpointRef))) == NULL)
 		    NSLog(@"Couldn't allocate %ld MIDI sources\n", sourceCount);
 	    }
 	    // We have to guard against attempting to connect to the same source twice. If we do, MIDIPortConnectSource will save both connections
 	    // and the userData in the order received, but then there is no way to disconnect the source in a different order, which is important 
 	    // since we want to communicate the userData back to the MKMidi reply function.
-	    if(!claimedSources[unit]) {
+	    if (!claimedSources[unit]) {
 		claimedSources[unit] = MIDIGetSource(unit);
-		if(claimedSources[unit] == (MIDIEndpointRef) NULL)
+		if (claimedSources[unit] == (MIDIEndpointRef) NULL)
 		    return MKMD_ERROR_UNKNOWN_ERROR;
 		// NSLog(@"Connecting inPort %p unit %d source is %x with userData %p\n", inPort, unit, claimedSources[unit], userData);
-		if(MIDIPortConnectSource(inPort, claimedSources[unit], userData) != noErr)
+		if (MIDIPortConnectSource(inPort, claimedSources[unit], userData) != noErr)
 		    return MKMD_ERROR_UNKNOWN_ERROR;		
 	    }
 	    else {
@@ -426,8 +426,8 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	destinationCount = MIDIGetNumberOfDestinations();
 	// NSLog(@"MKMDClaimUnit %ld destinations\n", destinationCount);
 	if (destinationCount > 0) {
-	    if(claimedDestinations == NULL) {
-		if((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
+	    if (claimedDestinations == NULL) {
+		if ((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
 		    NSLog(@"Couldn't allocate %ld destinations\n", destinationCount);
 	    }
 	    claimedDestinations[unit] = MIDIGetDestination(unit);
@@ -438,7 +438,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	    {
 		CFStringRef pname;
 		
-		if(MIDIObjectGetStringProperty(claimedDestinations[unit], kMIDIPropertyName, &pname) != noErr)
+		if (MIDIObjectGetStringProperty(claimedDestinations[unit], kMIDIPropertyName, &pname) != noErr)
 		    return MKMD_ERROR_UNKNOWN_ERROR;
 		NSLog(@"Output to %@\n", pname);
 		// CFRelease(pname); shouldn't need this?
@@ -463,13 +463,13 @@ PERFORM_API MKMDReturn MKMDReleaseUnit(BOOL input,
 #if FUNCLOG
     fprintf(debug, "MKMDReleaseUnit %d called\n", unit);
 #endif
-    if(input) {
+    if (input) {
 	// NSLog(@"MKMDReleaseUnit %d called, userData %p\n", unit, userData);
-	if(claimedSources[unit]) {
+	if (claimedSources && claimedSources[unit]) {
 	    OSStatus result = MIDIPortDisconnectSource(inPort, claimedSources[unit]);
 
 	    // NSLog(@"Attempting disconnect of inPort %p source %p result %d", inPort, claimedSources[unit], result);
-	    if(result != noErr)
+	    if (result != noErr)
 		return MKMD_ERROR_UNKNOWN_ERROR;	
 	    claimedSources[unit] = NULL;	    
 	}
@@ -480,7 +480,7 @@ PERFORM_API MKMDReturn MKMDReleaseUnit(BOOL input,
     }
     else {
     // Not quite sure how to rescind destinations, or if we even need to.
-    //    if(claimedDestinations != NULL) {
+    //    if (claimedDestinations != NULL) {
     //        MIDIDestination(claimedDestinations[unit]);
     //        claimedDestinations[unit] = NULL;
     //    }	
@@ -524,9 +524,9 @@ static void dumpPackets(MIDIPacketList *pktlist)
     printf("number of packets = %ld\n", pktlist->numPackets);
     
     packet = (MIDIPacket *) pktlist->packet;	// remove const (!)
-    for(i = 0; i < pktlist->numPackets; i++) {
+    for (i = 0; i < pktlist->numPackets; i++) {
         printf("timestamp = %f, length = %d\n", (double) packet->timeStamp, packet->length);
-        for(j = 0; j < packet->length; j++)
+        for (j = 0; j < packet->length; j++)
             printf("data[%d] = 0x%X ", j, packet->data[j]);
         printf("\n");
         packet = MIDIPacketNext(packet);
@@ -564,12 +564,12 @@ PERFORM_API MKMDReturn MKMDSendData (
 #endif
 
     // Assume worst case that we need to send the entire event list all at the same time.
-    if((buffer = (Byte *) malloc(dataCnt)) == NULL) {
+    if ((buffer = (Byte *) malloc(dataCnt)) == NULL) {
         return MKMD_ERROR_QUEUE_FULL;
     }
 
     // Create a packet list, each packet will contain those bytes all to be played at the same time.
-    if((packet = MIDIPacketListInit(pktlist)) == NULL) {
+    if ((packet = MIDIPacketListInit(pktlist)) == NULL) {
         free(buffer);
         return MKMD_ERROR_QUEUE_FULL;
     }
@@ -585,7 +585,7 @@ PERFORM_API MKMDReturn MKMDSendData (
 	else
 	    playTime = (data[msgIndex].time - datumMilliSecTime) * quantumFactor + datumRefTime;
         // since note-offs are also timed, playEndTimeEstimate will save the end time of the last note.
-        if(data[msgIndex].time > playEndTimeEstimate)
+        if (data[msgIndex].time > playEndTimeEstimate)
             playEndTimeEstimate = data[msgIndex].time;
 
 #if FUNCLOG
@@ -593,7 +593,7 @@ PERFORM_API MKMDReturn MKMDSendData (
         fprintf(debug, "Current time %f, play time %f:\n", (double) MIDIGetCurrentTime(), (double) playTime);
 #endif
         // collect all event bytes marked with the same time into a single buffer.
-        for(bufferIndex = 0; data[msgIndex].time == data[firstUniqueTimeIndex].time && msgIndex < dataCnt; bufferIndex++) {
+        for (bufferIndex = 0; data[msgIndex].time == data[firstUniqueTimeIndex].time && msgIndex < dataCnt; bufferIndex++) {
             buffer[bufferIndex] = data[msgIndex++].byte;
 #if FUNCLOG
             fprintf(debug, "%02X ", buffer[bufferIndex]);
@@ -605,7 +605,7 @@ PERFORM_API MKMDReturn MKMDSendData (
 
         // send all same-time bytes in a separate packet.
         packet = MIDIPacketListAdd(pktlist, sizeof(pbuf), packet, playTime, bufferIndex, buffer);
-        if(packet == NULL) {
+        if (packet == NULL) {
             NSLog(@"couldn't add packet to packet list\n");
             free(buffer);
             return MKMD_ERROR_QUEUE_FULL;
@@ -615,7 +615,7 @@ PERFORM_API MKMDReturn MKMDSendData (
     dumpPackets(pktlist);
 #endif
 
-    if((errCode = MIDISend(outPort, claimedDestinations[unit], pktlist)) != noErr) {
+    if ((errCode = MIDISend(outPort, claimedDestinations[unit], pktlist)) != noErr) {
         NSLog(@"couldn't send packet list errCode = %d\n", (int) errCode);
         free(buffer);
         return MKMD_ERROR_UNKNOWN_ERROR;
@@ -735,7 +735,7 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
 #endif
     userReplyFunctions = *funcs;
     // since replyDispatch will be called asynchronously when data is available, don't wait, just return
-    if(timeout != MKMD_NO_TIMEOUT) { 
+    if (timeout != MKMD_NO_TIMEOUT) { 
         playEndTimeEstimate = playEndTimeEstimate < timeout ? playEndTimeEstimate : timeout;
     }
     delayEstimateInSeconds = (playEndTimeEstimate - datumMilliSecTime) * quantumInSeconds;

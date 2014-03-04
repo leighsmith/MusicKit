@@ -337,34 +337,36 @@ static unsigned noteCachePtr = 0;
 }
 #endif
 
-- (void)dealloc
-  /* TYPE: Creating; Frees the receiver and its contents.
-   * Removes the receiver from its MKPart, if any, and then frees the
-   * receiver and its contents.
-   * MKEnvelope and MKWaveTable objects are not freed.
-   */
+/* TYPE: Creating; Frees the receiver and its contents.
+ * Removes the receiver from its MKPart, if any, and then frees the
+ * receiver and its contents.
+ * MKEnvelope and MKWaveTable objects are not freed.
+ */
+- (void) dealloc
 {
-  [part removeNote:self];
-
-  if (_parameters)
-    freeHashTable(_parameters);
-  _parameters = NULL;
-
-  if (_highAppPar)
-    free(_appPars);
-  _appPars = NULL;
-  
-  if (((NSObject *)(self->isa)) == noteClass) {
-    if (noteCachePtr < NOTECACHESIZE) {
-      noteCache[noteCachePtr++] = self;
+    [part removeNote: self];
+    
+    if (_parameters)
+        freeHashTable(_parameters);
+    _parameters = NULL;
+    
+    if (_highAppPar)
+        free(_appPars);
+    _appPars = NULL;
+    
+    if ([self class] == noteClass) {
+        if (noteCachePtr < NOTECACHESIZE) {
+            noteCache[noteCachePtr++] = self;
+        }
+        else
+            [super dealloc];
     }
-    else [super dealloc];
-  }
-  else [super dealloc];
+    else
+        [super dealloc];
 }
 
-static unsigned int nAppBitVects(MKNote *self)
 /* Assumes we have an appBitVect. */
+static unsigned int nAppBitVects(MKNote *self)
 {
     return (self->_highAppPar) ? (self->_highAppPar - _MK_FIRSTAPPPAR) / BITS_PER_INT + 1 : 0;
 }
@@ -1026,7 +1028,7 @@ id MKSetNoteParToObject(MKNote *aNote,int par,id anObj)
 if (!(_note) || !isParPresent((_note), par)) return _noVal; \
 SETDUMMYPAR(par); \
 parHashResult = NSHashGet((NSHashTable *)(_note)->_parameters, (const void *) dummyPar); \
-NSCAssert(parHashResult != NULL, ([NSString stringWithFormat: @"GETPAR failed finding parameter %u, note %@, parameters = %x", par, (_note), (_note)->_parameters])); \
+NSCAssert(parHashResult != NULL, ([NSString stringWithFormat: @"GETPAR failed finding parameter %u, note %@, parameters = %p", par, (_note), (_note)->_parameters])); \
 return _getFun(parHashResult)
 
 double MKGetNoteParAsDouble(MKNote *aNote, int par)

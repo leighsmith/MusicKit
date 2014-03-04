@@ -542,7 +542,7 @@ static BOOL optimize(self,arg,argP,highVal,lowVal)
 {
     if ([self->orchestra deviceStatus] == MK_devClosed) /* DAJ - 10/8/93 */
       return YES;
-    if (![((id)self->isa) shouldOptimize:arg])
+    if (![[self class] shouldOptimize: arg])
       return NO;
     if (!argP->initialized) {
 	argP->initialized = YES;
@@ -638,17 +638,17 @@ id MKSetUGDatumArg(MKUnitGenerator *self, unsigned argNum, DSPDatum val)
 	DSPFix48 value;
 	value.high24 = val;
 	value.low24 = 0;
-	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
-            _MKOrchTrace(self->orchestra,MK_TRACEDSP,
+	if (_MK_ORCHTRACE(self->orchestra, MK_TRACEDSP))
+            _MKOrchTrace(self->orchestra, MK_TRACEDSP,
 		       @"Setting (L-just, 0-filled) %@ of UG%d_%@ to datum 0x%x.",
-                argName(self,argNum),self->_instanceNumber,NSStringFromClass([self class]),val);
-	ec = DSPMKSendLongTimed(aTimeStamp,&value,p->addrStruct.address);
+                argName(self, argNum), self->_instanceNumber, NSStringFromClass([self class]), val);
+	ec = DSPMKSendLongTimed(aTimeStamp, &value, p->addrStruct.address);
         if (ec) {
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
             else {
                 MKErrorCode(MK_ugBadDatumPokeErr, [NSString stringWithUTF8String: (char *) val],
-				   argName(self,argNum), NSStringFromClass([self class]));
+				   argName(self, argNum), NSStringFromClass([self class]));
 		return nil;
 	    }
         }

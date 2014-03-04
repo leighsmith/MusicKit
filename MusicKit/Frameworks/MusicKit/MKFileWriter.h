@@ -85,7 +85,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
 @interface MKFileWriter : MKInstrument
 {
     MKTimeUnit timeUnit;
-    NSMutableString *filename;        /* Or NULL. */
+    NSString *filename;        /* Or nil. */
     NSMutableData *stream;            /* Pointer of open file. */
     double timeShift;
     BOOL compensatesDeltaT;

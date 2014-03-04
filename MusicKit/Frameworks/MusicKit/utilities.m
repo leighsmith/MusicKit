@@ -118,12 +118,12 @@ Class _MKCheckClassEnvelope()
 
 Class _MKCheckClassSamples()
 {
-    return checkClass(&_MKSamplesClass,@"MKSamples");
+    return checkClass(&_MKSamplesClass, @"MKSamples");
 }
 
 Class _MKCheckClassConductor()
 {
-    return checkClass(&_MKConductorClass,@"MKConductor");
+    return checkClass(&_MKConductorClass, @"MKConductor");
 }
 
 

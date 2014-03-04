@@ -81,11 +81,7 @@ _MKMidiOutStruct *_MKInitMidiOut()
     NSMapTableValueCallBacks valueCallBacks = {NSOwnedPointerMapValueCallBacks.retain, 
                                                freeMidiOutNode,
 					       NSOwnedPointerMapValueCallBacks.describe};
-#if !defined(MAC_OS_X_VERSION_10_5) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5)
-    NSMapTableKeyCallBacks keyCallBacks = NSIntMapKeyCallBacks;//{NULL, NULL, NULL, NULL, NULL, NULL};
-#else
     NSMapTableKeyCallBacks keyCallBacks = NSIntegerMapKeyCallBacks;//{NULL, NULL, NULL, NULL, NULL, NULL};
-#endif
     if (!beenHere) {
 	beenHere = YES;
 	for ( ; midiOutNodeCachePtr < CACHESIZE; midiOutNodeCachePtr++) 
@@ -450,10 +446,10 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
                     newTag = YES;
                 }
             }
-	    velocity = MKGetNoteParAsInt(aNote,MK_velocity);
+	    velocity = MKGetNoteParAsInt(aNote, MK_velocity);
 	    if (velocity == MAXINT)
                 velocity = 64;
-	    mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], (const void *) noteTag);
+	    mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], noteTag);
 	    keyNum = [aNote keyNum];
             if (keyNum == MAXINT) {
                 if (mapNode)
@@ -490,7 +486,8 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
 	    }
 	    else {
 		noteOn(chan, UCHAR(keyNum), UCHAR(velocity), ptr);
-		NSMapInsert(ptr->_map[chan], (const void *)noteTag, (void *)(mapNode = newMidiOutNode(keyNum)));
+                mapNode = newMidiOutNode(keyNum);
+		NSMapInsert(ptr->_map[chan], noteTag, mapNode);
 	    }
 	    if (KEYPRESSURE()) {
 		SET3BYTES(ptr,ADDCHAN(MIDI_POLYPRES),keyNum,
@@ -524,16 +521,17 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
                 }
 		break;
 	    } else {
-                mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], (const void *) noteTag);
+                // NSLog(@"ptr %p Map %p, Note tag %d", ptr, ptr->_map[chan], noteTag);
+                mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], noteTag);
 		if (!mapNode) {
                     if (MKIsTraced(MK_TRACEMIDI)) {
-			NSLog(@"NoteOff for noteTag which is already off at time %f", ptr->_timeTag);
+			NSLog(@"NoteOff for noteTag %d which is already off at time %f", noteTag, ptr->_timeTag);
 		    }
 		    break;
 		}
 		keyNum = mapNode->key;
 		noteOff(chan,UCHAR(keyNum),velocity,ptr);
-                NSMapRemove(ptr->_map[chan], (const void *) noteTag);
+                NSMapRemove(ptr->_map[chan], noteTag);
 	    }
 	    if (KEYPRESSURE()) {
 		SET3BYTES(ptr,ADDCHAN(MIDI_POLYPRES),keyNum,
@@ -545,7 +543,7 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
       case MK_noteUpdate:
 	if (KEYPRESSURE()) {
 	    int noteTag = [aNote noteTag];
-	    midiOutNode *mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], (const void *) noteTag);
+	    midiOutNode *mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], noteTag);
 	    if (!mapNode) {
 		if (MKGetInclusiveMidiTranslation()) {
 		    keyNum = [aNote parAsInt:MK_keyNum];

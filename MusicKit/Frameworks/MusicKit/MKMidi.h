@@ -203,8 +203,8 @@ See <b>Administration/MidiHardwareInfo.rtf</b> for using MIDI on NeXT hardware.
     MKConductor *conductor;      // Used by conductor and setConductor: methods
     /*! If non-nil, time mode is synchronise to MIDI Time Code (MTC). */
     MKConductor *synchConductor;
-    NSMachPort *exceptionPort;   // Exception port.  Only one unit per device may have one.
-    NSMachPort *alarmPort;       // Alarm port.  Only one unit per device may have one.
+    MKMDReplyPort exceptionPort;   // Exception port.  Only one unit per device may have one.
+    MKMDReplyPort alarmPort;       // Alarm port.  Only one unit per device may have one.
     /*! Which unit is receiving MTC. */
     MKMidi *mtcMidiObj;
     /*! Controls display of debugging information. */

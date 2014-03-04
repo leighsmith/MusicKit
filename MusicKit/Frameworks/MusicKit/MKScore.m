@@ -1012,7 +1012,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, MKMIDIFileOut *fileStructP,
 static void writeDataAsNumString(MKNote *aNote, int par, unsigned char *data, int nBytes)
 {
 #   define ROOM 4 /* Up to 3 digits per number followed by space */
-    int size = nBytes * ROOM;
+    int size = (nBytes * ROOM) + 1;
     char *str = (char *) _MKMalloc(size); // was alloca
     NSString * retStr;
     int i, j;

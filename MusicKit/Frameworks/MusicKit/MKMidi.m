@@ -224,8 +224,8 @@ static void midi_data_reply(void *receivingMidiPtr, short unit, MKMDRawEvent *ev
 	[aCoder encodeInt: queuePort forKey: @"MKMidi_queuePort"];
 	[aCoder encodeConditionalObject: conductor forKey: @"MKMidi_conductor"];
 	[aCoder encodeConditionalObject: synchConductor forKey: @"MKMidi_synchConductor"];
-	[aCoder encodeConditionalObject: exceptionPort forKey: @"MKMidi_exceptionPort"];
-	[aCoder encodeConditionalObject: alarmPort forKey: @"MKMidi_alarmPort"];
+	[aCoder encodeInt: exceptionPort forKey: @"MKMidi_exceptionPort"];
+	[aCoder encodeInt: alarmPort forKey: @"MKMidi_alarmPort"];
 	[aCoder encodeConditionalObject: mtcMidiObj forKey: @"MKMidi_mtcMidiObj"];
 	
 	[aCoder encodeDouble: localDeltaT forKey: @"MKMidi_localDeltaT"];
@@ -255,8 +255,7 @@ static void midi_data_reply(void *receivingMidiPtr, short unit, MKMDRawEvent *ev
 	[aCoder encodeValuesOfObjCTypes: "iiii", &devicePort, &ownerPort, &recvPort, &queuePort];
 	[aCoder encodeConditionalObject: conductor];
 	[aCoder encodeConditionalObject: synchConductor];
-	[aCoder encodeConditionalObject: exceptionPort];
-	[aCoder encodeConditionalObject: alarmPort];
+	[aCoder encodeValuesOfObjCTypes: "ii", &exceptionPort, &alarmPort];
 	[aCoder encodeConditionalObject: mtcMidiObj];
 
 	[aCoder encodeValuesOfObjCTypes: "ddcccccc", &localDeltaT, &timeOffset, &useInputTimeStamps,
@@ -284,8 +283,8 @@ static void midi_data_reply(void *receivingMidiPtr, short unit, MKMDRawEvent *ev
 	queuePort = [aDecoder decodeIntForKey: @"MKMidi_queuePort"];
 	conductor = [aDecoder decodeObjectForKey: @"MKMidi_conductor"];
 	synchConductor = [aDecoder decodeObjectForKey: @"MKMidi_synchConductor"];
-	exceptionPort = [aDecoder decodeObjectForKey: @"MKMidi_exceptionPort"];
-	alarmPort = [aDecoder decodeObjectForKey: @"MKMidi_alarmPort"];
+	exceptionPort = [aDecoder decodeIntForKey: @"MKMidi_exceptionPort"];
+	alarmPort = [aDecoder decodeIntForKey: @"MKMidi_alarmPort"];
 	mtcMidiObj = [aDecoder decodeObjectForKey: @"MKMidi_mtcMidiObj"];
 	
 	localDeltaT = [aDecoder decodeDoubleForKey: @"MKMidi_localDeltaT"];
@@ -316,8 +315,7 @@ static void midi_data_reply(void *receivingMidiPtr, short unit, MKMDRawEvent *ev
 	    [aDecoder decodeValuesOfObjCTypes: "iiii", &devicePort, &ownerPort, &recvPort, &queuePort];
 	    conductor = [[aDecoder decodeObject] retain];
 	    synchConductor = [[aDecoder decodeObject] retain];
-	    exceptionPort = [[aDecoder decodeObject] retain];
-	    alarmPort = [[aDecoder decodeObject] retain];
+            [aDecoder decodeValuesOfObjCTypes: "ii", &exceptionPort, &alarmPort];
 	    mtcMidiObj = [[aDecoder decodeObject] retain];
 
 	    [aDecoder decodeValuesOfObjCTypes: "ddcccccc", &localDeltaT, &timeOffset, &useInputTimeStamps,
@@ -523,8 +521,8 @@ NSString *midiDriverErrorString(int errorCode)
     }
     else { // initialise MTC ivars
         synchConductor = nil;                // If non-nil, time mode is MTC Synch
-        exceptionPort =  nil;                // Exception port.  Only one unit per device may have one
-        alarmPort =  nil;                    // Alarm port.  Only one unit per device may have one
+        exceptionPort = MKMD_PORT_NULL;      // Exception port.  Only one unit per device may have one
+        alarmPort = MKMD_PORT_NULL;          // Alarm port.  Only one unit per device may have one
         mtcMidiObj = nil;                    // No unit is receiving MTC.
         alarmTime = 0.0;
         intAlarmTime = 0;
@@ -582,14 +580,14 @@ static int resumeMidiClock(MKMidi *self)
     MKMDReturn r;
     
     if (self->synchConductor) {
-	r = MKMDRequestExceptions(self->devicePort, self->ownerPort, (MKMDReplyPort) [self->exceptionPort machPort]);
+	r = MKMDRequestExceptions(self->devicePort, self->ownerPort, self->exceptionPort);
 	if (r != MKMD_SUCCESS)
 	    MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resumeMidiClock MKMDRequestExceptions");
 	r = MKMDSetClockMode(self->devicePort, self->ownerPort, self->inputUnit, MKMD_CLOCK_MODE_MTC_SYNC);
 	if (r != MKMD_SUCCESS)
 	    MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resumeMidiClock MKMDSetClockMode");
 	if (self->alarmTimeValid) {
-	    r = MKMDRequestAlarm(self->devicePort, self->ownerPort, (MKMDReplyPort) [self->alarmPort machPort], self->alarmTime);
+	    r = MKMDRequestAlarm(self->devicePort, self->ownerPort, self->alarmPort, self->alarmTime);
 	    self->alarmPending = YES;
 	    if (r != MKMD_SUCCESS)
 		MKErrorCode(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resumeMidiClock MKMDRequestAlarm");
@@ -734,11 +732,10 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
     putTimedByteWithCheck(ptr, curTime, c);
     while (*sysExclStr) {
         c = _MKGetSysExByte(&sysExclStr);
-	putTimedByteWithCheck(ptr, curTime, c);
         // Add an inter-byte delay of 300mS to avoid overflow problems in slow synthesisers.
-        // TODO this should actually be a note parameter: MK_interByteDelay
-        curTime += 300 * _MK_MIDI_QUANTUM;
-//        curTime += 300;
+        // TODO this delay should actually be a note parameter: MK_interByteDelay
+        curTime += 0.300 * _MK_MIDI_QUANTUM;
+	putTimedByteWithCheck(ptr, curTime, c);
     }
     if (c != MIDI_EOX) 
         putTimedByteWithCheck(ptr, curTime, MIDI_EOX);  /* Terminate it properly */

@@ -100,7 +100,7 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 	    self->intAlarmTime != newIntTime) {
             MKMDRequestAlarm(devicePort, 
 			     ownerPort,
-			     (MKMDReplyPort) [alarmPort machPort], newIntTime);
+			     alarmPort, newIntTime);
 	    self->alarmPending = YES;
 	}
     }
@@ -150,14 +150,14 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 
 - (BOOL) setUpMTC
 {
-    exceptionPort = [[NSPort port] retain];
-    if (exceptionPort == nil) {
-	MKErrorCode(MK_machErr,OPEN_ERROR, @"Unable to open exceptionPort", @"setUpMTC");
+    exceptionPort++; // "Allocating" these MKMD_Ports now consists simply of incrementing.
+    if (exceptionPort == MKMD_PORT_NULL) {
+	MKErrorCode(MK_machErr, OPEN_ERROR, @"Unable to open exceptionPort", @"setUpMTC");
 	return NO;
     }
-    alarmPort = [[NSPort port] retain];
-    if (alarmPort == nil) {
-        MKErrorCode(MK_machErr,OPEN_ERROR, @"Unable to open alarmPort", @"setUpMTC");
+    alarmPort++; // "Allocating" these MKMD_Ports now consists simply of incrementing.
+    if (alarmPort == MKMD_PORT_NULL) {
+        MKErrorCode(MK_machErr, OPEN_ERROR, @"Unable to open alarmPort", @"setUpMTC");
         return NO;
     }
     alarmTimeValid = NO;
@@ -169,12 +169,12 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 - (BOOL) tearDownMTC
 {
     MKMDRequestExceptions(devicePort, ownerPort, MKMD_PORT_NULL);
-    [exceptionPort release];
+    exceptionPort = MKMD_PORT_NULL;
     /* Could call MKMDStopClock here? */
     MKMDRequestAlarm(devicePort, ownerPort, MKMD_PORT_NULL, 0);
     alarmPending = NO;
     alarmTimeValid = NO;
-    [alarmPort release];
+    alarmPort = MKMD_PORT_NULL;
     return YES;
 }
 
