@@ -833,7 +833,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    NSMaxXEdge, NSMaxYEdge, 
 	    NSMinXEdge, NSMinYEdge, 
 	    NSMinXEdge, NSMaxXEdge };
-	float myGrays[] = { NSWhite, NSDarkGray,
+	CGFloat myGrays[] = { NSWhite, NSDarkGray,
 	    NSWhite, NSDarkGray,
 	    NSDarkGray, NSLightGray, 
 	    NSDarkGray, NSLightGray };
@@ -2331,7 +2331,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
 - (BOOL) setStereoMode: (enum SndViewStereoMode) aMode
 {
-    if ((aMode < 0 || aMode > 2) && aMode != SNDVIEW_STEREOMODE)
+    if ((aMode > 2) && aMode != SNDVIEW_STEREOMODE)
 	return NO;
     if (stereoMode != aMode)
 	[self invalidateCache];

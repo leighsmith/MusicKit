@@ -265,7 +265,7 @@ Controller may need to inform the user that a complete bank must be downloaded, 
 {
 // [NSArray arrayWithArray: theBank]
 
-    NSArray *sorted = [theBank sortedArrayUsingKeyOrderArray: newSortOrder];
+    NSMutableArray *sorted = [theBank sortedArrayUsingKeyOrderArray: newSortOrder];
     [sortOrder release];
     sortOrder = [newSortOrder retain];  // keep a copy of the sort order to write out to the MIDI file.
     [theBank release];     // release the old one

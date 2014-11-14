@@ -189,7 +189,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (const int) index
+- (float) paramValue: (const NSInteger) index
 {
   /* Example:
   switch (index) {
@@ -205,7 +205,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString *) paramName: (const int) index
+- (NSString *) paramName: (const NSInteger) index
 {
   /* Example:
   switch (index) {
@@ -221,7 +221,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramLabel:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString *) paramLabel: (const int) index
+- (NSString *) paramLabel: (const NSInteger) index
 {
   /* Example:
   switch (index) {
@@ -237,7 +237,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString *) paramDisplay: (const int) index
+- (NSString *) paramDisplay: (const NSInteger) index
 {
     /* Example:
     switch (index) {
@@ -254,7 +254,7 @@ static NSMutableArray *fxClassesArray = nil;
 // setParam:toValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setParam: (const int) index toValue: (const float) v
+- (void) setParam: (const NSInteger) index toValue: (const float) v
 {
   /* Example:
   switch (index) {
@@ -382,7 +382,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramObjectForIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSNumber *) paramObjectForIndex: (const int) i
+- (NSNumber *) paramObjectForIndex: (const NSInteger) i
 {
     float f = [self paramValue: i];
   // return [NSValue value: &f withObjCType: @encode(float)];

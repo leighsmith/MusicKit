@@ -49,7 +49,7 @@
 // paramValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (const int) index;
+- (float) paramValue: (const NSInteger) index;
 {
   float r=0.0f;
   switch (index) {
@@ -75,7 +75,7 @@
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (const int) index
+- (NSString*) paramName: (const NSInteger) index
 {
   NSString *r = nil;
 
@@ -93,7 +93,7 @@
 // setParam:toValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setParam: (const int) index toValue: (const float) value
+- (void) setParam: (const NSInteger) index toValue: (const float) value
 {
   switch (index) {
     case noisegate_kThreshold:
@@ -118,7 +118,7 @@
 // paramLabel:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramLabel: (const int) index
+- (NSString*) paramLabel: (const NSInteger) index
 {
   NSString *r = nil;
   switch (index) {
@@ -145,7 +145,7 @@
 // paramDisplay:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramDisplay: (const int) index
+- (NSString*) paramDisplay: (const NSInteger) index
 {
   NSString *r = nil;
   switch (index) {

@@ -268,7 +268,7 @@
 // paramObjectForIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (id) paramObjectForIndex: (const int) i
+- (id) paramObjectForIndex: (const NSInteger) i
 {
   id obj;
   int conn_port;
@@ -286,7 +286,7 @@
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (const int) i
+- (NSString*) paramName: (const NSInteger) i
 {
   NSString *s = nil;
   switch (i) {

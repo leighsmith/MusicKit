@@ -421,7 +421,7 @@ typedef enum _MKDataType {
     MK_waveTable
 } MKDataType;
 
-@interface MKNote: NSObject
+@interface MKNote: NSObject <NSCopying>
 {
 /*! The MKNote's noteType. */
     MKNoteType noteType;

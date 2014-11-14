@@ -902,7 +902,7 @@
     unsigned long sampleNumber;
     const void *pcmData = [data bytes];
     
-    if(frameIndex < 0 || frameIndex >= [self lengthInSampleFrames]) {
+    if(frameIndex >= [self lengthInSampleFrames]) {
 	NSLog(@"SndAudioBuffer sampleAtFrameIndex:channel: frameIndex %ld out of range [0,%ld]\n", frameIndex, [self lengthInSampleFrames]);
 	return 0.0;
     }
@@ -967,7 +967,7 @@
     unsigned long sampleIndex = frameIndex * format.channelCount + channelNumber;
     const void *pcmData = [data mutableBytes];
     
-    if(frameIndex < 0 || frameIndex >= [self lengthInSampleFrames]) {
+    if(frameIndex >= [self lengthInSampleFrames]) {
 	NSLog(@"SndAudioBuffer -setSample:atFrameIndex:channel: frameIndex %ld out of range [0,%ld]\n", frameIndex, [self lengthInSampleFrames]);
 	return NO;
     }

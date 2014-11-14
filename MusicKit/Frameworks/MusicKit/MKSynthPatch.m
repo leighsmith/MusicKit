@@ -777,7 +777,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 	int count = [synthElements count], i;
         
 	for (i = 0; i < count; i++)
-	    if ([synthElements objectAtIndex: i] == DUMMY) {
+	    if ([[synthElements objectAtIndex: i] isEqual: DUMMY]) {
 		MKError(@"Attempt to use a freed MKSynthPatch.");
                 return;
             }
@@ -824,7 +824,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     n = [synthElements count];
     for (i = 0; i < n; i++) {
         el = [synthElements objectAtIndex:i];
-        if (el != DUMMY)
+        if (![el isEqual: DUMMY])
             _MKDeallocSynthElement(el,YES);
         }
     /* We know it can't be shared because you can't specify shared 

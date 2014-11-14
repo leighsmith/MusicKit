@@ -30,10 +30,10 @@
 - (void) initMIDIDriverPreferences
 {
     [midiInputPopup removeAllItems];
-    [midiInputPopup addItemsWithTitles: [MKMidi getDriverNames]];
+    [midiInputPopup addItemsWithTitles: [MKMidi getDriverNamesForInput]];
     [midiInputPopup selectItemWithTitle: [[SysExMessage midiDeviceForInput: YES] driverName]];
     [midiOutputPopup removeAllItems];
-    [midiOutputPopup addItemsWithTitles: [MKMidi getDriverNames]];
+    [midiOutputPopup addItemsWithTitles: [MKMidi getDriverNamesForOutput]];
     [midiOutputPopup selectItemWithTitle: [[SysExMessage midiDeviceForInput: NO] driverName]];
 }
 

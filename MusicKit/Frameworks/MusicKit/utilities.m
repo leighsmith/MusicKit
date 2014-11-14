@@ -607,7 +607,7 @@ NSData *_MKOpenFileStreamForReading(NSString * fileName, NSString *defaultExtens
     *    No longer supports file writing (see function above).
     */
 {
-    NSMutableData *rtnVal = nil;
+    NSData *rtnVal = nil;
     BOOL isDir;
     NSFileManager *manager = [NSFileManager defaultManager];
     

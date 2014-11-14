@@ -406,7 +406,7 @@
 // paramObjectForIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (id) paramObjectForIndex: (const int) i
+- (id) paramObjectForIndex: (const NSInteger) i
 {
     id obj;
     
@@ -424,7 +424,7 @@
 // paramValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (const int) index
+- (float) paramValue: (const NSInteger) index
 {
     float f = 0.0f;
     switch (index) {
@@ -435,7 +435,7 @@
     return f;
 }
 
-- (NSString *) paramName: (const int) index
+- (NSString *) paramName: (const NSInteger) index
 {
     NSString *r = nil;
     

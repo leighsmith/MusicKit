@@ -278,22 +278,32 @@ patch name be derived from the description (when downloading) & vice-versa when 
 - (BOOL) windowShouldClose: (id) sender
 {
     NSWindow *windowToClose = [self window];
-    int result;
+    NSModalResponse result;
+    NSAlert *saveChangesAlert = [[NSAlert alloc] init];
+    NSArray *buttons = [saveChangesAlert buttons];
+    NSButton *defaultButton = [buttons objectAtIndex: 0];
 
     if(![windowToClose isDocumentEdited])
         return YES;
     [windowToClose makeFirstResponder: windowToClose];
-    result = NSRunAlertPanel(@"Close", 
-	[NSString stringWithFormat: @"%@ patch \"%@\" has been modified. Save changes before closing?",
-        [self synthName], [self patchDescription]], @"Save", @"Don't Save", @"Cancel");
+    
+    [saveChangesAlert setMessageText:
+        [NSString stringWithFormat: @"%@ patch \"%@\" has been modified. Save changes before closing?",
+                                    [self synthName], [self patchDescription]]];
+    [defaultButton setTitle: @"Save"];
+    [saveChangesAlert addButtonWithTitle: @"Don't Save"];
+    [saveChangesAlert addButtonWithTitle: @"Cancel"];
+    [saveChangesAlert setAlertStyle: NSCriticalAlertStyle];
+    
+    result = [saveChangesAlert runModal];
 
     switch(result) {
-    case NSAlertDefaultReturn:
+    case NSAlertFirstButtonReturn:
         [[self bank] addPatch: self];  // should this be in PatchBankDocument.m?
         return YES;
-    case NSAlertAlternateReturn:
+    case NSAlertSecondButtonReturn:
         return YES;
-    case NSAlertOtherReturn:
+    case NSAlertThirdButtonReturn:
         return NO;
     }
     return NO;

@@ -21,8 +21,8 @@
 {
     [super initWithEmptyPatch];
     [self init];
-    [super initWithWindowNibName: @"UnhandledSynth" owner:self];
-    [[self window] makeKeyAndOrderFront:nil];     // make the window visible
+    [super initWithWindowNibName: @"UnhandledSynth" owner: self];
+    [[self window] makeKeyAndOrderFront: nil];     // make the window visible
     return self;
 }
 
@@ -128,7 +128,7 @@
 
     if([lastHexStringEntered length] > 0) {
 	[userMessages initWithString: lastHexStringEntered];
-        [self displayToText:@"\n"];
+        [self displayToText: @"\n"];
 	[userMessages send];
     }
 }

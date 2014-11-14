@@ -18,8 +18,14 @@ static SysExReceiver *sysExReceiver;
 // Put any MusicKit errors up in an alert panel
 static void handleMKError(NSString *msg)
 {
-    if (NSRunAlertPanel(@"PatchCord", msg, @"OK", @"Quit", nil, NULL) == NSAlertAlternateReturn)
-	[NSApp terminate:NSApp];
+    NSAlert *mkErrorAlert = [[NSAlert alloc] init];
+    
+    [mkErrorAlert setMessageText: msg];
+    [mkErrorAlert addButtonWithTitle: @"Quit"];
+    [mkErrorAlert setAlertStyle: NSCriticalAlertStyle];
+    
+    if ([mkErrorAlert runModal] == NSAlertSecondButtonReturn)
+        [NSApp terminate: NSApp];
 }
 
 // Class initialization
@@ -40,6 +46,7 @@ static void handleMKError(NSString *msg)
         [sysExMidiInput release];
     }
     sysExMidiInput = [deviceName length] == 0 ? [[MKMidi midi] retain] : [[MKMidi midiOnDevice: deviceName] retain];
+    // Connect the note sender of the MIDI input device to the SysEx note receiver.
     [[sysExMidiInput noteSender] connect: [sysExReceiver noteReceiver]];
     [sysExMidiInput setUseInputTimeStamps: NO];
     [sysExMidiInput open];
@@ -219,7 +226,7 @@ static void handleMKError(NSString *msg)
     NSString *s = [self exportToAscii: musicKitSysExSyntax];
     MKNote *myNote = [[MKNote alloc] init];
     
-    [myNote setPar:MK_sysExclusive toString: s];
+    [myNote setPar: MK_sysExclusive toString: s];
     return [myNote autorelease];
 }
 

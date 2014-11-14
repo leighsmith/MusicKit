@@ -130,14 +130,14 @@
   @param      index Index of the parameter
   @return     parameter value
 */
-- (float) paramValue: (const int) index;
+- (float) paramValue: (const NSInteger) index;
 
 /*!
  @brief  Gets the name of indexed parameter.
  @param  index Parameter index
  @return  NSString with parameter name
 */
-- (NSString *) paramName: (const int) index;
+- (NSString *) paramName: (const NSInteger) index;
 
 /*!
  @brief  Returns a label or extra text describing the parameters units of measurement.
@@ -146,7 +146,7 @@
   Example: if the parameter is in deciBels, an appropriate result might be to return "dB"
  @return  Returns the label for the parameter.
 */
-- (NSString *) paramLabel: (const int) index;
+- (NSString *) paramLabel: (const NSInteger) index;
 
 /*!
   @brief   Converts an object-internal value into a more user-friendly representation.
@@ -157,7 +157,7 @@
   object to provide a more meaningful description of the parameter.
   @return     Returns an NSString containing the alternative string representation of the parameter
 */
-- (NSString *) paramDisplay: (const int) index;
+- (NSString *) paramDisplay: (const NSInteger) index;
 
 /*!
  @brief  Sets the indexed parameter to the value given.
@@ -167,7 +167,7 @@
  @param  index Index of the parameter to be set.
  @param  value Floating point value in the range [0,1]
 */
-- (void) setParam: (const int) index toValue: (const float) value;
+- (void) setParam: (const NSInteger) index toValue: (const float) value;
 
 /*!
  @brief  Process the inputBuffer, and replace the results in the output buffer
@@ -271,7 +271,7 @@
   
   
 */
-- (NSNumber *) paramObjectForIndex: (const int) i;
+- (NSNumber *) paramObjectForIndex: (const NSInteger) i;
 // TODO - (id) paramObjectForIndex: (const int) i;
 
 /*!
