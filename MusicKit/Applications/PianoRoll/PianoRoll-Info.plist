@@ -22,7 +22,7 @@
 	<key>CFBundleIconFile</key>
 	<string>PianoRoll</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.musickit.PianoRoll</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

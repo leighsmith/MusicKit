@@ -114,15 +114,17 @@
    The scaling and length are copied from the receiver. */
 - copyWithZone: (NSZone *) zone
 {
-    MKWaveTable *newObj = (MKWaveTable *) NSCopyObject(self, 0, zone);
+    MKWaveTable *newObj = (MKWaveTable *) [[MKWaveTable allocWithZone: zone] init];
     newObj->dataDSP = NULL;
     newObj->dataDouble = NULL;
+    newObj->length = length;
+    newObj->scaling = scaling;
     return newObj;
 }
 
-- (void)dealloc
-    /* Frees cached data arrays then sends [super free].
-    It also removes the name, if any, from the Music Kit name table. */
+/* Frees cached data arrays then sends [super free].
+ It also removes the name, if any, from the Music Kit name table. */
+- (void) dealloc
 {
     if (dataDSP) {
 	free(dataDSP);

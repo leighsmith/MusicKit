@@ -265,6 +265,7 @@ static void cancelMsgs(register id self)
        */
 - (id) init
 {
+    self = [super init];
     return self;
 }
 

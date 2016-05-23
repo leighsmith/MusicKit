@@ -393,7 +393,6 @@
 		D82557BE05A2198200B0192B /* _ScorefileVar.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557B405A2198200B0192B /* _ScorefileVar.m */; };
 		D82557BF05A2198200B0192B /* _SharedSynthInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557B505A2198200B0192B /* _SharedSynthInfo.m */; };
 		D82557C105A2198200B0192B /* conversion.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557B705A2198200B0192B /* conversion.m */; };
-		D82557C205A2198200B0192B /* equalTempered.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557B805A2198200B0192B /* equalTempered.m */; };
 		D82557C305A2198200B0192B /* fastFFT.c in Sources */ = {isa = PBXBuildFile; fileRef = D82557B905A2198200B0192B /* fastFFT.c */; };
 		D82557C405A2198200B0192B /* SynthPatchList.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557BA05A2198200B0192B /* SynthPatchList.m */; };
 		D82557CB05A219E000B0192B /* _OrchloopbeginUG.m in Sources */ = {isa = PBXBuildFile; fileRef = D82557C905A219E000B0192B /* _OrchloopbeginUG.m */; };
@@ -1694,7 +1693,6 @@
 		D82557B505A2198200B0192B /* _SharedSynthInfo.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = _SharedSynthInfo.m; path = Frameworks/MusicKit/_SharedSynthInfo.m; sourceTree = "<group>"; };
 		D82557B605A2198200B0192B /* _synthElementMethods.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = _synthElementMethods.m; path = Frameworks/MusicKit/_synthElementMethods.m; sourceTree = "<group>"; };
 		D82557B705A2198200B0192B /* conversion.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = conversion.m; path = Frameworks/MusicKit/conversion.m; sourceTree = "<group>"; };
-		D82557B805A2198200B0192B /* equalTempered.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = equalTempered.m; path = Frameworks/MusicKit/equalTempered.m; sourceTree = "<group>"; };
 		D82557B905A2198200B0192B /* fastFFT.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = fastFFT.c; path = Frameworks/MusicKit/fastFFT.c; sourceTree = "<group>"; };
 		D82557BA05A2198200B0192B /* SynthPatchList.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SynthPatchList.m; path = Frameworks/MusicKit/SynthPatchList.m; sourceTree = "<group>"; };
 		D82557C905A219E000B0192B /* _OrchloopbeginUG.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = _OrchloopbeginUG.m; path = Frameworks/MusicKit/_OrchloopbeginUG.m; sourceTree = "<group>"; };
@@ -3100,7 +3098,6 @@
 				D82557E605A21B5900B0192B /* time.m */,
 				D82557D905A21AC000B0192B /* timetagInclude.m */,
 				D82557EC05A21B7F00B0192B /* utilities.m */,
-				D82557B805A2198200B0192B /* equalTempered.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -7090,7 +7087,7 @@
 		D8DB4E4C059FA05500624233 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "MusicKit Project";
 			};
 			buildConfigurationList = D8B44FEA099617E500B5C3A4 /* Build configuration list for PBXProject "MusicKit" */;
@@ -7631,7 +7628,6 @@
 				D82557BE05A2198200B0192B /* _ScorefileVar.m in Sources */,
 				D82557BF05A2198200B0192B /* _SharedSynthInfo.m in Sources */,
 				D82557C105A2198200B0192B /* conversion.m in Sources */,
-				D82557C205A2198200B0192B /* equalTempered.m in Sources */,
 				D82557C305A2198200B0192B /* fastFFT.c in Sources */,
 				D82557C405A2198200B0192B /* SynthPatchList.m in Sources */,
 				D82557CB05A219E000B0192B /* _OrchloopbeginUG.m in Sources */,
@@ -9032,6 +9028,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SignalProcessing;
 			};
 			name = Development;
@@ -9060,6 +9057,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SignalProcessing;
 				ZERO_LINK = NO;
 			};
@@ -9087,6 +9085,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SignalProcessing;
 			};
 			name = "Legacy Deployment";
@@ -9113,6 +9112,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SignalProcessing;
 			};
 			name = Embedded;
@@ -9139,6 +9139,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SignalProcessing;
 			};
 			name = Default;
@@ -9561,6 +9562,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKPerformSndMIDI;
 				PRODUCT_NAME = MKPerformSndMIDI;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9593,6 +9595,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKPerformSndMIDI;
 				PRODUCT_NAME = MKPerformSndMIDI;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9623,6 +9626,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKPerformSndMIDI;
 				PRODUCT_NAME = MKPerformSndMIDI;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -9651,6 +9655,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKPerformSndMIDI;
 				PRODUCT_NAME = MKPerformSndMIDI;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9686,6 +9691,7 @@
 					"$(CONFIGURED_LIBS)",
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndKit;
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9722,6 +9728,7 @@
 					98018000,
 					"$(CONFIGURED_LIBS)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndKit;
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
@@ -9757,6 +9764,7 @@
 					98018000,
 					"$(CONFIGURED_LIBS)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndKit;
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -9791,6 +9799,7 @@
 					98018000,
 					"$(CONFIGURED_LIBS)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndKit;
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9824,6 +9833,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKDSP;
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9857,6 +9867,7 @@
 					98390000,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKDSP;
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9888,6 +9899,7 @@
 					98390000,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKDSP;
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -9917,6 +9929,7 @@
 					98390000,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKDSP;
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -9950,6 +9963,7 @@
 					983B0000,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MusicKit;
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wall";
@@ -9984,6 +9998,7 @@
 					"-seg1addr",
 					983B0000,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MusicKit;
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wall";
@@ -10017,6 +10032,7 @@
 					983B0000,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MusicKit;
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -10048,6 +10064,7 @@
 					983B0000,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MusicKit;
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wall";
@@ -10170,6 +10187,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndViewPalette;
 				PRODUCT_NAME = SndViewP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10214,6 +10232,7 @@
 					"@loader_path/../../../DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndViewPalette;
 				PRODUCT_NAME = SndViewP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10249,6 +10268,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndViewPalette;
 				PRODUCT_NAME = SndViewP;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -10282,6 +10302,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndViewPalette;
 				PRODUCT_NAME = SndViewP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10768,6 +10789,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiRecord;
 				PRODUCT_NAME = MidiRecord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10797,6 +10819,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiRecord;
 				PRODUCT_NAME = MidiRecord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10824,6 +10847,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiRecord;
 				PRODUCT_NAME = MidiRecord;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -10849,6 +10873,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiRecord;
 				PRODUCT_NAME = MidiRecord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10877,6 +10902,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiLoop;
 				PRODUCT_NAME = MidiLoop;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10906,6 +10932,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiLoop;
 				PRODUCT_NAME = MidiLoop;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10933,6 +10960,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiLoop;
 				PRODUCT_NAME = MidiLoop;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -10958,6 +10986,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiLoop;
 				PRODUCT_NAME = MidiLoop;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -10986,6 +11015,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiPlay;
 				PRODUCT_NAME = MidiPlay;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11015,6 +11045,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiPlay;
 				PRODUCT_NAME = MidiPlay;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11042,6 +11073,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiPlay;
 				PRODUCT_NAME = MidiPlay;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -11067,6 +11099,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiPlay;
 				PRODUCT_NAME = MidiPlay;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11095,6 +11128,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiFilePlayback;
 				PRODUCT_NAME = MidiFilePlayback;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11124,6 +11158,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiFilePlayback;
 				PRODUCT_NAME = MidiFilePlayback;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11151,6 +11186,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiFilePlayback;
 				PRODUCT_NAME = MidiFilePlayback;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -11176,6 +11212,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiFilePlayback;
 				PRODUCT_NAME = MidiFilePlayback;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11204,6 +11241,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho;
 				PRODUCT_NAME = MidiEcho;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11233,6 +11271,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho;
 				PRODUCT_NAME = MidiEcho;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11260,6 +11299,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho;
 				PRODUCT_NAME = MidiEcho;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -11285,6 +11325,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho;
 				PRODUCT_NAME = MidiEcho;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11313,6 +11354,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho_1_Channel;
 				PRODUCT_NAME = "MidiEcho-1-Channel";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11342,6 +11384,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho_1_Channel;
 				PRODUCT_NAME = "MidiEcho-1-Channel";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -11369,6 +11412,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho_1_Channel;
 				PRODUCT_NAME = "MidiEcho-1-Channel";
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -11394,6 +11438,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho_1_Channel;
 				PRODUCT_NAME = "MidiEcho-1-Channel";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12151,6 +12196,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MultipleSoundPlayer;
 				PRODUCT_NAME = MultipleSoundPlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12182,6 +12228,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MultipleSoundPlayer;
 				PRODUCT_NAME = MultipleSoundPlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12211,6 +12258,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MultipleSoundPlayer;
 				PRODUCT_NAME = MultipleSoundPlayer;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -12238,6 +12286,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MultipleSoundPlayer;
 				PRODUCT_NAME = MultipleSoundPlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12485,6 +12534,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.example3;
 				PRODUCT_NAME = example3;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12516,6 +12566,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.example3;
 				PRODUCT_NAME = example3;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12545,6 +12596,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.example3;
 				PRODUCT_NAME = example3;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -12572,6 +12624,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.example3;
 				PRODUCT_NAME = example3;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12683,6 +12736,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.Spectro;
 				PRODUCT_NAME = Spectro;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12712,6 +12766,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.Spectro;
 				PRODUCT_NAME = Spectro;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12739,6 +12794,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.Spectro;
 				PRODUCT_NAME = Spectro;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -12764,6 +12820,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.Spectro;
 				PRODUCT_NAME = Spectro;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12792,6 +12849,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PatchCord;
 				PRODUCT_NAME = PatchCord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12821,6 +12879,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PatchCord;
 				PRODUCT_NAME = PatchCord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12848,6 +12907,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PatchCord;
 				PRODUCT_NAME = PatchCord;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -12873,6 +12933,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PatchCord;
 				PRODUCT_NAME = PatchCord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -12899,6 +12960,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.TwoWaves;
 				PRODUCT_NAME = TwoWaves;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12930,6 +12992,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.TwoWaves;
 				PRODUCT_NAME = TwoWaves;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -12959,6 +13022,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.TwoWaves;
 				PRODUCT_NAME = TwoWaves;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -12986,6 +13050,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.TwoWaves;
 				PRODUCT_NAME = TwoWaves;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13016,6 +13081,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.ScorePlayer;
 				PRODUCT_NAME = ScorePlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13047,6 +13113,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.ScorePlayer;
 				PRODUCT_NAME = ScorePlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13076,6 +13143,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.ScorePlayer;
 				PRODUCT_NAME = ScorePlayer;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -13103,6 +13171,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.ScorePlayer;
 				PRODUCT_NAME = ScorePlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13133,6 +13202,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PianoRoll;
 				PRODUCT_NAME = PianoRoll;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13164,6 +13234,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PianoRoll;
 				PRODUCT_NAME = PianoRoll;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13193,6 +13264,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PianoRoll;
 				PRODUCT_NAME = PianoRoll;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -13220,6 +13292,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PianoRoll;
 				PRODUCT_NAME = PianoRoll;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13250,6 +13323,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.EnvelopeEd;
 				PRODUCT_NAME = EnvelopeEd;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13281,6 +13355,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.EnvelopeEd;
 				PRODUCT_NAME = EnvelopeEd;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13310,6 +13385,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.EnvelopeEd;
 				PRODUCT_NAME = EnvelopeEd;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -13337,6 +13413,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.EnvelopeEd;
 				PRODUCT_NAME = EnvelopeEd;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13611,6 +13688,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKSynthPatches;
 				PRODUCT_NAME = MKSynthPatches;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -13641,6 +13719,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKSynthPatches;
 				PRODUCT_NAME = MKSynthPatches;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -13669,6 +13748,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKSynthPatches;
 				PRODUCT_NAME = MKSynthPatches;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -13695,6 +13775,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKSynthPatches;
 				PRODUCT_NAME = MKSynthPatches;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -13724,6 +13805,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKUnitGenerators;
 				PRODUCT_NAME = MKUnitGenerators;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13758,6 +13840,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKUnitGenerators;
 				PRODUCT_NAME = MKUnitGenerators;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13790,6 +13873,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKUnitGenerators;
 				PRODUCT_NAME = MKUnitGenerators;
 				SECTORDER_FLAGS = "";
 				SKIP_INSTALL = YES;
@@ -13820,6 +13904,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKUnitGenerators;
 				PRODUCT_NAME = MKUnitGenerators;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -13834,6 +13919,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_MODEL_TUNING = "";
 				LIBRARY_SEARCH_PATHS = /sw/lib;
 				ONLY_ACTIVE_ARCH = YES;
@@ -13894,6 +13980,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.metronome;
 				PRODUCT_NAME = metronome;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -13919,6 +14006,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.metronome;
 				PRODUCT_NAME = metronome;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -13942,6 +14030,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.metronome;
 				PRODUCT_NAME = metronome;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -13965,6 +14054,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.metronome;
 				PRODUCT_NAME = metronome;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -13991,6 +14081,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = PlayNote;
 			};
 			name = Development;
@@ -14015,6 +14106,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = PlayNote;
 				ZERO_LINK = NO;
 			};
@@ -14038,6 +14130,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = PlayNote;
 			};
 			name = Embedded;
@@ -14060,6 +14153,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = PlayNote;
 			};
 			name = Default;
@@ -14254,6 +14348,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKPerformSndMIDI;
 				PRODUCT_NAME = MKPerformSndMIDI;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14289,6 +14384,7 @@
 					98018000,
 					"$(CONFIGURED_LIBS)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndKit;
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
@@ -14322,6 +14418,7 @@
 					98390000,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKDSP;
 				PRODUCT_NAME = MKDSP;
 				SECTORDER_FLAGS = "";
 				USER_HEADER_SEARCH_PATHS = "/sw/include $(inherited) /usr/local/include";
@@ -14356,6 +14453,7 @@
 					"-seg1addr",
 					983B0000,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MusicKit;
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wall";
@@ -14385,6 +14483,7 @@
 					Foundation,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKSynthPatches;
 				PRODUCT_NAME = MKSynthPatches;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14414,6 +14513,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MKUnitGenerators;
 				PRODUCT_NAME = MKUnitGenerators;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -14460,6 +14560,7 @@
 					"@loader_path/../../../DevToolsFoundation.framework/Versions/A/DevToolsFoundation:/Developer/Library/PrivateFrameworks/DevToolsFoundation.framework/Versions/A/DevToolsFoundation",
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.SndViewPalette;
 				PRODUCT_NAME = SndViewP;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14624,6 +14725,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.example3;
 				PRODUCT_NAME = example3;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -14706,6 +14808,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiRecord;
 				PRODUCT_NAME = MidiRecord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14734,6 +14837,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiLoop;
 				PRODUCT_NAME = MidiLoop;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14762,6 +14866,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiPlay;
 				PRODUCT_NAME = MidiPlay;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14790,6 +14895,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiFilePlayback;
 				PRODUCT_NAME = MidiFilePlayback;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14818,6 +14924,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho;
 				PRODUCT_NAME = MidiEcho;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -14846,6 +14953,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MidiEcho_1_Channel;
 				PRODUCT_NAME = "MidiEcho-1-Channel";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -15176,6 +15284,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.MultipleSoundPlayer;
 				PRODUCT_NAME = MultipleSoundPlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -15208,6 +15317,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.Spectro;
 				PRODUCT_NAME = Spectro;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -15236,6 +15346,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PatchCord;
 				PRODUCT_NAME = PatchCord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -15262,6 +15373,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.TwoWaves;
 				PRODUCT_NAME = TwoWaves;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -15292,6 +15404,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.ScorePlayer;
 				PRODUCT_NAME = ScorePlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -15322,6 +15435,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.PianoRoll;
 				PRODUCT_NAME = PianoRoll;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -15352,6 +15466,7 @@
 					AppKit,
 				);
 				OTHER_REZFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.EnvelopeEd;
 				PRODUCT_NAME = EnvelopeEd;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -15381,6 +15496,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.musickit.metronome;
 				PRODUCT_NAME = metronome;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -15407,6 +15523,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.musickit.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = PlayNote;
 				ZERO_LINK = NO;
 			};

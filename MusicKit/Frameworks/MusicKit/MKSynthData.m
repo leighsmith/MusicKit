@@ -318,23 +318,22 @@ static id sendPreamble(self,dataArray,len,off,value)
     return [self setToConstant:value length:length offset:0];
 }
 
--(BOOL)readOnly
+- (BOOL) readOnly
   /* Returns YES if the receiver is read-only. */
 {
     return readOnly;
 }
 
--setReadOnly:(BOOL)readOnlyFlag
-  /* Sets whether the receiver is read-only. Default is no. Anyone can
-     change a readOnly object to read-write by first calling setReadOnly:.
-     Thus readOnly is more of a "curtesy flag".
-     The exception is the Sine ROM, the MuLaw ROM and the "zero" patchpoints.
-     These are protected. An attempt to make them read-write is ignored.*/
+/* Sets whether the receiver is read-only. Default is no. Anyone can
+   change a readOnly object to read-write by first calling setReadOnly:.
+   Thus readOnly is more of a "courtesy flag".
+   The exception is the Sine ROM, the MuLaw ROM and the "zero" patchpoints.
+   These are protected. An attempt to make them read-write is ignored.
+ */
+- (void) setReadOnly: (BOOL) readOnlyFlag
 {
-    if (_protected)
-      return self;
-    readOnly = readOnlyFlag;
-    return self;
+    if (! _protected)
+        readOnly = readOnlyFlag;
 }
 
 -(BOOL)isAllocated     

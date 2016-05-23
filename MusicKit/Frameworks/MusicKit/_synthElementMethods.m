@@ -45,6 +45,7 @@ Modification history:
     _MKAddSharedSynthClaim(_sharedKey);
 }
 
+/*
 -(oneway void)dealloc
 {
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
@@ -53,3 +54,4 @@ Modification history:
 
     [super dealloc];
 }
+*/

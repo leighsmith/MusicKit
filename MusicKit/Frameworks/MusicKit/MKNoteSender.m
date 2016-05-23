@@ -244,8 +244,9 @@ the note's MKConductor for time coordination. Then free the note. */
 - copyWithZone: (NSZone *) zone
 {
     unsigned int noteReceiverIndex;
-    MKNoteSender *newObj = (MKNoteSender *) NSCopyObject(self, 0, zone);
+    MKNoteSender *newObj = [[MKNoteSender allocWithZone: zone] init];
     
+    [newObj->noteReceivers release];
     newObj->noteReceivers = [[NSMutableArray arrayWithCapacity: [noteReceivers count]] retain];
     for (noteReceiverIndex = 0; noteReceiverIndex < [noteReceivers count]; noteReceiverIndex++) {
         [newObj connect: [noteReceivers objectAtIndex: noteReceiverIndex]];
@@ -254,6 +255,7 @@ the note's MKConductor for time coordination. Then free the note. */
     newObj->owner = owner;
     newObj->_ownerIsAPerformer = _ownerIsAPerformer;
     newObj->isSending = isSending;
+    newObj->isSquelched = isSquelched;
     return newObj;
 }
 

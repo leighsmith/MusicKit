@@ -344,7 +344,7 @@ unnecessary.
   @param  readOnlyFlag is a BOOL.
   @return Returns an id.
 */
-- setReadOnly: (BOOL) readOnlyFlag;
+- (void) setReadOnly: (BOOL) readOnlyFlag;
 
 /*!
   @brief Returns YES if the receiver is read-only.

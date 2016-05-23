@@ -524,16 +524,16 @@ Modification history:
 	[delegate performerDidDeactivate: self];
 }
 
-/* Creation ------------------------------------------------------- */
+/* Creation ------------------------------------------------------- */
 
+/* TYPE: Initializing; Initializes the receiver.
+ * Initializes the receiver.
+ * You never invoke this method directly,
+ * it's sent by the superclass upon creation.
+ * An overriding subclass method must send [super init]
+ * before setting its own defaults.
+ */
 - init
-  /* TYPE: Initializing; Initializes the receiver.
-   * Initializes the receiver.
-   * You never invoke this method directly,
-   * it's sent by the superclass upon creation.
-   * An overriding subclass method must send [super init]
-   * before setting its own defaults. 
-   */
 {
     self = [super init];
     if(self != nil) {
@@ -608,10 +608,9 @@ Modification history:
     return self;
 }
 
-#if 1
--rescheduleAtTime:(double)aTime
-  /* Reschedules at aTime, which is in terms of the receiver's Conductor's time 
+  /* Reschedules at aTime, which is in terms of the receiver's Conductor's time
      base. Returns nil and does nothing if the receiver is not active. */
+- rescheduleAtTime: (double) aTime
 {
     double condTime;
     
@@ -628,10 +627,10 @@ Modification history:
     return self;
 }
 
--rescheduleBy:(double)aTimeIncrement
-  /* Reschedules by aTimeIncrement, which is in terms of the receiver's 
+  /* Reschedules by aTimeIncrement, which is in terms of the receiver's
      Conductor's time base. Returns nil and does nothing if the receiver 
      is not active. */
+- rescheduleBy: (double) aTimeIncrement
 {
     double condTime;
     if (status != MK_active)
@@ -650,21 +649,18 @@ Modification history:
 			     @selector(_performerBody),self,0);
     return self;
 }
-#endif
 
-/* Copy ---------------------------------------------------------------- */
+/* Copy ---------------------------------------------------------------- */
 
-
-static id copyFields(MKPerformer *self,MKPerformer *newObj)
-  /* Same as copy but doesn't copy MKNoteSenders. */
+/* Same as copy but doesn't copy MKNoteSenders. */
+static id copyFields(MKPerformer *self, MKPerformer *newObj)
 {
     newObj->timeShift = self->timeShift;
     newObj->duration = self->duration;
     newObj->time = newObj->nextPerform = 0;
     newObj->_pauseOffset = 0;
     newObj->_deactivateMsgPtr = NULL;
-    newObj->_performMsgPtr=
-      MKNewMsgRequest(0.0,@selector(_performerBody),newObj,0);
+    newObj->_performMsgPtr = MKNewMsgRequest(0.0,@selector(_performerBody),newObj,0);
     newObj->status = MK_inactive;
     return newObj;
 }
@@ -681,12 +677,13 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
  */
 - copyWithZone: (NSZone *) zone
 {
-    MKPerformer *newObj = (MKPerformer *) NSCopyObject(self, 0, zone);
+    MKPerformer *newObj = [(MKPerformer *) [MKPerformer allocWithZone: zone] init];
     id obj_copy;
     unsigned n, i;
     
     newObj = copyFields(self, newObj);
-    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity: n = [noteSenders count]];
+    [newObj->noteSenders release];
+    newObj->noteSenders = [[NSMutableArray allocWithZone: zone] initWithCapacity: n = [noteSenders count]];
     for (i = 0; i < n; i++) {
         obj_copy = [[noteSenders objectAtIndex: i] copy];
         [newObj addNoteSender: obj_copy];
@@ -737,12 +734,6 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
     return delegate;
 }
 
-/* FIXME Needed due to a compiler bug. */
-static void setNoteSenders(MKPerformer *newObj, id aList)
-{
-    newObj->noteSenders = aList;
-}
-
 - (BOOL) inPerformance
 {
     return status != MK_inactive;
@@ -752,13 +743,14 @@ static void setNoteSenders(MKPerformer *newObj, id aList)
 
 @implementation MKPerformer(Private)
 
+/* This is like copyFromZone: except that the MKNoteSenders are not copied.
+ Instead, a virgin empty List is given. */
 - _copyFromZone: (NSZone *) zone
 {
-    /* This is like copyFromZone: except that the MKNoteSenders are not copied.
-       Instead, a virgin empty List is given. */
-    MKPerformer *newObj = (MKPerformer *) NSCopyObject(self, 0, zone);
+    MKPerformer *newObj = [(MKPerformer *) [MKPerformer allocWithZone: zone] init];
+    
     newObj = copyFields(self,newObj);
-    setNoteSenders(newObj,[[NSMutableArray alloc] init]);
+    newObj->noteSenders = [[NSMutableArray alloc] init];
     return newObj;
 }
 

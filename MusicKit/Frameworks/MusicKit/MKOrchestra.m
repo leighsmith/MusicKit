@@ -751,7 +751,7 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc);
     return self;
 }
 
-static id broadcastAndRtn(MKOrchestra *self, SEL sel)
+static id broadcastAndRtn(Class self, SEL sel)
 /* Does broadcast. Returns nil if any orchestras return nil, else self. */
 {
     register unsigned short i;

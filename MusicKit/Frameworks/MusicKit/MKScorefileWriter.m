@@ -183,7 +183,7 @@ Modification history prior to CVS commit.
         int len = [dataToAppend length];
         NSRange range = {SCOREPTR->_tagRangePos, len}; /*sb: there are 40 spaces, but this replaces exact amount. */
         char *aBuffer = (char *) _MKMalloc(len);
-        [dataToAppend getBytes: aBuffer]; //stick our string into a char buffer
+        [dataToAppend getBytes: aBuffer length: len]; //stick our string into a char buffer
 
         [SCOREPTR->_stream replaceBytesInRange: range withBytes: aBuffer];
         free(aBuffer);

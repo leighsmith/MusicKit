@@ -41,18 +41,27 @@ static void handleMKError(NSString *msg)
 
 + (void) openOnDevice: (NSString *) deviceName forInput: (BOOL) isInput
 {
-    if (sysExMidiInput) {
-        [sysExMidiInput close];
-        [sysExMidiInput release];
+    if (isInput) {
+        if (sysExMidiInput) {
+            [sysExMidiInput close];
+            [sysExMidiInput release];
+        }
+        sysExMidiInput = [deviceName length] == 0 ? [[MKMidi midi] retain] : [[MKMidi midiOnDevice: deviceName] retain];
+        // Connect the note sender of the MIDI input device to the SysEx note receiver.
+        [[sysExMidiInput noteSender] connect: [sysExReceiver noteReceiver]];
+        [sysExMidiInput setUseInputTimeStamps: NO];
+        [sysExMidiInput open];
+        [sysExMidiInput run];
+        [sysExMidiInput setOutputTimed: NO];
     }
-    sysExMidiInput = [deviceName length] == 0 ? [[MKMidi midi] retain] : [[MKMidi midiOnDevice: deviceName] retain];
-    // Connect the note sender of the MIDI input device to the SysEx note receiver.
-    [[sysExMidiInput noteSender] connect: [sysExReceiver noteReceiver]];
-    [sysExMidiInput setUseInputTimeStamps: NO];
-    [sysExMidiInput open];
-    [sysExMidiInput run];
-    // [sysExMidiOutput setOutputTimed: NO];
-    [sysExMidiInput setOutputTimed: NO];
+    else {
+        if (sysExMidiOutput) {
+            [sysExMidiOutput close];
+            [sysExMidiOutput release];
+        }
+        sysExMidiOutput = [deviceName length] == 0 ? [[MKMidi midi] retain] : [[MKMidi midiOnDevice: deviceName] retain];
+        // [sysExMidiOutput setOutputTimed: NO];
+    }
     [MKConductor setFinishWhenEmpty: NO];
     [MKConductor setClocked: YES];
     [MKConductor startPerformance];

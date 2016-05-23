@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>TwoWaves</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.musickit.TwoWaves</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

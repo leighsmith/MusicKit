@@ -127,11 +127,16 @@ void TSTAMP(char *msg) {
 
 void PRINTSTAMPS(void) {
     int i;
-    NSDate * prevStamp = tstamps[0]; //sb: was double
-    for (i=0; i<TSTAMPS; i++) {
+    NSDate *prevStamp = tstamps[0]; //sb: was double
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setTimeStyle: NSDateFormatterMediumStyle];
+    // [[tstamps[i] descriptionWithCalendarFormat: @"%H:%M:%S:%F" timeZone: nil locale: nil],
+    
+    for (i = 0; i < TSTAMPS; i++) {
 //      printf("%f: [%f] %s\n",tstamps[i],tstamps[i]-prevStamp,msgs[i]);
-	printf("%s: [%f] %s\n",[[tstamps[i] descriptionWithCalendarFormat:@"%H:%M:%S:%F" timeZone:nil locale:nil] UTF8String],
-	       [tstamps[i] timeIntervalSinceDate:prevStamp],
+	printf("%s: [%f] %s\n",
+               [[dateFormatter stringFromDate: tstamps[i]] UTF8String],
+	       [tstamps[i] timeIntervalSinceDate: prevStamp],
 	       msgs[i]);
 	prevStamp = tstamps[i];
     }

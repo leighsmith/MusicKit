@@ -184,11 +184,13 @@ Modification history:
    the same connections and entries. */
 - copyWithZone: (NSZone *) zone
 {
-    MKPatchTemplate *newObj = (MKPatchTemplate *) NSCopyObject(self, 0, zone);
+    MKPatchTemplate *newObj = (MKPatchTemplate *) [[MKPatchTemplate allocWithZone: zone] init];
 
-    _deallocatedPatches = [_MKClassOrchestra() _addTemplate:newObj];
+    // TODO this may not be correct.
+    newObj->_deallocatedPatches = [_MKClassOrchestra() _addTemplate: newObj];
     newObj->_connectionStorage = [_connectionStorage copy];
     newObj->_elementStorage = [_elementStorage copy];
+    newObj->_eMemSegments = _eMemSegments;
     return newObj;
 }
 

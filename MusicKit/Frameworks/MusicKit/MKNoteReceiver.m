@@ -162,13 +162,13 @@ Modification history before commit to CVS:
 - copyWithZone: (NSZone *) zone
 {
     unsigned n = [noteSenders count], i;
-    MKNoteReceiver *newObj = (MKNoteReceiver *) NSCopyObject(self, 0, zone);
+    MKNoteReceiver *newObj = [[MKNoteReceiver allocWithZone: zone] init];
 
+    [newObj->noteSenders release];
     newObj->noteSenders = [[NSMutableArray arrayWithCapacity: [noteSenders count]] retain];
     for (i = 0; i < n; i++)
         [newObj connect: [noteSenders objectAtIndex: i]];
-    newObj->dataObject = nil;
-    newObj->owner = nil;
+    newObj->isSquelched = isSquelched;
     return newObj;
 }
 

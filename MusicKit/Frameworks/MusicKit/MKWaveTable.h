@@ -78,7 +78,7 @@ fillTableLength:scale:.
 //sb:
 #import "dsp_types.h" /* for DSPDatum */
 
-@interface MKWaveTable : NSObject
+@interface MKWaveTable : NSObject <NSCopying>
 {
     unsigned int length;    /* Non-0 if a data table exists, 0 otherwise */
     double scaling;         /* 0.0 = normalization scaling */

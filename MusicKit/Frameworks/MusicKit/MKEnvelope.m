@@ -229,7 +229,7 @@ id MKGetEnvelopeClass(void)
 /* Returns a copy of the receiver with its own copy of arrays. */
 - copyWithZone: (NSZone *) zone
 {
-    MKEnvelope *newObj = (MKEnvelope *) NSCopyObject(self, 0, zone);
+    MKEnvelope *newObj = (MKEnvelope *) [[MKEnvelope allocWithZone: zone] init];
     newObj->xArray = NULL;
     newObj->yArray = NULL;
     newObj->smoothingArray = NULL;

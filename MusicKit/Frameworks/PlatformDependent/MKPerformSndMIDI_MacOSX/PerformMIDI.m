@@ -23,6 +23,7 @@
 */
 #include "PerformMIDI.h"
 #include <CoreMIDI/MIDIServices.h>
+#include <CoreAudio/HostTime.h>
 
 #define FUNCLOG 0      // 1 == write a log to disk whenever a function in this API is called.
 #define DUMPPACKETS 0  // 1 == print out each packet sent to the driver.
@@ -59,8 +60,7 @@ static long playEndTimeEstimate = 0;
 // This should become part of the CoreMIDI library.
 MIDITimeStamp MIDIGetCurrentTime(void)
 {
-    AbsoluteTime now = UpTime();
-    return UnsignedWideToUInt64(now);
+    return AudioGetCurrentHostTime();
 }
 
 // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
@@ -710,8 +710,7 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
     // MIDITimeStamp is measured in AbsoluteTime units which is not counted in clock-time units.
     // Therefore we need to convert to arrive at a divisor/multiplicand for conversion of quantum units.
     UInt64 nanoseconds = ((UInt64) microseconds) * 1000;
-    AbsoluteTime absTimeFactor = NanosecondsToAbsolute(UInt64ToUnsignedWide(nanoseconds));
-    quantumFactor = UnsignedWideToUInt64(absTimeFactor);
+    quantumFactor = AudioConvertNanosToHostTime(nanoseconds);
     quantumInSeconds = (float) microseconds / 1000000.0;
 
 #if FUNCLOG
@@ -724,8 +723,8 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
 
 // This should wait until a reply is received on port_set or until timeout.
 // For MacOS X, this is achieved by waiting for the playEndTimeEstimate, which is the time we
-// assume by which all the notes have been played. This is a bodge because cancelling should
-// shorten this playEndTimeEstimate to 0 and/or cancel the run loop...#@$%# Apple... :-(
+// assume by which all the notes have been played. This is a kludge because cancelling should
+// shorten this playEndTimeEstimate to 0 and/or cancel the run loop...
 PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions *funcs, int timeout)
 {
     double delayEstimateInSeconds;

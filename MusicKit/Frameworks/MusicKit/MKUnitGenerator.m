@@ -488,10 +488,10 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
       [NSString stringWithUTF8String:[self masterUGPtr]->argSymbols[argNum].name];
 }  
 
-static id argOutOfBoundsErr(unsigned argNum,MKUnitGenerator *self)
+static id argOutOfBoundsErr(unsigned argNum, MKUnitGenerator *self)
   /* Generates error message saying argument is out of bounds. */
 {
-    MKErrorCode(MK_ugBadArgErr, [NSString stringWithUTF8String: (char *) argNum], NSStringFromClass([self class]));
+    MKErrorCode(MK_ugBadArgErr, [NSString stringWithFormat: @"%u", argNum], NSStringFromClass([self class]));
     return nil;
 }
 
@@ -915,7 +915,7 @@ static id specialAddressVal(MKUnitGenerator *self, unsigned int argNum, SEL orch
     MKLeafUGStruct *theClassInfo = [self classInfo];
     if (errorChecks) {
 	if (argNum >= theClassInfo->master->argCount) {
-	    argOutOfBoundsErr(argNum,self);
+	    argOutOfBoundsErr(argNum, [[self alloc] init]);
 	    return DSP_MS_N;
 	}
     }
