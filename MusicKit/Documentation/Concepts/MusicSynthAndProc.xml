@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- Music Synth and Processing Chapter -->
   <chapter id="MusicSynthAndProc">
     <title>Music Synthesis and Processing</title>
 
@@ -2364,18 +2364,6 @@ location that, by convention, is never read:</para>
 
 <!-- Keep this comment at the end of the file
 Local variables:
-mode: sgml
-sgml-omittag:nil
-sgml-shorttag:t
-sgml-namecase-general:t
-sgml-general-insert-case:lower
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document: "MusicKitConcepts.sgml"
-sgml-exposed-tags:nil
-sgml-local-catalogs:nil
-sgml-local-ecat-files:nil
+mode: xml
 End:
 -->

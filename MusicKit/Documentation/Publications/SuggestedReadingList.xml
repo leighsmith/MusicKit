@@ -1,6 +1,6 @@
 <!-- $Id$ -->
 
-<bibliography id=suggestedreading>
+<bibliography id="suggestedreading">
 
   <title>Suggested Reading</title>
   <abstract>
@@ -15,7 +15,7 @@
     <title>Signal and Array Processing</title>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>Lawrence</firstname><othername>R.</othername>
@@ -25,7 +25,7 @@
 	    <firstname>Bernard</firstname><surname>Gold</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>
+	<title role="book">
 	  Theory and Application of Digital Signal Processing
 	</title>
 	<publishername>Prentice-Hall</publishername>
@@ -34,21 +34,21 @@
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>L.</firstname><othername>E.</othername>
 	    <surname>Franks</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>Signal Theory</title>
+	<title role="book">Signal Theory</title>
 	<publishername>Prentice-Hall</publishername>
 	<pubdate>1969</pubdate>
       </bibliomset>
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>Gene</firstname><othername>H.</othername>
@@ -59,7 +59,7 @@
 	    <surname>Van Loan</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>Matrix Computations</title>
+	<title role="book">Matrix Computations</title>
 	<pubdate>1983</pubdate>
 	<publishername>John Hopkins University Press</publishername>
       </bibliomset>
@@ -67,28 +67,28 @@
 
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>G.</firstname><othername>W.</othername>
 	    <surname>Stewart</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>Introduction to Matrix Computations</title>
+	<title role="book">Introduction to Matrix Computations</title>
 	<publishername>Academic Press</publishername>
 	<pubdate>1973</pubdate>
       </bibliomset>
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>Ronald</firstname><othername>N.</othername>
 	    <surname>Bracewell</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>
+	<title role="book">
 	  The Fourier Transform and Its Applications
 	</title>
 	<publishername>McGraw-Hill</publishername>
@@ -104,13 +104,13 @@
     <title>Sound</title>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>John</firstname><surname>Backus</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>
+	<title role="book">
 	  The Acoustical Foundations of Music, Second edition
 	</title>
 	<publishername>Norton</publishername>
@@ -119,15 +119,15 @@
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=article>
+      <bibliomset relation="article">
 	<firstname>B.</firstname><othername>A.</othername>
 	<surname>Blesser</surname>
-	<title role=article>
+	<title role="article">
 	  Digitization of Audio: A Comprehensive Examination of
 	  Theory, Implementation and Current Practice
 	</title>
       </bibliomset>
-      <bibliomset relation=journal>
+      <bibliomset relation="journal">
 	<title>Journal of the Audio Engineering Society</title>
 	<volumenum>26</volumenum>(<issuenum>10</issuenum>)
 	<pagenums>pp. 739-771</pagenums>
@@ -142,7 +142,7 @@
     <title>Music</title>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>Charles</firstname><surname>Dodge</surname>
@@ -152,20 +152,20 @@
 	    <surname>Jerse</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>Computer Music</title>
+	<title role="book">Computer Music</title>
 	Schirmer Books
 	<pubdate>1985</pubdate>
       </bibliomset>
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>Hal</firstname><surname>Chamberlain</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>
+	<title role="book">
 	  Musical Applications of Microprocessors
 	</title>
 	<publishername>Hayden</publishername>
@@ -174,32 +174,32 @@
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=book>
+      <bibliomset relation="book">
 	<authorgroup>
 	  <author>
 	    <firstname>Hubert</firstname><othername>S.</othername>
 	    <surname>Howe, Jr.</surname>
 	  </author>
 	</authorgroup>
-	<title role=book>Electronic Music Synthesis</title>
+	<title role="book">Electronic Music Synthesis</title>
 	<publishername>Norton</publishername>
 	<pubdate>1975</pubdate>
       </bibliomset>
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=article>
+      <bibliomset relation="article">
 	<authorgroup>
 	  <author>
 	    <firstname>Bill</firstname><surname>Schottstaedt</surname>
 	  </author>
 	</authorgroup>
-	<title role=article>
+	<title role="article">
 	  The Simulation of Natural Instrument Tones using Frequency
 	  Modulation with a Complex Modulating Wave
 	</title>
       </bibliomset>
-      <bibliomset relation=journal>
+      <bibliomset relation="journal">
 	<title>Computer Music Journal</title>
 	<volumenum>1</volumenum>(<issuenum>4</issuenum>)
 	<pagenums>pp. 46-50</pagenums>
@@ -208,14 +208,14 @@
     </bibliomixed>
 
     <bibliomixed>
-      <bibliomset relation=article>
+      <bibliomset relation="article">
 	<authorgroup>
 	  <author>
 	    <firstname>Marc</firstname> <surname>Le Brun</surname>
 	  </author>
 	</authorgroup>
       </bibliomset>
-      <bibliomset relation=journal>
+      <bibliomset relation="journal">
 	<title>Digital Waveshaping Synthesis</title>
 	Journal of the Audio Engineering Society
 	<volumenum>18</volumenum>(<issuenum>2</issuenum>)
@@ -225,7 +225,7 @@
     </bibliomixed>
 
     <bibliomixed>
-    <bibliomset relation=article>
+    <bibliomset relation="article">
       <authorgroup>
 	<author>
 	  <firstname>Eric</firstname> <othername>D.</othername>
@@ -236,9 +236,9 @@
 	  <surname>Vercoe</surname>
 	</author>
       </authorgroup>
-      <title role=article>SAOL: The MPEG-4 Structured Audio Orchestra Language</title>
+      <title role="article">SAOL: The MPEG-4 Structured Audio Orchestra Language</title>
     </bibliomset>
-    <bibliomset relation=journal>
+    <bibliomset relation="journal">
       <title>Computer Music Journal</title>
       <volumenum>23</volumenum>(<issuenum>2</issuenum>)
       <pubdate>1999</pubdate>

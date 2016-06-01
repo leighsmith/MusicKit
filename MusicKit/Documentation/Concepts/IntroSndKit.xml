@@ -1,6 +1,4 @@
 <!--
-$Id$
-
 Introduction to the SndKit chapter, in the original DocBook SGML source.
 
 Edit this file, not the HTML, RTF or LaTeX output.
@@ -1481,18 +1479,6 @@ selection.</para>
 
 <!-- Keep this comment at the end of the file
 Local variables:
-mode: sgml
-sgml-omittag:nil
-sgml-shorttag:t
-sgml-namecase-general:t
-sgml-general-insert-case:lower
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document: "MusicKitConcepts.sgml"
-sgml-exposed-tags:nil
-sgml-local-catalogs:nil
-sgml-local-ecat-files:nil
+mode: xml
 End:
 -->

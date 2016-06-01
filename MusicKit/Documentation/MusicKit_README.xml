@@ -1,9 +1,7 @@
 <!--
-The MusicKit README file, in the original DocBook SGML source.
+The MusicKit README file, in the original DocBook XML source.
 
 Edit this file, not the HTML, RTF or LaTeX output.
-
-$Id$
 
 (Author attribution below)
 
@@ -14,41 +12,41 @@ and binary distributions. Likewise if the distribution web site changes.
 -->
 
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
-<!entity mkvertuple "5.6.2">
-<!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
-<!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
-<!entity maintaineremail "leigh@leighsmith.com_nospam">
-<!entity mkurl "http://www.musickit.org">
-<!entity mkdownload "http://sourceforge.net/projects/musickit/files/musickit">
-<!entity mksvnweb "http://sourceforge.net/svn/?group_id=9881">
-<!entity mksfweb "http://www.sourceforge.net/projects/musickit">
+<!ENTITY mkvertuple "5.6.2">
+<!ENTITY bibliography        SYSTEM "Publications/PublishedDocumentation.xml">
+<!ENTITY readinglist         SYSTEM "Publications/SuggestedReadingList.xml">
+<!ENTITY maintaineremail "leigh@leighsmith.com_nospam">
+<!ENTITY mkurl "http://www.musickit.org">
+<!ENTITY mkdownload "http://sourceforge.net/projects/musickit/files/musickit">
+<!ENTITY mksvnweb "http://sourceforge.net/svn/?group_id=9881">
+<!ENTITY mksfweb "http://www.sourceforge.net/projects/musickit">
 <!-- Disable mklists to stop spam -->
-<!entity mklists "@lists.sourceforge.net_nospam">
+<!ENTITY mklists "@lists.sourceforge.net_nospam">
 <!-- GNUstep Libraries used -->
-<!entity gnustepdownload "http://www.gnustep.org">
-<!entity gsmakevertuple "2.2.0">
-<!entity gsbasevertuple "1.18.0">
-<!entity gsguivertuple "0.16.0">
+<!ENTITY gnustepdownload "http://www.gnustep.org">
+<!ENTITY gsmakevertuple "2.2.0">
+<!ENTITY gsbasevertuple "1.18.0">
+<!ENTITY gsguivertuple "0.16.0">
 <!-- Libraries used -->
-<!entity libsndfileweb "http://www.mega-nerd.com/libsndfile">
-<!entity libsndfilevertuple "1.0.20">
-<!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile/libsndfile-1.0.20.tar.gz">
-<!entity hipvertuple "0.4pre1">
-<!entity hipdownload "http://www.sourceforge.net/projects/lame/files/lame/libmp3hip-0.4pre1.tar.gz">
-<!entity lameweb "http://www.sourceforge.net/projects/lame">
-<!entity lamevertuple "3.98.2">
-<!entity lamedownload "http://sourceforge.net/projects/lame/files/lame/lame-398-2.tar.gz">
-<!entity oggvorbisweb "http://www.xiph.org/ogg/vorbis">
-<!entity oggvertuple "1.1.4">
-<!entity oggdownload "http://downloads.xiph.org/releases/ogg/libogg-1.1.4.tar.gz">
-<!entity vorbisvertuple "1.2.2">
-<!entity vorbisdownload "http://downloads.xiph.org/releases/vorbis/libvorbis-1.2.2.tar.gz">
-<!entity libshoutweb "http://www.icecast.org">
-<!entity libshoutvertuple "2.3.2">
-<!entity libshoutdownload "http://downloads.xiph.org/releases/icecast/icecast-2.3.2.tar.gz">
-<!entity portaudioweb "http://www.portaudio.com/">
-<!entity portaudiovertuple "19">
-<!entity portaudiodownload "http://www.portaudio.com/archives/pa_snapshot_v19.tar.gz">
+<!ENTITY libsndfileweb "http://www.mega-nerd.com/libsndfile">
+<!ENTITY libsndfilevertuple "1.0.20">
+<!ENTITY libsndfiledownload "http://www.mega-nerd.com/libsndfile/libsndfile-1.0.20.tar.gz">
+<!ENTITY hipvertuple "0.4pre1">
+<!ENTITY hipdownload "http://www.sourceforge.net/projects/lame/files/lame/libmp3hip-0.4pre1.tar.gz">
+<!ENTITY lameweb "http://www.sourceforge.net/projects/lame">
+<!ENTITY lamevertuple "3.98.2">
+<!ENTITY lamedownload "http://sourceforge.net/projects/lame/files/lame/lame-398-2.tar.gz">
+<!ENTITY oggvorbisweb "http://www.xiph.org/ogg/vorbis">
+<!ENTITY oggvertuple "1.1.4">
+<!ENTITY oggdownload "http://downloads.xiph.org/releases/ogg/libogg-1.1.4.tar.gz">
+<!ENTITY vorbisvertuple "1.2.2">
+<!ENTITY vorbisdownload "http://downloads.xiph.org/releases/vorbis/libvorbis-1.2.2.tar.gz">
+<!ENTITY libshoutweb "http://www.icecast.org">
+<!ENTITY libshoutvertuple "2.3.2">
+<!ENTITY libshoutdownload "http://downloads.xiph.org/releases/icecast/icecast-2.3.2.tar.gz">
+<!ENTITY portaudioweb "http://www.portaudio.com/">
+<!ENTITY portaudiovertuple "19">
+<!ENTITY portaudiodownload "http://www.portaudio.com/archives/pa_snapshot_v19.tar.gz">
 ]>
 
 <article id="README">
@@ -62,20 +60,20 @@ and binary distributions. Likewise if the distribution web site changes.
    this is legal DocBook, but is ignored?
     <mediaobject>
       <imageobject>
-	<imagedata FileRef="Images/MK_icon.eps" format="eps">
+	<imagedata FileRef="Images/MK_icon.eps" format="eps"/>
       </imageobject>
       <imageobject>
-	<imagedata FileRef="Images/MK_icon.png" format="png">
+	<imagedata FileRef="Images/MK_icon.png" format="png"/>
       </imageobject>
       <imageobject>
-	<imagedata FileRef="Images/.dir.tiff" format="tiff">
+	<imagedata FileRef="Images/.dir.tiff" format="tiff"/>
       </imageobject>
     </mediaobject>
 -->
 
     <author>
       <firstname>Leigh</firstname>
-      <othername role=mi>M.</othername>
+      <othername role="mi">M.</othername>
       <surname>Smith</surname>
       <affiliation>
         <orgname>
@@ -149,9 +147,9 @@ systems</link>.
     <para>
 The <link linkend="downloads"><productname>MusicKit</productname>
 Distribution</link> is a comprehensive package that includes <link
-linkend=onlinedoco>on-line documentation</link>, <link
-linkend=examples>programming examples</link>, <link
-linkend=applications>utilities, applications</link> and sample score
+linkend="onlinedoco">on-line documentation</link>, <link
+linkend="examples">programming examples</link>, <link
+linkend="applications">utilities, applications</link> and sample score
 documents. The <productname>MusicKit</productname> is dependent on the
 <productname>SndKit</productname> distribution, originally written by
 Stephen Brandon, and both Framework collections are available at the
@@ -168,18 +166,18 @@ Source code is available for everything, with the exception of the
 low-level sound and <acronym>DSP</acronym> drivers.  This means
 researchers and developers may study the source or even customize the
 Music Kit and <acronym>DSP</acronym> tools to suit their needs.
-Enhancements can be committed to the <link linkend=fixes><productname>Subversion</productname>
+Enhancements can be committed to the <link linkend="fixes"><productname>Subversion</productname>
 repository</link> to have them incorporated for future
 releases. Commercial software developers may freely incorporate and
 adapt the software to accelerate development of software products.
 </para>
 
-    <sect2 id=features>
+    <sect2 id="features">
       <title>Feature List</title>
       <para>
 The following is a partial list of the highlights of the
 <productname>MusicKit</productname> provided by David Jaffe on his
-<link linkend=otherlinks>web-page</link>:
+<link linkend="otherlinks">web-page</link>:
 </para>
 
       <itemizedlist>
@@ -263,7 +261,7 @@ writes a sound file.
 	</listitem>
 	<listitem>
 	  <para>
-Suite of <link linkend=applications>applications</link>, including
+Suite of <link linkend="applications">applications</link>, including
 <application>Ensemble</application> &mdash; an interactive algorithmic
 composition and performance environment (including a built-in sampler),
 and <application>ScorePlayer</application> &mdash; a Scorefile and standard
@@ -294,7 +292,7 @@ ScoreFile, a textual scripting language for music.
 	</listitem>
         <listitem>
           <para>
-Connectable audio processing modules (&ldquo;plugins&rdquo) including standard audio
+Connectable audio processing modules (&ldquo;plugins&rdquo;) including standard audio
 effects such as reverb. Support for <productname>Apple</productname>
 <productname>AudioUnits</productname>.
 </para>
@@ -328,7 +326,7 @@ linkend="license">license</link>
       </itemizedlist>
     </sect2>
 
-    <sect2 id=otherlinks>
+    <sect2 id="otherlinks">
       <title>References at Other Sites</title>
       <para>
 The <productname>MusicKit</productname> is listed on the following web
@@ -341,12 +339,10 @@ sites and open source portals:
 	    <ulink url="&mksfweb;">
 	      <inlinemediaobject>
 	        <imageobject>
-		  <imagedata fileref="Images/sourceforge.eps"
-		    format="EPS" width=50 depth=30
-		    scalefit=1>
+		  <imagedata fileref="Images/sourceforge.eps" format="EPS" width="50" depth="30" scalefit="1"/>
 	        </imageobject>
 	        <imageobject>
-		  <imagedata fileref="Images/sourceforge.png">
+		  <imagedata fileref="Images/sourceforge.png"/>
 	        </imageobject>
 	      </inlinemediaobject>
 sourceforge.net
@@ -359,11 +355,10 @@ hosts the <productname>Subversion</productname> repository, news, mail lists and
 	    <ulink url="http://www.freshmeat.net/projects/musickit/">
 	      <inlinemediaobject>
 	        <imageobject>
-		  <imagedata fileref="Images/freshmeat.eps" width=25 depth=15
-			     scalefit=1>
+		  <imagedata fileref="Images/freshmeat.eps" width="25" depth="15" scalefit="1"/>
 	        </imageobject>
 	        <imageobject>
-		  <imagedata fileref="Images/freshmeat.png">
+		  <imagedata fileref="Images/freshmeat.png"/>
 	        </imageobject>
 	      </inlinemediaobject>
 freshmeat.net
@@ -375,11 +370,10 @@ freshmeat.net
 	    <ulink url="http://www.advogato.org/proj/MusicKit%20and%20SndKit/">
 	      <inlinemediaobject>
 	        <imageobject>
-		  <imagedata fileref="Images/advogato.eps" width=25 depth=15
-			     scalefit=1>
+		  <imagedata fileref="Images/advogato.eps" width="25" depth="15" scalefit="1"/>
 	        </imageobject>
 	        <imageobject>
-	  	  <imagedata fileref="Images/advogato.png">
+	  	  <imagedata fileref="Images/advogato.png"/>
 	        </imageobject>
 	      </inlinemediaobject>
 advogato.org
@@ -403,7 +397,7 @@ advogato.org
       </itemizedlist>
     </sect2>
     
-    <sect2 id=maillist>
+    <sect2 id="maillist">
       <title><productname>MusicKit</productname> Mail-lists</title>
       <itemizedlist>
 	<listitem>
@@ -441,7 +435,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-users</ulink>.
       <para>
 Don't assume nothing is being done if you don't hear anything for a
 while!  The maintainers are usually adding fixes/code, but full
-releases are less frequent. The <link linkend=fixes><productname>Subversion</productname>
+releases are less frequent. The <link linkend="fixes"><productname>Subversion</productname>
 repository</link> can be used to track all updates and obtain them as
 they are committed by developers.
 </para>
@@ -457,7 +451,7 @@ they are committed by developers.
 	  <para>
 Thorough documentation of classes, applications, usage and concepts
 are found under the directory
-<filename class=directory>
+<filename class="directory">
 Documentation
 </filename> in the source distribution.
 </para>
@@ -528,7 +522,7 @@ function and <productname>Objective-C</productname> class.
 	<para>
 Conference papers and lecture slides in <acronym>PDF</acronym> or
 <acronym>HTML</acronym> are listed in the <link
-linkend=bibliography>bibliography</link>.
+linkend="bibliography">bibliography</link>.
 </para>
       </sect3>
     </sect2>
@@ -708,14 +702,14 @@ Kim Shrier added <productname>FreeBSD</productname> support.
     <title>Supported Platforms</title>
     <para>
         The <productname>MusicKit</productname> currently runs on the
-        platforms described in <xref linkend=supportedplatforms>:
+        platforms described in <xref linkend="supportedplatforms"/>:
 </para>
-    <table id=supportedplatforms frame=all><title><productname>MusicKit</productname> Supported Platforms</title>
-      <tgroup cols=4 colsep=1 rowsep=1>
-	<colspec colnum=1 align=left>
-	<colspec colnum=2 align=center>
-	<colspec colnum=3 align=center>
-	<colspec colnum=4 align=center>
+    <table id="supportedplatforms" frame="all"><title><productname>MusicKit</productname> Supported Platforms</title>
+      <tgroup cols="4" colsep="1" rowsep="1">
+	<colspec colnum="1" align="left"/>
+	<colspec colnum="2" align="center"/>
+	<colspec colnum="3" align="center"/>
+	<colspec colnum="4" align="center"/>
 	<thead>
 	  <row>
 	    <entry>Platform</entry>
@@ -781,7 +775,7 @@ some <productname>NeXT</productname> <acronym>API</acronym>
 (although that is now history, particularly for streaming
 audio).  There are several versions of
 <filename>MKPerformSndMIDI</filename> underneath <filename
-class=directory>MusicKit/Frameworks/PlatformSpecific</filename>.
+class="directory">MusicKit/Frameworks/PlatformSpecific</filename>.
 You only compile one, all the versions are intended to produce
 one framework named
 <filename>MKPerformSndMIDI.framework</filename> which the
@@ -822,7 +816,7 @@ supported. <classname>SndAudioUnitProcessor</classname> allows loading and using
 <productname>AudioUnits</productname> as a <classname>SndAudioProcessor</classname>, so
 you will be able to plug other developers <productname>AudioUnits</productname> into your
 <productname>SndKit</productname> sound processing stream. The source for AudioUnit
-processing is located in <filename class=directory>MusicKit/Frameworks/PlatformSpecific/AudioUnits</filename>.
+processing is located in <filename class="directory">MusicKit/Frameworks/PlatformSpecific/AudioUnits</filename>.
       </para>
 
       <para>
@@ -854,7 +848,7 @@ other <productname>Unix</productname> platforms will work (<productname>SGI</pro
 <productname>portaudio</productname> library and <productname>GNUstep</productname>.
 </para>
 
-      <sect3 id=installinggnustep>
+      <sect3 id="installinggnustep">
 	<title>Installing <productname>GNUStep</productname></title>
 	<para>
 Install <productname>GNUStep</productname> on your system in the usual fashion, according
@@ -866,7 +860,7 @@ versions of <productname>GNUStep</productname> packages are known to work:
 </para>
      
 	<variablelist>
-	  <varlistentry id=gnustep-make>
+	  <varlistentry id="gnustep-make">
 	    <term>
             <ulink url="&gnustepdownload;/gnustep-make-&gsmakevertuple;.tar.gz">gnustep-make-&gsmakevertuple;.tar.gz</ulink>. 
             </term>
@@ -893,7 +887,7 @@ spurious warnings.
               </note>
 	    </listitem>
 	  </varlistentry>
-	  <varlistentry id=gnustep-base>
+	  <varlistentry id="gnustep-base">
 	    <term>
             <ulink url="&gnustepdownload;/gnustep-base-&gsbasevertuple;.tar.gz">gnustep-base-&gsbasevertuple;.tar.gz</ulink>. 
             </term>
@@ -911,7 +905,7 @@ sudo make install
               </para>
 	    </listitem>
 	  </varlistentry>
-	  <varlistentry id=gnustep-gui>
+	  <varlistentry id="gnustep-gui">
 	    <term>
             <ulink url="&gnustepdownload;/gnustep-gui-&gsguivertuple;.tar.gz">gnustep-gui-&gsguivertuple;.tar.gz</ulink>. 
             </term>
@@ -981,7 +975,7 @@ running <filename>MSYS-1.0.10.exe</filename>.
 	    <para>
 Install complier, libraries and headers by running
 <filename>MinGW-3.2.0-rc-3.exe</filename>. Install into the <filename
-class=directory>C:/msys/mingw</filename> location.
+class="directory">C:/msys/mingw</filename> location.
 </para>
 	    <para>
 When installing MSYS, ensure that the user name or at least the home
@@ -1349,7 +1343,7 @@ from the source code distribution tarball. In either case, certain
 libraries must be preinstalled for the MusicKit to operate.
 </para>
 
-    <sect2 id=support>
+    <sect2 id="support">
       <title>Installing Supporting Libraries</title>
       <para>
 The following libraries need to be installed prior to
@@ -1366,15 +1360,15 @@ functionality of the MusicKit) if necessary. These are noted below.
 If installing on <productname>GNUstep</productname>, be sure that
 <constant>PKG_CONFIG_PATH</constant> is set to point to whereever you
 install the libraries listed below. For example, if you do install
-these in <filename class=directory>/usr/local/lib</filename>,
+these in <filename class="directory">/usr/local/lib</filename>,
 <constant>PKG_CONFIG_PATH</constant> should be set to <filename
-class=directory>/usr/local/lib/pkgconfig</filename>. See
+class="directory">/usr/local/lib/pkgconfig</filename>. See
 <command>pkg-config</command> for details.
         </para>
       </note>
 
       <variablelist>
-	<varlistentry id=oggvorbis>
+	<varlistentry id="oggvorbis">
 	  <term>
             <ulink
             url="&oggdownload;">libogg-&oggvertuple;.tar.gz</ulink>. Status:
@@ -1393,7 +1387,7 @@ The <ulink url="&oggvorbisweb;">Ogg/Vorbis</ulink> libraries
 provide patent-free <productname>Vorbis</productname>
 encoding/decoding of <acronym>PCM</acronym> audio
 to and from <productname>Ogg</productname> format bitstreams for use by
-<link linkend=libshout>libshout</link>.  Newer versions than
+<link linkend="libshout">libshout</link>.  Newer versions than
 &oggvertuple; for <productname>Ogg</productname> and &vorbisvertuple;
 for <productname>Vorbis</productname> will probably just work.
               </para>
@@ -1415,7 +1409,7 @@ sudo make install
               </para>
 	  </listitem>
 	</varlistentry>
-	<varlistentry id=libsndfile>
+	<varlistentry id="libsndfile">
 	  <term>
             <ulink
             url="&libsndfiledownload;">libsndfile-&libsndfilevertuple;.tar.gz</ulink>.
@@ -1425,7 +1419,7 @@ sudo make install
             </term>
 	  <listitem>
 	    <para>
-The <ulink url="&libsndfileweb">libsndfile</ulink> sound file I/O
+The <ulink url="&libsndfileweb;">libsndfile</ulink> sound file I/O
 library provides sound file format conversion.  Newer versions than
 &libsndfilevertuple; will probably just work.
               </para>
@@ -1442,10 +1436,10 @@ sudo make install
               </para>
 	  </listitem>
 	</varlistentry>
-	<varlistentry id=lame>
+	<varlistentry id="lame">
 	  <term>
             <ulink
-            url="&lamedownload">lame-&lamevertuple;.tar.gz</ulink>. Status:
+            url="&lamedownload;">lame-&lamevertuple;.tar.gz</ulink>. Status:
             optional - disables
             <classname>SndAudioProcessorMP3Encoder</classname> if omitted.
             </term>
@@ -1469,7 +1463,7 @@ sudo make install
 	  </listitem>
 	</varlistentry>
 
-	<varlistentry id=libshout>
+	<varlistentry id="libshout">
 	  <term>
             <ulink url="&libshoutdownload;">icecast-&libshoutvertuple;.tar.gz</ulink>. Status:
             optional - disables
@@ -1497,7 +1491,7 @@ sudo make install
               </para>
 	  </listitem>
 	</varlistentry>
-	<varlistentry id=portaudio>
+	<varlistentry id="portaudio">
 	  <term>
 <ulink
 url="&portaudiodownload;">pa_snapshot_v&portaudiovertuple;.tar.gz</ulink>.
@@ -1548,7 +1542,7 @@ sudo make install
 
 	  </listitem>
 	</varlistentry>
-	<varlistentry id=libmp3hip>
+	<varlistentry id="libmp3hip">
 	  <term>
             <ulink url="&hipdownload;/libmp3hip-&hipvertuple;.tar.gz">libmp3hip-&hipvertuple;.tar.gz</ulink>. Status:
             optional - disables
@@ -1577,7 +1571,7 @@ sudo make install
       </variablelist>
     </sect2>
 
-    <sect2 id=binaries>
+    <sect2 id="binaries">
       <title>Installing MusicKit Binaries</title>
       <para>
 Binaries for the compiled frameworks for various operating systems
@@ -1657,20 +1651,20 @@ The <application>Installer</application> program will let you choose a
 directory in which to place the binaries.  If you are on a
 stand-alone machine, you should be logged in (or running
 <application>Installer</application>) as root and choose
-&ldquo;<filename class=directory>/</filename>&rdquo; for the
+&ldquo;<filename class="directory">/</filename>&rdquo; for the
 installation directory (the default).
 </para>
 
 	<para>
 The frameworks and applications are installed into the appropriate
-platform locations given in <xref linkend=installlocations>.
+platform locations given in <xref linkend="installlocations"/>.
 </para>
 
-	<table id=installlocations frame=all><title><productname>MusicKit</productname> Install locations</title>
-	  <tgroup cols=3 colsep=1 rowsep=1>
-	    <colspec colnum=1 align=left>
-	    <colspec colnum=2 align=center>
-	    <colspec colnum=3 align=center>
+	<table id="installlocations" frame="all"><title><productname>MusicKit</productname> Install locations</title>
+	  <tgroup cols="3" colsep="1" rowsep="1">
+	    <colspec colnum="1" align="left"/>
+	    <colspec colnum="2" align="center"/>
+	    <colspec colnum="3" align="center"/>
 	    <thead>
 	      <row>
 		<entry>Platform</entry>
@@ -1681,28 +1675,28 @@ platform locations given in <xref linkend=installlocations>.
 	    <tbody>
 	      <row>
 		<entry><productname>OpenStep 4.2 (m68k,ix86)</productname></entry>
-		<entry><filename class=directory>/LocalLibrary/Frameworks</filename></entry>
-		<entry><filename class=directory>/LocalApps</filename></entry>
+		<entry><filename class="directory">/LocalLibrary/Frameworks</filename></entry>
+		<entry><filename class="directory">/LocalApps</filename></entry>
 	      </row>
 	      <row>
 		<entry><productname>MacOS X-Server V1.0-1.2</productname></entry>
-		<entry><filename class=directory>/Local/Library/Frameworks</filename></entry>
-		<entry><filename class=directory>/Local/Apps</filename></entry>
+		<entry><filename class="directory">/Local/Library/Frameworks</filename></entry>
+		<entry><filename class="directory">/Local/Apps</filename></entry>
 	      </row>
 	      <row>
 		<entry><productname>MacOS X</productname></entry>
-		<entry><filename class=directory>/Library/Frameworks</filename></entry>
-		<entry><filename class=directory>/Applications</filename></entry>
+		<entry><filename class="directory">/Library/Frameworks</filename></entry>
+		<entry><filename class="directory">/Applications</filename></entry>
 	      </row>
 	      <row>
 		<entry><productname>GNUStep</productname> (on <productname>Unix</productname>en)</entry>
-		<entry><filename class=directory>/usr/GNUstep/Local/Library/Frameworks</filename></entry>
-		<entry><filename class=directory>/usr/GNUstep/Local/Applications</filename></entry>
+		<entry><filename class="directory">/usr/GNUstep/Local/Library/Frameworks</filename></entry>
+		<entry><filename class="directory">/usr/GNUstep/Local/Applications</filename></entry>
 	      </row>
 	      <row>
 		<entry><productname>GNUStep</productname> (on <productname>Windows</productname>)</entry>
-		<entry><filename class=directory>C:\GNUstep\Local\Library\Frameworks</filename></entry>
-		<entry><filename class=directory>C:\GNUstep\Local\Applications</filename></entry>
+		<entry><filename class="directory">C:\GNUstep\Local\Library\Frameworks</filename></entry>
+		<entry><filename class="directory">C:\GNUstep\Local\Applications</filename></entry>
 	      </row>
 	    </tbody>
 	  </tgroup>
@@ -1710,9 +1704,9 @@ platform locations given in <xref linkend=installlocations>.
 	
 	<para>
 Command line tools and manual pages will install into the <filename
-class=directory>/usr/local</filename> hierarchy on
+class="directory">/usr/local</filename> hierarchy on
 <productname>Unix</productname> type machines, specifically <filename
-class=directory>/usr/local/bin</filename>. Locations for command line
+class="directory">/usr/local/bin</filename>. Locations for command line
 Windows tools have yet to be determined.
 </para>
 
@@ -1721,15 +1715,15 @@ If you are the system administrator for a NFS shared network, you
 probably want to choose a local directory which can be exported and
 create symbolic links into that directory on the networked machines.
 Alternatively, if you have a single server that exports <filename
-class=directory>/Local*</filename> and <filename
-class=directory>/usr/local</filename>, simply install the package
+class="directory">/Local*</filename> and <filename
+class="directory">/usr/local</filename>, simply install the package
 there and you're done.
 </para>
 
       </sect3>
     </sect2>
 
-    <sect2 id=sources>
+    <sect2 id="sources">
       <title>Installing From The Source Tarball</title>
       <para>
 The source distribution is located at:
@@ -1757,7 +1751,7 @@ for regression testing.
               </para>
 	      </listitem>
 	    </varlistentry>
-	    <varlistentry id=ZilogDriverSource>
+	    <varlistentry id="ZilogDriverSource">
 	      <term>
               <ulink url="&mkdownload;/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
             </term>
@@ -1774,7 +1768,7 @@ for regression testing.
                 </note>
 	      </listitem>
 	    </varlistentry>
-	    <varlistentry id=DriverKitHeaders>
+	    <varlistentry id="DriverKitHeaders">
 	      <term>
                <ulink url="&mkdownload;/DriverKitHeadersForMOXS_V1.2.tar.gz">DriverKitHeadersForMOXS_V1.2.tar.gz</ulink>
             </term>
@@ -1782,7 +1776,7 @@ for regression testing.
 		<para>
                   <productname>NeXTStep V3.3</productname> headers
                   required to compile the <link
-                  linkend=ZilogDriverSource>driver</link> on
+                  linkend="ZilogDriverSource">driver</link> on
                   <productname>MacOS X-Server V1.2</productname>.
                 </para>
                 <note>
@@ -1816,7 +1810,7 @@ configured software. Trivially, the following commands will compile and install 
 MusicKit.
 </para>
 
-	<informalexample id=mkbuild>
+	<informalexample id="mkbuild">
 	  <screen>
 ./configure
 make
@@ -1826,13 +1820,13 @@ sudo make install
 
       <para>
 If you are installing dependent libraries into a non-standard place such as <filename
-class=directory>/sw</filename> if using <ulink
+class="directory">/sw</filename> if using <ulink
 url="http://www.finkproject.org/"><productname>fink</productname></ulink> on
 <productname>MacOS X</productname>, you can use the standard <command>configure</command>
 method to specify the compilation and linking flags:
 </para>
 
-	<informalexample id=mkbuildflagsfink>
+	<informalexample id="mkbuildflagsfink">
 	  <screen>
 ./configure CPPFLAGS=-I/sw/include LDFLAGS=-L/sw/lib
 make
@@ -1865,7 +1859,7 @@ of <productname>GNUstep</productname> themselves. Also, the environment variable
 permissions in order to install. This is achieved with the following commands:
 </para>
 	
-	<informalexample id=gnustepmkbuild>
+	<informalexample id="gnustepmkbuild">
 	  <screen>
 % ./configure
 % sudo sh
@@ -1923,7 +1917,7 @@ binaries. Assuming the support libraries are built with an i386 architecture bin
 i386 architecture, using the -arch flag:
 </para>
 
-	<informalexample id=mkbuildflags>
+	<informalexample id="mkbuildflags">
 	  <screen>
 ./configure CFLAGS="-arch i386"
 make
@@ -1957,15 +1951,14 @@ files are missing.  You can get them from the
 <productname>SoundKit</productname>, copy them from a
 <productname>NeXTStep 3.3</productname>/<productname>OpenStep
 4.2</productname> system, or as a convience, they are made available
-for <link linkend=DriverKitHeaders>download</link>.
+for <link linkend="DriverKitHeaders">download</link>.
 </para>
 
 	<para>
 MacOS X Developer release includes source for a generic
 <acronym>USB</acronym> <acronym>MIDI</acronym> driver at
 <filename>/Developer/Examples/CoreAudio/MIDI/SampleUSBDriver</filename>.
-There is also a driver binary for the <productname
-class="Registered">MIDIMan</productname>
+There is also a driver binary for the <productname class="registered">MIDIMan</productname>
 <trademark>MIDISPORT</trademark> <acronym>USB</acronym> interfaces for
 MacOS X available for download from <ulink
 url="http://www.midiman.com">MIDIMan's web page</ulink> and other
@@ -1979,7 +1972,7 @@ vendors may well have drivers available for their hardware.
       <title>Building the Documentation</title>
       <para>
 The documentation for the MusicKit and SndKit are now authored in <ulink
-url="http://www.docbook.org">DocBook</ulink> <acronym>SGML</acronym> format. This is then
+url="http://www.docbook.org">DocBook</ulink> <acronym>XML</acronym> format. This is then
 rendered to <acronym>HTML</acronym>, <acronym>PDF</acronym>,
 <productname>Apple</productname> <application>HelpViewer</application> and potentially
 other formats. In order to convert the documentation to these usual output formats, tools
@@ -1993,7 +1986,7 @@ install as much of the documentation as possible based on which tools have been
 installed. This is invoked by:
 </para>
 
-	<informalexample id=mkbuilddocs>
+	<informalexample id="mkbuilddocs">
 	  <screen>
 make documentation
 sudo make installdocs
@@ -2509,7 +2502,7 @@ If you have discovered a bug, please report it via the
 </para>
   </sect1>
 
-  <sect1 id=Donations>
+  <sect1 id="Donations">
     <title>Supporting The MusicKit Project by Donations</title>
 
     <para>
@@ -2547,11 +2540,10 @@ administrator <email>&maintaineremail;</email>.
    <ulink url="http://sourceforge.net">
 	<inlinemediaobject>
 	<imageobject>
-	  <imagedata fileref="Images/sourceforge.eps" width=50 depth=30
-		     scalefit=1>
+	  <imagedata fileref="Images/sourceforge.eps" width="50" depth="30" scalefit="1"/>
 	</imageobject>
 	<imageobject>
-	  <imagedata fileref="Images/sourceforge.png">
+	  <imagedata fileref="Images/sourceforge.png"/>
 <!--
 	<imagedata fileref="http://sourceforge.net/sflogo.php?group_id=9881"
 	  width="88"

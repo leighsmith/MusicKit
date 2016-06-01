@@ -1,6 +1,4 @@
 <!--
-$Id$
-
 Introduction to the MusicKit file, in the original DocBook SGML source.
 
 Edit this file, not the HTML, RTF or LaTeX output.
@@ -170,7 +168,7 @@ classes support the Ariel QuintProcessor hardware, available for the
 	</listitem>
       </itemizedlist>
     </sect1>
-    <sect1 id=MusicKitClasses>
+    <sect1 id="MusicKitClasses">
       <title><productname>MusicKit</productname> Classes</title>
 
       <para>

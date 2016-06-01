@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- MusicKit Class 5 -->
 
   <CHAPTER ID="class5">
       <TITLE>Class 5 &horbar; <CLASSNAME>MKSynthPatch</CLASSNAME>es</TITLE>
@@ -768,18 +768,6 @@ MKUpdateAsymp(
 
 <!-- Keep this comment at the end of the file
 Local variables:
-mode: sgml
-sgml-omittag:nil
-sgml-shorttag:t
-sgml-namecase-general:t
-sgml-general-insert-case:upper
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document: "MusicKitTutorials.sgml"
-sgml-exposed-tags:nil
-sgml-local-catalogs:nil
-sgml-local-ecat-files:nil
+mode: xml
 End:
 -->

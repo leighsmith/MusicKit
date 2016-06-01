@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- MusicKit Class 2 -->
 
   <CHAPTER ID="class2">
     <title>Class 2 &horbar; <PRODUCTNAME>MusicKit</PRODUCTNAME> Representation Classes</title>
@@ -490,18 +490,6 @@ system("playscore test.score");
     
 <!-- Keep this comment at the end of the file
 Local variables:
-mode: sgml
-sgml-omittag:nil
-sgml-shorttag:t
-sgml-namecase-general:t
-sgml-general-insert-case:upper
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document: "MusicKitTutorials.sgml"
-sgml-exposed-tags:nil
-sgml-local-catalogs:nil
-sgml-local-ecat-files:nil
+mode: xml
 End:
 -->

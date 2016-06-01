@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- Note List to Scorefile Chapter -->
 <chapter id="NoteListToScoreFile">
 <title>From The Classical Software Synthesis Note-List to the
 <productname>MusicKit</productname> Scorefile</title>
@@ -311,7 +311,7 @@ share noteTags.</para>
 <para>Here is a <emphasis role="bold">scorefile</emphasis> fragment
 that produces a single line of 3 notes.</para>
 
-<example id="ex1"
+<example id="ex1">
 <title>Three Staccato Notes</title>
 <programlisting>
 guitar (noteOn,1) freq:c4; 		
@@ -337,8 +337,8 @@ guitar (.2) freq:e4;
 </programlisting>
 </example>
 
-<para>If noteTags are added to <xref linkend="ex2">, it behaves like
-<xref linkend="ex1">, again producing a single line of 3 notes. The
+<para>If noteTags are added to <xref linkend="ex2"/>, it behaves like
+<xref linkend="ex1"/>, again producing a single line of 3 notes. The
 durations, if they are longer than the time between notes with the
 same tag, are ignored.
 </para>
@@ -354,7 +354,7 @@ guitar (.2,1) freq:e4;
 </programlisting>
 </example>
 
-<para>Of course, you can combine the two approaches. <xref linkend="ex4">
+<para>Of course, you can combine the two approaches. <xref linkend="ex4"/>
 produces a line of 3 notes and 3 overlapping notes.</para>
 
 <example id="ex4">
@@ -509,7 +509,7 @@ singer (2) freq0:466.164 freq1:466.164 freqEnv:frqFn0 amp:-12dB
 <sect1 id="VariousParameterTypes">
 <title>Scorefiles Support Various Parameter Types</title>
 
-<para><xref linkend="ex7"> also illustrates that a parameter may be a
+<para><xref linkend="ex7"/> also illustrates that a parameter may be a
 number of types: a string, a floating point number, an integer, an
 envelope, a wavetable (see below), or a type defined by the
 application that reads the <emphasis

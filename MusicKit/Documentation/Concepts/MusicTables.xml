@@ -1,9 +1,9 @@
-<!-- $Id$ -->
+<!-- Music Tables Appendix -->
 
-<appendix id=MusicTables>
+<appendix id="MusicTables">
 <title>Music Tables</title>
 
-  <sect1 id=MusicKitParameters>
+  <sect1 id="MusicKitParameters">
     <title><productname>MusicKit</productname> Parameters</title>
 
     <para>This section lists and describes the parameters that are
@@ -72,10 +72,10 @@ objects that you supply, the others have access to the
 <productname>MusicKit</productname> <classname>MKWaveTable</classname>
 database:</para>
 
-      <table frame=all><title>Wave Table Subclasses of <classname>MKSynthPatch</classname></title>
-	<tgroup cols=2 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=left>
+      <table frame="all"><title>Wave Table Subclasses of <classname>MKSynthPatch</classname></title>
+	<tgroup cols="2" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left"/>
+	  <colspec colnum="2" align="left"/>
 	  <thead>
 	    <row>
 	      <entry><classname>MKSynthPatch</classname></entry>
@@ -123,11 +123,11 @@ vibrato and interpolation</entry>
 
 <para>The wave table synthesis parameters are:</para>
 
-      <table frame=all><title>Wave Table Synthesis Parameters</title>
-	<tgroup cols=3 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=center>
-	  <colspec colnum=3 align=left>
+      <table frame="all"><title>Wave Table Synthesis Parameters</title>
+	<tgroup cols="3" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left"/>
+	  <colspec colnum="2" align="center"/>
+	  <colspec colnum="3" align="left"/>
 	  <thead>
 	    <row>
 	      <entry>Name</entry>
@@ -329,10 +329,10 @@ in the carrier oscillator. The rest of the FM
 <classname>MKSynthPatch</classname>es use two modulators.  All of
 these classes provide frequency interpolation and vibrato:</para>
 
-      <table frame=all><title>FM Subclasses of <classname>MKSynthPatch</classname></title>
-	<tgroup cols=2 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=left>
+      <table frame="all"><title>FM Subclasses of <classname>MKSynthPatch</classname></title>
+	<tgroup cols="2" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left"/>
+	  <colspec colnum="2" align="left"/>
 	  <thead>
 	    <row>
 	      <entry><classname>MKSynthPatch</classname></entry>
@@ -374,11 +374,11 @@ FM <classname>MKSynthPatch</classname>es are listed below; parameters
 that are recognized by only a subset of the
 <classname>MKSynthPatch</classname>es are so noted.  </para>
 
-      <table frame=all><title>Frequency Modulation Parameters</title>
-	<tgroup cols=3 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=center>
-	  <colspec colnum=3 align=left>
+      <table frame="all"><title>Frequency Modulation Parameters</title>
+	<tgroup cols="3" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left"/>
+	  <colspec colnum="2" align="center"/>
+	  <colspec colnum="3" align="left"/>
 	  <thead>
 	    <row>
 	      <entry>Name</entry>
@@ -601,11 +601,11 @@ of its characteristic sound naturally, without requiring much
 attention.  As such, it recognizes fewer parameters than the other
 <classname>MKSynthPatch</classname>es:</para>
 
-      <table frame=all><title><classname>Pluck</classname> Parameters</title>
-	<tgroup cols=3 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=center>
-	  <colspec colnum=3 align=left>
+      <table frame="all"><title><classname>Pluck</classname> Parameters</title>
+	<tgroup cols="3" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left">
+	  <colspec colnum="2" align="center">
+	  <colspec colnum="3" align="left">
 	  <thead>
 	    <row>
 	      <entry>Name</entry>
@@ -704,11 +704,11 @@ the complexity of the resulting waveform is a function of the lookup
 table.  However, for added flexibility, you may set the oscillator
 waveform to anything you want.  The parameters are as follows:</para>
 
-      <table frame=all><title>Waveshaping Parameters</title>
-	<tgroup cols=3 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=center>
-	  <colspec colnum=3 align=left>
+      <table frame="all"><title>Waveshaping Parameters</title>
+	<tgroup cols="3" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left">
+	  <colspec colnum="2" align="center">
+	  <colspec colnum="3" align="left">
 	  <thead>
 	    <row>
 	      <entry>Name</entry>
@@ -947,11 +947,11 @@ corresponding instrument.  For example, &ldquo;BA&rdquo; is normally
 used from about <constant>c2</constant> to about <constant>d4</constant>.
 </para>
 
-      <table frame=all><title>Subclasses of <classname>MKSynthPatch</classname></title>
-	<tgroup cols=3 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=left>
-	  <colspec colnum=3 align=left>
+      <table frame="all"><title>Subclasses of <classname>MKSynthPatch</classname></title>
+	<tgroup cols="3" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left">
+	  <colspec colnum="2" align="left">
+	  <colspec colnum="3" align="left">
 	  <thead>
 	    <row>
 	      <entry>Name</entry>
@@ -1168,11 +1168,11 @@ that corresponds to the key number.  A key number's lowest frequency
 (non-inclusive) is the upper limit of the previous key number.
 </para>
 
-      <table frame=all><title>Subclasses of <classname>MKSynthPatch</classname></title>
-	<tgroup cols=3 colsep=1 rowsep=1>
-	  <colspec colnum=1 align=left>
-	  <colspec colnum=2 align=center>
-	  <colspec colnum=3 align=left>
+      <table frame="all"><title>Subclasses of <classname>MKSynthPatch</classname></title>
+	<tgroup cols="3" colsep="1" rowsep="1">
+	  <colspec colnum="1" align="left">
+	  <colspec colnum="2" align="center">
+	  <colspec colnum="3" align="left">
 	  <thead>
 	    <row>
 	    <entry>Pitch Name</entry>

@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- MIDI Timecode Appendix -->
 <appendix id="MIDITimeCode">
 <title>MIDI Time Code in the <productname>MusicKit</productname></title>
 
@@ -72,13 +72,13 @@ MKMidi *myMidi = [MKMidi midiOnDevice: @"midi0"];
 beginning with the value 0:0:0:0, using the default format (24
 frames/second).</para>
 
-      <sect2 id="CustomizingTimeCodeGeneration"
+      <sect2 id="CustomizingTimeCodeGeneration">
 	<title>Customizing Time Code Generation</title>
 
 <para>You set the format with the method <emphasis
 role="bold">setFormat:</emphasis>.  The argument should be one of the
 following constants, defined in <filename
-class=headerfile>&lt;MusicKit/MKMTCPerformer.h&gt;</filename>:</para>
+class="headerfile">&lt;MusicKit/MKMTCPerformer.h&gt;</filename>:</para>
 
     <itemizedlist>
       <listitem><para>MK_MTC_FORMAT_24</para></listitem>

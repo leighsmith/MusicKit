@@ -1,4 +1,4 @@
-<!-- $Id$ -->
+<!-- MusicKit Class 4 -->
 
   <CHAPTER ID="CLASS4">
     <TITLE>Class 4 &horbar; <ACRONYM>DSP</ACRONYM> Synthesis Classes</TITLE>
@@ -664,18 +664,6 @@ MKUnitGenerator *osc,*out;
 
 <!-- Keep this comment at the end of the file
 Local variables:
-mode: sgml
-sgml-omittag:nil
-sgml-shorttag:t
-sgml-namecase-general:t
-sgml-general-insert-case:upper
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document: "MusicKitTutorials.sgml"
-sgml-exposed-tags:nil
-sgml-local-catalogs:nil
-sgml-local-ecat-files:nil
+mode: xml
 End:
 -->

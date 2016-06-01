@@ -9,13 +9,13 @@ information) can be thrown at: dcrowdy@pip.hmn.mq.edu.au
 Denis Crowdy
 -->
 
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.2//EN">
 
 <article id="Ensemble">
 
-  <artheader>
+  <articleinfo>
     <title>Ensemble</title>
-  </artheader>
+  </articleinfo>
 
 <sect1 id="description">
   <title>Description</title>
@@ -100,11 +100,11 @@ release.
 configuration of MIDI,  DSP and/or sound file resources.  The user
 interface consists primarily of the performance control panel, the
 main heirarchical menu, and one or more document windows.
-<para>
+</para>
 
 <para>
 To get started, try opening one of the example documents from
-<filename class=directory>LocalLibrary/Music/Ensemble/</filename>.
+<filename class="directory">LocalLibrary/Music/Ensemble/</filename>.
 </para>
 
 <para>

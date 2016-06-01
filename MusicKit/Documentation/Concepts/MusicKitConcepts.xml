@@ -1,10 +1,9 @@
 <!-- 
-$Id$
 This is the main document which simply provides the attribution and
 then includes all chapters that constitute the
 MusicKit and SndKit Concepts book.
 
-In SGML using DocBook DTD V4.1 and above.
+In XML using DocBook DTD V4.1 and above.
 
 Edit this file, not the HTML, RTF or LaTeX output.
 
@@ -12,24 +11,24 @@ Leigh Smith <leigh@tomandandy.com>
 -->
 
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
-<!ENTITY SystemOverview      SYSTEM "SystemOverview.sgml">
-<!ENTITY IntroSndKit         SYSTEM "IntroSndKit.sgml">
-<!ENTITY IntroMusicKit       SYSTEM "IntroMusicKit.sgml">
-<!ENTITY MusicData           SYSTEM "MusicData.sgml">
-<!ENTITY MusicSynthAndProc   SYSTEM "MusicSynthAndProc.sgml">
-<!ENTITY MusicPerformance    SYSTEM "MusicPerformance.sgml">
-<!ENTITY ScoreFileRef        SYSTEM "ScoreFileLanguage/ScoreFileRef.sgml">
-<!ENTITY NoteListToScorefile SYSTEM "ScoreFileLanguage/NoteListToScorefile.sgml">
-<!ENTITY ScoreFileSummary    SYSTEM "ScoreFileLanguage/ScoreFileSummary.sgml">
-<!ENTITY MusicTables         SYSTEM "MusicTables.sgml">
-<!ENTITY MIDITimeCode        SYSTEM "MIDITimeCode.sgml">
+<!ENTITY SystemOverview      SYSTEM "SystemOverview.xml">
+<!ENTITY IntroSndKit         SYSTEM "IntroSndKit.xml">
+<!ENTITY IntroMusicKit       SYSTEM "IntroMusicKit.xml">
+<!ENTITY MusicData           SYSTEM "MusicData.xml">
+<!ENTITY MusicSynthAndProc   SYSTEM "MusicSynthAndProc.xml">
+<!ENTITY MusicPerformance    SYSTEM "MusicPerformance.xml">
+<!ENTITY ScoreFileRef        SYSTEM "ScoreFileLanguage/ScoreFileRef.xml">
+<!ENTITY NoteListToScorefile SYSTEM "ScoreFileLanguage/NoteListToScorefile.xml">
+<!ENTITY ScoreFileSummary    SYSTEM "ScoreFileLanguage/ScoreFileSummary.xml">
+<!ENTITY MusicTables         SYSTEM "MusicTables.xml">
+<!ENTITY MIDITimeCode        SYSTEM "MIDITimeCode.xml">
 <!ENTITY MKWeb               "http://www.musickit.org">
 <!ENTITY MKClassReferences   "&MKWeb;/Frameworks/MusicKit">
 <!ENTITY MKFunctionReferences "&MKWeb;">
 <!ENTITY SKClassReferences   "&MKWeb;/Frameworks/SndKit">
 <!ENTITY SKFunctionReferences "&MKWeb;">
 <!ENTITY IntroSynthPatches   "&MKWeb;">
-<!entity maintaineremail "leigh@leighsmith.com">
+<!ENTITY maintaineremail "leigh@leighsmith.com">
 ]>
 
 <book id="MusicKitConcepts">
@@ -42,13 +41,13 @@ Leigh Smith <leigh@tomandandy.com>
       </author>
       <author>
 	<firstname>David</firstname>
-	<othername role=mi>A.</othername>
+	<othername role="mi">A.</othername>
 	<surname>Jaffe</surname>
       </author>
     </authorgroup>
       <editor>
 	<firstname>Leigh</firstname>
-	<othername role=mi>M.</othername>
+	<othername role="mi">M.</othername>
 	<surname>Smith</surname>
       </editor>
     <releaseinfo>Current for MusicKit V5.2.2</releaseinfo>
@@ -87,56 +86,56 @@ Leigh Smith <leigh@tomandandy.com>
     </copyright>
   </bookinfo>
 
-<preface id="EditorsPreface">
-<title>Editors Preface</title>
-<para>
-Befitting its origins, this documentation still retains some of its
-<productname>NeXT</productname> specific character, particularly <xref
-linkend="SoundHardware"> and can sometimes err on the side of being
-&ldquo;promotional&rdquo; in tone. The majority of the document is
-however platform independent. Over subsequent releases, we intend to
-rewrite the redundant material, and clarify the confusing. Please
-direct suggestions to <email>&maintaineremail;</email>.
-</para>
+  <preface id="EditorsPreface">
+    <title>Editors Preface</title>
+    <para>
+      Befitting its origins, this documentation still retains some of its
+      <productname>NeXT</productname> specific character, particularly <xref
+      linkend="SoundHardware"/> and can sometimes err on the side of being
+      &ldquo;promotional&rdquo; in tone. The majority of the document is
+      however platform independent. Over subsequent releases, we intend to
+      rewrite the redundant material, and clarify the confusing. Please
+      direct suggestions to <email>&maintaineremail;</email>.
+    </para>
 
-<para>
-To gain a quick overview of the capabilities of the Kits and to decide
-whether to investigate further, read <xref
-linkend="SystemOverview">. Class and Functions are well described in
-this book, but fully referenced in separate documents comprising the
-<ulink url="&MKClassReferences;"><productname>MusicKit</productname>
-framework documentation</ulink> and <ulink
-url="&SKClassReferences;"><productname>SndKit</productname> framework
-documentation</ulink>.
-</para>
-</preface>
+    <para>
+      To gain a quick overview of the capabilities of the Kits and to decide
+      whether to investigate further, read <xref
+      linkend="SystemOverview"/>. Class and Functions are well described in
+      this book, but fully referenced in separate documents comprising the
+      <ulink url="&MKClassReferences;"><productname>MusicKit</productname>
+      framework documentation</ulink> and <ulink
+      url="&SKClassReferences;"><productname>SndKit</productname> framework
+      documentation</ulink>.
+    </para>
+  </preface>
 
-&SystemOverview;
+  &SystemOverview;
 
-<part id="SndKitPart" label="The SndKit">
-<title>Sound Representation, Processing, Display and Audition</title>
-&IntroSndKit;
-</part>
-
-<part id="MusicKitPart" label="The MusicKit">
-<title>Music Representation, Synthesis, Processing and Performance</title>
-&IntroMusicKit;
-&MusicData;
-&MusicSynthAndProc;
-&MusicPerformance;
-</part>
-
-<part id="ScorefilesPart" label="Scorefiles">
-<title>A Language for MusicKit Scores</title>
-&ScoreFileRef;
-&NoteListToScorefile;
-</part>
-
-<part id="AppendicesPart" label="Appendices">
-<title>Reference Material</title>
-&MusicTables;
-&MIDITimeCode;
-&ScoreFileSummary;
-</part>
+  <part id="SndKitPart" label="The SndKit">
+    <title>Sound Representation, Processing, Display and Audition</title>
+    &IntroSndKit;
+  </part>
+  
+  <part id="MusicKitPart" label="The MusicKit">
+    <title>Music Representation, Synthesis, Processing and Performance</title>
+    &IntroMusicKit;
+    &MusicData;
+    &MusicSynthAndProc;
+    &MusicPerformance;
+  </part>
+  
+  <part id="ScorefilesPart" label="Scorefiles">
+    <title>A Language for MusicKit Scores</title>
+    &ScoreFileRef;
+    &NoteListToScorefile;
+  </part>
+  
+  <part id="AppendicesPart" label="Appendices">
+    <title>Reference Material</title>
+    &MusicTables;
+    &MIDITimeCode;
+    &ScoreFileSummary;
+  </part>
 
 </book>

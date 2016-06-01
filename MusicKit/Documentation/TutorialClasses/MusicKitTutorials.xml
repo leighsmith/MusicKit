@@ -1,21 +1,20 @@
 <!-- 
-$Id$
 This is the main document which simply provides the attribution
 and preface and then includes all chapters that constitute the
 MusicKit Tutorials book.
 
-In SGML using DocBook DTD V4.1 and above.
+In XML using DocBook DTD V4.1 and above.
 
 Edit this file, not the HTML, RTF or LaTeX output.
 
 -->
 
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
-<!ENTITY class1 SYSTEM "MusicKitClass1.sgml">
-<!ENTITY class2 SYSTEM "MusicKitClass2.sgml">
-<!ENTITY class3 SYSTEM "MusicKitClass3.sgml">
-<!ENTITY class4 SYSTEM "MusicKitClass4.sgml">
-<!ENTITY class5 SYSTEM "MusicKitClass5.sgml">
+<!ENTITY class1 SYSTEM "MusicKitClass1.xml">
+<!ENTITY class2 SYSTEM "MusicKitClass2.xml">
+<!ENTITY class3 SYSTEM "MusicKitClass3.xml">
+<!ENTITY class4 SYSTEM "MusicKitClass4.xml">
+<!ENTITY class5 SYSTEM "MusicKitClass5.xml">
 <!ENTITY MKWebDoco     "http://www.musickit.org">
 <!ENTITY MKConcepts    "&MKWebDoco;/MusicKitConcepts">
 <!ENTITY MKFrameworks  "&MKWebDoco;/Frameworks/MusicKit">
@@ -28,7 +27,7 @@ Edit this file, not the HTML, RTF or LaTeX output.
     <authorgroup>
       <author>
 	<firstname>David</firstname>
-	<othername role=mi>A.</othername>
+	<othername role="mi">A.</othername>
 	<surname>Jaffe</surname>
       </author>
     </authorgroup>
@@ -38,7 +37,7 @@ Edit this file, not the HTML, RTF or LaTeX output.
     </editor>
     <editor>
       <firstname>Leigh</firstname>
-      <othername role=mi>M.</othername>
+      <othername role="mi">M.</othername>
       <surname>Smith</surname>
     </editor>
     <releaseinfo>Current for MusicKit V5.2.2</releaseinfo>
@@ -72,7 +71,7 @@ as <email>daj@ccrma.stanford.edu</email>).
 The students should have access to the 
 <ulink url="http://musickit.sourceforge.net/MusicKitConcepts">
 MusicKit and SndKit Concepts</ulink> Documentation. The students
-should be running V5.2.2 frameworks or later and should refer to the
+should be running V5.6.2 frameworks or later and should refer to the
 on-line documentation for the Reference section of the
 <productname>MusicKit</productname> and
 <productname>SndKit</productname> and the appropriate

@@ -5,19 +5,19 @@ dcrowdy@pip.hmn.mq.edu.au
 -->
 
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
-<!entity mkvers "5.3">
-<!entity mkvertuple "5.3.0">
-<!entity sndvertuple "2.0.0">
+<!ENTITY mkvers "5.3">
+<!ENTITY mkvertuple "5.3.0">
+<!ENTITY sndvertuple "2.0.0">
 ]>
 
 <article id="MusicApplications">
- <artheader>
+ <articleinfo>
 
 <title>Music Applications</title>
 
 
 <author>
-<firstname>David</firstname><othername role=mi>A.</othername> <surname>Jaffe</surname></author>
+<firstname>David</firstname><othername role="mi">A.</othername> <surname>Jaffe</surname></author>
 
 <affiliation><orgname>NeXT Computer Inc.</orgname>
 <address>
@@ -29,9 +29,8 @@ dcrowdy@pip.hmn.mq.edu.au
   <fax>(415) 780 3715</fax>
   <email>david@next.com</email>
 </address>
-
-
 </affiliation>
+
 <copyright>
   <year>1991</year>
   <holder>NeXT Computer Inc. All Rights Reserved</holder>
@@ -54,7 +53,7 @@ The NeXT Music Kit is a programmer's library of objects for DSP sound
  text looks in detail at the Music Kit mechanisms behind the scenes.
 </para>
 </abstract>
-</artheader>
+</articleinfo>
 <sect1 id="PayNoAttention">
 <title>Pay No Attention to the Kit Behind the Screen</title>
 
@@ -384,11 +383,11 @@ being extensively used in many areas.
 
 <bibliography>
 <bibliomixed>
-<bibliomset relation=dissertation>
+<bibliomset relation="dissertation">
 <author>
 <surname>Cook</surname><firstname>P</firstname><othername>R</othername>
 </author>
-<title role=dissertation>Identification and Control of Parameters in
+<title role="dissertation">Identification and Control of Parameters in
 an Articulatory Vocal Tract Model...</title>, Ph.D. Dissertation,
 Dept. of Electrical Engineering, Stanford
 Univ. <pubdate>1991</pubdate>
@@ -397,11 +396,11 @@ Univ. <pubdate>1991</pubdate>
 </bibliomixed>
 
 <bibliomixed>
-<bibliomset relation=proceedings>
+<bibliomset relation="proceedings">
   <author>
     <surname>Cook</surname><firstname>P</firstname><othername>R</othername>
   </author>
-  <title role=article>SPASM: a Real-Time Vocal Tract Physical Model
+  <title role="article">SPASM: a Real-Time Vocal Tract Physical Model
 	Editor/Controller and Singer: the Companion Software Synthesis
 	System</title>, Colloque les Mod`eles Physiques Dans
 	L'Analyse, la Production et la Cre'ation Sonore, ACROE,
@@ -412,7 +411,7 @@ Univ. <pubdate>1991</pubdate>
 
 
 <bibliomixed>
-<bibliomset relation=proceedings>
+<bibliomset relation="proceedings">
 <author>
 <surname>Cook</surname><firstname>P</firstname><othername>R</othername>
 </author>
@@ -560,7 +559,7 @@ Chip.  Proc. 1989 ICMC, pp. 303-306.
 <author>
 <surname>Taube</surname><firstname>H</firstname>
 </author>
- "Common Music±A Compositional Language in Common Lisp and CLOS".
+ "Common Music &horbar; A Compositional Language in Common Lisp and CLOS".
  Proc. 1989 ICMC, pp. 316-319.
 </bibliomset>
 </bibliomixed>

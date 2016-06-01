@@ -13,7 +13,7 @@ biblioentry (database) format.
 
 -->
 
-<bibliography id=bibliography>
+<bibliography id="bibliography">
 
   <title>Published Documentation</title>
   <abstract>
@@ -24,7 +24,7 @@ biblioentry (database) format.
   </abstract>
 
   <bibliomixed>
-    <bibliomset relation=article>
+    <bibliomset relation="article">
       <!-- <abbrev>hamel94:noteability</abbrev> -->
       <authorgroup>
          <author>
@@ -32,11 +32,11 @@ biblioentry (database) format.
           <surname>Hamel</surname>
          </author>
       </authorgroup>
-      <title role=article>NoteAbility: A Music Notation System Combines
+      <title role="article">NoteAbility: A Music Notation System Combines
                   Musical Intelligence with Graphic Flexibility</title>
     </bibliomset>
-    <bibliomset relation=proceedings>
-      <title role=proceedings>Proceedings of the 1994 International
+    <bibliomset relation="proceedings">
+      <title role="proceedings">Proceedings of the 1994 International
                   Computer Music Conference</title>
       <pagenums>303-6</pagenums>
       <pubdate>1994</pubdate>
@@ -51,7 +51,7 @@ biblioentry (database) format.
 
 <bibliomixed>
   <!-- <abbrev>jaffe89:overview</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>David</firstname>	 
@@ -59,10 +59,10 @@ biblioentry (database) format.
         <surname>Jaffe</surname>
       </author>
     </authorgroup>
-    <title role=article>An Overview of the NeXT Music Kit</title>
+    <title role="article">An Overview of the NeXT Music Kit</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the 1989 International Computer Music
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the 1989 International Computer Music
                   Conference</title>
     <pagenums>135-8</pagenums>
     <pubdate>1989</pubdate>
@@ -75,7 +75,7 @@ biblioentry (database) format.
 
 <bibliomixed>
   <!-- <abbrev>jaffe90:multipleDSPs</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>David</firstname>
@@ -83,11 +83,11 @@ biblioentry (database) format.
 	<surname>Jaffe</surname>
       </author>
     </authorgroup>
-    <title role=article>Efficient Dynamic Resource Management on Multiple
+    <title role="article">Efficient Dynamic Resource Management on Multiple
                   DSPs, as Implemented in the NeXT Music Kit</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the 1990 International Computer Music
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the 1990 International Computer Music
                   Conference</title>
     <pagenums>188-90</pagenums>
     <pubdate>1990</pubdate>
@@ -96,7 +96,7 @@ biblioentry (database) format.
       <address>Glasgow, Scotland</address>
     </publisher>
   </bibliomset>
-  <bibliomset relation=online>
+  <bibliomset relation="online">
     <bibliomisc>
       <ulink url="&mkurl;/Publications/OrchestraDetails.pdf">
         OrchestraDetails.pdf
@@ -115,7 +115,7 @@ multi-<acronym>DSP</acronym> support.
 
 <bibliomixed>
   <!-- <abbrev>jaffe91:musicalapplications</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>David</firstname>
@@ -123,11 +123,11 @@ multi-<acronym>DSP</acronym> support.
 	<surname>Jaffe</surname>
       </author>
     </authorgroup>
-    <title role=article>Musical and Extra-Musical Applications of the NeXT
+    <title role="article">Musical and Extra-Musical Applications of the NeXT
                   Music Kit</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the 1991 International Computer Music
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the 1991 International Computer Music
                   Conference</title>
     <pagenums>521-4</pagenums>
     <pubdate>1991</pubdate>
@@ -136,7 +136,7 @@ multi-<acronym>DSP</acronym> support.
       <address>Montreal, Canada</address>
     </publisher>
   </bibliomset>
-  <bibliomset relation=online>
+  <bibliomset relation="online">
     <bibliomisc>
       <ulink url="&mkurl;/Publications/MusicApplications.pdf">
         MusicApplications.pdf
@@ -153,7 +153,7 @@ Music Conference describing some of the uses to which the
 </bibliomixed>
 
 <bibliomixed>
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
   	<firstname>David</firstname>
@@ -170,7 +170,7 @@ Music Conference describing some of the uses to which the
     <title>Real Time Sound Processing &amp; Synthesis on Multiple DSPs Using
 the Music Kit and the Ariel QuintProcessor</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
+  <bibliomset relation="proceedings">
     <title>Proceedings of the 1993 International Computer Music Conference</title>
     <publisher>
         <publishername>International Computer Music Association</publishername>
@@ -178,7 +178,7 @@ the Music Kit and the Ariel QuintProcessor</title>
     </publisher>
     <pubdate>1993</pubdate>
   </bibliomset>
-  <bibliomset relation=online>
+  <bibliomset relation="online">
     <bibliomisc>
       <ulink url="&mkurl;/Publications/MusicKit-NWExpo93.pdf">
         MusicKit-NWExpo93.pdf
@@ -194,7 +194,7 @@ Documents multiple DSP operation.
 
       <bibliomixed>
 <!-- <abbrev>jaffe91:overview</abbrev> -->
-      <bibliomset relation=article>
+      <bibliomset relation="article">
         <authorgroup>
   	  <author>
   	    <firstname>David</firstname> <othername>A.</othername> <surname>Jaffe</surname>
@@ -203,10 +203,10 @@ Documents multiple DSP operation.
   	    <firstname>Lee</firstname> <othername>R.</othername> <surname>Boynton</surname>
   	  </author>
   	</authorgroup>
-        <title role=article>An Overview of the Sound and Music Kits for the <productname>NeXT</productname> Computer</title>
+        <title role="article">An Overview of the Sound and Music Kits for the <productname>NeXT</productname> Computer</title>
       </bibliomset>
-      <bibliomset relation=journal>
-        <title role=journal>Computer Music Journal</title>
+      <bibliomset relation="journal">
+        <title role="journal">Computer Music Journal</title>
         <volumenum>13</volumenum>(<issuenum>2</issuenum>)
         <pubdate>1989</pubdate>
         <pagenums>48-55</pagenums>
@@ -215,8 +215,8 @@ Documents multiple DSP operation.
         </publisher>
       </bibliomset>
 Reprinted in book form in
-      <bibliomset relation=book>
-        <title role=book>The Well-Tempered Object</title>
+      <bibliomset relation="book">
+        <title role="book">The Well-Tempered Object</title>
         <publisher>
           <publishername>MIT Press</publishername>
         </publisher>
@@ -230,7 +230,7 @@ Reprinted in book form in
 
     <bibliomixed>
       <!-- <abbrev>brandon:newworld</abbrev> -->
-      <bibliomset relation=article>
+      <bibliomset relation="article">
         <authorgroup>
           <author>
             <firstname>Stephen</firstname>
@@ -242,11 +242,11 @@ Reprinted in book form in
             <surname>Smith</surname>
           </author>
         </authorgroup>
-        <title role=article>Next Steps from NeXTSTEP: MusicKit and
+        <title role="article">Next Steps from NeXTSTEP: MusicKit and
                   SoundKit in a New World</title>
       </bibliomset>
-      <bibliomset relation=proceedings>
-        <title role=proceedings>Proceedings of the 2000 International
+      <bibliomset relation="proceedings">
+        <title role="proceedings">Proceedings of the 2000 International
                   Computer Music Conference</title>
         <pagenums>503-6</pagenums>
         <pubdate>2000</pubdate>
@@ -255,7 +255,7 @@ Reprinted in book form in
           <address>San Francisco, CA</address>
         </publisher>
       </bibliomset>
-      <bibliomset relation=online>
+      <bibliomset relation="online">
         <bibliomisc>
           <ulink url="&mkurl;/Publications/ICMC2000.pdf">
             ICMC2000.pdf
@@ -272,17 +272,17 @@ and cross-platform approach.
 
 <bibliomixed>
   <!-- <abbrev>mcnabb90:ensemble</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>Michael</firstname>
 	<surname>McNabb</surname>
       </author>
     </authorgroup>
-    <title role=article>Ensemble, An Extensible Real-Time Performance Environment</title>
+    <title role="article">Ensemble, An Extensible Real-Time Performance Environment</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of 89th Audio Engineering Society Convention</title>
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of 89th Audio Engineering Society Convention</title>
     <pubdate>1990</pubdate>
     <publisher>
       <publishername>Audio Engineering Society</publishername>
@@ -293,7 +293,7 @@ and cross-platform approach.
 
 <bibliomixed>
   <!-- <abbrev>smith89:architecture</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>Julius</firstname>
@@ -312,17 +312,17 @@ and cross-platform approach.
         <surname>Boynton</surname>
       </author>
     </authorgroup>
-    <title role=article>Music System Architecture on the NeXT Computer</title>
+    <title role="article">Music System Architecture on the NeXT Computer</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the Audio Engineering Society Conference</title>
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the Audio Engineering Society Conference</title>
     <pubdate>1989</pubdate>
     <publisher>
       <publishername>Audio Engineering Society</publishername>
       <address>Los Angeles, CA.</address>
     </publisher>
   </bibliomset>
-  <bibliomset relation=online>
+  <bibliomset relation="online">
     <bibliomisc>
       <ulink url="&mkurl;/Publications/SoundMusicDSP.pdf">
         SoundMusicDSP.pdf
@@ -338,7 +338,7 @@ A general (if dated) overview.
 
 <bibliomixed>
   <!-- <abbrev>smith89:cmusic_dsp56</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>Julius</firstname>
@@ -347,10 +347,10 @@ A general (if dated) overview.
         <lineage>III</lineage>
       </author>
     </authorgroup>
-    <title role=article>Computer Music on the DSP56001</title>
+    <title role="article">Computer Music on the DSP56001</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the IEEE Workshop on Applications of
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the IEEE Workshop on Applications of
                   Signal Processing to Audio and Acoustics</title>
     <pubdate>October, 1989</pubdate>
     <publisher>
@@ -358,7 +358,7 @@ A general (if dated) overview.
       <address>New York</address>
     </publisher>
   </bibliomset>
-  <bibliomset relation=online>
+  <bibliomset relation="online">
     <bibliomisc>
       <ulink url="&mkurl;/Publications/DSPSoftwareDesign.pdf">
         DSPSoftwareDesign.pdf
@@ -375,7 +375,7 @@ Transparencies for a talk describing the use of the
 
 <bibliomixed>
   <!-- <abbrev>smith89:unit_generator</abbrev> -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <authorgroup>
       <author>
         <firstname>Julius</firstname>
@@ -384,10 +384,10 @@ Transparencies for a talk describing the use of the
         <lineage>III</lineage>
       </author>
     </authorgroup>
-    <title role=article>Unit-Generator Implementation on the NeXT DSP Chip</title>
+    <title role="article">Unit-Generator Implementation on the NeXT DSP Chip</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the 1989 International Computer Music
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the 1989 International Computer Music
                   Conference</title>
     <pagenums>303-6</pagenums>
     <pubdate>1989</pubdate>
@@ -400,15 +400,15 @@ Transparencies for a talk describing the use of the
 
 <bibliomixed>
   <!-- Tanaka91 -->
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <author>
       <firstname>Atau</firstname>
       <surname>Tanaka</surname>
     </author>
-    <title role=article>Implementing Quadraphonic Audio on the NeXT</title>
+    <title role="article">Implementing Quadraphonic Audio on the NeXT</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the 1991 International Computer Music Conference</title>
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the 1991 International Computer Music Conference</title>
     <pubdate>1991</pubdate>
     <publisher>
       <publishername>International Computer Music Association</publishername>
@@ -419,15 +419,15 @@ Transparencies for a talk describing the use of the
 
 <bibliomixed>
   <!-- Lopez-Lezcano93 --> 
-  <bibliomset relation=article>
+  <bibliomset relation="article">
     <author>
       <firstname>Fernando</firstname>
       <surname>Lopez-Lezcano</surname>
     </author>
-    <title role=article>A Four Channel Dynamic Sound Location System</title>
+    <title role="article">A Four Channel Dynamic Sound Location System</title>
   </bibliomset>
-  <bibliomset relation=proceedings>
-    <title role=proceedings>Proceedings of the 1993 Japan Music and Computer Society</title>
+  <bibliomset relation="proceedings">
+    <title role="proceedings">Proceedings of the 1993 Japan Music and Computer Society</title>
     <pubdate>1993</pubdate>
     <publisher>
       <publishername>Japan Music and Computer Society</publishername>
