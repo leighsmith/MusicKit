@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Note List to Scorefile Chapter -->
 <chapter id="NoteListToScoreFile">
-<title>From The Classical Software Synthesis Note-List to the
+  <title>From The Classical Software Synthesis Note-List to the
 <productname>MusicKit</productname> Scorefile</title>
 
 <para>This introduction to the <productname>MusicKit</productname>

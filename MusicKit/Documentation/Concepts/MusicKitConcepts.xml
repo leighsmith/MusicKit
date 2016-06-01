@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!-- 
 This is the main document which simply provides the attribution and
 then includes all chapters that constitute the
@@ -10,7 +11,7 @@ Edit this file, not the HTML, RTF or LaTeX output.
 Leigh Smith <leigh@tomandandy.com>
 -->
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://oasis-open.org/docbook/xml/4.0/docbookx.dtd" [
 <!ENTITY SystemOverview      SYSTEM "SystemOverview.xml">
 <!ENTITY IntroSndKit         SYSTEM "IntroSndKit.xml">
 <!ENTITY IntroMusicKit       SYSTEM "IntroMusicKit.xml">

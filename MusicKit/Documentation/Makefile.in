@@ -6,7 +6,7 @@
 #
 # Usage: make CHANGELOG=[ChangeLog] OBJDIR=[ObjectDirectory] VERSION=[VersionString]
 #
-# Create a set of HTML pages and PDFs from the SGML documentation and creates HTML pages
+# Create a set of HTML pages and PDFs from the XML documentation and creates HTML pages
 # of class documentation from header files using Doxygen. The entire tree of documentation
 # is then packaged up suitable for shipping to the musickit.org web-site. We do this with a
 # customised stylesheet (in DSSSL) to produce the correct text colouring, background images etc.
@@ -20,8 +20,8 @@
 # messages remain intact and accompany all relevant code.
 #
 
-SGMLTRANS=@SGMLTRANS@
-PDFJADETEX=@PDFJADETEX@
+XMLTRANS=@XMLTRANS@
+PDFFORMATTER=@PDFFORMATTER@
 DOXYGEN=@DOXYGEN@
 
 # Default to storing all the temporary files in volatile /tmp.
@@ -50,15 +50,15 @@ SITE=musickit
 SITEDIR=/home/groups/m/mu/musickit
 SITEHTMLDIR=$(SITEDIR)/$(HTML_DISTRIB_DIR)
 
-MK_STYLEDIR=SGML
+MK_STYLEDIR=XML
 MK_STYLESHEET=$(MK_STYLEDIR)/MusicKit_README.dsssl
 CSS=MusicKit_README.css
 DOXYCSS=
 
 README=MusicKit_README
 
-ifeq ($(PDFJADETEX),)
-$(warning DocBook pdfjadetex translator not found, building of PDF documentation skipped.)
+ifeq ($(PDFFORMATTER),)
+$(warning DocBook PDF translator not found, building of PDF documentation skipped.)
 PDFS=
 else
 PDFS=$(addprefix $(PDF_OUTPUT_DIR)/, $(README).pdf MusicKitTutorials.pdf MusicKitConcepts.pdf)
@@ -81,31 +81,31 @@ HTMLS=$(addprefix $(HTML_TMPDIR)/, index.html \
 # where fink installs Norman Walsh's images as part of his DocBook
 # DSSSL distribution.
 #
-ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
+ADMONIMAGESDIR=/sw/share/xml/dsssl/docbook-dsssl-nwalsh/images
 
 #
 # Where documentation is installed on a local system.
 #
 INSTALL_DIR=$(DSTROOT)/Library/Documentation/MusicKit
 
-.PHONY: all clean install upload check_sgmltrans
+.PHONY: all clean install upload check_xmltrans
 
 # 
-# The highest level and default rule if there is an SGML translator, makes everything.
+# The highest level and default rule if there is an XML translator, makes everything.
 # Generates the HTML tarball. The HTML tarball will create the PDF
 # before it copies them into the HTML directory.
 #
 
-all: check_sgmltrans $(DOC_TARBALL_PATH)
+all: check_xmltrans $(DOC_TARBALL_PATH)
 
 #
-# Check an SGML translator has been found in the autoconf configuration process.
+# Check an XML translator has been found in the autoconf configuration process.
 # If there isn't, we want to exit gracefully rather than causing an error which will stop
 # the entire MusicKit build process.
 #
-check_sgmltrans:
-ifeq ($(SGMLTRANS),)
-	$(error DocBook SGML translator not found, building of documentation skipped.)
+check_xmltrans:
+ifeq ($(XMLTRANS),)
+	$(error DocBook XML translator not found, building of documentation skipped.)
 	@exit 0
 endif
 
@@ -113,7 +113,7 @@ clean:
 	-rm -rf $(HTML_TMPDIR)
 	-rm -rf $(PDF_OUTPUT_DIR) 
 
-install:: check_sgmltrans $(DOC_TARBALL_PATH) $(INSTALL_DIR)
+install:: check_xmltrans $(DOC_TARBALL_PATH) $(INSTALL_DIR)
 	tar -x -j -C $(INSTALL_DIR) -p -f $(DOC_TARBALL_PATH)
 	-chmod -R go-w $(INSTALL_DIR)
 	-chmod -R ugo+r $(INSTALL_DIR)
@@ -132,7 +132,7 @@ $(INSTALL_DIR):
 	mkdir -p $(INSTALL_DIR)
 
 #
-# Create HTML from the supplied DocBook SGML file.
+# Create HTML from the supplied DocBook XML file.
 # While we could just point all CSS references to a single CSS file,
 # by copying a CSS file into each subdirectory, this removes the
 # requirement to refer to the head of a document tree for the CSS
@@ -143,12 +143,12 @@ define create-html
 	cp $(CSS) $(dir $@)
 	-cp $(wildcard $(dir $<)/Images/*.gif) $(wildcard $(ADMONIMAGESDIR)/*.gif) $(dir $@)/Images
 	root=`pwd`; cd $(dir $@); \
-	$(SGMLTRANS) -t sgml -ihtml -d $$root/$(MK_STYLESHEET)\#html $$root/$< 
+	$(XMLTRANS) -t xml -ihtml -d $$root/$(MK_STYLESHEET)\#html $$root/$< 
 endef
 
 #
 # We assume we flawlessly create a Jadetex document from the supplied
-# DocBook SGML file which never fails to process with jadetex.
+# DocBook XML file which never fails to process with jadetex.
 # We have to process the TeX file three times to properly resolve
 # references.
 #
@@ -171,7 +171,7 @@ endef
 #
 define create-pdf
 	mkdir -p $(dir $@)/Images
-	$(SGMLTRANS) -t tex -d $(MK_STYLESHEET)\#print -o $(BUILDDIR)/epsversion.tex $<
+	$(XMLTRANS) -t tex -d $(MK_STYLESHEET)\#print -o $(BUILDDIR)/epsversion.tex $<
 	# ugly hack to swap .eps files for .pdfs for pdfjadetex to work
 	sed -e "s/\.eps/\.pdf/g" < $(BUILDDIR)/epsversion.tex > $(basename $@).tex
 	-cp $(ADMONIMAGESDIR)/*.pdf $(MK_STYLEDIR)/Images/*.pdf $(wildcard $(dir $<)/Images/*.pdf) $(dir $@)/Images
@@ -184,7 +184,7 @@ endef
 #
 # Generate the README documentation
 #
-$(HTML_TMPDIR)/index.html: $(README).sgml $(CSS)
+$(HTML_TMPDIR)/index.html: $(README).xml $(CSS)
 	$(create-html)
 	-cp -r $(MK_STYLEDIR)/Images/*.png $(HTML_TMPDIR)/Images
 
@@ -192,25 +192,25 @@ $(HTML_TMPDIR)/index.html: $(README).sgml $(CSS)
 # Generate the Concepts Book underneath the README directory, so it
 # can be referenced by URL independent of the README directory.
 #
-$(HTML_TMPDIR)/Concepts/index.html: Concepts/MusicKitConcepts.sgml $(CSS)
+$(HTML_TMPDIR)/Concepts/index.html: Concepts/MusicKitConcepts.xml $(CSS)
 	$(create-html)
 
 #
 # Generate the tutorials and also place them under the README directory.
 #
-$(HTML_TMPDIR)/TutorialClasses/index.html: TutorialClasses/MusicKitTutorials.sgml $(CSS)
+$(HTML_TMPDIR)/TutorialClasses/index.html: TutorialClasses/MusicKitTutorials.xml $(CSS)
 	$(create-html)
 
 #
 # Generate the MusicKit_README PDF.
 #
-$(PDF_OUTPUT_DIR)/$(README).pdf: $(README).sgml
+$(PDF_OUTPUT_DIR)/$(README).pdf: $(README).xml
 	$(create-pdf)
 
-$(PDF_OUTPUT_DIR)/MusicKitTutorials.pdf: TutorialClasses/MusicKitTutorials.sgml
+$(PDF_OUTPUT_DIR)/MusicKitTutorials.pdf: TutorialClasses/MusicKitTutorials.xml
 	$(create-pdf)
 
-$(PDF_OUTPUT_DIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.sgml
+$(PDF_OUTPUT_DIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.xml
 	$(create-pdf)
 
 #

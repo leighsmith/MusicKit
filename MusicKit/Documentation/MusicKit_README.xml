@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 The MusicKit README file, in the original DocBook XML source.
 
@@ -11,8 +12,8 @@ this document refers to. Change accordingly to match the source
 and binary distributions. Likewise if the distribution web site changes.
 -->
 
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
-<!ENTITY mkvertuple "5.6.2">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://oasis-open.org/docbook/xml/4.0/docbookx.dtd" [
+<!ENTITY mkvertuple "5.7.0">
 <!ENTITY bibliography        SYSTEM "Publications/PublishedDocumentation.xml">
 <!ENTITY readinglist         SYSTEM "Publications/SuggestedReadingList.xml">
 <!ENTITY maintaineremail "leigh@leighsmith.com_nospam">
@@ -77,7 +78,7 @@ and binary distributions. Likewise if the distribution web site changes.
       <surname>Smith</surname>
       <affiliation>
         <orgname>
-          <ulink url="http://www.ozmusiccode.com">Oz Music Code LLC.</ulink>
+          <ulink url="http://www.leighsmith.com">leighsmith.com Inc.</ulink>
         </orgname>
         <address>
           <email>&maintaineremail;</email>
@@ -85,7 +86,7 @@ and binary distributions. Likewise if the distribution web site changes.
       </affiliation>
     </author>
     <copyright>
-      <year>2000-2009</year>
+      <year>2000-20016</year>
       <holder>The MusicKit Project</holder>
     </copyright>
     <revhistory>

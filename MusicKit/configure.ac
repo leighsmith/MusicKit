@@ -16,7 +16,7 @@
 # could default to using MKPerformSndMIDI_silent for users who just want
 # to crunch notes and not play anything.
 
-AC_INIT(MusicKit, 5.6.2, leigh@leighsmith.com)
+AC_INIT(MusicKit, 5.7.0, leigh@leighsmith.com)
 AC_REVISION($Id$)
 
 AC_CONFIG_SRCDIR([Frameworks/SndKit/Snd.h])
@@ -38,12 +38,12 @@ else
    AC_SUBST(TOPLEVELBUILD, GNUmakefile)
 fi
 
-# Check for an SGML translator for generating documentation.
-# Currently openjade is our only option.
-AC_CHECK_PROGS(SGMLTRANS, openjade)
+# Check for an XML translator for generating documentation.
+# Currently xmlto is our only option.
+AC_CHECK_PROGS(XMLTRANS, xmlto)
 
-# Check for pdfjadetex being installed, this allows PDF generation.
-AC_CHECK_PROGS(PDFJADETEX, pdfjadetex)
+# Check for dblatex being installed, this allows PDF generation.
+AC_CHECK_PROGS(PDFFORMATTER, dblatex)
 
 # Check for doxygen which generates HTML documentation from header files.
 AC_CHECK_PROGS(DOXYGEN, doxygen)
