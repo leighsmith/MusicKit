@@ -595,7 +595,7 @@ BOOL _MKNoteIsPlaceHolder(MKNote *aNote)
 #define ABS(_x) ((_x < 0) ? -_x : _x)
 #endif
 
-int _MKNoteCompare(const void *el1,const void *el2)
+NSComparisonResult _MKNoteCompare(const void *el1,const void *el2)
     /* This must match code in MKNote. (Or move this function into MKNote.) */
 {
     MKNote *id1 = *((MKNote **)el1);
@@ -614,7 +614,7 @@ int _MKNoteCompare(const void *el1,const void *el2)
     return (t1 < t2) ? NSOrderedAscending : NSOrderedDescending;
 }
 
-- (int) compare: (MKNote *) aNote  
+- (NSComparisonResult) compare: (MKNote *) aNote
   /* TYPE: Copying; Compares the receiver with aNote.
    * Compares the receiver with aNote and returns a value as follows:
    *

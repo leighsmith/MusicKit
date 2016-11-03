@@ -25,7 +25,7 @@ extern void _MKSetNoteTag(MKNote *aNote, int aTag);
 extern void _MKSetNoteDur(MKNote *aNote, double dur);
 extern int  _MKGetPar(NSString *aName, id *aPar);
 extern id   _MKWriteNote2(MKNote *aNote, id aPart, _MKScoreOutStruct *p);
-extern int  _MKNoteCompare(const void *el1, const void *el2);
+extern NSComparisonResult  _MKNoteCompare(const void *el1, const void *el2);
 extern void _MKMakePlaceHolder(MKNote *aNote);
 extern BOOL _MKNoteIsPlaceHolder(MKNote *aNote);
 extern void _MKWriteParameters(MKNote *aNote, NSMutableData *aStream, _MKScoreOutStruct *p);
